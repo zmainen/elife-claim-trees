@@ -1,0 +1,66 @@
+@prefix claimrel: <http://elife-claim-trees.org/relations/> .
+@prefix cito:     <http://purl.org/spar/cito/> .
+@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:      <http://www.w3.org/2002/07/owl#> .
+@prefix dcterms:  <http://purl.org/dc/terms/> .
+
+# ── Ontology metadata ──────────────────────────────────────────────────
+
+<http://elife-claim-trees.org/relations/>
+    a owl:Ontology ;
+    rdfs:label "Claim Relations Vocabulary" ;
+    rdfs:comment "Extension properties for typed edges in scientific claim graphs. Each property is a subproperty of a CiTO citation-typing property, preserving entailment compatibility." ;
+    dcterms:creator "eLife Claim Trees project" ;
+    owl:imports <http://purl.org/spar/cito> .
+
+# ── Extensions with CiTO parents ───────────────────────────────────────
+
+claimrel:rulesOut
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf cito:refutes ;
+    rdfs:label "rules out" ;
+    rdfs:comment "The citing claim eliminates the cited claim as a viable hypothesis. Narrower than refutation: specifically eliminative, often a control result." .
+
+claimrel:replicates
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf cito:confirms ;
+    rdfs:label "replicates" ;
+    rdfs:comment "The citing claim reports an empirical replication of the cited claim's findings. A specific mechanism of confirmation: repeating an experiment and obtaining consistent results." .
+
+claimrel:contradicts
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf cito:disagreesWith ;
+    rdfs:label "contradicts" ;
+    rdfs:comment "The citing claim presents findings or reasoning incompatible with the cited claim. Stronger than disagreement: the two claims cannot both be true." .
+
+# ── Extensions without close CiTO parents ──────────────────────────────
+
+claimrel:requires
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf cito:cites ;
+    rdfs:label "requires" ;
+    rdfs:comment "The citing claim logically depends on the cited claim as a prerequisite. If the cited claim is false or inapplicable, the citing claim loses its foundation." .
+
+claimrel:tests
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf cito:cites ;
+    rdfs:label "tests" ;
+    rdfs:comment "The citing claim submits the cited claim to empirical or logical test. Outcome-neutral: the test may confirm, refute, or partially support the tested claim." .
+
+claimrel:entails
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf cito:cites ;
+    rdfs:label "entails" ;
+    rdfs:comment "The citing claim logically entails the cited claim. Deductive, not evidential: if the citing claim is true, the cited claim must be true." .
+
+claimrel:interprets
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf cito:cites ;
+    rdfs:label "interprets" ;
+    rdfs:comment "The citing claim offers an explanatory reading or theoretical frame for the cited claim. Distinct from support (which is evidential) and from extension (which adds content)." .
+
+claimrel:scopes
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf cito:cites ;
+    rdfs:label "scopes" ;
+    rdfs:comment "The citing claim delimits the domain of applicability of the cited claim. Distinct from qualification (which adds caveats): scoping sets boundary conditions." .
