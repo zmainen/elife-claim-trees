@@ -31,6 +31,7 @@ from pydantic import BaseModel
 # Add the extract package to the path — works from HAAK repo or standalone
 API_DIR = Path(__file__).resolve().parent
 for candidate in [
+    API_DIR.parent / "extract",                                         # published repo (extract/ at root)
     API_DIR / "elife_extract",                                          # standalone deploy
     API_DIR.parent / "home/collabs/elife/claim-trees/extract",         # HAAK repo
 ]:
@@ -444,6 +445,7 @@ async def extract(req: ExtractRequest, request: "Request"):
             else:
                 # Try relative to this file in HAAK repo layout
                 for p in [
+                    API_DIR.parent / "extract/prompts",
                     API_DIR / "prompts",
                     API_DIR.parent / "home/collabs/elife/claim-trees/extract/prompts",
                 ]:
@@ -590,6 +592,7 @@ async def extract_file(
                 cfg.prompts_dir = PROMPTS_DIR
             else:
                 for p in [
+                    API_DIR.parent / "extract/prompts",
                     API_DIR / "prompts",
                     API_DIR.parent / "home/collabs/elife/claim-trees/extract/prompts",
                 ]:

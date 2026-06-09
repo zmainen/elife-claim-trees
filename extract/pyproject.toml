@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "elife-extract"
+version = "0.1.0"
+description = "8-step claim induction pipeline for eLife papers — three-agent extraction, reconciliation, claim-file writing, CrossRef verification."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Zach Mainen", email = "zmainen@neuro.fchampalimaud.org" },
+]
+keywords = ["elife", "claim-extraction", "scientific-publishing", "claude", "vertex-ai"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+  "anthropic[vertex]>=0.40.0",
+  "httpx>=0.25",
+  "pdfplumber>=0.10",
+  "pyyaml>=6.0",
+  "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "pytest-asyncio>=0.21",
+  "ruff>=0.1",
+]
+
+[project.scripts]
+elife-extract = "elife_extract.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/zmainen/elife-claim-trees"
+Documentation = "https://github.com/zmainen/elife-claim-trees/tree/main/extract"
+Issues = "https://github.com/zmainen/elife-claim-trees/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["elife_extract*"]
+
+# Note: prompts/ is a sibling of elife_extract/, not a subdirectory. The
+# package finds it at runtime via Path(__file__).parent.parent / "prompts".
+# This works for editable installs (pip install -e .) which is the
+# Phase A-I development mode. Phase J (publish to shared repo) will
+# need a packaging pass — likely moving prompts into elife_extract/prompts/
+# and using importlib.resources for resolution, or shipping prompts as
+# data in a wheel via a MANIFEST.in.
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
