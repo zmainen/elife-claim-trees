@@ -8,11 +8,18 @@ identity: fix a typo in the paper and the hash changes, the span looks new, and
 its assignment is lost even though it is obviously the same claim about the same
 result.
 
-The identity that survives both is the one tika already implements. A tika mark
+The identity that survives both is the one tika already implements. A tika note
 anchors to a *quoted span* and relocates the quote when the text moves, so an
 assignment written as a mark survives edits that a position or a hash cannot:
 
-    ⟦^zach: @{the pattern was consistent with the Yu & Koban signature} <uuid>⟧
+    ⟦>zach claim=<uuid>: @{the pattern was consistent with the Yu & Koban signature} why⟧
+
+This is tika's **v2** grammar (SPEC.md, docs/v2/README.md), which landed after the
+`^` sign this project originally proposed. v2 has four signs and no `^`: a claim
+assignment is a *note* (`>`, which never changes the text) carrying the word
+`claim=KEY`, exactly as the spec intends — "many notes may name one claim; the
+unaccounted-for statements are then visible". The note's body carries the reason,
+so the adjudication no longer needs a sidecar to hold it.
 
 The payload is the claim's UUID, not its slug. A slug is derived from the claim's
 text, so rewording a claim changes it, and a mark carrying one rots silently. All
@@ -20,11 +27,16 @@ text, so rewording a claim changes it, and a mark carrying one rots silently. Al
 it as the node identity, so the mark, the claim file and the MIRA node then name
 the same thing.
 
-Every span that carries a result gets a mark saying what became of it:
+Every span that carries a result gets a note saying what became of it:
 
-    assigned        ⟦^author: @{quote} <claim-uuid>⟧
-    no assertion    ⟦^author: @{quote} no-assertion⟧
-    unclaimed       ⟦^author: @{quote} gap⟧
+    assigned        ⟦>author claim=<claim-uuid>: @{quote} why⟧
+    no assertion    ⟦>author claim=no-assertion: @{quote} why⟧
+    unclaimed       ⟦>author claim=gap: @{quote} why⟧
+
+The two bookkeeping states are values of `claim=`, not new words. Tested against
+the v2 engine: a bare invented word (`⟦>zach no-assertion: …⟧`) parses as
+`unknown` and is inert, so inventing vocabulary would silently produce marks the
+reader discards. A key value is the extension point the grammar actually offers.
 
 An unmarked sentence therefore means one thing only: it carries no result and was
 never an obligation.
@@ -50,28 +62,41 @@ logger = logging.getLogger(__name__)
 NO_ASSERTION = "no-assertion"
 GAP = "gap"
 
-# tika SPEC § 3: ⟦<sign><author>: <payload>⟧, and for an anchored kind the
-# payload opens with @{the quoted span}. The `^` sign is the claim assignment.
-MARK_RE = re.compile(r"⟦\^([A-Za-z0-9_.-]+):\s*@\{(.*?)\}\s*(\S+)⟧", re.DOTALL)
+# tika v2: ⟦<sign>[<author>[.<id>]][ <word>…]: <payload>⟧, and a note's payload
+# opens with @{the quoted span}. Only notes carrying `claim=` concern us.
+MARK_RE = re.compile(
+    r"⟦>([a-z0-9_-]+)?(?:\.[0-9a-z]{4,6})?"        # sign, optional author, optional id
+    r"((?: [a-z][a-z0-9-]*(?:=[^\s:]+)?)*)"          # words
+    r": ?@\{(.*?)\}\s*([\s\S]*?)⟧",                # anchor, then body
+    re.DOTALL)
 
 _SECTION_ORDER = ("abstract", "results", "captions", "tables")
 
 
 def _quote_for(text: str, limit: int = 120) -> str:
-    """The anchor quote: the span, trimmed, with the brace delimiter kept safe."""
+    """The anchor quote: the span, trimmed, escaped as v2 requires.
+
+    v2 reserves the mark delimiters outright and doubles a literal `}` inside an
+    anchor. Both are the spec's escapes, not ours — writing `)` for `}`, as the
+    first version did, would have altered the quoted text rather than escaped it,
+    and an anchor that is not the text verbatim cannot relocate.
+    """
     q = re.sub(r"\s+", " ", text).strip()
     if len(q) > limit:
         q = q[: limit - 1] + "…"
-    # A literal } would close the anchor early. Nothing in this corpus needs one.
-    return q.replace("}", ")")
+    q = q.replace("⟦", "&#x27E6;").replace("⟧", "&#x27E7;")
+    return q.replace("}", "}}")
 
 
 def render_marked(paper: PreparedPaper, assignments: dict[str, str],
-                  *, author: str = "zach", include_methods: bool = False) -> str:
+                  *, author: str = "zach", include_methods: bool = False,
+                  reasons: dict[str, str] | None = None) -> str:
     """Render the paper's text with a claim mark on every assigned span.
 
-    `assignments` maps span uid -> payload (a claim UUID, or NO_ASSERTION).
-    Spans with no entry are left bare, which is how a gap is recorded.
+    `assignments` maps span uid -> claim key (a claim UUID, or GAP, or
+    NO_ASSERTION); `reasons` optionally maps span uid -> the adjudicator's
+    sentence, which becomes the note's body. Spans with no entry are left bare,
+    which now means only "carries no result".
 
     The text is rebuilt from the same slices the segmenter reads, so a mark's
     anchor is exactly the span it was computed for — marking a separately
@@ -88,18 +113,31 @@ def render_marked(paper: PreparedPaper, assignments: dict[str, str],
             current = s.section
             out += ["", f"## {current}", ""]
         payload = assignments.get(s.uid)
-        line = s.text
+        line = s.text.replace("⟦", "&#x27E6;").replace("⟧", "&#x27E7;")
         if payload:
-            line = f"{line}⟦^{author}: @{{{_quote_for(s.text)}}} {payload}⟧"
+            why = (reasons or {}).get(s.uid, "")
+            body = f" {why}" if why else ""
+            line = f"{line}⟦>{author} claim={payload}: @{{{_quote_for(s.text)}}}{body}⟧"
         out.append(line)
         out.append("")
     return "\n".join(out).rstrip() + "\n"
 
 
 def read_marks(text: str) -> list[dict]:
-    """Every claim mark in a marked document, in order."""
-    return [{"author": m.group(1), "quote": m.group(2).strip(), "payload": m.group(3)}
-            for m in MARK_RE.finditer(text)]
+    """Every claim-bearing note in a marked document, in order.
+
+    A note without `claim=` is somebody's comment and none of our business, so it
+    is skipped rather than misread as an assignment.
+    """
+    out = []
+    for m in MARK_RE.finditer(text):
+        words = dict(
+            (w.split("=", 1) + [""])[:2] for w in m.group(2).strip().split() if w)
+        if "claim" not in words:
+            continue
+        out.append({"author": m.group(1), "quote": m.group(3).strip(),
+                    "payload": words["claim"], "body": m.group(4).strip()})
+    return out
 
 
 def assignments_from_marked(text: str, paper: PreparedPaper,

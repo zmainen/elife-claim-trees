@@ -485,8 +485,14 @@ def cmd_mark(args: argparse.Namespace) -> int:
         uid = next((uuid_of.get(sl) for sl in slugs if uuid_of.get(sl)), None)
         if uid:
             assignments[span.uid] = uid
-    for span, _why in rep.excluded:
+    reasons: dict[str, str] = {}
+    for v in (mapping.get("spans", []) if isinstance(mapping, dict) else mapping) or []:
+        if isinstance(v, dict) and v.get("uid") and v.get("why"):
+            reasons[v["uid"]] = v["why"]
+    for span, why in rep.excluded:
         assignments[span.uid] = NO_ASSERTION
+        if why:
+            reasons.setdefault(span.uid, why)
     # A span carrying a result that no claim accounts for is marked as such. Leaving it bare
     # would make it indistinguishable from the ordinary prose around it, which is most of the
     # paper — and telling those two apart is the entire point.
@@ -494,7 +500,7 @@ def cmd_mark(args: argparse.Namespace) -> int:
         assignments[span.uid] = GAP
 
     text = render_marked(paper, assignments, author=args.author,
-                         include_methods=args.include_methods)
+                         include_methods=args.include_methods, reasons=reasons)
     out = Path(args.out).expanduser() if args.out else Path(f"{paper.paper_slug}.marked.md")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(text, encoding="utf-8")
