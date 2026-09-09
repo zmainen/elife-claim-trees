@@ -73,17 +73,22 @@ MARK_RE = re.compile(
 _SECTION_ORDER = ("abstract", "results", "captions", "tables")
 
 
-def _quote_for(text: str, limit: int = 120) -> str:
-    """The anchor quote: the span, trimmed, escaped as v2 requires.
+def _quote_for(text: str) -> str:
+    """The anchor quote: the span verbatim, escaped as v2 requires.
 
     v2 reserves the mark delimiters outright and doubles a literal `}` inside an
     anchor. Both are the spec's escapes, not ours — writing `)` for `}`, as the
-    first version did, would have altered the quoted text rather than escaped it,
-    and an anchor that is not the text verbatim cannot relocate.
+    first version did, would have altered the quoted text rather than escaped it.
+
+    **Never truncated.** The first version cut the anchor at 120 characters and
+    added an ellipsis, which produced a quote that appears nowhere in the paper.
+    tika could then not locate 78 of 93 anchors, so those notes collapsed to a
+    zero-width point and the spans they were about were never highlighted — a
+    fault that looked like a missing feature in the editor and was a malformed
+    document. An anchor that is not the text verbatim cannot relocate, which is
+    the one property the whole scheme rests on.
     """
     q = re.sub(r"\s+", " ", text).strip()
-    if len(q) > limit:
-        q = q[: limit - 1] + "…"
     q = q.replace("⟦", "&#x27E6;").replace("⟧", "&#x27E7;")
     return q.replace("}", "}}")
 
@@ -104,10 +109,14 @@ def render_marked(paper: PreparedPaper, assignments: dict[str, str],
     """
     spans = segment(paper, include_methods=include_methods)
     out: list[str] = [f"# {paper.title}", "",
+                      # The example is written with the delimiters escaped as entities. A
+                      # literal pair here would be a real mark: an HTML comment hides nothing
+                      # from tika, which reads the file as text, and the first version of this
+                      # header quietly added a 94th mark to a 93-mark document.
                       f"<!-- {paper.paper_slug} · claim assignments as tika v2 notes · "
-                      f"⟦>author claim=KEY: @{{span}} what the claim says⟧ · KEY is the "
-                      f"claim's UUID, or `{GAP}` (a result no claim accounts for), or "
-                      f"`{NO_ASSERTION}` (the span states no result). An unmarked sentence "
+                      f"&#x27E6;&gt;author claim=KEY: @{{span}} what the claim says&#x27E7; · "
+                      f"KEY is the claim's UUID, or `{GAP}` (a result no claim accounts for), "
+                      f"or `{NO_ASSERTION}` (the span states no result). An unmarked sentence "
                       f"carries no result and was never an obligation. -->", ""]
     current = None
     for s in spans:
