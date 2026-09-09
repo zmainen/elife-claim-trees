@@ -4,7 +4,7 @@ Eight-step claim induction pipeline for eLife papers. Three-agent extraction (Re
 
 **Status: working.** All eight phases of the job spec are implemented. Verified end-to-end on Headley 2026 with 100% claim recovery against the curated reference and 96% role agreement when run in `--review-mode external`. See `tests/headley-roundtrip-v3-external.md` for the per-claim scorecard.
 
-**Methodology authority:** `~/Projects/mainenlab/elife-claim-trees/docs/method.md` § 3 (Claim induction — the eight-step process), § 4 (Schema). The CLI implements that methodology; when a behavior decision isn't anticipated by the doc, the CLI's behavior is the decision and the doc is updated in the same commit.
+**Methodology authority:** `~/Projects/mainenlab/elife-claim-trees/docs/method.md` § 3 (Claim induction — the ten-step process), § 4 (Schema). The CLI implements that methodology; when a behavior decision isn't anticipated by the doc, the CLI's behavior is the decision and the doc is updated in the same commit.
 
 ## Install
 

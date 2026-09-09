@@ -36,6 +36,28 @@ Claims relate to each other via directed belongings: `supports`, `requires`, `co
 
 Working prototype. 13 papers (10 eLife + 3 lab), 341 claims, 939 verified references. Public site at https://zmainen.github.io/elife-claim-trees/ (eLife papers only). Full methodology at `docs/method.md`, claim format at `docs/claim-format.md`, cost estimate for 3000-paper scaling at `docs/cost-estimate.md`.
 
+## Producing and exporting a claim tree
+
+The code that produces the corpus is in the repository alongside the corpus it produces.
+
+```bash
+# induce a claim tree from a paper (extract -> reconcile -> review -> write)
+cd extract && python3 -m elife_extract.cli run --doi 10.7554/eLife.105391 --corpus-dir ../claims
+
+# what does the paper assert that no claim accounts for? (no model calls)
+python3 -m elife_extract.cli coverage --doi 10.7554/eLife.105391 \
+    --claims-dir ../claims/gadeke-2026-guilt-insula
+
+# export every paper to MIRA JSON-LD, with a gap report per paper
+cd .. && python3 scripts/export_mira.py --all
+```
+
+`exports/` holds the result for every paper: a strict `.mira.jsonld`, an
+`.mira-extended.jsonld` carrying what MIRA has no vocabulary for, and a `.gap-report.md`
+saying exactly what the strict file dropped. The export is byte-stable, so regenerating it
+and diffing is a real check. What each standard can and cannot represent is documented in
+[`docs/schema-mapping/`](docs/schema-mapping/README.md).
+
 ## Running the site locally
 
 ```bash

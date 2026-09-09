@@ -10,7 +10,7 @@ The document covers the scientific methodology: schema, claim authoring, verific
 
 1. [Overview](#1-overview)
 2. [Corpus](#2-corpus)
-3. [Claim induction — the eight-step process](#3-claim-induction--the-eight-step-process)
+3. [Claim induction — the ten-step process](#3-claim-induction--the-ten-step-process)
 4. [Schema](#4-schema)
 5. [Verification procedure](#5-verification-procedure)
 6. [Paper summaries](#6-paper-summaries)
@@ -42,7 +42,7 @@ What this document is not: a specification of how the schema should evolve at sc
 
 The corpus consists of 12 papers spanning the neuroscience subfield mix of eLife, plus one within-paper revision pair carried forward from the lab's own work. Of the twelve, ten are recent eLife papers selected for domain breadth (atlas neuroanatomy, fMRI, computational modelling, psychophysics, sensor engineering and structural biology, channelopathy, deep-learning image analysis); the remaining two are the v1 preprint and R1 revision of the same Meijer–Mainen serotonin manuscript, included for a within-paper, across-revision comparison of how the same body of work is reframed across submission.
 
-Total: **310 claim files** across 12 paper directories.
+Total: **341 claim files** across 13 paper directories (10 eLife papers, which are what the public site publishes, plus 3 lab papers).
 
 **Distribution by `role`:**
 
@@ -67,9 +67,9 @@ The R1 revision of the Meijer paper carries 41 claims against 24 in the v1 prepr
 
 ---
 
-## 3. Claim induction — the eight-step process
+## 3. Claim induction — the ten-step process
 
-Claim induction is the translation of a paper from argument format into claim-graph format. It is not automated: it requires reading comprehension, domain judgment, and decisions about what constitutes a claim. Tools assist; they do not replace the analyst. The procedure has eight steps with one mandatory review gate at step 5, before any files are written.
+Claim induction is the translation of a paper from argument format into claim-graph format. It is not automated: it requires reading comprehension, domain judgment, and decisions about what constitutes a claim. Tools assist; they do not replace the analyst. The procedure has ten steps with one mandatory review gate at step 5, before any files are written. Steps 1–8 build and check the claim tree; steps 9–10 measure what it missed and export it.
 
 ### Step 1: Prepare
 
@@ -146,6 +146,44 @@ Generate a UUID4 for each claim (`python3 -c "import uuid; print(uuid.uuid4())"`
 ### Step 8: Verify
 
 For each claim where data and code are available, run the analysis and compare the output to the published numerics. Update the `status` field in the corresponding `reproductions:` block. The verification procedure is described in detail in Section 5.
+
+### Step 9: Coverage — what does no claim account for?
+
+Steps 1–8 produce a claim tree and check the claims in it. They do not ask the opposite
+question, and until recently nothing did: what does the paper assert that no claim
+represents? That gap is not hypothetical. Figure 2's panels C and F in Gädeke — a failed
+replication of a risk-aversion effect — sat unrepresented in the tree, and nothing in the
+pipeline registered their absence, because every check ran over the claims rather than over
+the paper.
+
+`elife-extract coverage --doi <doi> --claims-dir claims/<paper-slug>` takes its denominator
+from the paper instead. It builds the paper's own inventories — every figure panel, every
+table, every reported statistic — and then segments the entire text into sentences and asks,
+of each one, whether any claim accounts for it. No sampling, and no model calls, so it is
+free and fast enough to run over the whole corpus. `--fail-on-orphans` makes it a gate.
+
+Two things about the number it reports. First, "accounted for" is deliberately mechanical: a
+claim restates the same statistic, or names the same panel. Nothing judges whether a claim
+*means* the same thing as a sentence, because a model asked to make that judgement would
+smooth over exactly the sentences worth looking at. Second, and following from the first,
+the output is a worklist, not a score. Many misses are matching failures rather than gaps —
+the paper reports `t(1180) = 3.52, p = 0.0004` and the claim states that effect without
+restating the numbers, which scores as a miss. Read the orphan list; do not read the
+percentage.
+
+On Gädeke against the curated tree: 245 units segmented, 80 carrying a statistic or naming a
+panel, 27 accounted for.
+
+### Step 10: Export
+
+A claim tree is stored as Markdown files with YAML frontmatter, which is a good format for
+authoring and review and no format at all for exchange. `python3 scripts/export_mira.py --all`
+converts every paper to MIRA JSON-LD — strict and extended — with a per-paper gap report
+saying what the strict file could not carry. What each standard can and cannot represent is
+documented in [`schema-mapping/`](schema-mapping/README.md).
+
+The export is byte-stable across runs, deliberately: these files are published as artifacts
+anyone can regenerate and diff, and that check is meaningless if a re-run reshuffles them.
 
 ### Where short-form fields fit
 
@@ -244,7 +282,7 @@ The edge inventory operationalises six argumentative moves:
 
 **`shortClaim`** — single short clause for graph nodes and tooltips; required for synthesis / interpretation / literature-context nodes, recommended for high-traffic claims.
 
-**`number` / `numberParts`** — computed at build from role + graph position; do not author manually. The numbering convention is hierarchical: `H1.P2.E1` reads as "first hypothesis, second prediction, first empirical test." Standalone empirical (no hypothesis loop) become `E#`; controls `C#`; scope `Sc#`; methodological `M#`; literature-context `L#`; synthesis `S#`; interpretation `I#`. 307 of 310 claims carry computed numbers.
+**`number` / `numberParts`** — computed at build from role + graph position; do not author manually. The numbering convention is hierarchical: `H1.P2.E1` reads as "first hypothesis, second prediction, first empirical test." Standalone empirical (no hypothesis loop) become `E#`; controls `C#`; scope `Sc#`; methodological `M#`; literature-context `L#`; synthesis `S#`; interpretation `I#`. 242 of the 245 published claims carry computed numbers.
 
 **`reproductions:`** — list of blocks. Each block records a verification attempt:
 
@@ -581,7 +619,7 @@ The methodology described above is the disciplined process the prototype would a
 
 ### Authoring discipline not strictly enforced
 
-The eight-step procedure with three independent extractions and a mandatory Step 5 review gate describes a workflow the prototype did not strictly enforce. In practice, authoring was prompt-guided LLM extraction with intermittent rather than systematic human review. The 310 claim files should be read as a draft annotation layer, not as adjudicated output. A scaled-out version — the version this document is the methodology for — would enforce the three-extraction reconciliation and the Step 5 review gate as actual procedural checkpoints. The corpus is the prototype's draft; the methodology is the discipline the draft should be brought up to.
+The ten-step procedure with three independent extractions and a mandatory Step 5 review gate describes a workflow the prototype did not strictly enforce. In practice, authoring was prompt-guided LLM extraction with intermittent rather than systematic human review. The 341 claim files should be read as a draft annotation layer, not as adjudicated output. A scaled-out version — the version this document is the methodology for — would enforce the three-extraction reconciliation and the Step 5 review gate as actual procedural checkpoints. The corpus is the prototype's draft; the methodology is the discipline the draft should be brought up to.
 
 ### Verification coverage is shallow
 
