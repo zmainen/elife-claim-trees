@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import logging
 import re
+import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
@@ -73,7 +74,15 @@ FIG_CAPTION_START = re.compile(
 # Must NOT use \b before \( since \b is between word/non-word — and there
 # is no word char before the paren in caption usage. Use a non-letter or
 # start-of-string lookbehind instead.
-PANEL_LABEL_RE = re.compile(r"(?:^|[^A-Za-z])\(\s*([A-Za-z])\s*\)", re.MULTILINE)
+# Captions label panels three ways, and all three must be read:
+#   singles  "( A )"
+#   lists    "( A, D )"   "(A and B)"
+#   ranges   "( A-D )"    meaning A, B, C, D
+# Reading only singles lost B, C, E and F of Figure 2; reading a range as a
+# two-item list lost C, D, F and G of Figure 3. Parenthesised letters are also
+# used for abbreviations — "low outcomes (L)", "(L-H)" — so a descending or
+# implausible range is rejected, and a letter outside the panel run is dropped.
+PANEL_GROUP_RE = re.compile(r"(?:^|[^A-Za-z])\(\s*([A-Za-z][^()]{0,24}?)\s*\)")
 
 
 # ── Data class ───────────────────────────────────────────────────────────
@@ -95,6 +104,13 @@ class PreparedPaper:
     extraction_path: Literal["jats", "pdf"]
     extraction_path_note: str | None = None
     figure_captions: list["FigureCaption"] = field(default_factory=list)
+    tables: list["TableCaption"] = field(default_factory=list)
+    appendix_text: str = ""
+    supplementary_text: str = ""
+
+    @property
+    def tables_text(self) -> str:
+        return "\n\n".join(t.text for t in self.tables)
 
     @property
     def panel_ids(self) -> list[str]:
@@ -102,6 +118,7 @@ class PreparedPaper:
         ids = []
         for fc in self.figure_captions:
             ids.extend(fc.panel_ids())
+        ids.extend(t.panel_id() for t in self.tables)
         return ids
 
 
@@ -119,6 +136,17 @@ class FigureCaption:
         if not self.panels:
             return [prefix]
         return [f"{prefix}{p.lower()}" for p in self.panels]
+
+
+@dataclass
+class TableCaption:
+    """One table: label, caption and tabulated values as flat text."""
+
+    table_num: str
+    text: str
+
+    def panel_id(self) -> str:
+        return f"table{self.table_num.lower()}"
 
 
 # ── DOI / article-ID handling ────────────────────────────────────────────
@@ -199,12 +227,29 @@ def _text(el: etree._Element | None) -> str:
     return " ".join(el.itertext()).strip()
 
 
+def _main_scopes(root: etree._Element) -> list[etree._Element]:
+    """The article's own content, excluding <sub-article>.
+
+    eLife JATS embeds the editor assessment, referee reports and author
+    response as <sub-article> elements, each with its own <body>, <sec> and
+    sometimes <fig>. A `.//body/sec` or `.//fig` search reaches into them, so
+    referee prose could be extracted as the authors' claims. Scope to the
+    article's own body and floats-group instead.
+    """
+    scopes = [el for el in (root.find("body"), root.find("floats-group"))
+              if el is not None]
+    return scopes or [root]
+
+
 def _section_text(root: etree._Element, sec_type: str) -> str:
     """Extract full text of a body section by sec-type attribute."""
-    for sec in root.findall(f".//body/sec[@sec-type='{sec_type}']"):
+    body = root.find("body")
+    if body is None:
+        return ""
+    for sec in body.findall(f"sec[@sec-type='{sec_type}']"):
         return _text(sec)
     # Fallback: match by title text (some papers use non-standard sec-type)
-    for sec in root.findall(".//body/sec"):
+    for sec in body.findall("sec"):
         title_el = sec.find("title")
         if title_el is not None and title_el.text:
             t = title_el.text.lower().strip()
@@ -219,10 +264,59 @@ def _section_text(root: etree._Element, sec_type: str) -> str:
     return ""
 
 
+def _panel_letters(caption: str) -> list[str]:
+    """Panel letters named in a caption, expanding lists and ranges."""
+    found: list[str] = []
+    seen: set[str] = set()
+    for m in PANEL_GROUP_RE.finditer(caption):
+        body = m.group(1).strip()
+        if not re.fullmatch(r"[A-Za-z](\s*(?:,|and|&|[-\u2013\u2014])\s*[A-Za-z])*",
+                            body, re.IGNORECASE):
+            continue
+        rng = re.fullmatch(r"([A-Za-z])\s*[-\u2013\u2014]\s*([A-Za-z])", body)
+        if rng:
+            a, b = rng.group(1).lower(), rng.group(2).lower()
+            # Descending or absurdly wide means it is not a panel range —
+            # "(L-H)" is low-minus-high, not panels L through H.
+            if not (0 < ord(b) - ord(a) <= 8):
+                continue
+            letters = [chr(c) for c in range(ord(a), ord(b) + 1)]
+        else:
+            letters = [t.lower() for t in re.split(r"[^A-Za-z]+", body)
+                       if len(t) == 1]
+        for letter in letters:
+            if letter.isalpha() and letter not in seen:
+                found.append(letter)
+                seen.add(letter)
+    return _contiguous_panels(found)
+
+
+def _contiguous_panels(letters: list[str]) -> list[str]:
+    """Keep the run of panel letters that starts at the lowest one present.
+
+    Captions use parenthesised letters for two different jobs: panel labels
+    and abbreviations. Figure 4 here labels panels ( A ) … ( I ) and also
+    writes "low lottery outcomes (L)" and "(L–H)" — L is an abbreviation, not
+    a tenth panel. Real panels are consecutive; a letter separated from the
+    run by a gap is something else. Spacing distinguishes them in this
+    publisher's typesetting, but sequence is the general rule.
+    """
+    if not letters:
+        return []
+    ordered = sorted(set(letters))
+    keep = [ordered[0]]
+    for prev, cur in zip(ordered, ordered[1:]):
+        if ord(cur) - ord(prev) != 1:
+            break
+        keep.append(cur)
+    return [c for c in letters if c in set(keep)]
+
+
 def _extract_jats_figures(root: etree._Element) -> list[FigureCaption]:
     """Extract figure captions from JATS <fig> elements."""
     captions: list[FigureCaption] = []
-    for fig in root.findall(".//fig"):
+    figs = [f for scope in _main_scopes(root) for f in scope.iter("fig")]
+    for fig in figs:
         fig_id = fig.get("id", "")
         label_el = fig.find("label")
         caption_el = fig.find("caption")
@@ -230,9 +324,16 @@ def _extract_jats_figures(root: etree._Element) -> list[FigureCaption]:
             continue
         # Figure number from label or id
         fig_num = ""
-        if label_el is not None and label_el.text:
-            m = re.search(r"(S?\d+(?:[-–]\d+)?)", label_el.text)
-            fig_num = m.group(1) if m else fig_id.replace("fig", "")
+        label_txt = _text(label_el) if label_el is not None else ""
+        if label_txt:
+            # "Figure 3-figure supplement 1" must not collapse onto "Figure 3".
+            sup = re.search(r"(\d+)\s*[—–-]\s*figure\s+supplement\s+(\d+)",
+                            label_txt, re.IGNORECASE)
+            if sup:
+                fig_num = f"{sup.group(1)}s{sup.group(2)}"
+            else:
+                m = re.search(r"(S?\d+(?:[-–]\d+)?)", label_txt)
+                fig_num = m.group(1) if m else fig_id.replace("fig", "")
         elif fig_id:
             fig_num = fig_id.replace("fig", "").replace("s", "S")
         caption_text = _text(caption_el)
@@ -240,15 +341,65 @@ def _extract_jats_figures(root: etree._Element) -> list[FigureCaption]:
         if label_el is not None and label_el.text:
             caption_text = f"{label_el.text.strip()} {caption_text}"
         # Extract panel labels from caption text
-        panels: list[str] = []
-        seen: set[str] = set()
-        for pm in PANEL_LABEL_RE.finditer(caption_text):
-            letter = (pm.group(1) or "").lower()
-            if letter and letter not in seen and letter.isalpha() and len(letter) == 1:
-                panels.append(letter)
-                seen.add(letter)
+        panels = _panel_letters(caption_text)
         captions.append(FigureCaption(figure_num=fig_num, text=caption_text, panels=panels))
     return captions
+
+
+
+def _extract_jats_tables(root: etree._Element) -> list["TableCaption"]:
+    """Extract tables: label, caption, and the tabulated values themselves.
+
+    Tables carry results that appear nowhere else — this corpus already cites
+    `table1` as the panel for a claim about model weights — yet nothing in the
+    pipeline read them. Caption alone is not enough: the numbers are in the
+    cells.
+    """
+    tables: list[TableCaption] = []
+    # Most tables in an eLife article sit in <back><app-group><app>, not the
+    # body — 11 of 13 for this paper. Scoping to the body found two.
+    scopes = _main_scopes(root) + [el for el in (root.find("back"),) if el is not None]
+    wraps = [t for scope in scopes for t in scope.iter("table-wrap")]
+    for tw in wraps:
+        label_el = tw.find("label")
+        label = _text(label_el) if label_el is not None else ""
+        app = re.search(r"Appendix\s*(\d+)\s*[—–-]\s*table\s*(\d+)", label, re.I)
+        if app:
+            num = f"app{app.group(1)}-{app.group(2)}"
+        else:
+            m = re.search(r"(S?\d+)", label)
+            num = m.group(1) if m else re.sub(r"[^a-z0-9]+", "", (tw.get("id") or label).lower())[:24]
+        cap = tw.find("caption")
+        body = tw.find(".//table")
+        text = " ".join(x for x in (label, _text(cap), _text(body)) if x).strip()
+        if text:
+            tables.append(TableCaption(table_num=num, text=text))
+    return tables
+
+
+def _extract_appendices(root: etree._Element) -> str:
+    """Appendix / supplementary prose from <app-group>."""
+    parts = []
+    for app in root.iter("app"):
+        parts.append(_text(app))
+    return "\n\n".join(p for p in parts if p)
+
+
+def _extract_supplementary(root: etree._Element) -> str:
+    """Titles and captions of supplementary-material blocks.
+
+    The files themselves are not fetched; recording that they exist keeps them
+    visible in the assertion inventory rather than silently absent.
+    """
+    parts = []
+    for sm in root.iter("supplementary-material"):
+        label = sm.find("label")
+        cap = sm.find("caption")
+        bits = [_text(label) if label is not None else "", _text(cap) if cap is not None else ""]
+        line = " ".join(b for b in bits if b).strip()
+        if line:
+            parts.append(line)
+    return "\n".join(parts)
 
 
 def _extract_jats_metadata(root: etree._Element) -> tuple[str | None, list[str], str | None]:
@@ -294,6 +445,9 @@ def parse_jats(xml_path: Path, doi: str, paper_slug_override: str | None = None)
     results_text = _section_text(root, "results")
     methods_text = _section_text(root, "methods")
     captions = _extract_jats_figures(root)
+    tables = _extract_jats_tables(root)
+    appendix = _extract_appendices(root)
+    supplementary = _extract_supplementary(root)
 
     return PreparedPaper(
         doi=doi,
@@ -305,6 +459,9 @@ def parse_jats(xml_path: Path, doi: str, paper_slug_override: str | None = None)
         results_text=results_text,
         captions_text=captions_text_block(captions),
         methods_text=methods_text,
+        tables=tables,
+        appendix_text=appendix,
+        supplementary_text=supplementary,
         extraction_path="jats",
         extraction_path_note=f"JATS-XML from {ELIFE_CDN_XML_URL.format(article_id=article_id)}",
         figure_captions=captions,
@@ -427,18 +584,37 @@ def captions_text_block(captions: list[FigureCaption]) -> str:
 # ── Slug derivation ──────────────────────────────────────────────────────
 
 
+def _ascii_fold(text: str) -> str:
+    """Fold accented Latin characters to ASCII so slugs stay readable.
+
+    Slug derivation matched [A-Za-z] only, which silently *dropped* accented
+    characters rather than transliterating them: Gadeke's surname became
+    "gdeke", Muller "mller", Angstrom "ngstrm". For a European journal corpus
+    that is not an edge case. NFKD splits a letter from its combining mark;
+    dropping only the marks leaves the base letter behind.
+    """
+    text = unicodedata.normalize("NFKD", text)
+    text = "".join(c for c in text if not unicodedata.combining(c))
+    # Ligatures and letters with a stroke have no combining decomposition.
+    for src, dst in (("ß", "ss"), ("Ø", "O"), ("ø", "o"), ("Æ", "AE"),
+                     ("æ", "ae"), ("Œ", "OE"), ("œ", "oe"), ("Đ", "D"),
+                     ("đ", "d"), ("Ł", "L"), ("ł", "l")):
+        text = text.replace(src, dst)
+    return text
+
+
 def derive_slug(authors: list[str], year: str | None, title: str | None) -> str:
     """Derive a paper slug like 'headley-2026-inhibitory-rhythms' from metadata.
 
     First author surname + year + a short content phrase from the title.
     Best-effort; the analyst can override at write time via --paper-slug.
     """
-    surname = (authors[0].split()[-1] if authors else "unknown").lower()
+    surname = _ascii_fold(authors[0].split()[-1] if authors else "unknown").lower()
     surname = re.sub(r"[^a-z]", "", surname)
     year_part = year or "unknown"
     if title:
         # Take 2-3 content words, lowercased, hyphenated
-        words = re.findall(r"\b[A-Za-z]{4,}\b", title)
+        words = re.findall(r"\b[A-Za-z]{4,}\b", _ascii_fold(title))
         skip = {"with", "from", "into", "between", "during", "their", "that", "this",
                 "these", "those", "have", "been", "were", "will", "should", "would",
                 "while", "where", "when", "what", "such"}
@@ -503,10 +679,11 @@ def guess_metadata(text: str) -> tuple[str | None, list[str], str | None]:
 
 
 def prepare(
-    doi: str,
+    doi: str | None = None,
     paper_slug_override: str | None = None,
     cache_dir: Path | None = None,
     input_format: Literal["auto", "jats", "pdf"] = "auto",
+    pdf_path: Path | None = None,
 ) -> PreparedPaper:
     """Fetch and slice a paper into the three agent inputs.
 
@@ -514,18 +691,32 @@ def prepare(
       - "auto" (default): use JATS for eLife DOIs, PDF otherwise
       - "jats": force JATS-XML input
       - "pdf": force PDF input
-    """
-    article_id = article_id_from_doi(doi)
 
-    if input_format == "auto":
+    pdf_path supplies a local PDF for a paper that is not on the eLife CDN.
+    It bypasses fetching, forces the PDF path, and makes `doi` optional.
+    """
+    if not doi and pdf_path is None:
+        raise ValueError("prepare() requires a DOI or a local pdf_path")
+
+    article_id = article_id_from_doi(doi) if doi else None
+
+    if pdf_path is not None:
+        input_format = "pdf"
+    elif input_format == "auto":
         input_format = "jats"  # eLife DOIs always have JATS
 
     if input_format == "jats":
+        if article_id is None:
+            raise ValueError("JATS input requires a DOI")
         xml_path = fetch_jats(article_id, cache_dir=cache_dir)
         return parse_jats(xml_path, doi, paper_slug_override)
 
-    # PDF fallback
-    pdf_path = fetch_pdf(article_id, cache_dir=cache_dir)
+    # PDF path — a local file when given, otherwise fetched from the eLife CDN.
+    if pdf_path is None:
+        pdf_path = fetch_pdf(article_id, cache_dir=cache_dir)
+        source_note = f"PDF from {ELIFE_CDN_PDF_URL.format(article_id=article_id)}"
+    else:
+        source_note = f"local PDF at {pdf_path}"
     full_text = extract_text(pdf_path)
 
     sections = slice_sections(full_text)
@@ -535,8 +726,8 @@ def prepare(
     slug = paper_slug_override or derive_slug(authors, year, title)
 
     return PreparedPaper(
-        doi=doi,
-        article_id=article_id,
+        doi=doi or "",
+        article_id=article_id or "",
         paper_slug=slug,
         title=title,
         authors=authors,
@@ -545,6 +736,6 @@ def prepare(
         captions_text=captions_text_block(captions),
         methods_text=sections.get("methods", ""),
         extraction_path="pdf",
-        extraction_path_note=f"PDF from {ELIFE_CDN_PDF_URL.format(article_id=article_id)}",
+        extraction_path_note=source_note,
         figure_captions=captions,
     )

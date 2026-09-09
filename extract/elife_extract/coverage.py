@@ -1,0 +1,214 @@
+"""Coverage — is every assertion in the paper represented by a claim?
+
+`evaluate` scores *agreement*: when the CLI and the curated corpus both name a
+claim, do they agree about its panel and role. That says nothing about what
+neither of them mentioned. You can score 100% agreement on a third of a paper.
+
+This module supplies the missing denominator. It builds an inventory of the
+paper's assertion sites directly from the source — every figure panel, every
+table, every reported statistic — independently of what any model produced,
+then reports what no claim accounts for.
+
+The distinction that makes it useful: an *orphan* is not a disagreement, it is
+a silence. Nothing in the pipeline previously reported silence, which is how
+Figure 2's panels C and F — a failed replication of a risk-aversion effect —
+sat unrepresented without anything registering their absence.
+"""
+
+from __future__ import annotations
+
+import logging
+import re
+from dataclasses import dataclass, field
+
+from .prepare import PreparedPaper
+
+logger = logging.getLogger(__name__)
+
+
+# ── Statistic detection ──────────────────────────────────────────────────
+# Deliberately conservative: a reported statistic carries a value. Bare
+# mentions of "a t-test" are prose, not results, and matching them would
+# inflate the denominator with things no claim should have to cite.
+
+STAT_PATTERNS = [
+    # p = 0.03, p < .001, p = 3.1e-20
+    ("p", re.compile(r"\bp\s*[=<>≤≥]\s*0?\.\d+(?:\s*[eE]\s*[-−]\s*\d+)?|"
+                     r"\bp\s*[=<>≤≥]\s*\d+(?:\.\d+)?[eE][-−]\d+", re.I)),
+    # t(39) = 2.27
+    ("t", re.compile(r"\bt\s*\(\s*\d+(?:\.\d+)?\s*\)\s*[=]\s*[-−]?\d+\.?\d*", re.I)),
+    # F(1,39) = 6.28
+    ("F", re.compile(r"\bF\s*\(\s*\d+\s*,\s*\d+\s*\)\s*[=]\s*[-−]?\d+\.?\d*")),
+    # Z = 2.85
+    ("Z", re.compile(r"\bZ\s*[=]\s*[-−]?\d+\.?\d*")),
+    # d = 0.36  (Cohen's d)
+    ("d", re.compile(r"\bd\s*[=]\s*[-−]?\d+\.?\d*")),
+    # r = 0.89, R2 = 0.185, rho = -0.058
+    ("r", re.compile(r"\b(?:r|R2|R\^?2|rho|ρ|Rho)\s*[=]\s*[-−]?\d*\.?\d+", re.I)),
+    # BF10 = 0.49
+    ("BF", re.compile(r"\bBF\s*_?10\s*[=]\s*[-−]?\d*\.?\d+", re.I)),
+    # beta = 0.33
+    ("beta", re.compile(r"\b(?:β|beta)\s*[=]\s*[-−]?\d*\.?\d+", re.I)),
+]
+
+# MNI / stereotactic coordinates are assertions too — a peak location is a
+# result, and this corpus verifies one of them against the deposited map.
+COORD_RE = re.compile(r"\[\s*[-−]?\d+\s*,\s*[-−]?\d+\s*,\s*[-−]?\d+\s*\]")
+
+
+def _norm(s: str) -> str:
+    """Normalise a statistic for comparison: no spaces, ASCII minus, lowercase."""
+    return re.sub(r"\s+", "", s).replace("−", "-").replace("–", "-").lower()
+
+
+@dataclass(frozen=True)
+class Statistic:
+    kind: str
+    text: str
+    where: str          # which slice it was found in
+    context: str = ""   # surrounding prose, for the orphan report
+
+    @property
+    def key(self) -> str:
+        return _norm(self.text)
+
+
+def extract_statistics(paper: PreparedPaper) -> list[Statistic]:
+    """Every reported statistic in the paper, by slice."""
+    slices = {
+        "results": paper.results_text,
+        "captions": paper.captions_text,
+        "tables": paper.tables_text,
+        "methods": paper.methods_text,
+        "appendix": paper.appendix_text,
+        "abstract": paper.abstract,
+    }
+    seen: set[str] = set()
+    out: list[Statistic] = []
+    for where, text in slices.items():
+        if not text:
+            continue
+        for kind, rx in STAT_PATTERNS + [("coord", COORD_RE)]:
+            for m in rx.finditer(text):
+                stat = Statistic(
+                    kind=kind,
+                    text=m.group(0).strip(),
+                    where=where,
+                    context=re.sub(r"\s+", " ",
+                                   text[max(0, m.start() - 90):m.end() + 40]).strip(),
+                )
+                if stat.key not in seen:
+                    seen.add(stat.key)
+                    out.append(stat)
+    return out
+
+
+# ── Coverage report ──────────────────────────────────────────────────────
+
+
+@dataclass
+class CoverageReport:
+    paper_slug: str
+    panels_total: list[str] = field(default_factory=list)
+    panels_claimed: list[str] = field(default_factory=list)
+    panels_orphan: list[str] = field(default_factory=list)
+    panels_phantom: list[str] = field(default_factory=list)
+    panels_figure_level: list[str] = field(default_factory=list)
+    stats_total: list[Statistic] = field(default_factory=list)
+    stats_orphan: list[Statistic] = field(default_factory=list)
+
+    @property
+    def panel_pct(self) -> float:
+        n = len(self.panels_total)
+        return 100.0 * (n - len(self.panels_orphan)) / n if n else 100.0
+
+    @property
+    def stat_pct(self) -> float:
+        n = len(self.stats_total)
+        return 100.0 * (n - len(self.stats_orphan)) / n if n else 100.0
+
+    @property
+    def complete(self) -> bool:
+        return not self.panels_orphan and not self.stats_orphan
+
+
+_PANEL_TOKEN_RE = re.compile(r"(?:fig(?:ure)?|table)\s*\.?\s*"
+                             r"(?:s?\d+)(?:\s*[-–—]?\s*(?:figure\s*)?supplement\s*\d+)?"
+                             r"\s*[a-z]?", re.I)
+
+
+def _claim_panel_ids(panel_field: str | None) -> set[str]:
+    """Normalise a claim's panel field into inventory-shaped ids."""
+    if not panel_field:
+        return set()
+    ids = set()
+    for tok in _PANEL_TOKEN_RE.finditer(str(panel_field)):
+        t = re.sub(r"[\s.]+", "", tok.group(0)).lower()
+        t = t.replace("figure", "fig")
+        t = re.sub(r"[-–—]?supplement", "s", t)
+        ids.add(t)
+    return ids
+
+
+def assess(
+    paper: PreparedPaper,
+    claims: list[dict],
+) -> CoverageReport:
+    """Compare the paper's assertion inventory against a set of claims.
+
+    `claims` are dicts with at least `panel` and `claim` (the claim sentence);
+    both the draft table and parsed claim files can supply that shape.
+    """
+    rep = CoverageReport(paper_slug=paper.paper_slug)
+    rep.panels_total = list(dict.fromkeys(paper.panel_ids))
+
+    claimed: set[str] = set()
+    for c in claims:
+        claimed |= _claim_panel_ids(c.get("panel"))
+    rep.panels_claimed = sorted(claimed)
+
+    inventory = set(rep.panels_total)
+    rep.panels_orphan = [p for p in rep.panels_total if p not in claimed]
+
+    # A claim may cite a whole figure ("fig3") where the paper has panels
+    # ("fig3a".."fig3h"). That is not a phantom — the figure exists — but it
+    # is imprecise, and it discharges none of its panels, so it stays in the
+    # orphan list while being reported separately.
+    prefixes = {re.match(r"((?:fig|table)[a-z]*\d+(?:s\d+)?)", p).group(1)
+                for p in inventory if re.match(r"((?:fig|table)[a-z]*\d+(?:s\d+)?)", p)}
+    rep.panels_figure_level = sorted(
+        c for c in claimed if c not in inventory and c in prefixes)
+    rep.panels_phantom = sorted(
+        c for c in claimed if c not in inventory and c not in prefixes)
+
+    rep.stats_total = extract_statistics(paper)
+    blob = _norm(" ".join((c.get("claim") or "") for c in claims))
+    rep.stats_orphan = [s for s in rep.stats_total if s.key not in blob]
+    return rep
+
+
+def render(rep: CoverageReport, *, limit: int = 12) -> str:
+    """A human-readable orphan report."""
+    L = [f"Coverage — {rep.paper_slug}",
+         f"  panels     {len(rep.panels_total) - len(rep.panels_orphan)}/"
+         f"{len(rep.panels_total)}  ({rep.panel_pct:.0f}%)",
+         f"  statistics {len(rep.stats_total) - len(rep.stats_orphan)}/"
+         f"{len(rep.stats_total)}  ({rep.stat_pct:.0f}%)"]
+    if rep.panels_orphan:
+        L.append(f"\n  UNCLAIMED PANELS ({len(rep.panels_orphan)}):")
+        L.append("    " + ", ".join(rep.panels_orphan))
+    if rep.panels_figure_level:
+        L.append(f"\n  CITED AT FIGURE LEVEL, NOT PANEL ({len(rep.panels_figure_level)}):")
+        L.append("    " + ", ".join(rep.panels_figure_level))
+    if rep.panels_phantom:
+        L.append(f"\n  CITED BUT NOT IN THE PAPER ({len(rep.panels_phantom)}):")
+        L.append("    " + ", ".join(rep.panels_phantom))
+    if rep.stats_orphan:
+        L.append(f"\n  UNCLAIMED STATISTICS ({len(rep.stats_orphan)}):")
+        for s in rep.stats_orphan[:limit]:
+            L.append(f"    {s.text:<22} [{s.where}]  …{s.context[-72:]}")
+        if len(rep.stats_orphan) > limit:
+            L.append(f"    … and {len(rep.stats_orphan) - limit} more")
+    if rep.complete:
+        L.append("\n  complete — every panel and statistic is claimed")
+    return "\n".join(L)

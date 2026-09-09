@@ -33,7 +33,7 @@ import time
 
 from anthropic import Anthropic, AnthropicVertex
 
-from .config import Config
+from .config import Config, LITELLM_PREFIX
 from .prepare import PreparedPaper
 from .schema import AgentExtraction, AgentName, CandidateClaim
 
@@ -44,13 +44,28 @@ logger = logging.getLogger(__name__)
 
 
 def slice_for_agent(agent: AgentName, paper: PreparedPaper) -> str:
-    """Return the paper slice this agent reads."""
+    """Return the paper slice this agent reads.
+
+    The caption-reader gets tables as well as figures: a table is a float that
+    reports results panel-by-panel, and its numbers appear nowhere else in the
+    text. The structure-reader gets appendices and the supplementary inventory,
+    since supplementary methods and materials are structural claims about how
+    the work was done.
+    """
     if agent == "results":
         return f"# Abstract\n\n{paper.abstract}\n\n# Results\n\n{paper.results_text}"
     if agent == "caption":
-        return f"# Figure captions\n\n{paper.captions_text}"
+        parts = [f"# Figure captions\n\n{paper.captions_text}"]
+        if paper.tables_text:
+            parts.append(f"# Tables\n\n{paper.tables_text}")
+        return "\n\n".join(parts)
     if agent == "structure":
-        return f"# Methods\n\n{paper.methods_text}"
+        parts = [f"# Methods\n\n{paper.methods_text}"]
+        if paper.appendix_text:
+            parts.append(f"# Appendices\n\n{paper.appendix_text}")
+        if paper.supplementary_text:
+            parts.append(f"# Supplementary material\n\n{paper.supplementary_text}")
+        return "\n\n".join(parts)
     raise ValueError(f"unknown agent: {agent!r}")
 
 
@@ -141,6 +156,45 @@ def parse_json_response(raw: str) -> list[dict] | dict:
         raise
 
 
+def _as_claim_list(parsed, agent: str) -> list:
+    """Coerce an agent response to the list of claims the prompt asked for.
+
+    The prompts specify a bare JSON array. Claude models comply; others
+    routinely wrap it — {"claims": [...]}, {"results": [...]}, or a lone
+    unnamed list value. Since the pipeline is now multi-model, tolerate the
+    wrapper rather than failing the run, in the same spirit as the code-fence
+    tolerance above. Anything genuinely unusable still raises.
+    """
+    if isinstance(parsed, list):
+        return parsed
+    if isinstance(parsed, dict):
+        # A single list-valued key is unambiguous whatever it is called.
+        lists = {k: v for k, v in parsed.items() if isinstance(v, list)}
+        if len(lists) == 1:
+            key, value = next(iter(lists.items()))
+            logger.warning(
+                "agent=%s wrapped its array in an object; unwrapping key %r",
+                agent, key,
+            )
+            return value
+        for key in ("claims", "candidate_claims", "candidates", "results", "items"):
+            if isinstance(parsed.get(key), list):
+                logger.warning(
+                    "agent=%s wrapped its array in an object; unwrapping key %r",
+                    agent, key,
+                )
+                return parsed[key]
+        # A single claim returned bare, rather than a list of one.
+        if "claim" in parsed:
+            logger.warning("agent=%s returned a single claim object; wrapping", agent)
+            return [parsed]
+    raise ValueError(
+        f"agent={agent} returned JSON that is not a claim list: "
+        f"{type(parsed).__name__}"
+        + (f" with keys {sorted(parsed)[:8]}" if isinstance(parsed, dict) else "")
+    )
+
+
 # ── Anthropic client (cached per session) ───────────────────────────────
 
 
@@ -163,6 +217,130 @@ def reset_client():
     """Clear cached client — call when API key changes between requests."""
     global _client_cache
     _client_cache = None
+
+
+def stream_text(
+    cfg: Config,
+    *,
+    model: str,
+    system: str,
+    user: str,
+    max_tokens: int = 32768,
+    label: str | None = None,
+) -> str:
+    """One model call on whichever backend is configured; returns the text.
+
+    Every model call in the package goes through here, so adding a provider
+    is a config entry rather than a new code path. "vertex" and "anthropic"
+    use the Anthropic SDK (streaming, because long claim lists can exceed the
+    non-streaming limit); everything else goes through litellm.
+    """
+    t0 = time.time()
+    tag = label or model
+    chunks: list[str] = []
+    progress = _Progress(tag, t0)
+
+    if cfg.backend in ("vertex", "anthropic"):
+        client = get_client(cfg)
+        with client.messages.stream(
+            model=model,
+            max_tokens=max_tokens,
+            system=system,
+            messages=[{"role": "user", "content": user}],
+        ) as stream:
+            for text in stream.text_stream:
+                chunks.append(text)
+                progress.tick(len(text))
+    else:
+        import litellm
+
+        # litellm logs a banner per call at INFO, which drowns our heartbeat.
+        logging.getLogger("LiteLLM").setLevel(logging.WARNING)
+
+        prefix = LITELLM_PREFIX.get(cfg.backend, cfg.backend)
+        kwargs: dict = {
+            "model": f"{prefix}/{model}",
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            "max_tokens": max_tokens,
+            "stream": True,
+        }
+        if cfg.api_key:
+            kwargs["api_key"] = cfg.api_key
+        logger.info("  %s: sending %dc to %s (%s), awaiting first byte…",
+                    tag, len(system) + len(user), kwargs["model"], cfg.backend)
+        for chunk in litellm.completion(**kwargs):
+            try:
+                delta = chunk.choices[0].delta.content
+            except (AttributeError, IndexError):
+                continue
+            if delta:
+                chunks.append(delta)
+                progress.tick(len(delta))
+
+        # Not every provider honours stream=True for every model. Rather than
+        # return an empty string and fail later in JSON parsing, retry once
+        # without streaming and say so.
+        if not chunks:
+            logger.warning("  %s: stream returned nothing; retrying unstreamed",
+                           tag)
+            kwargs["stream"] = False
+            resp = litellm.completion(**kwargs)
+            chunks.append(resp.choices[0].message.content or "")
+
+    raw = "".join(chunks)
+    progress.done(len(raw))
+    return raw
+
+
+class _Progress:
+    """Heartbeat for a long model call.
+
+    A silent multi-minute call is indistinguishable from a hung one. The
+    heartbeat is time-based rather than size-based on purpose: a size
+    threshold stays silent exactly when the model is slow, which is when you
+    most need to know it is alive. Time to first byte is reported separately,
+    because that is the number that distinguishes "thinking" from "hung".
+    """
+
+    EVERY = 3.0  # seconds between heartbeats
+
+    def __init__(self, tag: str, t0: float):
+        self.tag, self.t0, self.n = tag, t0, 0
+        self.first = True
+        self.t_first = 0.0
+        self.last = t0
+
+    def tick(self, n: int) -> None:
+        self.n += n
+        now = time.time()
+        if self.first:
+            self.first = False
+            self.t_first = now
+            logger.info("  %s: first byte at %.1fs", self.tag, now - self.t0)
+            self.last = now
+            return
+        if now - self.last >= self.EVERY:
+            # Rate measured from first byte, not from send: including the
+            # time-to-first-byte in the denominator makes throughput look
+            # like it is accelerating when it is merely averaging away a
+            # long prefill.
+            gen = now - self.t_first
+            rate = self.n / gen if gen > 0 else 0
+            logger.info("  %s … %dc, %.0f c/s, %.0fs elapsed",
+                        self.tag, self.n, rate, now - self.t0)
+            self.last = now
+
+    def done(self, total: int) -> None:
+        now = time.time()
+        wall = now - self.t0
+        gen = now - self.t_first if self.t_first else wall
+        rate = total / gen if gen > 0 else 0
+        logger.info("  %s done: %dc in %.1fs wall (%.1fs to first byte, "
+                    "%.0f c/s generating)", self.tag, total, wall,
+                    self.t_first - self.t0 if self.t_first else 0.0, rate)
 
 
 # ── Single-agent invocation ─────────────────────────────────────────────
@@ -199,8 +377,6 @@ def run_agent(
             agent=agent, paper_slug=paper.paper_slug, model=model, claims=[]
         )
 
-    client = get_client(cfg)
-
     raw = None
     for attempt in range(max_retries + 1):
         try:
@@ -208,17 +384,15 @@ def run_agent(
             # Streaming is required by the SDK for max_tokens that may run
             # >10 minutes; we use it unconditionally for safety. The result
             # is identical to a non-streaming call once collected.
-            text_chunks: list[str] = []
-            with client.messages.stream(
+            raw = stream_text(
+                cfg,
                 model=model,
+                system=system_prompt,
+                user=paper_slice,
                 max_tokens=32768,  # 30+ claims with verbatim quotes routinely
                                    # exceed 10k tokens; budget for headroom
-                system=system_prompt,
-                messages=[{"role": "user", "content": paper_slice}],
-            ) as stream:
-                for text in stream.text_stream:
-                    text_chunks.append(text)
-            raw = "".join(text_chunks)
+                label=f"{agent}-reader",
+            )
             break
         except Exception as e:
             status = getattr(e, "status_code", None)
@@ -245,10 +419,7 @@ def run_agent(
         logger.error("last 500 chars: %r", raw[-500:])
         raise
 
-    if not isinstance(parsed, list):
-        raise ValueError(
-            f"agent={agent} returned non-list JSON: {type(parsed).__name__}"
-        )
+    parsed = _as_claim_list(parsed, agent)
 
     claims = [CandidateClaim(**c) for c in parsed]
     return AgentExtraction(

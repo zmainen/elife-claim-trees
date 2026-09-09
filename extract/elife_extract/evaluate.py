@@ -24,14 +24,14 @@ import json
 import logging
 import re
 import statistics
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field, asdict, replace
 from datetime import date
 from pathlib import Path
 from typing import Iterable
 
 import yaml
 
-from .agents import get_client
+from .agents import stream_text
 from .config import Config
 
 logger = logging.getLogger(__name__)
@@ -167,17 +167,14 @@ def run_matcher(
         + _format_claim_list(cli_claims, "CLI")
         + "\n\nReturn the JSON object as instructed."
     )
-    client = get_client(cfg)
-    text_chunks: list[str] = []
-    with client.messages.stream(
-        model=cfg.model_reconcile,  # Opus matcher (same model class)
-        max_tokens=32768,
+    raw = stream_text(
+        cfg,
+        model=cfg.model_reconcile,  # matcher, same model class as reconciliation
         system=MATCHER_PROMPT,
-        messages=[{"role": "user", "content": user}],
-    ) as stream:
-        for chunk in stream.text_stream:
-            text_chunks.append(chunk)
-    raw = "".join(text_chunks).strip()
+        user=user,
+        max_tokens=32768,
+        label="matcher",
+    ).strip()
     raw = re.sub(r"^```(?:json)?\s*\n?", "", raw, count=1, flags=re.IGNORECASE)
     raw = re.sub(r"\n?```\s*$", "", raw, count=1)
     return json.loads(raw)
@@ -372,12 +369,11 @@ def evaluate_paper(
             )
 
     # 5-7. write (use a per-paper sub-directory under work_dir)
-    write_cfg = Config.from_args(_NSpace(corpus_dir=work_dir, output_dir=work_dir / "out"))
-    write_cfg.model_reconcile = cfg.model_reconcile
-    write_cfg.model_results = cfg.model_results
-    write_cfg.model_caption = cfg.model_caption
-    write_cfg.model_structure = cfg.model_structure
-    write_cfg.prompt_variant = cfg.prompt_variant
+    # Copy the whole config and override only the paths. Rebuilding it from a
+    # bare namespace and re-copying selected fields silently dropped `backend`
+    # and `api_key`, so the write step fell back to Vertex and 404'd on a
+    # model name that only exists on the configured provider.
+    write_cfg = replace(cfg, corpus_dir=work_dir, output_dir=work_dir / "out")
     try:
         # Wipe any prior CLI output for this paper to allow re-runs
         cli_paper_dir = work_dir / cli_paper_slug

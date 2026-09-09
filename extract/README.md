@@ -15,7 +15,7 @@ pip install -e .
 
 Requires Python 3.10+, the Anthropic SDK with Vertex backend (`anthropic[vertex]`), pdfplumber, httpx, pyyaml, pydantic. All installed automatically.
 
-You also need Vertex AI credentials. The CLI defaults to `cr-mainen` / `europe-west1` (HAAK's Vertex project); override with `--vertex-project` / `--vertex-region` or env vars.
+You also need Vertex AI credentials. The CLI defaults to `cr-mainen` / `europe-west1` (HaaK's Vertex project); override with `--vertex-project` / `--vertex-region` or env vars.
 
 ## Configure
 

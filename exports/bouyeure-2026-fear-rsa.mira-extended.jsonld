@@ -1,0 +1,1342 @@
+{
+  "@context": [
+    "https://mira.science/schema/context.jsonld",
+    {
+      "haak": "https://haak.world/schema/claim#"
+    }
+  ],
+  "@graph": [
+    {
+      "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that prefrontal cortex represents fear-relevant contexts as distinct multivoxel patterns (context-specific coding), and this representational distinctness is the neural substrate that enables context-dependent fear renewal: participants whose PFC encodes contexts more distinctly during reversal will show stronger reinstatement of acquisition-phase fear memory traces when later tested in the original acquisition context?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that reversal learning recruits two simultaneous representational strategies in different brain regions: generalization (treating newly dangerous CS-+ like CS++ in fear-network territory) for cues that share their current threat status with established cue classes, and item-specific updating (distinguishing changing-valence cues such as CS+- from stable cues) in higher-order cortex?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that fear learning produces generalized (cross-item) neural representations of threatening cues in the canonical fear network: when an animal learns that a stimulus class is dangerous, the brain represents members of the class with overlapping multivoxel patterns rather than preserving item-specific patterns, so that any new exemplar of the class inherits the threat representation?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:dc36ab32-bbed-480d-b05d-f833b100b1c3",
+      "@type": "mira:Evidence",
+      "schema:name": "behavioral-learning-confirms-contingencies",
+      "schema:description": "US expectancy ratings follow the hierarchy CS++ > CS+- > CS-+ > CS-- across all experimental phases (LME: CS type F=479.35, p<0.0001; phase F=125.6, p<0.001; interaction p<0.001), confirming participants learned threat contingencies and their reversals.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "linear mixed effects model (lme4/lmerTest, Satterthwaite df, Bonferroni-corrected post-hoc Wilcoxon)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
+        },
+        {
+          "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+        },
+        {
+          "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "validates": [
+          {
+            "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
+          },
+          {
+            "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified:partial",
+          "haak:executed": false,
+          "haak:script": "verification/bouyeure-2026-fear-rsa/verify.py"
+        }
+      ],
+      "haak:panel": "fig2A",
+      "haak:analysis": "master_stats.R"
+    },
+    {
+      "@id": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c",
+      "@type": "mira:Evidence",
+      "schema:name": "context-specificity-increases-reversal",
+      "schema:description": "Neural representations of contexts become more distinct (context-specific) during reversal learning compared to acquisition, particularly in prefrontal cortex, reflecting the need to separate safe and dangerous environments.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "RSA context specificity measure (within-context minus between-context similarity), cluster FWE 10k permutations"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:a5fe00c8-602d-4b28-a458-68a57619b2e3"
+        },
+        {
+          "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74"
+        },
+        {
+          "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:a5fe00c8-602d-4b28-a458-68a57619b2e3"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74"
+          },
+          {
+            "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5B",
+      "haak:analysis": "fear_rsa_exploratory.py"
+    },
+    {
+      "@id": "urn:uuid:7ca6bb4e-6e66-47c1-bf7c-52c64d17d80d",
+      "@type": "mira:Evidence",
+      "schema:name": "context-specificity-predicts-acquisition-reinstatement-regional-dissociation",
+      "schema:description": "Higher reversal context specificity (PFC) interacts with CS type to predict generalized reinstatement of acquisition memory traces in ACC/SFG (favoring initially threatening CS+-, t(22)=6.25, p<0.05) and precuneus (favoring initially safe CS-+, t(22)=4.89, p<0.01), with opposite directions across regions.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "LME with context specificity × CS type interaction predicting generalized reinstatement; FDR correction within ROI pairs"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
+        },
+        {
+          "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "validates": [
+          {
+            "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5Di",
+      "haak:analysis": "roi_lme_analysis.R, master_stats.R"
+    },
+    {
+      "@id": "urn:uuid:d0bcf69c-c791-4b94-9d82-92a43bccc4ed",
+      "@type": "mira:Evidence",
+      "schema:name": "context-specificity-predicts-reinstatement-new-context-mtg",
+      "schema:description": "Higher reversal context specificity (PFC) predicts greater item reinstatement of CS-+ than CS+- acquisition memory traces in MTG during test_new (t(22)=2.51, p<0.05), the phase with entirely new contexts, suggesting context specificity generalizes beyond the training context.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "LME with context specificity × CS type interaction predicting item reinstatement in MTG during test_new"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e"
+      },
+      "haak:role": "control",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5Diii",
+      "haak:analysis": "roi_lme_analysis.R, master_stats.R"
+    },
+    {
+      "@id": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e",
+      "@type": "mira:Evidence",
+      "schema:name": "context-specificity-predicts-reversal-reinstatement-dmpfc",
+      "schema:description": "Higher reversal context specificity (PFC) predicts greater item reinstatement of CS-+ than CS+- reversal memory traces in dmPFC during test_old (t(22)=5.56, p<0.05), favoring reinstatement of threatening reversal memories in the same region that generalizes acquisition traces.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "LME with context specificity × CS type interaction predicting item reinstatement; FDR correction within ROI pairs"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
+        },
+        {
+          "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74"
+        },
+        {
+          "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "validates": [
+          {
+            "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5Dii",
+      "haak:analysis": "roi_lme_analysis.R, master_stats.R"
+    },
+    {
+      "@id": "urn:uuid:364302b6-4c41-4591-8df9-7800a8c674ff",
+      "@type": "mira:Evidence",
+      "schema:name": "cs-plus-univariate-fear-network-acquisition",
+      "schema:description": "During fear acquisition, threatening cues (CS+) produce significantly greater BOLD activation than safe cues (CS-) in dACC, superior frontal gyrus, caudate nucleus, and middle temporal gyrus, replicating the canonical fear network activation pattern.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "second-level mass-univariate GLM, cluster FWE with 10k permutations (p_uncorr<0.001)"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "enables-method": [
+          {
+            "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified:partial",
+          "haak:executed": false,
+          "haak:script": "verification/bouyeure-2026-fear-rsa/verify.py"
+        }
+      ],
+      "haak:panel": "fig2Bi",
+      "haak:analysis": "run_nina_analysis.py"
+    },
+    {
+      "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "@type": "mira:Evidence",
+      "schema:name": "cue-generalization-increases-acquisition",
+      "schema:description": "Neural representations of threatening cues (CS++) generalize across items during fear acquisition: RSA shows that patterns for different CS++ items become more similar to each other in the fear network, indicating a shared threat-cue representation.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "RSA searchlight + ROI analysis (BrainIAK), permutation testing (10k, cluster FWE)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:060f6390-e191-4522-a7ac-28bc91151f75"
+        },
+        {
+          "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:060f6390-e191-4522-a7ac-28bc91151f75"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:9c4f7718-812e-45ec-aecd-3218135a1e4b"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified:partial",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3A",
+      "haak:analysis": "run_nina_analysis.py, fear_rsa_core.py"
+    },
+    {
+      "@id": "urn:uuid:411ed78e-2542-4340-b896-bca7522579ae",
+      "@type": "mira:Evidence",
+      "schema:name": "cue-generalization-limited-dacc-reversal-consistent",
+      "schema:description": "During reversal, cue generalization for CS++ (always threatening) vs CS-- (always safe) is elevated only in dACC, not in the broader fear network regions where this effect was present during acquisition, suggesting that consistent threat representations are maintained more narrowly.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "RSA searchlight, cue generalization measure, cluster FWE 10k permutations (Bonferroni-corrected alpha p<0.0125)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+        },
+        {
+          "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "extends": [
+          {
+            "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3Bi",
+      "haak:analysis": "run_nina_analysis.py, fear_rsa_core.py"
+    },
+    {
+      "@id": "urn:uuid:0fce9813-0814-4bb8-86fd-12cd0c33bd98",
+      "@type": "mira:Evidence",
+      "schema:name": "current-threat-activates-fear-network-reversal",
+      "schema:description": "During reversal, currently threatening cues (CS++ and CS-+) produce greater BOLD activation than non-threatening cues (CS+- and CS--) across the same fear network regions as acquisition (dACC, SFG, MTG, IFG), reflecting rapid updating of neural threat responses.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "second-level mass-univariate GLM, cluster FWE with 10k permutations (p_uncorr<0.001)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
+        },
+        {
+          "@id": "urn:uuid:364302b6-4c41-4591-8df9-7800a8c674ff"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "supports": [
+          {
+            "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:364302b6-4c41-4591-8df9-7800a8c674ff"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/bouyeure-2026-fear-rsa/verify.py"
+        }
+      ],
+      "haak:panel": "fig2Bii",
+      "haak:analysis": "run_nina_analysis.py"
+    },
+    {
+      "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
+      "@type": "mira:Evidence",
+      "schema:name": "dmpfc-reinstates-acquisition-traces-generalized",
+      "schema:description": "In dmPFC during test_old, generalized reinstatement is higher for acquisition memory traces than for test_new memory traces (F(2,259)=4.01, p<0.05; t(259)=2.96, p<0.05), showing that dmPFC preferentially reinstates category-level (generalized) acquisition representations.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "ROI-based LME, Wilcoxon post-hoc (FDR-corrected within ROI)"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+      },
+      "mira:opposes": {
+        "@id": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4Bii",
+      "haak:analysis": "roi_lme_analysis.R, master_stats.R"
+    },
+    {
+      "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "@type": "mira:Claim",
+      "schema:name": "dual-strategy-reversal-generalize-plus-specify",
+      "schema:description": "Reversal learning recruits two distinct representational strategies simultaneously: generalization (treating newly dangerous CS-+ like old CS++) for currently dangerous cues, and item-specific updating (distinguishing CS+- from CS++) for cues with changing threat value.",
+      "mira:epistemicStatus": "mira:Claim",
+      "mira:supports": {
+        "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+      },
+      "haak:role": "synthesis",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "confirms": [
+          {
+            "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+          }
+        ],
+        "interprets": [
+          {
+            "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
+          },
+          {
+            "@id": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0"
+          },
+          {
+            "@id": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414"
+          },
+          {
+            "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-code",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4 (synthesis)"
+    },
+    {
+      "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
+      "@type": "mira:Evidence",
+      "schema:name": "generalized-pattern-cs-minus-plus-reversal",
+      "schema:description": "During reversal, the newly dangerous cue (CS-+) acquires generalized neural representations similar to the originally feared CS++, mirroring the initial acquisition pattern in fear network regions.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "RSA cue generalization measure"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:753f4a2e-8ab1-4e27-89be-67280c9d9a33"
+        },
+        {
+          "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+        },
+        {
+          "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
+        },
+        {
+          "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:753f4a2e-8ab1-4e27-89be-67280c9d9a33"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
+          },
+          {
+            "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3Bii",
+      "haak:analysis": "run_nina_analysis.py"
+    },
+    {
+      "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-context-specificity-supports-renewal",
+      "schema:description": "Prefrontal cortex represents fear-relevant contexts as distinct multivoxel patterns (context-specific coding), and this representational distinctness is the neural substrate that enables context-dependent fear renewal: participants whose PFC encodes contexts more distinctly during reversal will show stronger reinstatement of acquisition-phase fear memory traces when later tested in the original acquisition context.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:a5fe00c8-602d-4b28-a458-68a57619b2e3"
+          },
+          {
+            "@id": "urn:uuid:12cefa80-6075-43a5-b3ec-ce2a8527ec2c"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-dual-strategy-reversal",
+      "schema:description": "Reversal learning recruits two simultaneous representational strategies in different brain regions: generalization (treating newly dangerous CS-+ like CS++ in fear-network territory) for cues that share their current threat status with established cue classes, and item-specific updating (distinguishing changing-valence cues such as CS+- from stable cues) in higher-order cortex. The two strategies are not redundant — they encode complementary information about the same stimulus inventory.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:753f4a2e-8ab1-4e27-89be-67280c9d9a33"
+          },
+          {
+            "@id": "urn:uuid:4f0c3ed8-434a-4ab0-8ee2-bbc3f9f5d18e"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-fear-network-generalizes-threat-cues",
+      "schema:description": "Fear learning produces generalized (cross-item) neural representations of threatening cues in the canonical fear network: when an animal learns that a stimulus class is dangerous, the brain represents members of the class with overlapping multivoxel patterns rather than preserving item-specific patterns, so that any new exemplar of the class inherits the threat representation. The same mechanism operates whenever threat is acquired, including during reversal when previously safe cues become dangerous.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:060f6390-e191-4522-a7ac-28bc91151f75"
+          },
+          {
+            "@id": "urn:uuid:753f4a2e-8ab1-4e27-89be-67280c9d9a33"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414",
+      "@type": "mira:Evidence",
+      "schema:name": "ifg-reinstates-reversal-traces-item-specific",
+      "schema:description": "In IFG during test_old, item reinstatement is higher for reversal memory traces than for acquisition or test_new memory traces (F(2,253)=5.50, p<0.01), showing that IFG preferentially reinstates the most recently learned item-specific representations.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "ROI-based LME (reversal > acquisition item reinstatement, Wilcoxon t(253)=-3.01 p<0.01; reversal > test_new t(253)=-2.7 p<0.05)"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+      },
+      "mira:opposes": {
+        "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4Bi",
+      "haak:analysis": "roi_lme_analysis.R, master_stats.R"
+    },
+    {
+      "@id": "urn:uuid:500caa5d-b636-4776-98fe-422b618f8e02",
+      "@type": "mira:Evidence",
+      "schema:name": "item-stability-persists-test-phases",
+      "schema:description": "Item stability (but not cue generalization) persists into test phases in the absence of a US: CS+- > CS++ item stability in MTG at test_new, and CS++ > CS-- item stability in inferior temporal gyrus at test_old, showing that individual-item memory traces outlast the training context.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "RSA searchlight, item-stability measure, cluster FWE 10k permutations (p<0.0125)"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "supports": [
+          {
+            "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3C, fig3D",
+      "haak:analysis": "run_nina_analysis.py, fear_rsa_core.py"
+    },
+    {
+      "@id": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0",
+      "@type": "mira:Evidence",
+      "schema:name": "item-stability-precuneus-pfc-reversal",
+      "schema:description": "During reversal learning, item-specific (stable across phases) representations emerge in precuneus and prefrontal cortex for cues that change their threat value (CS+-), distinguishing the changing cue from the stable threats.",
+      "mira:epistemicStatus": "mira:Claim",
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "RSA searchlight, item-stability measure"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:4f0c3ed8-434a-4ab0-8ee2-bbc3f9f5d18e"
+        },
+        {
+          "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:4f0c3ed8-434a-4ab0-8ee2-bbc3f9f5d18e"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4",
+      "haak:analysis": "run_nina_analysis.py, fear_rsa_core.py"
+    },
+    {
+      "@id": "urn:uuid:9c4f7718-812e-45ec-aecd-3218135a1e4b",
+      "@type": "mira:Protocol",
+      "schema:name": "lss-unreinforced-trials-only",
+      "schema:description": "All RSA pattern similarity analyses use only unreinforced trials (no US delivered), excluding reinforced trials to avoid US-driven BOLD confounds; this exclusion reduces the effective trial count and may selectively remove trials with strongest fear responses.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "haak:role": "methodological",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+          },
+          {
+            "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
+          },
+          {
+            "@id": "urn:uuid:411ed78e-2542-4340-b896-bca7522579ae"
+          },
+          {
+            "@id": "urn:uuid:60dc4ad3-7400-4bd9-bf23-dfc403bdea39"
+          },
+          {
+            "@id": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0"
+          },
+          {
+            "@id": "urn:uuid:500caa5d-b636-4776-98fe-422b618f8e02"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "methods (RSA section)",
+      "haak:analysis": "methods inspection"
+    },
+    {
+      "@id": "urn:uuid:e5023cc6-f631-4d2b-b768-ed36dbef9edb",
+      "@type": "mira:Evidence",
+      "schema:name": "no-bold-differences-test-phases",
+      "schema:description": "During both test phases (test_new and test_old), no significant BOLD activation differences between any CS type contrasts are found, despite significant US expectancy differences at the behavioral level, motivating RSA over univariate analysis.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "second-level mass-univariate GLM, cluster FWE with 10k permutations (p_uncorr<0.001)"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+      },
+      "haak:role": "control",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "enables-method": [
+          {
+            "@id": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414"
+          },
+          {
+            "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2B (test phases)",
+      "haak:analysis": "run_nina_analysis.py"
+    },
+    {
+      "@id": "urn:uuid:60dc4ad3-7400-4bd9-bf23-dfc403bdea39",
+      "@type": "mira:Evidence",
+      "schema:name": "no-item-stability-difference-acquisition",
+      "schema:description": "During fear acquisition, item stability (within-cue neural pattern similarity) does not differ between CS+ and CS- cues anywhere in the brain, showing that threat learning selectively increases cross-item generalization but not single-item representational consistency.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "RSA searchlight, item-stability measure, cluster FWE 10k permutations (p<0.025 threshold)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+        },
+        {
+          "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3A",
+      "haak:analysis": "run_nina_analysis.py, fear_rsa_core.py"
+    },
+    {
+      "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74",
+      "@type": "mira:Evidence",
+      "schema:name": "pfc-context-specificity-predicts-renewal",
+      "schema:description": "Prefrontal cortex context-specificity during reversal learning predicts subsequent fear renewal at test, linking context-specific neural coding to behavioral expression of fear.",
+      "mira:epistemicStatus": "mira:Claim",
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "correlation: RSA context specificity × behavioral fear renewal"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:12cefa80-6075-43a5-b3ec-ce2a8527ec2c"
+        },
+        {
+          "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:12cefa80-6075-43a5-b3ec-ce2a8527ec2c"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5",
+      "haak:analysis": "roi_lme_analysis.R, master_stats.R"
+    },
+    {
+      "@id": "urn:uuid:a5fe00c8-602d-4b28-a458-68a57619b2e3",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-context-specificity-increases-during-reversal",
+      "schema:description": "If PFC context-specific coding is the substrate for context-dependent fear renewal, then context representations should become more distinct (greater within-context vs between-context pattern similarity) in PFC during reversal compared to acquisition, when context becomes newly relevant for predicting threat (the same cue can be safe in one context and dangerous in another).",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:753f4a2e-8ab1-4e27-89be-67280c9d9a33",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-cs-minus-plus-generalizes-reversal",
+      "schema:description": "If the same generalization mechanism that operates during acquisition is recruited whenever threat is acquired, then during reversal the newly dangerous cue (CS-+, previously safe) should acquire generalized neural representations in fear-network regions, mirroring the pattern seen for CS++ during acquisition.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
+          },
+          {
+            "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:060f6390-e191-4522-a7ac-28bc91151f75",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-cue-generalization-fear-network-acquisition",
+      "schema:description": "If fear learning recruits a generalization mechanism that encodes threatening cues with shared representations, then during initial acquisition CS+ items should show greater between-item neural pattern similarity than CS- items in canonical fear-network regions (dACC, SFG, caudate, insula), with the generalization signal detectable as a positive CS+ > CS- contrast on the cue-generalization RSA measure.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:4f0c3ed8-434a-4ab0-8ee2-bbc3f9f5d18e",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-item-stability-changing-cues-reversal",
+      "schema:description": "If reversal learning recruits an item-specific updating strategy in addition to generalization, then changing-valence cues (CS+- and CS-+) should show elevated within-item neural pattern stability — distinguishing each item from its category-mates — in higher-order cortex (precuneus, IFG, prefrontal cortex), regions outside the canonical fear network.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:12cefa80-6075-43a5-b3ec-ce2a8527ec2c",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-pfc-context-specificity-tracks-renewal",
+      "schema:description": "If PFC context-specific coding is the substrate for context-dependent fear renewal, then between-subject variability in PFC context specificity (during reversal) should covary with between-subject variability in subsequent reinstatement of acquisition-phase fear memory traces at test, with subjects who encode contexts more distinctly showing stronger reinstatement.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:db8f67a5-9139-44fb-89c1-b30613fbadf5",
+      "@type": "mira:Claim",
+      "schema:name": "prior-threat-activates-fear-network-weakly",
+      "schema:description": "During reversal, cues that were threatening during acquisition but not currently threatening (CS++) vs those that were safe during acquisition and currently threatening (CS-+) still show fear network activation — (CS++ > CS+-) > (CS-+ > CS--) — though to a lesser extent than the current-threat contrast, suggesting a lingering prior fear memory trace.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+      },
+      "haak:role": "interpretation",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "interprets": [
+          {
+            "@id": "urn:uuid:0fce9813-0814-4bb8-86fd-12cd0c33bd98"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:364302b6-4c41-4591-8df9-7800a8c674ff"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified:partial",
+          "haak:executed": false,
+          "haak:script": "verification/bouyeure-2026-fear-rsa/verify.py"
+        }
+      ],
+      "haak:panel": "fig2Biii",
+      "haak:analysis": "run_nina_analysis.py"
+    },
+    {
+      "@id": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
+      "@type": "mira:Protocol",
+      "schema:name": "rsa-roi-derived-from-searchlight",
+      "schema:description": "ROI-based RSA analyses (Fig 4B, Fig 5D) use ROIs derived from statistically significant clusters in the preceding searchlight analyses on the same dataset, without an independent ROI definition, creating a circularity that inflates the expected significance of ROI tests.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105126"
+      },
+      "haak:role": "methodological",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414"
+          },
+          {
+            "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c"
+          },
+          {
+            "@id": "urn:uuid:7ca6bb4e-6e66-47c1-bf7c-52c64d17d80d"
+          },
+          {
+            "@id": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e"
+          },
+          {
+            "@id": "urn:uuid:d0bcf69c-c791-4b94-9d82-92a43bccc4ed"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414"
+          },
+          {
+            "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c"
+          },
+          {
+            "@id": "urn:uuid:7ca6bb4e-6e66-47c1-bf7c-52c64d17d80d"
+          },
+          {
+            "@id": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4A (ROI definition procedure)",
+      "haak:analysis": "methods inspection"
+    },
+    {
+      "@id": "urn:uuid:d903f2eb-e683-43c7-8feb-1bc1ee72597b",
+      "@type": "mira:Claim",
+      "schema:name": "trace-conditioning-hippocampus-engaged",
+      "schema:description": "Trace conditioning (temporal gap between CS and US) is used to engage hippocampus-dependent memory formation; this design assumption is not independently validated in this paper but relies on prior literature establishing hippocampal involvement in trace conditioning.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "haak:role": "scope",
+      "haak:epistemicStrength": "weak",
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1 (methods)"
+    }
+  ]
+}

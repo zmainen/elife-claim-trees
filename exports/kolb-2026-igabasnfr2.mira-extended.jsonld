@@ -1,0 +1,1086 @@
+{
+  "@context": [
+    "https://mira.science/schema/context.jsonld",
+    {
+      "haak": "https://haak.world/schema/claim#"
+    }
+  ],
+  "@graph": [
+    {
+      "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that a GABA sensor with sufficiently improved sensitivity, kinetics, and affinity will cross qualitative capability thresholds — not merely improve signal-to-noise on measurements iGABASnFR1 could already make, but enable measurements that iGABASnFR1 cannot make at all?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that targeted near-saturation mutagenesis at sites in and around the Pf622 GABA-binding pocket and the cpGFP-linker interfaces can yield a successor to iGABASnFR1 with substantially improved sensitivity (ΔF/F), increased on-cell affinity within the physiologically relevant range, faster binding kinetics, and improved expression / membrane trafficking — without sacrificing GABA selectivity?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7",
+      "@type": "mira:Protocol",
+      "schema:name": "crystal-structure-pdb-9d57",
+      "schema:description": "The crystal structure of iGABASnFR2 is deposited at the Protein Data Bank (accession 9D57), providing atomic-resolution structural information on the binding pocket and cpGFP domain arrangement.",
+      "mira:epistemicStatus": "mira:Claim",
+      "haak:role": "methodological",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "enables-method": [
+          {
+            "@id": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/kolb-2026-igabasnfr2/verify.py"
+        }
+      ],
+      "haak:panel": "fig3 (or structural supplement)",
+      "haak:analysis": "PDB accession 9D57"
+    },
+    {
+      "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-improved-sensor-enables-new-biology",
+      "schema:description": "A GABA sensor with sufficiently improved sensitivity, kinetics, and affinity will cross qualitative capability thresholds — not merely improve signal-to-noise on measurements iGABASnFR1 could already make, but enable measurements that iGABASnFR1 cannot make at all. Specifically: detection of GABA release from individual inhibitory boutons in slice, single-trial detection of direction-selective GABA release from starburst amacrine cells in retina, and detection of volume-transmitted GABA in vivo following sensory stimulation.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+          },
+          {
+            "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+          },
+          {
+            "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-saturation-mutagenesis-yields-improved-sensor",
+      "schema:description": "Targeted near-saturation mutagenesis at sites in and around the Pf622 GABA-binding pocket and the cpGFP-linker interfaces can yield a successor to iGABASnFR1 with substantially improved sensitivity (ΔF/F), increased on-cell affinity within the physiologically relevant range, faster binding kinetics, and improved expression / membrane trafficking — without sacrificing GABA selectivity. The performance ceiling of iGABASnFR1 is set by suboptimal residues at a small number of structurally identifiable positions, not by an intrinsic limit of the cpGFP-coupled Venus-flytrap scaffold.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
+          },
+          {
+            "@id": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb",
+      "@type": "mira:Evidence",
+      "schema:name": "igabasnfr2-13fold-expression-increase",
+      "schema:description": "iGABASnFR2 shows a 13.1-fold increase in responsive pixels (expression-weighted response) compared to iGABASnFR1, indicating both improved sensitivity and membrane trafficking.",
+      "mira:epistemicStatus": "mira:Claim",
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.5281/zenodo.17971101",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "fluorescence imaging, high-throughput screening"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
+        },
+        {
+          "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1C",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
+      "@type": "mira:Protocol",
+      "schema:name": "igabasnfr2-2p-compatible",
+      "schema:description": "iGABASnFR2 has two-photon excitation spectra similar to its one-photon spectra and is compatible with two-photon imaging; both v2 sensors show reduced pH dependence compared to iGABASnFR1.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+        },
+        {
+          "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+      },
+      "haak:role": "methodological",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "enables-method": [
+          {
+            "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+          },
+          {
+            "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+          },
+          {
+            "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+          },
+          {
+            "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4e, fig4f, fig4-supplement3",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc",
+      "@type": "mira:Claim",
+      "schema:name": "igabasnfr2-cpgfp-rigid-on-gaba-binding",
+      "schema:description": "GABA binding to iGABASnFR2 closes the Venus flytrap lobes of the Pf622 domain but produces negligible conformational change in cpGFP and its flanking linkers (RMSD 0.25 Å), contrasting with the large cpGFP interface rearrangement seen in GCaMP upon calcium binding.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7"
+        },
+        {
+          "@id": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+      },
+      "haak:role": "interpretation",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "interprets": [
+          {
+            "@id": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:partial",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3a",
+      "haak:analysis": "PDB structure comparison (9D57 vs 6DGV)"
+    },
+    {
+      "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
+      "@type": "mira:Evidence",
+      "schema:name": "igabasnfr2-fourfold-sensitivity-gain",
+      "schema:description": "iGABASnFR2 exhibits a 4.1-fold improvement in ΔF/F sensitivity compared to iGABASnFR1 under equivalent stimulation conditions in cultured neurons, quantified by the high-throughput screening pipeline.",
+      "mira:epistemicStatus": "mira:Claim",
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.5281/zenodo.17971101",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "fluorescence imaging, high-throughput mutagenesis screening"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
+        },
+        {
+          "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1, fig2",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c",
+      "@type": "mira:Evidence",
+      "schema:name": "igabasnfr2-gaba-selective-specificity",
+      "schema:description": "iGABASnFR2 displays high selectivity for GABA over structurally related compounds, none of which interfere with GABA binding as competitive or non-competitive antagonists at 1 mM concentrations.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.5281/zenodo.17971101",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "fluorescence titration with GABA-related compounds; competition assay with 1 mM competitor + increasing GABA"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+        },
+        {
+          "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+        },
+        {
+          "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+      },
+      "haak:role": "control",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "validates": [
+          {
+            "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+          },
+          {
+            "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+          },
+          {
+            "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8"
+          }
+        ],
+        "rules-out": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4-supplement1, fig4-supplement2",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
+      "@type": "mira:Evidence",
+      "schema:name": "igabasnfr2-invivo-barrel-cortex",
+      "schema:description": "iGABASnFR2 detects volume-transmitted extracellular GABA signals in vivo in mouse barrel cortex (layers L2–L3, ~300 μm depth) evoked by rhythmic whisker stimulation, corresponding to a transient GABA concentration increase of approximately 2–2.5 μM at peak.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.5281/zenodo.17971101",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "in vivo 2P Tornado scanning (1 kHz resonant scan); AAV9-hSyn-iGABASnFR2 cortical injection; rhythmic whisker stimulation (4 air puffs at 20 Hz, 200 ms)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216"
+        },
+        {
+          "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
+        },
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        }
+      ],
+      "mira:opposes": [
+        {
+          "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+        },
+        {
+          "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+          },
+          {
+            "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig6c, fig6-video1",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee",
+      "@type": "mira:Evidence",
+      "schema:name": "igabasnfr2-kinetics-rise-decay",
+      "schema:description": "At 10 action potentials (83 Hz), iGABASnFR2 has a rise time constant of 43 ± 9 ms (faster than iGABASnFR1's 61 ± 13 ms) and a decay time constant of 73 ± 26 ms (slower than iGABASnFR1's 62 ± 29 ms), while iGABASnFR2n has a substantially slower rise time of 72 ± 8 ms.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.5281/zenodo.17971101",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "field stimulation in cultured neurons; exponential fits to ΔF/F₀ time courses; n=24 wells (iGABASnFR1, iGABASnFR2), n=18 wells (iGABASnFR2n)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+        },
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "confirms": [
+          {
+            "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2c, fig2d",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d",
+      "@type": "mira:Evidence",
+      "schema:name": "igabasnfr2-oncell-affinity-sevenfold",
+      "schema:description": "iGABASnFR2 expressed on the surface of cultured neurons has an on-cell EC50 of 6.4 ± 0.21 μM for GABA, representing a sevenfold higher affinity than iGABASnFR1 (EC50 ~45 μM on-cell) while remaining above the tonic extracellular GABA concentration range of 0.2–2.5 μM in the mammalian brain.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.5281/zenodo.17971101",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "on-cell fluorescence titration; GABA perfusion onto cultured neurons"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+        },
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        },
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "confirms": [
+          {
+            "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4b",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
+      "@type": "mira:Evidence",
+      "schema:name": "igabasnfr2-retina-direction-selectivity",
+      "schema:description": "iGABASnFR2 directly demonstrates direction-selective GABA release from starburst amacrine cells in the intact retina, with significantly higher SNR and response reliability than iGABASnFR1; iGABASnFR1 signals were insufficient to detect direction selectivity even after trial-averaging.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.5281/zenodo.17971101",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "two-photon imaging in excised retina; Cre-Lox AAV delivery in ChAT-IRES-Cre mice; moving spot and full-field flash stimuli"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216"
+        },
+        {
+          "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
+        },
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
+      "@type": "mira:Evidence",
+      "schema:name": "igabasnfr2-single-bouton-hippocampus",
+      "schema:description": "iGABASnFR2 detects GABA release from individual hippocampal interneuron axonal boutons using Tornado scanning two-photon microscopy; iGABASnFR1 failed to produce any detectable spike-evoked fluorescence signal across 15 trials in five separate experiments.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.5281/zenodo.17971101",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "simultaneous 2P Tornado scanning (1.5 μm scan path, 0.5–1 kHz) and whole-cell electrophysiology in acute hippocampal slices and organotypic cultures; biolistic transfection (CA3 interneurons) and viral delivery (CA1)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216"
+        },
+        {
+          "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
+        },
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig6a, fig6b",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:837eae22-f6f6-4d29-9696-c998ee633b7f",
+      "@type": "mira:Evidence",
+      "schema:name": "igabasnfr2-single-exponential-kinetics",
+      "schema:description": "iGABASnFR2 and iGABASnFR2n display single-exponential stopped-flow kinetics, whereas iGABASnFR1 exhibits biphasic kinetics; the observed reaction rate constants (Kobs) are far greater for both v2 sensors than for iGABASnFR1.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.5281/zenodo.17971101",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "stopped-flow fluorescence spectroscopy; monoexponential fits in MATLAB"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+        },
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "confirms": [
+          {
+            "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4c, fig4d",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6",
+      "@type": "mira:Evidence",
+      "schema:name": "igabasnfr2n-negative-going-variant",
+      "schema:description": "A negative-going variant (iGABASnFR2n) achieves -2.2-fold ΔF/F with 10.3-fold increased responsive pixels, providing an alternative sensor with inverted fluorescence change direction for applications requiring negative-going signals.",
+      "mira:epistemicStatus": "mira:Claim",
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.5281/zenodo.17971101",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "fluorescence imaging, high-throughput screening"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
+        },
+        {
+          "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+        },
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1C, fig1D",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9",
+      "@type": "mira:Protocol",
+      "schema:name": "mutagenesis-3947-variants-screened",
+      "schema:description": "High-throughput mutagenesis screening generated 3,947 total variants from 39 targeted sites; 93 variants exceeded iGABASnFR1 controls in ΔF/F, and 22 showed improvements in both sensitivity and expression.",
+      "mira:epistemicStatus": "mira:Claim",
+      "mira:supports": {
+        "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
+      },
+      "haak:role": "methodological",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
+          }
+        ],
+        "enables-method": [
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          },
+          {
+            "@id": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb"
+          },
+          {
+            "@id": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1B, fig1C",
+      "haak:analysis": "Zenodo analysis code"
+    },
+    {
+      "@id": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-improved-sensor-enables-new-measurements",
+      "schema:description": "If iGABASnFR2's improvements (4-fold ΔF/F, 7-fold on-cell affinity, faster rise kinetics, 2P-compatible spectra) cross qualitative capability thresholds, then side-by-side comparison with iGABASnFR1 in three demanding preparations should show: (i) iGABASnFR2 detects single-bouton hippocampal GABA release where iGABASnFR1 yields no signal; (ii) iGABASnFR2 resolves direction-selective starburst GABA release on single trials where iGABASnFR1 cannot resolve direction even after trial-averaging; (iii) iGABASnFR2 detects whisker-evoked volume-transmitted GABA in vivo at cortical layers reachable by 2P imaging.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
+          },
+          {
+            "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-screen-yields-multiple-improved-variants",
+      "schema:description": "If the v1 performance ceiling is set by suboptimal residues at identifiable structural sites, then near-saturation mutagenesis at those sites should yield (i) multiple variants exceeding iGABASnFR1 in ΔF/F sensitivity, (ii) at least one variant simultaneously improved on sensitivity and expression / responsive-pixel count, and (iii) potentially variants with qualitatively new behaviour (e.g. inverted response). The screen should not be dominated by single-site marginal improvements.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
+      "@type": "mira:Claim",
+      "schema:name": "scope-sensor-engineering-paper",
+      "schema:description": "All findings are scoped to a sensor-engineering paper: the screen is wet-lab only (cultured rat primary neurons in 96-well format, evoked synaptic release as the ΔF/F readout); biophysical characterisation uses purified protein expressed in E. coli (stopped-flow, titration, 2P spectra); on-cell measurements use cultured neurons under perfusion; biological demonstrations use ex vivo retina (ChAT-Cre mice + AAV), acute and organotypic hippocampal slice (biolistic and AAV delivery), and in vivo cranial window in mouse barrel cortex (AAV9-hSyn-iGABASnFR2). The paper does not test iGABASnFR2 in non-mammalian preparations, in awake behaving animals at fine temporal resolution, or in genetic backgrounds beyond standard laboratory mouse and rat.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.108319"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9"
+          },
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          },
+          {
+            "@id": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb"
+          },
+          {
+            "@id": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6"
+          },
+          {
+            "@id": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee"
+          },
+          {
+            "@id": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7"
+          },
+          {
+            "@id": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc"
+          },
+          {
+            "@id": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d"
+          },
+          {
+            "@id": "urn:uuid:837eae22-f6f6-4d29-9696-c998ee633b7f"
+          },
+          {
+            "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff"
+          },
+          {
+            "@id": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c"
+          },
+          {
+            "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+          },
+          {
+            "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+          },
+          {
+            "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-04-20",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "scope"
+    },
+    {
+      "@id": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
+      "@type": "mira:Claim",
+      "schema:name": "screening-scope-wet-lab-only",
+      "schema:description": "The primary claims of iGABASnFR2 performance (sensitivity, kinetics, SNR) are established through wet-lab measurements (fluorescence imaging in cultured neurons, stopped-flow kinetics, two-photon excitation spectroscopy) that cannot be reproduced from deposited code and data alone; computational analysis of deposited source data covers only figure generation, not the underlying measurements.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "haak:role": "scope",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9"
+          },
+          {
+            "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+          },
+          {
+            "@id": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb"
+          },
+          {
+            "@id": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6"
+          },
+          {
+            "@id": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee"
+          },
+          {
+            "@id": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc"
+          },
+          {
+            "@id": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d"
+          },
+          {
+            "@id": "urn:uuid:837eae22-f6f6-4d29-9696-c998ee633b7f"
+          },
+          {
+            "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff"
+          },
+          {
+            "@id": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c"
+          },
+          {
+            "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+          },
+          {
+            "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+          },
+          {
+            "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "all figures (assessment)",
+      "haak:analysis": "code inspection"
+    }
+  ]
+}

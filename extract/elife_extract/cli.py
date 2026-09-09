@@ -55,13 +55,21 @@ def cmd_extract(args: argparse.Namespace) -> int:
     )
 
     # ── Step 1: prepare ──────────────────────────────────────────────────
+    pdf_path = getattr(args, "pdf_path", None)
+    if not args.doi and not pdf_path:
+        print("error: at least one of --doi or --pdf-path is required", file=sys.stderr)
+        return 2
     print(f"=== Step 1 — Prepare ===")
-    print(f"  doi    = {args.doi}")
+    if pdf_path:
+        print(f"  pdf    = {pdf_path}")
+    if args.doi:
+        print(f"  doi    = {args.doi}")
     try:
         paper = prepare(
-            args.doi,
+            doi=args.doi,
             paper_slug_override=getattr(args, "paper_slug", None),
             input_format=getattr(args, "input_format", "auto"),
+            pdf_path=Path(pdf_path) if pdf_path else None,
         )
     except Exception as e:
         print(f"error: prepare failed: {e}", file=sys.stderr)
@@ -82,7 +90,10 @@ def cmd_extract(args: argparse.Namespace) -> int:
     print(f"  Results-reader   ({cfg.model_results})")
     print(f"  Caption-reader   ({cfg.model_caption})")
     print(f"  Structure-reader ({cfg.model_structure})")
-    print(f"  vertex: project={cfg.vertex_project} region={cfg.vertex_region}")
+    if cfg.backend == "vertex":
+        print(f"  backend: vertex (project={cfg.vertex_project} region={cfg.vertex_region})")
+    else:
+        print(f"  backend: {cfg.backend}")
     print()
     try:
         results, caption, structure = run_all_agents(paper, cfg)
@@ -150,7 +161,7 @@ def cmd_write(args: argparse.Namespace) -> int:
     import json
     import logging
     from .review import review as review_step
-    from .write import write_claim_files
+    from .write import write_claim_files, write_oxa_document
     from .schema import DraftClaimTable
 
     logging.basicConfig(
@@ -212,12 +223,32 @@ def cmd_write(args: argparse.Namespace) -> int:
             )
 
     # Step 7: write claim files
+    output_format = getattr(args, "format", "yaml")
     print()
-    print(f"=== Steps 6-7 — Write claim files ===")
+    print(f"=== Steps 6-7 — Write claim files (format: {output_format}) ===")
     print(f"  corpus_dir = {cfg.corpus_dir}")
-    print(f"  paper_dir  = {cfg.corpus_dir / approved.paper_slug}")
+
     try:
-        written = write_claim_files(approved, cfg)
+        if output_format == "oxa":
+            # OXA-native output: one JSON Document per paper
+            oxa_path = write_oxa_document(approved, cfg)
+            print(f"  OXA document → {oxa_path}")
+            print(f"  {len(approved.claims)} claims as validated OXA JSON")
+            print()
+            print(f"  Downstream: oxa validate {oxa_path}")
+            print(f"  Export:     python3 scripts/export_discourse_graphs.py {oxa_path}")
+        else:
+            # Legacy YAML-frontmatter markdown: one file per claim
+            print(f"  paper_dir  = {cfg.corpus_dir / approved.paper_slug}")
+            written = write_claim_files(approved, cfg)
+            print(f"  wrote {len(written)} files:")
+            for p in written[:5]:
+                print(f"    {p.relative_to(cfg.corpus_dir)}")
+            if len(written) > 5:
+                print(f"    ... and {len(written) - 5} more")
+            print()
+            print(f"  Step 6 (dependency mapping) is scaffolded — claim files have empty")
+            print(f"  edge sections. Analyst fills in or runs a future edge-inference pass.")
     except FileExistsError as e:
         print(f"error: {e}", file=sys.stderr)
         return 7
@@ -225,14 +256,6 @@ def cmd_write(args: argparse.Namespace) -> int:
         print(f"error: write failed: {e}", file=sys.stderr)
         return 8
 
-    print(f"  wrote {len(written)} files:")
-    for p in written[:5]:
-        print(f"    {p.relative_to(cfg.corpus_dir)}")
-    if len(written) > 5:
-        print(f"    ... and {len(written) - 5} more")
-    print()
-    print(f"  Step 6 (dependency mapping) is scaffolded — claim files have empty")
-    print(f"  edge sections. Analyst fills in or runs a future edge-inference pass.")
     print(f"  Next: elife-extract verify-refs --paper {approved.paper_slug} --corpus-dir {cfg.corpus_dir}")
     return 0
 
@@ -423,6 +446,27 @@ def cmd_run(args: argparse.Namespace) -> int:
 # ── Argument parser construction ──────────────────────────────────────────
 
 
+def _add_backend_args(parser: argparse.ArgumentParser) -> None:
+    """Backend routing. Shared by every subcommand that calls a model."""
+    parser.add_argument(
+        "--backend",
+        default=None,
+        help=(
+            "Model backend: vertex (default), anthropic, openrouter, openai, "
+            "google, groq, together, deepseek. Anything but vertex/anthropic "
+            "is routed via litellm. Or set ELIFE_EXTRACT_BACKEND."
+        ),
+    )
+    parser.add_argument(
+        "--api-key",
+        default=None,
+        help=(
+            "API key for the chosen backend. Defaults to that backend's "
+            "environment variable (e.g. OPENROUTER_API_KEY). Not needed for vertex."
+        ),
+    )
+
+
 def _add_common_args(parser: argparse.ArgumentParser) -> None:
     """Args shared across all subcommands."""
     parser.add_argument(
@@ -440,6 +484,17 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
         default=DEFAULT_PROMPT_VARIANT,
         help=f"Named prompt variant under prompts/<variant>/ (default: {DEFAULT_PROMPT_VARIANT}).",
     )
+    parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Per-chunk DEBUG logging. Default is INFO, which reports each stage and a progress heartbeat.",
+    )
+    parser.add_argument(
+        "--no-infer-edges",
+        action="store_true",
+        help="Skip Step 6 dependency mapping. Claims are written with no edges.",
+    )
+    _add_backend_args(parser)
 
 
 def _add_model_args(parser: argparse.ArgumentParser) -> None:
@@ -500,7 +555,8 @@ def build_parser() -> argparse.ArgumentParser:
             "as JSON for the write subcommand to consume after review."
         ),
     )
-    p_extract.add_argument("--doi", required=True, help="eLife paper DOI (e.g., 10.7554/eLife.95562).")
+    p_extract.add_argument("--doi", default=None, help="Paper DOI. Optional when --pdf-path is given.")
+    p_extract.add_argument("--pdf-path", default=None, help="Path to a local PDF. Bypasses eLife DOI fetch.")
     p_extract.add_argument(
         "--input-format",
         choices=["auto", "jats", "pdf"],
@@ -547,6 +603,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_write.add_argument("--draft", required=True, type=Path, help="Path to draft claim JSON from extract.")
     p_write.add_argument(
+        "--format",
+        choices=["yaml", "oxa"],
+        default="yaml",
+        help=(
+            "Output format: yaml (per-claim YAML-frontmatter markdown, default) "
+            "or oxa (single OXA JSON Document with ClaimGraph)."
+        ),
+    )
+    p_write.add_argument(
         "--review-mode",
         choices=["interactive", "auto-approve", "external", "dry-run"],
         default="interactive",
@@ -558,6 +623,9 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     _add_common_args(p_write)
+    # write needs model routing too: the external reviewer (Step 4.5) and
+    # edge inference (Step 6) both call cfg.model_reconcile.
+    _add_model_args(p_write)
     p_write.set_defaults(func=cmd_write)
 
     # ── verify-refs ──────────────────────────────────────────────────────
@@ -627,6 +695,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Skip papers that already have a scorecard.json under work-dir.",
     )
     _add_model_args(p_eval)
+    _add_backend_args(p_eval)
     p_eval.add_argument(
         "--prompts-dir", type=Path,
         help="Override the prompts directory (default: package-local prompts/).",
@@ -648,7 +717,8 @@ def build_parser() -> argparse.ArgumentParser:
             "extract / write / verify-refs separately."
         ),
     )
-    p_run.add_argument("--doi", required=True, help="eLife paper DOI.")
+    p_run.add_argument("--doi", default=None, help="Paper DOI. Optional when --pdf-path is given.")
+    p_run.add_argument("--pdf-path", default=None, help="Path to a local PDF.")
     p_run.add_argument(
         "--input-format", choices=["auto", "jats", "pdf"], default="auto",
         help="Input source (default: auto = jats for eLife DOIs).",

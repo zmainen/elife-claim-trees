@@ -22,7 +22,7 @@ DEFAULT_MODEL_CAPTION = "claude-sonnet-4-6"
 DEFAULT_MODEL_STRUCTURE = "claude-sonnet-4-6"
 DEFAULT_MODEL_RECONCILE = "claude-opus-4-6"
 
-# ── Vertex AI defaults (HAAK canonical: cr-mainen / europe-west1) ────────
+# ── Vertex AI defaults (HaaK canonical: cr-mainen / europe-west1) ────────
 DEFAULT_VERTEX_PROJECT = "cr-mainen"
 DEFAULT_VERTEX_REGION = "europe-west1"
 
@@ -32,6 +32,32 @@ DEFAULT_VERTEX_REGION = "europe-west1"
 # structure-reader.md). Variants live at prompts/<variant>/<role>.md.
 
 DEFAULT_PROMPT_VARIANT = "default"
+
+# ── Backend routing ──────────────────────────────────────────────────────
+# "vertex" and "anthropic" call the Anthropic SDK directly. Any other value
+# is passed to litellm, whose provider prefix is looked up below — so
+# OpenRouter, OpenAI and Gemini need no code of their own.
+
+DEFAULT_BACKEND = "vertex"
+
+LITELLM_PREFIX = {
+    "openrouter": "openrouter",
+    "openai": "openai",
+    "google": "gemini",
+    "groq": "groq",
+    "together": "together_ai",
+    "deepseek": "deepseek",
+}
+
+BACKEND_ENV_KEY = {
+    "anthropic": "ANTHROPIC_API_KEY",
+    "openrouter": "OPENROUTER_API_KEY",
+    "openai": "OPENAI_API_KEY",
+    "google": "GEMINI_API_KEY",
+    "groq": "GROQ_API_KEY",
+    "together": "TOGETHER_API_KEY",
+    "deepseek": "DEEPSEEK_API_KEY",
+}
 
 
 @dataclass
@@ -50,7 +76,10 @@ class Config:
 
     # Direct Anthropic API (alternative to Vertex)
     anthropic_api_key: str | None = None
-    backend: str = "vertex"  # "vertex" or "anthropic"
+    # "vertex" and "anthropic" use the Anthropic SDK directly; every other
+    # value ("openrouter", "openai", "google", …) is routed through litellm.
+    backend: str = DEFAULT_BACKEND
+    api_key: str | None = None
 
     # Paths (resolved at runtime, not import-time)
     corpus_dir: Path | None = None
@@ -65,6 +94,7 @@ class Config:
     # Behavioral knobs
     max_claims: int | None = None
     retry_on_thin: bool = True
+    infer_edges: bool = True
 
     # Provided fields, populated by from_args()
     extras: dict = field(default_factory=dict)
@@ -96,6 +126,23 @@ class Config:
             or DEFAULT_MODEL_RECONCILE
         )
 
+        # Backend selection. Anything other than "vertex"/"anthropic" is routed
+        # through litellm, so openrouter/openai/google work without new code.
+        cfg.backend = (
+            getattr(args, "backend", None)
+            or os.environ.get("ELIFE_EXTRACT_BACKEND")
+            or DEFAULT_BACKEND
+        )
+        cfg.api_key = (
+            getattr(args, "api_key", None)
+            or os.environ.get(BACKEND_ENV_KEY.get(cfg.backend, ""))
+            or None
+        )
+        # Kept for backwards compatibility with the anthropic-only path.
+        cfg.anthropic_api_key = cfg.anthropic_api_key or (
+            cfg.api_key if cfg.backend == "anthropic" else None
+        )
+
         # Vertex AI
         cfg.vertex_project = (
             getattr(args, "vertex_project", None)
@@ -112,6 +159,8 @@ class Config:
         corpus = getattr(args, "corpus_dir", None) or os.environ.get("ELIFE_CORPUS_DIR")
         if corpus:
             cfg.corpus_dir = Path(corpus).expanduser().resolve()
+
+        cfg.infer_edges = not getattr(args, "no_infer_edges", False)
 
         # Default prompts dir is the package's sibling prompts/ directory
         cfg.prompts_dir = Path(__file__).resolve().parent.parent / "prompts"

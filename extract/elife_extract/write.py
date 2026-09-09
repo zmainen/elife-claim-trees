@@ -1,15 +1,10 @@
 """Steps 6-7 — Dependency mapping and claim file emission.
 
-Step 6 — Dependency mapping: typed edges between claims (14 edge types
-from `docs/method.md` § 4.3). The methodology calls for this to be done
-by the analyst at write time, with the analyst's judgment about which
-claims `requires`, `supports`, `entails` etc. which others. The CLI's
-contribution at this step is mechanical scaffolding — for hypothesis
-claims, scaffold an `entails:` edge list to predictions; for prediction
-claims, scaffold `derived-from:` and `tests:` edges; for empirical claims,
-leave the edge sections empty for the analyst to fill in. A future LLM
-pass can suggest edges; for now we ship the scaffolding with empty lists
-and a `# TODO` marker the analyst can fill in.
+Step 6 — Dependency mapping: typed edges between claims (the edge inventory
+in `docs/method.md` § 4.3). This used to be left to the analyst, with the
+writer emitting `belongings: []` and a TODO. It is now inferred by a model
+call — see `edges.py`, which carries the vocabulary mapping and the rule for
+where each relation type is stored. Pass --no-infer-edges to skip it.
 
 Step 7 — Write claim files: generate UUID4 per claim, derive a slug, and
 write each claim as <corpus_dir>/<paper_slug>/<claim_slug>.md per the
@@ -29,7 +24,13 @@ from pathlib import Path
 import yaml
 
 from .config import Config
+from .prepare import _ascii_fold
+from .edges import edges_for_slug
 from .schema import DraftClaimTable, ReconciledClaim
+from .oxa import (
+    Claim, ClaimGraph, ClaimRelation, ClaimMetadata, SourceSpan,
+    Document, text_node, claim_from_reconciled, build_document, EDGE_MAP,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +52,7 @@ def derive_claim_slug(claim_text: str, panel: str | None = None) -> str:
         "these", "those", "their", "its", "it", "they", "there",
         "approximately", "approximately,", "almost", "nearly",
     }
-    words = re.findall(r"\b[A-Za-z][A-Za-z\-]+\b", claim_text)
+    words = re.findall(r"\b[A-Za-z][A-Za-z\-]+\b", _ascii_fold(claim_text))
     keep = []
     for w in words:
         wl = w.lower()
@@ -96,25 +97,34 @@ def _claim_frontmatter(
     slug: str,
     paper_slug: str,
     paper_doi: str,
+    edges: list[dict] | None = None,
 ) -> dict:
     """Build the YAML frontmatter dict for one claim."""
     today = date.today().isoformat()
     fm: dict = {
         "uuid": str(uuid.uuid4()),
         "slug": slug,
-        "doi": "~",  # placeholder per § 4.1 — claims aren't yet citable units
+        # None serialises as YAML null, matching curated files. Writing the
+        # string "~" produced a quoted '~' that parsers read as text.
+        "doi": None,  # per § 4.1 — claims aren't yet citable units
         "claim": claim.claim,
         "claim-type": claim.claim_type,
         "role": claim.role,
         "concepts": [],  # § 4.1 — analyst fills in at review or in a later pass
         "priority": today,
-        "epistemic": "tentative",  # default; analyst sets per § 4.1 vocabulary
+        # Roles that are not empirical carry their role as the epistemic
+        # value in the curated corpus; the rest start unassessed.
+        "epistemic": (
+            claim.role if claim.role in ("hypothesis", "prediction") else "tentative"
+        ),
     }
 
-    # Edge sections — empty by default (Step 6 pass deferred). Include
-    # placeholder keys for the canonical edges so the analyst sees the
-    # slots and can fill them in.
-    fm["belongings"] = []  # general belongs-to edges
+    # Step 6 — dependency mapping. `requires`/`supports` live under
+    # `belongings:`; every other relation is a top-level key. See
+    # edges.BELONGINGS_RELATIONS for why.
+    top, belongings = edges_for_slug(edges or [], slug)
+    fm.update(top)
+    fm["belongings"] = belongings
 
     # Assertions block — link the claim to its panel and source paper
     if claim.panel:
@@ -220,6 +230,66 @@ def _format_paper_index(
     return f"---\n{fm_yaml}---\n\n" + "\n".join(body)
 
 
+# ── OXA write path ───────────────────────────────────────────────────────
+
+
+def _reconciled_to_oxa_claim(
+    claim: ReconciledClaim,
+    slug: str,
+) -> Claim:
+    """Convert a ReconciledClaim to an OXA Claim node."""
+    return claim_from_reconciled(
+        claim_text=claim.claim,
+        slug=slug,
+        role=claim.role,
+        panel=claim.panel,
+        epistemic=None,  # ReconciledClaim doesn't carry epistemic strength
+        confidence=claim.confidence,
+        sources=[str(s) for s in claim.sources],
+        evidence_by_agent={str(k): v for k, v in claim.evidence_by_agent.items()},
+    )
+
+
+def write_oxa_document(draft: DraftClaimTable, cfg: Config) -> Path:
+    """Emit an OXA Document JSON file for a paper's claims.
+
+    Produces <corpus_dir>/<paper_slug>.oxa.json containing a Document
+    with a ClaimGraph of Claim nodes. This is the OXA-native output
+    path — the source of truth for downstream tools.
+
+    Also writes per-claim YAML markdown files for human browsing
+    (backward compatibility with the existing corpus format).
+    """
+    if cfg.corpus_dir is None:
+        raise ValueError("corpus_dir not set; cannot write OXA document")
+
+    slugs = _unique_slugs(draft.claims)
+
+    # Convert each reconciled claim to an OXA Claim node
+    oxa_claims = []
+    for claim, slug in zip(draft.claims, slugs):
+        oxa_claims.append(_reconciled_to_oxa_claim(claim, slug))
+
+    # Build the OXA Document
+    doc = build_document(
+        paper_slug=draft.paper_slug,
+        paper_doi=draft.paper_doi,
+        paper_title=draft.paper_title,
+        claims=oxa_claims,
+    )
+
+    # Write the OXA JSON
+    cfg.corpus_dir.mkdir(parents=True, exist_ok=True)
+    oxa_path = cfg.corpus_dir / f"{draft.paper_slug}.oxa.json"
+
+    import json
+    out = doc.model_dump(mode="json", exclude_none=True)
+    oxa_path.write_text(json.dumps(out, indent=2, ensure_ascii=False))
+
+    logger.info("OXA document: %s (%d claims)", oxa_path, len(oxa_claims))
+    return oxa_path
+
+
 # ── Top-level write ──────────────────────────────────────────────────────
 
 
@@ -244,10 +314,20 @@ def write_claim_files(draft: DraftClaimTable, cfg: Config) -> list[Path]:
     slugs = _unique_slugs(draft.claims)
     written: list[Path] = []
 
+    # Step 6 — infer the edges between claims before writing any of them,
+    # since an edge names two slugs and both must already be assigned.
+    edges: list[dict] = []
+    if getattr(cfg, "infer_edges", True):
+        from .edges import infer_edges
+        try:
+            edges = infer_edges(draft, slugs, cfg)
+        except Exception as e:                                   # noqa: BLE001
+            logger.warning("edge inference failed (%s); writing claims without edges", e)
+
     # Per-claim files
     for claim, slug in zip(draft.claims, slugs):
         fm = _claim_frontmatter(
-            claim, slug, draft.paper_slug, draft.paper_doi
+            claim, slug, draft.paper_slug, draft.paper_doi, edges
         )
         body = _claim_body(claim)
         text = _format_claim_file(fm, body)

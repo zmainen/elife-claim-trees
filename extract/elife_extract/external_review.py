@@ -22,7 +22,7 @@ from __future__ import annotations
 import json
 import logging
 
-from .agents import get_client, parse_json_response
+from .agents import parse_json_response, stream_text
 from .config import Config
 from .prepare import PreparedPaper
 from .schema import DraftClaimTable
@@ -94,21 +94,18 @@ def external_review(
         f"JSON only — no surrounding prose."
     )
 
-    client = get_client(cfg)
     logger.info(
         "external review: paper=%s claims=%d via %s",
         paper.paper_slug, len(draft.claims), cfg.model_reconcile,
     )
-    text_chunks: list[str] = []
-    with client.messages.stream(
-        model=cfg.model_reconcile,  # use the same Opus model as reconciliation
-        max_tokens=32768,
+    raw = stream_text(
+        cfg,
+        model=cfg.model_reconcile,  # same model class as reconciliation
         system=system_prompt,
-        messages=[{"role": "user", "content": user_message}],
-    ) as stream:
-        for chunk in stream.text_stream:
-            text_chunks.append(chunk)
-    raw = "".join(text_chunks)
+        user=user_message,
+        max_tokens=32768,
+        label="external-reviewer",
+    )
 
     parsed = parse_json_response(raw)
     if not isinstance(parsed, dict):

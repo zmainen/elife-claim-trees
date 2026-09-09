@@ -1,0 +1,1378 @@
+{
+  "@context": [
+    "https://mira.science/schema/context.jsonld",
+    {
+      "haak": "https://haak.world/schema/claim#"
+    }
+  ],
+  "@graph": [
+    {
+      "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that a deep-learning segmentation pipeline (UNet/UNETR ensemble) coupled with cross-time-point registration, vertex-wise radius estimation, and graph-theoretic network analysis can produce reliable, automated, network-level measurements of neurovascular coupling in volumetric two-photon fluorescence microscopy of cerebral microcirculation — measurements that prior point-measurement and manual-segmentation approaches could not yield at the scale of hundreds of interconnected vessels per FOV?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that optogenetic activation of cortical pyramidal neurons elicits coordinated, network-level vascular responses that cannot be predicted from individual-vessel measurements alone: dilations and constrictions are spatially organised relative to active neurons, capillary responses correlate with their network neighbours' responses, and overall capillary network efficiency is modulated by stimulation?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd",
+      "@type": "mira:Evidence",
+      "schema:name": "artery-dilates-venule-unchanged-at-low-power",
+      "schema:description": "At 1.1 mW/mm² 458 nm stimulation, a sample artery dilated 1.33±0.86 µm (p<1e-4) and a sample capillary dilated 0.42±0.39 µm (p<1e-4), while a sample venule showed no significant radius change (p=0.22), demonstrating vessel-type heterogeneity in optogenetic neurovascular responses.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "vertex-wise radius tracking; Mann-Whitney U test; single image stack example"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        },
+        {
+          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+        },
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig7A",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
+      "@type": "mira:Evidence",
+      "schema:name": "baseline-intra-vessel-radius-varies-24pct",
+      "schema:description": "Capillary radius varies along vessel length by 24±28% of the mean resting radius across baseline frames, such that point measurements of vessel caliber cannot accurately estimate microvessel volume changes.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "vertex-wise radius tracking along centerline, 2PFM, n=17 mice"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        },
+        {
+          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+        },
+        {
+          "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+        },
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        }
+      ],
+      "mira:opposes": [
+        {
+          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+        },
+        {
+          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+          },
+          {
+            "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+          }
+        ],
+        "rules-out": [
+          {
+            "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          }
+        ],
+        "contradicts": [
+          {
+            "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig7",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "@type": "mira:Evidence",
+      "schema:name": "blue-light-dilations-exceed-green-control",
+      "schema:description": "Capillary dilations following 458 nm ChR2 stimulation (0.90±0.93 µm at 1.1 mW/mm²; 0.90±0.78 µm at 4.3 mW/mm²) are significantly larger than those following 552 nm control illumination (0.58±0.92 µm; p<1e-4), confirming that the vascular responses are ChR2-mediated rather than photothermal artifacts.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mixed-effects model on responder vessel radius changes; Wilcoxon signed-rank"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        },
+        {
+          "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+        },
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        },
+        {
+          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+        },
+        {
+          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        }
+      ],
+      "haak:role": "control",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          },
+          {
+            "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+          },
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          },
+          {
+            "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+          },
+          {
+            "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig8A",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "@type": "mira:Evidence",
+      "schema:name": "capillary-efficiency-increases-4pct",
+      "schema:description": "Capillary network efficiency shows a median 4% increase during peak optogenetic stimulation, consistent with coordinated vasodilation improving local blood flow distribution.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "graph-theoretic network analysis"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        },
+        {
+          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+        },
+        {
+          "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+          },
+          {
+            "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
+          },
+          {
+            "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig9C",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "@type": "mira:Evidence",
+      "schema:name": "constrictions-deeper-than-dilations",
+      "schema:description": "Constricting capillaries are located on average 37±179 µm deeper in cortex than dilating capillaries following 458 nm optogenetic stimulation at 4.3 mW/mm² (p<1e-4), with dilators tending toward the cortical surface across all stimulation conditions.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "vertex-wise cortical depth from cortical surface; mixed-effects model"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        },
+        {
+          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig8E",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "@type": "mira:Evidence",
+      "schema:name": "dilations-nearer-neurons-than-constrictions",
+      "schema:description": "Following ChR2 optogenetic activation at 458 nm, capillary dilations occur on average 16.1±14.3 µm from the nearest labeled pyramidal neuron while constrictions occur 21.9±14.6 µm away (4.3 mW/mm²; p<1e-4), and this spatial segregation is absent under control 552 nm illumination.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "vertex-wise distance to YFP-labeled neuron; mixed-effects model; Wilcoxon test"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        },
+        {
+          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+        },
+        {
+          "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+        },
+        {
+          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+          },
+          {
+            "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig8D",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "@type": "mira:Claim",
+      "schema:name": "dl-model-scope-single-pipeline",
+      "schema:description": "All neurovascular coupling metrics are derived from a single integrated deep learning pipeline (segmentation → registration → graph analysis); the segmentation model requires GPU inference and was trained on data from one imaging preparation (Thy1-ChR2-YFP mice, 6-12 months), so generalization to other preparations is not demonstrated in this paper.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "haak:role": "scope",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
+          },
+          {
+            "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+          },
+          {
+            "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc"
+          },
+          {
+            "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
+          },
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          },
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          },
+          {
+            "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+          },
+          {
+            "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+          },
+          {
+            "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1 (architecture)",
+      "haak:analysis": "code inspection"
+    },
+    {
+      "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-dl-pipeline-enables-network-nvc",
+      "schema:description": "A deep-learning segmentation pipeline (UNet/UNETR ensemble) coupled with cross-time-point registration, vertex-wise radius estimation, and graph-theoretic network analysis can produce reliable, automated, network-level measurements of neurovascular coupling in volumetric two-photon fluorescence microscopy of cerebral microcirculation — measurements that prior point-measurement and manual-segmentation approaches could not yield at the scale of hundreds of interconnected vessels per FOV. The performance ceiling of conventional baselines (ilastik, single-time-point segmentation, point-caliber tracking) is set by their inability to handle volumetric SNR, transient RBC plugs, and within-vessel radius heterogeneity — not by an intrinsic limit of the imaging modality.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
+          },
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-network-level-nvc-coordination",
+      "schema:description": "Optogenetic activation of cortical pyramidal neurons elicits coordinated, network-level vascular responses that cannot be predicted from individual-vessel measurements alone: dilations and constrictions are spatially organised relative to active neurons, capillary responses correlate with their network neighbours' responses, and overall capillary network efficiency is modulated by stimulation. Prior point-measurement studies that interrogate vessels in isolation systematically miss this coordination because they cannot resolve within-vessel radius heterogeneity, between-vessel network topology, or stimulation-evoked changes in graph-level metrics across hundreds of interconnected vessels.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          },
+          {
+            "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "@type": "mira:Evidence",
+      "schema:name": "network-assortativity-increases-stimulation",
+      "schema:description": "Vascular network assortativity increases by 152 ± 65% at 4.3 mW/mm² optogenetic stimulation relative to control, indicating that high-degree vessels preferentially couple with high-degree vessels during neurovascular responses.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "graph-theoretic network analysis"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        },
+        {
+          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+        },
+        {
+          "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+          },
+          {
+            "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
+          },
+          {
+            "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig9B",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58",
+      "@type": "mira:Evidence",
+      "schema:name": "novas3d-generalizes-qualitatively-ood",
+      "schema:description": "The NOVAS3D segmentation model produces qualitatively reasonable vessel segmentations on out-of-distribution data including a different mouse strain (C57BL/6), a different species (Fischer rat), and a different microscope modality (light-sheet fluorescence microscopy, Miltenyi UltraMicroscope Blaze), without retraining.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+        },
+        {
+          "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "confirms": [
+          {
+            "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "app1fig12, app1fig13"
+    },
+    {
+      "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "@type": "mira:Evidence",
+      "schema:name": "novas3d-outperforms-ilastik",
+      "schema:description": "The NOVAS3D deep learning segmentation pipeline (UNet/UNETR) achieves significantly higher Dice scores and precision/recall for volumetric vessel segmentation than the baseline ilastik classifier on the deposited two-photon microscopy test dataset.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "deep learning benchmark comparison"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
+        },
+        {
+          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+        },
+        {
+          "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
+        }
+      ],
+      "haak:role": "control",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
+          }
+        ],
+        "enables-method": [
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          },
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          },
+          {
+            "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+          },
+          {
+            "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3, fig4",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "@type": "mira:Claim",
+      "schema:name": "novas3d-single-preparation-scope",
+      "schema:description": "The NOVAS3D segmentation model was trained and quantitatively evaluated exclusively on data from Thy1-ChR2-YFP mice (line 18, 6–12 months, Texas Red vascular labeling, cranial window, isoflurane anesthesia); quantitative performance metrics are not reported for any other preparation, strain, species, or imaging modality.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
+          },
+          {
+            "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+          },
+          {
+            "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc"
+          },
+          {
+            "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
+          },
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          },
+          {
+            "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0"
+          },
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          },
+          {
+            "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+          },
+          {
+            "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
+          },
+          {
+            "@id": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd"
+          },
+          {
+            "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+          },
+          {
+            "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+          },
+          {
+            "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1 (architecture); methods section",
+      "haak:analysis": "code inspection"
+    },
+    {
+      "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-pipeline-outperforms-baselines",
+      "schema:description": "If the DL segmentation + registration + radius-estimation stack genuinely improves on conventional baselines, then (a) the UNet/UNETR ensemble should significantly outperform ilastik on volumetric segmentation metrics (HD95, Dice, precision), (b) cross-time-point registration combined with mask union should recover substantially more vessel segments per FOV than any single time-point segmentation, and (c) the boundary-detection radius estimator should recover known simulated radii with high R² and remain stable to physiologically realistic noise levels.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-pipeline-reveals-network-coordination",
+      "schema:description": "If the pipeline can resolve network-level neurovascular coupling and if optogenetic activation drives coordinated vascular responses, then in Thy1-ChR2-YFP mice under 458 nm photostimulation we should observe (a) a spatial gradient of dilations vs constrictions relative to labelled neurons, (b) a network-wide rise in assortativity (high-degree vessels coupling with high-degree vessels), (c) a measurable change in capillary network efficiency, and (d) absence of these patterns under 552 nm control illumination and in wild-type mice — none of which would be visible from point-caliber measurements alone.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+          },
+          {
+            "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "@type": "mira:Protocol",
+      "schema:name": "radius-estimation-r2-0p68",
+      "schema:description": "The pipeline's boundary-detection radius estimation achieves R²=0.68 against ground-truth simulated radii across >100,000 simulations spanning 0.5×–2× dilation/constriction, and remains stable under Gaussian noise up to a standard deviation of 200 signal units (image range 0–1023 SU).",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
+        },
+        {
+          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+        },
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        },
+        {
+          "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        },
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        }
+      ],
+      "haak:role": "methodological",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
+          }
+        ],
+        "enables-method": [
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          },
+          {
+            "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+          },
+          {
+            "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          },
+          {
+            "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0"
+          },
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          },
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
+      "@type": "mira:Protocol",
+      "schema:name": "registration-doubles-vessel-count",
+      "schema:description": "Rigid registration across time points and union of segmentation masks increases the number of identified vessel segments per FOV from 241±174 (single time point) to 412±281 (union across all time points; 507×507×250 µm, n=107 FOVs), while reducing mean squared error between acquisitions from 1306±747 to 0.008±0.003 signal units.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
+        },
+        {
+          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+        },
+        {
+          "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
+        }
+      ],
+      "haak:role": "methodological",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
+          }
+        ],
+        "enables-method": [
+          {
+            "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+          },
+          {
+            "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "@type": "mira:Claim",
+      "schema:name": "responder-threshold-2sd-untested",
+      "schema:description": "Vessels are classified as responders if their radius change exceeds twice the baseline standard deviation (2×σ); this threshold is not sensitivity-tested in the main analysis, though an alternative 10% threshold is shown in Appendix 1—figure 14 with qualitatively similar results.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          },
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          },
+          {
+            "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+          },
+          {
+            "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+          },
+          {
+            "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+          },
+          {
+            "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "app1fig14",
+      "haak:analysis": "code inspection"
+    },
+    {
+      "@id": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "@type": "mira:Claim",
+      "schema:name": "scope-pipeline-and-application-paper",
+      "schema:description": "All findings are scoped to a method-paper-with-application envelope: a single deep-learning pipeline (UNet/UNETR ensemble + ANTsPy registration + boundary-detection radius + NetworkX graph analysis) trained and quantitatively benchmarked on Thy1-ChR2-EYFP mice (line 18, 6–12 months, Texas Red vascular labelling, cranial window over S1FL, isoflurane for structural scan, alpha-chloralose for functional scan); the in vivo demonstration uses the same single preparation (n=17 mice for biology, n=4 C57BL/6J wild-type mice for negative control). Quantitative segmentation metrics are reported for nine test images from six held-out mice; out-of-distribution generalisation (C57BL/6, Fischer rat, light-sheet) is shown only qualitatively. The paper does not test the pipeline on awake-behaving preparations, non-mammalian species, disease models, or alternative vascular labels; it does not test alternative responder thresholds beyond a single appendix supplement.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
+          },
+          {
+            "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+          },
+          {
+            "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc"
+          },
+          {
+            "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
+          },
+          {
+            "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+          },
+          {
+            "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0"
+          },
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          },
+          {
+            "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+          },
+          {
+            "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
+          },
+          {
+            "@id": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd"
+          },
+          {
+            "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+          },
+          {
+            "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+          },
+          {
+            "@id": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181"
+          },
+          {
+            "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-04-20",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "scope"
+    },
+    {
+      "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+      "@type": "mira:Claim",
+      "schema:name": "synthesis-individual-vessel-measurements-insufficient",
+      "schema:description": "Interrogating individual vessels in isolation is insufficient to predict how blood flow is modulated across the cerebral microvascular network. The paper's combined evidence — within-vessel radius heterogeneity (24 ± 28% along vessel length at baseline), the spatial segregation of dilations and constrictions relative to active neurons, the network-wide rise in assortativity during optogenetic stimulation, and the modulation of capillary network efficiency — together argue that point-caliber and single-vessel approaches systematically miss the coordinated, graph-level structure of functional hyperemia.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "haak:role": "synthesis",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-04-20",
+          "haak:status": "N/A",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "synthesis (Discussion)"
+    },
+    {
+      "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
+      "@type": "mira:Evidence",
+      "schema:name": "unetr-outperforms-ilastik-hd95",
+      "schema:description": "UNETR ensemble segmentation shows significantly better HD95 surface distance than ilastik for both vessel and neuron channels (p<0.05 Wilcoxon signed-rank), while ilastik over-segments vessels with high recall (0.89±0.19) but low precision (0.37±0.33), evaluated on nine test images (507×507×250 µm) from six held-out mice.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "Wilcoxon signed-rank test on segmentation metrics; 9 test images, 6 mice"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
+        },
+        {
+          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+        },
+        {
+          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+      },
+      "haak:role": "control",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "@type": "mira:Evidence",
+      "schema:name": "vessel-radius-heterogeneity-stimulation",
+      "schema:description": "Vessel radius adjustments during optogenetic stimulation show 24 ± 28% variation relative to resting diameter, with dilations averaging 16.1 ± 14.3 µm and constrictions averaging 21.9 ± 14.6 µm relative to nearby neurons.",
+      "mira:epistemicStatus": "mira:Claim",
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "vertex-level vessel tracking, 2P microscopy"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        },
+        {
+          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
+          },
+          {
+            "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig6",
+      "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
+      "@type": "mira:Evidence",
+      "schema:name": "wt-controls-no-blue-green-difference",
+      "schema:description": "Wild-type C57BL/6J mice (n=4) show no statistically distinguishable capillary radius distributions following blue (458 nm) versus green (552 nm) photostimulation, confirming that vascular responses in Thy1-ChR2 mice are ChR2-specific and not attributable to photothermal or non-specific light effects.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://doi.org/10.20383/103.01588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "Wilcoxon test on capillary radius distributions; n=4 C57BL/6J mice"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        },
+        {
+          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+        },
+        {
+          "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        },
+        {
+          "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+        },
+        {
+          "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        }
+      ],
+      "haak:role": "control",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "tests": [
+          {
+            "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+          }
+        ],
+        "confirms": [
+          {
+            "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
+          },
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          },
+          {
+            "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
+          },
+          {
+            "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "app1fig9",
+      "haak:analysis": "Tutorial.ipynb"
+    }
+  ]
+}

@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 import logging
 
-from .agents import get_client, load_prompt, parse_json_response
+from .agents import load_prompt, parse_json_response, stream_text
 from .config import Config
 from .schema import AgentExtraction, DraftClaimTable, ReconciledClaim
 
@@ -91,7 +91,6 @@ def reconcile(
         f"draft claim table per the schema in your instructions. Return JSON only."
     )
 
-    client = get_client(cfg)
     logger.info(
         "reconciling %d (results) + %d (caption) + %d (structure) claims via %s",
         len(results.claims),
@@ -99,16 +98,14 @@ def reconcile(
         len(structure.claims),
         cfg.model_reconcile,
     )
-    text_chunks: list[str] = []
-    with client.messages.stream(
+    raw = stream_text(
+        cfg,
         model=cfg.model_reconcile,
-        max_tokens=32768,  # reconciliation output can be large; budget headroom
         system=system_prompt,
-        messages=[{"role": "user", "content": user_message}],
-    ) as stream:
-        for text in stream.text_stream:
-            text_chunks.append(text)
-    raw = "".join(text_chunks)
+        user=user_message,
+        max_tokens=32768,  # reconciliation output can be large; budget headroom
+        label="reconciler",
+    )
     parsed = parse_json_response(raw)
     if not isinstance(parsed, dict):
         raise ValueError(
