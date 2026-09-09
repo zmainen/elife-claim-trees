@@ -141,6 +141,71 @@ def _resolve(ref, slugs: list[str]) -> str | None:
     return None
 
 
+def _parse_edge_array(raw: str) -> list | None:
+    """Read the model's edge array, salvaging one that was cut off mid-stream.
+
+    A run that hits the token ceiling stops mid-array, so there is no closing
+    bracket and a `\\[.*\\]` search finds nothing at all. Discarding every edge
+    because the last one was truncated is the wrong trade: the edges before the
+    cut are complete, well-formed, and exactly as good as they would have been
+    had the model stopped one object earlier. This happened on a live Gädeke
+    run — six minutes of streaming, 48 claims, and zero edges written.
+
+    Salvage is deliberately conservative: it takes only whole objects, by
+    walking the array and tracking brace depth outside strings, so a half-
+    written edge is dropped rather than guessed at.
+    """
+    start = raw.find("[")
+    if start == -1:
+        logger.warning("edge inference returned no JSON array; no edges written")
+        return None
+
+    end = raw.rfind("]")
+    if end > start:
+        try:
+            return json.loads(raw[start:end + 1])
+        except json.JSONDecodeError:
+            pass    # fall through and salvage what is whole
+
+    objs: list = []
+    depth = 0
+    obj_start = -1
+    in_str = False
+    esc = False
+    for i in range(start + 1, len(raw)):
+        ch = raw[i]
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+        elif ch == "{":
+            if depth == 0:
+                obj_start = i
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0 and obj_start != -1:
+                try:
+                    objs.append(json.loads(raw[obj_start:i + 1]))
+                except json.JSONDecodeError:
+                    pass
+                obj_start = -1
+
+    if not objs:
+        logger.warning("edge inference produced no parseable edges; none written")
+        return None
+    logger.warning(
+        "edge inference output was truncated or malformed; salvaged %d complete edge(s). "
+        "Raise the token budget if this recurs.", len(objs))
+    return objs
+
+
 def infer_edges(
     draft: DraftClaimTable, slugs: list[str], cfg: Config
 ) -> list[dict]:
@@ -157,22 +222,26 @@ def infer_edges(
         "Refer to claims by number. Return JSON array only."
     )
 
+    # Budget the call to what the output can actually be. An edge is a small JSON object —
+    # two claim numbers and a relation name, ~40 tokens — and a paper has at most a few edges
+    # per claim. Taking the package default of 32768 asks for roughly twenty times what this
+    # call can emit, which buys nothing and costs real failures: providers that reserve the
+    # requested budget against a credit balance reject the request outright rather than
+    # charging for what it uses. That is how edge inference died on a live Gädeke run —
+    # HTTP 402, "you requested up to 16384 tokens, but can only afford 14385" — and lost the
+    # entails/derived-from spine while every other stage succeeded.
+    budget = max(8192, min(32768, 400 * max(len(slugs), 1)))
     raw = stream_text(
         cfg,
         model=cfg.model_reconcile,
         system=EDGE_PROMPT,
         user=user,
+        max_tokens=budget,
         label="edge-inference",
     )
 
-    match = re.search(r"\[.*\]", raw, re.DOTALL)
-    if not match:
-        logger.warning("edge inference returned no JSON array; no edges written")
-        return []
-    try:
-        parsed = json.loads(match.group(0))
-    except json.JSONDecodeError:
-        logger.warning("edge inference JSON parse failed; no edges written")
+    parsed = _parse_edge_array(raw)
+    if parsed is None:
         return []
 
     edges: list[dict] = []
