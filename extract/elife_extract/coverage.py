@@ -187,6 +187,115 @@ def assess(
     return rep
 
 
+# ── Unit-level coverage ──────────────────────────────────────────────────
+# The section above takes its denominator from two inventories the paper
+# publishes about itself: its figure panels and the statistics a regex can find.
+# Both are useful and neither is exhaustive — a statistic the pattern misses is
+# invisible on both sides, so it cannot even be counted as missed.
+#
+# This section takes the denominator from the text instead. `segment` cuts the
+# whole paper into sentences, mechanically; every sentence is then either
+# accounted for by some claim or it is not, and "not" is a fact about the paper
+# rather than about a pattern.
+#
+# What counts as "accounted for" is deliberately narrow and mechanical: a claim
+# states the same statistic, or names the same panel. Nothing here tries to
+# judge whether a claim means the same thing as a sentence — that is the human's
+# job, and a model that guessed would hide exactly the sentences worth looking
+# at. So an unaccounted sentence is a *candidate* orphan, not a verdict.
+
+
+@dataclass
+class UnitCoverage:
+    paper_slug: str
+    units: list = field(default_factory=list)          # every unit, in order
+    accounted: list = field(default_factory=list)      # (unit, [slugs])
+    orphans: list = field(default_factory=list)        # units carrying a result, unmatched
+    textual: list = field(default_factory=list)        # units carrying no result at all
+
+    @property
+    def obligations(self) -> int:
+        """Units carrying something a claim could be expected to account for."""
+        return len(self.accounted) + len(self.orphans)
+
+    @property
+    def pct(self) -> float:
+        n = self.obligations
+        return 100.0 * len(self.accounted) / n if n else 100.0
+
+
+def _claim_index(claims: list[dict]) -> tuple[dict, dict]:
+    """statistic → slugs, and panel-id → slugs, over the whole claim set."""
+    from .segment import STAT_RE, plain
+    by_stat: dict[str, list[str]] = {}
+    by_panel: dict[str, list[str]] = {}
+    for c in claims:
+        slug = c.get("slug") or ""
+        for m in STAT_RE.finditer(plain(c.get("claim") or "")):
+            by_stat.setdefault(_norm(m.group(0)), []).append(slug)
+        for pid in _claim_panel_ids(c.get("panel")):
+            by_panel.setdefault(pid, []).append(slug)
+    return by_stat, by_panel
+
+
+def assess_units(paper: PreparedPaper, claims: list[dict],
+                 *, include_methods: bool = False) -> UnitCoverage:
+    """Cut the paper into sentences and ask which ones a claim accounts for.
+
+    Methods are excluded by default: a methods sentence describes procedure, and
+    the corpus does not claim procedure. Pass include_methods=True to see them
+    counted — the measurement does not decide the policy, it just reports it.
+    """
+    from .segment import segment
+
+    rep = UnitCoverage(paper_slug=paper.paper_slug)
+    by_stat, by_panel = _claim_index(claims)
+    rep.units = segment(paper, include_methods=include_methods)
+
+    for u in rep.units:
+        hits: list[str] = []
+        for s in u.stats:
+            for slug in by_stat.get(_norm(s), []):
+                if slug not in hits:
+                    hits.append(slug)
+        for p in u.panels:
+            for pid in _claim_panel_ids(p):
+                for slug in by_panel.get(pid, []):
+                    if slug not in hits:
+                        hits.append(slug)
+        if not (u.has_result or u.panels):
+            rep.textual.append(u)
+        elif hits:
+            rep.accounted.append((u, hits))
+        else:
+            rep.orphans.append(u)
+    return rep
+
+
+def render_units(rep: UnitCoverage, *, limit: int = 20) -> str:
+    from collections import Counter
+    by_section = Counter(u.section for u in rep.units)
+    L = [f"Unit coverage — {rep.paper_slug}",
+         f"  {len(rep.units)} units segmented from the paper "
+         f"({', '.join(f'{k}={v}' for k, v in by_section.items())})",
+         f"  {rep.obligations} carry a statistic or name a panel; "
+         f"{len(rep.textual)} are prose that asserts no result",
+         f"  accounted for by a claim: {len(rep.accounted)}/{rep.obligations} "
+         f"({rep.pct:.0f}%)"]
+    if rep.orphans:
+        L.append(f"\n  NOT ACCOUNTED FOR ({len(rep.orphans)}) — each carries a result that no "
+                 f"claim states:")
+        for u in rep.orphans[:limit]:
+            L.append(f"    [{u.uid}] {u.text[:110]}")
+            if u.stats:
+                L.append(f"           stats: {', '.join(u.stats[:6])}")
+        if len(rep.orphans) > limit:
+            L.append(f"    … and {len(rep.orphans) - limit} more")
+    else:
+        L.append("\n  every unit carrying a result is accounted for")
+    return "\n".join(L)
+
+
 def render(rep: CoverageReport, *, limit: int = 12) -> str:
     """A human-readable orphan report."""
     L = [f"Coverage — {rep.paper_slug}",

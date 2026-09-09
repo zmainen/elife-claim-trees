@@ -315,6 +315,112 @@ def cmd_verify_refs(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_coverage(args: argparse.Namespace) -> int:
+    """Exhaustive coverage: what in the paper does no claim account for?
+
+    No model calls, so it is fast and free, and it can be run on every paper in
+    the corpus as a gate. It answers a different question from `evaluate`:
+    evaluate scores agreement between two claim sets, which says nothing about
+    what neither of them mentioned. You can score 100% agreement on a third of a
+    paper. This takes its denominator from the paper itself.
+    """
+    import json
+    import logging
+    from .prepare import prepare
+    from .coverage import assess, render, assess_units, render_units
+
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+                        datefmt="%H:%M:%S")
+
+    pdf_path = getattr(args, "pdf_path", None)
+    if not args.doi and not pdf_path:
+        print("error: at least one of --doi or --pdf-path is required", file=sys.stderr)
+        return 2
+    try:
+        paper = prepare(doi=args.doi,
+                        paper_slug_override=getattr(args, "paper_slug", None),
+                        input_format=getattr(args, "input_format", "auto"),
+                        pdf_path=Path(pdf_path) if pdf_path else None)
+    except Exception as e:
+        print(f"error: prepare failed: {e}", file=sys.stderr)
+        return 3
+
+    claims_dir = Path(args.claims_dir).expanduser().resolve()
+    if not claims_dir.is_dir():
+        print(f"error: claims dir not found: {claims_dir}", file=sys.stderr)
+        return 2
+    claims = _load_claim_frontmatter(claims_dir)
+    if not claims:
+        print(f"error: no claim files under {claims_dir}", file=sys.stderr)
+        return 2
+
+    inv = assess(paper, claims)
+    units = assess_units(paper, claims, include_methods=args.include_methods)
+
+    print(f"=== Coverage — {paper.paper_slug} ===")
+    print(f"  claims read: {len(claims)}  from {claims_dir}\n")
+    print(render(inv))
+    print()
+    print(render_units(units))
+
+    if args.json:
+        out = Path(args.json).expanduser()
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps({
+            "paper": paper.paper_slug,
+            "claims": len(claims),
+            "panels": {"total": inv.panels_total, "orphan": inv.panels_orphan,
+                       "figure_level": inv.panels_figure_level,
+                       "phantom": inv.panels_phantom, "pct": round(inv.panel_pct, 1)},
+            "statistics": {"total": len(inv.stats_total),
+                           "orphan": [s.text for s in inv.stats_orphan],
+                           "pct": round(inv.stat_pct, 1)},
+            "units": {
+                "segmented": len(units.units),
+                "obligations": units.obligations,
+                "textual": len(units.textual),
+                "accounted": len(units.accounted),
+                "pct": round(units.pct, 1),
+                "orphans": [{"uid": u.uid, "section": u.section, "text": u.text,
+                             "stats": u.stats, "panels": u.panels}
+                            for u in units.orphans],
+            },
+        }, indent=2), encoding="utf-8")
+        print(f"\nwritten: {out}")
+
+    # A gate, when asked to be one.
+    if args.fail_on_orphans and (inv.panels_orphan or units.orphans):
+        print("\nFAIL: the paper contains panels or results no claim accounts for.",
+              file=sys.stderr)
+        return 1
+    return 0
+
+
+def _load_claim_frontmatter(d: Path) -> list:
+    """Read every claim file's YAML frontmatter from a claim-tree directory."""
+    import re
+    import yaml
+    out = []
+    for f in sorted(d.glob("*.md")):
+        if f.name == "index.md":
+            continue
+        m = re.match(r"^---\n(.*?)\n---", f.read_text(encoding="utf-8"), re.S)
+        if not m:
+            continue
+        # Some committed files put an empty list at column 0 on the line after
+        # its key, which strict YAML rejects. Normalise rather than edit source.
+        body = re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2",
+                      m.group(1), flags=re.M)
+        try:
+            fm = yaml.safe_load(body) or {}
+        except yaml.YAMLError:
+            continue
+        if fm.get("slug"):
+            out.append(fm)
+    return out
+
+
 def cmd_evaluate(args: argparse.Namespace) -> int:
     """Round-trip evaluation against a curated reference corpus.
 
@@ -705,6 +811,38 @@ def build_parser() -> argparse.ArgumentParser:
         help="Named prompt variant under prompts/<variant>/.",
     )
     p_eval.set_defaults(func=cmd_evaluate)
+
+    # ── coverage ─────────────────────────────────────────────────────────
+    p_cov = sub.add_parser(
+        "coverage",
+        help="What in the paper does no claim account for? (no model calls)",
+        description=(
+            "Take the denominator from the paper rather than from the claim set. "
+            "Builds the paper's panel and statistic inventories, then segments the "
+            "whole text into sentences and reports which of them carry a result "
+            "that no claim states. Unlike `evaluate`, which scores agreement "
+            "between two claim sets, this can see what both of them missed."
+        ),
+    )
+    p_cov.add_argument("--doi", help="Paper DOI (eLife DOIs fetch JATS).")
+    p_cov.add_argument("--pdf-path", help="Path to a local PDF instead.")
+    p_cov.add_argument("--input-format", choices=["auto", "jats", "pdf"], default="auto")
+    p_cov.add_argument("--paper-slug", help="Override slug.")
+    p_cov.add_argument(
+        "--claims-dir", required=True,
+        help="The claim tree to measure against (e.g. claims/gadeke-2026-guilt-insula).",
+    )
+    p_cov.add_argument(
+        "--include-methods", action="store_true",
+        help="Count methods sentences as obligations too (off by default: the corpus "
+             "claims results, not procedure).",
+    )
+    p_cov.add_argument("--json", help="Also write the full report as JSON here.")
+    p_cov.add_argument(
+        "--fail-on-orphans", action="store_true",
+        help="Exit non-zero if any panel or result is unaccounted for — for use as a gate.",
+    )
+    p_cov.set_defaults(func=cmd_coverage)
 
     # ── run (composed shorthand) ─────────────────────────────────────────
     p_run = sub.add_parser(
