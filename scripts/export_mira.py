@@ -128,7 +128,10 @@ def relations(claim):
     the other silently truncates the graph. See docs/claim-format.md §5, which
     documents the `belongings` form; the top-level form is undocumented practice.
     """
-    for key in EDGE_KEYS:
+    # sorted(): EDGE_KEYS is a set, and Python randomises string hashing per process, so an
+    # unsorted iteration emits relations in a different order on every run — which showed up
+    # as the published exports changing bytes without changing content.
+    for key in sorted(EDGE_KEYS):
         for target in (claim.get(key) or []):
             if isinstance(target, str):
                 yield key, target
