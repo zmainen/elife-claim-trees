@@ -48,9 +48,21 @@ cd extract && python3 -m elife_extract.cli run --doi 10.7554/eLife.105391 --corp
 python3 -m elife_extract.cli coverage --doi 10.7554/eLife.105391 \
     --claims-dir ../claims/gadeke-2026-guilt-insula
 
+# ...and again with the adjudicated verdicts folded in, so it reports real gaps
+# rather than everything a string comparison could not match
+python3 -m elife_extract.cli coverage --doi 10.7554/eLife.105391 \
+    --claims-dir ../claims/gadeke-2026-guilt-insula \
+    --mapping ../mappings/gadeke-2026-guilt-insula.json
+
 # export every paper to MIRA JSON-LD, with a gap report per paper
 cd .. && python3 scripts/export_mira.py --all
 ```
+
+`mappings/` holds the adjudicated coverage verdicts per paper. The mechanical match answers
+"does a claim restate this statistic or name this panel", which is a proxy for the question
+that matters and wrong in both directions; the residue is judged once and stored, so it can
+be audited rather than silently recomputed. For Gädeke: 245 spans, 78 carrying a result, 64
+accounted for, 15 asserting nothing, 14 real gaps, nothing unexamined.
 
 `exports/` holds the result for every paper: a strict `.mira.jsonld`, an
 `.mira-extended.jsonld` carrying what MIRA has no vocabulary for, and a `.gap-report.md`
