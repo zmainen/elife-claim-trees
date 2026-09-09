@@ -463,3 +463,25 @@ for (const p of papers) {
 const out = { papers, totalClaims, statusCounts: allStatuses };
 writeFileSync(outFile, JSON.stringify(out, null, 2));
 console.log(`Written ${outFile}: ${papers.length} papers, ${totalClaims} claims`);
+
+// ── Publish the MIRA exports ──────────────────────────────────────────────
+// The download links on the standards page point at /exports/, which is served from
+// site/public/exports/. Copying here rather than by hand means a regenerated export cannot
+// silently disagree with the file the site offers — which is the whole claim being made
+// about them ("run the exporter and diff").
+const exportsSrc = join(projectRoot, 'exports');
+const exportsDst = join(__dirname, '../public/exports');
+if (existsSync(exportsSrc)) {
+  mkdirSync(exportsDst, { recursive: true });
+  const published = new Set(papers.map(p => p.slug));
+  let n = 0;
+  for (const f of readdirSync(exportsSrc)) {
+    // Only papers the site publishes: the corpus filter is the authority on that, and
+    // shipping an export for a paper with no page would be a dangling download.
+    const slug = f.replace(/\.(mira|mira-extended)\.jsonld$|\.gap-report\.md$/, '');
+    if (!published.has(slug)) continue;
+    fs.copyFileSync(join(exportsSrc, f), join(exportsDst, f));
+    n++;
+  }
+  console.log(`Copied ${n} export files to public/exports/`);
+}

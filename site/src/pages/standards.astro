@@ -112,23 +112,58 @@ const url = (path: string) => `${base}${path}/`;
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-10 mb-3">The evidence</h2>
     <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <p>
-        The full 10-paper eLife corpus is expressed in this format: 231 claims, 503 typed relations, all 9 roles and 14 edge types. Also exported as <a href="https://discoursegraphs.com" class="text-amber-700 dark:text-amber-400 hover:underline" target="_blank">Discourse Graphs</a> JSON-LD.
+        The full 10-paper eLife corpus is expressed in this format: 245 claims, 916 typed relations, all 9 roles and 14 edge types. Also exported as <a href="https://discoursegraphs.com" class="text-amber-700 dark:text-amber-400 hover:underline" target="_blank">Discourse Graphs</a> JSON-LD and as <a href="#mira" class="text-amber-700 dark:text-amber-400 hover:underline">MIRA</a>.
       </p>
     </div>
 
     <div class="grid grid-cols-3 gap-4 mb-8">
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">231</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">245</div>
         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">claims</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">503</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">916</div>
         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">typed relations</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
         <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">10</div>
         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">eLife papers</div>
       </div>
+    </div>
+
+    <!-- MIRA -->
+    <h2 id="mira" class="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-10 mb-3">MIRA, and what conversion costs</h2>
+    <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      <p>
+        <strong>MIRA</strong> (Modular Interoperable Research Attribution) is the discourse-graph schema eLife&rsquo;s article platform reads, and it is a real advance on the three standards above for this purpose: it has Claim, Evidence, Question and Study as first-class nodes, and an explicit epistemic status. Its gap is narrower and more specific. MIRA represents the <em>nodes</em> well and the <em>edges</em> thinly &mdash; two predicates, <code>supports</code> and <code>opposes</code>, against the 14 this corpus uses &mdash; and it has no vocabulary for the fact that a claim was independently checked.
+      </p>
+      <p>
+        Every paper exports to MIRA, and each export ships with a gap report saying exactly what the strict file could not carry. The numbers below are produced by the exporter, not estimated, and <code>python3 scripts/export_mira.py --all</code> regenerates all of them byte-for-byte.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mb-6">
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">57%</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">of typed relations have no MIRA predicate</div>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">225</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">verification records with no node type</div>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">31</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Questions the export had to synthesise</div>
+      </div>
+    </div>
+
+    <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      <p>
+        The most consequential loss is the <code>entails</code> / <code>derived-from</code> pair &mdash; together, a paper&rsquo;s deductive spine. A strict MIRA export still contains every hypothesis and every prediction, and gives no way to tell which belongs to which, and therefore no way to see what would have counted as the hypothesis being wrong. <code>scopes</code> and <code>requires</code>, the two largest categories, fail more quietly: a claim that holds only under a stated condition, exported without that condition, does not read as narrower than it is &mdash; it reads as unconditional.
+      </p>
+      <p>
+        None of this is an objection to MIRA. Two of the three gaps are additive, and could be proposed as extensions without changing anything MIRA already does: a richer relation vocabulary, and a Verification node carrying code location, data identifier, data commit, and reproduced-versus-published values. The third &mdash; requiring a Question per Claim &mdash; is reasonable for graphs built by hand from reading, and manufactures rhetoric for graphs induced from a finished paper.
+      </p>
     </div>
 
     <!-- Downloads -->
@@ -141,6 +176,18 @@ const url = (path: string) => `${base}${path}/`;
       <a href="/elife-claim-trees/exports/headley.dg.jsonld" class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all no-underline group" target="_blank">
         <code class="text-xs text-blue-700 dark:text-blue-400">JSONLD</code>
         <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Headley 2026 — Discourse Graphs export</span>
+      </a>
+      <a href="/elife-claim-trees/exports/gadeke-2026-guilt-insula.mira.jsonld" class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all no-underline group" target="_blank">
+        <code class="text-xs text-blue-700 dark:text-blue-400">JSONLD</code>
+        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">G&auml;deke 2026 &mdash; strict MIRA core</span>
+      </a>
+      <a href="/elife-claim-trees/exports/gadeke-2026-guilt-insula.mira-extended.jsonld" class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all no-underline group" target="_blank">
+        <code class="text-xs text-blue-700 dark:text-blue-400">JSONLD</code>
+        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">G&auml;deke 2026 &mdash; MIRA plus what MIRA cannot carry</span>
+      </a>
+      <a href="/elife-claim-trees/exports/gadeke-2026-guilt-insula.gap-report.md" class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all no-underline group" target="_blank">
+        <code class="text-xs text-red-700 dark:text-red-400">MD</code>
+        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">G&auml;deke 2026 &mdash; gap report: what the strict export dropped</span>
       </a>
       <a href="/elife-claim-trees/exports/claim-relations.ttl" class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all no-underline group" target="_blank">
         <code class="text-xs text-green-700 dark:text-green-400">TTL</code>

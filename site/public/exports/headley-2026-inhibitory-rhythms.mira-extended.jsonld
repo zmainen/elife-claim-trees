@@ -1,0 +1,1188 @@
+{
+  "@context": [
+    "https://mira.science/schema/context.jsonld",
+    {
+      "haak": "https://haak.world/schema/claim#"
+    }
+  ],
+  "@graph": [
+    {
+      "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that perisomatic and distal dendritic inhibition serve distinct computational roles in layer 5 pyramidal neurons: perisomatic inhibition principally regulates somatic action potential generation (gain and threshold of axonal output), while distal dendritic inhibition principally regulates dendritic spike incidence and the temporal coupling of dendritic spikes to somatic APs?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that the optimal frequency of rhythmic inhibition for modulating a given dendritic computation is determined by matching the rhythm's cycle period to the intrinsic timescale of the spike process at the target compartment: fast (gamma) for perisomatic Na+/AP processes, slow (beta) for distal Ca²⁺/NMDA dendritic spike processes?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
+      "@type": "mira:Evidence",
+      "schema:name": "beta-bidirectional-dendritic-control",
+      "schema:description": "Beta-frequency rhythms at distal dendritic locations produce bidirectional control of dendritic spike probability: enhanced dendritic spike occurrence during inhibitory troughs and suppressed occurrence during inhibitory peaks within the same oscillatory cycle.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — phase-binned dendritic spike analysis"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
+          },
+          {
+            "@id": "urn:uuid:9c3d1464-1a51-4381-a466-fcb1ca6fca65"
+          },
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5, fig7",
+      "haak:analysis": "scripts/Fig5.ipynb, scripts/Fig7.ipynb"
+    },
+    {
+      "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "@type": "mira:Evidence",
+      "schema:name": "beta-gates-distal-apical-inputs",
+      "schema:description": "Beta-frequency rhythmic inhibition at distal dendritic locations gates the transmission of clustered synaptic inputs from apical dendrites to somatic output: inputs arriving during inhibitory troughs are transmitted, while inputs arriving during peaks are blocked.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — clustered input gating experiment"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf"
+        },
+        {
+          "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
+        },
+        {
+          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
+          },
+          {
+            "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
+          },
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
+          },
+          {
+            "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig10",
+      "haak:analysis": "scripts/Fig10.ipynb"
+    },
+    {
+      "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "@type": "mira:Evidence",
+      "schema:name": "beta-optimal-distal-dendritic-entrainment",
+      "schema:description": "In a frequency sweep from 0.5 to 80 Hz, beta frequencies near 20 Hz produce the strongest phase-dependent entrainment of dendritic Ca²⁺ and NMDA spike onsets by distal rhythmic inhibition, as measured by Pairwise Phase Consistency.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — frequency sweep, Pairwise Phase Consistency (PPC)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:d0c2d8d6-82ea-46a0-928f-16e6c33d36a8"
+        },
+        {
+          "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
+        },
+        {
+          "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+        },
+        {
+          "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
+        },
+        {
+          "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
+          },
+          {
+            "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+          },
+          {
+            "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
+          },
+          {
+            "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:d0c2d8d6-82ea-46a0-928f-16e6c33d36a8"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig7",
+      "haak:analysis": "scripts/Fig7.ipynb"
+    },
+    {
+      "@id": "urn:uuid:34c1a5fd-714f-4cde-ba8b-1c230af108db",
+      "@type": "mira:Evidence",
+      "schema:name": "burst-effects-emerge-first-cycles",
+      "schema:description": "Phase-dependent modulation of dendritic spike probability and action potential timing by oscillatory bursts of beta or gamma emerges within the first few cycles of the burst, indicating rapid engagement of the inhibitory control mechanism.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — burst onset analysis"
+        }
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
+          },
+          {
+            "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
+          },
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig9",
+      "haak:analysis": "scripts/Fig9.ipynb"
+    },
+    {
+      "@id": "urn:uuid:9c3d1464-1a51-4381-a466-fcb1ca6fca65",
+      "@type": "mira:Evidence",
+      "schema:name": "ca-spikes-couple-20ms-before-ap",
+      "schema:description": "Ca²⁺ spikes in apical tuft dendrites precede somatic action potentials by approximately 20 ms in spike-triggered averages, with the strongest coupling in apical compartments distal from the soma.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "spike-triggered average analysis"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
+        },
+        {
+          "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
+          },
+          {
+            "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2, fig3",
+      "haak:analysis": "scripts/Fig2_3.ipynb"
+    },
+    {
+      "@id": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "@type": "mira:Evidence",
+      "schema:name": "distal-inhib-drops-firing-02hz",
+      "schema:description": "Doubling the strength of distal dendritic inhibition reduces somatic firing rate from a baseline of approximately 5.5 Hz to approximately 0.2 Hz, primarily by suppressing the occurrence of dendritic Ca²⁺ and NMDA spikes rather than by directly raising AP threshold.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — inhibition magnitude sweep"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:f924648f-6829-41cb-9722-0bd97fec6ad3"
+        },
+        {
+          "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
+        },
+        {
+          "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+        },
+        {
+          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          },
+          {
+            "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
+          },
+          {
+            "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+          },
+          {
+            "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:f924648f-6829-41cb-9722-0bd97fec6ad3"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/headley-2026-inhibitory-rhythms/verify.py"
+        }
+      ],
+      "haak:panel": "fig4, fig5",
+      "haak:analysis": "scripts/Fig4.ipynb, scripts/Fig5.ipynb"
+    },
+    {
+      "@id": "urn:uuid:b88c89df-7f9c-4d11-9dc4-1ec829d6b413",
+      "@type": "mira:Evidence",
+      "schema:name": "ei-lag-sensitivity-firing-rate",
+      "schema:description": "Varying the excitatory-inhibitory coupling lag from 4 to 500 ms has modest effects on total somatic firing rate but substantially alters which dendritic compartments contribute most to driving action potentials, demonstrating that timing shapes dendritic computation even when overall output rate is similar.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — E/I lag sweep"
+        }
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          },
+          {
+            "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4",
+      "haak:analysis": "scripts/Fig4.ipynb"
+    },
+    {
+      "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "@type": "mira:Evidence",
+      "schema:name": "gamma-gates-proximal-basal-inputs",
+      "schema:description": "Gamma-frequency rhythmic inhibition at perisomatic locations gates the transmission of clustered synaptic inputs from proximal and basal dendrites to somatic output in a phase-dependent manner, while leaving distal apical inputs relatively unaffected.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — clustered input gating experiment"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf"
+        },
+        {
+          "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
+        },
+        {
+          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
+          },
+          {
+            "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b"
+          },
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
+          },
+          {
+            "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig10",
+      "haak:analysis": "scripts/Fig10.ipynb"
+    },
+    {
+      "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "@type": "mira:Evidence",
+      "schema:name": "gamma-optimal-perisomatic-ap-modulation",
+      "schema:description": "In a sweep across 11 frequencies from 0.5 to 80 Hz, gamma frequencies (40–80 Hz) produce the strongest phase-dependent modulation of somatic action potential voltage threshold by perisomatic rhythmic inhibition.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — perisomatic frequency sweep"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:874d0787-6f89-43fa-aa72-d183d242fd91"
+        },
+        {
+          "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b"
+        },
+        {
+          "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21"
+        },
+        {
+          "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
+        },
+        {
+          "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b"
+          },
+          {
+            "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21"
+          },
+          {
+            "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
+          },
+          {
+            "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:874d0787-6f89-43fa-aa72-d183d242fd91"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig8",
+      "haak:analysis": "scripts/Fig8.ipynb"
+    },
+    {
+      "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "@type": "mira:Evidence",
+      "schema:name": "gamma-perisomatic-no-dendritic-spike-change",
+      "schema:description": "Gamma-frequency perisomatic rhythms phase-modulate action potential threshold without substantially altering overall dendritic spike rates, demonstrating functional orthogonality between the perisomatic-gamma and distal-beta inhibitory streams.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — dendritic event rate comparison"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b"
+        },
+        {
+          "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
+        },
+        {
+          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b"
+          },
+          {
+            "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
+          },
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
+          },
+          {
+            "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5",
+      "haak:analysis": "scripts/Fig5.ipynb"
+    },
+    {
+      "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-distinct-compartmental-roles",
+      "schema:description": "Perisomatic and distal dendritic inhibition serve distinct computational roles in layer 5 pyramidal neurons: perisomatic inhibition principally regulates somatic action potential generation (gain and threshold of axonal output), while distal dendritic inhibition principally regulates dendritic spike incidence and the temporal coupling of dendritic spikes to somatic APs.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b"
+          },
+          {
+            "@id": "urn:uuid:f924648f-6829-41cb-9722-0bd97fec6ad3"
+          },
+          {
+            "@id": "urn:uuid:d8d26ce3-8c2d-4075-ad06-cf37c2fee73c"
+          },
+          {
+            "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-frequency-compartment-matching",
+      "schema:description": "The optimal frequency of rhythmic inhibition for modulating a given dendritic computation is determined by matching the rhythm's cycle period to the intrinsic timescale of the spike process at the target compartment: fast (gamma) for perisomatic Na+/AP processes, slow (beta) for distal Ca²⁺/NMDA dendritic spike processes.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:d0c2d8d6-82ea-46a0-928f-16e6c33d36a8"
+          },
+          {
+            "@id": "urn:uuid:874d0787-6f89-43fa-aa72-d183d242fd91"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:2f988e78-8a82-41d3-a121-1e90636d3460",
+      "@type": "dg:SourceDocument",
+      "schema:name": "interprets-pv-gamma-sst-beta-associations",
+      "schema:description": "Empirical work across the cortical-interneuron literature has established two correlated associations: parvalbumin-positive (PV+) fast-spiking interneurons target perisomatic compartments and are implicated in the generation and entrainment of cortical gamma rhythms (40–80 Hz), while somatostatin-positive (SST+) interneurons target distal dendritic compartments and are preferentially associated with beta rhythms (12–35 Hz). These are literature claims about anatomical targeting patterns and their correlation with specific oscillatory bands, not results of the present paper.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.1038/nature08002"
+      },
+      "haak:role": "literature-context",
+      "haak:epistemicStrength": "moderate",
+      "haak:panel": "fig10 synthesis / discussion"
+    },
+    {
+      "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "@type": "mira:Claim",
+      "schema:name": "l5-model-single-cell-scope",
+      "schema:description": "All results derive from a single-cell compartmental model of one layer 5 pyramidal neuron; no network dynamics, recurrent excitation, or population-level inhibitory effects are simulated, and all firing rate effects are for a single isolated neuron receiving naturalistic presynaptic drive.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "scopes": [
+          {
+            "schema:name": "*"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1A",
+      "haak:analysis": "code inspection (sim_functions in InhibOnDendComp/src/)"
+    },
+    {
+      "@id": "urn:uuid:fb9ac5da-3094-4370-b277-fe34853856b1",
+      "@type": "mira:Evidence",
+      "schema:name": "na-spikes-couple-2to3ms-before-ap",
+      "schema:description": "Na+ dendritic spikes in proximal compartments peak in spike-triggered averages 2–3 ms before somatic action potentials, with coupling strength declining with electrotonic distance from the soma.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "spike-triggered average analysis"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/headley-2026-inhibitory-rhythms/verify.py"
+        }
+      ],
+      "haak:panel": "fig2, fig3",
+      "haak:analysis": "scripts/Fig2_3.ipynb"
+    },
+    {
+      "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c",
+      "@type": "mira:Claim",
+      "schema:name": "naturalistic-drive-parameterization",
+      "schema:description": "The model is driven by ~26,000 excitatory and ~4,500 inhibitory synapses with parameters (release probability, PSC amplitude, temporal kinetics) taken from published experimental measurements, producing a baseline somatic firing rate of approximately 5.3 Hz that matches typical in vivo layer 5 firing rates; no sensitivity analysis over these synaptic parameter choices is presented.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "scopes": [
+          {
+            "schema:name": "*"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1A (inset)",
+      "haak:analysis": "code inspection + methods"
+    },
+    {
+      "@id": "urn:uuid:920d7adb-9ab1-4bc0-8185-de3e5de3a71e",
+      "@type": "mira:Evidence",
+      "schema:name": "nmda-spikes-couple-25ms-before-ap",
+      "schema:description": "NMDA spikes show peak spike-triggered average approximately 25 ms before somatic action potentials, reflecting their slower kinetics relative to Na+ spikes.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "spike-triggered average analysis"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/headley-2026-inhibitory-rhythms/verify.py"
+        }
+      ],
+      "haak:panel": "fig2, fig3",
+      "haak:analysis": "scripts/Fig2_3.ipynb"
+    },
+    {
+      "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "@type": "mira:Evidence",
+      "schema:name": "perisomatic-inhib-drops-firing-07hz",
+      "schema:description": "Doubling perisomatic inhibition reduces somatic firing from approximately 5.5 Hz to approximately 0.7 Hz by elevating action potential voltage threshold, while dendritic spike rates are relatively preserved.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — inhibition magnitude sweep"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b"
+        },
+        {
+          "@id": "urn:uuid:702332b6-1ba1-40b9-9319-f9f3053d59dd"
+        },
+        {
+          "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b"
+        },
+        {
+          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          },
+          {
+            "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:702332b6-1ba1-40b9-9319-f9f3053d59dd"
+          },
+          {
+            "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b"
+          },
+          {
+            "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/headley-2026-inhibitory-rhythms/verify.py"
+        }
+      ],
+      "haak:panel": "fig4, fig5",
+      "haak:analysis": "scripts/Fig4.ipynb, scripts/Fig5.ipynb"
+    },
+    {
+      "@id": "urn:uuid:702332b6-1ba1-40b9-9319-f9f3053d59dd",
+      "@type": "mira:Evidence",
+      "schema:name": "perisomatic-inhib-subtractive-divisive",
+      "schema:description": "Perisomatic inhibition reduces both the baseline firing rate (subtractive effect) and the slope of the input-output relationship (divisive effect), thereby compressing the neuron's dynamic range rather than merely shifting its operating point.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "compartmental modelling — I/O curve analysis"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:d8d26ce3-8c2d-4075-ad06-cf37c2fee73c"
+        },
+        {
+          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b"
+          },
+          {
+            "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:d8d26ce3-8c2d-4075-ad06-cf37c2fee73c"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5, fig6",
+      "haak:analysis": "scripts/Fig5.ipynb, scripts/Fig6.ipynb"
+    },
+    {
+      "@id": "urn:uuid:d0c2d8d6-82ea-46a0-928f-16e6c33d36a8",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-beta-optimal-distal",
+      "schema:description": "If the optimal frequency of rhythmic inhibition at a compartment is set by matching the rhythm period to the local spike timescale, then distal inhibition — where apical Ca²⁺ and NMDA spikes lead the soma by ~20 ms and ~25 ms respectively — should be maximally effective at beta frequencies (~20 Hz), whose period (~50 ms) matches the dendritic-spike lead time.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:f924648f-6829-41cb-9722-0bd97fec6ad3",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-distal-dendritic-spike-mechanism",
+      "schema:description": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then doubling distal dendritic inhibition should reduce somatic firing primarily by suppressing apical Ca²⁺ and NMDA dendritic spikes, with little change in the somatic AP voltage threshold.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:874d0787-6f89-43fa-aa72-d183d242fd91",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-gamma-optimal-perisomatic",
+      "schema:description": "If the optimal frequency of rhythmic inhibition at a compartment is set by matching the rhythm period to the local spike timescale, then perisomatic inhibition — where Na+ spikes lead the soma by 2–3 ms — should be maximally effective at gamma frequencies (40–80 Hz), whose periods are commensurate with the 2–3 ms timescale.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-orthogonal-input-gating",
+      "schema:description": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then beta-frequency distal inhibition should gate clustered apical inputs phase-dependently (via dendritic spike control), gamma-frequency perisomatic inhibition should gate clustered proximal/basal inputs phase-dependently (via threshold modulation), and the two gating regimes should be largely independent of each other.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:d8d26ce3-8c2d-4075-ad06-cf37c2fee73c",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-perisomatic-input-output-shaping",
+      "schema:description": "If perisomatic inhibition principally regulates somatic action potential generation, then it should reshape the somatic input-output curve through both subtractive (threshold shift) and divisive (gain reduction) effects, rather than producing a pure translation of the operating point.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-perisomatic-threshold-mechanism",
+      "schema:description": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then doubling perisomatic inhibition should reduce somatic firing primarily by raising the action potential voltage threshold, while leaving apical Ca²⁺ and NMDA dendritic spike rates largely intact.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "@type": "mira:Claim",
+      "schema:name": "pv-gamma-sst-beta-correspondence",
+      "schema:description": "The model provides mechanistic grounding for the empirical association of parvalbumin-positive interneurons with gamma rhythms and somatostatin-positive interneurons with beta rhythms: PV+ neurons target perisomatic locations where gamma is optimal for AP threshold modulation, while SST+ neurons target distal dendrites where beta is optimal for dendritic spike entrainment.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:role": "interpretation",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "interprets": [
+          {
+            "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
+          },
+          {
+            "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
+          },
+          {
+            "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+          },
+          {
+            "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21"
+          },
+          {
+            "@id": "urn:uuid:2f988e78-8a82-41d3-a121-1e90636d3460"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:no-code",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig10 (synthesis / discussion)"
+    }
+  ]
+}

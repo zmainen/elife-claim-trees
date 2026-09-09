@@ -1,0 +1,1341 @@
+{
+  "@context": [
+    "https://mira.science/schema/context.jsonld",
+    {
+      "haak": "https://haak.world/schema/claim#"
+    }
+  ],
+  "@graph": [
+    {
+      "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that anterior insula is the neural substrate of interpersonal guilt: when a participant bears responsibility for a choice that yields a negative outcome for another person, anterior insula activity tracks the resulting responsibility-contingent affect?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that momentary happiness in social decision contexts is governed by a computational rule in which partner reward prediction errors that arise from the participant's own choices (social_pRPEs) carry an independent, non-zero weight, distinct from the weight on partner RPEs that arise without participant agency?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:01faee80-e511-4f08-9a93-225e869637ee#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that superior temporal sulcus (STS) — a core mentalizing-network region — represents the partner's affective experience specifically when the participant is responsible for the partner's outcome?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:8edb5949-b433-496e-8d9f-1f10df952ddc",
+      "@type": "mira:Evidence",
+      "schema:name": "agency-reduces-happiness",
+      "schema:description": "Being the decision-maker (Social + Solo vs Partner condition) reduces participant happiness independently of outcome (Study 1: t(3600)=−3.92, p<0.0001, β=−0.14, 95%CI=[−0.20, −0.07]; Study 2: t(2870)=−6.07, p<0.0001, β=−0.24, 95%CI=[−0.31, −0.16]), consistent with a psychological cost of assuming responsibility for others.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "linear mixed model (LMM) on z-scored happiness ratings"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+      },
+      "mira:opposes": {
+        "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3 (text, no dedicated panel)",
+      "haak:analysis": "master_behavAnalysis.m"
+    },
+    {
+      "@id": "urn:uuid:af22eed8-ee48-4772-9294-94abc7fb74cc",
+      "@type": "mira:Evidence",
+      "schema:name": "guilt-effect-independent-of-own-outcome",
+      "schema:description": "The guilt effect (happiness decrease after low partner outcomes under participant vs partner choice) is present regardless of whether the participant received the high or low lottery outcome: high own outcome: Study 1 t(39)=−3.58, p<0.001, d=0.56, BF10=32; Study 2 t(43)=−2.68, p=0.01, d=0.40, BF10=3.8; low own outcome: Study 1 t(39)=−3.39, p=0.002, d=0.54, BF10=19; Study 2 t(43)=−3.58, p<0.001, d=0.54, BF10=33.5.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "paired t-test within participants (binned by own outcome × decision-maker)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+        },
+        {
+          "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+        },
+        {
+          "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:e36646f0-ce3f-4223-acec-a4c490b38400"
+      },
+      "haak:role": "control",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:e36646f0-ce3f-4223-acec-a4c490b38400"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+          },
+          {
+            "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3d, fig3h",
+      "haak:analysis": "master_behavAnalysis.m"
+    },
+    {
+      "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031",
+      "@type": "mira:Evidence",
+      "schema:name": "guilt-reduces-happiness-after-partner-loss",
+      "schema:description": "Happiness ratings decrease more after negative partner outcomes when the participant made the choice (Social condition) than when the partner made the choice (Partner condition), operationalizing interpersonal guilt as responsibility-contingent unhappiness about partner harm.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mixed-effects regression (Experiment 1 and 2)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+        },
+        {
+          "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445"
+        },
+        {
+          "@id": "urn:uuid:68f77387-69ad-4b26-b766-7ed6a6c1658c"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "confirms": [
+          {
+            "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+          },
+          {
+            "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:68f77387-69ad-4b26-b766-7ed6a6c1658c"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py"
+        },
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-09-06",
+          "haak:status": "verified",
+          "haak:executed": true,
+          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "haak:function": "verify_guilt_happiness() (verify.py line 197)",
+          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "haak:dataCommit": "11854fe",
+          "haak:dataFile": "Code/csv/ — single-trial happiness tables, both cohorts (auto-detected by column matching; see caveat below)",
+          "haak:publishedValue": "beta = 0.33 (fMRI cohort), 0.39 (behavioural cohort)",
+          "haak:reproducedValue": "beta = 0.34, 0.40"
+        }
+      ],
+      "haak:panel": "fig3d, fig3h",
+      "haak:analysis": "master_behavAnalysis.m"
+    },
+    {
+      "@id": "urn:uuid:a26a42bf-23a3-4c8c-a8da-981b1b317381",
+      "@type": "mira:Evidence",
+      "schema:name": "guilt-signature-no-individual-difference",
+      "schema:description": "Individual dot-product values between participants' guilt-related BOLD responses and the Yu & Koban neural guilt signature do not correlate with individual behavioral guilt effect scores (Spearman's Rho=−0.058, p=0.725), indicating the neural signature does not track individual differences in guilt sensitivity as measured behaviorally.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "Spearman correlation between dot products and behavioural guilt effect"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:7808e12b-12e9-4340-997a-f4eeb2da40d7"
+      },
+      "mira:opposes": {
+        "@id": "urn:uuid:7808e12b-12e9-4340-997a-f4eeb2da40d7"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:7808e12b-12e9-4340-997a-f4eeb2da40d7"
+          }
+        ],
+        "extends": [
+          {
+            "@id": "urn:uuid:7808e12b-12e9-4340-997a-f4eeb2da40d7"
+          }
+        ],
+        "interprets": [
+          {
+            "@id": "urn:uuid:1f9bf241-1d6a-4288-80a3-cf0f5d9460a0"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4 (supplement, text)",
+      "haak:analysis": "f_apply_YuKoban_guilt_signature_map.m"
+    },
+    {
+      "@id": "urn:uuid:e36646f0-ce3f-4223-acec-a4c490b38400",
+      "@type": "mira:Evidence",
+      "schema:name": "happiness-correlates-partner-reward",
+      "schema:description": "Participant momentary happiness correlates with both participant reward (Study 1: F(1,3598)=691.5, R²=0.16; Study 2: F(1,2630)=650.8, R²=0.20) and partner reward (Study 1: F(1,2426)=128.6, R²=0.05; Study 2: F(1,1735)=111.8, R²=0.06), confirming that participants were emotionally responsive to partner outcomes throughout the task.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mixed-effects linear regression (pooled across participants)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+        },
+        {
+          "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+        },
+        {
+          "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "supports": [
+          {
+            "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+          },
+          {
+            "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py"
+        },
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-09-06",
+          "haak:status": "verified",
+          "haak:executed": true,
+          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "haak:function": "verify_happiness_partner() (verify.py line 147)",
+          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "haak:dataCommit": "11854fe",
+          "haak:dataFile": "Code/csv/ — happiness-by-model tables, both cohorts (auto-detected by column matching; see caveat below)",
+          "haak:publishedValue": "R2 = 0.185 (fMRI cohort), 0.147 (behavioural cohort)",
+          "haak:reproducedValue": "R2 = 0.184, 0.145"
+        }
+      ],
+      "haak:panel": "fig3a, fig3b, fig3e, fig3f",
+      "haak:analysis": "master_behavAnalysis.m"
+    },
+    {
+      "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-insula-tracks-interpersonal-guilt",
+      "schema:description": "Anterior insula is the neural substrate of interpersonal guilt: when a participant bears responsibility for a choice that yields a negative outcome for another person, anterior insula activity tracks the resulting responsibility-contingent affect. The region is recruited specifically by the conjunction of self-agency over the choice and harm to the partner, distinguishing guilt from generic empathy for partner loss (which would be present in the Partner condition too) and from regret about one's own loss (which would be present in Solo trials too).",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:68f77387-69ad-4b26-b766-7ed6a6c1658c"
+          },
+          {
+            "@id": "urn:uuid:a3c124db-5983-4f4a-81da-77aa7d917e7c"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-responsibility-weights-partner-rpes",
+      "schema:description": "Momentary happiness in social decision contexts is governed by a computational rule in which partner reward prediction errors that arise from the participant's own choices (social_pRPEs) carry an independent, non-zero weight, distinct from the weight on partner RPEs that arise without participant agency. Responsibility modulates how partner outcomes enter the happiness computation: participants internalize partner losses as affective costs specifically when those losses can be attributed to their own decision.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:6eb8393f-a95e-4360-91d9-442d08200190"
+          },
+          {
+            "@id": "urn:uuid:68f77387-69ad-4b26-b766-7ed6a6c1658c"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:01faee80-e511-4f08-9a93-225e869637ee",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-sts-mentalizes-partner-state-under-responsibility",
+      "schema:description": "Superior temporal sulcus (STS) — a core mentalizing-network region — represents the partner's affective experience specifically when the participant is responsible for the partner's outcome. The mentalizing computation is conditioned on agency: STS does not track partner reward prediction errors uniformly, but rather engages selectively when the participant's own choice produced the partner's outcome, consistent with self-attributed responsibility recruiting other-modeling.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:52a693d9-fa42-4b84-8e27-7c77ef16022f"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:01faee80-e511-4f08-9a93-225e869637ee#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:7808e12b-12e9-4340-997a-f4eeb2da40d7",
+      "@type": "mira:Claim",
+      "schema:name": "insula-guilt-replicates-yu-koban-signature",
+      "schema:description": "The anterior insula guilt effect is consistent with a previously published neural guilt signature map (Yu & Koban), providing convergent validity for the insula as a guilt-tracking region.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+        },
+        {
+          "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+        }
+      ],
+      "haak:role": "interpretation",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "extends": [
+          {
+            "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+          }
+        ],
+        "interprets": [
+          {
+            "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+          },
+          {
+            "@id": "urn:uuid:1f9bf241-1d6a-4288-80a3-cf0f5d9460a0"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified:partial",
+          "haak:executed": false,
+          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py"
+        },
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-09-06",
+          "haak:status": "verified",
+          "haak:executed": true,
+          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "haak:function": "verify_yu_koban() (verify.py line 278)",
+          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "haak:dataCommit": "11854fe",
+          "haak:dataFile": "fMRIresults/outcome/guiltEffectEachPartic.nii (4D, 40 participants; shipped in the deposit as .nii.zip) x Code/bin/Yu_guilt_SVM_sxpo_sxpx_EmotionForwardmask.nii (50,860 mask voxels)",
+          "haak:publishedValue": "sign test p < 0.05",
+          "haak:reproducedValue": "sign test p = 0.0083, Wilcoxon p = 0.0211, 28 of 40 participants positive"
+        }
+      ],
+      "haak:panel": "fig4 (supplement)",
+      "haak:analysis": "f_apply_YuKoban_guilt_signature_map.m"
+    },
+    {
+      "@id": "urn:uuid:8f7f9f33-a142-4962-b4cd-f161de239f2e",
+      "@type": "mira:Evidence",
+      "schema:name": "insula-ifg-connectivity-guilt",
+      "schema:description": "Functional connectivity (gPPI) between anterior insula and inferior frontal gyrus varies by experimental condition, with increased coupling in the Social condition associated with the guilt effect.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "gPPI functional connectivity (SPM12 + gPPI toolbox)"
+        }
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "interprets": [
+          {
+            "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:compute-infeasible",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig5",
+      "haak:analysis": "c_gPPI.m, master_fMRI_showResults.m"
+    },
+    {
+      "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b",
+      "@type": "mira:Evidence",
+      "schema:name": "insula-tracks-guilt-effect",
+      "schema:description": "Anterior insula BOLD activity is significantly elevated in the Social condition compared to the Partner condition specifically after negative partner outcomes, tracking the guilt effect (responsibility-contingent partner unhappiness).",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "fMRI mass-univariate GLM (SPM12), ROI analysis"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+        },
+        {
+          "@id": "urn:uuid:a3c124db-5983-4f4a-81da-77aa7d917e7c"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "confirms": [
+          {
+            "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:a3c124db-5983-4f4a-81da-77aa7d917e7c"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py"
+        },
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-09-06",
+          "haak:status": "verified",
+          "haak:executed": true,
+          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "haak:function": "verify_insula_peak() (verify.py line 235)",
+          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "haak:dataCommit": "11854fe",
+          "haak:dataFile": "fMRIresults/outcome/guiltEffect_0p05FWE_SVC_aIns.nii",
+          "haak:publishedValue": "peak MNI [-28, 24, -4]",
+          "haak:reproducedValue": "peak MNI [-28, 24, -4]"
+        }
+      ],
+      "haak:panel": "fig4e, fig4f",
+      "haak:analysis": "master_fMRI_showResults.m, fMRIresults/*.nii"
+    },
+    {
+      "@id": "urn:uuid:1f9bf241-1d6a-4288-80a3-cf0f5d9460a0",
+      "@type": "dg:SourceDocument",
+      "schema:name": "interprets-yu-koban-guilt-signature",
+      "schema:description": "Yu and Koban (with colleagues) trained a whole-brain multivariate SVM to decode interpersonal guilt from fMRI activity patterns and derived a voxel-weight map — the \"guilt signature\" — that generalizes across guilt-inducing paradigms. The signature loads most strongly on anterior insula, medial prefrontal, and surrounding regions and has been validated as a pattern-level neural marker of guilt states across independent samples.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.1101/835520"
+      },
+      "haak:role": "literature-context",
+      "haak:epistemicStrength": "moderate",
+      "haak:panel": "fig4 supplement (convergent-validity analysis)"
+    },
+    {
+      "@id": "urn:uuid:49d08c4f-7b31-4967-9ab7-06aa50a006b4",
+      "@type": "mira:Evidence",
+      "schema:name": "lottery-choice-increases-with-ev",
+      "schema:description": "Probability of lottery selection increases with expected value advantage in both Study 1 (t(4796)=9.26, p<3.1e-20, β=0.074, 95%CI [0.059-0.090]) and Study 2 (t(3829)=10.62, p<5.3e-26, β=0.093, 95%CI [0.075-0.110]), confirming participants were sensitive to expected value in their choices.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mixed-effects regression"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:69cad10c-46f3-4f7e-8cec-3c9de1c629de"
+        },
+        {
+          "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+        }
+      ],
+      "haak:role": "control",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "validates": [
+          {
+            "@id": "urn:uuid:69cad10c-46f3-4f7e-8cec-3c9de1c629de"
+          },
+          {
+            "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified:partial",
+          "haak:executed": false,
+          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py"
+        },
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-09-06",
+          "haak:status": "verified",
+          "haak:executed": true,
+          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "haak:function": "verify_lottery_ev() (verify.py line 74)",
+          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "haak:dataCommit": "11854fe",
+          "haak:dataFile": "Code/csv/fMRI - Choices_singleTrialData.csv",
+          "haak:publishedValue": "beta > 0, p < 0.05",
+          "haak:reproducedValue": "beta = 0.032, p = 9.55e-68, n = 2400"
+        }
+      ],
+      "haak:panel": "fig2a, fig2d",
+      "haak:analysis": "master_behavAnalysis.m"
+    },
+    {
+      "@id": "urn:uuid:cb673152-8776-46c8-8f13-c95262c2138b",
+      "@type": "mira:Claim",
+      "schema:name": "partner-algorithm-deception-assumption",
+      "schema:description": "The experiment partner's decisions were in fact made by an expected-value-maximizing algorithm (lottery chosen if EV_diff > 0), not by a real person, but participants were not informed of this; this deception is a structural assumption underlying all social comparison contrasts and the claim that participants felt interpersonal guilt toward a real partner.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+          },
+          {
+            "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+          },
+          {
+            "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000"
+          }
+        ],
+        "scopes": [
+          {
+            "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+          },
+          {
+            "@id": "urn:uuid:af22eed8-ee48-4772-9294-94abc7fb74cc"
+          },
+          {
+            "@id": "urn:uuid:e36646f0-ce3f-4223-acec-a4c490b38400"
+          },
+          {
+            "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+          },
+          {
+            "@id": "urn:uuid:8f7f9f33-a142-4962-b4cd-f161de239f2e"
+          },
+          {
+            "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000"
+          },
+          {
+            "@id": "urn:uuid:1f154108-1ed9-4084-935a-6ef65adc2418"
+          },
+          {
+            "@id": "urn:uuid:69cad10c-46f3-4f7e-8cec-3c9de1c629de"
+          },
+          {
+            "@id": "urn:uuid:7808e12b-12e9-4340-997a-f4eeb2da40d7"
+          },
+          {
+            "@id": "urn:uuid:a26a42bf-23a3-4c8c-a8da-981b1b317381"
+          },
+          {
+            "@id": "urn:uuid:033edd46-00ec-4b2d-9921-99c1bc9245d3"
+          },
+          {
+            "@id": "urn:uuid:8edb5949-b433-496e-8d9f-1f10df952ddc"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ]
+    },
+    {
+      "@id": "urn:uuid:033edd46-00ec-4b2d-9921-99c1bc9245d3",
+      "@type": "mira:Evidence",
+      "schema:name": "precuneus-tpj-mpfc-social-decisions",
+      "schema:description": "Three clusters — precuneus (d=0.79), left temporoparietal junction (TPJ; d=0.59), and medial prefrontal cortex (mPFC; d=0.54) — show greater BOLD response when participants decide for themselves and their partner (Social condition) than for themselves alone (Solo condition), replicating the association of these regions with social decision-making.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "fMRI mass-univariate GLM (SPM12), whole-brain cluster-corrected (p<0.05 FWE)"
+        }
+      },
+      "mira:supports": {
+        "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "validates": [
+          {
+            "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:compute-infeasible",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4b",
+      "haak:analysis": "master_fMRI_showResults.m"
+    },
+    {
+      "@id": "urn:uuid:68f77387-69ad-4b26-b766-7ed6a6c1658c",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-behavioral-guilt-effect",
+      "schema:description": "If interpersonal guilt is a real affective phenomenon contingent on responsibility, then in a within-subject lottery paradigm where the same partner outcomes occur under Social and Partner conditions, momentary happiness should drop more after negative partner outcomes in Social trials (participant chose) than in Partner trials (partner chose). This is operationalised as a positive interaction term between partnerWon (low partner outcome) and subjDecided (Social condition) in a mixed-effects regression of happiness on outcomes and responsibility.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+          },
+          {
+            "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:a3c124db-5983-4f4a-81da-77aa7d917e7c",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-insula-tracks-guilt",
+      "schema:description": "If anterior insula encodes interpersonal guilt, then in the trial-level GLM, anterior insula BOLD should be elevated in the Social vs Partner contrast specifically after negative partner outcomes — i.e., the (condition × partner-outcome) interaction should yield a significant positive cluster in the anterior insula, detectable with small-volume FWE correction (SVC) over an a priori anterior-insula ROI derived from prior literature. The signal should not be present for the same contrast after positive partner outcomes (specificity).",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:6eb8393f-a95e-4360-91d9-442d08200190",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-responsibility-model-wins-comparison",
+      "schema:description": "If happiness incorporates partner reward prediction errors with a responsibility-weighted rule, then a computational model of happiness that includes a social_pRPE regressor (partner RPE × subject-decided indicator) should fit participant happiness ratings better than nested alternatives that omit the responsibility interaction. Formally: the Responsibility model (and Responsibility Redux model) should achieve lower cross-validated error than baseline (own-reward-only) and additive social-utility models in both Study 1 and Study 2; and the fitted social_pRPE weight should be significantly greater than zero.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:52a693d9-fa42-4b84-8e27-7c77ef16022f",
+      "@type": "mira:Claim",
+      "schema:name": "prediction-sts-tracks-partner-rpe-under-responsibility",
+      "schema:description": "If superior temporal sulcus represents the partner's affective experience selectively under responsibility, then in a model-based GLM with trial-by-trial partner RPE regressors split by who-chose, the parametric modulator for partner RPE in Social trials (subject-decided) should yield a significant cluster in left STS, while the parametric modulator for partner RPE in Partner trials (partner-decided) should not. This conditional engagement, rather than a main effect of partner RPE, is the diagnostic prediction.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "haak:role": "prediction",
+      "haak:epistemicStrength": "prediction",
+      "haak:relations": {
+        "derived-from": [
+          {
+            "@id": "urn:uuid:01faee80-e511-4f08-9a93-225e869637ee"
+          }
+        ]
+      },
+      "haak:panel": "prediction"
+    },
+    {
+      "@id": "urn:uuid:69cad10c-46f3-4f7e-8cec-3c9de1c629de",
+      "@type": "mira:Evidence",
+      "schema:name": "responsibility-modulates-guilt-computational",
+      "schema:description": "A computational model incorporating responsibility-modulated happiness better accounts for the behavioral guilt effect than models without responsibility weighting, providing formal parameterization of the social decision-making component.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "computational model fitting (expected utility + responsibility parameter)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445"
+        },
+        {
+          "@id": "urn:uuid:6eb8393f-a95e-4360-91d9-442d08200190"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "confirms": [
+          {
+            "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445"
+          }
+        ],
+        "enables-method": [
+          {
+            "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000"
+          },
+          {
+            "@id": "urn:uuid:ce86ffb9-f29e-4374-b2d3-9c2c78927ba7"
+          }
+        ],
+        "interprets": [
+          {
+            "@id": "urn:uuid:1f154108-1ed9-4084-935a-6ef65adc2418"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:6eb8393f-a95e-4360-91d9-442d08200190"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3, table1",
+      "haak:analysis": "Code/behavioural analysis scripts"
+    },
+    {
+      "@id": "urn:uuid:5650c9b0-92e0-42da-8772-aa8523bfbd6b",
+      "@type": "mira:Evidence",
+      "schema:name": "risk-premiums-null-social-solo",
+      "schema:description": "Risk premiums do not differ between Solo and Social conditions in either study (Study 1: t(39)=1.53, p=0.134, Cohen's d=0.24, BF10=0.49; Study 2: t(43)=−0.21, p=0.84, d=−0.03, BF10=0.17), providing evidence against social-context-driven changes in risk aversion in this paradigm.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "paired t-tests on risk premium (certainty equivalent approach)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+        },
+        {
+          "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000"
+        }
+      ],
+      "mira:opposes": [
+        {
+          "@id": "urn:uuid:5198582f-237b-447c-810e-c9a4559f9cb6"
+        },
+        {
+          "@id": "urn:uuid:5198582f-237b-447c-810e-c9a4559f9cb6"
+        }
+      ],
+      "haak:role": "control",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "contradicts": [
+          {
+            "@id": "urn:uuid:5198582f-237b-447c-810e-c9a4559f9cb6"
+          }
+        ],
+        "rules-out": [
+          {
+            "@id": "urn:uuid:5198582f-237b-447c-810e-c9a4559f9cb6"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+          },
+          {
+            "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2b, fig2e",
+      "haak:analysis": "master_behavAnalysis.m"
+    },
+    {
+      "@id": "urn:uuid:aa8d444f-2f3c-4558-8074-f6347d962523",
+      "@type": "mira:Claim",
+      "schema:name": "scope-two-study-design",
+      "schema:description": "All findings are scoped to a two-study design: Study 1 is an fMRI study of N=40 young adults run on a 3T scanner using a within-subject lottery paradigm with three conditions (Solo, Social, Partner) over two scanning sessions; Study 2 is a behavioural-only replication with N=44 independent participants using the same task outside the scanner. Both studies use the same EV-maximising algorithmic partner (the participants are not told the partner is an algorithm). All neural claims derive from Study 1; all behavioural claims are tested in both studies. Conclusions about interpersonal guilt are conditional on this paradigm — repeated lottery decisions in a constrained risk-taking design with monetary stakes — and on the specific population sampled.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:49d08c4f-7b31-4967-9ab7-06aa50a006b4"
+          },
+          {
+            "@id": "urn:uuid:5198582f-237b-447c-810e-c9a4559f9cb6"
+          },
+          {
+            "@id": "urn:uuid:5650c9b0-92e0-42da-8772-aa8523bfbd6b"
+          },
+          {
+            "@id": "urn:uuid:e36646f0-ce3f-4223-acec-a4c490b38400"
+          },
+          {
+            "@id": "urn:uuid:69cad10c-46f3-4f7e-8cec-3c9de1c629de"
+          },
+          {
+            "@id": "urn:uuid:1f154108-1ed9-4084-935a-6ef65adc2418"
+          },
+          {
+            "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+          },
+          {
+            "@id": "urn:uuid:af22eed8-ee48-4772-9294-94abc7fb74cc"
+          },
+          {
+            "@id": "urn:uuid:8edb5949-b433-496e-8d9f-1f10df952ddc"
+          },
+          {
+            "@id": "urn:uuid:4585605a-6c71-4fd1-ab45-3ef5d2f449c8"
+          },
+          {
+            "@id": "urn:uuid:033edd46-00ec-4b2d-9921-99c1bc9245d3"
+          },
+          {
+            "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+          },
+          {
+            "@id": "urn:uuid:ce86ffb9-f29e-4374-b2d3-9c2c78927ba7"
+          },
+          {
+            "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000"
+          },
+          {
+            "@id": "urn:uuid:8f7f9f33-a142-4962-b4cd-f161de239f2e"
+          },
+          {
+            "@id": "urn:uuid:7808e12b-12e9-4340-997a-f4eeb2da40d7"
+          },
+          {
+            "@id": "urn:uuid:a26a42bf-23a3-4c8c-a8da-981b1b317381"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-04-20",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "scope"
+    },
+    {
+      "@id": "urn:uuid:1f154108-1ed9-4084-935a-6ef65adc2418",
+      "@type": "mira:Evidence",
+      "schema:name": "social-prpe-weight-positive",
+      "schema:description": "The weight on partner reward prediction errors resulting from participant choices (social_pRPE) is significantly greater than zero in both the Responsibility model (Study 1: Z=2.85, p=0.004; Study 2: Z=3.26, p=0.001) and the Responsibility Redux model (Study 1: Z=2.93, p=0.003; Study 2: Z=3.30, p=0.001), demonstrating that participant-caused partner RPEs independently influence participant happiness.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "Wilcoxon sign-rank test on model weights (non-normal distribution)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445"
+        },
+        {
+          "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445"
+        },
+        {
+          "@id": "urn:uuid:69cad10c-46f3-4f7e-8cec-3c9de1c629de"
+        },
+        {
+          "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "confirms": [
+          {
+            "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:69cad10c-46f3-4f7e-8cec-3c9de1c629de"
+          },
+          {
+            "@id": "urn:uuid:b47187b8-9269-495c-90ec-d3b4e4193031"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:88edff87-3bea-4030-bdf5-fb172865c445"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3c, fig3g, table1",
+      "haak:analysis": "master_behavAnalysis.m"
+    },
+    {
+      "@id": "urn:uuid:5198582f-237b-447c-810e-c9a4559f9cb6",
+      "@type": "mira:Evidence",
+      "schema:name": "solo-vs-social-choice-difference",
+      "schema:description": "Participants chose lotteries more often in the Solo condition than in the Social condition in Study 1 (t(4796)=2.54, p=0.011, β=0.164, 95%CI=[0.038, 0.291]) but not in Study 2 (t(3829)=0.23, p=0.82, β=0.015), suggesting a weak and inconsistent effect of social context on risk-taking that does not replicate across studies.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mixed-effects regression"
+        }
+      },
+      "mira:opposes": [
+        {
+          "@id": "urn:uuid:5650c9b0-92e0-42da-8772-aa8523bfbd6b"
+        },
+        {
+          "@id": "urn:uuid:5650c9b0-92e0-42da-8772-aa8523bfbd6b"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "contradicts": [
+          {
+            "@id": "urn:uuid:5650c9b0-92e0-42da-8772-aa8523bfbd6b"
+          }
+        ],
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:5650c9b0-92e0-42da-8772-aa8523bfbd6b"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2a (Study 1 only; null in fig2d Study 2)",
+      "haak:analysis": "master_behavAnalysis.m"
+    },
+    {
+      "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000",
+      "@type": "mira:Evidence",
+      "schema:name": "sts-tracks-partner-reward-prediction-errors",
+      "schema:description": "Superior temporal sulcus (STS) BOLD activity tracks partner reward prediction errors specifically when the participant was responsible for the choice, consistent with mentalizing about the partner's experiential state.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "fMRI model-based analysis (computational happiness/responsibility model)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:01faee80-e511-4f08-9a93-225e869637ee"
+        },
+        {
+          "@id": "urn:uuid:52a693d9-fa42-4b84-8e27-7c77ef16022f"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "confirms": [
+          {
+            "@id": "urn:uuid:01faee80-e511-4f08-9a93-225e869637ee"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:52a693d9-fa42-4b84-8e27-7c77ef16022f"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:compute-infeasible",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4h",
+      "haak:analysis": "master_fMRI_showResults.m"
+    },
+    {
+      "@id": "urn:uuid:ce86ffb9-f29e-4374-b2d3-9c2c78927ba7",
+      "@type": "mira:Evidence",
+      "schema:name": "ventral-striatum-tracks-computational-reward",
+      "schema:description": "Bilateral ventral striatum activation increases with the computational model's expected certain rewards and expected values of chosen lotteries (left: pFWE=0.002, T=5.63, d=0.75, Z=5.41, 110 voxels, MNI [−14 8 −8]; right: pFWE=0.005, T=5.46, d=0.70, Z=5.26, 80 voxels, MNI [10 10 −4]), validating the model-based fMRI approach as a manipulation check before the STS analysis.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "fMRI model-based GLM (GLM2, SPM12), whole-brain FWE-corrected"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000"
+        },
+        {
+          "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000"
+        }
+      ],
+      "haak:role": "control",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "supports": [
+          {
+            "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:e0633fdd-645b-4fa1-ae43-8d6b6b170000"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:compute-infeasible",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4g",
+      "haak:analysis": "master_fMRI_showResults.m"
+    },
+    {
+      "@id": "urn:uuid:4585605a-6c71-4fd1-ab45-3ef5d2f449c8",
+      "@type": "mira:Evidence",
+      "schema:name": "ventral-striatum-tracks-risky-choices",
+      "schema:description": "Bilateral ventral striatum shows greater BOLD response when participants choose the risky (lottery) rather than safe option, irrespective of Social or Solo condition (left cluster: Cohen's d=0.72; right cluster: d=0.85), replicating established striatal responses to risky decision-making.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105391"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://openneuro.org/datasets/ds005588",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "fMRI mass-univariate GLM (SPM12), whole-brain cluster-corrected (p<0.05 FWE)"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+        },
+        {
+          "@id": "urn:uuid:033edd46-00ec-4b2d-9921-99c1bc9245d3"
+        }
+      ],
+      "haak:role": "control",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "validates": [
+          {
+            "@id": "urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"
+          },
+          {
+            "@id": "urn:uuid:033edd46-00ec-4b2d-9921-99c1bc9245d3"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "unverified:compute-infeasible",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4a",
+      "haak:analysis": "master_fMRI_showResults.m"
+    }
+  ]
+}

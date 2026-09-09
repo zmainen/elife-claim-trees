@@ -1,0 +1,1345 @@
+{
+  "@context": [
+    "https://mira.science/schema/context.jsonld",
+    {
+      "haak": "https://haak.world/schema/claim#"
+    }
+  ],
+  "@graph": [
+    {
+      "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that d1 and D2 receptors encode dopamine signals on distinct temporal scales due to their different binding kinetics: D1 receptors (high EC50, fast on-rate) follow extracellular DA with millisecond delay and act as detectors of transient burst events, while D2 receptors (low EC50, slow off-rate) integrate the dopamine signal over seconds and cannot resolve brief pauses or closely spaced bursts?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that dAT nanoclustering acts as a possible regulator of effective DAT activity in striatum: when transporters are concentrated into dense nanoclusters rather than uniformly distributed, local depletion at the cluster surface creates a diffusion-limited bottleneck that lowers the effective Vmax even at constant total DAT expression — proposing nanoclustering as one candidate mechanism for the lower effective Vmax in VS than DS?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09#question",
+      "@type": "mira:Question",
+      "schema:description": "Is it the case that the qualitative regional contrast in extracellular dopamine dynamics between dorsal and ventral striatum — DS producing varicosity-scale hotspots with no pervasive tonic baseline versus VS producing diffuse tonic-like coverage — is principally explained by a difference in DAT Vmax (~3:1 DS:VS), rather than by differences in release-related parameters (vesicular content, release probability, active terminal fraction, or pacemaker firing rate)?",
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+    },
+    {
+      "@id": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e",
+      "@type": "mira:Evidence",
+      "schema:name": "d1r-tracks-da-50ms-delay",
+      "schema:description": "D1R occupancy closely tracks extracellular DA with approximately 50 ms delay during burst firing; D1R occupancy is negligible during pacemaker activity because the EC50 of 1000 nM far exceeds tonic [DA] of ~10 nM in DS, making burst events the effective threshold for D1R engagement.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+        },
+        {
+          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+        },
+        {
+          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+          },
+          {
+            "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1H, fig1I",
+      "haak:analysis": "Figure 1-Fig 1h-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff",
+      "@type": "mira:Protocol",
+      "schema:name": "d2r-initialization-unjustified",
+      "schema:description": "D2 receptor occupancy is initialized at 0.4 in all receptor dynamics simulations without derivation from steady state; at the modeled EC50 of 7 nM and simulated tonic [DA] of ~10 nM in DS, equilibrium occupancy would be approximately 0.59. No sensitivity analysis over this initialization is reported.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "haak:role": "methodological",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9"
+          },
+          {
+            "@id": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215"
+          },
+          {
+            "@id": "urn:uuid:db68e131-734a-4471-a7e6-e027f38048ac"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1H",
+      "haak:analysis": "Figure 1-Fig 1h-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215",
+      "@type": "mira:Evidence",
+      "schema:name": "d2r-insensitive-to-brief-pauses",
+      "schema:description": "A complete 1 s pause in firing reduces D2R occupancy from approximately 0.55 to 0.45 only; this finding is robust across an order of magnitude of D2R affinity (2–20 nM).",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+        },
+        {
+          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+        },
+        {
+          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9"
+          },
+          {
+            "@id": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+          },
+          {
+            "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1J",
+      "haak:analysis": "Figure 1-Fig 1j-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "@type": "mira:Evidence",
+      "schema:name": "d2r-integrates-over-seconds",
+      "schema:description": "D2R occupancy takes at least 5 s to return to baseline after a burst due to slow off-kinetics (k_off = 0.2 s⁻¹), making D2R incapable of temporally separating closely linked bursts; the directional conclusion is robust but absolute occupancy values are sensitive to the initialization assumption.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+        },
+        {
+          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+        },
+        {
+          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+          },
+          {
+            "@id": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+          },
+          {
+            "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1H",
+      "haak:analysis": "Figure 1-Fig 1h-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:db68e131-734a-4471-a7e6-e027f38048ac",
+      "@type": "mira:Evidence",
+      "schema:name": "d2r-occupancy-higher-in-vs",
+      "schema:description": "D2R occupancy during pacemaker activity is approximately 0.8 in VS versus approximately 0.55 in DS, consistent with higher prevailing tonic DA in VS.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "weak",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+          },
+          {
+            "@id": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "unverified:compute-infeasible",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2G",
+      "haak:analysis": "Figure 2-Fig 2g, h-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:498bf1d1-2d0f-42d4-bdf7-c9996ed5af78",
+      "@type": "mira:Evidence",
+      "schema:name": "dat-clustering-greater-in-vs",
+      "schema:description": "Super-resolution dSTORM imaging shows DAT is significantly more nanoclustered in VS than DS (p=0.012, Welch's two-sample t-test, n=12 DS, n=13 VS), consistent across cluster sizes 20–200 nm.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "dSTORM super-resolution microscopy"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+        },
+        {
+          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+        },
+        {
+          "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f"
+        },
+        {
+          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "supports": [
+          {
+            "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+          },
+          {
+            "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f"
+          },
+          {
+            "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        },
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-26",
+          "haak:status": "failed:mismatch",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4M, fig4N"
+    },
+    {
+      "@id": "urn:uuid:c714f46f-4715-4d61-90d8-fdac5fffa159",
+      "@type": "mira:Evidence",
+      "schema:name": "dat-immunostaining-dorsoventral-gradient",
+      "schema:description": "DAT expression is significantly higher in dorsal than ventral striatum (p=0.0021, one-sided t-test, n=4 mice), corroborating the 3:1 Vmax ratio assumed in the model.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "supports": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          },
+          {
+            "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+          },
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+          },
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2—supplement 1B, fig2—supplement 1C"
+    },
+    {
+      "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
+      "@type": "mira:Evidence",
+      "schema:name": "dat-nanoclustering-slows-clearance",
+      "schema:description": "Dense DAT nanoclusters (20 nm diameter) take approximately 400 ms to clear a 100 nM DA bolus compared to approximately 200 ms for unclustered DAT, because local [DA] at the cluster surface drops near zero creating a diffusion-limited bottleneck.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+        },
+        {
+          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+        },
+        {
+          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:8300c7dc-9386-4a06-9763-c3b681b5c282"
+          },
+          {
+            "@id": "urn:uuid:5b351222-ab85-46be-a673-b05a6f104f80"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+          },
+          {
+            "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "unverified:compute-infeasible",
+          "haak:executed": false
+        },
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-26",
+          "haak:status": "partial:zenodo-data-downloaded",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4C, fig4D, fig4E, fig4F, fig4G",
+      "haak:analysis": "Figure 4-Fig 4 simulations-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "@type": "mira:Evidence",
+      "schema:name": "ds-lacks-pervasive-tonic-da",
+      "schema:description": "During 4 Hz pacemaker activity, the dorsal striatum produces partially segregated DA hotspots with large fractions of the simulated volume devoid of DA — there is no pervasive tonic baseline.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          },
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "unverified:code-error",
+          "haak:executed": false,
+          "haak:script": "verification/ejdrup-2026-dopamine/verify.py"
+        },
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/ejdrup-2026-dopamine/verify.py"
+        }
+      ],
+      "haak:panel": "fig1D, fig1E, fig1F",
+      "haak:analysis": "Figure 1-Fig 1a, d, e, f-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72",
+      "@type": "mira:Claim",
+      "schema:name": "ds-vs-vmax-ratio-assumed",
+      "schema:description": "The 3:1 DS:VS DAT Vmax ratio (DS = 6 µM·s⁻¹, VS = 2 µM·s⁻¹) is assumed from published literature rather than directly measured in this study; the immunostaining gradient (Figure 2—supplement 1) corroborates this assumption at the protein level but does not directly establish the functional Vmax ratio.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "interprets": [
+          {
+            "@id": "urn:uuid:39079ccf-d87a-4e0b-83a9-a01369e54836"
+          }
+        ],
+        "scopes": [
+          {
+            "schema:name": "*"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2A (implied throughout)",
+      "haak:analysis": "Figure 2-Fig 2a-f-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "@type": "mira:Evidence",
+      "schema:name": "fscv-matches-may-wightman-1989",
+      "schema:description": "Simulated FSCV responses to 10, 30, and 60 Hz stimulation closely replicate May & Wightman (1989): VS reaches considerably higher peak DA than DS at all three stimulation frequencies.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+        },
+        {
+          "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+        },
+        {
+          "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "interprets": [
+          {
+            "@id": "urn:uuid:afbf7e64-20a0-4f3f-a748-8591ddc1e2d4"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+          },
+          {
+            "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          },
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+          },
+          {
+            "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+          },
+          {
+            "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "unverified:compute-infeasible",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2E",
+      "haak:analysis": "Figure 2-Fig 2g, h-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-d1-d2-temporal-distinction",
+      "schema:description": "D1 and D2 receptors encode dopamine signals on distinct temporal scales due to their different binding kinetics: D1 receptors (high EC50, fast on-rate) follow extracellular DA with millisecond delay and act as detectors of transient burst events, while D2 receptors (low EC50, slow off-rate) integrate the dopamine signal over seconds and cannot resolve brief pauses or closely spaced bursts.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e"
+          },
+          {
+            "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9"
+          },
+          {
+            "@id": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-nanoclustering-regulates-vmax",
+      "schema:description": "DAT nanoclustering acts as a possible regulator of effective DAT activity in striatum: when transporters are concentrated into dense nanoclusters rather than uniformly distributed, local depletion at the cluster surface creates a diffusion-limited bottleneck that lowers the effective Vmax even at constant total DAT expression — proposing nanoclustering as one candidate mechanism for the lower effective Vmax in VS than DS.",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f"
+          },
+          {
+            "@id": "urn:uuid:498bf1d1-2d0f-42d4-bdf7-c9996ed5af78"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "@type": "mira:Claim",
+      "schema:name": "hypothesis-vmax-explains-regional-difference",
+      "schema:description": "The qualitative regional contrast in extracellular dopamine dynamics between dorsal and ventral striatum — DS producing varicosity-scale hotspots with no pervasive tonic baseline versus VS producing diffuse tonic-like coverage — is principally explained by a difference in DAT Vmax (~3:1 DS:VS), rather than by differences in release-related parameters (vesicular content, release probability, active terminal fraction, or pacemaker firing rate).",
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "haak:role": "hypothesis",
+      "haak:epistemicStrength": "hypothesis",
+      "haak:relations": {
+        "entails": [
+          {
+            "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+          },
+          {
+            "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+          },
+          {
+            "@id": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795"
+          },
+          {
+            "@id": "urn:uuid:59c0aba5-a0e0-41d8-8961-fa5e927d83e7"
+          },
+          {
+            "@id": "urn:uuid:e3b92961-38ad-41b2-a66f-65e328d33a2e"
+          },
+          {
+            "@id": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94"
+          }
+        ]
+      },
+      "haak:panel": "hypothesis",
+      "mira:addresses": {
+        "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:39079ccf-d87a-4e0b-83a9-a01369e54836",
+      "@type": "dg:SourceDocument",
+      "schema:name": "interprets-cragg-rice-vmax-ratio",
+      "schema:description": "Prior voltammetry and DAT-binding literature — notably Cragg & Rice (2004, TINS) and Kennedy and colleagues on in vivo fast-scan measurements — established a roughly 3:1 ratio of dopamine transporter Vmax between dorsal and ventral striatum, with DS at approximately 4–6 µM·s⁻¹ and VS at approximately 1.5–2 µM·s⁻¹. This Vmax asymmetry is the functional correlate of the DAT protein gradient seen across the dorsoventral striatal axis and has been treated as an empirical given in computational models of striatal DA dynamics.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.1016/j.tins.2004.03.011"
+      },
+      "haak:role": "literature-context",
+      "haak:epistemicStrength": "moderate",
+      "haak:panel": "fig2A (implied parameterization)"
+    },
+    {
+      "@id": "urn:uuid:afbf7e64-20a0-4f3f-a748-8591ddc1e2d4",
+      "@type": "dg:SourceDocument",
+      "schema:name": "interprets-may-wightman-1989-fscv",
+      "schema:description": "May & Wightman (1989, Brain Research) used fast-scan cyclic voltammetry (FSCV) in rat striatal slices to measure evoked extracellular dopamine transients across 10, 30, and 60 Hz electrical stimulation in dorsal and ventral striatum, and reported that ventral striatum reached substantially higher peak DA concentrations than dorsal striatum across all three frequencies. This slice-level dataset is the canonical empirical anchor for regional differences in striatal DA release dynamics.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.1016/0006-8993(89)90835-4"
+      },
+      "haak:role": "literature-context",
+      "haak:epistemicStrength": "moderate",
+      "haak:panel": "fig2E (explicit replication comparison)"
+    },
+    {
+      "@id": "urn:uuid:961ce4c4-5809-4b6b-aaa4-c5f52373612c",
+      "@type": "mira:Evidence",
+      "schema:name": "low-burst-no-spillover-high-burst-does",
+      "schema:description": "3 APs at 10 Hz generates no significant DA spillover outside the burst zone; 6 APs at 20 Hz and 12 APs at 40 Hz cause frequency-dependent spillover exposing 10× and 30× the burst volume to concentrations above 100 nM respectively.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig1G",
+      "haak:analysis": "Figure 1-Fig 1g-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:5b351222-ab85-46be-a673-b05a6f104f80",
+      "@type": "mira:Claim",
+      "schema:name": "nanoclustering-constant-vmax-constraint",
+      "schema:description": "The nanoclustering simulations hold total DAT Vmax constant across clustered and unclustered conditions — the per-voxel rate is multiplied by a normalization factor so total integrated uptake capacity is identical; if DAT nanoclustering co-occurs with increased total DAT expression in biology, the clearance-slowing result would not hold.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f"
+          },
+          {
+            "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4C, fig4D, fig4E, fig4F",
+      "haak:analysis": "Figure 4-Fig 4 simulations-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:8300c7dc-9386-4a06-9763-c3b681b5c282",
+      "@type": "mira:Claim",
+      "schema:name": "nanoclustering-model-varicosity-scale",
+      "schema:description": "The nanoclustering simulations (Figure 4C–F) operate in a standalone varicosity-scale model (1.8 × 1.8 µm domain, 0.02 µm voxels) architecturally separate from the tissue-level model used in Figures 1–3 (100 µm domain, 1 µm voxels); no formal coupling exists between the two models and no effective-Vmax output from the nanoclustering simulation feeds into the tissue simulation.",
+      "mira:epistemicStatus": "mira:Assumption",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "haak:role": "scope",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "scopes": [
+          {
+            "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f"
+          },
+          {
+            "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig4C, fig4D, fig4E, fig4F",
+      "haak:analysis": "Figure 4-Fig 4 simulations-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:73da2169-c0ce-4ae2-85b2-42fb821ec872",
+      "@type": "mira:Evidence",
+      "schema:name": "vmat2-gradient-absent",
+      "schema:description": "VMAT2 immunostaining shows no significant dorsoventral gradient in striatum (p=0.0086, one-sided t-test, n=4 mice), ruling out differential release capacity as the primary explanation for regional DA differences.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        }
+      ],
+      "mira:opposes": {
+        "schema:name": "differential VMAT2 expression / vesicular release capacity as the explanation for the DS/VS DA difference"
+      },
+      "haak:role": "control",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "rules-out": [
+          {
+            "schema:name": "differential VMAT2 expression / vesicular release capacity as the explanation for the DS/VS DA difference"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          },
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ],
+        "validates": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "unverified:no-data",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2—supplement 1A, fig2—supplement 1B, fig2—supplement 1C"
+    },
+    {
+      "@id": "urn:uuid:59c0aba5-a0e0-41d8-8961-fa5e927d83e7",
+      "@type": "mira:Evidence",
+      "schema:name": "vmax-modulation-larger-impact-in-vs",
+      "schema:description": "A ±50% change in DAT Vmax shifts tonic DA by 38 nM in VS but only 11 nM in DS, indicating VS operates closer to the Km saturation regime and is more sensitive to DAT modulation.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795"
+          },
+          {
+            "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          },
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3K",
+      "haak:analysis": "Figure 3-Fig 3k, l-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "@type": "mira:Evidence",
+      "schema:name": "vmax-only-parameter-driving-regional-difference",
+      "schema:description": "Across parameter sweeps of active terminal fraction, quantal size, release probability, and firing rate, only DAT Vmax generates differential responses between DS and VS; all other parameters shift both regions proportionally without altering the regional contrast.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        }
+      ],
+      "mira:opposes": [
+        {
+          "schema:name": "differential active terminal fraction as the explanation for the DS/VS DA difference"
+        },
+        {
+          "schema:name": "differential quantal release size as the explanation for the DS/VS DA difference"
+        },
+        {
+          "schema:name": "differential release probability as the explanation for the DS/VS DA difference"
+        },
+        {
+          "schema:name": "differential pacemaker firing rate as the explanation for the DS/VS DA difference"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "strong",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+          }
+        ],
+        "rules-out": [
+          {
+            "schema:name": "differential active terminal fraction as the explanation for the DS/VS DA difference"
+          },
+          {
+            "schema:name": "differential quantal release size as the explanation for the DS/VS DA difference"
+          },
+          {
+            "schema:name": "differential release probability as the explanation for the DS/VS DA difference"
+          },
+          {
+            "schema:name": "differential pacemaker firing rate as the explanation for the DS/VS DA difference"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          },
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/ejdrup-2026-dopamine/verify.py"
+        }
+      ],
+      "haak:panel": "fig3B, fig3C, fig3E, fig3F, fig3G, fig3K, fig3L",
+      "haak:analysis": "Figure 3-Fig 3b, c, e-g-Source code.py, Figure 3-Fig 3i-Source code.py, Figure 3-Fig 3k, l-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:e3b92961-38ad-41b2-a66f-65e328d33a2e",
+      "@type": "mira:Evidence",
+      "schema:name": "vs-low-active-fraction-resembles-ds-distribution",
+      "schema:description": "VS at 5% active terminals produces a spatial DA distribution resembling DS at 100% active terminals, demonstrating VS operates in a low-focality high-coverage regime while DS requires dense terminal participation for equivalent spatial reach.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        }
+      ],
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          },
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "unverified:compute-infeasible",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig3B",
+      "haak:analysis": "Figure 3-Fig 3b, c, e-g-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:897a3449-e5bd-4f12-99f2-e701f5989c74",
+      "@type": "mira:Evidence",
+      "schema:name": "vs-lowest-percentiles-above-10nm",
+      "schema:description": "Even the lowest DA concentration percentiles in VS exceed 10 nM during 4 Hz pacemaker activity.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "requires": [
+          {
+            "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "unverified:code-error",
+          "haak:executed": false
+        },
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false
+        }
+      ],
+      "haak:panel": "fig2D",
+      "haak:analysis": "Figure 2-Fig 2a-f-Source code.py"
+    },
+    {
+      "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "@type": "mira:Evidence",
+      "schema:name": "vs-maintains-pervasive-tonic-da",
+      "schema:description": "With DAT Vmax reduced to 33% of DS and terminal density at 90%, VS produces a diffuse tonic-like DA level throughout the simulated volume rather than segregated hotspots during 4 Hz pacemaker activity.",
+      "mira:epistemicStatus": "mira:Claim",
+      "dg:sourceDocument": {
+        "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "mira:observationBase": {
+        "@type": "mira:Study",
+        "schema:identifier": "https://zenodo.org/record/17664800",
+        "mira:follows": {
+          "@type": "mira:Protocol",
+          "schema:name": "mathematical modelling"
+        }
+      },
+      "mira:supports": [
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        },
+        {
+          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+        }
+      ],
+      "mira:opposes": {
+        "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+      },
+      "haak:role": "empirical",
+      "haak:epistemicStrength": "moderate",
+      "haak:relations": {
+        "dissociates-with": [
+          {
+            "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+          }
+        ],
+        "requires": [
+          {
+            "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+          },
+          {
+            "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+          }
+        ],
+        "supports": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          },
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ],
+        "tests": [
+          {
+            "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
+          }
+        ]
+      },
+      "haak:verification": [
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-29",
+          "haak:status": "unverified:code-error",
+          "haak:executed": false,
+          "haak:script": "verification/ejdrup-2026-dopamine/verify.py"
+        },
+        {
+          "@type": "haak:VerificationRecord",
+          "haak:agent": "mainen-z",
+          "schema:date": "2026-03-30",
+          "haak:status": "verified",
+          "haak:executed": false,
+          "haak:script": "verification/ejdrup-2026-dopamine/verify.py"
+        }
+      ],
+      "haak:panel": "fig2A, fig2B, fig2C",
+      "haak:analysis": "Figure 2-Fig 2a-f-Source code.py"
+    }
+  ]
+}
