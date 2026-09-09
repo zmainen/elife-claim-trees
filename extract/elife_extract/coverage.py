@@ -150,6 +150,29 @@ def _claim_panel_ids(panel_field: str | None) -> set[str]:
     return ids
 
 
+def _claim_panels(claim: dict):
+    """Every panel a claim names, from both places the corpus stores them.
+
+    The curated corpus keeps panels on the assertion — `assertions: [{panel: "fig4e, fig4f"}]`
+    — while the CLI writes a top-level `panel`. Reading only the top level scored the whole
+    curated corpus at 0/40 panels, which looked like a devastating finding and was a bug in
+    the measurement. Same shape as the `belongings` relations the MIRA export used to miss:
+    when a corpus stores one fact two ways, a reader that knows one way reports confident
+    zeroes.
+    """
+    vals = []
+    top = claim.get("panel")
+    if top:
+        vals.append(top)
+    for a in (claim.get("assertions") or []):
+        if isinstance(a, dict) and a.get("panel"):
+            vals.append(a["panel"])
+    ids = set()
+    for v in vals:
+        ids |= _claim_panel_ids(v)
+    return ids
+
+
 def assess(
     paper: PreparedPaper,
     claims: list[dict],
@@ -164,7 +187,7 @@ def assess(
 
     claimed: set[str] = set()
     for c in claims:
-        claimed |= _claim_panel_ids(c.get("panel"))
+        claimed |= _claim_panels(c)
     rep.panels_claimed = sorted(claimed)
 
     inventory = set(rep.panels_total)
@@ -233,7 +256,7 @@ def _claim_index(claims: list[dict]) -> tuple[dict, dict]:
         slug = c.get("slug") or ""
         for m in STAT_RE.finditer(plain(c.get("claim") or "")):
             by_stat.setdefault(_norm(m.group(0)), []).append(slug)
-        for pid in _claim_panel_ids(c.get("panel")):
+        for pid in _claim_panels(c):
             by_panel.setdefault(pid, []).append(slug)
     return by_stat, by_panel
 
