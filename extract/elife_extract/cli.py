@@ -441,6 +441,76 @@ def _load_claim_frontmatter(d: Path) -> list:
     return out
 
 
+def cmd_mark(args: argparse.Namespace) -> int:
+    """Write the paper's claim assignments into the document, as tika marks.
+
+    The marked document is the record: an assigned span carries the claim's
+    UUID, a span that states no result says so, and a span carrying a result
+    with no mark is a gap you can see by looking.
+    """
+    import json
+    import logging
+    from .prepare import prepare
+    from .coverage import assess_spans, apply_mapping
+    from .marks import render_marked, assignments_from_marked, NO_ASSERTION
+
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+                        datefmt="%H:%M:%S")
+    try:
+        paper = prepare(doi=args.doi, paper_slug_override=getattr(args, "paper_slug", None))
+    except Exception as e:
+        print(f"error: prepare failed: {e}", file=sys.stderr)
+        return 3
+
+    claims_dir = Path(args.claims_dir).expanduser().resolve()
+    claims = _load_claim_frontmatter(claims_dir)
+    if not claims:
+        print(f"error: no claim files under {claims_dir}", file=sys.stderr)
+        return 2
+    uuid_of = {c["slug"]: c.get("uuid") for c in claims}
+
+    rep = assess_spans(paper, claims, include_methods=args.include_methods)
+    mapping = {}
+    if args.mapping:
+        mapping = json.loads(Path(args.mapping).read_text(encoding="utf-8"))
+        rep = apply_mapping(rep, mapping)
+
+    # A span is assigned the UUID of a claim that accounts for it. Where several
+    # do, the first is written — the mark records that the span is covered, and
+    # which claim leads; a span belonging to several claims is a curation
+    # question rather than something to guess at here.
+    assignments: dict[str, str] = {}
+    for span, slugs in rep.accounted:
+        uid = next((uuid_of.get(sl) for sl in slugs if uuid_of.get(sl)), None)
+        if uid:
+            assignments[span.uid] = uid
+    for span, _why in rep.excluded:
+        assignments[span.uid] = NO_ASSERTION
+
+    text = render_marked(paper, assignments, author=args.author,
+                         include_methods=args.include_methods)
+    out = Path(args.out).expanduser() if args.out else Path(f"{paper.paper_slug}.marked.md")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(text, encoding="utf-8")
+
+    # Read the marks straight back. If the document cannot reproduce the
+    # assignments it was just written from, it is not a record of anything.
+    back = assignments_from_marked(text, paper, include_methods=args.include_methods)
+    gaps = len(rep.orphans)
+    print(f"=== Marked — {paper.paper_slug} ===")
+    print(f"  assigned to a claim : {sum(1 for v in assignments.values() if v != NO_ASSERTION)}")
+    print(f"  states no result    : {sum(1 for v in assignments.values() if v == NO_ASSERTION)}")
+    print(f"  gaps (left unmarked): {gaps}")
+    print(f"  written             : {out}")
+    if back == assignments:
+        print(f"  round-trip          : OK — {len(back)} marks read back identically")
+        return 0
+    print(f"  round-trip          : MISMATCH — wrote {len(assignments)}, read {len(back)}",
+          file=sys.stderr)
+    return 1
+
+
 def cmd_evaluate(args: argparse.Namespace) -> int:
     """Round-trip evaluation against a curated reference corpus.
 
@@ -844,6 +914,25 @@ def build_parser() -> argparse.ArgumentParser:
     p_eval.set_defaults(func=cmd_evaluate)
 
     # ── coverage ─────────────────────────────────────────────────────────
+    p_mark = sub.add_parser(
+        "mark",
+        help="Write claim assignments into the paper as tika marks.",
+        description=(
+            "Render the paper with a tika claim mark on every span a claim accounts for, "
+            "carrying that claim's UUID. Spans that state no result are marked as such; "
+            "spans carrying a result that no claim states are left bare, so a gap is "
+            "visible by absence rather than only countable in a report."
+        ),
+    )
+    p_mark.add_argument("--doi", required=True)
+    p_mark.add_argument("--paper-slug")
+    p_mark.add_argument("--claims-dir", required=True)
+    p_mark.add_argument("--mapping", help="Adjudicated verdicts, as for `coverage`.")
+    p_mark.add_argument("--include-methods", action="store_true")
+    p_mark.add_argument("--author", default="zach", help="Mark author (default: zach).")
+    p_mark.add_argument("-o", "--out", help="Output path (default: <slug>.marked.md).")
+    p_mark.set_defaults(func=cmd_mark)
+
     p_cov = sub.add_parser(
         "coverage",
         help="What in the paper does no claim account for? (no model calls)",
