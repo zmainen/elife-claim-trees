@@ -199,7 +199,9 @@ def build_node(claim, by_slug, extended):
         typed.setdefault(key, []).append(
             {"@id": node_id(t)} if t else {"schema:name": target})
     if typed:
-        ext["haak:relations"] = typed
+        # Sorted, because this file is published as a reproducible artifact: re-running the
+        # export must produce the same bytes, not the same content in dict-insertion order.
+        ext["haak:relations"] = {k: typed[k] for k in sorted(typed)}
 
     reps = []
     for r in (claim.get("reproductions") or []):
