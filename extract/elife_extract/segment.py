@@ -205,9 +205,10 @@ def panel_refs(text: str, current_figure: str | None = None) -> list[str]:
 
         if base == "app":
             # "Appendix 1—table 4" is one id; a bare "Appendix 1" names no panel.
+            # The id is the document's own — eLife's JATS calls this `app1table4`.
             if m.group("apptab"):
                 n = re.search(r"\d+", m.group("apptab")).group(0)
-                add(f"tableapp{num}-{n}")
+                add(f"app{num}table{n}")
             continue
 
         if m.group("supp"):
@@ -221,6 +222,11 @@ def panel_refs(text: str, current_figure: str | None = None) -> list[str]:
                 add(f"{base}{num}{L}")
         else:
             add(f"{base}{num}")
+
+    # The key resources table has a name rather than a number, and JATS calls it
+    # `keyresource`. Nothing else in the reference grammar reaches it.
+    if re.search(r"\bkey\s+resources?\s+table\b", text, re.I):
+        add("keyresource")
 
     if current_figure:
         for m in _BARE_LETTERS_RE.finditer(text):

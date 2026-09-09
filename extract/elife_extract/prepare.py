@@ -126,16 +126,35 @@ class PreparedPaper:
 class FigureCaption:
     """One figure's caption with extracted panel labels."""
 
-    figure_num: str  # "1", "2", "S1", "3-5" etc.
+    figure_num: str  # display label: "1", "2", "S1", "3-5" etc.
     text: str
     panels: list[str]  # e.g. ["a", "b", "c"]; empty if no panel labels found
+    element_id: str = ""   # the JATS <fig id> verbatim, when the source has one
+
+    def base_id(self) -> str:
+        """The figure's identifier — the document's own, wherever it has one.
+
+        eLife's JATS assigns every figure and table an id (`fig2`, `fig3s1`,
+        `app1table4`, `keyresource`). Parsing the human-readable label and
+        rebuilding an id from it was inventing a second name for something
+        already named, and the two disagreed: "Appendix 1—table 4" became
+        `tableapp1-4` where the document itself says `app1table4`. Inherit the
+        identifier; derive one only from a source that has none, which is the
+        PDF path.
+        """
+        return self.element_id or f"fig{self.figure_num.lower()}"
 
     def panel_ids(self) -> list[str]:
-        """e.g. fig1a, fig1b, ... or just fig1 if no panels detected."""
-        prefix = f"fig{self.figure_num.lower()}"
+        """e.g. fig1a, fig1b, ... or just fig1 if no panels detected.
+
+        Panels are the one thing genuinely not inherited: JATS marks figures,
+        not panels. So the panel id extends the figure's own id with the letter
+        the article itself prints ("Figure 2C" -> fig2 + c).
+        """
+        base = self.base_id()
         if not self.panels:
-            return [prefix]
-        return [f"{prefix}{p.lower()}" for p in self.panels]
+            return [base]
+        return [f"{base}{p.lower()}" for p in self.panels]
 
 
 @dataclass
@@ -144,9 +163,11 @@ class TableCaption:
 
     table_num: str
     text: str
+    element_id: str = ""   # the JATS <table-wrap id> verbatim
 
     def panel_id(self) -> str:
-        return f"table{self.table_num.lower()}"
+        """The table's identifier — the document's own where it has one."""
+        return self.element_id or f"table{self.table_num.lower()}"
 
 
 # ── DOI / article-ID handling ────────────────────────────────────────────
@@ -342,7 +363,8 @@ def _extract_jats_figures(root: etree._Element) -> list[FigureCaption]:
             caption_text = f"{label_el.text.strip()} {caption_text}"
         # Extract panel labels from caption text
         panels = _panel_letters(caption_text)
-        captions.append(FigureCaption(figure_num=fig_num, text=caption_text, panels=panels))
+        captions.append(FigureCaption(figure_num=fig_num, text=caption_text, panels=panels,
+                                      element_id=fig_id))
     return captions
 
 
@@ -373,7 +395,8 @@ def _extract_jats_tables(root: etree._Element) -> list["TableCaption"]:
         body = tw.find(".//table")
         text = " ".join(x for x in (label, _text(cap), _text(body)) if x).strip()
         if text:
-            tables.append(TableCaption(table_num=num, text=text))
+            tables.append(TableCaption(table_num=num, text=text,
+                                       element_id=(tw.get("id") or "")))
     return tables
 
 
