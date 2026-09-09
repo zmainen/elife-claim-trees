@@ -317,7 +317,20 @@ def write_claim_files(draft: DraftClaimTable, cfg: Config) -> list[Path]:
     # Step 6 — infer the edges between claims before writing any of them,
     # since an edge names two slugs and both must already be assigned.
     edges: list[dict] = []
-    if getattr(cfg, "infer_edges", True):
+    # A supplied edge answer wins over calling a backend, and goes through exactly the same
+    # validation — unknown slugs dropped, self-edges dropped, reciprocals synthesised. The
+    # route in differs; the checks do not. This exists because the deductive spine is the
+    # part of a claim tree that matters most and the part most easily lost to a provider
+    # outage: on a live Gädeke run every other stage succeeded and the edges were gone.
+    supplied = getattr(cfg, "edges_json", None)
+    if supplied:
+        from .edges import edges_from_raw
+        try:
+            edges = edges_from_raw(Path(supplied).read_text(encoding="utf-8"),
+                                   slugs, source=f"supplied:{supplied}")
+        except Exception as e:                                   # noqa: BLE001
+            logger.warning("supplied edge file unusable (%s); writing claims without edges", e)
+    elif getattr(cfg, "infer_edges", True):
         from .edges import infer_edges
         try:
             edges = infer_edges(draft, slugs, cfg)

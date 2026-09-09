@@ -95,6 +95,7 @@ class Config:
     max_claims: int | None = None
     retry_on_thin: bool = True
     infer_edges: bool = True
+    edges_json: str | None = None
 
     # Provided fields, populated by from_args()
     extras: dict = field(default_factory=dict)
@@ -161,6 +162,7 @@ class Config:
             cfg.corpus_dir = Path(corpus).expanduser().resolve()
 
         cfg.infer_edges = not getattr(args, "no_infer_edges", False)
+        cfg.edges_json = getattr(args, "edges_json", None)
 
         # Default prompts dir is the package's sibling prompts/ directory
         cfg.prompts_dir = Path(__file__).resolve().parent.parent / "prompts"

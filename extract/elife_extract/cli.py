@@ -189,6 +189,23 @@ def cmd_write(args: argparse.Namespace) -> int:
     print(f"  claims = {len(draft.claims)} (per-agent: {dict(draft.per_agent_counts)})")
     print()
 
+    # Emit the Step 6 prompt and stop. Whatever answers it — an analyst, a reasoning agent —
+    # then answers the same question the pipeline would have asked, rather than a paraphrase
+    # of it written from memory.
+    if getattr(args, "dump_edge_prompt", None):
+        from .edges import build_edge_request
+        from .write import _unique_slugs
+        slugs = _unique_slugs(draft.claims)
+        system, user = build_edge_request(draft, slugs)
+        out = Path(args.dump_edge_prompt).expanduser()
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
+        print(f"  Step 6 prompt written: {out}")
+        print(f"  Answer it with a JSON array, then: "
+              f"elife-extract write --draft {draft_path} --corpus-dir {cfg.corpus_dir} "
+              f"--edges-json <answer.json>")
+        return 0
+
     # external mode: run Opus reviewer pass before write; substitutes for
     # the human review at Step 5.
     if cfg.review_mode == "external":
@@ -732,6 +749,17 @@ def build_parser() -> argparse.ArgumentParser:
     # write needs model routing too: the external reviewer (Step 4.5) and
     # edge inference (Step 6) both call cfg.model_reconcile.
     _add_model_args(p_write)
+    p_write.add_argument(
+        "--edges-json",
+        help="Use this file's edge answer instead of calling a backend for Step 6. It goes "
+             "through the same validation as an inferred one. For answering the edge step "
+             "from outside the configured provider — an analyst, or a reasoning agent.",
+    )
+    p_write.add_argument(
+        "--dump-edge-prompt", metavar="PATH",
+        help="Write the exact Step 6 prompt to PATH and exit, so whatever answers it "
+             "answers the same question the pipeline would have asked.",
+    )
     p_write.set_defaults(func=cmd_write)
 
     # ── verify-refs ──────────────────────────────────────────────────────

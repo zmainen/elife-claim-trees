@@ -206,14 +206,13 @@ def _parse_edge_array(raw: str) -> list | None:
     return objs
 
 
-def infer_edges(
-    draft: DraftClaimTable, slugs: list[str], cfg: Config
-) -> list[dict]:
-    """Ask the model for typed relations between the draft's claims.
+def build_edge_request(draft: DraftClaimTable, slugs: list[str]) -> tuple[str, str]:
+    """The exact (system, user) prompt the edge step sends.
 
-    Returns [{source, target, relation}] in corpus vocabulary. Edges naming
-    an unknown slug, or pointing at themselves, are dropped rather than
-    written — an invented target is worse than a missing edge.
+    Exposed so the same request can be answered by something other than a
+    configured backend — an analyst, or a reasoning agent — without that
+    answer being produced against a different question. If the prompt lived
+    only inside `infer_edges`, any alternative route would be guessing at it.
     """
     user = (
         f"Here are {len(draft.claims)} claims from the paper:\n\n"
@@ -221,6 +220,29 @@ def infer_edges(
         "Identify the relationships between these numbered claims. "
         "Refer to claims by number. Return JSON array only."
     )
+    return EDGE_PROMPT, user
+
+
+def edges_from_raw(raw: str, slugs: list[str], *, source: str = "model") -> list[dict]:
+    """Validate a raw edge response into corpus-vocabulary edges.
+
+    Every route into the corpus goes through here — the configured backend,
+    a supplied file, an analyst's hand-written list. Edges naming an unknown
+    slug, or pointing at themselves, are dropped rather than written: an
+    invented target is worse than a missing edge, and that has to hold no
+    matter who produced the answer.
+    """
+    parsed = _parse_edge_array(raw)
+    if parsed is None:
+        return []
+    return _validate_edges(parsed, slugs, source=source)
+
+
+def infer_edges(
+    draft: DraftClaimTable, slugs: list[str], cfg: Config
+) -> list[dict]:
+    """Ask the configured backend for typed relations between the claims."""
+    system, user = build_edge_request(draft, slugs)
 
     # Budget the call to what the output can actually be. An edge is a small JSON object —
     # two claim numbers and a relation name, ~40 tokens — and a paper has at most a few edges
@@ -234,16 +256,16 @@ def infer_edges(
     raw = stream_text(
         cfg,
         model=cfg.model_reconcile,
-        system=EDGE_PROMPT,
+        system=system,
         user=user,
         max_tokens=budget,
         label="edge-inference",
     )
 
-    parsed = _parse_edge_array(raw)
-    if parsed is None:
-        return []
+    return edges_from_raw(raw, slugs, source="model")
 
+
+def _validate_edges(parsed: list, slugs: list[str], *, source: str) -> list[dict]:
     edges: list[dict] = []
     seen: set[tuple[str, str, str]] = set()
     unknown = 0
@@ -280,8 +302,8 @@ def infer_edges(
     for e in edges:
         by_type[e["relation"]] = by_type.get(e["relation"], 0) + 1
     logger.info(
-        "edge inference: %d edges across %d types (%d dropped as invalid): %s",
-        len(edges), len(by_type), unknown,
+        "edges (%s): %d edges across %d types (%d dropped as invalid): %s",
+        source, len(edges), len(by_type), unknown,
         ", ".join(f"{k}={v}" for k, v in sorted(by_type.items(), key=lambda x: -x[1])),
     )
     return edges
