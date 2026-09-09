@@ -7,11 +7,11 @@
 ## Claims by role
 
 - **empirical** — 15
-- **scope** — 3
 - **hypothesis** — 3
+- **scope** — 3
 - **literature-context** — 2
-- **methodological** — 1
 - **control** — 1
+- **methodological** — 1
 
 ## Relations dropped
 

@@ -324,7 +324,7 @@ def gap_report(paper_slug, claims, dropped, questions):
     L.append(f"{len(claims)} claims, {total_edges} typed relations between them.\n")
 
     L.append("## Claims by role\n")
-    for r, n in sorted(roles.items(), key=lambda x: -x[1]):
+    for r, n in sorted(roles.items(), key=lambda x: (-x[1], x[0])):
         L.append(f"- **{r}** — {n}")
     L.append("")
 
@@ -337,7 +337,7 @@ def gap_report(paper_slug, claims, dropped, questions):
                  f"predicate and are absent from the strict export.**\n")
         L.append("| Relation | Dropped | What is lost |")
         L.append("|---|---:|---|")
-        for k, n in sorted(by_type.items(), key=lambda x: -x[1]):
+        for k, n in sorted(by_type.items(), key=lambda x: (-x[1], x[0])):
             L.append(f"| `{k}` | {n} | {GAPS.get(k, '')} |")
         L.append("")
         L.append("The `entails` / `derived-from` pair is the most consequential: together "

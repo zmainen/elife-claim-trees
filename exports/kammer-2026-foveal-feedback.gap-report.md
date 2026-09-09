@@ -10,9 +10,9 @@
 - **prediction** — 4
 - **control** — 3
 - **hypothesis** — 3
-- **synthesis** — 2
-- **scope** — 2
 - **methodological** — 2
+- **scope** — 2
+- **synthesis** — 2
 - **literature-context** — 1
 
 ## Relations dropped

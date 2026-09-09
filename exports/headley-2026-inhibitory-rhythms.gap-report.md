@@ -10,8 +10,8 @@
 - **prediction** — 6
 - **hypothesis** — 2
 - **scope** — 2
-- **literature-context** — 1
 - **interpretation** — 1
+- **literature-context** — 1
 
 ## Relations dropped
 
@@ -20,8 +20,8 @@
 | Relation | Dropped | What is lost |
 |---|---:|---|
 | `requires` | 28 | a claim depends on another holding |
-| `entails` | 6 | hypothesis entails its prediction — the deductive step |
 | `derived-from` | 6 | prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 6 | hypothesis entails its prediction — the deductive step |
 | `interprets` | 5 | one claim interprets another |
 | `scopes` | 2 | a scope constraint governs another claim's validity |
 

@@ -10,9 +10,9 @@
 - **prediction** — 9
 - **hypothesis** — 3
 - **control** — 2
-- **synthesis** — 1
 - **methodological** — 1
 - **scope** — 1
+- **synthesis** — 1
 
 ## Relations dropped
 
@@ -22,8 +22,8 @@
 |---|---:|---|
 | `scopes` | 18 | a scope constraint governs another claim's validity |
 | `enables-method` | 16 | a result makes a downstream method possible |
-| `entails` | 9 | hypothesis entails its prediction — the deductive step |
 | `derived-from` | 9 | prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 9 | hypothesis entails its prediction — the deductive step |
 | `interprets` | 4 | one claim interprets another |
 | `requires` | 2 | a claim depends on another holding |
 

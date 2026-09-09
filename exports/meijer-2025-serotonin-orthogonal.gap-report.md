@@ -22,8 +22,8 @@
 |---|---:|---|
 | `requires` | 18 | a claim depends on another holding |
 | `scopes` | 10 | a scope constraint governs another claim's validity |
-| `entails` | 4 | hypothesis entails its prediction — the deductive step |
 | `derived-from` | 4 | prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 4 | hypothesis entails its prediction — the deductive step |
 | `enables-method` | 2 | a result makes a downstream method possible |
 | `interprets` | 1 | one claim interprets another |
 

@@ -11,8 +11,8 @@
 - **hypothesis** — 2
 - **prediction** — 2
 - **scope** — 2
-- **interpretation** — 1
 - **control** — 1
+- **interpretation** — 1
 
 ## Relations dropped
 
@@ -23,8 +23,8 @@
 | `scopes` | 27 | a scope constraint governs another claim's validity |
 | `enables-method` | 7 | a result makes a downstream method possible |
 | `entails` | 5 | hypothesis entails its prediction — the deductive step |
-| `requires` | 3 | a claim depends on another holding |
 | `derived-from` | 3 | prediction derived from its hypothesis (inverse of entails) |
+| `requires` | 3 | a claim depends on another holding |
 | `interprets` | 1 | one claim interprets another |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.

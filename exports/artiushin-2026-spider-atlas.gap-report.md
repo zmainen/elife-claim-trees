@@ -8,8 +8,8 @@
 
 - **empirical** — 13
 - **methodological** — 2
-- **scope** — 1
 - **interpretation** — 1
+- **scope** — 1
 
 ## Relations dropped
 
@@ -19,9 +19,9 @@
 |---|---:|---|
 | `scopes` | 15 | a scope constraint governs another claim's validity |
 | `enables-method` | 14 | a result makes a downstream method possible |
-| `requires` | 2 | a claim depends on another holding |
 | `derived-from` | 2 | prediction derived from its hypothesis (inverse of entails) |
 | `interprets` | 2 | one claim interprets another |
+| `requires` | 2 | a claim depends on another holding |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.
 

@@ -12,9 +12,9 @@
 - **control** — 2
 - **interpretation** — 2
 - **literature-context** — 1
+- **methodological** — 1
 - **scope** — 1
 - **synthesis** — 1
-- **methodological** — 1
 
 ## Relations dropped
 
@@ -26,8 +26,8 @@
 | `scopes` | 14 | a scope constraint governs another claim's validity |
 | `interprets` | 10 | one claim interprets another |
 | `enables-method` | 7 | a result makes a downstream method possible |
-| `entails` | 4 | hypothesis entails its prediction — the deductive step |
 | `derived-from` | 4 | prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 4 | hypothesis entails its prediction — the deductive step |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.
 
