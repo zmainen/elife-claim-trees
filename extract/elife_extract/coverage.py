@@ -279,6 +279,7 @@ def assess_spans(paper: PreparedPaper, claims: list[dict],
 
     rep = SpanCoverage(paper_slug=paper.paper_slug)
     by_stat, by_panel = _claim_index(claims)
+    inventory = set(paper.panel_ids)
     rep.spans = segment(paper, include_methods=include_methods)
 
     for u in rep.spans:
@@ -287,11 +288,22 @@ def assess_spans(paper: PreparedPaper, claims: list[dict],
             for slug in by_stat.get(_norm(s), []):
                 if slug not in hits:
                     hits.append(slug)
-        for p in u.panels:
-            for pid in _claim_panel_ids(p):
-                for slug in by_panel.get(pid, []):
-                    if slug not in hits:
-                        hits.append(slug)
+        for pid in u.panels:
+            for slug in by_panel.get(pid, []):
+                if slug not in hits:
+                    hits.append(slug)
+            # A caption opener says "Figure 4." and the inventory holds fig4a..fig4i, so a
+            # figure-level reference matches nothing and the span can never be accounted
+            # for. Treat it as touched when a claim names any panel of that figure: the span
+            # refers to the figure as a whole, and the claim is still specific. This does not
+            # credit the claim with panels it never named — `assess` reports figure-level
+            # citation separately, and still counts every unnamed panel as an orphan.
+            if pid not in inventory:
+                for cid, slugs in by_panel.items():
+                    if cid.startswith(pid) and cid in inventory:
+                        for slug in slugs:
+                            if slug not in hits:
+                                hits.append(slug)
         if not (u.has_result or u.panels):
             rep.textual.append(u)
         elif hits:
