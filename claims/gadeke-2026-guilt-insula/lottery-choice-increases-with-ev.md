@@ -57,6 +57,26 @@ reproductions:
       weighted), not raw EV. The core claim — positive and highly significant EV effect — is
       confirmed. Status: verified for direction and significance; coefficient scale differs due
       to predictor definition, not error.
+  - agent: mainen-z
+    date: 2026-09-06
+    status: verified
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    function: verify_lottery_ev() (verify.py line 74)
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_commit: 11854fe
+    data_file: Code/csv/fMRI - Choices_singleTrialData.csv
+    script_execution: executed
+    script_execution_note: "Executed 2026-09-06 in Python (fast mode, ~3 min) against the authors' deposited analysis tables and thresholded maps. The authors' original MATLAB/SPM12 pipeline was NOT re-run; that is full mode, requiring OpenNeuro ds005588 (~15 GB) plus MATLAB and SPM12."
+    paper_value: "beta > 0, p < 0.05"
+    reproduced_value: "beta = 0.032, p = 9.55e-68, n = 2400"
+    notes: >
+      Mixed-effects logistic regression of lottery choice on expected-value advantage, run on
+      the authors' deposited single-trial CSV (Code/csv/fMRI - Choices_singleTrialData.csv).
+      The expected-value advantage coefficient is positive and highly significant, reproducing
+      the paper's manipulation check.
+      Supersedes the 2026-03-30 partial status; the re-run returns PASS. The earlier 'partial'
+      reflected a coefficient-scale comparison against a utility-weighted predictor, not a
+      failure to reproduce.
 
 discrepancy:
   type: methodological-gap

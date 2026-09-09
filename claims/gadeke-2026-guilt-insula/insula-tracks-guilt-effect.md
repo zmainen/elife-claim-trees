@@ -56,6 +56,22 @@ reproductions:
       confirming perfect match. The paper reports anterior insula peak coordinates at [-28 24 -4]
       (left hemisphere). Claim verified: peak coordinates match and cluster is restricted to
       anterior insula as described.
+  - agent: mainen-z
+    date: 2026-09-06
+    status: verified
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    function: verify_insula_peak() (verify.py line 235)
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_commit: 11854fe
+    data_file: fMRIresults/outcome/guiltEffect_0p05FWE_SVC_aIns.nii
+    script_execution: executed
+    script_execution_note: "Executed 2026-09-06 in Python (fast mode, ~3 min) against the authors' deposited analysis tables and thresholded maps. The authors' original MATLAB/SPM12 pipeline was NOT re-run; that is full mode, requiring OpenNeuro ds005588 (~15 GB) plus MATLAB and SPM12."
+    paper_value: "peak MNI [-28, 24, -4]"
+    reproduced_value: "peak MNI [-28, 24, -4]"
+    notes: >
+      Loads the authors' deposited thresholded contrast map, finds the peak voxel, and applies
+      the image affine to convert voxel indices to MNI millimetres. Exact match to the published
+      coordinates.
 ---
 
 

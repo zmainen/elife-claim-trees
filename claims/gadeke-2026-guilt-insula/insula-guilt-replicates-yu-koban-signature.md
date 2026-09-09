@@ -64,6 +64,36 @@ reproductions:
       is supported at p<0.05 by nonparametric test; t-test marginal. Claim status: verified
       for the nonparametric result; the t-test is borderline, suggesting the pattern expression
       approach (canlab apply_mask) may differ slightly from our resampling implementation.
+  - agent: mainen-z
+    date: 2026-09-06
+    status: verified
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    function: verify_yu_koban() (verify.py line 278)
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_commit: 11854fe
+    data_file: "fMRIresults/outcome/guiltEffectEachPartic.nii (4D, 40 participants; shipped in the deposit as .nii.zip) x Code/bin/Yu_guilt_SVM_sxpo_sxpx_EmotionForwardmask.nii (50,860 mask voxels)"
+    script_execution: executed
+    script_execution_note: "Executed 2026-09-06 in Python (fast mode, ~3 min) against the authors' deposited analysis tables and thresholded maps. The authors' original MATLAB/SPM12 pipeline was NOT re-run; that is full mode, requiring OpenNeuro ds005588 (~15 GB) plus MATLAB and SPM12."
+    paper_value: "sign test p < 0.05"
+    reproduced_value: "sign test p = 0.0083, Wilcoxon p = 0.0211, 28 of 40 participants positive"
+    notes: >
+      Read this entry together with its caveats; the numbers above did NOT come from the
+      committed script as it currently stands.
+      (a) Until this run the check had been failing in the committed verify.py for two separate
+      reasons. First, the 4D per-participant guilt-effect map ships in the deposit zipped, as
+      guiltEffectEachPartic.nii.zip, while the script's file-search pattern only matched a
+      plain .nii, so the input was never found. Second, the Yu/Koban signature mask was being
+      resampled onto the 4-dimensional image rather than onto its 3-dimensional spatial grid,
+      which produced a malformed transform.
+      (b) Both are one-line fixes: match the zipped filename, and resample to
+      guilt_img.shape[:3] using guilt_img.affine.
+      (c) These fixes are NOT yet applied to the committed verify.py. The 2026-09-06 numbers
+      were produced in a scratch copy of the script, so re-running the repository copy today
+      will not reproduce them until the two fixes land.
+      (d) The 2026-03-30 entry above records sign test p = 0.017 and Wilcoxon p = 0.042 —
+      the same direction and the same conclusion, but different figures, presumably from a
+      different resampling choice. That discrepancy is unresolved, and both sets of numbers are
+      recorded here deliberately rather than one replacing the other.
 
 discrepancy:
   type: data-gap

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Verification script for Gadeke et al. 2026 — guilt and anterior insula.
-eLife 102584 | doi:10.7554/eLife.102584
+eLife 105391 | doi:10.7554/eLife.105391
 
 FAST MODE (default, ~3 min):
   Clones GitHub repo, loads pre-computed CSVs, runs logistic regression,

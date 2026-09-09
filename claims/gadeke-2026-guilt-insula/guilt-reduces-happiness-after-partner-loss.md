@@ -59,6 +59,27 @@ reproductions:
         Behav: Social mean=-0.464, Partner mean=-0.090, t=-3.260, p=0.0012, d=-0.357
       The LMM interaction is significant in both studies; the simple post-hoc comparison is
       significant in Behav and marginal in fMRI (small N after subsetting). Claim verified.
+  - agent: mainen-z
+    date: 2026-09-06
+    status: verified
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    function: verify_guilt_happiness() (verify.py line 197)
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_commit: 11854fe
+    data_file: "Code/csv/ — single-trial happiness tables, both cohorts (auto-detected by column matching; see caveat below)"
+    script_execution: executed
+    script_execution_note: "Executed 2026-09-06 in Python (fast mode, ~3 min) against the authors' deposited analysis tables and thresholded maps. The authors' original MATLAB/SPM12 pipeline was NOT re-run; that is full mode, requiring OpenNeuro ds005588 (~15 GB) plus MATLAB and SPM12."
+    paper_value: "beta = 0.33 (fMRI cohort), 0.39 (behavioural cohort)"
+    reproduced_value: "beta = 0.34, 0.40"
+    notes: >
+      The guilt effect is the partnerWon x subjDecided interaction term in a mixed-effects
+      regression on z-scored happiness ratings, fitted separately for each cohort on the
+      authors' deposited single-trial happiness tables. Both reproduced coefficients are within
+      0.01 of the published values.
+      Caveat on auditability: as with the partner-reward check, the script locates its input by
+      globbing the CSV directory and matching on column names rather than by a pinned filename,
+      so this row of the chain is not yet independently auditable. Pinning the exact filename is
+      an open task.
 ---
 
 
