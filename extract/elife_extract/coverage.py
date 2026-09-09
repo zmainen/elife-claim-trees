@@ -234,6 +234,7 @@ class SpanCoverage:
     spans: list = field(default_factory=list)          # every span, in order
     excluded: list = field(default_factory=list)       # adjudicated as asserting no result
     adjudicated: int = 0
+    stale_verdicts: int = 0
     accounted: list = field(default_factory=list)      # (span, [slugs])
     orphans: list = field(default_factory=list)        # spans carrying a result, unmatched
     textual: list = field(default_factory=list)        # spans carrying no result at all
@@ -344,8 +345,20 @@ def apply_mapping(rep: SpanCoverage, mapping: dict) -> SpanCoverage:
     rows = mapping.get("spans", []) if isinstance(mapping, dict) else mapping
     by_uid = {m["uid"]: m for m in rows if isinstance(m, dict) and m.get("uid")}
     still_orphan, covered_late, excluded = [], [], []
+    stale = 0
     for u in rep.orphans:
         v = by_uid.get(u.uid)
+        # A verdict carries the fingerprint of the sentence it was made about. A span id is
+        # positional, so inserting one sentence earlier in a section shifts every id after
+        # it — and a verdict would then reattach to a different sentence with nothing to
+        # notice. Fail closed: a mismatched verdict is discarded and the span goes back to
+        # being unexamined, which is recoverable. Applying it would be a wrong judgement
+        # wearing the authority of a human decision.
+        if v and v.get("sha") and v["sha"] != u.sha:
+            logger.warning("stale verdict for %s: judged text no longer matches "
+                           "(verdict %s, current %s) — discarding", u.uid, v["sha"], u.sha)
+            stale += 1
+            v = None
         if not v:
             still_orphan.append(u)
         elif v.get("verdict") == "covered":
@@ -358,6 +371,9 @@ def apply_mapping(rep: SpanCoverage, mapping: dict) -> SpanCoverage:
     rep.orphans = still_orphan
     rep.excluded = excluded
     rep.adjudicated = len(by_uid)
+    rep.stale_verdicts = stale
+    if stale:
+        logger.warning("%d verdict(s) discarded as stale — re-adjudicate those spans", stale)
     return rep
 
 

@@ -237,6 +237,25 @@ CITATION_RE = re.compile(r"\([A-Z][A-Za-z’'\-]+(?:\s+et\s+al\.?)?,?\s*\d{4}[a-
 COORD_RE = re.compile(r"\[\s*[-−–]?\d+\s*,\s*[-−–]?\d+\s*,\s*[-−–]?\d+\s*\]")
 
 
+def span_sha(text: str) -> str:
+    """A content fingerprint for a span: the first 8 hex of sha256 over its
+    normalised text.
+
+    Span ids are positional (`results-026`), which makes them readable and
+    useless as identity: insert one sentence earlier in the section and every
+    id after it shifts, silently. Anything that stores a judgement about a span
+    — an adjudicated coverage verdict, a claim assignment — must be able to
+    tell that the sentence it judged is still the sentence it is looking at.
+    The id says where to look; the fingerprint says whether it is the same text.
+
+    JATS cannot help here. It gives ids to sections (43 in this paper) and to
+    figures and tables, but to none of its 225 paragraphs, and it has no
+    sentence element at all. Below section level there is nothing to inherit.
+    """
+    import hashlib
+    return hashlib.sha256(re.sub(r"\s+", " ", text).strip().encode("utf-8")).hexdigest()[:8]
+
+
 @dataclass
 class Span:
     """One span of the paper's text that must be accounted for."""
@@ -249,6 +268,11 @@ class Span:
     panels: list[str] = field(default_factory=list)
     citations: list[str] = field(default_factory=list)
     coords: list[str] = field(default_factory=list)
+
+    @property
+    def sha(self) -> str:
+        """Content fingerprint — see `span_sha`."""
+        return span_sha(self.text)
 
     @property
     def has_result(self) -> bool:
