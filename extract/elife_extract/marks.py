@@ -104,9 +104,11 @@ def render_marked(paper: PreparedPaper, assignments: dict[str, str],
     """
     spans = segment(paper, include_methods=include_methods)
     out: list[str] = [f"# {paper.title}", "",
-                      f"<!-- {paper.paper_slug} · claim assignments as tika ^ marks · "
-                      f"payload is the claim UUID; `{NO_ASSERTION}` means the span states "
-                      f"no result; an unmarked result sentence is a gap -->", ""]
+                      f"<!-- {paper.paper_slug} · claim assignments as tika v2 notes · "
+                      f"⟦>author claim=KEY: @{{span}} what the claim says⟧ · KEY is the "
+                      f"claim's UUID, or `{GAP}` (a result no claim accounts for), or "
+                      f"`{NO_ASSERTION}` (the span states no result). An unmarked sentence "
+                      f"carries no result and was never an obligation. -->", ""]
     current = None
     for s in spans:
         if s.section != current:

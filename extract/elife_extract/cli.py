@@ -469,6 +469,11 @@ def cmd_mark(args: argparse.Namespace) -> int:
         print(f"error: no claim files under {claims_dir}", file=sys.stderr)
         return 2
     uuid_of = {c["slug"]: c.get("uuid") for c in claims}
+    # A card in the margin shows the note's body. With the UUID alone in the payload every
+    # card read `49d08c4f-7b31-4967-9ab7-06aa50a006b4`, which is correct, durable and
+    # unreadable — visible the moment the document was opened rather than reasoned about.
+    # The key stays the identity; the body says what it means.
+    label_of = {c["slug"]: (c.get("shortClaim") or c.get("slug") or "") for c in claims}
 
     rep = assess_spans(paper, claims, include_methods=args.include_methods)
     mapping = {}
@@ -481,10 +486,12 @@ def cmd_mark(args: argparse.Namespace) -> int:
     # which claim leads; a span belonging to several claims is a curation
     # question rather than something to guess at here.
     assignments: dict[str, str] = {}
+    labels: dict[str, str] = {}
     for span, slugs in rep.accounted:
-        uid = next((uuid_of.get(sl) for sl in slugs if uuid_of.get(sl)), None)
-        if uid:
-            assignments[span.uid] = uid
+        sl = next((sl for sl in slugs if uuid_of.get(sl)), None)
+        if sl:
+            assignments[span.uid] = uuid_of[sl]
+            labels[span.uid] = label_of.get(sl, sl)
     reasons: dict[str, str] = {}
     for v in (mapping.get("spans", []) if isinstance(mapping, dict) else mapping) or []:
         if isinstance(v, dict) and v.get("uid") and v.get("why"):
@@ -493,6 +500,9 @@ def cmd_mark(args: argparse.Namespace) -> int:
         assignments[span.uid] = NO_ASSERTION
         if why:
             reasons.setdefault(span.uid, why)
+    # The body reads: what the claim says, then why — whichever we have.
+    for uid, lab in labels.items():
+        reasons[uid] = f"{lab} — {reasons[uid]}" if reasons.get(uid) else lab
     # A span carrying a result that no claim accounts for is marked as such. Leaving it bare
     # would make it indistinguishable from the ordinary prose around it, which is most of the
     # paper — and telling those two apart is the entire point.
