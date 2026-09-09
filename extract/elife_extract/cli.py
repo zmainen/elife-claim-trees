@@ -344,7 +344,7 @@ def cmd_coverage(args: argparse.Namespace) -> int:
     import json
     import logging
     from .prepare import prepare
-    from .coverage import assess, render, assess_units, render_units
+    from .coverage import assess, render, assess_spans, render_spans
 
     logging.basicConfig(level=logging.INFO,
                         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
@@ -373,13 +373,16 @@ def cmd_coverage(args: argparse.Namespace) -> int:
         return 2
 
     inv = assess(paper, claims)
-    units = assess_units(paper, claims, include_methods=args.include_methods)
+    spans = assess_spans(paper, claims, include_methods=args.include_methods)
+    if getattr(args, "mapping", None):
+        from .coverage import apply_mapping
+        spans = apply_mapping(spans, json.loads(Path(args.mapping).read_text(encoding="utf-8")))
 
     print(f"=== Coverage — {paper.paper_slug} ===")
     print(f"  claims read: {len(claims)}  from {claims_dir}\n")
     print(render(inv))
     print()
-    print(render_units(units))
+    print(render_spans(spans))
 
     if args.json:
         out = Path(args.json).expanduser()
@@ -393,21 +396,21 @@ def cmd_coverage(args: argparse.Namespace) -> int:
             "statistics": {"total": len(inv.stats_total),
                            "orphan": [s.text for s in inv.stats_orphan],
                            "pct": round(inv.stat_pct, 1)},
-            "units": {
-                "segmented": len(units.units),
-                "obligations": units.obligations,
-                "textual": len(units.textual),
-                "accounted": len(units.accounted),
-                "pct": round(units.pct, 1),
+            "spans": {
+                "segmented": len(spans.spans),
+                "obligations": spans.obligations,
+                "textual": len(spans.textual),
+                "accounted": len(spans.accounted),
+                "pct": round(spans.pct, 1),
                 "orphans": [{"uid": u.uid, "section": u.section, "text": u.text,
                              "stats": u.stats, "panels": u.panels}
-                            for u in units.orphans],
+                            for u in spans.orphans],
             },
         }, indent=2), encoding="utf-8")
         print(f"\nwritten: {out}")
 
     # A gate, when asked to be one.
-    if args.fail_on_orphans and (inv.panels_orphan or units.orphans):
+    if args.fail_on_orphans and (inv.panels_orphan or spans.orphans):
         print("\nFAIL: the paper contains panels or results no claim accounts for.",
               file=sys.stderr)
         return 1
@@ -864,6 +867,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--include-methods", action="store_true",
         help="Count methods sentences as obligations too (off by default: the corpus "
              "claims results, not procedure).",
+    )
+    p_cov.add_argument(
+        "--mapping",
+        help="Adjudicated verdicts for spans the mechanical match could not resolve "
+             "(covered / gap / not-an-assertion). Folds them in so the report shows real "
+             "gaps rather than everything the string match missed.",
     )
     p_cov.add_argument("--json", help="Also write the full report as JSON here.")
     p_cov.add_argument(

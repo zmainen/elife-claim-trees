@@ -138,16 +138,16 @@ _PANEL_TOKEN_RE = re.compile(r"(?:fig(?:ure)?|table)\s*\.?\s*"
 
 
 def _claim_panel_ids(panel_field: str | None) -> set[str]:
-    """Normalise a claim's panel field into inventory-shaped ids."""
+    """Normalise a claim's panel field into inventory-shaped ids.
+
+    Deliberately the same resolver the paper side uses. Two normalisers meant
+    two vocabularies: a claim saying "Figure 4E" and a paper saying "fig4e"
+    only match if one function decides what both mean.
+    """
     if not panel_field:
         return set()
-    ids = set()
-    for tok in _PANEL_TOKEN_RE.finditer(str(panel_field)):
-        t = re.sub(r"[\s.]+", "", tok.group(0)).lower()
-        t = t.replace("figure", "fig")
-        t = re.sub(r"[-–—]?supplement", "s", t)
-        ids.add(t)
-    return ids
+    from .segment import panel_refs
+    return set(panel_refs(str(panel_field)))
 
 
 def _claim_panels(claim: dict):
@@ -210,7 +210,7 @@ def assess(
     return rep
 
 
-# ── Unit-level coverage ──────────────────────────────────────────────────
+# ── Span-level coverage ──────────────────────────────────────────────────
 # The section above takes its denominator from two inventories the paper
 # publishes about itself: its figure panels and the statistics a regex can find.
 # Both are useful and neither is exhaustive — a statistic the pattern misses is
@@ -229,16 +229,22 @@ def assess(
 
 
 @dataclass
-class UnitCoverage:
+class SpanCoverage:
     paper_slug: str
-    units: list = field(default_factory=list)          # every unit, in order
-    accounted: list = field(default_factory=list)      # (unit, [slugs])
-    orphans: list = field(default_factory=list)        # units carrying a result, unmatched
-    textual: list = field(default_factory=list)        # units carrying no result at all
+    spans: list = field(default_factory=list)          # every span, in order
+    excluded: list = field(default_factory=list)       # adjudicated as asserting no result
+    adjudicated: int = 0
+    accounted: list = field(default_factory=list)      # (span, [slugs])
+    orphans: list = field(default_factory=list)        # spans carrying a result, unmatched
+    textual: list = field(default_factory=list)        # spans carrying no result at all
 
     @property
     def obligations(self) -> int:
-        """Units carrying something a claim could be expected to account for."""
+        """Spans carrying something a claim could be expected to account for.
+
+        Excludes spans adjudicated as asserting no result: a cross-reference is
+        not an obligation, and counting it as one understates the corpus.
+        """
         return len(self.accounted) + len(self.orphans)
 
     @property
@@ -261,8 +267,8 @@ def _claim_index(claims: list[dict]) -> tuple[dict, dict]:
     return by_stat, by_panel
 
 
-def assess_units(paper: PreparedPaper, claims: list[dict],
-                 *, include_methods: bool = False) -> UnitCoverage:
+def assess_spans(paper: PreparedPaper, claims: list[dict],
+                 *, include_methods: bool = False) -> SpanCoverage:
     """Cut the paper into sentences and ask which ones a claim accounts for.
 
     Methods are excluded by default: a methods sentence describes procedure, and
@@ -271,11 +277,11 @@ def assess_units(paper: PreparedPaper, claims: list[dict],
     """
     from .segment import segment
 
-    rep = UnitCoverage(paper_slug=paper.paper_slug)
+    rep = SpanCoverage(paper_slug=paper.paper_slug)
     by_stat, by_panel = _claim_index(claims)
-    rep.units = segment(paper, include_methods=include_methods)
+    rep.spans = segment(paper, include_methods=include_methods)
 
-    for u in rep.units:
+    for u in rep.spans:
         hits: list[str] = []
         for s in u.stats:
             for slug in by_stat.get(_norm(s), []):
@@ -295,18 +301,70 @@ def assess_units(paper: PreparedPaper, claims: list[dict],
     return rep
 
 
-def render_units(rep: UnitCoverage, *, limit: int = 20) -> str:
+VERDICTS = ("covered", "gap", "not-an-assertion")
+
+
+def apply_mapping(rep: SpanCoverage, mapping: dict) -> SpanCoverage:
+    """Fold adjudicated verdicts into a report.
+
+    The mechanical match answers "does a claim restate this statistic or name
+    this panel", which is a proxy for the question that matters and a poor one
+    in both directions. Adjudication resolves the remainder into three states:
+
+      covered           a claim does account for it; the matcher could not see
+                        it, typically because the claim states the effect
+                        without repeating its numbers
+      gap               nothing in the tree accounts for it — a real hole
+      not-an-assertion  the span states no result of its own: a cross-reference
+                        ("see Appendix 1—table 4"), analysis narration, or a
+                        bare panel label
+
+    Keeping the three apart is the point. Lumping the third into the orphan
+    list buries the real gaps in bookkeeping — in the Gädeke Results section,
+    9 of 24 unmatched spans assert nothing, and reporting them as unmet
+    obligations made the 10 that matter harder to see, not easier.
+
+    A verdict is a judgement and is stored, not recomputed, so it can be
+    audited, disagreed with, and re-used when the corpus changes.
+    """
+    # Accept either a bare array of verdicts or {"spans": [...]}, because both are
+    # natural things for an adjudicator to hand back.
+    rows = mapping.get("spans", []) if isinstance(mapping, dict) else mapping
+    by_uid = {m["uid"]: m for m in rows if isinstance(m, dict) and m.get("uid")}
+    still_orphan, covered_late, excluded = [], [], []
+    for u in rep.orphans:
+        v = by_uid.get(u.uid)
+        if not v:
+            still_orphan.append(u)
+        elif v.get("verdict") == "covered":
+            covered_late.append((u, [v["claim"]] if v.get("claim") else []))
+        elif v.get("verdict") == "not-an-assertion":
+            excluded.append((u, v.get("why", "")))
+        else:
+            still_orphan.append(u)
+    rep.accounted = rep.accounted + covered_late
+    rep.orphans = still_orphan
+    rep.excluded = excluded
+    rep.adjudicated = len(by_uid)
+    return rep
+
+
+def render_spans(rep: SpanCoverage, *, limit: int = 20) -> str:
     from collections import Counter
-    by_section = Counter(u.section for u in rep.units)
-    L = [f"Unit coverage — {rep.paper_slug}",
-         f"  {len(rep.units)} units segmented from the paper "
+    by_section = Counter(u.section for u in rep.spans)
+    L = [f"Span coverage — {rep.paper_slug}",
+         f"  {len(rep.spans)} spans segmented from the paper "
          f"({', '.join(f'{k}={v}' for k, v in by_section.items())})",
          f"  {rep.obligations} carry a statistic or name a panel; "
          f"{len(rep.textual)} are prose that asserts no result",
          f"  accounted for by a claim: {len(rep.accounted)}/{rep.obligations} "
          f"({rep.pct:.0f}%)"]
+    if rep.excluded:
+        L.append(f"  adjudicated as asserting no result: {len(rep.excluded)} "
+                 f"(cross-references, analysis narration, bare panel labels)")
     if rep.orphans:
-        L.append(f"\n  NOT ACCOUNTED FOR ({len(rep.orphans)}) — each carries a result that no "
+        label = ("GAPS" if rep.adjudicated else "NOT ACCOUNTED FOR")
+        L.append(f"\n  {label} ({len(rep.orphans)}) — each carries a result that no "
                  f"claim states:")
         for u in rep.orphans[:limit]:
             L.append(f"    [{u.uid}] {u.text[:110]}")
@@ -315,7 +373,7 @@ def render_units(rep: UnitCoverage, *, limit: int = 20) -> str:
         if len(rep.orphans) > limit:
             L.append(f"    … and {len(rep.orphans) - limit} more")
     else:
-        L.append("\n  every unit carrying a result is accounted for")
+        L.append("\n  every span carrying a result is accounted for")
     return "\n".join(L)
 
 
