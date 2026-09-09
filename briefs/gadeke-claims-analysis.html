@@ -1,0 +1,560 @@
+<title>Gädeke Claims Analysis</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --bg: #F5F3EE;
+    --bg-alt: #ECEAE3;
+    --surface: #FDFCF9;
+    --border: #D8D4CB;
+    --border-soft: #E4E1D9;
+    --text: #1A1C22;
+    --text-2: #5A5C66;
+    --text-3: #8E9099;
+    --accent: #3D8C7E;
+    --accent-dim: #DDEDE9;
+    --mono-bg: #EDEFF1;
+    --ok: #2F7A50;
+    --ok-bg: #DFEFE4;
+    --warn: #97722C;
+    --warn-bg: #F5EBD6;
+    --err: #A34D2C;
+    --err-bg: #F6E4DB;
+    --rule: #CFCABF;
+    --hyp: #3A62A8;
+    --pred: #6A4CA8;
+    --emp: #2F7A50;
+    --ctl: #4A7A5E;
+    --int: #8A5020;
+    --scope: #5F6478;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1623;
+      --bg-alt: #151D2C;
+      --surface: #1A2333;
+      --border: #29344A;
+      --border-soft: #212B3D;
+      --text: #E4E2DC;
+      --text-2: #939AA8;
+      --text-3: #6B7280;
+      --accent: #4FB5A3;
+      --accent-dim: #16332E;
+      --mono-bg: #172031;
+      --ok: #52BE80;
+      --ok-bg: #12301F;
+      --warn: #D6AC55;
+      --warn-bg: #2E2410;
+      --err: #E08055;
+      --err-bg: #331A0F;
+      --rule: #2C374C;
+      --hyp: #7AAAE0;
+      --pred: #A890E8;
+      --emp: #52BE80;
+      --ctl: #6FC894;
+      --int: #D09050;
+      --scope: #96A0B8;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0F1623;
+    --bg-alt: #151D2C;
+    --surface: #1A2333;
+    --border: #29344A;
+    --border-soft: #212B3D;
+    --text: #E4E2DC;
+    --text-2: #939AA8;
+    --text-3: #6B7280;
+    --accent: #4FB5A3;
+    --accent-dim: #16332E;
+    --mono-bg: #172031;
+    --ok: #52BE80;
+    --ok-bg: #12301F;
+    --warn: #D6AC55;
+    --warn-bg: #2E2410;
+    --err: #E08055;
+    --err-bg: #331A0F;
+    --rule: #2C374C;
+    --hyp: #7AAAE0;
+    --pred: #A890E8;
+    --emp: #52BE80;
+    --ctl: #6FC894;
+    --int: #D09050;
+    --scope: #96A0B8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 800px; margin: 0 auto; padding: 0 24px 96px; }
+
+  .backlink {
+    display: inline-block;
+    margin-top: 28px;
+    font-size: 12.5px;
+    color: var(--text-3);
+    text-decoration: none;
+  }
+  .backlink:hover { color: var(--accent); }
+
+  header { padding: 14px 0 26px; border-bottom: 1px solid var(--rule); }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: clamp(28px, 5vw, 38px);
+    font-weight: 700;
+    line-height: 1.15;
+    text-wrap: balance;
+    margin-bottom: 12px;
+  }
+
+  .standfirst { font-size: 16px; color: var(--text-2); max-width: 62ch; }
+
+  .paper-card {
+    margin-top: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 5px 5px 0;
+    padding: 16px 20px;
+  }
+  .paper-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .paper-title {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 6px;
+    max-width: none;
+  }
+  .paper-title a { text-decoration: none; }
+  .paper-title a:hover { text-decoration: underline; }
+  .paper-authors { font-size: 13px; color: var(--text-2); margin-bottom: 10px; max-width: none; }
+  .paper-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-3);
+  }
+
+  section { margin-top: 56px; scroll-margin-top: 20px; }
+
+  h2 {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 24px;
+    font-weight: 600;
+    text-wrap: balance;
+    margin-bottom: 6px;
+  }
+
+  .section-note {
+    font-size: 13px;
+    color: var(--text-3);
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  h3 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-2);
+    margin: 30px 0 10px;
+  }
+
+  p { margin-bottom: 14px; max-width: 68ch; }
+  p:last-child { margin-bottom: 0; }
+  a { color: var(--accent); text-underline-offset: 2px; }
+  strong { font-weight: 600; }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    background: var(--mono-bg);
+    color: var(--text);
+    padding: 1px 5px;
+    border-radius: 3px;
+    word-break: break-word;
+  }
+
+  ul, ol { padding-left: 20px; margin-bottom: 14px; max-width: 68ch; }
+  li { margin-bottom: 8px; }
+  li:last-child { margin-bottom: 0; }
+
+  /* Composition bar */
+  .comp {
+    display: flex;
+    height: 34px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin: 20px 0 10px;
+  }
+  .comp span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: #fff;
+    min-width: 0;
+  }
+  .comp .c-hyp { background: var(--hyp); }
+  .comp .c-pred { background: var(--pred); }
+  .comp .c-emp { background: var(--emp); }
+  .comp .c-ctl { background: var(--ctl); }
+  .comp .c-int { background: var(--int); }
+  .comp .c-scope { background: var(--scope); }
+
+  .comp-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 18px;
+  }
+  .comp-key span { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    margin: 18px 0;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 560px; }
+  thead { background: var(--bg-alt); }
+  th {
+    text-align: left;
+    padding: 9px 14px;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+    font-variant-numeric: tabular-nums;
+  }
+  tr:last-child td { border-bottom: none; }
+  .num { font-family: 'IBM Plex Mono', monospace; font-size: 12px; white-space: nowrap; }
+  .slug { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; }
+
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .p-ok   { background: var(--ok-bg);   color: var(--ok); }
+  .p-warn { background: var(--warn-bg); color: var(--warn); }
+  .p-err  { background: var(--err-bg);  color: var(--err); }
+
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 5px 5px 0;
+    padding: 16px 20px;
+    margin: 22px 0;
+  }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 7px;
+  }
+  .callout p { margin-bottom: 10px; font-size: 14.5px; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* Errata */
+  .erratum {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 15px 0;
+    border-top: 1px solid var(--border-soft);
+  }
+  .erratum:first-of-type { border-top: none; }
+  .err-said { font-size: 14px; color: var(--text-2); }
+  .err-said::before {
+    content: "Said";
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--err);
+    margin-right: 9px;
+  }
+  .err-is { font-size: 14px; color: var(--text); }
+  .err-is::before {
+    content: "Is";
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ok);
+    margin-right: 9px;
+  }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 12.5px;
+    color: var(--text-3);
+  }
+  footer p { max-width: none; }
+</style>
+
+<div class="wrap">
+
+<a class="backlink" href="2026-09-06-mira-conversion-reply-brief.html">← Reply brief</a>
+
+<header>
+  <div class="eyebrow">Claims analysis · corrected · 6 September 2026</div>
+  <h1>Gädeke Claims Analysis</h1>
+  <p class="standfirst">A clean account of the 27 extracted claims and their verification status, replacing an earlier analysis that got eight things wrong. Every number below was produced by a script that was run, on data that was downloaded.</p>
+
+  <div class="paper-card">
+    <div class="paper-label">The paper</div>
+    <p class="paper-title"><a href="https://doi.org/10.7554/eLife.105391">Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions</a></p>
+    <p class="paper-authors">Maria Gädeke, Tom Eric Willems, Omar Salah Ahmed, Bernd Weber, Rene Hurlemann, Johannes Schultz</p>
+    <div class="paper-links">
+      <span><em>eLife</em> 14 · Version of Record, 24 March 2026</span>
+      <span><a href="https://doi.org/10.7554/eLife.105391">10.7554/eLife.105391</a></span>
+      <span><a href="https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment">Authors' data deposit</a></span>
+      <span><a href="https://openneuro.org/datasets/ds005588">OpenNeuro ds005588</a></span>
+    </div>
+  </div>
+</header>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="shape">
+  <h2>The shape of the argument</h2>
+  <p class="section-note">27 claims across seven roles</p>
+
+  <div class="comp">
+    <span class="c-hyp"   style="flex:3"  title="3 hypotheses">3</span>
+    <span class="c-pred"  style="flex:4"  title="4 predictions">4</span>
+    <span class="c-emp"   style="flex:11" title="11 empirical claims">11</span>
+    <span class="c-ctl"   style="flex:5"  title="5 controls">5</span>
+    <span class="c-int"   style="flex:1"  title="1 interpretation"></span>
+    <span class="c-scope" style="flex:3"  title="2 scope claims and 1 literature-context node">3</span>
+  </div>
+  <div class="comp-key">
+    <span><i class="dot" style="background:var(--hyp)"></i>3 hypotheses</span>
+    <span><i class="dot" style="background:var(--pred)"></i>4 predictions</span>
+    <span><i class="dot" style="background:var(--emp)"></i>11 empirical</span>
+    <span><i class="dot" style="background:var(--ctl)"></i>5 controls</span>
+    <span><i class="dot" style="background:var(--int)"></i>1 interpretation</span>
+    <span><i class="dot" style="background:var(--scope)"></i>2 scope · 1 prior work</span>
+  </div>
+
+  <p>The paper argues three things: that the anterior insula encodes responsibility-contingent interpersonal guilt; that momentary happiness weights partner reward-prediction errors by the participant's own responsibility for them; and that the superior temporal sulcus represents the partner's affective state specifically under that responsibility. Each hypothesis entails one or two predictions, and each prediction is tested by named empirical claims. Five controls establish that the paradigm behaves as intended, and two scope claims constrain everything downstream.</p>
+
+  <p>The five controls are worth noting as a marker of extraction quality: they are not findings, they are the reasons to believe the findings, and a claim graph that omits them is flattering rather than faithful.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="verification">
+  <h2>Verification</h2>
+  <p class="section-note">Seven claims carry records. Five are computational and all five now pass; two were confirmed by reading the Methods.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Claim</th><th class="num">Paper</th><th class="num">Reproduced</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="slug">insula-tracks-guilt-effect</span></td>
+          <td class="num">MNI [−28, 24, −4]</td>
+          <td class="num">MNI [−28, 24, −4]</td>
+          <td><span class="pill p-ok">Pass</span></td>
+        </tr>
+        <tr>
+          <td><span class="slug">guilt-reduces-happiness-after-partner-loss</span></td>
+          <td class="num">β = 0.33 · 0.39</td>
+          <td class="num">β = 0.34 · 0.40</td>
+          <td><span class="pill p-ok">Pass</span></td>
+        </tr>
+        <tr>
+          <td><span class="slug">happiness-correlates-partner-reward</span></td>
+          <td class="num">R² = 0.185 · 0.147</td>
+          <td class="num">R² = 0.184 · 0.145</td>
+          <td><span class="pill p-ok">Pass</span></td>
+        </tr>
+        <tr>
+          <td><span class="slug">lottery-choice-increases-with-ev</span></td>
+          <td class="num">β &gt; 0, p &lt; 0.05</td>
+          <td class="num">β = 0.032, p = 9.6e−68</td>
+          <td><span class="pill p-ok">Pass</span></td>
+        </tr>
+        <tr>
+          <td><span class="slug">insula-guilt-replicates-yu-koban-signature</span></td>
+          <td class="num">sign test p &lt; 0.05</td>
+          <td class="num">p = 0.0083 · 28/40</td>
+          <td><span class="pill p-ok">Pass*</span></td>
+        </tr>
+        <tr>
+          <td><span class="slug">scope-two-study-design</span></td>
+          <td class="num">fMRI N=40 · behav N=44</td>
+          <td class="num">confirmed</td>
+          <td><span class="pill p-ok">Methods</span></td>
+        </tr>
+        <tr>
+          <td><span class="slug">partner-algorithm-deception-assumption</span></td>
+          <td class="num">simulated partner</td>
+          <td class="num">confirmed verbatim</td>
+          <td><span class="pill p-ok">Methods</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-3)">* Passes only with two uncommitted one-line fixes to <code>verify.py</code>. See below.</p>
+
+  <div class="callout">
+    <div class="callout-label">The important finding</div>
+    <p>These checks do not touch the raw imaging data. They run against the authors' own deposit of analysis tables and thresholded statistical maps — about 50 MB, cloned by the script, roughly three minutes end to end on a laptop. <strong>No imaging pipeline, no MATLAB, no SPM12.</strong></p>
+    <p>Re-analysing from raw data is a different and much larger job: OpenNeuro <code>ds005588</code>, about 15 GB, three hours, and first-level GLMs for every subject. It was not needed for anything above. The generalisable point for a publisher is that a well-constructed deposit makes a substantial fraction of a paper's claims checkable by anyone, cheaply.</p>
+  </div>
+
+  <h3>The Yu–Koban check, and why it sat broken for five months</h3>
+  <p>This claim had been recorded as a partial result since March while the committed script could not actually run it, logging "nibabel not installed." That message was wrong on both counts. The library was present. The script could not find the per-participant contrast map because the deposit ships it as <code>guiltEffectEachPartic.nii.zip</code> and the file-search pattern only matched <code>.nii</code>. Unzipped, it failed for a second, separate reason: the signature mask was being resampled onto the four-dimensional image rather than onto its three-dimensional spatial grid, which produces a malformed transform.</p>
+  <p>With both corrected, the check runs: the Yu &amp; Koban guilt signature mask covers 50,860 voxels, and the per-participant spatial dot products are positive in 28 of 40 participants — sign test p = 0.0083, Wilcoxon p = 0.0211. The paper's claim holds.</p>
+  <p>The March record gives p = 0.017 and p = 0.042 for the same test. Same direction, same conclusion, different figures, presumably a different resampling choice in an implementation that has since been lost. <strong>That discrepancy is unresolved</strong>, and both numbers are now recorded in the claim file rather than one quietly replacing the other.</p>
+
+  <h3>What has not been checked, and why</h3>
+  <p>Twenty of the 27 claims carry no verification record. This is not uniform neglect — the reasons differ and are worth separating:</p>
+  <ul>
+    <li><strong>Hypotheses and predictions (7 claims) are not the kind of thing that reproduces.</strong> They are the paper's argument, not its results. Nothing is missing here.</li>
+    <li><strong>The computational-model claims need the authors' MATLAB fitting code.</strong> The deposit includes fitted parameters but not a runnable path from data to fit.</li>
+    <li><strong>The whole-brain GLM claims need SPM12 and a full re-run</strong> — precomputed maps are deposited, but checking them means redoing the analysis.</li>
+    <li><strong>Several behavioural claims are simply not yet written up as checks</strong>, and could be. This is the most tractable remaining work.</li>
+  </ul>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="errata">
+  <h2>Errata</h2>
+  <p class="section-note">Eight errors in the previous analysis, corrected</p>
+
+  <p>An earlier pass over these claims — assembled without access to the verification directory — reached several wrong conclusions. They are listed here rather than quietly fixed, because one of them was about to be sent to the publisher.</p>
+
+  <div class="erratum">
+    <p class="err-said">The verification scripts are illustrative reconstructions showing what a check <em>would</em> look like; nobody has run them.</p>
+    <p class="err-is">A working 474-line <code>verify.py</code> has existed since March, with a run log and generated figures. It was re-run on 6 September 2026 from a clean clone and reproduced every value.</p>
+  </div>
+
+  <div class="erratum">
+    <p class="err-said">Verification runs against OpenNeuro ds005588, so making it real requires a 15 GB download.</p>
+    <p class="err-is">The checks run against the authors' own GitHub deposit — 50 MB, three minutes. OpenNeuro is needed only for full re-analysis from raw imaging data.</p>
+  </div>
+
+  <div class="erratum">
+    <p class="err-said"><code>lottery-choice-increases-with-ev</code> is a partial match; the coefficient is on a different scale.</p>
+    <p class="err-is">It passes outright: β = 0.032, p = 9.55e−68, n = 2400. The "partial" reflected a scale comparison against a utility-weighted predictor, not a failure to reproduce.</p>
+  </div>
+
+  <div class="erratum">
+    <p class="err-said">The Yu–Koban replication is a partial result at sign-test p = 0.017.</p>
+    <p class="err-is">The check was not running at all in the committed script. Fixed, it passes at p = 0.0083 with 28 of 40 participants positive — and the older figure remains unexplained.</p>
+  </div>
+
+  <div class="erratum">
+    <p class="err-said">The paper has 26 extracted claims.</p>
+    <p class="err-is">27, counted from the claim files.</p>
+  </div>
+
+  <div class="erratum">
+    <p class="err-said">Five of 26 claims have been independently checked.</p>
+    <p class="err-is">Seven claims carry verification records — five computational, two confirmed from the Methods.</p>
+  </div>
+
+  <div class="erratum">
+    <p class="err-said">The paper is eLife 102584 (per the verification script's own header).</p>
+    <p class="err-is">eLife 105391. The Version of Record published 24 March 2026; 102584 does not resolve. The script header is wrong and should be corrected.</p>
+  </div>
+
+  <div class="erratum">
+    <p class="err-said">Every reproduction record reads <code>script_execution: not-executed</code>.</p>
+    <p class="err-is">This field conflated two different things — the authors' original MATLAB pipeline was not re-run, but the Python verification was executed. That wording is the direct cause of the first error in this list.</p>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">The lesson worth keeping</div>
+    <p>Every one of these errors came from reading the claim files and reasoning about them, rather than running the code they point to. The records described the verification accurately enough to be quoted and badly enough to be misread — and a reader working carefully from them still concluded the opposite of the truth. That is an argument for the chain being machine-checkable rather than narrated: a record that names its function, its input file and its output value cannot drift from what the code does without the drift being visible.</p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="next">
+  <h2>Open work</h2>
+  <p class="section-note">In order of what each unblocks</p>
+
+  <ol>
+    <li><strong>Commit the two Yu–Koban fixes</strong> and re-run, so the log in the repository is the log being described. Until then the 7-of-7 result lives only in a scratch copy.</li>
+    <li><strong>Correct the article number</strong> in the <code>verify.py</code> header before anything goes to eLife.</li>
+    <li><strong>Pin the data.</strong> Two checks locate their input by globbing the CSV directory and column-matching. It works, but a reader cannot tell which of forty files was used — so that link in the chain is not auditable. Pin exact filenames, and record the deposit's commit hash alongside them.</li>
+    <li><strong>Resolve the Yu–Koban discrepancy</strong> between the March and September figures, or document why it cannot be resolved.</li>
+    <li><strong>Repair <code>generate_figures.py</code></strong>, which still errors on the lottery-choice panel — it expects a CSV path that no longer matches the deposit layout. The committed figures are from an older good run, so the site is fine, but the script has drifted from the data.</li>
+    <li><strong>Extend coverage</strong> to the behavioural claims that could be checked from the deposit but have not been written up yet.</li>
+    <li><strong>Extract the prior-work network.</strong> Only one of 27 claims is prior work. The pipeline extracted this paper's own argument and never made a second pass over its reference list.</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Verification re-run 6 September 2026 against <code>BonnSocialNeuroscienceUnit/ResponsibilityExperiment</code> at commit <code>11854fe</code>. Claim counts from <code>claims/gadeke-2026-guilt-insula</code>. Format comparisons: <a href="artifacts/index.html">artifact set</a>. Context and the reply to eLife: <a href="2026-09-06-mira-conversion-reply-brief.html">reply brief</a>.</p>
+</footer>
+
+</div>

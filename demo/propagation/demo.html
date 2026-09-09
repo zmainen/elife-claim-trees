@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claim Change Propagation — Headley et al. 2026</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --border: #2a2d3a;
+    --text: #e8eaf0;
+    --muted: #8892a4;
+    --accent: #4f8ef7;
+
+    --col-changed: #f5a623;
+    --col-direct: #e5534b;
+    --col-transitive: #e58a7a;
+    --col-unaffected: #3a3f52;
+    --col-assessment: #5b6e9e;
+
+    --node-r: 9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  header {
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  header .sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  header a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 12px;
+    margin-left: auto;
+  }
+
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ─── GRAPH ─── */
+  #graph-panel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  svg#graph {
+    width: 100%;
+    height: 100%;
+  }
+
+  .node circle {
+    stroke-width: 2;
+    cursor: pointer;
+    transition: r 0.15s, stroke-width 0.15s;
+  }
+  .node circle:hover { stroke-width: 3; }
+  .node.selected circle { stroke-width: 3.5; }
+
+  .node text {
+    font-size: 10px;
+    fill: var(--text);
+    pointer-events: none;
+    dominant-baseline: middle;
+  }
+
+  .link {
+    stroke: #3a3f52;
+    stroke-opacity: 0.7;
+    stroke-width: 1.5;
+    fill: none;
+    marker-end: url(#arrow);
+  }
+
+  .link.requires { stroke: #4a5068; }
+  .link.supports  { stroke: #3a6068; stroke-dasharray: 5,3; }
+  .link.extends   { stroke: #3a6068; stroke-dasharray: 2,2; }
+
+  /* ─── SIDEBAR ─── */
+  #sidebar {
+    width: 340px;
+    border-left: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .sidebar-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .sidebar-section h2 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  /* Blast radius meter */
+  .blast-meter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .blast-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--col-direct);
+    line-height: 1;
+  }
+
+  .blast-label {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .blast-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  .blast-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .stat-chip {
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .chip-direct   { background: rgba(229,83,75,0.18); color: var(--col-direct); }
+  .chip-transit  { background: rgba(229,138,122,0.18); color: var(--col-transitive); }
+  .chip-changed  { background: rgba(245,166,35,0.18); color: var(--col-changed); }
+  .chip-ok       { background: rgba(58,63,82,0.5); color: var(--muted); }
+
+  /* Claim selector */
+  select {
+    width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 7px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    margin-top: 2px;
+  }
+
+  select:focus { border-color: var(--accent); }
+
+  /* Claim list */
+  #claim-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  .claim-item {
+    padding: 8px 20px;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .claim-item:hover { background: rgba(255,255,255,0.03); }
+  .claim-item.active { background: rgba(255,255,255,0.04); }
+
+  .claim-item.state-changed  { border-left-color: var(--col-changed); }
+  .claim-item.state-direct   { border-left-color: var(--col-direct); }
+  .claim-item.state-transitive { border-left-color: var(--col-transitive); }
+  .claim-item.state-unaffected { border-left-color: transparent; }
+
+  .claim-slug {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin-bottom: 2px;
+  }
+
+  .claim-prop {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .claim-badges {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .badge {
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-type-assessment  { background: rgba(91,110,158,0.25); color: #8899cc; }
+  .badge-type-empirical   { background: rgba(60,130,100,0.25); color: #6ec28a; }
+  .badge-type-interpretive { background: rgba(130,80,180,0.25); color: #bb88ee; }
+  .badge-type-synthesis   { background: rgba(180,120,40,0.25); color: #ddaa55; }
+  .badge-ep-strong        { background: rgba(60,180,80,0.12); color: #5dbb6e; }
+  .badge-ep-moderate      { background: rgba(200,160,40,0.12); color: #c8a028; }
+  .badge-ep-weak          { background: rgba(220,80,60,0.12); color: #dd6650; }
+
+  /* Tooltip */
+  #tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    max-width: 280px;
+    font-size: 12px;
+    line-height: 1.5;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  #tooltip .tt-slug {
+    font-family: monospace;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  #tooltip .tt-prop {
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .conclusion-alert {
+    background: rgba(229,83,75,0.12);
+    border: 1px solid rgba(229,83,75,0.3);
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #e5534b;
+    margin-top: 8px;
+    display: none;
+  }
+  .conclusion-alert.visible { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Claim Change Propagation</h1>
+  <span class="sub">Headley et al. 2026 · Spatially targeted inhibitory rhythms</span>
+  <a href="https://elifesciences.org/articles/95562" target="_blank">eLife 95562 ↗</a>
+</header>
+
+<div class="main">
+  <div id="graph-panel">
+    <svg id="graph">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#3a3f52"/>
+        </marker>
+        <marker id="arrow-requires" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#4a5068"/>
+        </marker>
+        <marker id="arrow-supports" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#3a6068"/>
+        </marker>
+      </defs>
+    </svg>
+    <div id="tooltip"></div>
+  </div>
+
+  <div id="sidebar">
+    <!-- Claim selector -->
+    <div class="sidebar-section">
+      <h2>Changed claim</h2>
+      <select id="claim-select"></select>
+    </div>
+
+    <!-- Blast radius stats -->
+    <div class="sidebar-section">
+      <h2>Blast radius</h2>
+      <div class="blast-meter">
+        <div class="blast-number" id="stat-n">0</div>
+        <div>
+          <div class="blast-label">of <span id="stat-total">17</span> claims affected</div>
+          <div class="stat-row">
+            <span class="stat-chip chip-direct" id="stat-direct">0 direct</span>
+            <span class="stat-chip chip-transit" id="stat-transit">0 transitive</span>
+          </div>
+        </div>
+      </div>
+      <div class="blast-bar">
+        <div class="blast-bar-fill" id="blast-fill"
+             style="width:0%; background: linear-gradient(90deg, var(--col-direct), var(--col-transitive))">
+        </div>
+      </div>
+      <div class="conclusion-alert" id="conclusion-alert">
+        ⚑ Interpretive/conclusion claims in blast radius
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--col-changed)"></div>Changed</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--col-direct)"></div>Directly affected</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--col-transitive)"></div>Transitively affected</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--col-unaffected)"></div>Unaffected</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--col-assessment); border: 2px solid #8899cc;"></div>Assessment</div>
+    </div>
+
+    <!-- Claim list -->
+    <div id="claim-list"></div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+// All claims for headley-2026-inhibitory-rhythms
+// Extracted from claims/*.md frontmatter
+
+const CLAIMS = {
+  "l5-model-single-cell-scope": {
+    type: "assessment",
+    epistemic: "moderate",
+    proposition: "All results derive from a single-cell compartmental model of one layer 5 pyramidal neuron; no network dynamics, recurrent excitation, or population-level inhibitory effects are simulated.",
+    panel: "fig1A",
+    belongings: []
+  },
+  "naturalistic-drive-parameterization": {
+    type: "assessment",
+    epistemic: "moderate",
+    proposition: "The model is driven by ~26,000 excitatory and ~4,500 inhibitory synapses with parameters from published measurements, producing ~5.3 Hz baseline firing; no sensitivity analysis is presented.",
+    panel: "fig1A inset",
+    belongings: []
+  },
+  "na-spikes-couple-2to3ms-before-ap": {
+    type: "empirical",
+    epistemic: "strong",
+    proposition: "Na⁺ dendritic spikes peak 2–3 ms before somatic APs; strongest coupling in proximal compartments.",
+    panel: "fig2, fig3",
+    belongings: [
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "supports", target: "distal-inhib-drops-firing-02hz" }
+    ]
+  },
+  "nmda-spikes-couple-25ms-before-ap": {
+    type: "empirical",
+    epistemic: "strong",
+    proposition: "NMDA spikes show peak spike-triggered average ~25 ms before somatic APs, reflecting slower kinetics.",
+    panel: "fig2, fig3",
+    belongings: [
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "supports", target: "beta-optimal-distal-dendritic-entrainment" }
+    ]
+  },
+  "ca-spikes-couple-20ms-before-ap": {
+    type: "empirical",
+    epistemic: "strong",
+    proposition: "Ca²⁺ spikes in apical dendrites precede somatic APs by ~20 ms in spike-triggered averages.",
+    panel: "fig2, fig3",
+    belongings: [
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "supports", target: "beta-bidirectional-dendritic-control" },
+      { relation: "supports", target: "beta-gates-distal-apical-inputs" }
+    ]
+  },
+  "distal-inhib-drops-firing-02hz": {
+    type: "empirical",
+    epistemic: "strong",
+    proposition: "Doubling distal dendritic inhibition reduces somatic firing from 5.5 Hz to 0.2 Hz by suppressing dendritic spikes.",
+    panel: "fig4, fig5",
+    belongings: [
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "requires", target: "naturalistic-drive-parameterization" },
+      { relation: "supports", target: "beta-bidirectional-dendritic-control" },
+      { relation: "supports", target: "beta-gates-distal-apical-inputs" }
+    ]
+  },
+  "perisomatic-inhib-drops-firing-07hz": {
+    type: "empirical",
+    epistemic: "strong",
+    proposition: "Doubling perisomatic inhibition reduces firing from 5.5 Hz to 0.7 Hz by raising AP voltage threshold.",
+    panel: "fig4, fig5",
+    belongings: [
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "requires", target: "naturalistic-drive-parameterization" },
+      { relation: "supports", target: "perisomatic-inhib-subtractive-divisive" },
+      { relation: "supports", target: "gamma-perisomatic-no-dendritic-spike-change" }
+    ]
+  },
+  "perisomatic-inhib-subtractive-divisive": {
+    type: "empirical",
+    epistemic: "moderate",
+    proposition: "Perisomatic inhibition reduces the gain (divisive) in addition to shifting the threshold (subtractive) of the input–output relationship.",
+    panel: "fig5, fig6",
+    belongings: [
+      { relation: "requires", target: "perisomatic-inhib-drops-firing-07hz" },
+      { relation: "requires", target: "l5-model-single-cell-scope" }
+    ]
+  },
+  "beta-optimal-distal-dendritic-entrainment": {
+    type: "empirical",
+    epistemic: "strong",
+    proposition: "Beta frequencies (~20 Hz) are optimal for entraining dendritic spike onsets at distal inhibitory sites across a 0.5–80 Hz sweep.",
+    panel: "fig7",
+    belongings: [
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "supports", target: "beta-bidirectional-dendritic-control" },
+      { relation: "supports", target: "beta-gates-distal-apical-inputs" },
+      { relation: "supports", target: "pv-gamma-sst-beta-correspondence" }
+    ]
+  },
+  "gamma-optimal-perisomatic-ap-modulation": {
+    type: "empirical",
+    epistemic: "strong",
+    proposition: "Gamma frequencies (40–80 Hz) are optimal for perisomatic phase-modulation of AP voltage threshold across an 11-frequency sweep.",
+    panel: "fig8",
+    belongings: [
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "supports", target: "gamma-perisomatic-no-dendritic-spike-change" },
+      { relation: "supports", target: "gamma-gates-proximal-basal-inputs" },
+      { relation: "supports", target: "pv-gamma-sst-beta-correspondence" }
+    ]
+  },
+  "beta-bidirectional-dendritic-control": {
+    type: "empirical",
+    epistemic: "moderate",
+    proposition: "Beta rhythms at distal dendrites enhance dendritic spike probability during inhibitory troughs and suppress it during peaks — bidirectional phase-dependent control within a single cycle.",
+    panel: "fig5, fig7",
+    belongings: [
+      { relation: "requires", target: "beta-optimal-distal-dendritic-entrainment" },
+      { relation: "requires", target: "ca-spikes-couple-20ms-before-ap" },
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "supports", target: "beta-gates-distal-apical-inputs" }
+    ]
+  },
+  "gamma-perisomatic-no-dendritic-spike-change": {
+    type: "empirical",
+    epistemic: "moderate",
+    proposition: "Gamma perisomatic rhythms modulate AP threshold without substantially altering overall dendritic spike rates — functionally orthogonal to the beta/distal effect.",
+    panel: "fig5",
+    belongings: [
+      { relation: "requires", target: "perisomatic-inhib-drops-firing-07hz" },
+      { relation: "requires", target: "gamma-optimal-perisomatic-ap-modulation" },
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "supports", target: "pv-gamma-sst-beta-correspondence" }
+    ]
+  },
+  "burst-effects-emerge-first-cycles": {
+    type: "empirical",
+    epistemic: "moderate",
+    proposition: "Phase-dependent modulation by oscillatory bursts emerges within the first few cycles, indicating fast engagement of inhibitory control.",
+    panel: "fig9",
+    belongings: [
+      { relation: "requires", target: "beta-bidirectional-dendritic-control" },
+      { relation: "requires", target: "gamma-optimal-perisomatic-ap-modulation" },
+      { relation: "requires", target: "l5-model-single-cell-scope" }
+    ]
+  },
+  "beta-gates-distal-apical-inputs": {
+    type: "empirical",
+    epistemic: "strong",
+    proposition: "Beta rhythms at distal locations gate clustered synaptic input transmission from apical dendrites: inputs during inhibitory troughs transmitted, inputs during peaks blocked.",
+    panel: "fig10",
+    belongings: [
+      { relation: "requires", target: "beta-bidirectional-dendritic-control" },
+      { relation: "requires", target: "beta-optimal-distal-dendritic-entrainment" },
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "supports", target: "pv-gamma-sst-beta-correspondence" }
+    ]
+  },
+  "gamma-gates-proximal-basal-inputs": {
+    type: "empirical",
+    epistemic: "strong",
+    proposition: "Gamma rhythms at perisomatic locations gate clustered synaptic input transmission from proximal/basal dendrites, while leaving distal apical inputs relatively unaffected.",
+    panel: "fig10",
+    belongings: [
+      { relation: "requires", target: "gamma-optimal-perisomatic-ap-modulation" },
+      { relation: "requires", target: "gamma-perisomatic-no-dendritic-spike-change" },
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "supports", target: "pv-gamma-sst-beta-correspondence" }
+    ]
+  },
+  "ei-lag-sensitivity-firing-rate": {
+    type: "empirical",
+    epistemic: "moderate",
+    proposition: "The E/I timing lag between excitatory and inhibitory inputs modulates somatic firing rate in a parameter-sensitive manner.",
+    panel: "fig6",
+    belongings: [
+      { relation: "requires", target: "l5-model-single-cell-scope" },
+      { relation: "requires", target: "naturalistic-drive-parameterization" }
+    ]
+  },
+  "pv-gamma-sst-beta-correspondence": {
+    type: "interpretive",
+    epistemic: "moderate",
+    proposition: "The model provides mechanistic grounding for the empirical association of PV+ interneurons with gamma rhythms and SST+ interneurons with beta: PV+ targets perisomatic sites optimal for gamma-AP threshold modulation; SST+ targets distal dendrites optimal for beta-dendritic spike gating.",
+    panel: "fig10 (synthesis)",
+    belongings: [
+      { relation: "requires", target: "beta-optimal-distal-dendritic-entrainment" },
+      { relation: "requires", target: "gamma-optimal-perisomatic-ap-modulation" },
+      { relation: "requires", target: "beta-gates-distal-apical-inputs" },
+      { relation: "requires", target: "gamma-gates-proximal-basal-inputs" }
+    ]
+  }
+};
+
+const TOTAL = Object.keys(CLAIMS).length;
+
+// ─── PROPAGATION LOGIC ───────────────────────────────────────────────────────
+
+function buildForwardDAG(claims) {
+  const forward = {};
+  for (const slug of Object.keys(claims)) forward[slug] = new Set();
+
+  for (const [slug, meta] of Object.entries(claims)) {
+    for (const b of meta.belongings) {
+      if (b.relation === "requires" || b.relation === "extends") {
+        if (claims[b.target]) forward[b.target].add(slug);
+      } else if (b.relation === "supports") {
+        if (claims[b.target]) forward[slug].add(b.target);
+      }
+    }
+  }
+  return forward;
+}
+
+function bfsPropagate(changedSlug, forward) {
+  const direct = new Set(forward[changedSlug] || []);
+  const visited = new Set([changedSlug, ...direct]);
+  const queue = [...direct];
+  const transitive = new Set();
+
+  while (queue.length) {
+    const node = queue.shift();
+    for (const neighbor of (forward[node] || [])) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        transitive.add(neighbor);
+        queue.push(neighbor);
+      }
+    }
+  }
+  return { direct, transitive };
+}
+
+// ─── LAYOUT ──────────────────────────────────────────────────────────────────
+// Layered layout: assessment → empirical → interpretive
+// Within each layer, order by slug for determinism
+
+function computeLayout(claims, svgW, svgH) {
+  const layers = {
+    assessment: [],
+    empirical: [],
+    interpretive: [],
+    synthesis: []
+  };
+
+  for (const [slug, meta] of Object.entries(claims)) {
+    const t = meta.type;
+    if (t === "assessment") layers.assessment.push(slug);
+    else if (t === "interpretive" || t === "synthesis") layers.interpretive.push(slug);
+    else layers.empirical.push(slug);
+  }
+
+  // Merge interpretive+synthesis
+  const allLayers = [
+    layers.assessment,
+    layers.empirical,
+    [...layers.interpretive, ...layers.synthesis]
+  ].filter(l => l.length);
+
+  const positions = {};
+  const padX = 60, padY = 60;
+  const usableH = svgH - 2 * padY;
+
+  allLayers.forEach((layer, li) => {
+    const x = padX + (li / (allLayers.length - 1 || 1)) * (svgW - 2 * padX);
+    layer.sort();
+    layer.forEach((slug, i) => {
+      const y = padY + (layer.length === 1 ? usableH / 2 : (i / (layer.length - 1)) * usableH);
+      positions[slug] = { x, y };
+    });
+  });
+
+  return positions;
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+
+const forward = buildForwardDAG(CLAIMS);
+let currentChanged = "l5-model-single-cell-scope";
+let currentState = {}; // slug → 'changed'|'direct'|'transitive'|'unaffected'
+
+function computeState(changedSlug) {
+  const { direct, transitive } = bfsPropagate(changedSlug, forward);
+  const state = {};
+  for (const slug of Object.keys(CLAIMS)) {
+    if (slug === changedSlug) state[slug] = "changed";
+    else if (direct.has(slug)) state[slug] = "direct";
+    else if (transitive.has(slug)) state[slug] = "transitive";
+    else state[slug] = "unaffected";
+  }
+  return { state, direct, transitive };
+}
+
+function nodeColor(s) {
+  if (s === "changed")    return "var(--col-changed)";
+  if (s === "direct")     return "var(--col-direct)";
+  if (s === "transitive") return "var(--col-transitive)";
+  return "var(--col-unaffected)";
+}
+
+function nodeStroke(slug, state) {
+  const t = CLAIMS[slug].type;
+  if (t === "assessment") return "#8899cc";
+  if (state === "changed") return "#f5c842";
+  if (state === "direct") return "#ff6b63";
+  if (state === "transitive") return "#e59080";
+  return "#555870";
+}
+
+let positions = {};
+let svgW = 0, svgH = 0;
+
+function initGraph() {
+  const svg = document.getElementById("graph");
+  svgW = svg.clientWidth || 900;
+  svgH = svg.clientHeight || 600;
+  positions = computeLayout(CLAIMS, svgW, svgH);
+  renderGraph();
+}
+
+function renderGraph() {
+  const svg = document.getElementById("graph");
+  svg.innerHTML = `
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#3a3f52"/>
+      </marker>
+    </defs>`;
+
+  const { state } = computeState(currentChanged);
+  currentState = state;
+
+  // Draw edges first (behind nodes)
+  const edgeGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  edgeGroup.setAttribute("class", "edges");
+
+  const drawn = new Set();
+  for (const [slug, meta] of Object.entries(CLAIMS)) {
+    for (const b of meta.belongings) {
+      const key = `${slug}→${b.target}`;
+      if (drawn.has(key) || !positions[b.target]) continue;
+      drawn.add(key);
+
+      const src = positions[slug];
+      const tgt = positions[b.target];
+
+      // Curved path to avoid overlap
+      const dx = tgt.x - src.x;
+      const dy = tgt.y - src.y;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      const r = 9; // node radius
+      // Offset start/end by node radius along the direction
+      const ux = dx / len, uy = dy / len;
+      const x1 = src.x + ux * (r + 2);
+      const y1 = src.y + uy * (r + 2);
+      const x2 = tgt.x - ux * (r + 6);
+      const y2 = tgt.y - uy * (r + 6);
+      // Gentle curve
+      const cx = (x1 + x2) / 2 - uy * 20;
+      const cy = (y1 + y2) / 2 + ux * 20;
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`);
+      path.setAttribute("class", `link ${b.relation}`);
+      path.setAttribute("marker-end", "url(#arrow)");
+
+      // Highlight edge if it's in the blast path
+      const srcState = state[slug];
+      const tgtState = state[b.target];
+      if ((srcState === "changed" || srcState === "direct" || srcState === "transitive") &&
+          (tgtState === "direct" || tgtState === "transitive")) {
+        path.setAttribute("stroke", "rgba(229,83,75,0.5)");
+        path.setAttribute("stroke-opacity", "0.9");
+        path.setAttribute("stroke-width", "2");
+      }
+
+      edgeGroup.appendChild(path);
+    }
+  }
+  svg.appendChild(edgeGroup);
+
+  // Draw nodes
+  const nodeGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  nodeGroup.setAttribute("class", "nodes");
+
+  for (const [slug, meta] of Object.entries(CLAIMS)) {
+    const pos = positions[slug];
+    const s = state[slug];
+
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.setAttribute("class", "node" + (slug === currentChanged ? " selected" : ""));
+    g.setAttribute("transform", `translate(${pos.x},${pos.y})`);
+    g.setAttribute("data-slug", slug);
+
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("r", slug === currentChanged ? 12 : 9);
+    circle.setAttribute("fill", nodeColor(s));
+    circle.setAttribute("stroke", nodeStroke(slug, s));
+    circle.setAttribute("stroke-width", "2");
+    g.appendChild(circle);
+
+    // Label (abbreviated slug)
+    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    const words = slug.split("-");
+    const abbr = words.slice(0, 2).join("-");
+    label.textContent = abbr;
+    label.setAttribute("x", "14");
+    label.setAttribute("y", "0");
+    label.setAttribute("font-size", "9");
+    label.setAttribute("fill", s === "unaffected" ? "#555870" : "#c8cfe0");
+    label.setAttribute("dominant-baseline", "middle");
+    g.appendChild(label);
+
+    // Events
+    g.addEventListener("mouseenter", (e) => showTooltip(e, slug));
+    g.addEventListener("mouseleave", hideTooltip);
+    g.addEventListener("click", () => {
+      currentChanged = slug;
+      document.getElementById("claim-select").value = slug;
+      updateAll();
+    });
+
+    nodeGroup.appendChild(g);
+  }
+  svg.appendChild(nodeGroup);
+}
+
+function showTooltip(e, slug) {
+  const tt = document.getElementById("tooltip");
+  const meta = CLAIMS[slug];
+  tt.innerHTML = `
+    <div class="tt-slug">${slug}</div>
+    <div class="tt-prop">${meta.proposition.slice(0, 160)}${meta.proposition.length > 160 ? "…" : ""}</div>
+    <div style="margin-top:5px;font-size:10px;color:var(--muted)">${meta.type} · ${meta.epistemic} · ${meta.panel}</div>
+  `;
+  tt.style.display = "block";
+  moveTooltip(e);
+}
+
+function moveTooltip(e) {
+  const tt = document.getElementById("tooltip");
+  const panel = document.getElementById("graph-panel").getBoundingClientRect();
+  let x = e.clientX - panel.left + 14;
+  let y = e.clientY - panel.top - 10;
+  if (x + 290 > panel.width) x = e.clientX - panel.left - 290;
+  tt.style.left = x + "px";
+  tt.style.top  = y + "px";
+}
+
+function hideTooltip() {
+  document.getElementById("tooltip").style.display = "none";
+}
+
+document.getElementById("graph-panel").addEventListener("mousemove", (e) => {
+  if (document.getElementById("tooltip").style.display !== "none") moveTooltip(e);
+});
+
+// ─── SIDEBAR ──────────────────────────────────────────────────────────────────
+
+function initSelect() {
+  const sel = document.getElementById("claim-select");
+  const groups = {
+    "Assessment (model scope)": [],
+    "Empirical results": [],
+    "Interpretive / conclusion": []
+  };
+  for (const [slug, meta] of Object.entries(CLAIMS)) {
+    if (meta.type === "assessment") groups["Assessment (model scope)"].push(slug);
+    else if (meta.type === "interpretive" || meta.type === "synthesis") groups["Interpretive / conclusion"].push(slug);
+    else groups["Empirical results"].push(slug);
+  }
+  for (const [label, slugs] of Object.entries(groups)) {
+    if (!slugs.length) continue;
+    const og = document.createElement("optgroup");
+    og.label = label;
+    slugs.sort().forEach(slug => {
+      const opt = document.createElement("option");
+      opt.value = slug;
+      opt.textContent = slug;
+      if (slug === currentChanged) opt.selected = true;
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  }
+  sel.addEventListener("change", () => {
+    currentChanged = sel.value;
+    updateAll();
+  });
+}
+
+function updateStats(direct, transitive) {
+  const n = direct.size + transitive.size;
+  document.getElementById("stat-n").textContent = n;
+  document.getElementById("stat-total").textContent = TOTAL;
+  document.getElementById("stat-direct").textContent = `${direct.size} direct`;
+  document.getElementById("stat-transit").textContent = `${transitive.size} transitive`;
+  document.getElementById("blast-fill").style.width = `${(n / TOTAL) * 100}%`;
+
+  // Alert if interpretive/conclusion claims affected
+  const hasHigh = [...direct, ...transitive].some(slug =>
+    CLAIMS[slug] && (CLAIMS[slug].type === "interpretive" || CLAIMS[slug].type === "synthesis")
+  );
+  document.getElementById("conclusion-alert").classList.toggle("visible", hasHigh);
+}
+
+function badgeHTML(type, epistemic) {
+  return `<span class="badge badge-type-${type}">${type}</span><span class="badge badge-ep-${epistemic}">${epistemic}</span>`;
+}
+
+function updateClaimList(state) {
+  const list = document.getElementById("claim-list");
+  list.innerHTML = "";
+
+  const order = ["changed", "direct", "transitive", "unaffected"];
+  const groups = { changed: [], direct: [], transitive: [], unaffected: [] };
+  for (const [slug, s] of Object.entries(state)) groups[s].push(slug);
+
+  for (const grp of order) {
+    groups[grp].sort().forEach(slug => {
+      const meta = CLAIMS[slug];
+      const item = document.createElement("div");
+      item.className = `claim-item state-${grp}`;
+      item.dataset.slug = slug;
+      item.innerHTML = `
+        <div class="claim-slug">${slug}</div>
+        <div class="claim-prop">${meta.proposition}</div>
+        <div class="claim-badges">${badgeHTML(meta.type, meta.epistemic)}</div>
+      `;
+      item.addEventListener("click", () => {
+        currentChanged = slug;
+        document.getElementById("claim-select").value = slug;
+        updateAll();
+      });
+      list.appendChild(item);
+    });
+  }
+}
+
+function updateAll() {
+  const { state, direct, transitive } = computeState(currentChanged);
+  currentState = state;
+  renderGraph();
+  updateStats(direct, transitive);
+  updateClaimList(state);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+
+window.addEventListener("load", () => {
+  initSelect();
+  initGraph();
+  updateAll();
+});
+
+window.addEventListener("resize", () => {
+  initGraph();
+  updateAll();
+});
+</script>
+</body>
+</html>

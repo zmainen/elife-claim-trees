@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Format Comparison Artifacts</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #F5F3EE;
+    --surface: #FDFCF9;
+    --border: #D8D4CB;
+    --text: #1A1C22;
+    --text-2: #5A5C66;
+    --accent: #3D8C7E;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1623;
+      --surface: #1A2333;
+      --border: #29344A;
+      --text: #E4E2DC;
+      --text-2: #939AA8;
+      --accent: #4FB5A3;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0F1623;
+    --surface: #1A2333;
+    --border: #29344A;
+    --text: #E4E2DC;
+    --text-2: #939AA8;
+    --accent: #4FB5A3;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    padding: 40px 24px 80px;
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .backlink {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    text-decoration: none;
+    margin-bottom: 36px;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+  }
+
+  .backlink:hover { border-bottom-color: var(--accent); }
+
+  h1 {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: clamp(28px, 5vw, 38px);
+    font-weight: 700;
+    line-height: 1.2;
+    text-wrap: balance;
+    margin-bottom: 12px;
+  }
+
+  .note {
+    color: var(--text-2);
+    font-size: 14px;
+    max-width: 56ch;
+    margin-bottom: 44px;
+  }
+
+  ul.cards {
+    list-style: none;
+  }
+
+  li.card {
+    margin-bottom: 18px;
+  }
+
+  a.card-link {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+
+  a.card-link:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .card-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+
+  .card-file {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-2);
+    margin-top: 10px;
+    opacity: 0.8;
+  }
+
+  footer {
+    margin-top: 52px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-2);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="backlink" href="../2026-09-06-mira-conversion-reply-brief.html">← Reply brief</a>
+
+  <h1>Format comparison artifacts</h1>
+  <p class="note">Local copies of artifacts originally published to claude.ai, captured 6 September 2026.</p>
+
+  <ul class="cards">
+    <li class="card">
+      <a class="card-link" href="mira-schema.html">
+        <span class="card-num">01 · Reference</span>
+        <div class="card-title">MIRA Schema</div>
+        <div class="card-desc">Reference doc on the MIRA discourse-graph ontology.</div>
+        <div class="card-file">mira-schema.html</div>
+      </a>
+    </li>
+
+    <li class="card">
+      <a class="card-link" href="three-formats-sample.html">
+        <span class="card-num">02 · Sample</span>
+        <div class="card-title">Gädeke Claims — Three Formats</div>
+        <div class="card-desc">3 sample claims shown side by side in HaaK YAML, OXA JSON, MIRA JSON-LD.</div>
+        <div class="card-file">three-formats-sample.html</div>
+      </a>
+    </li>
+
+    <li class="card">
+      <a class="card-link" href="three-formats-all-claims.html">
+        <span class="card-num">03 · Browser</span>
+        <div class="card-title">Gädeke 2026 — All Claims</div>
+        <div class="card-desc">All 26 claims, interactive browser, three formats.</div>
+        <div class="card-file">three-formats-all-claims.html</div>
+      </a>
+    </li>
+
+    <li class="card">
+      <a class="card-link" href="discourse-graph.html">
+        <span class="card-num">04 · Graph</span>
+        <div class="card-title">Gädeke — Discourse Graph</div>
+        <div class="card-desc">Canvas graph with a HaaK/MIRA toggle and verification records tab.</div>
+        <div class="card-file">discourse-graph.html</div>
+      </a>
+    </li>
+
+    <li class="card">
+      <a class="card-link" href="hypothesis-evidence-chain.html">
+        <span class="card-num">05 · Diagram</span>
+        <div class="card-title">Hypothesis–Evidence Chain</div>
+        <div class="card-desc">The deductive backbone diagram.</div>
+        <div class="card-file">hypothesis-evidence-chain.html</div>
+      </a>
+    </li>
+  </ul>
+
+  <footer>
+    eLife Claim Trees · Gädeke et al. 2026, eLife 105391
+  </footer>
+
+</div>
+</body>
+</html>

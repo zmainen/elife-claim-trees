@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 const API_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost'
-  ? 'http://localhost:8081'
+  ? 'http://localhost:8080'
   : 'https://console.haak.world/elife-extract';
 
 // ── Types ────────────────────────────────────────────────────────────

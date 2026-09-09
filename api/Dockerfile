@@ -8,7 +8,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the extraction package and prompts
 COPY elife_extract/ ./elife_extract/
 COPY prompts/ ./prompts/
-COPY server.py .
+# Copy all API modules — server.py imports review, llm, infer_edges
+COPY server.py review.py llm.py infer_edges.py ./
 
 ENV ELIFE_PROMPTS_DIR=/app/prompts
 

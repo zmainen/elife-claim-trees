@@ -23,8 +23,9 @@ logger = logging.getLogger(__name__)
 # Provider → model catalog (what shows up in the dropdown)
 PROVIDER_MODELS = {
     "anthropic": [
-        {"id": "claude-sonnet-4-6", "name": "Claude Sonnet 4", "tier": "fast"},
-        {"id": "claude-opus-4-6", "name": "Claude Opus 4", "tier": "best"},
+        {"id": "claude-sonnet-4-6", "name": "Claude Sonnet 4.6 (balanced)", "tier": "fast"},
+        {"id": "claude-opus-4-8", "name": "Claude Opus 4.8 (best)", "tier": "best"},
+        {"id": "claude-haiku-4-5", "name": "Claude Haiku 4.5 (fast/cheap)", "tier": "cheap"},
     ],
     "openai": [
         {"id": "gpt-4o", "name": "GPT-4o", "tier": "fast"},
@@ -32,17 +33,21 @@ PROVIDER_MODELS = {
         {"id": "o3", "name": "o3", "tier": "best"},
     ],
     "google": [
-        {"id": "gemini-2.5-pro", "name": "Gemini 2.5 Pro", "tier": "best"},
-        {"id": "gemini-2.5-flash", "name": "Gemini 2.5 Flash", "tier": "fast"},
+        {"id": "gemini-2.5-pro", "name": "Gemini 2.5 Pro (best)", "tier": "best"},
+        {"id": "gemini-2.5-flash", "name": "Gemini 2.5 Flash (fast)", "tier": "fast"},
     ],
     "openrouter": [
         {"id": "anthropic/claude-sonnet-4", "name": "Claude Sonnet 4 (via OpenRouter)", "tier": "fast"},
         {"id": "openai/gpt-4o", "name": "GPT-4o (via OpenRouter)", "tier": "fast"},
         {"id": "google/gemini-2.5-pro", "name": "Gemini 2.5 Pro (via OpenRouter)", "tier": "best"},
     ],
+    # Hosted demo path (server-paid Vertex). cr-mainen pins opus at 4-6 —
+    # 4-7/4-8 time out on that region. Requires a demo token / passkey auth.
     "vertex": [
-        {"id": "claude-sonnet-4-6", "name": "Claude Sonnet 4 (Vertex)", "tier": "fast"},
-        {"id": "claude-opus-4-6", "name": "Claude Opus 4 (Vertex)", "tier": "best"},
+        {"id": "gemini-2.5-flash", "name": "Gemini 2.5 Flash (fastest)", "tier": "fast"},
+        {"id": "gemini-2.5-pro", "name": "Gemini 2.5 Pro", "tier": "best"},
+        {"id": "claude-sonnet-4-6", "name": "Claude Sonnet 4.6 (Vertex)", "tier": "fast"},
+        {"id": "claude-opus-4-6", "name": "Claude Opus 4.6 (Vertex)", "tier": "best"},
     ],
 }
 

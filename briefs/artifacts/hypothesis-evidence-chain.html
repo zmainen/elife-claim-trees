@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}</style>
+</head>
+<body>
+<title>Hypothesis–Evidence Chain</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F5F3EE; --surf: #FDFCF9; --bdr: #DDD9CE;
+  --txt: #1C1A17; --txt2: #5E5B52; --txt3: #9A9588;
+  --h: #2F5CA8; --h-bg: #E8EEF8; --h-bdr: #AABEE0;
+  --p: #6040B0; --p-bg: #EDE8F8; --p-bdr: #C0B0E8;
+  --e: #1E7A5A; --e-bg: #E2F3EC; --e-bdr: #90CEB4;
+  --c: #3E7A60; --c-bg: #E8F5EE; --c-bdr: #A8D8BE;
+  --v: #1A6030; --v-bg: #CDF0DC; --v-bdr: #6EC898;
+  --vp: #6A5000; --vp-bg: #FFF0C0; --vp-bdr: #DCBA40;
+  --u: #5A5650; --u-bg: #EEECE8; --u-bdr: #CCCAC0;
+  --lit: #8A5020; --lit-bg: #F5E8D0; --lit-bdr: #D0A870;
+  --entails: #2F5CA8; --tests: #1E7A5A; --confirms: #6040B0;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) {
+  --bg: #0E0D0B; --surf: #161510; --bdr: #2A2820;
+  --txt: #E0DDD5; --txt2: #8A8880; --txt3: #5A5850;
+  --h: #7AAAE0; --h-bg: #101E38; --h-bdr: #204070;
+  --p: #A890E8; --p-bg: #180E38; --p-bdr: #402868;
+  --e: #48C890; --e-bg: #082818; --e-bdr: #185840;
+  --c: #60C888; --c-bg: #081E14; --c-bdr: #204830;
+  --v: #50D888; --v-bg: #082018; --v-bdr: #208050;
+  --vp: #D8B030; --vp-bg: #201800; --vp-bdr: #705000;
+  --u: #888480; --u-bg: #181814; --u-bdr: #383430;
+  --lit: #D09050; --lit-bg: #201408; --lit-bdr: #604020;
+  --entails: #7AAAE0; --tests: #48C890; --confirms: #A890E8;
+}}
+:root[data-theme=dark] {
+  --bg: #0E0D0B; --surf: #161510; --bdr: #2A2820;
+  --txt: #E0DDD5; --txt2: #8A8880; --txt3: #5A5850;
+  --h: #7AAAE0; --h-bg: #101E38; --h-bdr: #204070;
+  --p: #A890E8; --p-bg: #180E38; --p-bdr: #402868;
+  --e: #48C890; --e-bg: #082818; --e-bdr: #185840;
+  --c: #60C888; --c-bg: #081E14; --c-bdr: #204830;
+  --v: #50D888; --v-bg: #082018; --v-bdr: #208050;
+  --vp: #D8B030; --vp-bg: #201800; --vp-bdr: #705000;
+  --u: #888480; --u-bg: #181814; --u-bdr: #383430;
+  --lit: #D09050; --lit-bg: #201408; --lit-bdr: #604020;
+  --entails: #7AAAE0; --tests: #48C890; --confirms: #A890E8;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--txt);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 13px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  padding: 32px 24px 48px;
+  min-height: 100vh;
+}
+.masthead { max-width: 820px; margin: 0 auto 28px; }
+.paper-title { font-size: 11px; font-weight: 500; color: var(--txt3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+h1 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: var(--txt2); margin-bottom: 20px; }
+.legend { display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px; margin-bottom: 6px; }
+.litem { display: flex; align-items: center; gap: 6px; }
+.ldot { width: 10px; height: 10px; border-radius: 2px; }
+.lline { width: 24px; height: 2px; }
+.lline-dash { width: 24px; height: 0; border-top: 2px dashed; }
+/* chain layout */
+.chain-wrap { max-width: 900px; margin: 0 auto; }
+.hyp-block { margin-bottom: 32px; background: var(--surf); border: 1px solid var(--bdr); border-radius: 8px; overflow: hidden; }
+.hyp-header { padding: 14px 18px; border-bottom: 1px solid var(--bdr); }
+.hyp-node { display: flex; align-items: flex-start; gap: 10px; }
+.role-chip { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: 2px 7px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+.chip-h { background: var(--h-bg); color: var(--h); border: 1px solid var(--h-bdr); }
+.chip-p { background: var(--p-bg); color: var(--p); border: 1px solid var(--p-bdr); }
+.chip-e { background: var(--e-bg); color: var(--e); border: 1px solid var(--e-bdr); }
+.chip-c { background: var(--c-bg); color: var(--c); border: 1px solid var(--c-bdr); }
+.chip-i { background: var(--lit-bg); color: var(--lit); border: 1px solid var(--lit-bdr); }
+.claim-slug { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--txt3); margin-bottom: 3px; }
+.claim-text { font-size: 12.5px; color: var(--txt); line-height: 1.45; }
+.repro-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 3px; margin-left: 8px; }
+.rb-v  { background: var(--v-bg);  color: var(--v);  border: 1px solid var(--v-bdr); }
+.rb-vp { background: var(--vp-bg); color: var(--vp); border: 1px solid var(--vp-bdr); }
+.rb-u  { background: var(--u-bg);  color: var(--u);  border: 1px solid var(--u-bdr); }
+.pred-rows { padding: 0 18px 18px; }
+.pred-block { margin-top: 14px; display: flex; gap: 0; }
+.connector-col { width: 32px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding-top: 18px; }
+.v-line { width: 2px; background: var(--entails); opacity: .35; flex: 1; min-height: 8px; }
+.arrow-down { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--entails); opacity: .5; }
+.edge-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; writing-mode: vertical-rl; transform: rotate(180deg); color: var(--txt3); margin: 4px 0; white-space: nowrap; }
+.pred-content { flex: 1; min-width: 0; }
+.pred-node { background: var(--p-bg); border: 1px solid var(--p-bdr); border-radius: 6px; padding: 10px 14px; margin-bottom: 10px; }
+.empirical-rows { display: flex; flex-direction: column; gap: 8px; }
+.emp-row { display: flex; gap: 0; }
+.emp-connector { width: 24px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding-top: 14px; }
+.v-line-dash { width: 0; border-left: 2px dashed; border-color: var(--tests); opacity: .4; flex: 1; min-height: 8px; }
+.arrow-down-test { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid var(--tests); opacity: .5; }
+.emp-node { flex: 1; border-radius: 5px; padding: 8px 12px; border: 1px solid; }
+.emp-node.empirical { background: var(--e-bg); border-color: var(--e-bdr); }
+.emp-node.control   { background: var(--c-bg); border-color: var(--c-bdr); }
+.emp-node.interpretation { background: var(--lit-bg); border-color: var(--lit-bdr); }
+.emp-note { font-size: 10.5px; color: var(--txt2); margin-top: 3px; font-style: italic; }
+/* mira gap callout */
+.mira-gap { max-width: 900px; margin: 24px auto 0; background: var(--surf); border: 1px solid var(--bdr); border-radius: 8px; padding: 16px 20px; }
+.mira-gap h2 { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--txt2); }
+.gap-row { display: flex; gap: 12px; margin-bottom: 8px; font-size: 12px; align-items: baseline; }
+.gap-row:last-child { margin-bottom: 0; }
+.gap-label { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--h); min-width: 110px; flex-shrink: 0; }
+.gap-label.tests { color: var(--e); }
+.gap-label.repro { color: var(--v); }
+.missing { font-size: 10px; font-weight: 600; background: #FFF0C0; color: #6A5000; padding: 1px 6px; border-radius: 3px; margin-left: 6px; }
+@media(prefers-color-scheme: dark){ :root:not([data-theme=light]) .missing { background: #2A2000; color: #D8B030; }}
+:root[data-theme=dark] .missing { background: #2A2000; color: #D8B030; }
+</style>
+
+<div class="masthead">
+  <div class="paper-title">Gädeke et al. 2026 · eLife 105391</div>
+  <h1>Hypothesis → Prediction → Evidence</h1>
+  <p class="subtitle">The deductive backbone of the paper's argument — invisible in MIRA, explicit in HaaK</p>
+  <div class="legend">
+    <div class="litem"><div class="ldot" style="background:var(--h)"></div> Hypothesis</div>
+    <div class="litem"><div class="ldot" style="background:var(--p)"></div> Prediction</div>
+    <div class="litem"><div class="ldot" style="background:var(--e)"></div> Empirical</div>
+    <div class="litem"><div class="ldot" style="background:var(--c)"></div> Control</div>
+    <div class="litem"><div class="ldot" style="background:var(--lit)"></div> Interpretation</div>
+    <div class="litem" style="gap:8px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div class="lline" style="background:var(--entails)"></div>
+      </div>
+      <span>entails</span>
+    </div>
+    <div class="litem" style="gap:8px">
+      <div class="lline-dash" style="border-color:var(--tests)"></div>
+      <span>tests</span>
+    </div>
+    <div class="litem"><span class="repro-badge rb-v">✓ verified</span></div>
+    <div class="litem"><span class="repro-badge rb-vp">~ partial</span></div>
+    <div class="litem"><span class="repro-badge rb-u">unverified</span></div>
+  </div>
+</div>
+
+<div class="chain-wrap">
+
+<!-- H1 -->
+<div class="hyp-block">
+  <div class="hyp-header">
+    <div class="hyp-node">
+      <span class="role-chip chip-h">H1</span>
+      <div>
+        <div class="claim-slug">hypothesis-insula-tracks-interpersonal-guilt</div>
+        <div class="claim-text">Anterior insula is the neural substrate of responsibility-contingent interpersonal guilt — recruited specifically by the conjunction of self-agency and harm to the partner.</div>
+      </div>
+    </div>
+  </div>
+  <div class="pred-rows">
+
+    <div class="pred-block">
+      <div class="connector-col">
+        <div class="v-line"></div>
+        <div class="arrow-down"></div>
+        <div class="edge-label">entails</div>
+        <div class="v-line"></div>
+      </div>
+      <div class="pred-content">
+        <div class="pred-node">
+          <div class="claim-slug">prediction-behavioral-guilt-effect</div>
+          <div class="claim-text" style="color:var(--p)">Happiness drops more after negative partner outcomes in Social vs Partner trials — positive (partnerWon × subjDecided) interaction.</div>
+        </div>
+        <div class="empirical-rows">
+          <div class="emp-row">
+            <div class="emp-connector">
+              <div class="v-line-dash"></div>
+              <div class="arrow-down-test"></div>
+            </div>
+            <div class="emp-node empirical">
+              <div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                <span class="role-chip chip-e">empirical</span>
+                <span style="font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace">guilt-reduces-happiness-after-partner-loss</span>
+                <span class="repro-badge rb-v">✓ verified</span>
+              </div>
+              <div class="emp-note">fMRI β=0.33**, Behav β=0.39*** — both studies · panel fig3d, fig3h</div>
+            </div>
+          </div>
+          <div class="emp-row">
+            <div class="emp-connector">
+              <div class="v-line-dash"></div>
+              <div class="arrow-down-test"></div>
+            </div>
+            <div class="emp-node empirical">
+              <div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                <span class="role-chip chip-e">empirical</span>
+                <span style="font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace">agency-reduces-happiness</span>
+                <span class="repro-badge rb-u">unverified</span>
+              </div>
+              <div class="emp-note">Being the decision-maker reduces happiness independently of outcome · β=−0.14 to −0.24</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pred-block">
+      <div class="connector-col">
+        <div class="v-line"></div>
+        <div class="arrow-down"></div>
+        <div class="edge-label">entails</div>
+        <div class="v-line"></div>
+      </div>
+      <div class="pred-content">
+        <div class="pred-node">
+          <div class="claim-slug">prediction-insula-tracks-guilt</div>
+          <div class="claim-text" style="color:var(--p)">Anterior insula BOLD elevated Social > Partner after negative partner outcomes — (condition × partner-outcome) interaction in a priori insula ROI.</div>
+        </div>
+        <div class="empirical-rows">
+          <div class="emp-row">
+            <div class="emp-connector">
+              <div class="v-line-dash"></div>
+              <div class="arrow-down-test"></div>
+            </div>
+            <div class="emp-node empirical">
+              <div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                <span class="role-chip chip-e">empirical</span>
+                <span style="font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace">insula-tracks-guilt-effect</span>
+                <span class="repro-badge rb-v">✓ verified</span>
+              </div>
+              <div class="emp-note">Peak MNI [−28, 24, −4] extracted from NIfTI — exact match · panel fig4e, fig4f</div>
+            </div>
+          </div>
+          <div class="emp-row">
+            <div class="emp-connector">
+              <div class="v-line-dash"></div>
+              <div class="arrow-down-test"></div>
+            </div>
+            <div class="emp-node interpretation">
+              <div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                <span class="role-chip chip-i">interpretation</span>
+                <span style="font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace">insula-guilt-replicates-yu-koban-signature</span>
+                <span class="repro-badge rb-vp">~ partial</span>
+              </div>
+              <div class="emp-note">Sign test p=0.017, Wilcoxon p=0.042 · t-test marginal p=0.071</div>
+            </div>
+          </div>
+          <div class="emp-row">
+            <div class="emp-connector">
+              <div class="v-line-dash"></div>
+              <div class="arrow-down-test"></div>
+            </div>
+            <div class="emp-node empirical">
+              <div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                <span class="role-chip chip-e">empirical</span>
+                <span style="font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace">insula-ifg-connectivity-guilt</span>
+                <span class="repro-badge rb-u">unverified</span>
+              </div>
+              <div class="emp-note">gPPI connectivity insula ↔ IFG varies by condition · panel fig5</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- H2 -->
+<div class="hyp-block">
+  <div class="hyp-header">
+    <div class="hyp-node">
+      <span class="role-chip chip-h">H2</span>
+      <div>
+        <div class="claim-slug">hypothesis-responsibility-weights-partner-rpes</div>
+        <div class="claim-text">Momentary happiness in social contexts is governed by a computational rule in which partner reward prediction errors from the participant's own choices carry an independent, non-zero weight.</div>
+      </div>
+    </div>
+  </div>
+  <div class="pred-rows">
+
+    <div class="pred-block">
+      <div class="connector-col">
+        <div class="v-line"></div>
+        <div class="arrow-down"></div>
+        <div class="edge-label">entails</div>
+        <div class="v-line"></div>
+      </div>
+      <div class="pred-content">
+        <div class="pred-node">
+          <div class="claim-slug">prediction-responsibility-model-wins-comparison</div>
+          <div class="claim-text" style="color:var(--p)">A happiness model with social_pRPE × responsibility outperforms nested alternatives; social_pRPE weight significantly > 0 in both studies.</div>
+        </div>
+        <div class="empirical-rows">
+          <div class="emp-row">
+            <div class="emp-connector">
+              <div class="v-line-dash"></div>
+              <div class="arrow-down-test"></div>
+            </div>
+            <div class="emp-node empirical">
+              <div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                <span class="role-chip chip-e">empirical</span>
+                <span style="font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace">social-prpe-weight-positive</span>
+                <span class="repro-badge rb-u">unverified</span>
+              </div>
+              <div class="emp-note">social_pRPE weight > 0 · Study 1: Z=2.85, p=0.004 · Study 2: Z=3.26, p=0.001</div>
+            </div>
+          </div>
+          <div class="emp-row">
+            <div class="emp-connector">
+              <div class="v-line-dash"></div>
+              <div class="arrow-down-test"></div>
+            </div>
+            <div class="emp-node empirical">
+              <div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                <span class="role-chip chip-e">empirical</span>
+                <span style="font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace">responsibility-modulates-guilt-computational</span>
+                <span class="repro-badge rb-u">unverified</span>
+              </div>
+              <div class="emp-note">Responsibility model outperforms all nested alternatives · panel fig3, table1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pred-block">
+      <div class="connector-col">
+        <div class="v-line"></div>
+        <div class="arrow-down"></div>
+        <div class="edge-label">entails</div>
+        <div class="v-line"></div>
+      </div>
+      <div class="pred-content">
+        <div class="pred-node">
+          <div class="claim-slug">prediction-behavioral-guilt-effect <span style="color:var(--txt3);font-size:9px">(shared with H1)</span></div>
+          <div class="claim-text" style="color:var(--p)">Happiness drops more in Social vs Partner after negative partner outcomes.</div>
+        </div>
+        <div class="empirical-rows">
+          <div class="emp-row">
+            <div class="emp-connector">
+              <div class="v-line-dash"></div>
+              <div class="arrow-down-test"></div>
+            </div>
+            <div class="emp-node empirical">
+              <div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                <span class="role-chip chip-e">empirical</span>
+                <span style="font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace">happiness-correlates-partner-reward</span>
+                <span class="repro-badge rb-v">✓ verified</span>
+              </div>
+              <div class="emp-note">fMRI R²=0.185, Behav R²=0.147 — exact match · panel fig3a-f</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- H3 -->
+<div class="hyp-block">
+  <div class="hyp-header">
+    <div class="hyp-node">
+      <span class="role-chip chip-h">H3</span>
+      <div>
+        <div class="claim-slug">hypothesis-sts-mentalizes-partner-state-under-responsibility</div>
+        <div class="claim-text">Superior temporal sulcus represents the partner's affective experience specifically when the participant is responsible for the partner's outcome — mentalizing conditioned on agency.</div>
+      </div>
+    </div>
+  </div>
+  <div class="pred-rows">
+
+    <div class="pred-block">
+      <div class="connector-col">
+        <div class="v-line"></div>
+        <div class="arrow-down"></div>
+        <div class="edge-label">entails</div>
+        <div class="v-line"></div>
+      </div>
+      <div class="pred-content">
+        <div class="pred-node">
+          <div class="claim-slug">prediction-sts-tracks-partner-rpe-under-responsibility</div>
+          <div class="claim-text" style="color:var(--p)">Left STS parametric BOLD tracks partner RPE in Social trials but not Partner trials — responsibility-split regressors in model-based GLM.</div>
+        </div>
+        <div class="empirical-rows">
+          <div class="emp-row">
+            <div class="emp-connector">
+              <div class="v-line-dash"></div>
+              <div class="arrow-down-test"></div>
+            </div>
+            <div class="emp-node empirical">
+              <div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                <span class="role-chip chip-e">empirical</span>
+                <span style="font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace">sts-tracks-partner-reward-prediction-errors</span>
+                <span class="repro-badge rb-u">unverified</span>
+              </div>
+              <div class="emp-note">Left STS cluster in Social RPE regressor · requires MATLAB model outputs · panel fig4h</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MIRA gap callout -->
+<div class="mira-gap">
+  <h2>What MIRA cannot represent from this diagram</h2>
+  <div class="gap-row">
+    <span class="gap-label">entails</span>
+    <span>The H→P arrows are invisible in MIRA. All three hypotheses and their four predictions collapse into a flat set of <code style="font-size:10.5px;font-family:'IBM Plex Mono',monospace">mira:Claim</code> nodes with no derivation relation between them. A reader cannot tell which prediction belongs to which hypothesis.</span>
+    <span class="missing">no MIRA predicate</span>
+  </div>
+  <div class="gap-row">
+    <span class="gap-label tests">tests</span>
+    <span>The P→E dashed arrows are invisible. MIRA represents confirmed evidence as <code style="font-size:10.5px;font-family:'IBM Plex Mono',monospace">mira:supports</code>, but cannot distinguish "this empirical result was designed to test this specific prediction" from generic post-hoc support.</span>
+    <span class="missing">no MIRA predicate</span>
+  </div>
+  <div class="gap-row">
+    <span class="gap-label repro">reproductions</span>
+    <span>Three claims carry verified reproduction records (insula peak MNI, happiness β values, R² exact match). MIRA has no node type for verification — badges are invisible.</span>
+    <span class="missing">no MIRA node type</span>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>

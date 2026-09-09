@@ -106,7 +106,7 @@ class RunReviewRequest(AuthInfo):
     reviewers: list[dict]  # each: {slug, type: "personified"|"generic", name, ...}
     instructions: str = "elife"  # key into INSTRUCTION_SETS or raw text
     model: str = "claude-sonnet-4-6"
-    editor_model: str = "claude-opus-4-6"
+    editor_model: str = "claude-opus-4-8"
 
 
 class ChatRequest(AuthInfo):

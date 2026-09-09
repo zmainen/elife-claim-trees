@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}</style>
+</head>
+<body>
+<title>Gädeke 2026 — All Claims</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F7F6F2;--bg2:#EEECEA;--surf:#FFF;--bdr:#D4D0C8;
+  --txt:#181A20;--txt2:#5C5E68;--txt3:#9A9CA6;
+  --haak:#4C7AB5;--haak-d:#E6EDF8;--haak-b:#BDD0EE;
+  --oxa:#3A9C88;--oxa-d:#DFF2ED;--oxa-b:#A8DDD4;
+  --mira:#B08030;--mira-d:#F5EDD8;--mira-b:#DFCA88;
+  --code:#F0EFE8;--ck:#2A5090;--cs:#1A7060;--cv:#7A4808;--cm:#7A7C88;
+  --gap-bg:#F5E8C8;--gap-c:#7A5000;
+  --rbadge-v:#D4F0DC;--rbadge-vc:#1A6830;
+  --rbadge-p:#FFF0C0;--rbadge-pc:#7A6000;
+  --rbadge-u:#F0EFE8;--rbadge-uc:#5C5E68;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#0C1018;--bg2:#141A26;--surf:#161E2E;--bdr:#222C40;
+  --txt:#DDD9D0;--txt2:#8A8EA0;--txt3:#5A5E70;
+  --haak:#7AAAD8;--haak-d:#112030;--haak-b:#2A4060;
+  --oxa:#4EC4A8;--oxa-d:#0E2820;--oxa-b:#1C4840;
+  --mira:#D4A840;--mira-d:#281E08;--mira-b:#4A3808;
+  --code:#111820;--ck:#80AADC;--cs:#4EC4A8;--cv:#D4A840;--cm:#585C70;
+  --gap-bg:#2A1E00;--gap-c:#D4A840;
+  --rbadge-v:#0E3018;--rbadge-vc:#4EC880;
+  --rbadge-p:#2A2400;--rbadge-pc:#D4C050;
+  --rbadge-u:#1A1E28;--rbadge-uc:#8A8EA0;
+}}
+:root[data-theme=dark]{
+  --bg:#0C1018;--bg2:#141A26;--surf:#161E2E;--bdr:#222C40;
+  --txt:#DDD9D0;--txt2:#8A8EA0;--txt3:#5A5E70;
+  --haak:#7AAAD8;--haak-d:#112030;--haak-b:#2A4060;
+  --oxa:#4EC4A8;--oxa-d:#0E2820;--oxa-b:#1C4840;
+  --mira:#D4A840;--mira-d:#281E08;--mira-b:#4A3808;
+  --code:#111820;--ck:#80AADC;--cs:#4EC4A8;--cv:#D4A840;--cm:#585C70;
+  --gap-bg:#2A1E00;--gap-c:#D4A840;
+  --rbadge-v:#0E3018;--rbadge-vc:#4EC880;
+  --rbadge-p:#2A2400;--rbadge-pc:#D4C050;
+  --rbadge-u:#1A1E28;--rbadge-uc:#8A8EA0;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+/* Top bar */
+.topbar{background:var(--surf);border-bottom:1px solid var(--bdr);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.topbar-title{font-weight:600;font-size:14px}
+.topbar-meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--txt3)}
+.chips{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.chip{font-size:11px;font-weight:500;padding:2px 8px;border-radius:3px;white-space:nowrap}
+.chip-h{background:var(--haak-d);color:var(--haak)}
+.chip-o{background:var(--oxa-d);color:var(--oxa)}
+.chip-m{background:var(--mira-d);color:var(--mira)}
+/* Format legend */
+.fmtbar{background:var(--bg2);border-bottom:1px solid var(--bdr);display:grid;grid-template-columns:260px 1fr 1fr 1fr;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;flex-shrink:0}
+.fmtbar-blank{padding:7px 14px;border-right:1px solid var(--bdr)}
+.fmtlabel{padding:7px 14px;display:flex;align-items:center;gap:6px;border-right:1px solid var(--bdr)}
+.fmtlabel:last-child{border-right:none}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.fl-h{color:var(--haak)}.fl-h .dot{background:var(--haak)}
+.fl-o{color:var(--oxa)}.fl-o .dot{background:var(--oxa)}
+.fl-m{color:var(--mira)}.fl-m .dot{background:var(--mira)}
+/* Main layout */
+.main{display:flex;flex:1;overflow:hidden;min-height:0}
+/* Sidebar */
+.sidebar{width:260px;flex-shrink:0;border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden}
+.search-wrap{padding:10px;border-bottom:1px solid var(--bdr);flex-shrink:0}
+.search{width:100%;background:var(--bg2);border:1px solid var(--bdr);border-radius:4px;padding:6px 10px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--txt);outline:none}
+.search:focus{border-color:var(--haak)}
+.claim-list{overflow-y:auto;flex:1;padding:8px 0}
+.role-group{}
+.role-header{padding:8px 14px 4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--txt3);position:sticky;top:0;background:var(--bg);z-index:1}
+.claim-item{padding:7px 14px;cursor:pointer;border-left:2px solid transparent;transition:background .1s,border-color .1s;border-bottom:1px solid transparent}
+.claim-item:hover{background:var(--bg2)}
+.claim-item.active{background:var(--haak-d);border-left-color:var(--haak)}
+.claim-item-slug{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--txt3);margin-bottom:2px}
+.claim-item-text{font-size:12px;color:var(--txt2);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.claim-item.active .claim-item-slug,.claim-item.active .claim-item-text{color:var(--txt)}
+/* Role badge */
+.rbadge{display:inline-block;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:2px;margin-right:4px}
+.rb-hypothesis{background:var(--haak-d);color:var(--haak)}
+.rb-prediction{background:#E8E0F8;color:#5840A0}
+.rb-empirical{background:var(--oxa-d);color:var(--oxa)}
+.rb-control{background:#E8F4D8;color:#3A7028}
+.rb-interpretation{background:var(--mira-d);color:var(--mira)}
+.rb-scope{background:var(--rbadge-u);color:var(--rbadge-uc)}
+.rb-literature-context{background:var(--rbadge-u);color:var(--rbadge-uc)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .rb-prediction{background:#201840;color:#A090E0}}
+:root[data-theme=dark] .rb-prediction{background:#201840;color:#A090E0}
+/* Panel area */
+.panels-area{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.claim-header{padding:12px 16px;border-bottom:1px solid var(--bdr);flex-shrink:0;background:var(--surf)}
+.claim-header-slug{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--txt3);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.claim-header-text{font-size:13px;color:var(--txt);line-height:1.5;max-width:90ch}
+.repro-badge{font-size:10px;font-weight:600;padding:1px 7px;border-radius:3px}
+.rb-v{background:var(--rbadge-v);color:var(--rbadge-vc)}
+.rb-vp{background:var(--rbadge-p);color:var(--rbadge-pc)}
+.rb-u{background:var(--rbadge-u);color:var(--rbadge-uc)}
+/* Three columns */
+.panels{display:grid;grid-template-columns:1fr 1fr 1fr;flex:1;overflow:hidden;min-height:0}
+.panel{border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden}
+.panel:last-child{border-right:none}
+.panel-body{overflow-y:auto;padding:14px;flex:1}
+pre.code{font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.6;background:var(--code);border-radius:5px;padding:12px 14px;overflow-x:auto;white-space:pre;margin-bottom:10px}
+.ck{color:var(--ck)}.cs{color:var(--cs)}.cv{color:var(--cv)}.cm{color:var(--cm)}.cx{color:var(--txt2)}
+/* Annotations */
+.anns{font-size:11.5px;color:var(--txt2)}
+.ann{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--bdr)}
+.ann:last-child{border-bottom:none}
+.ann-k{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--txt3);min-width:80px;flex-shrink:0;padding-top:1px}
+.ann-v{line-height:1.45}
+.gap-tag{display:inline-block;font-size:9px;font-weight:600;text-transform:uppercase;background:var(--gap-bg);color:var(--gap-c);padding:1px 5px;border-radius:2px;margin-left:4px;letter-spacing:.04em}
+/* Empty state */
+.empty{display:flex;align-items:center;justify-content:center;flex:1;color:var(--txt3);font-size:14px;flex-direction:column;gap:8px}
+.empty-icon{font-size:32px;opacity:.5}
+/* Gap summary */
+.gap-bar{background:var(--gap-bg);border-top:1px solid var(--bdr);padding:8px 14px;font-size:11px;color:var(--gap-c);flex-shrink:0;display:none}
+.gap-bar.show{display:block}
+</style>
+
+<div class="topbar">
+  <span class="topbar-title">Gädeke 2026 — Three Formats</span>
+  <span class="topbar-meta">eLife 105391 · 10.7554/eLife.105391 · 26 claims</span>
+  <div class="chips">
+    <span class="chip chip-h">HaaK YAML</span>
+    <span class="chip chip-o">OXA JSON</span>
+    <span class="chip chip-m">MIRA JSON-LD</span>
+  </div>
+</div>
+
+<div class="fmtbar">
+  <div class="fmtbar-blank">
+    <input class="search" type="text" placeholder="Search claims…" id="search" oninput="filterClaims(this.value)" style="width:100%;background:var(--bg2);border:1px solid var(--bdr);border-radius:3px;padding:4px 8px;font-family:inherit;font-size:11px;color:var(--txt);outline:none">
+  </div>
+  <div class="fmtlabel fl-h"><span class="dot"></span>HaaK YAML — native format</div>
+  <div class="fmtlabel fl-o"><span class="dot"></span>OXA JSON — ClaimGraph RFC</div>
+  <div class="fmtlabel fl-m"><span class="dot"></span>MIRA JSON-LD — inter-lab exchange</div>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="claim-list" id="claimList"></div>
+  </div>
+  <div class="panels-area">
+    <div class="claim-header" id="claimHeader">
+      <div style="color:var(--txt3);font-size:13px">← Select a claim</div>
+    </div>
+    <div class="panels" id="panelsGrid">
+      <div class="panel"><div class="empty"><div class="empty-icon">📄</div>HaaK</div></div>
+      <div class="panel"><div class="empty"><div class="empty-icon">{ }</div>OXA</div></div>
+      <div class="panel"><div class="empty"><div class="empty-icon">🕸</div>MIRA</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CLAIMS = [
+  {slug:"hypothesis-insula-tracks-interpersonal-guilt",uuid:"7a27dc0a-904f-485f-99ae-2b1ac54ca7c2",role:"hypothesis",epistemic:"hypothesis",panel:"hypothesis",method:"hypothesis stated in introduction and abstract",confidence:"N/A",doi:"10.7554/eLife.105391",dataset:null,
+   claim:"Anterior insula is the neural substrate of interpersonal guilt: when a participant bears responsibility for a choice that yields a negative outcome for another person, anterior insula activity tracks the resulting responsibility-contingent affect. The region is recruited specifically by the conjunction of self-agency over the choice and harm to the partner, distinguishing guilt from generic empathy for partner loss and from regret about one's own loss.",
+   short:"The anterior insula encodes responsibility-contingent interpersonal guilt.",
+   edges:{entails:["prediction-behavioral-guilt-effect","prediction-insula-tracks-guilt"]},
+   repro:[]},
+
+  {slug:"hypothesis-responsibility-weights-partner-rpes",uuid:"88edff87-3bea-4030-bdf5-fb172865c445",role:"hypothesis",epistemic:"hypothesis",panel:"hypothesis",method:"hypothesis stated in introduction and modelling section",confidence:"N/A",doi:"10.7554/eLife.105391",dataset:null,
+   claim:"Momentary happiness in social decision contexts is governed by a computational rule in which partner reward prediction errors that arise from the participant's own choices (social_pRPEs) carry an independent, non-zero weight, distinct from the weight on partner RPEs that arise without participant agency.",
+   short:"Happiness weights partner reward prediction errors by the subject's responsibility.",
+   edges:{entails:["prediction-responsibility-model-wins-comparison","prediction-behavioral-guilt-effect"]},
+   repro:[]},
+
+  {slug:"hypothesis-sts-mentalizes-partner-state-under-responsibility",uuid:"01faee80-e511-4f08-9a93-225e869637ee",role:"hypothesis",epistemic:"hypothesis",panel:"hypothesis",method:"hypothesis stated in introduction and discussion",confidence:"N/A",doi:"10.7554/eLife.105391",dataset:null,
+   claim:"Superior temporal sulcus (STS) represents the partner's affective experience specifically when the participant is responsible for the partner's outcome. The mentalizing computation is conditioned on agency: STS engages selectively when the participant's own choice produced the partner's outcome.",
+   short:"STS tracks the partner's RPEs only when the subject is responsible for the outcome.",
+   edges:{entails:["prediction-sts-tracks-partner-rpe-under-responsibility"]},
+   repro:[]},
+
+  {slug:"prediction-behavioral-guilt-effect",uuid:"68f77387-69ad-4b26-b766-7ed6a6c1658c",role:"prediction",epistemic:"prediction",panel:"prediction",method:"derived prediction",confidence:"strong",doi:"10.7554/eLife.105391",dataset:null,
+   claim:"If interpersonal guilt is a real affective phenomenon contingent on responsibility, then happiness should drop more after negative partner outcomes in Social trials than in Partner trials — a positive interaction between partnerWon and subjDecided in a mixed-effects regression of happiness on outcomes and responsibility.",
+   short:"Happiness should drop more after negative partner outcomes when the participant chose.",
+   edges:{"derived-from":["hypothesis-insula-tracks-interpersonal-guilt","hypothesis-responsibility-weights-partner-rpes"]},
+   repro:[]},
+
+  {slug:"prediction-insula-tracks-guilt",uuid:"a3c124db-5983-4f4a-81da-77aa7d917e7c",role:"prediction",epistemic:"prediction",panel:"prediction",method:"derived prediction",confidence:"strong",doi:"10.7554/eLife.105391",dataset:null,
+   claim:"If anterior insula encodes interpersonal guilt, then anterior insula BOLD should be elevated in the Social vs Partner contrast specifically after negative partner outcomes — the (condition × partner-outcome) interaction in an a priori insula SVC ROI.",
+   short:"Anterior insula BOLD elevated Social > Partner after negative partner outcomes.",
+   edges:{"derived-from":["hypothesis-insula-tracks-interpersonal-guilt"]},
+   repro:[]},
+
+  {slug:"prediction-responsibility-model-wins-comparison",uuid:"6eb8393f-a95e-4360-91d9-442d08200190",role:"prediction",epistemic:"prediction",panel:"prediction",method:"derived prediction",confidence:"strong",doi:"10.7554/eLife.105391",dataset:null,
+   claim:"A happiness model with a social_pRPE × responsibility interaction term should fit participant happiness ratings better than nested alternatives in both Study 1 and Study 2; and the fitted social_pRPE weight should be significantly greater than zero.",
+   short:"Responsibility model with social_pRPE outperforms nested alternatives in both studies.",
+   edges:{"derived-from":["hypothesis-responsibility-weights-partner-rpes"]},
+   repro:[]},
+
+  {slug:"prediction-sts-tracks-partner-rpe-under-responsibility",uuid:"52a693d9-fa42-4b84-8e27-7c77ef16022f",role:"prediction",epistemic:"prediction",panel:"prediction",method:"derived prediction",confidence:"moderate",doi:"10.7554/eLife.105391",dataset:null,
+   claim:"In a model-based GLM with trial-by-trial partner RPE regressors split by who-chose, the parametric modulator for partner RPE in Social trials should yield a significant cluster in left STS, while partner RPE in Partner trials should not.",
+   short:"Left STS tracks partner RPEs in Social but not Partner trials.",
+   edges:{"derived-from":["hypothesis-sts-mentalizes-partner-state-under-responsibility"]},
+   repro:[]},
+
+  {slug:"guilt-reduces-happiness-after-partner-loss",uuid:"b47187b8-9269-495c-90ec-d3b4e4193031",role:"empirical",epistemic:"strong",panel:"fig3d, fig3h",method:"mixed-effects regression (Study 1 and 2)",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Happiness ratings decrease more after negative partner outcomes when the participant made the choice (Social condition) than when the partner made the choice (Partner condition), operationalizing interpersonal guilt as responsibility-contingent unhappiness about partner harm.",
+   short:"Happiness decreases more after negative partner outcomes when the participant chose (guilt operationalization).",
+   edges:{tests:["prediction-behavioral-guilt-effect"],confirms:["hypothesis-insula-tracks-interpersonal-guilt","hypothesis-responsibility-weights-partner-rpes"]},
+   repro:[{status:"verified",notes:"partnerWon:subjDecided_1 interaction confirmed: fMRI β=0.33**, Behav β=0.39***. Exact match."}]},
+
+  {slug:"happiness-correlates-partner-reward",uuid:"e36646f0-ce3f-4223-acec-a4c490b38400",role:"empirical",epistemic:"strong",panel:"fig3a, fig3b, fig3e, fig3f",method:"mixed-effects linear regression",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Participant momentary happiness correlates with both participant reward (Study 1: R²=0.16; Study 2: R²=0.20) and partner reward (Study 1: R²=0.05; Study 2: R²=0.06), confirming emotional responsiveness to partner outcomes.",
+   short:"Happiness correlates with both own reward (R²≈0.16–0.20) and partner reward (R²≈0.05–0.06).",
+   edges:{validates:["guilt-reduces-happiness-after-partner-loss","hypothesis-insula-tracks-interpersonal-guilt"],supports:["guilt-reduces-happiness-after-partner-loss"]},
+   repro:[{status:"verified",notes:"fMRI R²=0.185, Behav R²=0.147 — exact match to paper values."}]},
+
+  {slug:"social-prpe-weight-positive",uuid:"1f154108-1ed9-4084-935a-6ef65adc2418",role:"empirical",epistemic:"strong",panel:"fig3c, fig3g, table1",method:"Wilcoxon sign-rank test on model weights",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"The weight on partner reward prediction errors resulting from participant choices (social_pRPE) is significantly greater than zero in both the Responsibility model (Study 1: Z=2.85, p=0.004; Study 2: Z=3.26, p=0.001) and the Responsibility Redux model.",
+   short:"social_pRPE weight > 0 in both models and both studies.",
+   edges:{tests:["hypothesis-responsibility-weights-partner-rpes"],confirms:["hypothesis-responsibility-weights-partner-rpes"],supports:["responsibility-modulates-guilt-computational","guilt-reduces-happiness-after-partner-loss"]},
+   repro:[{status:"unverified",notes:"Model fitting requires MATLAB."}]},
+
+  {slug:"responsibility-modulates-guilt-computational",uuid:"69cad10c-46f3-4f7e-8cec-3c9de1c629de",role:"empirical",epistemic:"moderate",panel:"fig3, table1",method:"computational model fitting (responsibility parameter)",confidence:"moderate",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"A computational model incorporating responsibility-modulated happiness better accounts for the behavioral guilt effect than models without responsibility weighting, providing formal parameterization of the social decision-making component.",
+   short:"Responsibility computational model outperforms all nested alternatives.",
+   edges:{tests:["prediction-responsibility-model-wins-comparison"],confirms:["hypothesis-responsibility-weights-partner-rpes"],interprets:["social-prpe-weight-positive"],"enables-method":["sts-tracks-partner-reward-prediction-errors","ventral-striatum-tracks-computational-reward"]},
+   repro:[{status:"unverified",notes:"Requires MATLAB model fitting code."}]},
+
+  {slug:"agency-reduces-happiness",uuid:"8edb5949-b433-496e-8d9f-1f10df952ddc",role:"empirical",epistemic:"strong",panel:"fig3 (text, no dedicated panel)",method:"linear mixed model on z-scored happiness ratings",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Being the decision-maker (Social + Solo vs Partner condition) reduces participant happiness independently of outcome (Study 1: β=−0.14, p<0.0001; Study 2: β=−0.24, p<0.0001), consistent with a psychological cost of assuming responsibility for others.",
+   short:"Being the decision-maker reduces happiness independently of outcome.",
+   edges:{"dissociates-with":["guilt-reduces-happiness-after-partner-loss"],supports:["guilt-reduces-happiness-after-partner-loss"]},
+   repro:[{status:"unverified",notes:null}]},
+
+  {slug:"solo-vs-social-choice-difference",uuid:"5198582f-237b-447c-810e-c9a4559f9cb6",role:"empirical",epistemic:"moderate",panel:"fig2a (Study 1 only; null in fig2d Study 2)",method:"mixed-effects regression",confidence:"moderate",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Participants chose lotteries more often in the Solo condition than in the Social condition in Study 1 (β=0.164, p=0.011) but not in Study 2 (β=0.015, p=0.82), suggesting a weak and inconsistent effect of social context on risk-taking that does not replicate.",
+   short:"Solo > Social lottery choice in Study 1 only; null in Study 2.",
+   edges:{"dissociates-with":["risk-premiums-null-social-solo"],contradicts:["risk-premiums-null-social-solo"]},
+   repro:[{status:"unverified",notes:null}]},
+
+  {slug:"insula-tracks-guilt-effect",uuid:"50303ec9-0d79-48a5-ac00-e3386900731b",role:"empirical",epistemic:"strong",panel:"fig4e, fig4f",method:"fMRI mass-univariate GLM (SPM12), ROI SVC",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Anterior insula BOLD activity is significantly elevated in the Social condition compared to the Partner condition specifically after negative partner outcomes, tracking the guilt effect (responsibility-contingent partner unhappiness).",
+   short:"Anterior insula elevated Social > Partner after negative partner outcomes. Peak MNI [−28, 24, −4].",
+   edges:{tests:["prediction-insula-tracks-guilt"],confirms:["hypothesis-insula-tracks-interpersonal-guilt"]},
+   repro:[{status:"verified",notes:"Peak MNI [−28, 24, −4] extracted from deposited NIfTI — exact match to paper."}]},
+
+  {slug:"precuneus-tpj-mpfc-social-decisions",uuid:"033edd46-00ec-4b2d-9921-99c1bc9245d3",role:"empirical",epistemic:"strong",panel:"fig4b",method:"fMRI mass-univariate GLM (SPM12), whole-brain FWE",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Precuneus (d=0.79), left TPJ (d=0.59), and mPFC (d=0.54) show greater BOLD response in Social vs Solo condition at decision time, replicating association of these regions with social decision-making.",
+   short:"Precuneus, left TPJ, mPFC more active Social > Solo at decision time.",
+   edges:{validates:["insula-tracks-guilt-effect"]},
+   repro:[{status:"unverified:compute-infeasible",notes:"Pre-computed NIfTI available but no GLM re-run."}]},
+
+  {slug:"insula-ifg-connectivity-guilt",uuid:"8f7f9f33-a142-4962-b4cd-f161de239f2e",role:"empirical",epistemic:"moderate",panel:"fig5",method:"gPPI functional connectivity (SPM12)",confidence:"moderate",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Functional connectivity (gPPI) between anterior insula and inferior frontal gyrus varies by experimental condition, with increased coupling in the Social condition associated with the guilt effect.",
+   short:"IFG–insula gPPI connectivity varies by condition × choice.",
+   edges:{interprets:["insula-tracks-guilt-effect"],requires:["insula-tracks-guilt-effect"]},
+   repro:[{status:"unverified:compute-infeasible",notes:"gPPI requires individual-level GLM outputs and gPPI toolbox."}]},
+
+  {slug:"sts-tracks-partner-reward-prediction-errors",uuid:"e0633fdd-645b-4fa1-ae43-8d6b6b170000",role:"empirical",epistemic:"moderate",panel:"fig4h",method:"fMRI model-based analysis (responsibility model regressors)",confidence:"moderate",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Superior temporal sulcus BOLD activity tracks partner reward prediction errors specifically when the participant was responsible for the choice, consistent with mentalizing about the partner's experiential state.",
+   short:"Left STS tracks partner RPEs in Social but not Partner trials.",
+   edges:{tests:["prediction-sts-tracks-partner-rpe-under-responsibility"],confirms:["hypothesis-sts-mentalizes-partner-state-under-responsibility"]},
+   repro:[{status:"unverified:compute-infeasible",notes:"Requires computational model outputs from MATLAB."}]},
+
+  {slug:"guilt-signature-no-individual-difference",uuid:"a26a42bf-23a3-4c8c-a8da-981b1b317381",role:"empirical",epistemic:"moderate",panel:"fig4 (supplement, text)",method:"Spearman correlation between dot products and behavioral guilt effect",confidence:"moderate",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Individual dot-product values between participants' guilt-related BOLD responses and the Yu & Koban neural guilt signature do not correlate with individual behavioral guilt effect scores (Rho=−0.058, p=0.725).",
+   short:"Guilt signature dot products do not correlate with individual behavioral guilt effect (Rho=−0.058).",
+   edges:{"dissociates-with":["insula-guilt-replicates-yu-koban-signature"],interprets:["interprets-yu-koban-guilt-signature"],extends:["insula-guilt-replicates-yu-koban-signature"]},
+   repro:[{status:"unverified",notes:null}]},
+
+  {slug:"insula-guilt-replicates-yu-koban-signature",uuid:"7808e12b-12e9-4340-997a-f4eeb2da40d7",role:"interpretation",epistemic:"moderate",panel:"fig4 (supplement)",method:"spatial correlation with published neural mask",confidence:"moderate",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"The anterior insula guilt effect is consistent with the published Yu & Koban neural guilt signature map, providing convergent validity for the insula as a guilt-tracking region.",
+   short:"Insula guilt activation matches the Yu & Koban guilt signature at the group level.",
+   edges:{interprets:["insula-tracks-guilt-effect","interprets-yu-koban-guilt-signature"],validates:["hypothesis-insula-tracks-interpersonal-guilt"],extends:["insula-tracks-guilt-effect"]},
+   repro:[{status:"verified:partial",notes:"Nonparametric sign test p=0.017, Wilcoxon p=0.042; t-test marginal p=0.071."}]},
+
+  {slug:"lottery-choice-increases-with-ev",uuid:"49d08c4f-7b31-4967-9ab7-06aa50a006b4",role:"control",epistemic:"strong",panel:"fig2a, fig2d",method:"mixed-effects regression",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Probability of lottery selection increases with expected value advantage in both Study 1 (β=0.074, p<3.1e-20) and Study 2 (β=0.093, p<5.3e-26), confirming participants were sensitive to expected value.",
+   short:"Lottery selection increases with expected value in both studies.",
+   edges:{validates:["responsibility-modulates-guilt-computational","hypothesis-insula-tracks-interpersonal-guilt"]},
+   repro:[{status:"verified:partial",notes:"Direction/significance confirmed; β scale differs due to predictor definition (EV vs utility-weighted)."}]},
+
+  {slug:"risk-premiums-null-social-solo",uuid:"5650c9b0-92e0-42da-8772-aa8523bfbd6b",role:"control",epistemic:"strong",panel:"fig2b, fig2e",method:"paired t-tests on risk premium",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Risk premiums do not differ between Solo and Social conditions in either study (Study 1: t=1.53, p=0.134, BF10=0.49; Study 2: t=−0.21, p=0.84, BF10=0.17).",
+   short:"Risk premiums null between Solo and Social — no social-context risk aversion change.",
+   edges:{"rules-out":["solo-vs-social-choice-difference"],validates:["insula-tracks-guilt-effect","sts-tracks-partner-reward-prediction-errors"],contradicts:["solo-vs-social-choice-difference"]},
+   repro:[{status:"unverified",notes:null}]},
+
+  {slug:"guilt-effect-independent-of-own-outcome",uuid:"af22eed8-ee48-4772-9294-94abc7fb74cc",role:"control",epistemic:"strong",panel:"fig3d, fig3h",method:"paired t-test within participants (binned by own outcome × decision-maker)",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"The guilt effect is present regardless of whether the participant received the high or low lottery outcome: high own outcome Study 1 t=−3.58, p<0.001, BF10=32; Study 2 t=−2.68, p=0.01, BF10=3.8; low own outcome both studies also significant.",
+   short:"Guilt effect present regardless of participant's own outcome.",
+   edges:{validates:["guilt-reduces-happiness-after-partner-loss","hypothesis-insula-tracks-interpersonal-guilt"],"dissociates-with":["happiness-correlates-partner-reward"],extends:["guilt-reduces-happiness-after-partner-loss"]},
+   repro:[{status:"unverified",notes:null}]},
+
+  {slug:"ventral-striatum-tracks-risky-choices",uuid:"4585605a-6c71-4fd1-ab45-3ef5d2f449c8",role:"control",epistemic:"strong",panel:"fig4a",method:"fMRI mass-univariate GLM (SPM12), whole-brain FWE",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Bilateral ventral striatum shows greater BOLD for risky vs safe choices (left d=0.72; right d=0.85), replicating established striatal responses to risky decision-making.",
+   short:"Ventral striatum bilateral replication of risky-choice activation.",
+   edges:{validates:["insula-tracks-guilt-effect","precuneus-tpj-mpfc-social-decisions"]},
+   repro:[{status:"unverified:compute-infeasible",notes:"Pre-computed NIfTI available; full re-run requires SPM12/MATLAB."}]},
+
+  {slug:"ventral-striatum-tracks-computational-reward",uuid:"ce86ffb9-f29e-4374-b2d3-9c2c78927ba7",role:"control",epistemic:"strong",panel:"fig4g",method:"fMRI model-based GLM (GLM2, SPM12), whole-brain FWE",confidence:"strong",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"Bilateral ventral striatum activation increases with computational expected certain rewards and expected values (left: pFWE=0.002, MNI [−14, 8, −8]; right: pFWE=0.005, MNI [10, 10, −4]), validating the model-based fMRI approach.",
+   short:"Ventral striatum tracks model-based reward — manipulation check for GLM2.",
+   edges:{validates:["sts-tracks-partner-reward-prediction-errors"],supports:["sts-tracks-partner-reward-prediction-errors"]},
+   repro:[{status:"unverified:compute-infeasible",notes:"Pre-computed NIfTI available."}]},
+
+  {slug:"interprets-yu-koban-guilt-signature",uuid:"1f9bf241-1d6a-4288-80a3-cf0f5d9460a0",role:"literature-context",epistemic:"moderate",panel:"fig4 supplement (convergent-validity analysis)",method:"literature interpretation; cited prior pattern map",confidence:"moderate",doi:null,dataset:null,
+   claim:"Yu and Koban (with colleagues) trained a whole-brain multivariate SVM to decode interpersonal guilt from fMRI activity patterns and derived a 'guilt signature' that loads most strongly on anterior insula, medial prefrontal, and surrounding regions and has been validated as a pattern-level neural marker of guilt.",
+   short:"Yu & Koban guilt signature: whole-brain multivariate SVM loads on anterior insula; validated as generalizable guilt marker.",
+   edges:{},
+   repro:[]},
+
+  {slug:"partner-algorithm-deception-assumption",uuid:"cb673152-8776-46c8-8f13-c95262c2138b",role:"scope",epistemic:"weak",panel:null,method:"code inspection (Decision task section, Methods)",confidence:"weak",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"The experiment partner's decisions were made by an EV-maximizing algorithm (not a real person), and participants were not informed; this structural assumption underlies all social comparison contrasts and the claim that participants felt interpersonal guilt toward a real partner.",
+   short:"Partner was an EV-maximizing algorithm, not a real person. All social claims inherit this validity constraint.",
+   edges:{scopes:["guilt-reduces-happiness-after-partner-loss","guilt-effect-independent-of-own-outcome","happiness-correlates-partner-reward","insula-tracks-guilt-effect","insula-ifg-connectivity-guilt","sts-tracks-partner-reward-prediction-errors","social-prpe-weight-positive","responsibility-modulates-guilt-computational","insula-guilt-replicates-yu-koban-signature","guilt-signature-no-individual-difference","precuneus-tpj-mpfc-social-decisions","agency-reduces-happiness"],requires:["guilt-reduces-happiness-after-partner-loss","insula-tracks-guilt-effect","sts-tracks-partner-reward-prediction-errors"]},
+   repro:[{status:"verified",notes:"Confirmed by Methods inspection: 'partner's decisions were simulated using a simple algorithm that always selected the option with the highest expected value.'"}]},
+
+  {slug:"scope-two-study-design",uuid:"aa8d444f-2f3c-4558-8074-f6347d962523",role:"scope",epistemic:"weak",panel:"scope",method:"design summary from Methods",confidence:"weak",doi:"10.7554/eLife.105391",dataset:"openneuro:ds005588",
+   claim:"All findings are scoped to a two-study design: Study 1 is an fMRI study (N=40) run on a 3T scanner; Study 2 is a behavioural-only replication (N=44). All neural claims derive from Study 1 only; behavioural claims are tested in both. Conclusions are conditional on this paradigm and population.",
+   short:"Two-study design (fMRI N=40, behavioural N=44). Neural claims Study 1 only.",
+   edges:{scopes:["lottery-choice-increases-with-ev","solo-vs-social-choice-difference","risk-premiums-null-social-solo","happiness-correlates-partner-reward","responsibility-modulates-guilt-computational","social-prpe-weight-positive","guilt-reduces-happiness-after-partner-loss","guilt-effect-independent-of-own-outcome","agency-reduces-happiness","ventral-striatum-tracks-risky-choices","precuneus-tpj-mpfc-social-decisions","insula-tracks-guilt-effect","ventral-striatum-tracks-computational-reward","sts-tracks-partner-reward-prediction-errors","insula-ifg-connectivity-guilt","insula-guilt-replicates-yu-koban-signature","guilt-signature-no-individual-difference"]},
+   repro:[{status:"verified",notes:"Confirmed by Methods inspection."}]},
+];
+
+// Role ordering for sidebar
+const ROLE_ORDER = ["hypothesis","prediction","empirical","control","interpretation","scope","literature-context"];
+const ROLE_LABELS = {hypothesis:"Hypotheses",prediction:"Predictions",empirical:"Empirical Claims",control:"Control Claims",interpretation:"Interpretations",scope:"Scope Claims","literature-context":"Literature Context"};
+
+// MIRA type mapping
+const MIRA_TYPE = {hypothesis:"mira:Claim",prediction:"mira:Claim",empirical:"mira:Evidence",control:"mira:Evidence",interpretation:"mira:Claim","literature-context":"dg:SourceDocument",scope:"mira:Claim"};
+const MIRA_EPISTEMIC = {hypothesis:"mira:Hypothesis",prediction:"mira:Hypothesis",strong:"mira:Claim",moderate:"mira:Claim",weak:"mira:Assumption","literature-context":"mira:Claim"};
+
+// Edge → MIRA mapping
+const MIRA_EDGE = {
+  supports:"mira:supports",confirms:"mira:supports",tests:"mira:supports",validates:"mira:supports",extends:"mira:supports",
+  opposes:"mira:opposes",contradicts:"mira:opposes","dissociates-with":"mira:opposes","rules-out":"mira:opposes",
+  // gaps:
+  entails:null,"derived-from":null,interprets:null,"enables-method":null,scopes:null,requires:null
+};
+
+let activeClaim = null;
+
+function reproStatus(repro){
+  if(!repro||!repro.length) return {badge:"rb-u",label:"—"};
+  const s = repro[0].status;
+  if(s==="verified") return {badge:"rb-v",label:"✓ Verified"};
+  if(s==="verified:partial") return {badge:"rb-vp",label:"~ Partial"};
+  return {badge:"rb-u",label:"Unverified"};
+}
+
+function esc(s){return s?s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"):"";}
+
+function buildHaaK(c){
+  const lines = [];
+  lines.push(`<span class="cx">---</span>`);
+  lines.push(`<span class="ck">uuid</span><span class="cx">:</span> <span class="cv">${esc(c.uuid)}</span>`);
+  lines.push(`<span class="ck">slug</span><span class="cx">:</span> <span class="cs">${esc(c.slug)}</span>`);
+  lines.push(`<span class="ck">doi</span><span class="cx">:</span> <span class="cv">~</span>`);
+  lines.push(`<span class="ck">claim-type</span><span class="cx">:</span> <span class="cv">${esc(c.role==="control"?"empirical":c.role)}</span>`);
+  lines.push(`<span class="ck">role</span><span class="cx">:</span>       <span class="cv">${esc(c.role)}</span>`);
+  lines.push(`<span class="ck">epistemic</span><span class="cx">:</span>  <span class="cv">${esc(c.epistemic)}</span>`);
+  lines.push(``);
+  lines.push(`<span class="ck">claim</span><span class="cx">: ></span>`);
+  // wrap claim text
+  const words = c.claim.split(' ');
+  let line='  '; const maxw=60;
+  for(const w of words){
+    if(line.length+w.length>maxw){lines.push(`<span class="cs">${esc(line.trimEnd())}</span>`);line='  '+w+' ';}
+    else{line+=w+' ';}
+  }
+  if(line.trim()) lines.push(`<span class="cs">${esc(line.trimEnd())}</span>`);
+  lines.push(``);
+  // edges
+  for(const [et,targets] of Object.entries(c.edges||{})){
+    if(!targets||!targets.length) continue;
+    lines.push(`<span class="ck">${esc(et)}</span><span class="cx">:</span>`);
+    for(const t of targets) lines.push(`<span class="cx">  -</span> <span class="cs">${esc(t)}</span>`);
+  }
+  lines.push(``);
+  lines.push(`<span class="ck">assertions</span><span class="cx">:</span>`);
+  lines.push(`<span class="cx">  -</span> <span class="ck">paper-slug</span><span class="cx">:</span> <span class="cs">gadeke-2026-guilt-insula</span>`);
+  lines.push(`    <span class="ck">doi</span><span class="cx">:</span>        <span class="cv">${esc(c.doi||"~")}</span>`);
+  if(c.panel) lines.push(`    <span class="ck">panel</span><span class="cx">:</span>      <span class="cs">${esc(c.panel)}</span>`);
+  lines.push(`    <span class="ck">method</span><span class="cx">:</span>     <span class="cs">${esc(c.method)}</span>`);
+  lines.push(`    <span class="ck">confidence</span><span class="cx">:</span> <span class="cv">${esc(c.confidence)}</span>`);
+  if(c.dataset) lines.push(`    <span class="ck">dataset</span><span class="cx">:</span>    <span class="cs">${esc(c.dataset)}</span>`);
+  lines.push(``);
+  if(c.repro&&c.repro.length){
+    lines.push(`<span class="ck">reproductions</span><span class="cx">:</span>`);
+    for(const r of c.repro){
+      lines.push(`<span class="cx">  -</span> <span class="ck">agent</span><span class="cx">:</span>  <span class="cs">mainen-z</span>`);
+      lines.push(`    <span class="ck">date</span><span class="cx">:</span>   <span class="cv">2026-03-30</span>`);
+      lines.push(`    <span class="ck">status</span><span class="cx">:</span> <span class="cv">${esc(r.status)}</span>`);
+      if(r.notes) lines.push(`    <span class="ck">notes</span><span class="cx">: ></span>\n      <span class="cs">${esc(r.notes.substring(0,100))}…</span>`);
+    }
+  } else {
+    lines.push(`<span class="ck">reproductions</span><span class="cx">:</span> <span class="cx">[]</span>`);
+  }
+  lines.push(`<span class="cx">---</span>`);
+  return lines.join('\n');
+}
+
+function buildOXA(c){
+  const relations = [];
+  for(const [et,targets] of Object.entries(c.edges||{})){
+    if(!targets||!targets.length) continue;
+    for(const t of targets){
+      relations.push(`    <span class="cx">{</span>\n      <span class="ck">"xref"</span><span class="cx">:</span> <span class="cs">"${esc(t)}"</span><span class="cx">,</span>\n      <span class="ck">"relationType"</span><span class="cx">:</span> <span class="cs">"claimrel:${esc(et)}"</span>\n    <span class="cx">}</span>`);
+    }
+  }
+  const lines = [];
+  lines.push(`<span class="cx">{</span>`);
+  lines.push(`  <span class="ck">"type"</span><span class="cx">:</span> <span class="cs">"Claim"</span><span class="cx">,</span>`);
+  lines.push(`  <span class="ck">"identifier"</span><span class="cx">:</span> <span class="cs">"${esc(c.slug)}"</span><span class="cx">,</span>`);
+  lines.push(`  <span class="ck">"uuid"</span><span class="cx">:</span> <span class="cs">"${esc(c.uuid)}"</span><span class="cx">,</span>`);
+  lines.push(`  <span class="ck">"role"</span><span class="cx">:</span> <span class="cs">"${esc(c.role)}"</span><span class="cx">,</span>`);
+  lines.push(`  <span class="ck">"epistemicStrength"</span><span class="cx">:</span> <span class="cs">"${esc(c.epistemic)}"</span><span class="cx">,</span>`);
+  lines.push(`  <span class="ck">"children"</span><span class="cx">: [{</span>`);
+  lines.push(`    <span class="ck">"type"</span><span class="cx">:</span> <span class="cs">"Text"</span><span class="cx">,</span>`);
+  const ct = c.claim.length>120 ? c.claim.substring(0,120)+"…" : c.claim;
+  lines.push(`    <span class="ck">"value"</span><span class="cx">:</span> <span class="cs">"${esc(ct)}"</span>`);
+  lines.push(`  <span class="cx">}],</span>`);
+  if(relations.length){
+    lines.push(`  <span class="ck">"relations"</span><span class="cx">: [</span>`);
+    lines.push(relations.join(',\n'));
+    lines.push(`  <span class="cx">],</span>`);
+  } else {
+    lines.push(`  <span class="ck">"relations"</span><span class="cx">: [],</span>`);
+  }
+  lines.push(`  <span class="ck">"assertions"</span><span class="cx">: [{</span>`);
+  lines.push(`    <span class="ck">"doi"</span><span class="cx">:</span> <span class="cs">"${esc(c.doi||"")}"</span><span class="cx">,</span>`);
+  if(c.panel) lines.push(`    <span class="ck">"panel"</span><span class="cx">:</span> <span class="cs">"${esc(c.panel)}"</span><span class="cx">,</span>`);
+  lines.push(`    <span class="ck">"method"</span><span class="cx">:</span> <span class="cs">"${esc(c.method)}"</span><span class="cx">,</span>`);
+  lines.push(`    <span class="ck">"confidence"</span><span class="cx">:</span> <span class="cs">"${esc(c.confidence)}"</span>`);
+  if(c.dataset) lines.push(`    <span class="cx">,</span><span class="ck">"dataset"</span><span class="cx">:</span> <span class="cs">"${esc(c.dataset)}"</span>`);
+  lines.push(`  <span class="cx">}]</span>`);
+  if(c.repro&&c.repro.length){
+    lines.push(`<span class="cx">,</span>`);
+    lines.push(`  <span class="ck">"reproductions"</span><span class="cx">: [{</span>`);
+    lines.push(`    <span class="ck">"agent"</span><span class="cx">:</span> <span class="cs">"mainen-z"</span><span class="cx">,</span>`);
+    lines.push(`    <span class="ck">"date"</span><span class="cx">:</span> <span class="cs">"2026-03-30"</span><span class="cx">,</span>`);
+    lines.push(`    <span class="ck">"status"</span><span class="cx">:</span> <span class="cs">"${esc(c.repro[0].status)}"</span>`);
+    lines.push(`  <span class="cx">}]</span>`);
+  }
+  lines.push(`<span class="cx">}</span>`);
+  return lines.join('\n');
+}
+
+function buildMIRA(c){
+  const mtype = MIRA_TYPE[c.role]||"mira:Claim";
+  const mepis = (c.epistemic==="strong"||c.epistemic==="moderate"||c.epistemic==="weak") ? MIRA_EPISTEMIC[c.epistemic] : (MIRA_EPISTEMIC[c.role]||"mira:Claim");
+  const lines = [];
+  const gaps = [];
+  const supports = [], opposes = [];
+  for(const [et,targets] of Object.entries(c.edges||{})){
+    if(!targets||!targets.length) continue;
+    const mEdge = MIRA_EDGE[et];
+    if(mEdge==="mira:supports") supports.push(...targets);
+    else if(mEdge==="mira:opposes") opposes.push(...targets);
+    else if(mEdge===null) gaps.push(et);
+  }
+
+  lines.push(`<span class="cx">{</span>`);
+  lines.push(`  <span class="ck">"@context"</span><span class="cx">:</span>`);
+  lines.push(`    <span class="cs">"https://mira.science/schema/context.jsonld"</span><span class="cx">,</span>`);
+  lines.push(`  <span class="ck">"@type"</span><span class="cx">:</span> <span class="cs">"${mtype}"</span><span class="cx">,</span>`);
+  lines.push(`  <span class="ck">"@id"</span><span class="cx">:</span> <span class="cs">"urn:uuid:${esc(c.uuid)}"</span><span class="cx">,</span>`);
+  lines.push(`  <span class="ck">"schema:name"</span><span class="cx">:</span> <span class="cs">"${esc(c.slug)}"</span><span class="cx">,</span>`);
+  const ct2 = c.claim.length>100 ? c.claim.substring(0,100)+"…":c.claim;
+  lines.push(`  <span class="ck">"schema:description"</span><span class="cx">:</span>`);
+  lines.push(`    <span class="cs">"${esc(ct2)}"</span><span class="cx">,</span>`);
+  lines.push(`  <span class="ck">"mira:epistemicStatus"</span><span class="cx">:</span> <span class="cs">"${mepis}"</span>`);
+  if(c.role==="hypothesis"||c.role==="prediction"){
+    lines.push(`<span class="cx">,</span>`);
+    lines.push(`  <span class="ck">"mira:addresses"</span><span class="cx">: {</span>`);
+    lines.push(`    <span class="ck">"@type"</span><span class="cx">:</span> <span class="cs">"mira:Question"</span><span class="cx">,</span>`);
+    lines.push(`    <span class="ck">"schema:description"</span><span class="cx">:</span>`);
+    lines.push(`      <span class="cm">/* synthesized from claim text */</span>`);
+    lines.push(`  <span class="cx">}</span>`);
+  }
+  if(supports.length){
+    lines.push(`<span class="cx">,</span>`);
+    if(supports.length===1){
+      lines.push(`  <span class="ck">"mira:supports"</span><span class="cx">: {</span>`);
+      lines.push(`    <span class="ck">"schema:name"</span><span class="cx">:</span> <span class="cs">"${esc(supports[0])}"</span>`);
+      lines.push(`  <span class="cx">}</span>`);
+    } else {
+      lines.push(`  <span class="ck">"mira:supports"</span><span class="cx">: [</span>`);
+      for(const s of supports) lines.push(`    <span class="cx">{</span><span class="ck">"schema:name"</span><span class="cx">:</span> <span class="cs">"${esc(s)}"</span><span class="cx">},</span>`);
+      lines.push(`  <span class="cx">]</span>`);
+    }
+  }
+  if(opposes.length){
+    lines.push(`<span class="cx">,</span>`);
+    lines.push(`  <span class="ck">"mira:opposes"</span><span class="cx">: {</span>`);
+    lines.push(`    <span class="ck">"schema:name"</span><span class="cx">:</span> <span class="cs">"${esc(opposes[0])}"</span>`);
+    lines.push(`  <span class="cx">}</span>`);
+  }
+  if(c.doi){
+    lines.push(`<span class="cx">,</span>`);
+    lines.push(`  <span class="ck">"dg:sourceDocument"</span><span class="cx">: {</span>`);
+    lines.push(`    <span class="ck">"schema:identifier"</span><span class="cx">:</span> <span class="cs">"${esc(c.doi)}"</span>`);
+    lines.push(`  <span class="cx">}</span>`);
+  }
+  if(c.dataset){
+    lines.push(`<span class="cx">,</span>`);
+    lines.push(`  <span class="ck">"mira:observationBase"</span><span class="cx">: {</span>`);
+    lines.push(`    <span class="ck">"@type"</span><span class="cx">:</span> <span class="cs">"mira:Study"</span><span class="cx">,</span>`);
+    lines.push(`    <span class="ck">"schema:identifier"</span><span class="cx">:</span> <span class="cs">"${esc(c.dataset)}"</span><span class="cx">,</span>`);
+    lines.push(`    <span class="ck">"mira:follows"</span><span class="cx">: {</span>`);
+    lines.push(`      <span class="ck">"@type"</span><span class="cx">:</span> <span class="cs">"mira:Protocol"</span><span class="cx">,</span>`);
+    lines.push(`      <span class="ck">"schema:name"</span><span class="cx">:</span> <span class="cs">"${esc(c.method)}"</span>`);
+    lines.push(`    <span class="cx">}</span>`);
+    lines.push(`  <span class="cx">}</span>`);
+  }
+  if(gaps.length){
+    lines.push(`<span class="cm">  // ⚠ gaps — no MIRA equivalent:</span>`);
+    for(const g of gaps) lines.push(`<span class="cm">  //   ${esc(g)} → not representable in MIRA</span>`);
+    if(c.repro&&c.repro.length) lines.push(`<span class="cm">  // ⚠ reproductions → dropped (no MIRA concept)</span>`);
+  } else if(c.repro&&c.repro.length){
+    lines.push(`<span class="cm">  // ⚠ reproductions → dropped (no MIRA concept)</span>`);
+  }
+  lines.push(`<span class="cx">}</span>`);
+  return {code:lines.join('\n'), gaps};
+}
+
+function getHaaKAnnotations(c){
+  const anns = [];
+  const edgeTypes = Object.keys(c.edges||{});
+  if(edgeTypes.length) anns.push({k:"edge types",v:`${edgeTypes.join(', ')} — CiTO-aligned; all ${edgeTypes.length} preserved in HaaK`});
+  anns.push({k:"assertions",v:"One block per paper; preserves panel, analysis, dataset, confidence"});
+  if(c.repro&&c.repro.length) anns.push({k:"reproductions",v:`${c.repro[0].status} — agent + date + notes; unique to HaaK`});
+  else anns.push({k:"reproductions",v:"Empty (hypotheses/predictions are not directly reproducible)"});
+  return anns;
+}
+
+function getOXAAnnotations(c){
+  const anns = [];
+  anns.push({k:"type: Claim",v:"OXA ClaimGraph RFC — drafted from HaaK's work; not yet in upstream OXA 0.2.x"});
+  const edgeTypes = Object.keys(c.edges||{});
+  if(edgeTypes.length) anns.push({k:"relations",v:`${edgeTypes.length} edge type(s) preserved as claimrel:* — lossless mapping`});
+  anns.push({k:"children",v:"OXA convention: prose content is a typed child Text node, not a top-level string"});
+  if(c.repro&&c.repro.length) anns.push({k:"reproductions",v:"Carried as first-class nodes — HaaK RFC extension to OXA, not standard OXA"});
+  return anns;
+}
+
+function getMIRAAnnotations(c, gaps){
+  const anns = [];
+  const mtype = MIRA_TYPE[c.role]||"mira:Claim";
+  anns.push({k:"@type",v:`${c.role} → ${mtype}${c.role==="hypothesis"?" (epistemic=Hypothesis)":c.role==="empirical"?" (epistemic=Claim)":""}`});
+  if(c.role==="hypothesis"||c.role==="prediction") anns.push({k:"mira:addresses",v:"MIRA requires explicit mira:Question node — must be synthesized from hypothesis text; not present in HaaK",gap:true});
+  if(gaps.length) anns.push({k:`${gaps.join(', ')}`,v:`No MIRA predicate for these edge types — the hypothesis→prediction→empirical argument chain is invisible in MIRA`,gap:true});
+  const supports = [], opposes = [];
+  for(const [et,targets] of Object.entries(c.edges||{})){
+    if(!targets||!targets.length) continue;
+    if(MIRA_EDGE[et]==="mira:supports") supports.push(et);
+    if(MIRA_EDGE[et]==="mira:opposes") opposes.push(et);
+  }
+  if(supports.length>1) anns.push({k:"mira:supports",v:`${supports.join(' + ')} all collapse to mira:supports — semantic distinction lost`,gap:true});
+  if(c.repro&&c.repro.length) anns.push({k:"reproductions",v:"No MIRA equivalent — reproduction records are dropped entirely",gap:true});
+  return anns;
+}
+
+function renderSidebar(){
+  const list = document.getElementById('claimList');
+  const grouped = {};
+  for(const c of CLAIMS){
+    if(!grouped[c.role]) grouped[c.role]=[];
+    grouped[c.role].push(c);
+  }
+  let html='';
+  for(const role of ROLE_ORDER){
+    if(!grouped[role]) continue;
+    html+=`<div class="role-group" data-role="${role}">`;
+    html+=`<div class="role-header">${ROLE_LABELS[role]||role} <span style="color:var(--txt3)">(${grouped[role].length})</span></div>`;
+    for(const c of grouped[role]){
+      html+=`<div class="claim-item" id="item-${c.slug}" onclick="selectClaim('${c.slug}')" data-search="${c.slug} ${c.short} ${c.claim}">`;
+      html+=`<div class="claim-item-slug">${c.slug.substring(0,30)}${c.slug.length>30?"…":""}</div>`;
+      html+=`<div class="claim-item-text">${esc(c.short)}</div>`;
+      html+=`</div>`;
+    }
+    html+=`</div>`;
+  }
+  list.innerHTML=html;
+}
+
+function selectClaim(slug){
+  const c = CLAIMS.find(x=>x.slug===slug);
+  if(!c) return;
+  // update active
+  document.querySelectorAll('.claim-item').forEach(el=>el.classList.remove('active'));
+  const item = document.getElementById('item-'+slug);
+  if(item){item.classList.add('active');item.scrollIntoView({block:'nearest'});}
+  activeClaim = slug;
+  // render header
+  const rs = reproStatus(c.repro);
+  const edgeCount = Object.values(c.edges||{}).flat().length;
+  document.getElementById('claimHeader').innerHTML=`
+    <div class="claim-header-slug">
+      <span class="rbadge rb-${c.role}">${c.role}</span>
+      ${c.slug}
+      ${c.repro&&c.repro.length?`<span class="repro-badge ${rs.badge}">${rs.label}</span>`:''}
+      ${c.panel&&c.panel!=="hypothesis"&&c.panel!=="prediction"&&c.panel!=="scope"?`<span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--txt3)">${esc(c.panel)}</span>`:''}
+    </div>
+    <div class="claim-header-text">${esc(c.short)}</div>`;
+  // render panels
+  const haakCode = buildHaaK(c);
+  const oxaCode = buildOXA(c);
+  const {code:miraCode, gaps} = buildMIRA(c);
+  const haakAnns = getHaaKAnnotations(c);
+  const oxaAnns = getOXAAnnotations(c);
+  const miraAnns = getMIRAAnnotations(c, gaps);
+  function annHtml(anns){
+    return `<div class="anns">${anns.map(a=>`<div class="ann"><span class="ann-k">${esc(a.k)}</span><span class="ann-v">${esc(a.v)}${a.gap?`<span class="gap-tag">gap</span>`:''}</span></div>`).join('')}</div>`;
+  }
+  document.getElementById('panelsGrid').innerHTML=`
+    <div class="panel"><div class="panel-body">
+      <pre class="code">${haakCode}</pre>${annHtml(haakAnns)}</div></div>
+    <div class="panel"><div class="panel-body">
+      <pre class="code">${oxaCode}</pre>${annHtml(oxaAnns)}</div></div>
+    <div class="panel"><div class="panel-body">
+      <pre class="code">${miraCode}</pre>${annHtml(miraAnns)}</div></div>`;
+}
+
+function filterClaims(q){
+  const lq = q.toLowerCase().trim();
+  document.querySelectorAll('.claim-item').forEach(el=>{
+    const text = (el.dataset.search||'').toLowerCase();
+    el.style.display = (!lq||text.includes(lq)) ? '' : 'none';
+  });
+  document.querySelectorAll('.role-group').forEach(g=>{
+    const visible = [...g.querySelectorAll('.claim-item')].some(el=>el.style.display!=='none');
+    g.style.display = visible ? '' : 'none';
+  });
+}
+
+renderSidebar();
+// auto-select first claim
+if(CLAIMS.length) selectClaim(CLAIMS[0].slug);
+</script>
+
+</body>
+</html>

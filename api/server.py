@@ -114,7 +114,7 @@ class ExtractRequest(BaseModel):
     demo_token: str = ""
     provider: str = "anthropic"  # anthropic, openai, google, openrouter, vertex
     model_extract: str = "claude-sonnet-4-6"
-    model_reconcile: str = "claude-opus-4-6"
+    model_reconcile: str = "claude-opus-4-8"
 
 
 @app.get("/providers")
@@ -559,7 +559,7 @@ async def extract_file(
     demo_token: str = Form(""),
     provider: str = Form("anthropic"),
     model_extract: str = Form("claude-sonnet-4-6"),
-    model_reconcile: str = Form("claude-opus-4-6"),
+    model_reconcile: str = Form("claude-opus-4-8"),
 ):
     """Extract claims from an uploaded PDF or DOCX file."""
     _ensure_pipeline()

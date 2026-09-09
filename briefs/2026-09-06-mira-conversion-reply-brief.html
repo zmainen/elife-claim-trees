@@ -1,0 +1,827 @@
+<title>Gädeke to MIRA</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --bg: #F5F3EE;
+    --bg-alt: #ECEAE3;
+    --surface: #FDFCF9;
+    --border: #D8D4CB;
+    --border-soft: #E4E1D9;
+    --text: #1A1C22;
+    --text-2: #5A5C66;
+    --text-3: #8E9099;
+    --accent: #3D8C7E;
+    --accent-dim: #DDEDE9;
+    --mono-bg: #EDEFF1;
+    --ready: #2F7A50;
+    --ready-bg: #DFEFE4;
+    --work: #97722C;
+    --work-bg: #F5EBD6;
+    --decide: #A34D2C;
+    --decide-bg: #F6E4DB;
+    --rule: #CFCABF;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1623;
+      --bg-alt: #151D2C;
+      --surface: #1A2333;
+      --border: #29344A;
+      --border-soft: #212B3D;
+      --text: #E4E2DC;
+      --text-2: #939AA8;
+      --text-3: #6B7280;
+      --accent: #4FB5A3;
+      --accent-dim: #16332E;
+      --mono-bg: #172031;
+      --ready: #52BE80;
+      --ready-bg: #12301F;
+      --work: #D6AC55;
+      --work-bg: #2E2410;
+      --decide: #E08055;
+      --decide-bg: #331A0F;
+      --rule: #2C374C;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0F1623;
+    --bg-alt: #151D2C;
+    --surface: #1A2333;
+    --border: #29344A;
+    --border-soft: #212B3D;
+    --text: #E4E2DC;
+    --text-2: #939AA8;
+    --text-3: #6B7280;
+    --accent: #4FB5A3;
+    --accent-dim: #16332E;
+    --mono-bg: #172031;
+    --ready: #52BE80;
+    --ready-bg: #12301F;
+    --work: #D6AC55;
+    --work-bg: #2E2410;
+    --decide: #E08055;
+    --decide-bg: #331A0F;
+    --rule: #2C374C;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 800px; margin: 0 auto; padding: 0 24px 96px; }
+
+  header {
+    padding: 48px 0 26px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+    text-wrap: balance;
+    margin-bottom: 12px;
+  }
+
+  .standfirst { font-size: 16px; color: var(--text-2); max-width: 62ch; }
+
+  .meta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    margin-top: 22px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-3);
+  }
+  .meta-strip a { color: var(--text-3); }
+
+  .paper-card {
+    margin-top: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 5px 5px 0;
+    padding: 16px 20px;
+  }
+  .paper-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .paper-title {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 6px;
+    max-width: none;
+  }
+  .paper-title a { text-decoration: none; }
+  .paper-title a:hover { text-decoration: underline; }
+  .paper-authors {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-bottom: 10px;
+    max-width: none;
+  }
+  .paper-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-3);
+  }
+
+  nav.toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    padding-top: 18px;
+    font-size: 12.5px;
+  }
+  nav.toc a {
+    color: var(--text-2);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 1px;
+  }
+  nav.toc a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  nav.toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  section { margin-top: 56px; scroll-margin-top: 20px; }
+
+  h2 {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 24px;
+    font-weight: 600;
+    text-wrap: balance;
+    margin-bottom: 6px;
+  }
+
+  .section-note {
+    font-size: 13px;
+    color: var(--text-3);
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  h3 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-2);
+    margin: 30px 0 10px;
+  }
+
+  p { margin-bottom: 14px; max-width: 68ch; }
+  p:last-child { margin-bottom: 0; }
+  a { color: var(--accent); text-underline-offset: 2px; }
+  strong { font-weight: 600; }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    background: var(--mono-bg);
+    color: var(--text);
+    padding: 1px 5px;
+    border-radius: 3px;
+    word-break: break-word;
+  }
+
+  ul, ol { padding-left: 20px; margin-bottom: 14px; max-width: 68ch; }
+  li { margin-bottom: 7px; }
+  li:last-child { margin-bottom: 0; }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    margin: 18px 0;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 520px; }
+  thead { background: var(--bg-alt); }
+
+  th {
+    text-align: left;
+    padding: 9px 14px;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+    font-variant-numeric: tabular-nums;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.tight { white-space: nowrap; }
+  .num { font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .p-ready  { background: var(--ready-bg);  color: var(--ready); }
+  .p-work   { background: var(--work-bg);   color: var(--work); }
+  .p-decide { background: var(--decide-bg); color: var(--decide); }
+
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 5px 5px 0;
+    padding: 16px 20px;
+    margin: 22px 0;
+  }
+  .callout.warn { border-left-color: var(--work); }
+  .callout-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 7px;
+  }
+  .callout p { margin-bottom: 10px; font-size: 14.5px; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ── Verification chain ───────────────────────────── */
+
+  .chain {
+    display: grid;
+    gap: 1px;
+    background: var(--border-soft);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+
+  .link {
+    background: var(--surface);
+    padding: 16px 18px;
+  }
+
+  .link-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .link-slug {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .steps { display: grid; gap: 7px; }
+
+  .step {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px 16px;
+    font-size: 13px;
+  }
+
+  @media (min-width: 640px) {
+    .step { grid-template-columns: 74px 1fr; }
+  }
+
+  .step-k {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-3);
+    padding-top: 3px;
+  }
+
+  .step-v { color: var(--text-2); min-width: 0; overflow-wrap: anywhere; }
+  .step-v.result { color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+  /* ── Decisions ────────────────────────────────────── */
+
+  .decision { border-top: 1px solid var(--border-soft); padding: 18px 0; }
+  .decision:first-of-type { border-top: none; padding-top: 6px; }
+
+  .decision-q {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .decision p { font-size: 14px; color: var(--text-2); margin-bottom: 8px; }
+
+  .rec {
+    font-size: 13.5px;
+    background: var(--accent-dim);
+    border-radius: 4px;
+    padding: 8px 12px;
+    display: inline-block;
+    max-width: 68ch;
+  }
+  .rec strong { color: var(--accent); }
+
+  /* ── Letter ───────────────────────────────────────── */
+
+  .letter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 26px 28px;
+    margin-top: 18px;
+  }
+  .letter p {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 15.5px;
+    line-height: 1.65;
+    margin-bottom: 15px;
+  }
+  .letter .subject {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--text-2);
+    padding-bottom: 16px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border-soft);
+    line-height: 1.9;
+  }
+  .letter ul { max-width: none; }
+  .letter li { font-family: 'Spectral', Georgia, serif; font-size: 15.5px; }
+
+  .placeholder {
+    background: var(--work-bg);
+    color: var(--work);
+    padding: 0 5px;
+    border-radius: 3px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 12.5px;
+    color: var(--text-3);
+  }
+  footer p { max-width: none; }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Reply brief · 6 September 2026</div>
+  <h1>Gädeke to MIRA</h1>
+  <p class="standfirst">Everything needed to answer Paul Shannon's 27 August request — what he asked for, the verification chain from claim to code to deposited data, what the conversion loses, and the calls left to make.</p>
+  <div class="paper-card">
+    <div class="paper-label">The paper</div>
+    <p class="paper-title"><a href="https://doi.org/10.7554/eLife.105391">Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions</a></p>
+    <p class="paper-authors">Maria Gädeke, Tom Eric Willems, Omar Salah Ahmed, Bernd Weber, Rene Hurlemann, Johannes Schultz</p>
+    <div class="paper-links">
+      <span><em>eLife</em> 14 · Version of Record, 24 March 2026</span>
+      <span><a href="https://doi.org/10.7554/eLife.105391">10.7554/eLife.105391</a></span>
+      <span><a href="https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment">Authors' data deposit</a></span>
+      <span><a href="https://openneuro.org/datasets/ds005588">OpenNeuro ds005588</a></span>
+    </div>
+  </div>
+
+  <div class="meta-strip">
+    <span>27 claims · 7 of 7 verified</span>
+    <span><a href="https://github.com/zmainen/elife-claim-trees">zmainen/elife-claim-trees</a></span>
+    <span><a href="gadeke-claims-analysis.html">Claims analysis →</a></span>
+    <span><a href="artifacts/index.html">Format artifacts →</a></span>
+  </div>
+  <nav class="toc">
+    <a href="#ask">The ask</a>
+    <a href="#chain">Verification chain</a>
+    <a href="#gaps">Chain gaps</a>
+    <a href="#loss">What MIRA drops</a>
+    <a href="#proposal">The proposal</a>
+    <a href="#site">The site</a>
+    <a href="#status">Package status</a>
+    <a href="#decisions">Open decisions</a>
+    <a href="#draft">Draft reply</a>
+  </nav>
+</header>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="ask">
+  <h2>The ask</h2>
+  <p class="section-note">Paul Shannon, 27 August — "Progress on building claim extraction into our article software"</p>
+
+  <p>eLife has implemented OXA in Reviewed Preprints and is now integrating extracted claims into the article reading experience itself. They want <strong>MIRA</strong> as the input format, and they want the Gädeke 2026 claims converted as the pilot.</p>
+
+  <p>Paul notes that eLife <em>could</em> do the conversion themselves — but that we are better placed to confirm it is correct. So the deliverable is not the file. It is the evidence that the mapping is faithful, and that the claims themselves hold.</p>
+
+  <h3>One name, not two</h3>
+  <p>Paul writes "a MIRA graph or Discourse Graph format." These are the same thing. <strong>Discourse Graph</strong> is Joel Chan's conceptual framework; <strong>MIRA</strong> is its formal, inter-operable specification, maintained by Marc-Antoine Parent and running at 10+ life-science labs. There is no choice to make — send MIRA JSON-LD. OXA is a different layer: it structures the <em>document</em>, MIRA structures the <em>argument</em>. Our ClaimGraph RFC is the proposed bridge, and it is ours, not yet upstream.</p>
+
+  <h3>Who is in the thread</h3>
+  <ul>
+    <li><strong>Paul Shannon</strong> — eLife. Technical lead here and on the ARIA proposal; 18 threads to date. Wrote the request.</li>
+    <li><strong>David Moulton</strong> — eLife engineering manager, cc'd, driving the platform integration. The person who decides whether an extension is buildable. Address him directly.</li>
+    <li><strong>Marc-Antoine Parent</strong> — maintains MIRA, not on the thread. Would be the one to accept schema extensions. Paul already introduced us to Matt Akamatsu on that side.</li>
+    <li><strong>Damian Pattinson · Andy Collings</strong> — the relationship above the technical work. Not needed for a conversion reply.</li>
+  </ul>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="chain">
+  <h2>The verification chain</h2>
+  <p class="section-note">Claim → code → deposited data → reproduced value. Re-run in full on 6 September 2026; 7 of 7 pass, 0 fail.</p>
+
+  <p>These are not attestations. Each claim below names the function that checks it, the file in the authors' deposit it reads, and the number that came back. The whole run takes about three minutes on a laptop.</p>
+
+  <div class="callout">
+    <div class="callout-label">Data provenance</div>
+    <p><strong>Fast path</strong> — <code>github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment</code>, the authors' own deposit of analysis CSVs and thresholded statistical maps. About 50 MB, cloned fresh by the script. This is what produced every value below.</p>
+    <p><strong>Full path</strong> — OpenNeuro <code>ds005588</code>, the raw imaging data. About 15 GB and three hours, and it re-runs first-level GLMs for all subjects, so it needs MATLAB and SPM12. Not required for anything below.</p>
+  </div>
+
+  <div class="chain">
+
+    <div class="link">
+      <div class="link-head">
+        <span class="link-slug">lottery-choice-increases-with-ev</span>
+        <span class="pill p-ready">Pass</span>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-k">Code</span><span class="step-v"><code>verify.py</code> → <code>verify_lottery_ev()</code>, line 74</span></div>
+        <div class="step"><span class="step-k">Data</span><span class="step-v"><code>Code/csv/fMRI - Choices_singleTrialData.csv</code></span></div>
+        <div class="step"><span class="step-k">Paper</span><span class="step-v result">β &gt; 0, p &lt; 0.05</span></div>
+        <div class="step"><span class="step-k">Got</span><span class="step-v result">β = 0.032, p = 9.55e−68, n = 2400</span></div>
+      </div>
+    </div>
+
+    <div class="link">
+      <div class="link-head">
+        <span class="link-slug">happiness-correlates-partner-reward</span>
+        <span class="pill p-ready">Pass</span>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-k">Code</span><span class="step-v"><code>verify_happiness_partner()</code>, line 147</span></div>
+        <div class="step"><span class="step-k">Data</span><span class="step-v"><code>Code/csv/</code> — happiness-by-model tables, both cohorts</span></div>
+        <div class="step"><span class="step-k">Paper</span><span class="step-v result">R² = 0.185 (fMRI) · 0.147 (behavioural)</span></div>
+        <div class="step"><span class="step-k">Got</span><span class="step-v result">R² = 0.184 · 0.145</span></div>
+      </div>
+    </div>
+
+    <div class="link">
+      <div class="link-head">
+        <span class="link-slug">guilt-reduces-happiness-after-partner-loss</span>
+        <span class="pill p-ready">Pass</span>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-k">Code</span><span class="step-v"><code>verify_guilt_happiness()</code>, line 197</span></div>
+        <div class="step"><span class="step-k">Data</span><span class="step-v"><code>Code/csv/</code> — single-trial happiness tables, both cohorts</span></div>
+        <div class="step"><span class="step-k">Paper</span><span class="step-v result">β = 0.33 (fMRI) · 0.39 (behavioural)</span></div>
+        <div class="step"><span class="step-k">Got</span><span class="step-v result">β = 0.34 · 0.40</span></div>
+      </div>
+    </div>
+
+    <div class="link">
+      <div class="link-head">
+        <span class="link-slug">insula-tracks-guilt-effect</span>
+        <span class="pill p-ready">Pass</span>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-k">Code</span><span class="step-v"><code>verify_insula_peak()</code>, line 235 — loads the map, finds the peak voxel, applies the image affine</span></div>
+        <div class="step"><span class="step-k">Data</span><span class="step-v"><code>fMRIresults/outcome/guiltEffect_0p05FWE_SVC_aIns.nii</code></span></div>
+        <div class="step"><span class="step-k">Paper</span><span class="step-v result">peak MNI [−28, 24, −4]</span></div>
+        <div class="step"><span class="step-k">Got</span><span class="step-v result">peak MNI [−28, 24, −4]</span></div>
+      </div>
+    </div>
+
+    <div class="link">
+      <div class="link-head">
+        <span class="link-slug">insula-guilt-replicates-yu-koban-signature</span>
+        <span class="pill p-ready">Pass — newly closed</span>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="step-k">Code</span><span class="step-v"><code>verify_yu_koban()</code>, line 278 — resamples the signature mask onto the contrast grid, takes a spatial dot product per participant, sign and signed-rank tests</span></div>
+        <div class="step"><span class="step-k">Data</span><span class="step-v"><code>fMRIresults/outcome/guiltEffectEachPartic.nii</code> (40 participants, shipped zipped) × <code>Code/bin/Yu_guilt_SVM_sxpo_sxpx_EmotionForwardmask.nii</code> (50,860 voxels)</span></div>
+        <div class="step"><span class="step-k">Paper</span><span class="step-v result">sign test p &lt; 0.05</span></div>
+        <div class="step"><span class="step-k">Got</span><span class="step-v result">sign p = 0.0083 · Wilcoxon p = 0.0211 · 28 of 40 positive</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">What changed today</div>
+    <p>This claim had been sitting at WARN since March, logged as "nibabel not installed." That message was wrong twice over. The library was fine; the script could not find the per-participant map because the deposit ships it as <code>.nii.zip</code> and the search pattern only matched <code>.nii</code>. Unzipped, it then failed for a second reason: the mask was being resampled onto the <em>four-dimensional</em> image rather than its three-dimensional spatial grid, which produces a malformed transform. Resampling to <code>shape[:3]</code> fixes it, and the claim passes.</p>
+    <p>Both are one-line fixes in <code>verify.py</code>, and neither is applied yet — the run above used a scratch copy, so your repository is untouched.</p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="gaps">
+  <h2>What would make the chain airtight</h2>
+  <p class="section-note">Four gaps between "we ran it" and "anyone can audit it"</p>
+
+  <p>The chain holds, but parts of it are held together by search patterns rather than by fixed references. If this is going to a publisher as a reproducibility demonstration, these are worth closing first.</p>
+
+  <ul>
+    <li><strong>Two claims find their data by pattern-matching, not by name.</strong> The happiness and guilt checks glob the CSV directory and pick a file whose columns look right. It works, but it means the chain cannot be audited by reading it — a reader cannot tell which of the forty CSVs was used. Pin the exact filenames.</li>
+    <li><strong>The deposit is not pinned to a revision.</strong> The script clones whatever is at the tip of the authors' repository today. Record the commit hash so the numbers stay attached to a specific state of the data.</li>
+    <li><strong>The reproduced values do not live in the claim files.</strong> Each claim's <code>reproductions</code> block records a status and a note, but not the function that produced it or the file it read. Writing the chain back into the claims is what makes it machine-readable — and it is precisely what MIRA has no room for, which makes it the sharpest example for the extension proposal.</li>
+    <li><strong>The recorded Yu–Koban numbers disagree with today's run.</strong> The claim file says sign p = 0.017 and Wilcoxon p = 0.042; today's run gives 0.0083 and 0.0211. Same direction, same conclusion, different figures — presumably a different resampling choice in an earlier attempt. Whichever is right, the file should carry the number the current code actually produces.</li>
+  </ul>
+
+  <div class="callout warn">
+    <div class="callout-label">Check before anything is sent</div>
+    <p><strong>Resolved: the script has the wrong article number.</strong> <code>verify.py</code>'s header names eLife 102584 / <code>10.7554/eLife.102584</code>, while every claim file says 105391. <strong>105391 is correct</strong> — it resolves to the Gädeke Version of Record, published 24 March 2026; 102584 returns a 404 at eLife. Fix the header before this goes anywhere near the publisher.</p>
+    <p>Worth noting the timing that falls out of this: the Version of Record published on 24 March, and the first verification run is dated 30 March. The claims were checked six days after the paper appeared.</p>
+    <p><strong>Figure regeneration is partly broken.</strong> <code>generate_figures.py</code> still exits with an error on the lottery-choice panel — it expects a CSV path that no longer matches the deposit's layout. The committed PNGs are from an older successful run, so the figures on the site are fine, but the script that makes them has drifted from the data.</p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="loss">
+  <h2>What MIRA drops</h2>
+  <p class="section-note">46 of the 75 relations in the Gädeke graph — 61% — have no MIRA equivalent. Measured by the exporter, not estimated.</p>
+
+  <p>The conversion works and is lossy, in ways better named than discovered. Three losses are structural.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>What we have</th><th>In MIRA</th><th>Consequence for a reader</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>entails</code>, <code>derived-from</code> <span class="num">(10)</span><br><span style="color:var(--text-2)">hypothesis → prediction</span></td>
+          <td>No predicate</td>
+          <td>The deductive spine vanishes. Three hypotheses and four predictions flatten into one undifferentiated set — you cannot tell which prediction belongs to which hypothesis.</td>
+        </tr>
+        <tr>
+          <td><code>tests</code> vs <code>confirms</code><br><span style="color:var(--text-2)">also <code>validates</code>, <code>extends</code></span></td>
+          <td>All → <code>mira:supports</code></td>
+          <td>A result designed in advance to test a prediction becomes indistinguishable from one that merely agrees after the fact.</td>
+        </tr>
+        <tr>
+          <td><code>reproductions</code><br><span style="color:var(--text-2)">the entire chain above</span></td>
+          <td>No node type</td>
+          <td>Every verification in this brief is dropped on export. There is nowhere in MIRA to say that a claim was checked, by what code, against what data.</td>
+        </tr>
+        <tr>
+          <td><code>scopes</code> <span class="num">(29)</span>, <code>interprets</code> <span class="num">(5)</span>, <code>enables-method</code> <span class="num">(2)</span></td>
+          <td>No predicate</td>
+          <td>The two scope claims each constrain 12+ downstream claims. Those constraints silently detach.</td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td><code>mira:Question</code> required</td>
+          <td>MIRA wants an explicit question node per claim. We have none; they must be synthesised from hypothesis text, which is an editorial act, not a conversion.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">The sharpest example</div>
+    <p><code>partner-algorithm-deception-assumption</code> records that participants believed they were harming a person when the partner was in fact an expected-value-maximising algorithm — a validity constraint inherited by every social claim in the paper. In our format it attaches to all twelve. In MIRA it becomes a free-floating claim attached to nothing. That is not a conversion oversight; it is a gap in the standard.</p>
+  </div>
+
+  <h3>One gap that is ours, not MIRA's</h3>
+  <p>Only one of the 27 claims is prior work — the Yu &amp; Koban guilt signature. Partly that is the paper's nature, being focused and empirical rather than a review; mostly it is because the pipeline extracted the paper's own argument and never made a second pass over its reference list. Better to name this to eLife than let them find it.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="proposal">
+  <h2>The proposal</h2>
+  <p class="section-note">Three additions to MIRA, ranked by what each buys a reader</p>
+
+  <p>The framing that works is not "MIRA is missing things," but: <em>here are three additions that would let the claims layer drive the article experience rather than merely annotate it.</em></p>
+
+  <h3>1 · A verification record type</h3>
+  <p>MIRA has no concept of anyone having checked anything. A node carrying who checked, when, against which data, with what code, and what came back is the most original thing we have — and the chain above is the working demonstration, not a sketch. For a publisher whose reputation rests on reproducibility this is the strongest of the three. Reader payoff: <strong>a trust signal on the claim itself, traceable to code.</strong></p>
+
+  <h3>2 · Derivation predicates</h3>
+  <p>Two predicates, <code>entails</code> (hypothesis → prediction) and <code>tests</code> (evidence → prediction, directional), recover the argument's logical backbone. Reader payoff: <strong>you can walk the paper from question to data.</strong></p>
+
+  <h3>3 · Edge precision</h3>
+  <p>Cheapest of the three: rather than collapsing <code>tests</code>, <code>confirms</code>, <code>validates</code> and <code>extends</code> into one relation, carry the distinction as a sub-property or qualifier on <code>supports</code>. Reader payoff: <strong>how much weight a piece of support deserves</strong> becomes legible.</p>
+
+  <p style="margin-top:22px;color:var(--text-2)">Leave <code>scopes</code>, <code>interprets</code>, <code>enables-method</code> and <code>requires</code> out of the first proposal — they matter structurally but are harder to motivate to a platform team, and four asks dilute three good ones.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="site">
+  <h2>What I would change on the site</h2>
+  <p class="section-note">Seven changes to <a href="https://zmainen.github.io/elife-claim-trees/">zmainen.github.io/elife-claim-trees</a>, in priority order</p>
+
+  <p>The site is already a working prototype of the reading experience, which is why it is worth sending Paul. But its most distinctive asset — the chain from claim to code to data — is the thing it currently shows least. These are ordered by how much each strengthens the case to eLife.</p>
+
+  <h3>1 · Make verification the front door, not a badge</h3>
+  <p>A green tick is an assertion; the chain is evidence. Every verified claim should show, inline: the function that checks it, the file in the deposit it reads, the paper's value, the reproduced value, and a copy-paste command to run it. The three-minute reproducibility is the headline — put the command on the page and let a reader run it while they read.</p>
+
+  <h3>2 · Publish the run log, including what failed</h3>
+  <p>A dated table per paper, straight from <code>verify.log</code> — pass, warn and fail alike. A site that says <em>6 of 7, and here is exactly why the seventh did not run</em> is far more credible to a publisher than one showing unbroken green. Today's history is a good example: a claim sat at WARN for five months behind a misleading error message.</p>
+
+  <h3>3 · Navigate by argument, not by list</h3>
+  <p><code>ClaimDAG</code> already exists. Promote it from a view to the primary way in: enter at a hypothesis, walk down through its predictions to the results that test them. This is precisely the structure MIRA cannot carry, so making it the site's main interaction is also the strongest possible argument for the extension.</p>
+
+  <h3>4 · Show scope inheritance where it bites</h3>
+  <p>Gädeke's partner was a simulated algorithm, not a person — a constraint inherited by twelve downstream claims. Any claim carrying an inherited scope should say so on the claim page itself, as a persistent banner rather than a footnote. No other claims interface does this, and it is a genuinely better way to read a paper.</p>
+
+  <h3>5 · Offer the formats as a download</h3>
+  <p>A control on each paper page exporting HaaK YAML, OXA JSON, or MIRA JSON-LD. This turns the interop story from a claim into a button — and it means Paul can fetch the file himself instead of waiting for an attachment.</p>
+
+  <h3>6 · Fold the comparison artifacts into <code>standards.astro</code></h3>
+  <p>Five one-off pages currently live outside the site, including the graph with the HaaK/MIRA toggle where you can watch the typed relations collapse. That toggle is the proposal in one click and belongs in the product, not in a scratch artifact.</p>
+
+  <h3>7 · Publish the denominator</h3>
+  <p>Twenty-seven claims, five with verification records, one prior-work node. Showing coverage honestly — including a plain "what we have not checked and why" panel, naming the claims that need MATLAB — is more persuasive than showing only the wins, and it invites exactly the collaboration you want.</p>
+</section>
+
+<section id="status">
+  <h2>Package status</h2>
+  <p class="section-note">What is ready to send, and what still needs doing</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Piece</th><th class="tight">State</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Verification chain</strong></td>
+          <td class="tight"><span class="pill p-ready">Ready</span></td>
+          <td>7 of 7, re-run today against the authors' deposit. Two one-line fixes to commit first.</td>
+        </tr>
+        <tr>
+          <td><strong>Format documentation</strong></td>
+          <td class="tight"><span class="pill p-ready">Ready</span></td>
+          <td><code>haak-to-mira-mapping.md</code>, committed. Closed the one real documentation gap.</td>
+        </tr>
+        <tr>
+          <td><strong>Gap analysis</strong></td>
+          <td class="tight"><span class="pill p-ready">Ready</span></td>
+          <td>What makes the reply interesting rather than administrative.</td>
+        </tr>
+        <tr>
+          <td><strong>Comparison artifacts</strong></td>
+          <td class="tight"><span class="pill p-ready">Ready</span></td>
+          <td>Five pages. Decide which go to eLife and which stay internal.</td>
+        </tr>
+        <tr>
+          <td><strong>Gädeke paper review</strong></td>
+          <td class="tight"><span class="pill p-work">To do</span></td>
+          <td>Reviewing the paper itself. The verification is already most of a methods review — 7 claims checked, one signature replication only marginally supported.</td>
+        </tr>
+        <tr>
+          <td><strong>MIRA JSON-LD export</strong></td>
+          <td class="tight"><span class="pill p-work">To do</span></td>
+          <td>The file Paul actually asked for. Logic exists and the mapping is settled; point the export at the Gädeke claims and align to his team's MIRA version.</td>
+        </tr>
+        <tr>
+          <td><strong>MIRA extension proposal</strong></td>
+          <td class="tight"><span class="pill p-decide">Decision</span></td>
+          <td>Scoped and ranked. Question is whether it rides in this reply or follows separately.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="decisions">
+  <h2>Open decisions</h2>
+  <p class="section-note">Three calls, plus one fact I could not establish</p>
+
+  <div class="decision">
+    <div class="decision-q">1 · Fix and commit the verification, or send as is?</div>
+    <p>Today's run used a scratch copy. The two fixes — the zipped-map pattern and the 4D resample — are one line each, and they take the record from 6/7 with an unexplained warning to 7/7 clean.</p>
+    <div class="rec"><strong>Suggestion:</strong> commit them, pin the CSV filenames and the deposit commit while you are in there, then re-run once so the log in the repo is the log you are describing. An hour, and the difference between a chain that holds and one that merely held.</div>
+  </div>
+
+  <div class="decision">
+    <div class="decision-q">2 · Adopt MIRA, or extend it?</div>
+    <p>Convert and accept the losses — literally what was asked — or convert <em>and</em> propose the three additions upstream, positioning this work as a reference implementation of a richer standard?</p>
+    <div class="rec"><strong>Suggestion:</strong> both, in that order, and let the call decide the second. Deliver the conversion, raise the extensions as the thing you want to talk about rather than a document you drop on them.</div>
+  </div>
+
+  <div class="decision">
+    <div class="decision-q">3 · What happens after the pilot?</div>
+    <p>Earlier threads raised scaling to the full corpus and to bioRxiv. If the reply is silent on what comes next, the pilot stays a pilot.</p>
+    <div class="rec"><strong>Suggestion:</strong> let the call carry this too — but go in with a concrete unit in mind, most naturally a second paper of eLife's choosing, extracted and verified end to end.</div>
+  </div>
+
+  <div class="decision">
+    <div class="decision-q">Unresolved: the ARIA outcome</div>
+    <p><strong>There is no news in your mailbox</strong> — no shortlist notice, no award, no rejection, no delay. Searched all three mail accounts. That is an absence of evidence, not a rejection: eLife submitted the proposal, so ARIA would have notified Paul or Damian directly, and it may simply never have been relayed to you.</p>
+    <p>The timeline was also later than remembered. Paul's 21 May note gives it precisely: shortlist <strong>8 July</strong>, negotiation period <strong>9 July – 6 August</strong>, <strong>final decision 12 August</strong>. All three are now past. The last ARIA mention in the correspondence is 17 June; after that it disappears entirely — including from Paul's warm, forward-looking 27 August message, written a fortnight after the final decision date.</p>
+    <div class="rec"><strong>Suggestion:</strong> don't speculate in writing. Ask him on the call, where a null result costs nothing to hear. Paul's own position, from 21 May, was that eLife would "continue to develop this idea anyway and use it in other funding pitches" — so the work is not contingent on it either way.</div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+
+<section id="draft">
+  <h2>Draft reply</h2>
+  <p class="section-note">A follow-up, not a first reply — see the thread state below</p>
+
+  <div class="callout warn">
+    <div class="callout-label">Read this first</div>
+    <p><strong>You already answered Paul, on 31 August.</strong> It was a four-line holding note: "Thanks for your message. That sounds exciting. I'm looking into it now and should be able to get you something shortly. I'll get back to you with questions or results." No deliverable named, no date. Nobody has written since — <strong>the ball is unambiguously yours, and "shortly" is now six days old.</strong> So this is a delivery against a promise, not an opening move.</p>
+    <p><strong>Paul made a second ask you have not answered.</strong> He closed with: "We'll then be in touch again to get your feedback on our ideas for the user experience if you're interested in that too." That is an open invitation, and it is the natural way into the call — you are accepting an offer rather than requesting a favour.</p>
+    <p><strong>Three things he left unspecified</strong>, and volunteered nothing about: which MIRA schema version to target (he says only "the current MIRA schema"), any deadline (there is none — the framing is "if you have the time"), and how to hand the output over. Ask; the ambiguity is live on both sides.</p>
+  </div>
+
+  <div class="letter">
+    <div class="subject">
+      <strong>To:</strong> Paul Shannon &lt;p.shannon@elifesciences.org&gt;<br>
+      <strong>Cc:</strong> David Moulton &lt;d.moulton@elifesciences.org&gt;<br>
+      <strong>Subject:</strong> Re: Progress on building claim extraction into our article software
+    </div>
+
+    <p>Paul, David —</p>
+
+    <p>Following up on my note last week — here is the something I promised, and it turned into rather more than a conversion.</p>
+
+    <p>The Gädeke claims are converted: MIRA JSON-LD for all 27, with the field-by-field mapping in the repo so you can see how each decision was made rather than taking the output on trust.</p>
+
+    <p>You were right that the conversion is mechanical and the checking is the useful part. Two things came out of it.</p>
+
+    <p><strong>First, the claims themselves verify.</strong> Seven of the paper's claims are now checked end to end against the authors' own deposit — the insula peak reproduces exactly at MNI [−28, 24, −4]; the happiness effects come back at β = 0.34 and 0.40 against 0.33 and 0.39 reported; the R² values land within 0.002; and the Yu &amp; Koban signature replication holds at sign-test p = 0.008 across 40 participants. Every one of those has a named function in a script and a named file in the deposit behind it, and the whole run takes about three minutes on a laptop — no imaging pipeline required, because the authors deposited their analysis tables alongside the raw data. That last point may be the more useful finding for you: <strong>a substantial fraction of a paper's claims can be independently checked from a good deposit alone.</strong></p>
+
+    <p><strong>Second, the conversion is lossy in ways I think matter for what you are building.</strong> Forty-six of the seventy-five typed relations in the Gädeke graph — 61% — have no MIRA equivalent. Across all fourteen papers we have extracted, the figure is 475 of 789, so this is not a quirk of one paper:</p>
+
+    <ul>
+      <li>The <em>hypothesis → prediction → result</em> chain disappears — MIRA has no predicate for entailment, so the three hypotheses and their predictions flatten into one undifferentiated set and a reader cannot follow the argument.</li>
+      <li>A result designed to test a specific prediction is indistinguishable from one that merely agrees with it; both become <code>supports</code>.</li>
+      <li>Scope constraints detach. Gädeke's partner was a simulated expected-value-maximising algorithm rather than a real person — a constraint that in our format attaches to all twelve social claims that inherit it, and in MIRA attaches to nothing.</li>
+      <li>And the verification above has nowhere to live. MIRA has no node type for "this was checked, here is the code, here is the data, here is what came back."</li>
+    </ul>
+
+    <p>None of that is a conversion problem we can fix at our end — they are gaps in the schema, and the last one especially seems worth solving rather than working around.</p>
+
+    <p>Yes to your offer on the user experience, very much. Could we make it a call rather than a document — the three of us, in the next couple of weeks? I would like to see where you want to take the reading experience, and to work out together whether the right move is to propose these as MIRA extensions upstream or to carry them some other way. Our own prototype is at <a href="https://zmainen.github.io/elife-claim-trees/">zmainen.github.io/elife-claim-trees</a> if it is useful as a starting point, and I will bring the verification chain and the gap analysis.</p>
+
+    <p>Two practical things in the meantime. Which version of the MIRA schema is your pipeline reading — I have targeted the current published context, but I would rather match what you are actually ingesting. And how would you like the file: a pull request against the claim-trees repo, or just attached?</p>
+
+    <p>Zach</p>
+  </div>
+
+  <p style="margin-top:16px;font-size:13px;color:var(--text-3)">No placeholders left. ARIA is deliberately absent — see the decision above; ask on the call rather than in writing.</p>
+</section>
+
+<footer>
+  <p>Assembled 6 September 2026, from a working session recovered after a server outage. Verification re-run the same day from a fresh clone of the authors' deposit; the Yu–Koban check was completed in a scratch copy and its two fixes are not yet committed. Claim counts taken from <code>claims/gadeke-2026-guilt-insula</code> (27 files); earlier artifacts in this series say 26.</p>
+</footer>
+
+</div>

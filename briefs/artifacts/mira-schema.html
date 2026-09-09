@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}</style>
+</head>
+<body>
+<title>MIRA Schema</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --bg: #F5F3EE;
+    --bg-alt: #ECEAE3;
+    --surface: #FFFFFF;
+    --border: #D8D4CB;
+    --text: #1A1C22;
+    --text-secondary: #5A5C66;
+    --accent: #3D8C7E;
+    --accent-dim: #D0EAE6;
+    --mono-bg: #EEF0F4;
+    --tag-bg: #E2EEE C;
+    --link: #2F7A6C;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1623;
+      --bg-alt: #161E2E;
+      --surface: #1C2535;
+      --border: #2A3548;
+      --text: #E4E2DC;
+      --text-secondary: #8A909E;
+      --accent: #4FB5A3;
+      --accent-dim: #1A3530;
+      --mono-bg: #1A2236;
+      --link: #5CC9B4;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0F1623;
+    --bg-alt: #161E2E;
+    --surface: #1C2535;
+    --border: #2A3548;
+    --text: #E4E2DC;
+    --text-secondary: #8A909E;
+    --accent: #4FB5A3;
+    --accent-dim: #1A3530;
+    --mono-bg: #1A2236;
+    --link: #5CC9B4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  @media (min-width: 900px) {
+    .layout {
+      grid-template-columns: 220px 1fr;
+      gap: 0 56px;
+      padding: 0 40px;
+    }
+  }
+
+  /* Header */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 40px 0 32px;
+    margin-bottom: 40px;
+  }
+
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  @media (min-width: 900px) {
+    .header-inner { padding: 0 40px; }
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: clamp(26px, 4vw, 38px);
+    font-weight: 700;
+    line-height: 1.2;
+    text-wrap: balance;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 14px;
+    max-width: 560px;
+  }
+
+  /* TOC */
+  .toc {
+    display: none;
+    padding-top: 4px;
+  }
+
+  @media (min-width: 900px) {
+    .toc {
+      display: block;
+      position: sticky;
+      top: 32px;
+      align-self: start;
+      padding-top: 0;
+    }
+  }
+
+  .toc-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+
+  .toc ol {
+    list-style: none;
+    padding: 0;
+  }
+
+  .toc li {
+    margin-bottom: 4px;
+  }
+
+  .toc a {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 3px 0;
+    display: block;
+    transition: color 0.15s;
+    border-left: 2px solid transparent;
+    padding-left: 10px;
+  }
+
+  .toc a:hover {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  .toc .toc-sub a {
+    font-size: 12px;
+    padding-left: 22px;
+    color: var(--text-secondary);
+    opacity: 0.75;
+  }
+
+  /* Content */
+  .content {
+    padding-bottom: 80px;
+    min-width: 0;
+  }
+
+  h2 {
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 52px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    text-wrap: balance;
+    scroll-margin-top: 24px;
+  }
+
+  h2:first-child { margin-top: 0; }
+
+  h3 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    margin-top: 32px;
+    margin-bottom: 10px;
+    scroll-margin-top: 24px;
+  }
+
+  p {
+    margin-bottom: 14px;
+    max-width: 66ch;
+    color: var(--text);
+  }
+
+  a { color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Code / mono chips */
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    background: var(--mono-bg);
+    color: var(--accent);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  pre {
+    background: var(--mono-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin: 20px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* Tables */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 20px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    min-width: 520px;
+  }
+
+  thead {
+    background: var(--bg-alt);
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    font-variant-numeric: tabular-nums;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tbody tr:hover { background: var(--bg-alt); }
+
+  /* Callout */
+  .callout {
+    background: var(--accent-dim);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 18px;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+
+  .callout p { margin-bottom: 0; max-width: none; }
+
+  /* Tag list */
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 20px;
+  }
+
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    background: var(--mono-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 9px;
+    color: var(--text);
+  }
+
+  /* Resource list */
+  .resource-list {
+    list-style: none;
+    margin: 14px 0;
+  }
+
+  .resource-list li {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+
+  .resource-list li:last-child { border-bottom: none; }
+
+  .resource-path {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    flex: 1;
+    word-break: break-all;
+  }
+
+  .resource-label {
+    color: var(--text-secondary);
+    min-width: 60px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-top: 1px;
+  }
+
+  ul, ol {
+    padding-left: 22px;
+    margin-bottom: 14px;
+  }
+
+  li { margin-bottom: 5px; }
+  li p { margin-bottom: 0; }
+
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+
+  .gap-note {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 6px;
+  }
+</style>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">eLife Claim Trees · Schema Reference</div>
+    <h1>MIRA Schema</h1>
+    <p class="subtitle">Modular Interoperable Research Attribution — a discourse graph ontology for scientific arguments, and what it means to convert to it.</p>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" aria-label="Contents">
+    <div class="toc-label">Contents</div>
+    <ol>
+      <li><a href="#what-is-mira">What is MIRA?</a></li>
+      <li><a href="#node-types">Node Types</a></li>
+      <li><a href="#relations">Relations</a></li>
+      <li><a href="#extraction-overlay">Extraction Overlay</a></li>
+      <li><a href="#toolchain">Toolchain</a></li>
+      <li><a href="#elife-oxa">eLife &amp; OXA</a></li>
+      <li><a href="#conversion">Converting HaaK → MIRA</a></li>
+      <li class="toc-sub"><a href="#role-mapping">Role mapping</a></li>
+      <li class="toc-sub"><a href="#relation-mapping">Relation mapping</a></li>
+      <li class="toc-sub"><a href="#practical">Practical steps</a></li>
+      <li><a href="#resources">Where Things Live</a></li>
+    </ol>
+  </nav>
+
+  <main class="content">
+
+    <h2 id="what-is-mira">What is MIRA?</h2>
+    <p><strong>MIRA</strong> (Modular Interoperable Research Attribution) is a discourse graph ontology for scientific arguments maintained by Marc-Antoine Parent. It defines how scientific claims, evidence, questions, and studies relate to each other as a typed graph. The schema is written in <strong>LinkML</strong> and generates Pydantic (Python), TypeScript, RDF/OWL, SHACL, and JSON-LD.</p>
+    <p>It is deployed at <strong>10+ life-science labs</strong> (McGill, UW, NYU, QBI) with 6,000+ signed research records. It functions as the inter-lab exchange layer that eLife is now integrating into their article platform.</p>
+    <p>MIRA is closely related to the <strong>Discourse Graph</strong> movement (Joel Chan's work, originally built in Roam Research) — the conceptual structure is the same: questions, claims, evidence as first-class nodes with typed edges. MIRA is the formalized, interoperable version of that idea.</p>
+    <div class="tag-row">
+      <span class="tag">github.com/mira-science/schema</span>
+      <span class="tag">LinkML</span>
+      <span class="tag">JSON-LD</span>
+      <span class="tag">RDF/OWL</span>
+    </div>
+
+    <h2 id="node-types">Node Types</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Entity</th>
+            <th>Namespace</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Question</code></td>
+            <td><code>mira:Question</code></td>
+            <td>Scientific unknowns addressable by research methods</td>
+          </tr>
+          <tr>
+            <td><code>Claim</code></td>
+            <td><code>mira:Claim</code></td>
+            <td>Atomic assertions proposing to answer Questions</td>
+          </tr>
+          <tr>
+            <td><code>Evidence</code></td>
+            <td><code>mira:Evidence</code></td>
+            <td>Specific empirical observations from a method application</td>
+          </tr>
+          <tr>
+            <td><code>Study</code></td>
+            <td><code>mira:Study</code></td>
+            <td>Research activity that produced data (<code>prov:Activity</code>)</td>
+          </tr>
+          <tr>
+            <td><code>Protocol</code></td>
+            <td><code>mira:Protocol</code></td>
+            <td>Method a Study follows</td>
+          </tr>
+          <tr>
+            <td><code>Request</code></td>
+            <td><code>mira:Request</code></td>
+            <td>Request for a follow-up Study or Analysis</td>
+          </tr>
+          <tr>
+            <td><code>SourceDocument</code></td>
+            <td><code>dg:SourceDocument</code></td>
+            <td>Research document that reports evidence</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="relations">Relations</h2>
+
+    <h3>Claim ↔ Question</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Predicate</th><th>Direction</th></tr></thead>
+        <tbody>
+          <tr><td><code>addresses</code> / <code>addressedBy</code></td><td>Claim ↔ Question</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Claim ↔ Argument</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Predicate</th><th>Direction</th></tr></thead>
+        <tbody>
+          <tr><td><code>supports</code> / <code>supportedBy</code></td><td>Argument → Claim</td></tr>
+          <tr><td><code>opposes</code> / <code>opposedBy</code></td><td>Argument → Claim</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Evidence ↔ Claim / Data</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Predicate</th><th>Direction</th></tr></thead>
+        <tbody>
+          <tr><td><code>observationStatement</code></td><td>Evidence → Claim</td></tr>
+          <tr><td><code>observationBase</code></td><td>Evidence → Entity (the data)</td></tr>
+          <tr><td><code>grounds</code> / <code>is_grounded_in</code></td><td>Study ↔ Evidence</td></tr>
+          <tr><td><code>follows</code></td><td>Study → Protocol</td></tr>
+          <tr><td><code>request_for</code> / <code>request_target</code></td><td>Request → Study/Claim</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <p><strong>Key gap vs HaaK:</strong> MIRA does not use CiTO. HaaK has 13 CiTO-aligned edge types (<code>tests</code>, <code>entails</code>, <code>interprets</code>, <code>scopes</code>, <code>rulesOut</code>, <code>replicates</code>, <code>contradicts</code>, <code>extends</code>, <code>qualifies</code>, …) — none of these exist in MIRA natively, though they are proposed for contribution upstream.</p>
+    </div>
+
+    <h2 id="extraction-overlay">Extraction Overlay (mirax)</h2>
+    <p>The <code>MIRA-extraction</code> spec adds operational machinery on top of the core schema for provenance tracking and curation status:</p>
+    <ul>
+      <li><strong>SourceSpan</strong> — verbatim quote, doc_id, char offsets, page, bbox, grounding status (verified / fuzzy / unverified)</li>
+      <li><strong>Provenance</strong> — run_id, model, prompt_id, confidence, raw completion hash</li>
+      <li><strong>EpistemicStatus</strong> — hypothesis / claim / assumption / definition / observation</li>
+      <li><strong>ActivityModality</strong> — proposed / in_progress / completed</li>
+      <li><strong>CurationStatus</strong> — ai_extracted / in_review / expert_verified / rejected</li>
+      <li><strong>Bundles</strong> — content-hashed grouping primitive for inter-lab exchange</li>
+      <li><strong>Identity</strong> — Agent with ORCID / ROR / DID</li>
+    </ul>
+
+    <h2 id="toolchain">Toolchain</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tool</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>myst-plus-mira</strong></td>
+            <td>MyST Markdown parser with discourse graph directives (<code>:::{claim}</code>, <code>:::{evidence}</code>)</td>
+          </tr>
+          <tr>
+            <td><strong>koi-net</strong></td>
+            <td>Decentralized bundle exchange (BlockScience) — how labs share claims across institutions</td>
+          </tr>
+          <tr>
+            <td><strong>Kalepi</strong></td>
+            <td>Epistemic impact visualization for funders</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="elife-oxa">How MIRA Relates to eLife / OXA</h2>
+    <p>eLife is building <strong>OXA</strong> (Open Exchange Architecture, maintained by Curvenote) as their native document format — typed JSON node trees for scientific papers. OXA and MIRA are complementary layers:</p>
+    <ul>
+      <li><strong>OXA</strong> — document structure (how a paper is represented)</li>
+      <li><strong>MIRA</strong> — argument structure (how claims relate to each other and to evidence)</li>
+    </ul>
+    <p>eLife's integration plan: OXA documents contain claim nodes; those nodes export to MIRA JSON-LD for inter-lab exchange. HaaK already has bridge scripts for both directions (<code>export_discourse_graphs.py</code>). The <code>spec.md</code> in <code>home/collabs/mira/oxa-adoption/</code> describes this convergence, including a vocabulary alignment table.</p>
+    <p>Paul Shannon's August 27 request is specifically about feeding MIRA-formatted claims into eLife's article reading experience — the platform is ready to consume them; they need the Gädeke claims converted as a pilot.</p>
+
+    <h2 id="conversion">Converting HaaK → MIRA</h2>
+    <p>The Gädeke paper has 26 claims in HaaK format (YAML-frontmatter markdown in <code>elife-claim-trees/claims/gadeke-2026-guilt-insula/</code>). Converting to MIRA means mapping three things: node types, relations, and status fields.</p>
+
+    <h3 id="role-mapping">Role mapping</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>HaaK ClaimRole</th>
+            <th>→ MIRA type</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>hypothesis</code></td>
+            <td><code>mira:Claim</code> (epistemic_status: hypothesis)</td>
+            <td>Direct mapping</td>
+          </tr>
+          <tr>
+            <td><code>prediction</code></td>
+            <td><code>mira:Claim</code> (epistemic_status: claim)</td>
+            <td>No prediction concept in MIRA</td>
+          </tr>
+          <tr>
+            <td><code>empirical</code></td>
+            <td><code>mira:Evidence</code></td>
+            <td>Direct mapping</td>
+          </tr>
+          <tr>
+            <td><code>control</code></td>
+            <td><code>mira:Evidence</code></td>
+            <td>MIRA has no control/empirical distinction</td>
+          </tr>
+          <tr>
+            <td><code>methodological</code></td>
+            <td><code>mira:Protocol</code></td>
+            <td>Close but not identical</td>
+          </tr>
+          <tr>
+            <td><code>synthesis</code> / <code>interpretation</code></td>
+            <td><code>mira:Claim</code></td>
+            <td>MIRA has no sub-roles</td>
+          </tr>
+          <tr>
+            <td><code>literature-context</code></td>
+            <td><code>dg:SourceDocument</code></td>
+            <td>Different structural level</td>
+          </tr>
+          <tr>
+            <td><code>scope</code></td>
+            <td>—</td>
+            <td>No equivalent in MIRA</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="relation-mapping">Relation mapping</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>HaaK relation</th>
+            <th>→ MIRA predicate</th>
+            <th>Loss?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>supports</code></td>
+            <td><code>mira:supports</code></td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td><code>opposes</code> / <code>contradicts</code></td>
+            <td><code>mira:opposes</code></td>
+            <td>Slight flattening</td>
+          </tr>
+          <tr>
+            <td><code>tests</code>, <code>entails</code>, <code>interprets</code></td>
+            <td>Raw CiTO IRI or collapsed to <code>supports</code></td>
+            <td>Semantic precision lost</td>
+          </tr>
+          <tr>
+            <td><code>scopes</code>, <code>qualifies</code>, <code>extends</code></td>
+            <td>No equivalent</td>
+            <td>Drop or annotate as custom property</td>
+          </tr>
+          <tr>
+            <td><code>replicates</code></td>
+            <td>No equivalent</td>
+            <td>Proposed for MIRA contribution</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="practical">Practical steps</h3>
+    <p>A conversion script reads each claim's YAML frontmatter, maps the <code>role</code> field to a MIRA entity type, maps <code>relations</code> to MIRA edges, wraps text content as the node's proposition, and serializes as JSON-LD using MIRA's context. The existing <code>export_discourse_graphs.py</code> does most of this already — it needs to be pointed at the Gädeke claim files and the output schema aligned to the current MIRA version Paul's team is using.</p>
+    <p>The verification step (which Paul specifically mentioned) is confirming that the claim role and relation mappings faithfully represent what the paper argues — the MIRA graph should be checkable against the paper itself.</p>
+
+    <h2 id="resources">Where Things Live</h2>
+    <ul class="resource-list">
+      <li>
+        <span class="resource-label">Schema</span>
+        <span class="resource-path">home/collabs/mira/reference/mira-schema.md</span>
+      </li>
+      <li>
+        <span class="resource-label">OXA spec</span>
+        <span class="resource-path">home/collabs/mira/oxa-adoption/spec.md</span>
+      </li>
+      <li>
+        <span class="resource-label">Review spec</span>
+        <span class="resource-path">home/collabs/mira/oxa-adoption/structured-review-spec.md</span>
+      </li>
+      <li>
+        <span class="resource-label">Claims</span>
+        <span class="resource-path">elife-claim-trees/claims/gadeke-2026-guilt-insula/</span>
+      </li>
+      <li>
+        <span class="resource-label">OXA RFC</span>
+        <span class="resource-path">home/collabs/elife/claim-trees/reference/oxa-rfc-claim/</span>
+      </li>
+      <li>
+        <span class="resource-label">Upstream</span>
+        <span class="resource-path">github.com/mira-science/schema</span>
+      </li>
+    </ul>
+
+  </main>
+</div>
+
+</body>
+</html>

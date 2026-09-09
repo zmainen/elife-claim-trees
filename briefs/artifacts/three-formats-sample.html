@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}</style>
+</head>
+<body>
+<title>Gädeke Claims — Three Formats</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --bg: #F8F7F4;
+    --bg-alt: #EFEEE9;
+    --surface: #FFFFFF;
+    --border: #D5D1C8;
+    --text: #1A1C22;
+    --text-2: #5A5C66;
+    --text-3: #8A8C96;
+
+    --haak: #5577AA;
+    --haak-dim: #E8EEF6;
+    --haak-border: #C0CDE0;
+
+    --oxa: #3D9E8C;
+    --oxa-dim: #E3F4F0;
+    --oxa-border: #B0DDD5;
+
+    --mira: #B08840;
+    --mira-dim: #F4EEE0;
+    --mira-border: #DDD0A8;
+
+    --code-bg: #F0EFE8;
+    --code-key: #2A5590;
+    --code-str: #1A7A6A;
+    --code-val: #7A4A10;
+    --code-kw: #8B2252;
+    --code-comment: #7A7C86;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E1118;
+      --bg-alt: #161C28;
+      --surface: #1A2030;
+      --border: #252E40;
+      --text: #E0DDD6;
+      --text-2: #8A909E;
+      --text-3: #5A6070;
+
+      --haak: #7A9FD0;
+      --haak-dim: #162030;
+      --haak-border: #2A3C58;
+
+      --oxa: #52C4AA;
+      --oxa-dim: #102820;
+      --oxa-border: #1E4840;
+
+      --mira: #D4A852;
+      --mira-dim: #28200A;
+      --mira-border: #4A3C10;
+
+      --code-bg: #131822;
+      --code-key: #80AADD;
+      --code-str: #52C4AA;
+      --code-val: #D4A852;
+      --code-kw: #E0809E;
+      --code-comment: #5A6070;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0E1118;
+    --bg-alt: #161C28;
+    --surface: #1A2030;
+    --border: #252E40;
+    --text: #E0DDD6;
+    --text-2: #8A909E;
+    --text-3: #5A6070;
+
+    --haak: #7A9FD0;
+    --haak-dim: #162030;
+    --haak-border: #2A3C58;
+
+    --oxa: #52C4AA;
+    --oxa-dim: #102820;
+    --oxa-border: #1E4840;
+
+    --mira: #D4A852;
+    --mira-dim: #28200A;
+    --mira-border: #4A3C10;
+
+    --code-bg: #131822;
+    --code-key: #80AADD;
+    --code-str: #52C4AA;
+    --code-val: #D4A852;
+    --code-kw: #E0809E;
+    --code-comment: #5A6070;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Header */
+  .page-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .page-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .page-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-3);
+  }
+
+  /* Claim tabs */
+  .claim-tabs {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+
+  .claim-tab {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-2);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.12s, border-color 0.12s;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .claim-tab:hover { color: var(--text); }
+  .claim-tab.active { color: var(--text); border-bottom-color: var(--text); }
+
+  /* Format legend strip */
+  .format-strip {
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .format-label {
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .format-label .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .format-label.haak { color: var(--haak); }
+  .format-label.oxa  { color: var(--oxa); }
+  .format-label.mira { color: var(--mira); }
+  .format-label.haak .dot { background: var(--haak); }
+  .format-label.oxa  .dot { background: var(--oxa); }
+  .format-label.mira .dot { background: var(--mira); }
+
+  /* Three-column panels */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    min-height: calc(100vh - 200px);
+  }
+
+  .panel {
+    border-right: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .panel:last-child { border-right: none; }
+
+  .panel-inner {
+    padding: 20px;
+    min-width: 280px;
+  }
+
+  /* Code display */
+  pre.claim-code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    line-height: 1.65;
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    white-space: pre;
+    color: var(--text);
+  }
+
+  .ck { color: var(--code-key); }    /* key / field name */
+  .cs { color: var(--code-str); }    /* string value */
+  .cv { color: var(--code-val); }    /* literal / number */
+  .cm { color: var(--code-comment); font-style: italic; } /* comment */
+  .cx { color: var(--text-2); }      /* structural punctuation */
+
+  /* Annotations */
+  .ann {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+
+  .ann-row {
+    display: flex;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .ann-row:last-child { border-bottom: none; }
+
+  .ann-key {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    min-width: 90px;
+    padding-top: 1px;
+  }
+
+  .ann-val { color: var(--text-2); }
+
+  /* Gap badge */
+  .gap-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 4px;
+    background: #F0D4B0;
+    color: #7A4A00;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .gap-badge {
+      background: #3A2A00;
+      color: #D4A852;
+    }
+  }
+
+  :root[data-theme="dark"] .gap-badge { background: #3A2A00; color: #D4A852; }
+
+  /* Mapping table */
+  .mapping-section {
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    padding: 24px;
+  }
+
+  .mapping-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    margin-bottom: 14px;
+  }
+
+  .mapping-table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 560px;
+  }
+
+  th {
+    text-align: left;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-3);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-alt);
+  }
+
+  td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .td-haak { color: var(--haak); }
+  .td-oxa  { color: var(--oxa); }
+  .td-mira { color: var(--mira); }
+  .td-gap  { color: var(--text-3); font-style: italic; }
+
+  .claim-panel { display: none; }
+  .claim-panel.active { display: contents; }
+
+  @media (max-width: 760px) {
+    .panels { grid-template-columns: 1fr; }
+    .panel { border-right: none; border-bottom: 1px solid var(--border); }
+    .format-strip { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="page-header">
+  <div class="header-top">
+    <span class="page-title">Gädeke 2026 — Claim Formats</span>
+    <span class="page-meta">eLife 105391 · 26 claims · 3 formats</span>
+  </div>
+  <div class="claim-tabs" role="tablist">
+    <button class="claim-tab active" onclick="showClaim(0)" role="tab">Hypothesis</button>
+    <button class="claim-tab" onclick="showClaim(1)" role="tab">Prediction</button>
+    <button class="claim-tab" onclick="showClaim(2)" role="tab">Empirical</button>
+  </div>
+</div>
+
+<div class="format-strip">
+  <div class="format-label haak"><span class="dot"></span>HaaK YAML</div>
+  <div class="format-label oxa"><span class="dot"></span>OXA JSON</div>
+  <div class="format-label mira"><span class="dot"></span>MIRA JSON-LD</div>
+</div>
+
+<!-- CLAIM 0: Hypothesis -->
+<div class="panels" id="claim-0">
+  <div class="panel">
+    <div class="panel-inner">
+<pre class="claim-code"><span class="cx">---</span>
+<span class="ck">uuid</span><span class="cx">:</span> <span class="cv">7a27dc0a-904f-485f-99ae-2b1ac54ca7c2</span>
+<span class="ck">slug</span><span class="cx">:</span> <span class="cs">hypothesis-insula-tracks-interpersonal-guilt</span>
+<span class="ck">claim-type</span><span class="cx">:</span> <span class="cv">hypothesis</span>
+<span class="ck">role</span><span class="cx">:</span> <span class="cv">hypothesis</span>
+<span class="ck">epistemic</span><span class="cx">:</span> <span class="cv">hypothesis</span>
+
+<span class="ck">claim</span><span class="cx">: ></span>
+  <span class="cs">Anterior insula is the neural substrate of</span>
+  <span class="cs">interpersonal guilt: when a participant bears</span>
+  <span class="cs">responsibility for a choice that yields a negative</span>
+  <span class="cs">outcome for another person, anterior insula activity</span>
+  <span class="cs">tracks the responsibility-contingent affect.</span>
+
+<span class="ck">entails</span><span class="cx">:</span>
+  <span class="cx">-</span> <span class="cs">prediction-behavioral-guilt-effect</span>
+  <span class="cx">-</span> <span class="cs">prediction-insula-tracks-guilt</span>
+
+<span class="ck">assertions</span><span class="cx">:</span>
+  <span class="cx">-</span> <span class="ck">paper-slug</span><span class="cx">:</span> <span class="cs">gadeke-2026-guilt-insula</span>
+    <span class="ck">doi</span><span class="cx">:</span>        <span class="cv">10.7554/eLife.105391</span>
+    <span class="ck">method</span><span class="cx">:</span>     <span class="cs">hypothesis stated in intro &amp; abstract</span>
+    <span class="ck">confidence</span><span class="cx">:</span> <span class="cv">N/A</span>
+
+<span class="ck">reproductions</span><span class="cx">:</span> <span class="cx">[]</span>
+<span class="cx">---</span></pre>
+      <div class="ann">
+        <div class="ann-row">
+          <span class="ann-key">role</span>
+          <span class="ann-val">HaaK-native field; 9 values (hypothesis, prediction, empirical, control, interpretation, synthesis, assessment, scope, methodological)</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">entails</span>
+          <span class="ann-val">CiTO-aligned edge: claim entails its derived predictions</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">assertions</span>
+          <span class="ann-val">Provenance: one block per paper that states or tests the claim</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-inner">
+<pre class="claim-code"><span class="cx">{</span>
+  <span class="ck">"type"</span><span class="cx">:</span> <span class="cs">"Claim"</span><span class="cx">,</span>
+  <span class="ck">"identifier"</span><span class="cx">:</span>
+    <span class="cs">"hypothesis-insula-tracks-interpersonal-guilt"</span><span class="cx">,</span>
+  <span class="ck">"uuid"</span><span class="cx">:</span> <span class="cs">"7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"</span><span class="cx">,</span>
+  <span class="ck">"role"</span><span class="cx">:</span> <span class="cs">"hypothesis"</span><span class="cx">,</span>
+  <span class="ck">"epistemicStrength"</span><span class="cx">:</span> <span class="cs">"hypothesis"</span><span class="cx">,</span>
+  <span class="ck">"children"</span><span class="cx">: [{</span>
+    <span class="ck">"type"</span><span class="cx">:</span> <span class="cs">"Text"</span><span class="cx">,</span>
+    <span class="ck">"value"</span><span class="cx">:</span> <span class="cs">"Anterior insula is the neural substrate</span>
+<span class="cs">      of interpersonal guilt..."</span>
+  <span class="cx">}],</span>
+  <span class="ck">"relations"</span><span class="cx">: [</span>
+    <span class="cx">{</span>
+      <span class="ck">"xref"</span><span class="cx">:</span> <span class="cs">"prediction-behavioral-guilt-effect"</span><span class="cx">,</span>
+      <span class="ck">"relationType"</span><span class="cx">:</span> <span class="cs">"claimrel:entails"</span>
+    <span class="cx">},</span>
+    <span class="cx">{</span>
+      <span class="ck">"xref"</span><span class="cx">:</span> <span class="cs">"prediction-insula-tracks-guilt"</span><span class="cx">,</span>
+      <span class="ck">"relationType"</span><span class="cx">:</span> <span class="cs">"claimrel:entails"</span>
+    <span class="cx">}</span>
+  <span class="cx">],</span>
+  <span class="ck">"assertions"</span><span class="cx">: [{</span>
+    <span class="ck">"doi"</span><span class="cx">:</span> <span class="cs">"10.7554/eLife.105391"</span><span class="cx">,</span>
+    <span class="ck">"method"</span><span class="cx">:</span>
+      <span class="cs">"hypothesis stated in intro &amp; abstract"</span>
+  <span class="cx">}]</span>
+<span class="cx">}</span></pre>
+      <div class="ann">
+        <div class="ann-row">
+          <span class="ann-key">type</span>
+          <span class="ann-val">OXA node type — <code>Claim</code> is an RFC drafted from HaaK's work; not yet in upstream OXA 0.2.x</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">relationType</span>
+          <span class="ann-val"><code>claimrel:entails</code> carries the CiTO-aligned semantics; OXA's xref system is the mechanism</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">children</span>
+          <span class="ann-val">OXA convention: prose content is a typed child node, not a top-level string field</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-inner">
+<pre class="claim-code"><span class="cx">{</span>
+  <span class="ck">"@context"</span><span class="cx">:</span>
+    <span class="cs">"https://mira.science/schema/context.jsonld"</span><span class="cx">,</span>
+  <span class="ck">"@type"</span><span class="cx">:</span> <span class="cs">"mira:Claim"</span><span class="cx">,</span>
+  <span class="ck">"@id"</span><span class="cx">:</span>
+    <span class="cs">"urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"</span><span class="cx">,</span>
+  <span class="ck">"schema:name"</span><span class="cx">:</span>
+    <span class="cs">"hypothesis-insula-tracks-interpersonal-guilt"</span><span class="cx">,</span>
+  <span class="ck">"schema:description"</span><span class="cx">:</span>
+    <span class="cs">"Anterior insula is the neural substrate of</span>
+<span class="cs">      interpersonal guilt..."</span><span class="cx">,</span>
+  <span class="ck">"mira:epistemicStatus"</span><span class="cx">:</span> <span class="cs">"mira:Hypothesis"</span><span class="cx">,</span>
+  <span class="ck">"mira:addresses"</span><span class="cx">: {</span>
+    <span class="ck">"@type"</span><span class="cx">:</span> <span class="cs">"mira:Question"</span><span class="cx">,</span>
+    <span class="ck">"schema:description"</span><span class="cx">:</span>
+      <span class="cs">"What is the neural substrate of</span>
+<span class="cs">        interpersonal guilt?"</span>
+  <span class="cx">},</span>
+  <span class="ck">"dg:sourceDocument"</span><span class="cx">: {</span>
+    <span class="ck">"schema:identifier"</span><span class="cx">:</span> <span class="cs">"10.7554/eLife.105391"</span>
+  <span class="cx">}</span>
+  <span class="cm">// ⚠ entails → no MIRA equivalent</span>
+  <span class="cm">// claimrel:entails not in MIRA vocab</span>
+  <span class="cm">// options: drop, use raw CiTO IRI, or</span>
+  <span class="cm">// contribute to MIRA upstream</span>
+<span class="cx">}</span></pre>
+      <div class="ann">
+        <div class="ann-row">
+          <span class="ann-key">@type</span>
+          <span class="ann-val">Hypothesis maps to <code>mira:Claim</code> — MIRA has no separate Hypothesis type; EpistemicStatus carries the distinction</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">mira:addresses</span>
+          <span class="ann-val">MIRA requires an explicit <code>mira:Question</code> node — must be synthesized from hypothesis text (not present in HaaK)</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">entails<span class="gap-badge">gap</span></span>
+          <span class="ann-val">No MIRA predicate for logical entailment. Best option: raw CiTO IRI <code>cito:citesAsEvidence</code> or drop and annotate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLAIM 1: Prediction -->
+<div class="panels" id="claim-1" style="display:none">
+  <div class="panel">
+    <div class="panel-inner">
+<pre class="claim-code"><span class="cx">---</span>
+<span class="ck">uuid</span><span class="cx">:</span> <span class="cv">a3c124db-5983-4f4a-81da-77aa7d917e7c</span>
+<span class="ck">slug</span><span class="cx">:</span> <span class="cs">prediction-insula-tracks-guilt</span>
+<span class="ck">claim-type</span><span class="cx">:</span> <span class="cv">prediction</span>
+<span class="ck">role</span><span class="cx">:</span> <span class="cv">prediction</span>
+<span class="ck">epistemic</span><span class="cx">:</span> <span class="cv">prediction</span>
+
+<span class="ck">claim</span><span class="cx">: ></span>
+  <span class="cs">If anterior insula encodes interpersonal guilt,</span>
+  <span class="cs">then anterior insula BOLD should be elevated in</span>
+  <span class="cs">the Social vs Partner contrast specifically after</span>
+  <span class="cs">negative partner outcomes — the (condition ×</span>
+  <span class="cs">partner-outcome) interaction in an a priori</span>
+  <span class="cs">insula SVC ROI.</span>
+
+<span class="ck">derived-from</span><span class="cx">:</span>
+  <span class="cx">-</span> <span class="cs">hypothesis-insula-tracks-interpersonal-guilt</span>
+
+<span class="ck">assertions</span><span class="cx">:</span>
+  <span class="cx">-</span> <span class="ck">paper-slug</span><span class="cx">:</span> <span class="cs">gadeke-2026-guilt-insula</span>
+    <span class="ck">doi</span><span class="cx">:</span>        <span class="cv">10.7554/eLife.105391</span>
+    <span class="ck">method</span><span class="cx">:</span>     <span class="cs">derived prediction</span>
+    <span class="ck">confidence</span><span class="cx">:</span> <span class="cs">strong</span>
+
+<span class="ck">reproductions</span><span class="cx">:</span> <span class="cx">[]</span>
+<span class="cx">---</span></pre>
+      <div class="ann">
+        <div class="ann-row">
+          <span class="ann-key">derived-from</span>
+          <span class="ann-val">HaaK CiTO-aligned edge: prediction is derived from its parent hypothesis — the inverse of <code>entails</code></span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">role: prediction</span>
+          <span class="ann-val">Falsifiable claim derived from a hypothesis — tested by an empirical claim, not directly reproduced</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-inner">
+<pre class="claim-code"><span class="cx">{</span>
+  <span class="ck">"type"</span><span class="cx">:</span> <span class="cs">"Claim"</span><span class="cx">,</span>
+  <span class="ck">"identifier"</span><span class="cx">:</span> <span class="cs">"prediction-insula-tracks-guilt"</span><span class="cx">,</span>
+  <span class="ck">"uuid"</span><span class="cx">:</span> <span class="cs">"a3c124db-5983-4f4a-81da-77aa7d917e7c"</span><span class="cx">,</span>
+  <span class="ck">"role"</span><span class="cx">:</span> <span class="cs">"prediction"</span><span class="cx">,</span>
+  <span class="ck">"epistemicStrength"</span><span class="cx">:</span> <span class="cs">"prediction"</span><span class="cx">,</span>
+  <span class="ck">"children"</span><span class="cx">: [{</span>
+    <span class="ck">"type"</span><span class="cx">:</span> <span class="cs">"Text"</span><span class="cx">,</span>
+    <span class="ck">"value"</span><span class="cx">:</span> <span class="cs">"If anterior insula encodes interpersonal</span>
+<span class="cs">      guilt, then anterior insula BOLD should be</span>
+<span class="cs">      elevated in Social vs Partner contrast..."</span>
+  <span class="cx">}],</span>
+  <span class="ck">"relations"</span><span class="cx">: [{</span>
+    <span class="ck">"xref"</span><span class="cx">:</span>
+      <span class="cs">"hypothesis-insula-tracks-interpersonal-guilt"</span><span class="cx">,</span>
+    <span class="ck">"relationType"</span><span class="cx">:</span> <span class="cs">"claimrel:derived-from"</span>
+  <span class="cx">}],</span>
+  <span class="ck">"assertions"</span><span class="cx">: [{</span>
+    <span class="ck">"doi"</span><span class="cx">:</span> <span class="cs">"10.7554/eLife.105391"</span><span class="cx">,</span>
+    <span class="ck">"method"</span><span class="cx">:</span> <span class="cs">"derived prediction"</span><span class="cx">,</span>
+    <span class="ck">"confidence"</span><span class="cx">:</span> <span class="cs">"strong"</span>
+  <span class="cx">}]</span>
+<span class="cx">}</span></pre>
+      <div class="ann">
+        <div class="ann-row">
+          <span class="ann-key">relationType</span>
+          <span class="ann-val"><code>claimrel:derived-from</code> — inverse of entails; OXA's ClaimGraph RFC defines both as first-class relation types</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-inner">
+<pre class="claim-code"><span class="cx">{</span>
+  <span class="ck">"@context"</span><span class="cx">:</span>
+    <span class="cs">"https://mira.science/schema/context.jsonld"</span><span class="cx">,</span>
+  <span class="ck">"@type"</span><span class="cx">:</span> <span class="cs">"mira:Claim"</span><span class="cx">,</span>
+  <span class="ck">"@id"</span><span class="cx">:</span>
+    <span class="cs">"urn:uuid:a3c124db-5983-4f4a-81da-77aa7d917e7c"</span><span class="cx">,</span>
+  <span class="ck">"schema:name"</span><span class="cx">:</span> <span class="cs">"prediction-insula-tracks-guilt"</span><span class="cx">,</span>
+  <span class="ck">"schema:description"</span><span class="cx">:</span>
+    <span class="cs">"Anterior insula BOLD should be elevated in</span>
+<span class="cs">      Social vs Partner contrast specifically after</span>
+<span class="cs">      negative partner outcomes..."</span><span class="cx">,</span>
+  <span class="ck">"mira:epistemicStatus"</span><span class="cx">:</span> <span class="cs">"mira:Hypothesis"</span><span class="cx">,</span>
+  <span class="ck">"mira:addresses"</span><span class="cx">: {</span>
+    <span class="ck">"@id"</span><span class="cx">:</span>
+      <span class="cs">"urn:uuid:7a27dc0a-...</span>
+<span class="cs">        [parent hypothesis as question proxy]"</span>
+  <span class="cx">},</span>
+  <span class="ck">"dg:sourceDocument"</span><span class="cx">: {</span>
+    <span class="ck">"schema:identifier"</span><span class="cx">:</span> <span class="cs">"10.7554/eLife.105391"</span>
+  <span class="cx">}</span>
+  <span class="cm">// ⚠ derived-from → no MIRA equivalent</span>
+  <span class="cm">// prediction has no distinct MIRA type;</span>
+  <span class="cm">// collapses to mira:Claim (hypothesis status)</span>
+<span class="cx">}</span></pre>
+      <div class="ann">
+        <div class="ann-row">
+          <span class="ann-key">mira:addresses<span class="gap-badge">workaround</span></span>
+          <span class="ann-val">Predictions in MIRA address a Question — the parent hypothesis stands in as a question proxy (its UUID is the target)</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">derived-from<span class="gap-badge">gap</span></span>
+          <span class="ann-val">No MIRA predicate. The hypothesis→prediction→empirical chain — HaaK's core argument structure — is invisible in MIRA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLAIM 2: Empirical -->
+<div class="panels" id="claim-2" style="display:none">
+  <div class="panel">
+    <div class="panel-inner">
+<pre class="claim-code"><span class="cx">---</span>
+<span class="ck">uuid</span><span class="cx">:</span> <span class="cv">50303ec9-0d79-48a5-ac00-e3386900731b</span>
+<span class="ck">slug</span><span class="cx">:</span> <span class="cs">insula-tracks-guilt-effect</span>
+<span class="ck">claim-type</span><span class="cx">:</span> <span class="cv">empirical</span>
+<span class="ck">role</span><span class="cx">:</span> <span class="cv">empirical</span>
+<span class="ck">epistemic</span><span class="cx">:</span> <span class="cv">strong</span>
+
+<span class="ck">claim</span><span class="cx">: ></span>
+  <span class="cs">Anterior insula BOLD is significantly elevated</span>
+  <span class="cs">Social vs Partner after negative partner outcomes,</span>
+  <span class="cs">tracking the guilt effect.</span>
+
+<span class="ck">tests</span><span class="cx">:</span>    <span class="cx">-</span> <span class="cs">prediction-insula-tracks-guilt</span>
+<span class="ck">confirms</span><span class="cx">:</span> <span class="cx">-</span> <span class="cs">hypothesis-insula-tracks-interpersonal-guilt</span>
+
+<span class="ck">assertions</span><span class="cx">:</span>
+  <span class="cx">-</span> <span class="ck">paper-slug</span><span class="cx">:</span> <span class="cs">gadeke-2026-guilt-insula</span>
+    <span class="ck">doi</span><span class="cx">:</span>        <span class="cv">10.7554/eLife.105391</span>
+    <span class="ck">panel</span><span class="cx">:</span>      <span class="cs">fig4e, fig4f</span>
+    <span class="ck">method</span><span class="cx">:</span>     <span class="cs">fMRI GLM (SPM12), ROI SVC</span>
+    <span class="ck">confidence</span><span class="cx">:</span> <span class="cs">strong</span>
+    <span class="ck">dataset</span><span class="cx">:</span>
+      <span class="cs">https://openneuro.org/datasets/ds005588</span>
+
+<span class="ck">reproductions</span><span class="cx">:</span>
+  <span class="cx">-</span> <span class="ck">agent</span><span class="cx">:</span>  <span class="cs">mainen-z</span>
+    <span class="ck">date</span><span class="cx">:</span>   <span class="cv">2026-03-30</span>
+    <span class="ck">status</span><span class="cx">:</span> <span class="cv">verified</span>
+    <span class="ck">notes</span><span class="cx">: ></span>
+      <span class="cs">Peak MNI = [-28, 24, -4].</span>
+      <span class="cs">Exact match to paper.</span>
+<span class="cx">---</span></pre>
+      <div class="ann">
+        <div class="ann-row">
+          <span class="ann-key">tests / confirms</span>
+          <span class="ann-val">Two distinct CiTO-aligned edges: empirical claim tests its prediction, and independently confirms its parent hypothesis</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">reproductions</span>
+          <span class="ann-val">Full reproduction record: agent, date, status, script, figure, notes — HaaK's unique contribution beyond any other format</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">dataset</span>
+          <span class="ann-val">OpenNeuro deposit — enables independent reproduction</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-inner">
+<pre class="claim-code"><span class="cx">{</span>
+  <span class="ck">"type"</span><span class="cx">:</span> <span class="cs">"Claim"</span><span class="cx">,</span>
+  <span class="ck">"identifier"</span><span class="cx">:</span> <span class="cs">"insula-tracks-guilt-effect"</span><span class="cx">,</span>
+  <span class="ck">"uuid"</span><span class="cx">:</span> <span class="cs">"50303ec9-0d79-48a5-ac00-e3386900731b"</span><span class="cx">,</span>
+  <span class="ck">"role"</span><span class="cx">:</span> <span class="cs">"empirical"</span><span class="cx">,</span>
+  <span class="ck">"epistemicStrength"</span><span class="cx">:</span> <span class="cs">"strong"</span><span class="cx">,</span>
+  <span class="ck">"children"</span><span class="cx">: [{</span>
+    <span class="ck">"type"</span><span class="cx">:</span> <span class="cs">"Text"</span><span class="cx">,</span>
+    <span class="ck">"value"</span><span class="cx">:</span> <span class="cs">"Anterior insula BOLD is significantly</span>
+<span class="cs">      elevated Social vs Partner after negative</span>
+<span class="cs">      partner outcomes..."</span>
+  <span class="cx">}],</span>
+  <span class="ck">"relations"</span><span class="cx">: [</span>
+    <span class="cx">{</span>
+      <span class="ck">"xref"</span><span class="cx">:</span> <span class="cs">"prediction-insula-tracks-guilt"</span><span class="cx">,</span>
+      <span class="ck">"relationType"</span><span class="cx">:</span> <span class="cs">"claimrel:tests"</span>
+    <span class="cx">},</span>
+    <span class="cx">{</span>
+      <span class="ck">"xref"</span><span class="cx">:</span>
+        <span class="cs">"hypothesis-insula-tracks-interpersonal-guilt"</span><span class="cx">,</span>
+      <span class="ck">"relationType"</span><span class="cx">:</span> <span class="cs">"claimrel:confirms"</span>
+    <span class="cx">}</span>
+  <span class="cx">],</span>
+  <span class="ck">"assertions"</span><span class="cx">: [{</span>
+    <span class="ck">"doi"</span><span class="cx">:</span> <span class="cs">"10.7554/eLife.105391"</span><span class="cx">,</span>
+    <span class="ck">"panel"</span><span class="cx">:</span> <span class="cx">[</span><span class="cs">"fig4e"</span><span class="cx">,</span> <span class="cs">"fig4f"</span><span class="cx">],</span>
+    <span class="ck">"method"</span><span class="cx">:</span> <span class="cs">"fMRI GLM (SPM12), ROI SVC"</span><span class="cx">,</span>
+    <span class="ck">"dataset"</span><span class="cx">:</span>
+      <span class="cs">"https://openneuro.org/datasets/ds005588"</span>
+  <span class="cx">}],</span>
+  <span class="ck">"reproductions"</span><span class="cx">: [{</span>
+    <span class="ck">"agent"</span><span class="cx">:</span>  <span class="cs">"mainen-z"</span><span class="cx">,</span>
+    <span class="ck">"date"</span><span class="cx">:</span>   <span class="cs">"2026-03-30"</span><span class="cx">,</span>
+    <span class="ck">"status"</span><span class="cx">:</span> <span class="cs">"verified"</span><span class="cx">,</span>
+    <span class="ck">"notes"</span><span class="cx">:</span>  <span class="cs">"Peak MNI = [-28, 24, -4]. Exact match."</span>
+  <span class="cx">}]</span>
+<span class="cx">}</span></pre>
+      <div class="ann">
+        <div class="ann-row">
+          <span class="ann-key">reproductions</span>
+          <span class="ann-val">OXA carries reproductions as first-class nodes — this is an HaaK contribution to the RFC, not standard OXA</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">claimrel:tests</span>
+          <span class="ann-val">OXA's ClaimGraph RFC includes the full HaaK edge vocabulary (13 types) as <code>claimrel:*</code> predicates</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-inner">
+<pre class="claim-code"><span class="cx">{</span>
+  <span class="ck">"@context"</span><span class="cx">:</span>
+    <span class="cs">"https://mira.science/schema/context.jsonld"</span><span class="cx">,</span>
+  <span class="ck">"@type"</span><span class="cx">:</span> <span class="cs">"mira:Evidence"</span><span class="cx">,</span>
+  <span class="ck">"@id"</span><span class="cx">:</span>
+    <span class="cs">"urn:uuid:50303ec9-0d79-48a5-ac00-e3386900731b"</span><span class="cx">,</span>
+  <span class="ck">"schema:name"</span><span class="cx">:</span> <span class="cs">"insula-tracks-guilt-effect"</span><span class="cx">,</span>
+  <span class="ck">"schema:description"</span><span class="cx">:</span>
+    <span class="cs">"Anterior insula BOLD is significantly elevated</span>
+<span class="cs">      Social vs Partner after negative partner</span>
+<span class="cs">      outcomes..."</span><span class="cx">,</span>
+  <span class="ck">"mira:epistemicStatus"</span><span class="cx">:</span> <span class="cs">"mira:Claim"</span><span class="cx">,</span>
+  <span class="ck">"mira:supports"</span><span class="cx">: {</span>
+    <span class="ck">"@id"</span><span class="cx">:</span>
+      <span class="cs">"urn:uuid:7a27dc0a-904f-485f-99ae-2b1ac54ca7c2"</span>
+  <span class="cx">},</span>
+  <span class="ck">"mira:observationBase"</span><span class="cx">: {</span>
+    <span class="ck">"@type"</span><span class="cx">:</span> <span class="cs">"mira:Study"</span><span class="cx">,</span>
+    <span class="ck">"schema:identifier"</span><span class="cx">:</span>
+      <span class="cs">"openneuro:ds005588"</span><span class="cx">,</span>
+    <span class="ck">"mira:follows"</span><span class="cx">: {</span>
+      <span class="ck">"@type"</span><span class="cx">:</span> <span class="cs">"mira:Protocol"</span><span class="cx">,</span>
+      <span class="ck">"schema:name"</span><span class="cx">:</span>
+        <span class="cs">"fMRI GLM (SPM12), ROI SVC"</span>
+    <span class="cx">}</span>
+  <span class="cx">},</span>
+  <span class="ck">"dg:sourceDocument"</span><span class="cx">: {</span>
+    <span class="ck">"schema:identifier"</span><span class="cx">:</span> <span class="cs">"10.7554/eLife.105391"</span>
+  <span class="cx">}</span>
+  <span class="cm">// ⚠ tests (empirical→prediction) → mira:supports</span>
+  <span class="cm">// ⚠ confirms (empirical→hypothesis) → mira:supports</span>
+  <span class="cm">// two distinct HaaK edges collapse to one</span>
+  <span class="cm">// ⚠ reproductions → no MIRA equivalent (dropped)</span>
+<span class="cx">}</span></pre>
+      <div class="ann">
+        <div class="ann-row">
+          <span class="ann-key">@type: Evidence</span>
+          <span class="ann-val">Empirical claims map to <code>mira:Evidence</code> — the closest type; Study and Protocol become sub-nodes</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">mira:supports</span>
+          <span class="ann-val">Both <code>tests</code> and <code>confirms</code> collapse to <code>mira:supports</code> — the prediction layer disappears</span>
+        </div>
+        <div class="ann-row">
+          <span class="ann-key">reproductions<span class="gap-badge">dropped</span></span>
+          <span class="ann-val">MIRA has no reproduction record concept. This is HaaK's most significant contribution that cannot be expressed in MIRA today</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mapping table -->
+<div class="mapping-section">
+  <div class="mapping-title">Field mapping across formats</div>
+  <div class="mapping-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th style="color:var(--haak)">HaaK</th>
+          <th style="color:var(--oxa)">OXA</th>
+          <th style="color:var(--mira)">MIRA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Identity</td>
+          <td class="td-haak">uuid + slug</td>
+          <td class="td-oxa">identifier (= slug) + uuid</td>
+          <td class="td-mira">@id = urn:uuid:…</td>
+        </tr>
+        <tr>
+          <td>Claim text</td>
+          <td class="td-haak">claim: (string)</td>
+          <td class="td-oxa">children[{type:Text, value}]</td>
+          <td class="td-mira">schema:description</td>
+        </tr>
+        <tr>
+          <td>Claim role</td>
+          <td class="td-haak">role: hypothesis/prediction/empirical…</td>
+          <td class="td-oxa">role: (same vocabulary)</td>
+          <td class="td-mira">@type: mira:Claim / mira:Evidence</td>
+        </tr>
+        <tr>
+          <td>Epistemic strength</td>
+          <td class="td-haak">epistemic: strong/moderate/weak/contested</td>
+          <td class="td-oxa">epistemicStrength: (same)</td>
+          <td class="td-mira">mira:epistemicStatus: mira:Hypothesis/Claim/…</td>
+        </tr>
+        <tr>
+          <td>entails</td>
+          <td class="td-haak">entails: [slug]</td>
+          <td class="td-oxa">relations[{relationType: claimrel:entails}]</td>
+          <td class="td-gap">— no equivalent</td>
+        </tr>
+        <tr>
+          <td>derived-from</td>
+          <td class="td-haak">derived-from: [slug]</td>
+          <td class="td-oxa">relations[{relationType: claimrel:derived-from}]</td>
+          <td class="td-gap">— no equivalent</td>
+        </tr>
+        <tr>
+          <td>tests</td>
+          <td class="td-haak">tests: [slug]</td>
+          <td class="td-oxa">relations[{relationType: claimrel:tests}]</td>
+          <td class="td-mira">mira:supports (semantic loss)</td>
+        </tr>
+        <tr>
+          <td>confirms</td>
+          <td class="td-haak">confirms: [slug]</td>
+          <td class="td-oxa">relations[{relationType: claimrel:confirms}]</td>
+          <td class="td-mira">mira:supports (collapses with tests)</td>
+        </tr>
+        <tr>
+          <td>Paper provenance</td>
+          <td class="td-haak">assertions: [{doi, panel, method, confidence}]</td>
+          <td class="td-oxa">assertions: [{doi, panel, method, confidence}]</td>
+          <td class="td-mira">dg:sourceDocument + mira:Study</td>
+        </tr>
+        <tr>
+          <td>Reproductions</td>
+          <td class="td-haak">reproductions: [{agent, date, status, notes}]</td>
+          <td class="td-oxa">reproductions: (HaaK RFC extension)</td>
+          <td class="td-gap">— no equivalent (dropped)</td>
+        </tr>
+        <tr>
+          <td>Question link</td>
+          <td class="td-gap">— implicit (hypothesis IS the question)</td>
+          <td class="td-gap">— implicit</td>
+          <td class="td-mira">mira:addresses mira:Question (must synthesize)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const panels = [
+    document.getElementById('claim-0'),
+    document.getElementById('claim-1'),
+    document.getElementById('claim-2'),
+  ];
+  const tabs = document.querySelectorAll('.claim-tab');
+
+  function showClaim(i) {
+    panels.forEach((p, idx) => p.style.display = idx === i ? 'grid' : 'none');
+    tabs.forEach((t, idx) => t.classList.toggle('active', idx === i));
+  }
+</script>
+
+</body>
+</html>

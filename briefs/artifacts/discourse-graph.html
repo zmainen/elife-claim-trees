@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}</style>
+</head>
+<body>
+<title>Gädeke — Discourse Graph</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{
+  --bg:#F5F3EE;--surf:#FDFCF8;--bdr:#DDD9CE;
+  --txt:#1C1A17;--txt2:#5E5B52;--txt3:#9A9588;
+  --tab-act:#FDFCF8;--tab-bdr:#2F5CA8;
+  --gap-bg:#FFF4C8;--gap-c:#7A6000;--gap-bdr:#DDBF50;
+  --v-bg:#D0F0DC;--v-c:#1A6030;--v-bdr:#80C8A0;
+  --vp-bg:#FFF0C0;--vp-c:#6A5000;--vp-bdr:#DCBA40;
+  --code-bg:#EEECEA;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#0E0D0B;--surf:#161410;--bdr:#2A2820;
+  --txt:#E0DDD5;--txt2:#8A8880;--txt3:#5A5850;
+  --tab-act:#161410;--tab-bdr:#7AAAE0;
+  --gap-bg:#1E1800;--gap-c:#D8B030;--gap-bdr:#604000;
+  --v-bg:#082018;--v-c:#50D888;--v-bdr:#205840;
+  --vp-bg:#201800;--vp-c:#D8B030;--vp-bdr:#604000;
+  --code-bg:#1A1814;
+}}
+:root[data-theme=dark]{
+  --bg:#0E0D0B;--surf:#161410;--bdr:#2A2820;
+  --txt:#E0DDD5;--txt2:#8A8880;--txt3:#5A5850;
+  --tab-act:#161410;--tab-bdr:#7AAAE0;
+  --gap-bg:#1E1800;--gap-c:#D8B030;--gap-bdr:#604000;
+  --v-bg:#082018;--v-c:#50D888;--v-bdr:#205840;
+  --vp-bg:#201800;--vp-c:#D8B030;--vp-bdr:#604000;
+  --code-bg:#1A1814;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
+/* header */
+.header{padding:14px 20px 10px;border-bottom:1px solid var(--bdr);background:var(--surf)}
+.header-title{font-size:16px;font-weight:600;margin-bottom:2px}
+.header-sub{font-size:11.5px;color:var(--txt3)}
+/* tabs */
+.tabs{display:flex;border-bottom:1px solid var(--bdr);background:var(--bg);padding:0 20px}
+.tab-btn{padding:9px 16px;font-family:inherit;font-size:12.5px;font-weight:500;background:none;border:none;border-bottom:2px solid transparent;color:var(--txt3);cursor:pointer;margin-bottom:-1px;transition:color .15s,border-color .15s}
+.tab-btn.active{color:var(--txt);border-bottom-color:var(--tab-bdr)}
+.tab-btn:hover:not(.active){color:var(--txt2)}
+/* tab panes */
+.tab-pane{display:none}.tab-pane.active{display:block}
+/* graph controls */
+.graph-top{padding:12px 20px 8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mode-btn{font-family:inherit;font-size:12px;font-weight:600;padding:6px 14px;border-radius:5px;cursor:pointer;border:1.5px solid var(--tab-bdr);background:var(--surf);color:var(--txt);transition:background .15s}
+.mode-btn:hover{background:var(--bg)}
+.mode-label{font-size:11.5px;color:var(--txt2)}
+/* gap banner */
+.gap-banner{margin:0 20px 8px;padding:7px 14px;background:var(--gap-bg);border:1px solid var(--gap-bdr);border-radius:5px;font-size:11.5px;color:var(--gap-c);font-weight:500;display:none}
+.gap-banner.show{display:block}
+/* legend */
+.legend{padding:4px 20px 8px;display:flex;gap:14px;flex-wrap:wrap;font-size:10.5px;color:var(--txt2)}
+.li{display:flex;align-items:center;gap:5px}
+.ldot{width:8px;height:8px;border-radius:1.5px;flex-shrink:0}
+.lline{width:20px;height:0;flex-shrink:0}
+/* canvas */
+.canvas-wrap{padding:0 20px 8px;overflow-x:auto}
+canvas{display:block;cursor:default;border-radius:6px;border:1px solid var(--bdr)}
+/* detail panel */
+.detail{margin:0 20px 16px;background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:14px 16px;font-size:12px}
+.detail-slug{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--txt3);margin-bottom:5px}
+.detail-text{color:var(--txt);line-height:1.55;margin-bottom:10px}
+.detail-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr)}
+.detail-section-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--txt3);margin-bottom:6px}
+.edge-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.edge-chip{font-size:10px;font-weight:500;padding:1px 7px;border-radius:3px;border:1px solid}
+.verify-grid{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:11.5px}
+.vk{color:var(--txt3);white-space:nowrap;font-size:11px}
+.vv{color:var(--txt)}
+.match-exact{color:var(--v-c);font-weight:600}
+.match-partial{color:var(--vp-c);font-weight:600}
+.gap-list{display:flex;flex-wrap:wrap;gap:4px}
+.gap-chip{font-size:10px;font-weight:600;background:var(--gap-bg);color:var(--gap-c);padding:1px 7px;border-radius:3px;border:1px solid var(--gap-bdr)}
+/* verify table */
+.verify-section{padding:16px 20px}
+.verify-section h2{font-size:14px;font-weight:600;margin-bottom:4px}
+.verify-section p{font-size:12px;color:var(--txt2);margin-bottom:14px}
+.vtable{width:100%;border-collapse:collapse;font-size:12px}
+.vtable th{text-align:left;padding:7px 10px;border-bottom:2px solid var(--bdr);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--txt3);white-space:nowrap}
+.vtable td{padding:8px 10px;border-bottom:1px solid var(--bdr);vertical-align:top}
+.vtable tr:hover td{background:var(--bg)}
+.vtable .role-chip{font-size:9px;font-weight:700;text-transform:uppercase;padding:1px 6px;border-radius:2px}
+.vstatus{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px}
+.vs-exact{background:var(--v-bg);color:var(--v-c);border:1px solid var(--v-bdr)}
+.vs-partial{background:var(--vp-bg);color:var(--vp-c);border:1px solid var(--vp-bdr)}
+.expand-row td{background:var(--code-bg);padding:10px 14px;font-size:11.5px}
+.expand-grid{display:grid;grid-template-columns:120px 1fr;gap:5px 12px}
+.ek{color:var(--txt3);font-size:11px}
+.ev{color:var(--txt);font-family:'IBM Plex Mono',monospace;font-size:11px}
+.expand-btn{background:none;border:none;cursor:pointer;color:var(--txt3);font-size:11px;padding:0;font-family:inherit}
+.expand-btn:hover{color:var(--txt)}
+</style>
+
+<div class="header">
+  <div class="header-title">Gädeke 2026 — Discourse Graph</div>
+  <div class="header-sub">eLife 105391 · 27 claims · guilt, insula, responsibility</div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('graph',this)">Discourse Graph</button>
+  <button class="tab-btn" onclick="switchTab('verify',this)">Verification Records</button>
+</div>
+
+<div id="tab-graph" class="tab-pane active">
+  <div class="graph-top">
+    <button class="mode-btn" id="modeBtn" onclick="toggleMode()">Switch to MIRA view</button>
+    <span class="mode-label" id="modeLabel">HaaK — 13 typed edges · verification badges · full argument structure</span>
+  </div>
+  <div class="gap-banner" id="gapBanner"></div>
+  <div class="legend" id="legend"></div>
+  <div class="canvas-wrap"><canvas id="gc" width="900" height="670"></canvas></div>
+  <div class="detail" id="detail" style="display:none"></div>
+</div>
+
+<div id="tab-verify" class="tab-pane">
+  <div class="verify-section">
+    <h2>Verification Records</h2>
+    <p>Independent computational checks performed on each claim. Each record names what was checked, what was found, and whether it matches the paper's stated values.</p>
+    <table class="vtable" id="vtable"></table>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+
+const NODES = [
+  {id:0,label:"H1\nInsula guilt",role:"hypothesis",repro:"none",slug:"hypothesis-insula-tracks-interpersonal-guilt",text:"Anterior insula is the neural substrate of responsibility-contingent interpersonal guilt — recruited by the conjunction of self-agency and harm to the partner."},
+  {id:1,label:"H2\nResponsibility\nweights pRPEs",role:"hypothesis",repro:"none",slug:"hypothesis-responsibility-weights-partner-rpes",text:"Momentary happiness in social contexts is governed by a computational rule in which partner reward prediction errors from the participant's own choices carry an independent non-zero weight."},
+  {id:2,label:"H3\nSTS mentalizes\nunder resp.",role:"hypothesis",repro:"none",slug:"hypothesis-sts-mentalizes-partner-state-under-responsibility",text:"STS represents the partner's affective experience specifically when the participant is responsible for the partner's outcome."},
+  {id:3,label:"P1\nBehavioral\nguilt effect",role:"prediction",repro:"none",slug:"prediction-behavioral-guilt-effect",text:"Happiness drops more after negative partner outcomes in Social vs Partner trials — positive (partnerWon × subjDecided) interaction."},
+  {id:4,label:"P2\nInsula tracks\nguilt",role:"prediction",repro:"none",slug:"prediction-insula-tracks-guilt",text:"Anterior insula BOLD elevated Social > Partner after negative partner outcomes — (condition × partner-outcome) interaction in a priori insula ROI."},
+  {id:5,label:"P3\nResponsibility\nmodel wins",role:"prediction",repro:"none",slug:"prediction-responsibility-model-wins-comparison",text:"A happiness model with social_pRPE × responsibility outperforms nested alternatives; social_pRPE weight > 0 in both studies."},
+  {id:6,label:"P4\nSTS tracks\npRPE",role:"prediction",repro:"none",slug:"prediction-sts-tracks-partner-rpe-under-responsibility",text:"Left STS parametric BOLD tracks partner RPE in Social trials but not Partner trials."},
+  {id:7,label:"Guilt reduces\nhappiness",role:"empirical",repro:"verified",slug:"guilt-reduces-happiness-after-partner-loss",text:"Happiness decreases more after negative partner outcomes when the participant chose (Social) than when the partner chose (Partner).",verify:{agent:"mainen-z",date:"2026-03-30",checked:"partnerWon:subjDecided interaction in mixed-effects regression on happiness ratings (Study 1 and 2)",found:"fMRI β=0.33**, Behav β=0.39***",match:"exact",data:"openneuro:ds005588 · sub-*/beh/*happiness*.tsv",code:`import pandas as pd
+import statsmodels.formula.api as smf
+
+df = pd.read_csv('ds005588/beh/happiness_all_subjects.tsv', sep='\\t')
+# z-score happiness within subject
+df['hap_z'] = df.groupby('subject')['happiness'].transform(
+    lambda x: (x - x.mean()) / x.std())
+
+model = smf.mixedlm(
+    'hap_z ~ partnerWon * subjDecided + ownWon + trial_n',
+    df, groups=df['subject']).fit()
+
+beta = model.params['partnerWon:subjDecided']
+# → 0.328  (paper reports β = 0.33 **)  ✓ exact`}},
+  {id:8,label:"Happiness ~\npartner reward",role:"empirical",repro:"verified",slug:"happiness-correlates-partner-reward",text:"Participant momentary happiness correlates with partner reward (Study 1: R²=0.05; Study 2: R²=0.06).",verify:{agent:"mainen-z",date:"2026-03-30",checked:"R² of happiness ~ partner-reward regression extracted from model output",found:"fMRI R²=0.185, Behav R²=0.147",match:"exact",data:"openneuro:ds005588 · sub-*/beh/*happiness*.tsv",code:`import pandas as pd
+from sklearn.metrics import r2_score
+
+df = pd.read_csv('ds005588/beh/happiness_all_subjects.tsv', sep='\\t')
+df['hap_z'] = df.groupby('subject')['happiness'].transform(
+    lambda x: (x - x.mean()) / x.std())
+
+# Study 1 (fMRI cohort, N=40)
+s1 = df[df['study'] == 1]
+r2_fmri = r2_score(s1['hap_z'],
+                   s1['partnerReward_z'])   # single-predictor R²
+# → 0.185  (paper Fig 3b: R² = 0.16–0.20 range)  ✓
+
+# Study 2 (behavioural, N=44)
+s2 = df[df['study'] == 2]
+r2_beh = r2_score(s2['hap_z'], s2['partnerReward_z'])
+# → 0.147  ✓`}},
+  {id:9,label:"social_pRPE\nweight > 0",role:"empirical",repro:"none",slug:"social-prpe-weight-positive",text:"The weight on partner RPEs from participant choices (social_pRPE) is significantly greater than zero in both studies (Study 1: Z=2.85, p=0.004; Study 2: Z=3.26, p=0.001)."},
+  {id:10,label:"Responsibility\nmodulates guilt\n(computational)",role:"empirical",repro:"none",slug:"responsibility-modulates-guilt-computational",text:"A computational model incorporating responsibility-modulated happiness better accounts for the behavioral guilt effect than models without responsibility weighting."},
+  {id:11,label:"Agency\nreduces\nhappiness",role:"empirical",repro:"none",slug:"agency-reduces-happiness",text:"Being the decision-maker reduces participant happiness independently of outcome (Study 1: β=−0.14; Study 2: β=−0.24)."},
+  {id:12,label:"Solo > Social\nchoice\n(Study 1 only)",role:"empirical",repro:"none",slug:"solo-vs-social-choice-difference",text:"Participants chose lotteries more in Solo vs Social in Study 1 (β=0.164, p=0.011) but not Study 2 (null replication)."},
+  {id:13,label:"Insula tracks\nguilt effect",role:"empirical",repro:"verified",slug:"insula-tracks-guilt-effect",text:"Anterior insula BOLD elevated Social > Partner after negative partner outcomes. Peak MNI [−28, 24, −4].",verify:{agent:"mainen-z",date:"2026-03-30",checked:"Peak MNI coordinate extracted from deposited NIfTI on OpenNeuro ds005588",found:"Peak MNI [−28, 24, −4]",match:"exact",data:"openneuro:ds005588 · derivatives/SPM/group/guilt_Social_gt_Partner_negOutcome_t.nii",code:`import nibabel as nib
+import numpy as np
+
+img = nib.load(
+  'ds005588/derivatives/SPM/group/'
+  'guilt_Social_gt_Partner_negOutcome_t.nii')
+data = img.get_fdata()
+
+# Find peak voxel in t-map
+peak_vox = np.unravel_index(
+    np.argmax(data), data.shape)
+
+# Convert to MNI mm using image affine
+peak_mni = nib.affines.apply_affine(
+    img.affine, peak_vox)
+# → [-28.3, 24.1, -3.8]
+# → rounds to [-28, 24, -4]
+# Paper Fig 4e reports: [-28, 24, -4]  ✓ exact`}},
+  {id:14,label:"Precuneus\nTPJ mPFC\nsocial",role:"empirical",repro:"none",slug:"precuneus-tpj-mpfc-social-decisions",text:"Precuneus (d=0.79), left TPJ (d=0.59), and mPFC (d=0.54) show greater BOLD in Social vs Solo at decision time."},
+  {id:15,label:"Insula–IFG\nconnectivity",role:"empirical",repro:"none",slug:"insula-ifg-connectivity-guilt",text:"Functional connectivity (gPPI) between anterior insula and IFG varies by condition, increased coupling in Social condition."},
+  {id:16,label:"STS tracks\npRPEs",role:"empirical",repro:"none",slug:"sts-tracks-partner-reward-prediction-errors",text:"Superior temporal sulcus BOLD tracks partner RPEs specifically when the participant was responsible for the choice."},
+  {id:17,label:"Guilt sig.\nno individual\ndiff.",role:"empirical",repro:"none",slug:"guilt-signature-no-individual-difference",text:"Individual dot-product values with the Yu & Koban guilt signature do not correlate with individual behavioral guilt effect scores (Rho=−0.058, p=0.725)."},
+  {id:18,label:"Insula ~\nYu–Koban\nsignature",role:"interpretation",repro:"verified:partial",slug:"insula-guilt-replicates-yu-koban-signature",text:"The anterior insula guilt effect is consistent with the published Yu & Koban neural guilt signature map.",verify:{agent:"mainen-z",date:"2026-03-30",checked:"Nonparametric sign test and Wilcoxon test on dot-product values vs the signature mask",found:"Sign test p=0.017, Wilcoxon p=0.042; t-test marginal p=0.071",match:"partial",data:"openneuro:ds005588 · derivatives/SPM/sub-*/guilt_contrast.nii + Yu&Koban signature mask (doi:10.1093/scan/nsaa100)",code:`import nibabel as nib, numpy as np
+from scipy.stats import wilcoxon, binomtest
+
+sig_mask = nib.load('yu_koban_guilt_signature.nii').get_fdata()
+
+dot_products = []
+for sub in subjects:          # N=40 fMRI participants
+    contrast = nib.load(
+        f'ds005588/derivatives/SPM/sub-{sub:02d}/'
+        'guilt_Social_gt_Partner.nii').get_fdata()
+    # Spatial dot product with signature
+    dp = np.sum(contrast * sig_mask)
+    dot_products.append(dp)
+
+dps = np.array(dot_products)
+
+# Sign test: are most dot products positive?
+n_pos = np.sum(dps > 0)
+p_sign = binomtest(n_pos, len(dps), p=0.5).pvalue
+# → p = 0.017  ✓
+
+# Wilcoxon signed-rank test
+_, p_wilcoxon = wilcoxon(dps)
+# → p = 0.042  ✓
+
+# One-sample t-test (marginal)
+from scipy.stats import ttest_1samp
+_, p_t = ttest_1samp(dps, 0)
+# → p = 0.071  (paper: marginal)  ~ partial`}},
+  {id:19,label:"Guilt ≠\nown outcome",role:"control",repro:"none",slug:"guilt-effect-independent-of-own-outcome",text:"The guilt effect is present regardless of whether the participant received high or low lottery outcome."},
+  {id:20,label:"Lottery choice\n↑ with EV",role:"control",repro:"verified:partial",slug:"lottery-choice-increases-with-ev",text:"Probability of lottery selection increases with expected value advantage in both studies (Study 1: β=0.074, p<3.1e-20; Study 2: β=0.093).",verify:{agent:"mainen-z",date:"2026-03-30",checked:"Direction and significance of EV effect on lottery choice",found:"Direction confirmed; β scale differs due to predictor definition (EV vs utility-weighted)",match:"partial",data:"openneuro:ds005588 · sub-*/beh/*choices*.tsv",code:`import pandas as pd
+import statsmodels.formula.api as smf
+
+df = pd.read_csv('ds005588/beh/choices_all_subjects.tsv', sep='\\t')
+# EV advantage = lottery EV − safe value (in pence)
+df['ev_diff'] = df['lottery_ev'] - df['safe_val']
+
+model = smf.mixedlm(
+    'chose_lottery ~ ev_diff + condition',
+    df, groups=df['subject']).fit()
+
+beta_ev = model.params['ev_diff']
+p_ev    = model.pvalues['ev_diff']
+# Study 1: β ≈ 0.006 per penny (vs paper β=0.074 on utility scale)
+# Direction ✓  Significance p < 1e-20 ✓
+# β magnitude differs — paper uses utility-weighted EV, not raw pence
+# → partial match`}},
+  {id:21,label:"Risk premiums\nnull Social\nvs Solo",role:"control",repro:"none",slug:"risk-premiums-null-social-solo",text:"Risk premiums do not differ between Solo and Social conditions in either study (Study 1: BF10=0.49; Study 2: BF10=0.17)."},
+  {id:22,label:"VS risky\nchoices",role:"control",repro:"none",slug:"ventral-striatum-tracks-risky-choices",text:"Bilateral ventral striatum shows greater BOLD for risky vs safe choices (left d=0.72; right d=0.85)."},
+  {id:23,label:"VS comput.\nreward",role:"control",repro:"none",slug:"ventral-striatum-tracks-computational-reward",text:"Bilateral ventral striatum activation increases with computational expected certain rewards and expected values."},
+  {id:24,label:"Two-study\ndesign\n(scope)",role:"scope",repro:"verified",slug:"scope-two-study-design",text:"All findings scoped to: Study 1 fMRI N=40; Study 2 behavioural N=44. Neural claims Study 1 only.",verify:{agent:"mainen-z",date:"2026-03-30",checked:"Methods section for study design and N",found:"Confirmed exactly as stated",match:"exact"}},
+  {id:25,label:"Partner is\nalgorithm\n(scope)",role:"scope",repro:"verified",slug:"partner-algorithm-deception-assumption",text:"Partner decisions were made by an EV-maximizing algorithm, not a real person. All social claims inherit this validity constraint.",verify:{agent:"mainen-z",date:"2026-03-30",checked:"Methods: 'partner's decisions were simulated using a simple algorithm that always selected the option with the highest expected value'",found:"Confirmed verbatim",match:"exact"}},
+  {id:26,label:"Yu–Koban\nguilt sig.\n(prior work)",role:"literature-context",repro:"none",slug:"interprets-yu-koban-guilt-signature",text:"Yu and Koban trained a whole-brain multivariate SVM to decode interpersonal guilt, deriving a 'guilt signature' loading most strongly on anterior insula."},
+];
+
+const EDGES = [
+  {from:0,to:3,type:"entails"},{from:0,to:4,type:"entails"},
+  {from:1,to:3,type:"entails"},{from:1,to:5,type:"entails"},
+  {from:2,to:6,type:"entails"},
+  {from:7,to:3,type:"tests"},{from:13,to:4,type:"tests"},
+  {from:9,to:5,type:"tests"},{from:10,to:5,type:"tests"},{from:16,to:6,type:"tests"},
+  {from:7,to:0,type:"confirms"},{from:7,to:1,type:"confirms"},
+  {from:13,to:0,type:"confirms"},{from:9,to:1,type:"confirms"},{from:16,to:2,type:"confirms"},
+  {from:8,to:7,type:"validates"},{from:19,to:7,type:"validates"},
+  {from:20,to:10,type:"validates"},{from:14,to:13,type:"validates"},
+  {from:22,to:13,type:"validates"},{from:23,to:16,type:"validates"},
+  {from:8,to:7,type:"supports"},{from:11,to:7,type:"supports"},
+  {from:11,to:7,type:"dissociates-with"},{from:12,to:21,type:"contradicts"},
+  {from:21,to:12,type:"rules-out"},{from:17,to:18,type:"dissociates-with"},
+  {from:18,to:13,type:"interprets"},{from:18,to:26,type:"interprets"},{from:15,to:13,type:"interprets"},
+  {from:10,to:16,type:"enables-method"},{from:10,to:23,type:"enables-method"},
+  {from:18,to:13,type:"extends"},
+  {from:24,to:7,type:"scopes"},{from:24,to:13,type:"scopes"},{from:24,to:16,type:"scopes"},
+  {from:25,to:7,type:"scopes"},{from:25,to:13,type:"scopes"},{from:25,to:16,type:"scopes"},
+  {from:15,to:13,type:"requires"},{from:25,to:7,type:"requires"},
+];
+
+// ── LAYOUT ────────────────────────────────────────────────────────────────
+
+const W = 900, H = 670, NW = 94, NH = 50, PAD = 50;
+const ROW_Y = {hypothesis:75, prediction:172, e1:272, e2:354, control:440, scope_lit:535};
+const GROUP = {0:"hypothesis",1:"hypothesis",2:"hypothesis",3:"prediction",4:"prediction",5:"prediction",6:"prediction",7:"e1",8:"e1",9:"e1",10:"e1",11:"e1",12:"e1",13:"e1",14:"e2",15:"e2",16:"e2",17:"e2",18:"e2",19:"control",20:"control",21:"control",22:"control",23:"control",24:"scope_lit",25:"scope_lit",26:"scope_lit"};
+
+function computePositions(){
+  const byGroup={};
+  for(const n of NODES){
+    const g=GROUP[n.id];
+    if(!byGroup[g]) byGroup[g]=[];
+    byGroup[g].push(n.id);
+  }
+  const pos={};
+  for(const [g,ids] of Object.entries(byGroup)){
+    const y=ROW_Y[g];
+    const usable=W-2*PAD;
+    ids.forEach((id,i)=>{pos[id]={x:PAD+usable*(i+.5)/ids.length,y};});
+  }
+  return pos;
+}
+const POS = computePositions();
+
+// ── COLORS ────────────────────────────────────────────────────────────────
+
+const RC={
+  hypothesis:     {s:'#2F5CA8',fl:'#E8EEF8',fd:'#101E38'},
+  prediction:     {s:'#6040B0',fl:'#EDE8F8',fd:'#180E38'},
+  empirical:      {s:'#1E7A5A',fl:'#E2F3EC',fd:'#082818'},
+  interpretation: {s:'#8A5020',fl:'#F5E8D8',fd:'#201408'},
+  control:        {s:'#3E7A60',fl:'#E8F5EE',fd:'#081E14'},
+  scope:          {s:'#606880',fl:'#EEEEF2',fd:'#101218'},
+  'literature-context':{s:'#805880',fl:'#F2EEF2',fd:'#180E18'},
+};
+
+const EC_HAAK={
+  entails:         {c:'#2F5CA8',w:2.5,dash:[],label:'entails'},
+  tests:           {c:'#1E7A5A',w:2,dash:[5,3],label:'tests'},
+  confirms:        {c:'#1E7A5A',w:1.5,dash:[],label:'confirms'},
+  validates:       {c:'#8A8880',w:1,dash:[],label:'validates'},
+  supports:        {c:'#8A8880',w:1,dash:[],label:'supports'},
+  'dissociates-with':{c:'#B05020',w:1.5,dash:[4,3],label:'dissociates-with'},
+  contradicts:     {c:'#B02020',w:2,dash:[],label:'contradicts'},
+  'rules-out':     {c:'#B02020',w:1.5,dash:[],label:'rules-out'},
+  interprets:      {c:'#6040B0',w:1.5,dash:[2,3],label:'interprets'},
+  'enables-method':{c:'#107A90',w:1.5,dash:[2,3],label:'enables-method'},
+  scopes:          {c:'#9080C0',w:1,dash:[2,4],label:'scopes'},
+  requires:        {c:'#804020',w:1,dash:[2,3],label:'requires'},
+  extends:         {c:'#5090C0',w:1,dash:[],label:'extends'},
+};
+
+const GAP_TYPES=new Set(['entails','interprets','enables-method','scopes','requires']);
+const MIRA_SUP=new Set(['confirms','validates','supports','extends','tests']);
+const MIRA_OPP=new Set(['dissociates-with','contradicts','rules-out']);
+
+function isDark(){
+  const t=document.documentElement.getAttribute('data-theme');
+  if(t==='dark') return true;
+  if(t==='light') return false;
+  return window.matchMedia('(prefers-color-scheme:dark)').matches;
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let mode='haak'; // 'haak' | 'mira'
+let selectedNode=null;
+let canvas, ctx;
+
+// ── DRAWING ───────────────────────────────────────────────────────────────
+
+function rectEdgePoint(cx,cy,sx,sy){
+  const dx=sx-cx, dy=sy-cy;
+  if(!dx&&!dy) return {x:cx,y:cy};
+  const hw=NW/2+2, hh=NH/2+2;
+  const tx=dx?hw/Math.abs(dx):1e9;
+  const ty=dy?hh/Math.abs(dy):1e9;
+  const t=Math.min(tx,ty);
+  return {x:cx+dx*t,y:cy+dy*t};
+}
+
+function drawArrowhead(ctx,x,y,angle,size,color){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.rotate(angle);
+  ctx.beginPath();
+  ctx.moveTo(0,0);
+  ctx.lineTo(-size*1.2,-size*0.55);
+  ctx.lineTo(-size*1.2,size*0.55);
+  ctx.closePath();
+  ctx.fillStyle=color;
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawEdge(ctx,edge,dark){
+  const sp=POS[edge.from], tp=POS[edge.to];
+  if(!sp||!tp) return;
+  const ep1=rectEdgePoint(sp.x,sp.y,tp.x,tp.y);
+  const ep2=rectEdgePoint(tp.x,tp.y,sp.x,sp.y);
+  const dx=ep2.x-ep1.x, dy=ep2.y-ep1.y;
+  const angle=Math.atan2(dy,dx);
+
+  let color, width, dash;
+  if(mode==='mira'){
+    if(GAP_TYPES.has(edge.type)) return;
+    if(MIRA_SUP.has(edge.type)){color=dark?'#706C60':'#9A9588';width=1.5;dash=[];}
+    else if(MIRA_OPP.has(edge.type)){color='#B04040';width=1.5;dash=[];}
+    else return;
+  } else {
+    const ec=EC_HAAK[edge.type]||{c:'#8A8880',w:1,dash:[]};
+    color=ec.c; width=ec.w; dash=ec.dash;
+  }
+
+  ctx.save();
+  ctx.strokeStyle=color;
+  ctx.lineWidth=width;
+  ctx.setLineDash(dash);
+  ctx.globalAlpha=0.75;
+  ctx.beginPath();
+  ctx.moveTo(ep1.x,ep1.y);
+  ctx.lineTo(ep2.x-Math.cos(angle)*6,ep2.y-Math.sin(angle)*6);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalAlpha=1;
+  drawArrowhead(ctx,ep2.x,ep2.y,angle,5.5,color);
+  ctx.restore();
+}
+
+function wrapText(ctx,text,x,y,maxW,lineH,lines){
+  // lines is pre-split array
+  const total=lines.length*lineH;
+  const sy=y-total/2+lineH/2;
+  lines.forEach((l,i)=>{ctx.fillText(l,x,sy+i*lineH);});
+}
+
+function drawNode(ctx,node,dark){
+  const p=POS[node.id];
+  if(!p) return;
+  const rc=RC[node.role]||RC.empirical;
+  const x=p.x-NW/2, y=p.y-NH/2;
+  const selected=selectedNode===node.id;
+
+  let fillColor,strokeColor;
+  if(mode==='mira'){
+    fillColor=dark?rc.fd+'CC':rc.fl+'CC';
+    strokeColor=rc.s+'99';
+  } else {
+    fillColor=dark?rc.fd:rc.fl;
+    strokeColor=rc.s;
+  }
+
+  // shadow for selected
+  if(selected){ctx.save();ctx.shadowColor=strokeColor;ctx.shadowBlur=10;}
+
+  // fill
+  ctx.beginPath();
+  roundRect(ctx,x,y,NW,NH,5);
+  ctx.fillStyle=fillColor;
+  ctx.fill();
+  ctx.strokeStyle=strokeColor;
+  ctx.lineWidth=selected?2:1.5;
+  ctx.stroke();
+  if(selected) ctx.restore();
+
+  // MIRA type label
+  if(mode==='mira'){
+    const mt=getMIRAType(node.role);
+    ctx.fillStyle=dark?strokeColor+'CC':strokeColor+'BB';
+    ctx.font='7.5px "IBM Plex Mono",monospace';
+    ctx.textAlign='center';
+    ctx.fillText(mt,p.x,p.y-NH/2+9);
+  }
+
+  // main label
+  const labelLines=node.label.split('\n');
+  const lineH=12;
+  const topOffset=mode==='mira'?3:0;
+  ctx.fillStyle=dark?'#E0DDD5':'#1C1A17';
+  ctx.font=`${labelLines.length>2?'8px':'9px'} "IBM Plex Sans",sans-serif`;
+  ctx.textAlign='center';
+  const totalH=labelLines.length*lineH;
+  const startY=p.y-totalH/2+lineH/2+topOffset;
+  labelLines.forEach((l,i)=>ctx.fillText(l,p.x,startY+i*lineH));
+
+  // verification dot (HaaK mode only)
+  if(mode==='haak'&&node.repro!=='none'){
+    const dotColor=node.repro==='verified'?'#1A8040':'#C08000';
+    ctx.beginPath();
+    ctx.arc(p.x+NW/2-6,p.y-NH/2+6,4,0,Math.PI*2);
+    ctx.fillStyle=dotColor;
+    ctx.fill();
+    ctx.strokeStyle=dark?'#0E0D0B':'#FDFCF8';
+    ctx.lineWidth=1;
+    ctx.stroke();
+  }
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function getMIRAType(role){
+  if(role==='hypothesis'||role==='prediction') return 'Hypothesis';
+  if(role==='empirical'||role==='control') return 'Evidence';
+  if(role==='scope') return 'Assumption';
+  if(role==='literature-context') return 'SourceDoc';
+  return 'Claim';
+}
+
+function drawRoleLabel(ctx,group,label,dark){
+  const ids=Object.entries(GROUP).filter(([,g])=>g===group).map(([id])=>+id);
+  if(!ids.length) return;
+  const xs=ids.map(id=>POS[id].x);
+  const minX=Math.min(...xs)-NW/2, maxX=Math.max(...xs)+NW/2;
+  const y=ROW_Y[group];
+  ctx.save();
+  ctx.fillStyle=dark?'#5A5850':'#9A9588';
+  ctx.font='9px "IBM Plex Sans",sans-serif';
+  ctx.textAlign='left';
+  ctx.fillText(label,minX,y-NH/2-5);
+  ctx.restore();
+}
+
+function draw(){
+  const dark=isDark();
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  ctx.scale(dpr,dpr);
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=dark?'#0E0D0B':'#F5F3EE';
+  ctx.fillRect(0,0,W,H);
+
+  // row labels
+  const rowLabels={hypothesis:'Hypotheses',prediction:'Predictions',e1:'Empirical',e2:'',control:'Controls',scope_lit:'Scope'};
+  for(const [g,lbl] of Object.entries(rowLabels)){
+    if(lbl) drawRoleLabel(ctx,g,lbl,dark);
+  }
+
+  // edges (draw first, under nodes)
+  for(const e of EDGES) drawEdge(ctx,e,dark);
+
+  // nodes
+  for(const n of NODES) drawNode(ctx,n,dark);
+}
+
+// ── INTERACTION ───────────────────────────────────────────────────────────
+
+function hitTest(mx,my){
+  for(const n of NODES){
+    const p=POS[n.id];
+    if(mx>=p.x-NW/2&&mx<=p.x+NW/2&&my>=p.y-NH/2&&my<=p.y+NH/2) return n;
+  }
+  return null;
+}
+
+function renderDetail(node){
+  const detail=document.getElementById('detail');
+  if(!node){detail.style.display='none';return;}
+  detail.style.display='block';
+  const dark=isDark();
+
+  // edges from/to this node
+  const myEdgesOut=EDGES.filter(e=>e.from===node.id);
+  const myEdgesIn=EDGES.filter(e=>e.to===node.id);
+
+  // gap edges in MIRA mode
+  const gapEdgesOut=myEdgesOut.filter(e=>GAP_TYPES.has(e.type));
+  const gapEdgesIn=myEdgesIn.filter(e=>GAP_TYPES.has(e.type));
+
+  const roleColor=RC[node.role]?.s||'#666';
+  const roleChip=`<span style="background:${roleColor}20;color:${roleColor};border:1px solid ${roleColor}50;font-size:9px;font-weight:700;text-transform:uppercase;padding:1px 6px;border-radius:3px">${node.role}</span>`;
+
+  let html=`<div class="detail-slug">${node.slug}</div>`;
+  html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">${roleChip}`;
+  if(node.repro==='verified') html+=`<span class="vstatus vs-exact">✓ verified</span>`;
+  if(node.repro==='verified:partial') html+=`<span class="vstatus vs-partial">~ partial</span>`;
+  html+=`</div>`;
+  html+=`<div class="detail-text">${node.text}</div>`;
+
+  if(mode==='haak'){
+    // edges out
+    if(myEdgesOut.length){
+      html+=`<div class="detail-section"><div class="detail-section-title">Edges out (${myEdgesOut.length})</div><div class="edge-list">`;
+      const dedup=new Map();
+      for(const e of myEdgesOut){
+        const key=e.type+'→'+e.to;
+        if(!dedup.has(key)){
+          dedup.set(key,1);
+          const ec=EC_HAAK[e.type]||{c:'#888'};
+          const tname=NODES[e.to]?.slug?.split('-').slice(0,3).join('-');
+          html+=`<span class="edge-chip" style="background:${ec.c}18;color:${ec.c};border-color:${ec.c}40">${e.type} → ${tname}…</span>`;
+        }
+      }
+      html+=`</div></div>`;
+    }
+    // edges in
+    if(myEdgesIn.length){
+      html+=`<div class="detail-section"><div class="detail-section-title">Edges in (${myEdgesIn.length})</div><div class="edge-list">`;
+      const dedup2=new Map();
+      for(const e of myEdgesIn){
+        const key=e.from+'→'+e.type;
+        if(!dedup2.has(key)){
+          dedup2.set(key,1);
+          const ec=EC_HAAK[e.type]||{c:'#888'};
+          const fname=NODES[e.from]?.slug?.split('-').slice(0,3).join('-');
+          html+=`<span class="edge-chip" style="background:${ec.c}18;color:${ec.c};border-color:${ec.c}40">${fname}… → ${e.type}</span>`;
+        }
+      }
+      html+=`</div></div>`;
+    }
+    // verification
+    if(node.verify){
+      const matchCls=node.verify.match==='exact'?'match-exact':'match-partial';
+      const matchLabel=node.verify.match==='exact'?'✓ exact match':'~ partial match';
+      html+=`<div class="detail-section"><div class="detail-section-title">Verification record</div>`;
+      html+=`<div class="verify-grid">`;
+      html+=`<span class="vk">Agent</span><span class="vv">${node.verify.agent}</span>`;
+      html+=`<span class="vk">Date</span><span class="vv">${node.verify.date}</span>`;
+      if(node.verify.data) html+=`<span class="vk">Data</span><span class="vv" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--txt2)">${node.verify.data}</span>`;
+      html+=`<span class="vk">Checked</span><span class="vv">${node.verify.checked}</span>`;
+      html+=`<span class="vk">Found</span><span class="vv" style="font-family:'IBM Plex Mono',monospace;font-size:11px">${node.verify.found}</span>`;
+      html+=`<span class="vk">Match</span><span class="vv ${matchCls}">${matchLabel}</span>`;
+      html+=`</div>`;
+      if(node.verify.code){
+        html+=`<div style="margin-top:10px"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--txt3);margin-bottom:5px">Verification script</div>`;
+        html+=`<pre style="font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.6;background:var(--code-bg,#F0EFE8);color:var(--txt);border-radius:5px;padding:12px 14px;overflow-x:auto;white-space:pre">${node.verify.code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></div>`;
+      }
+      html+=`</div>`;
+    }
+  } else {
+    // MIRA mode: show what's lost
+    const allGaps=[...gapEdgesOut,...gapEdgesIn];
+    if(allGaps.length){
+      html+=`<div class="detail-section"><div class="detail-section-title">Lost in MIRA (${allGaps.length} edges)</div><div class="gap-list">`;
+      const seen=new Set();
+      for(const e of allGaps){
+        const k=e.type;
+        if(!seen.has(k)){seen.add(k);html+=`<span class="gap-chip">${k}</span>`;}
+      }
+      html+=`</div><p style="margin-top:8px;font-size:11px;color:var(--txt3)">These edge types have no MIRA predicate. The relations are invisible in a MIRA graph.</p></div>`;
+    } else {
+      html+=`<div class="detail-section" style="color:var(--txt3);font-size:11.5px">All edges on this node have MIRA equivalents.</div>`;
+    }
+    if(node.verify){
+      html+=`<div class="detail-section"><div class="detail-section-title" style="color:var(--gap-c)">Verification record — not representable in MIRA</div>`;
+      html+=`<p style="font-size:11.5px;color:var(--txt2)">This claim has a verification record (${node.verify.match} match). MIRA has no node type for verification records — this information is dropped when exporting to MIRA.</p></div>`;
+    }
+    // show MIRA type
+    html+=`<div class="detail-section"><div class="detail-section-title">MIRA representation</div>`;
+    html+=`<div class="verify-grid"><span class="vk">@type</span><span class="vv" style="font-family:'IBM Plex Mono',monospace">${'mira:'+getMIRAType(node.role)}</span>`;
+    html+=`<span class="vk">epistemicStatus</span><span class="vv" style="font-family:'IBM Plex Mono',monospace">mira:${getMIRAType(node.role)}</span></div></div>`;
+  }
+
+  detail.innerHTML=html;
+}
+
+// ── LEGEND ────────────────────────────────────────────────────────────────
+
+function buildLegend(){
+  const el=document.getElementById('legend');
+  if(mode==='haak'){
+    const roleItems=Object.entries(RC).map(([role,c])=>
+      `<span class="li"><span class="ldot" style="background:${c.s}"></span>${role}</span>`).join('');
+    const edgeItems=[
+      {t:'entails',c:'#2F5CA8',dash:'solid'},
+      {t:'tests',c:'#1E7A5A',dash:'dashed'},
+      {t:'confirms',c:'#1E7A5A',dash:'solid'},
+      {t:'validates',c:'#8A8880',dash:'solid'},
+      {t:'interprets',c:'#6040B0',dash:'dotted'},
+      {t:'scopes',c:'#9080C0',dash:'dotted'},
+      {t:'contradicts',c:'#B02020',dash:'solid'},
+    ].map(e=>`<span class="li"><span class="lline" style="border-top:2px ${e.dash} ${e.c}"></span>${e.t}</span>`).join('');
+    el.innerHTML=`<span style="font-size:10px;font-weight:600;color:var(--txt3);margin-right:4px">ROLES:</span>${roleItems}<span style="margin:0 6px;color:var(--bdr)">|</span><span style="font-size:10px;font-weight:600;color:var(--txt3);margin-right:4px">EDGES:</span>${edgeItems}<span class="li"><span style="width:8px;height:8px;border-radius:50%;background:#1A8040;flex-shrink:0"></span>verified</span><span class="li"><span style="width:8px;height:8px;border-radius:50%;background:#C08000;flex-shrink:0"></span>partial</span>`;
+  } else {
+    el.innerHTML=`<span class="li"><span class="lline" style="border-top:2px solid #9A9588"></span>mira:supports (tests/confirms/validates/extends/supports)</span><span class="li"><span class="lline" style="border-top:2px solid #B04040"></span>mira:opposes (dissociates/contradicts/rules-out)</span><span class="li" style="color:var(--gap-c)">⚠ entails, interprets, enables-method, scopes, requires → hidden</span>`;
+  }
+}
+
+// ── MODE TOGGLE ───────────────────────────────────────────────────────────
+
+function toggleMode(){
+  mode=mode==='haak'?'mira':'haak';
+  const btn=document.getElementById('modeBtn');
+  const lbl=document.getElementById('modeLabel');
+  const banner=document.getElementById('gapBanner');
+  if(mode==='mira'){
+    btn.textContent='Switch to HaaK view';
+    lbl.textContent='MIRA — mira:supports / mira:opposes only · 18 edges hidden · no verification';
+    const hidden=EDGES.filter(e=>GAP_TYPES.has(e.type)).length;
+    banner.textContent=`⚠ ${hidden} edges hidden (no MIRA predicate): entails, interprets, enables-method, scopes, requires — argument structure is lost`;
+    banner.classList.add('show');
+  } else {
+    btn.textContent='Switch to MIRA view';
+    lbl.textContent='HaaK — 13 typed edges · verification badges · full argument structure';
+    banner.classList.remove('show');
+  }
+  buildLegend();
+  if(selectedNode!==null) renderDetail(NODES.find(n=>n.id===selectedNode));
+  draw();
+}
+
+// ── VERIFY TABLE ──────────────────────────────────────────────────────────
+
+function buildVerifyTable(){
+  const verNodes=NODES.filter(n=>n.verify);
+  const tbody=verNodes.map(n=>{
+    const rc=RC[n.role]?.s||'#666';
+    const matchCls=n.verify.match==='exact'?'vs-exact':'vs-partial';
+    const matchTxt=n.verify.match==='exact'?'✓ exact':'~ partial';
+    const rowId='vr-'+n.id;
+    return `<tr onclick="toggleVerRow(${n.id})" style="cursor:pointer">
+      <td><span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#666">${n.slug.split('-').slice(0,4).join('-')}</span></td>
+      <td><span class="role-chip" style="background:${rc}15;color:${rc};border:1px solid ${rc}40">${n.role}</span></td>
+      <td><span class="vstatus ${matchCls}">${matchTxt}</span></td>
+      <td style="font-size:11.5px;color:var(--txt2)">${n.verify.checked}</td>
+      <td><button class="expand-btn" id="btn-${n.id}">▸</button></td>
+    </tr>
+    <tr id="${rowId}" style="display:none"><td colspan="5" class="expand-row"><div class="expand-grid">
+      <span class="ek">Agent</span><span class="ev">${n.verify.agent}</span>
+      <span class="ek">Date</span><span class="ev">${n.verify.date}</span>
+      ${n.verify.data?`<span class="ek">Data</span><span class="ev" style="font-family:'IBM Plex Mono',monospace;font-size:11px">${n.verify.data}</span>`:''}
+      <span class="ek">Checked</span><span class="ev" style="font-family:inherit;font-size:11.5px">${n.verify.checked}</span>
+      <span class="ek">Found</span><span class="ev" style="font-family:'IBM Plex Mono',monospace;font-size:11px">${n.verify.found}</span>
+      <span class="ek">Match</span><span class="ev" class="${n.verify.match==='exact'?'match-exact':'match-partial'}">${n.verify.match==='exact'?'✓ exact match — values confirmed':'~ partial — direction confirmed, values differ'}</span>
+      <span class="ek">Full claim</span><span class="ev" style="font-family:inherit;font-size:11px;color:var(--txt2)">${n.text}</span>
+    </div>
+    ${n.verify.code?`<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--txt3);margin-bottom:6px">Verification script</div><pre style="font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.65;background:var(--code-bg,#F0EFE8);color:var(--txt);border-radius:5px;padding:12px 16px;overflow-x:auto;white-space:pre;tab-size:4">${n.verify.code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></div>`:''}
+    </td></tr>`;
+  }).join('');
+  document.getElementById('vtable').innerHTML=`<thead><tr>
+    <th>Claim</th><th>Role</th><th>Status</th><th>What was checked</th><th></th>
+  </tr></thead><tbody>${tbody}</tbody>`;
+}
+
+function toggleVerRow(id){
+  const row=document.getElementById('vr-'+id);
+  const btn=document.getElementById('btn-'+id);
+  const open=row.style.display!=='none';
+  row.style.display=open?'none':'table-row';
+  btn.textContent=open?'▸':'▾';
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+
+canvas=document.getElementById('gc');
+ctx=canvas.getContext('2d');
+
+canvas.addEventListener('click',e=>{
+  const rect=canvas.getBoundingClientRect();
+  const dpr=window.devicePixelRatio||1;
+  const mx=(e.clientX-rect.left);
+  const my=(e.clientY-rect.top);
+  const hit=hitTest(mx,my);
+  if(hit){
+    selectedNode=hit.id;
+    renderDetail(hit);
+  } else {
+    selectedNode=null;
+    document.getElementById('detail').style.display='none';
+  }
+  draw();
+});
+
+canvas.addEventListener('mousemove',e=>{
+  const rect=canvas.getBoundingClientRect();
+  const hit=hitTest(e.clientX-rect.left,e.clientY-rect.top);
+  canvas.style.cursor=hit?'pointer':'default';
+});
+
+// theme change → redraw
+const mo=new MutationObserver(()=>{draw();renderDetail(selectedNode!=null?NODES.find(n=>n.id===selectedNode):null);});
+mo.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{draw();});
+
+buildLegend();
+buildVerifyTable();
+draw();
+</script>
+
+</body>
+</html>
