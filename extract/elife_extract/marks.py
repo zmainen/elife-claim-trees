@@ -20,16 +20,21 @@ text, so rewording a claim changes it, and a mark carrying one rots silently. Al
 it as the node identity, so the mark, the claim file and the MIRA node then name
 the same thing.
 
-Three states, and the third is what makes the document readable as a record:
+Every span that carries a result gets a mark saying what became of it:
 
     assigned        ⟦^author: @{quote} <claim-uuid>⟧
     no assertion    ⟦^author: @{quote} no-assertion⟧
-    gap             no mark at all
+    unclaimed       ⟦^author: @{quote} gap⟧
 
-A gap is recorded by *absence*. That is the whole point of marking the paper
-rather than tabulating it elsewhere: every sentence carrying a result is either
-marked or visibly bare, so a hole is something you can see by looking rather than
-something you have to be told.
+An unmarked sentence therefore means one thing only: it carries no result and was
+never an obligation.
+
+The first version recorded a gap by *absence*, which read well as a principle and
+failed on the page. 152 of this paper's 245 spans are ordinary prose, so absence
+was dominated by sentences that were never obligations, and a bare line could mean
+either "no claim accounts for this result" or "there is no result here" — the
+distinction the whole exercise exists to draw. Rendering it is what showed this;
+the argument for absence had sounded fine.
 """
 
 from __future__ import annotations
@@ -43,6 +48,7 @@ from .segment import segment
 logger = logging.getLogger(__name__)
 
 NO_ASSERTION = "no-assertion"
+GAP = "gap"
 
 # tika SPEC § 3: ⟦<sign><author>: <payload>⟧, and for an anchored kind the
 # payload opens with @{the quoted span}. The `^` sign is the claim assignment.

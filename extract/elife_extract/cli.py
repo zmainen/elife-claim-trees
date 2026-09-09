@@ -452,7 +452,7 @@ def cmd_mark(args: argparse.Namespace) -> int:
     import logging
     from .prepare import prepare
     from .coverage import assess_spans, apply_mapping
-    from .marks import render_marked, assignments_from_marked, NO_ASSERTION
+    from .marks import render_marked, assignments_from_marked, NO_ASSERTION, GAP
 
     logging.basicConfig(level=logging.INFO,
                         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
@@ -487,6 +487,11 @@ def cmd_mark(args: argparse.Namespace) -> int:
             assignments[span.uid] = uid
     for span, _why in rep.excluded:
         assignments[span.uid] = NO_ASSERTION
+    # A span carrying a result that no claim accounts for is marked as such. Leaving it bare
+    # would make it indistinguishable from the ordinary prose around it, which is most of the
+    # paper — and telling those two apart is the entire point.
+    for span in rep.orphans:
+        assignments[span.uid] = GAP
 
     text = render_marked(paper, assignments, author=args.author,
                          include_methods=args.include_methods)
@@ -497,11 +502,12 @@ def cmd_mark(args: argparse.Namespace) -> int:
     # Read the marks straight back. If the document cannot reproduce the
     # assignments it was just written from, it is not a record of anything.
     back = assignments_from_marked(text, paper, include_methods=args.include_methods)
-    gaps = len(rep.orphans)
+    n = lambda p: sum(1 for v in assignments.values() if v == p)
     print(f"=== Marked — {paper.paper_slug} ===")
-    print(f"  assigned to a claim : {sum(1 for v in assignments.values() if v != NO_ASSERTION)}")
-    print(f"  states no result    : {sum(1 for v in assignments.values() if v == NO_ASSERTION)}")
-    print(f"  gaps (left unmarked): {gaps}")
+    print(f"  assigned to a claim : {len(assignments) - n(NO_ASSERTION) - n(GAP)}")
+    print(f"  states no result    : {n(NO_ASSERTION)}")
+    print(f"  unclaimed (gap)     : {n(GAP)}")
+    print(f"  unmarked prose      : (carries no result — never an obligation)")
     print(f"  written             : {out}")
     if back == assignments:
         print(f"  round-trip          : OK — {len(back)} marks read back identically")
