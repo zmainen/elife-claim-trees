@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `ejdrup-2026-dopamine` · **Generated:** 2026-09-09
+**Paper:** `ejdrup-2026-dopamine` · **Generated:** 2026-09-10
 
 25 claims, 95 typed relations between them.
 

@@ -373,17 +373,52 @@ def gap_report(paper_slug, claims, dropped, questions):
     return "\n".join(L)
 
 
+def public_papers():
+    """The papers a public export may include, from `corpus.yaml`.
+
+    `--all` used to mean every directory under `claims/`, which is not the same
+    thing. The repository's `.gitignore` keeps private papers' claim trees and
+    verification scripts out of git, but `exports/` was never covered — so
+    exporting "the whole corpus" wrote MIRA files and gap reports for three lab
+    papers, two of them unpublished, into a directory that was then committed.
+    The manifest already records which corpora are public; the exporter now asks
+    it instead of trusting the filesystem.
+    """
+    manifest = os.path.join(ROOT, "corpus.yaml")
+    if not os.path.exists(manifest):
+        return None                      # no manifest: caller decides
+    data = yaml.safe_load(open(manifest, encoding="utf-8")) or {}
+    out = []
+    for name, c in (data.get("corpora") or {}).items():
+        if c.get("public"):
+            out += list(c.get("papers") or [])
+    return sorted(set(out))
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("paper", nargs="?", help="paper slug under claims/")
     p.add_argument("--all", action="store_true", help="export every paper")
     p.add_argument("--out-dir", default="exports")
+    p.add_argument("--include-private", action="store_true",
+                   help="also export papers corpus.yaml marks non-public. Off by default: "
+                        "`exports/` is committed, so a private paper exported here becomes "
+                        "a public file.")
     args = p.parse_args()
 
     if args.all:
-        papers = sorted(d for d in os.listdir(CLAIMS_DIR)
-                        if os.path.isdir(os.path.join(CLAIMS_DIR, d)))
+        on_disk = sorted(d for d in os.listdir(CLAIMS_DIR)
+                         if os.path.isdir(os.path.join(CLAIMS_DIR, d)))
+        allowed = public_papers()
+        if allowed is None or args.include_private:
+            papers = on_disk
+        else:
+            papers = [d for d in on_disk if d in allowed]
+            held = [d for d in on_disk if d not in allowed]
+            if held:
+                print(f"  skipping {len(held)} non-public paper(s): {', '.join(held)}\n"
+                      f"  (corpus.yaml marks them private; --include-private overrides)")
     elif args.paper:
         papers = [args.paper]
     else:
