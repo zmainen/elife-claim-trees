@@ -69,7 +69,33 @@ The R1 revision of the Meijer paper carries 41 claims against 24 in the v1 prepr
 
 ## 3. Claim induction — the ten-step process
 
-Claim induction is the translation of a paper from argument format into claim-graph format. It is not automated: it requires reading comprehension, domain judgment, and decisions about what constitutes a claim. Tools assist; they do not replace the analyst. The procedure has ten steps with one mandatory review gate at step 5, before any files are written. Steps 1–8 build and check the claim tree; steps 9–10 measure what it missed and export it.
+> ## No human checks this corpus
+>
+> **Every claim in this repository was produced by a language model, and no person has
+> verified any of it.** That is true of the whole pipeline, not one step of it:
+>
+> - The claims are **found** by three model calls reading the paper independently, and
+>   **reconciled** by a fourth.
+> - The relations between claims — the deductive spine — are **inferred** by a model call.
+> - Step 5 below is written as an analyst's review gate. In this version it runs either as
+>   `--review-mode auto-approve`, which writes the files unread, or as
+>   `--review-mode external`, which is **another model** reading the draft. There is no
+>   configuration in which a person sees the table before it is written.
+> - The `agent:` field on a verification record names **the agent identity that ran the
+>   script**, not a person who checked the result. All 225 records read `agent: mainen-z`;
+>   none of them means Zach Mainen read that claim.
+> - The coverage verdicts in `mappings/` — `covered`, `gap`, `no-assertion` — are **model
+>   judgements**, made from the paper and the claim text.
+>
+> Read the corpus as **a draft annotation layer**, not as adjudicated output. Where this
+> document says "curated", it means "assembled by this pipeline", not "checked by a person".
+>
+> A human-review step is compatible with the format — claim files carry provenance fields,
+> and the tooling can already write anchored comments and claim assignments into the paper
+> for a person to disposition. **It is not implemented, and it has not been run.** Adding it
+> would be a change to the method, and would be recorded here as one.
+
+Claim induction is the translation of a paper from argument format into claim-graph format. It demands reading comprehension, domain judgment, and decisions about what constitutes a claim — and in this version a model makes all of them. The procedure has ten steps with a review gate at step 5, which no person currently passes through. Steps 1–8 build and check the claim tree; steps 9–10 measure what it missed and export it.
 
 ### Step 1: Prepare
 
@@ -131,7 +157,17 @@ Instruct all extraction agents to avoid the following ten failure modes. These a
 
 ### Step 5: Review (the gate)
 
-Present the draft claim table to the analyst for review before writing any files. The analyst corrects claim sentences, reclassifies roles and types, adds missing claims, removes spurious ones, revises slugs, and adjudicates single-source candidates. Nothing is written to disk until the table is approved. This is the intellectual gate: the claim graph must be right before it is made permanent. Step 5 is where the schema's role labels (`hypothesis`, `prediction`, `empirical`, `control`, `scope`, `methodological`, `synthesis`, `interpretation`, `literature-context`) are first assigned definitively, because role-assignment requires the analyst's judgment about what kind of work each claim is doing in the paper's argument.
+**This step is specified but not implemented as written.** As specified: present the draft
+claim table for review before any files are written; the reviewer corrects claim sentences,
+reclassifies roles and types, adds missing claims, removes spurious ones, revises slugs, and
+adjudicates single-source candidates. Nothing reaches disk until the table is approved. It is
+the intellectual gate — the claim graph should be right before it is made permanent.
+
+As it runs today, the gate is passed by a model or skipped entirely: `--review-mode external`
+sends the draft to another model, and `--review-mode auto-approve` writes the files unread.
+The corpus in this repository was produced without a person passing this gate. The step is
+documented in full because it is what the method requires, and its absence is the single
+largest gap between the method and the artefact. Step 5 is where the schema's role labels (`hypothesis`, `prediction`, `empirical`, `control`, `scope`, `methodological`, `synthesis`, `interpretation`, `literature-context`) are first assigned definitively, because role-assignment requires the analyst's judgment about what kind of work each claim is doing in the paper's argument.
 
 ### Step 6: Dependency mapping
 

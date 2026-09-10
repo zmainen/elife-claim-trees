@@ -28,6 +28,18 @@ Figures are too coarse: a single figure panel contains multiple sub-results, and
 
 Existing claim-extraction approaches tend toward either sentence-level NLP (too granular, loses causal structure) or paper-level labeling (too coarse, misses the verification problem). Panel-level is the level at which reproducibility actually operates.
 
+## No human checks this corpus
+
+**Every claim here was produced by a language model, and no person has verified any of it.**
+The claims are found by three model calls and reconciled by a fourth; the relations between
+them are inferred by a fifth; the review gate the methodology specifies is passed either by
+another model or not at all. The `agent:` field on a verification record names the agent that
+ran the script, not a person who checked the result.
+
+Read this as a draft annotation layer, not as adjudicated output. A human-review step is
+compatible with the format and is **not implemented**. See
+[`docs/method.md`](docs/method.md) § 3 for exactly which steps are model calls.
+
 ## The claim graph
 
 Claims relate to each other via directed belongings: `supports`, `requires`, `contradicts`, `extends`. The graph is stored as plain text files — no database, no neural network required for the core structure. Each node is a claim file; each edge is a typed relation in the frontmatter. The graph is human-auditable at every level.

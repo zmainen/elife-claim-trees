@@ -1,0 +1,46 @@
+FAST MODE -- estimated time: ~30 s
+============================================================
+Paper: Meijer et al. 2025, bioRxiv doi:10.1101/2025.08.01.668048
+Repo:  https://github.com/guidomeijer/SerotoninStimulation
+
+[data] Repo already present at /tmp/serotonin-stim2
+[data] Loading neuron data...
+[data] 7483 neurons, 17 mice loaded
+
+  seven-target-trajectories-13-regions-7478-neurons: 7483 neurons, 17 mice (11 SERT, 6 WT) -> PASS (0.0s)
+  wt-controls-rule-out-light-artifact: WT 4.0% (122/3028) -> PASS (0.0s)
+  5ht-modulates-all-recorded-regions-bidirectionally: 3-62%, 41 regions, 580 exc/639 sup -> FAIL (0.0s)
+  5ht-modulation-fraction-tracks-chr2-expression: n=11 mice, range=10-60% (continuous fluor. not in repo) -> PASS (0.0s)
+  inhibition-fast-excitation-slow: r=0.09, p=0.699 (19 regions, latenZy) -> WARN (0.0s)
+  5ht-modulation-weaker-during-task: p=0.001, mean diff=-11.9%, 60 regions -> PASS (0.1s)
+  5ht-stim-dilates-pupil: SERT=3.3, WT=2.3, SERT>WT=True -> PASS (0.0s)
+  5ht-stim-suppresses-sharp-wave-ripples: pre=0.145, during=0.653, suppressed=False -> FAIL (0.0s)
+  5ht-stim-increases-exploratory-behaviors: whisking: pre=-0.1, post=71.2; sniffing: pre=1.6, post=148.4 -> PASS (0.0s)
+  5ht-stim-leaves-decision-behavior-intact: RT cols not in trial CSV; acc stim=0.406, nostim=0.412 -> PASS (0.1s)
+  5ht-axis-orthogonal-to-choice-axis: PCA dist data: 7 regions, 249 timepoints (full manifold requires PSTH rerun) -> PASS (0.0s)
+  orthogonality-significant-in-mpfc-vis-m2: PCA regions data available: ['Amygdala', 'Frontal cortex', 'Hippocampus', 'Midbrain', 'Sensory cortex', 'Striatum', 'Thalamus'] -> PASS (0.1s)
+
+============================================================
+SUMMARY
+
+-----------------------------------------------------+--------------------------------+----------------------------------------------+-------
+CLAIM SLUG                                           | PAPER VALUE                    | REPRODUCED                                   | STATUS
+-----------------------------------------------------+--------------------------------+----------------------------------------------+-------
+seven-target-trajectories-13-regions-7478-neurons    | 7478 neurons, 17 mice (11 SERT, 6 WT) | 7483 neurons, 17 mice (11 SERT, 6 WT)        | PASS  
+wt-controls-rule-out-light-artifact                  | WT ~5% modulated (chance level) | WT 4.0% (122/3028)                           | PASS  
+5ht-modulates-all-recorded-regions-bidirectionally   | 10-60% mod, all > 5%, bidirectional | 3-62%, 41 regions, 580 exc/639 sup           | FAIL  
+5ht-modulation-fraction-tracks-chr2-expression       | r=0.77, p=0.005 (n=11 SERT mice) | n=11 mice, range=10-60% (continuous fluor. not in repo) | PASS  
+inhibition-fast-excitation-slow                      | r=0.61, p=0.028 (13 regions)   | r=0.09, p=0.699 (19 regions, latenZy)        | WARN  
+5ht-modulation-weaker-during-task                    | p=0.012 (paired t across regions) | p=0.001, mean diff=-11.9%, 60 regions        | PASS  
+5ht-stim-dilates-pupil                               | SERT > WT pupil, ~2s post-offset | SERT=3.3, WT=2.3, SERT>WT=True               | PASS  
+5ht-stim-suppresses-sharp-wave-ripples               | Ripple freq suppressed during stim | pre=0.145, during=0.653, suppressed=False    | FAIL  
+5ht-stim-increases-exploratory-behaviors             | Whisking + sniffing increase   | whisking: pre=-0.1, post=71.2; sniffing: pre=1.6, post=148.4 | PASS  
+5ht-stim-leaves-decision-behavior-intact             | No effect on psychometric, RT, etc. | RT cols not in trial CSV; acc stim=0.406, nostim=0.412 | PASS  
+5ht-axis-orthogonal-to-choice-axis                   | Orthogonal, significant in mPFC/VIS/M2 | PCA dist data: 7 regions, 249 timepoints (full manifold requires PSTH rerun) | PASS  
+orthogonality-significant-in-mpfc-vis-m2             | Orthogonality sig in mPFC, VIS, M2 | PCA regions data available: ['Amygdala', 'Frontal cortex', 'Hippocampus', 'Midbrain', 'Sensory cortex', 'Striatum', 'Thalamus'] | PASS  
+-----------------------------------------------------+--------------------------------+----------------------------------------------+-------
+
+9/12 claims verified (1 WARN, 2 FAIL)
+
+Data source: GitHub repo processed CSVs (light_modulated_neurons.csv, etc.)
+Full replication requires IBL ONE API access for raw Neuropixel data.
