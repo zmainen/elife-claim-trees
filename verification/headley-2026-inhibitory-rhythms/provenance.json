@@ -1,0 +1,65 @@
+{
+  "paper": "headley-2026-inhibitory-rhythms",
+  "script": "verification/headley-2026-inhibitory-rhythms/verify.py",
+  "argv": [],
+  "observed_by": "verification/audit_run.py",
+  "recorded": "2026-09-10T16:12:35+00:00",
+  "interpreter": {
+    "executable": "/Users/zach/anaconda/bin/python3",
+    "version": "3.10.18"
+  },
+  "exit": "SystemExit(0)",
+  "results": [
+    {
+      "claim": "distal-inhib-drops-firing-02hz",
+      "paper_value": "control=5.5 Hz, distal\u00d72=0.2 Hz",
+      "reproduced_value": "control=5.50, dendritic=0.20 Hz",
+      "status": "PASS"
+    },
+    {
+      "claim": "perisomatic-inhib-drops-firing-07hz",
+      "paper_value": "control=5.5 Hz, perisomatic\u00d72=0.7 Hz",
+      "reproduced_value": "control=5.50, somatic=0.70 Hz",
+      "status": "PASS"
+    },
+    {
+      "claim": "na-spikes-couple-2to3ms-before-ap",
+      "paper_value": "Na+ peak -1 to -3 ms before AP (proximal)",
+      "reproduced_value": "proximal peak times: ['-2', '-3', '-1', '-2'] ms",
+      "status": "PASS"
+    },
+    {
+      "claim": "nmda-spikes-couple-25ms-before-ap",
+      "paper_value": "NMDA peak -15 to -25 ms before AP (distal)",
+      "reproduced_value": "distal peak times: ['-10', '-15', '-20', '-20'] ms",
+      "status": "PASS"
+    }
+  ],
+  "opened": [
+    {
+      "path": "/tmp/headley/data/Figure2b.csv",
+      "bytes": 18697,
+      "sha256_12": "d1a62ef5c3e5"
+    },
+    {
+      "path": "/tmp/headley/data/Figure3a.csv",
+      "bytes": 7523,
+      "sha256_12": "9cbeea137fd7"
+    },
+    {
+      "path": "/tmp/headley/data/Figure4a.csv",
+      "bytes": 1424,
+      "sha256_12": "f31b71ec9896"
+    },
+    {
+      "path": "verification/headley-2026-inhibitory-rhythms/3",
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/Users/zach/Projects/mainenlab/elife-claim-trees/verification/headley-2026-inhibitory-rhythms/3'"
+    },
+    {
+      "path": "verification/headley-2026-inhibitory-rhythms/5",
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/Users/zach/Projects/mainenlab/elife-claim-trees/verification/headley-2026-inhibitory-rhythms/5'"
+    }
+  ],
+  "stdout_tail": "FAST MODE \u2014 estimated time: ~2 min\n============================================================\n[data] Cloning https://github.com/dbheadley/InhibOnDendComp \u2192 /tmp/headley ...\n[data] Clone complete.\n[data] Found 15 CSVs in /tmp/headley/data\n\n[data] Loading /tmp/headley/data/Figure4a.csv\n  firing-rate claims: control=5.50, distal=0.20 (0.0s)\n  na-spikes-couple-2to3ms-before-ap: [-2, -3, -1, -2] \u2192 PASS (0.0s)\n  nmda-spikes-couple-25ms-before-ap: [-10, -15, -20, -20] \u2192 PASS (0.0s)\n\n[figures] Running /Users/zach/Projects/mainenlab/elife-claim-trees/verification/headley-2026-inhibitory-rhythms/figures/generate_figures.py ...\nGenerating Headley 2026 figure panels...\n[figures] WARNING: exited 1\nTraceback (most recent call last):\n  File \"/Users/zach/Projects/mainenlab/elife-claim-trees/verification/headley-2026-inhibitory-rhythms/figures/generate_figures.py\", line 120, in <module>\n    fig4a_firing_rates()\n  File \"/Users/zach/Projects/mainenlab/elife-claim-trees/verification/headley-2026-inhibitory-rhythms/figures/generate_figures.py\", line 23, in fig4a_firing_rates\n    df = pd.read_csv(os.path.join(DATA_DIR, \"Figure4a.csv\"))\n  File \"/Users/zach/anaconda/lib/python3.10/site-packages/pand\n\n============================================================\nSUMMARY\n\n-------------------------------------------------+----------------------------+------------------------------------------+-------\nCLAIM SLUG                                       | PAPER VALUE                | REPRODUCED                               | STATUS\n-------------------------------------------------+----------------------------+------------------------------------------+-------\ndistal-inhib-drops-firing-02hz                   | control=5.5 Hz, distal\u00d72=0.2 Hz | control=5.50, dendritic=0.20 Hz          | PASS  \nperisomatic-inhib-drops-firing-07hz              | control=5.5 Hz, perisomatic\u00d72=0.7 Hz | control=5.50, somatic=0.70 Hz            | PASS  \nna-spikes-couple-2to3ms-before-ap                | Na+ peak -1 to -3 ms before AP (proximal) | proximal peak times: ['-2', '-3', '-1', '-2'] ms | PASS  \nnmda-spikes-couple-25ms-before-ap                | NMDA peak -15 to -25 ms before AP (distal) | distal peak times: ['-10', '-15', '-20', '-20'] ms | PASS  \n-------------------------------------------------+----------------------------+------------------------------------------+-------\n\n4/4 claims verified (0 WARN, 0 FAIL)\n",
+  "data_commit": "0476c95"
+}

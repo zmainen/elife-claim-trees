@@ -1,0 +1,75 @@
+{
+  "paper": "scheller-2026-self-prioritization",
+  "script": "verification/scheller-2026-self-prioritization/verify.py",
+  "argv": [],
+  "observed_by": "verification/audit_run.py",
+  "recorded": "2026-09-10T16:12:49+00:00",
+  "interpreter": {
+    "executable": "/Users/zach/anaconda/bin/python3",
+    "version": "3.10.18"
+  },
+  "exit": "SystemExit(0)",
+  "results": [
+    {
+      "claim": "perceptual-salience-6hz-advantage",
+      "paper_value": "6 Hz",
+      "reproduced_value": "6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20)",
+      "status": "PASS"
+    },
+    {
+      "claim": "other-association-advantage-social",
+      "paper_value": "-1.6 Hz",
+      "reproduced_value": "-1.36 Hz (Exp2 other-salient vs neutral)",
+      "status": "PASS"
+    },
+    {
+      "claim": "processing-capacity-rises-perceptual-self",
+      "paper_value": "\u0394C=2.6 Hz",
+      "reproduced_value": "\u0394C=2.60 Hz",
+      "status": "PASS"
+    },
+    {
+      "claim": "spe-robust-matching-both-experiments [Exp1]",
+      "paper_value": "d=1.064",
+      "reproduced_value": "d=1.09",
+      "status": "PASS"
+    },
+    {
+      "claim": "spe-robust-matching-both-experiments [Exp2]",
+      "paper_value": "d=0.982",
+      "reproduced_value": "d=1.01",
+      "status": "PASS"
+    },
+    {
+      "claim": "spe-matching-correlates-social-decision [Exp1]",
+      "paper_value": "r=0.354",
+      "reproduced_value": "r=0.354",
+      "status": "PASS"
+    },
+    {
+      "claim": "spe-matching-correlates-social-decision [Exp2]",
+      "paper_value": "r=0.069",
+      "reproduced_value": "r=0.069",
+      "status": "PASS"
+    },
+    {
+      "claim": "self-prioritization-absent-social",
+      "paper_value": "-1.2 Hz",
+      "reproduced_value": "diff=-1.20 Hz",
+      "status": "PASS"
+    }
+  ],
+  "opened": [
+    {
+      "path": "/tmp/scheller-2026/estimates_indiv_C_Exp1.csv",
+      "bytes": 298247,
+      "sha256_12": "9fc0985e1eb1"
+    },
+    {
+      "path": "/tmp/scheller-2026/estimates_indiv_C_Exp2.csv",
+      "bytes": 617841,
+      "sha256_12": "025e6c568d88"
+    }
+  ],
+  "stdout_tail": "FAST MODE \u2014 estimated time: ~3 min\n============================================================\nData source: OSF https://osf.io/a62df\n\n[data] Attempting OSF data download for live recomputation...\n[data] Exp1 estimates CSV downloaded via 6981ef8c094a3454212f7f97\n[data] Exp2 estimates CSV downloaded via 69821558fd70e3d1bb2f80a2\n[data] Exp1 loaded: 3807 rows, cols: ['Unnamed: 0', 'mean', 'sd', 'hdi_3%', 'hdi_97%', 'mcse_mean', 'mcse_sd', 'ess_bulk']\n[data] Exp2 loaded: 7831 rows, cols: ['Unnamed: 0', 'mean', 'sd', 'hdi_3%', 'hdi_97%', 'mcse_mean', 'mcse_sd', 'ess_bulk']\n\n  perceptual-salience-6hz-advantage: paper=6 Hz, reproduced=6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20) \u2192 PASS (0.0s)\n  other-association-advantage-social: paper=-1.6 Hz, reproduced=-1.36 Hz (Exp2 other-salient vs neutral) \u2192 PASS (0.0s)\n  processing-capacity-rises-perceptual-self: paper=\u0394C=2.6 Hz, reproduced=\u0394C=2.60 Hz \u2192 PASS (0.0s)\n  spe-robust-matching-both-experiments [Exp1]: paper=d=1.064, reproduced=d=1.09 \u2192 PASS (0.0s)\n  spe-robust-matching-both-experiments [Exp2]: paper=d=0.982, reproduced=d=1.01 \u2192 PASS (0.0s)\n  spe-matching-correlates-social-decision [Exp1]: paper=r=0.354, reproduced=r=0.354 \u2192 PASS (0.0s)\n  spe-matching-correlates-social-decision [Exp2]: paper=r=0.069, reproduced=r=0.069 \u2192 PASS (0.0s)\n  self-prioritization-absent-social: paper=-1.2 Hz, reproduced=diff=-1.20 Hz \u2192 PASS (0.0s)\n\n============================================================\nSUMMARY\n\n-----------------------------------------------------+------------------------+----------------------------+-------\nCLAIM SLUG                                           | PAPER VALUE            | REPRODUCED                 | STATUS\n-----------------------------------------------------+------------------------+----------------------------+-------\nperceptual-salience-6hz-advantage                    | 6 Hz                   | 6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20) | PASS  \nother-association-advantage-social                   | -1.6 Hz                | -1.36 Hz (Exp2 other-salient vs neutral) | PASS  \nprocessing-capacity-rises-perceptual-self            | \u0394C=2.6 Hz              | \u0394C=2.60 Hz                 | PASS  \nspe-robust-matching-both-experiments [Exp1]          | d=1.064                | d=1.09                     | PASS  \nspe-robust-matching-both-experiments [Exp2]          | d=0.982                | d=1.01                     | PASS  \nspe-matching-correlates-social-decision [Exp1]       | r=0.354                | r=0.354                    | PASS  \nspe-matching-correlates-social-decision [Exp2]       | r=0.069                | r=0.069                    | PASS  \nself-prioritization-absent-social                    | -1.2 Hz                | diff=-1.20 Hz              | PASS  \n-----------------------------------------------------+------------------------+----------------------------+-------\n\n8/8 claims verified (0 WARN, 0 FAIL)\n\nNote: Values from pre-computed OSF Stan posterior CSVs (estimates_indiv_C.csv).\nExact match within rounding to paper throughout. See claim files for full details.\n"
+}

@@ -91,10 +91,16 @@ def verify_from_notes():
     Verify all claims using exact values from the original verification session.
     These values were read directly from OSF Stan posterior CSVs.
     """
+    # The slugs below are the claim files' slugs, and must stay that way: two of them read
+    # `other-association-advantage-social` and `self-prioritization-absent-social`, while
+    # the claims are `…-social-condition` and `…-social-decision`. The verdicts were real
+    # and simply never attached to a claim -- both claims read `verified` on the strength of
+    # a result no reconciliation could find. scripts/audit_verifications.py now reports a
+    # result whose slug matches no claim as an error.
     claims = [
         ("perceptual-salience-6hz-advantage", "6 Hz", 6.05, 0.2,
          "6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20)"),
-        ("other-association-advantage-social", "-1.6 Hz", -1.36, 0.35,
+        ("other-association-advantage-social-condition", "-1.6 Hz", -1.36, 0.35,
          "-1.36 Hz (Exp2 other-salient vs neutral)"),
         ("processing-capacity-rises-perceptual-self", "ΔC=2.6 Hz", 2.60, 0.05,
          "ΔC=2.60 Hz"),
@@ -102,7 +108,7 @@ def verify_from_notes():
         ("spe-robust-matching-both-experiments [Exp2]", "d=0.982", 1.01, 0.05, "d=1.01"),
         ("spe-matching-correlates-social-decision [Exp1]", "r=0.354", 0.354, 0.001, "r=0.354"),
         ("spe-matching-correlates-social-decision [Exp2]", "r=0.069", 0.069, 0.001, "r=0.069"),
-        ("self-prioritization-absent-social", "-1.2 Hz", -1.20, 0.05, "diff=-1.20 Hz"),
+        ("self-prioritization-absent-social-decision", "-1.2 Hz", -1.20, 0.05, "diff=-1.20 Hz"),
     ]
 
     df2 = load_estimates(2)

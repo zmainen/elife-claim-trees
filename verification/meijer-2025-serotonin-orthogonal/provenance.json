@@ -1,0 +1,140 @@
+{
+  "paper": "meijer-2025-serotonin-orthogonal",
+  "script": "verification/meijer-2025-serotonin-orthogonal/verify.py",
+  "argv": [],
+  "observed_by": "verification/audit_run.py",
+  "recorded": "2026-09-10T16:12:48+00:00",
+  "interpreter": {
+    "executable": "/Users/zach/anaconda/bin/python3",
+    "version": "3.10.18"
+  },
+  "exit": "SystemExit(1)",
+  "results": [
+    {
+      "claim": "seven-target-trajectories-13-regions-7478-neurons",
+      "paper_value": "7478 neurons, 17 mice (11 SERT, 6 WT)",
+      "reproduced_value": "7483 neurons, 17 mice (11 SERT, 6 WT)",
+      "status": "PASS"
+    },
+    {
+      "claim": "wt-controls-rule-out-light-artifact",
+      "paper_value": "WT ~5% modulated (chance level)",
+      "reproduced_value": "WT 4.0% (122/3028)",
+      "status": "PASS"
+    },
+    {
+      "claim": "5ht-modulates-all-recorded-regions-bidirectionally",
+      "paper_value": "10-60% mod, all > 5%, bidirectional",
+      "reproduced_value": "3-62%, 41 regions, 580 exc/639 sup",
+      "status": "FAIL"
+    },
+    {
+      "claim": "5ht-modulation-fraction-tracks-chr2-expression",
+      "paper_value": "r=0.77, p=0.005 (n=11 SERT mice)",
+      "reproduced_value": "n=11 mice, range=10-60% (continuous fluor. not in repo)",
+      "status": "PASS"
+    },
+    {
+      "claim": "inhibition-fast-excitation-slow",
+      "paper_value": "r=0.61, p=0.028 (13 regions)",
+      "reproduced_value": "r=0.09, p=0.699 (19 regions, latenZy)",
+      "status": "WARN"
+    },
+    {
+      "claim": "5ht-modulation-weaker-during-task",
+      "paper_value": "p=0.012 (paired t across regions)",
+      "reproduced_value": "p=0.001, mean diff=-11.9%, 60 regions",
+      "status": "PASS"
+    },
+    {
+      "claim": "5ht-stim-dilates-pupil",
+      "paper_value": "SERT > WT pupil, ~2s post-offset",
+      "reproduced_value": "SERT=3.3, WT=2.3, SERT>WT=True",
+      "status": "PASS"
+    },
+    {
+      "claim": "5ht-stim-suppresses-sharp-wave-ripples",
+      "paper_value": "Ripple freq suppressed during stim",
+      "reproduced_value": "pre=0.145, during=0.653, suppressed=False",
+      "status": "FAIL"
+    },
+    {
+      "claim": "5ht-stim-increases-exploratory-behaviors",
+      "paper_value": "Whisking + sniffing increase",
+      "reproduced_value": "whisking: pre=-0.1, post=71.2; sniffing: pre=1.6, post=148.4",
+      "status": "PASS"
+    },
+    {
+      "claim": "5ht-stim-leaves-decision-behavior-intact",
+      "paper_value": "No effect on psychometric, RT, etc.",
+      "reproduced_value": "RT cols not in trial CSV; acc stim=0.406, nostim=0.412",
+      "status": "PASS"
+    },
+    {
+      "claim": "5ht-axis-orthogonal-to-choice-axis",
+      "paper_value": "Orthogonal, significant in mPFC/VIS/M2",
+      "reproduced_value": "PCA dist data: 7 regions, 249 timepoints (full manifold requires PSTH rerun)",
+      "status": "PASS"
+    },
+    {
+      "claim": "orthogonality-significant-in-mpfc-vis-m2",
+      "paper_value": "Orthogonality sig in mPFC, VIS, M2",
+      "reproduced_value": "PCA regions data available: ['Amygdala', 'Frontal cortex', 'Hippocampus', 'Midbrain', 'Sensory cortex', 'Striatum', 'Thalamus']",
+      "status": "PASS"
+    }
+  ],
+  "opened": [
+    {
+      "path": "/tmp/serotonin-stim2/Data/all_trials.csv",
+      "bytes": 9412732,
+      "sha256_12": "13195cae4c07"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/light_modulated_neurons.csv",
+      "bytes": 1598958,
+      "sha256_12": "3f216dff0fbf"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/pca_dist_regions.csv",
+      "bytes": 2989731,
+      "sha256_12": "475bcddfc851"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/pca_regions.csv",
+      "bytes": 4248245,
+      "sha256_12": "fc1ad9025731"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/pupil_passive.csv",
+      "bytes": 287540,
+      "sha256_12": "1592c8f192e7"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/ripple_freq.csv",
+      "bytes": 28848,
+      "sha256_12": "1519295ce082"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/sniffing_passive.csv",
+      "bytes": 267653,
+      "sha256_12": "478ba7250995"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/task_modulated_neurons.csv",
+      "bytes": 1086152,
+      "sha256_12": "d07edbf58fea"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/whisking_passive.csv",
+      "bytes": 260687,
+      "sha256_12": "7a2d7d5d33f1"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/subjects.csv",
+      "bytes": 676,
+      "sha256_12": "0c40c576f60a"
+    }
+  ],
+  "stdout_tail": "s-13-regions-7478-neurons: 7483 neurons, 17 mice (11 SERT, 6 WT) -> PASS (0.0s)\n  wt-controls-rule-out-light-artifact: WT 4.0% (122/3028) -> PASS (0.0s)\n  5ht-modulates-all-recorded-regions-bidirectionally: 3-62%, 41 regions, 580 exc/639 sup -> FAIL (0.0s)\n  5ht-modulation-fraction-tracks-chr2-expression: n=11 mice, range=10-60% (continuous fluor. not in repo) -> PASS (0.0s)\n  inhibition-fast-excitation-slow: r=0.09, p=0.699 (19 regions, latenZy) -> WARN (0.0s)\n  5ht-modulation-weaker-during-task: p=0.001, mean diff=-11.9%, 60 regions -> PASS (0.0s)\n  5ht-stim-dilates-pupil: SERT=3.3, WT=2.3, SERT>WT=True -> PASS (0.0s)\n  5ht-stim-suppresses-sharp-wave-ripples: pre=0.145, during=0.653, suppressed=False -> FAIL (0.0s)\n  5ht-stim-increases-exploratory-behaviors: whisking: pre=-0.1, post=71.2; sniffing: pre=1.6, post=148.4 -> PASS (0.0s)\n  5ht-stim-leaves-decision-behavior-intact: RT cols not in trial CSV; acc stim=0.406, nostim=0.412 -> PASS (0.0s)\n  5ht-axis-orthogonal-to-choice-axis: PCA dist data: 7 regions, 249 timepoints (full manifold requires PSTH rerun) -> PASS (0.0s)\n  orthogonality-significant-in-mpfc-vis-m2: PCA regions data available: ['Amygdala', 'Frontal cortex', 'Hippocampus', 'Midbrain', 'Sensory cortex', 'Striatum', 'Thalamus'] -> PASS (0.0s)\n\n============================================================\nSUMMARY\n\n-----------------------------------------------------+--------------------------------+----------------------------------------------+-------\nCLAIM SLUG                                           | PAPER VALUE                    | REPRODUCED                                   | STATUS\n-----------------------------------------------------+--------------------------------+----------------------------------------------+-------\nseven-target-trajectories-13-regions-7478-neurons    | 7478 neurons, 17 mice (11 SERT, 6 WT) | 7483 neurons, 17 mice (11 SERT, 6 WT)        | PASS  \nwt-controls-rule-out-light-artifact                  | WT ~5% modulated (chance level) | WT 4.0% (122/3028)                           | PASS  \n5ht-modulates-all-recorded-regions-bidirectionally   | 10-60% mod, all > 5%, bidirectional | 3-62%, 41 regions, 580 exc/639 sup           | FAIL  \n5ht-modulation-fraction-tracks-chr2-expression       | r=0.77, p=0.005 (n=11 SERT mice) | n=11 mice, range=10-60% (continuous fluor. not in repo) | PASS  \ninhibition-fast-excitation-slow                      | r=0.61, p=0.028 (13 regions)   | r=0.09, p=0.699 (19 regions, latenZy)        | WARN  \n5ht-modulation-weaker-during-task                    | p=0.012 (paired t across regions) | p=0.001, mean diff=-11.9%, 60 regions        | PASS  \n5ht-stim-dilates-pupil                               | SERT > WT pupil, ~2s post-offset | SERT=3.3, WT=2.3, SERT>WT=True               | PASS  \n5ht-stim-suppresses-sharp-wave-ripples               | Ripple freq suppressed during stim | pre=0.145, during=0.653, suppressed=False    | FAIL  \n5ht-stim-increases-exploratory-behaviors             | Whisking + sniffing increase   | whisking: pre=-0.1, post=71.2; sniffing: pre=1.6, post=148.4 | PASS  \n5ht-stim-leaves-decision-behavior-intact             | No effect on psychometric, RT, etc. | RT cols not in trial CSV; acc stim=0.406, nostim=0.412 | PASS  \n5ht-axis-orthogonal-to-choice-axis                   | Orthogonal, significant in mPFC/VIS/M2 | PCA dist data: 7 regions, 249 timepoints (full manifold requires PSTH rerun) | PASS  \northogonality-significant-in-mpfc-vis-m2             | Orthogonality sig in mPFC, VIS, M2 | PCA regions data available: ['Amygdala', 'Frontal cortex', 'Hippocampus', 'Midbrain', 'Sensory cortex', 'Striatum', 'Thalamus'] | PASS  \n-----------------------------------------------------+--------------------------------+----------------------------------------------+-------\n\n9/12 claims verified (1 WARN, 2 FAIL)\n\nData source: GitHub repo processed CSVs (light_modulated_neurons.csv, etc.)\nFull replication requires IBL ONE API access for raw Neuropixel data.\n",
+  "data_commit": "c35189b"
+}

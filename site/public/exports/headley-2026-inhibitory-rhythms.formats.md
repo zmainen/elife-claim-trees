@@ -48,7 +48,7 @@ Every relation keeps its own type — nothing is flattened into `supports`. 38 o
 
 Verification — that a claim was checked, by what code, against what deposited data, with what result beside the published value. None of the three has a node for it.
 
-This paper's records: 9 verified, 8 blocked.
+This paper's records: 8 blocked, 8 verified, 1 partial.
 
 ---
 

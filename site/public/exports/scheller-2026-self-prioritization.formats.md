@@ -56,7 +56,7 @@ Beyond those, nothing. Every relation in this paper reaches the export, either a
 
 Verification — that a claim was checked, by what code, against what deposited data, with what result beside the published value. None of the three has a node for it.
 
-This paper's records: 10 verified, 2 partial, 2 unattempted.
+This paper's records: 8 verified, 4 partial, 2 unattempted.
 
 ---
 

@@ -1,0 +1,33 @@
+# Dependencies for the verification scripts, in fast mode.
+#
+# Derived from the scripts' own imports, not from memory. The previous instruction in
+# README.md asked for four packages nothing imports (biopython, lifelines, requests, and
+# — as an import — openpyxl) and omitted scikit-learn, which meijer-2025-serotonin-additive-r1
+# does import. That omission is not harmless: the script catches the ImportError and records
+# `WARN — statsmodels/sklearn not installed` instead of failing, so an under-specified
+# environment silently downgrades a claim's verdict rather than announcing that it could not
+# be tested. `verification/audit_run.py` now records missing dependencies in provenance.json
+# for exactly this reason.
+#
+# Regenerate the import set with:
+#   python3 -c "import ast,os,sys; [print(p) for p in sorted({m.split('.')[0] \
+#     for d in os.listdir('verification') if os.path.isfile(f'verification/{d}/verify.py') \
+#     for n in ast.walk(ast.parse(open(f'verification/{d}/verify.py').read())) \
+#     for m in ([a.name for a in n.names] if isinstance(n,ast.Import) \
+#               else [n.module] if isinstance(n,ast.ImportFrom) and n.module and not n.level \
+#               else []) if m.split('.')[0] not in sys.stdlib_module_names})]"
+
+numpy
+pandas
+scipy
+statsmodels
+scikit-learn      # meijer-2025-serotonin-additive-r1 (StandardScaler)
+nibabel           # bouyeure, gadeke — NIfTI statistical maps
+openpyxl          # wengert — pandas.read_excel on the G-Node deposit; not imported directly
+
+# Full mode (`--full`) needs more, per script and per paper. Each script's docstring names
+# what it wants; none of it is required for the fast mode the corpus was verified in.
+#   cmdstanpy   scheller   (~12 hrs)
+#   neuron      headley    (~6 hrs)
+#   pyabf       wengert    (~48 hrs, plus gin-cli for the 68 GB deposit)
+#   brainiak    bouyeure   (~48 hrs, FSL, HPC recommended)

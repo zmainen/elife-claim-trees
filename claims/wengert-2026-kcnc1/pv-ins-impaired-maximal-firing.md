@@ -39,7 +39,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified
+    status: partial
     script: verification/wengert-2026-kcnc1/verify.py
     original_script: https://doi.gin.g-node.org/10.12751/g-node.bqni9h
     script_execution: pre-computed
@@ -50,6 +50,14 @@ reproductions:
       Data from G-Node Excel (PV-IN WT P16-21 Spiking, PV-IN A421V+ P16-21 Spiking sheets).
       Max AP counts per cell from F/I protocol (-100 to +900 pA, 20pA steps):
       WT n=20 mean=200.8; KI n=37 mean=125.9; unpaired t-test p<0.001.
+      DISCREPANCY (2026-09-10, audit_run.py): the script named above, run under
+      observation on the same sheets and the same n, returns WT=207.8 KI=175.8
+      p=0.1661 — the same direction but no significant difference. The two analyses
+      disagree about the KI mean (125.9 vs 175.8) and therefore about whether the
+      effect is significant at all. Which is correct has not been adjudicated, so the
+      status is `partial`: direction reproduces, magnitude and significance do not.
+      Recorded `verified` with p<0.001 until this audit; that verdict was never
+      produced by the script the record cites.
       Direction (WT > KI) and significance both confirmed. Adult data (P32-42 sheets)
       also present: WT n=14, KI n=17.
 

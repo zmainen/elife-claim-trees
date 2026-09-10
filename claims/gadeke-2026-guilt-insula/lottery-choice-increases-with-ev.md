@@ -73,7 +73,7 @@ reproductions:
     reproduced_value: "beta = 0.032, p = 9.55e-68, n = 2400"
     notes: >
       Mixed-effects logistic regression of lottery choice on expected-value advantage, run on
-      the authors' deposited single-trial CSV (Code/csv/fMRI - Choices_singleTrialData.csv).
+      the authors' deposited single-trial CSV (Code/csv/Behav - Choices_singleTrialData.csv).
       The expected-value advantage coefficient is positive and highly significant, reproducing
       the paper's manipulation check.
       Supersedes the 2026-03-30 partial status; the re-run returns PASS. The earlier 'partial'

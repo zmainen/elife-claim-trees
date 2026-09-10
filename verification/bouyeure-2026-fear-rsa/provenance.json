@@ -1,0 +1,56 @@
+{
+  "paper": "bouyeure-2026-fear-rsa",
+  "script": "verification/bouyeure-2026-fear-rsa/verify.py",
+  "argv": [],
+  "observed_by": "verification/audit_run.py",
+  "recorded": "2026-09-10T16:18:08+00:00",
+  "interpreter": {
+    "executable": "/Users/zach/anaconda/bin/python3",
+    "version": "3.10.18"
+  },
+  "exit": "SystemExit(0)",
+  "results": [
+    {
+      "claim": "cs-plus-univariate-fear-network-acquisition",
+      "paper_value": "dACC/SFG cluster confirmed, >100 total sig voxels",
+      "reproduced_value": "total=5544 voxels, dACC/SFG=1075, peak=[6.0, 15.0, 39.0]",
+      "status": "PASS"
+    },
+    {
+      "claim": "current-threat-activates-fear-network-reversal",
+      "paper_value": ">1000 sig voxels in fear network",
+      "reproduced_value": "total=7473 voxels, peak=[-9.0, 10.0, 41.5]",
+      "status": "PASS"
+    },
+    {
+      "claim": "prior-threat-activates-fear-network-weakly",
+      "paper_value": "~36 sig voxels, occipital peak NOT fear network (MISMATCH documented)",
+      "reproduced_value": "n_sig=36, peak=[-9.0, -92.5, -6.0]",
+      "status": "PASS"
+    },
+    {
+      "claim": "behavioral-learning-confirms-contingencies",
+      "paper_value": "CS++ > CS+- > CS-+ > CS--, p<0.0001",
+      "reproduced_value": "Download failed",
+      "status": "WARN"
+    }
+  ],
+  "opened": [
+    {
+      "path": "/tmp/bouyeure-2026/CSplus-minus_TFCE_nlog10p.nii.gz",
+      "bytes": 159022,
+      "sha256_12": "2bba1ad9b296"
+    },
+    {
+      "path": "/tmp/bouyeure-2026/run2_currentvalencecontrast_TFCE_nlog10p.nii.gz",
+      "bytes": 135491,
+      "sha256_12": "d254e6bd18c6"
+    },
+    {
+      "path": "/tmp/bouyeure-2026/run2_previousvalencecontrast_TFCE_nlog10p.nii.gz",
+      "bytes": 109592,
+      "sha256_12": "336c7496b303"
+    }
+  ],
+  "stdout_tail": "FAST MODE \u2014 estimated time: ~4 min\n============================================================\nNIfTI source: NeuroVault collection 23032\nBehavioral source: OSF https://osf.io/download/ngwka/\n\n[data] CSplus-minus_TFCE_nlog10p.nii.gz already cached\n  cs-plus-univariate-fear-network-acquisition: n_sig=5544, dACC=1075 \u2192 PASS (0.0s)\n[data] run2_currentvalencecontrast_TFCE_nlog10p.nii.gz already cached\n  current-threat-activates-fear-network-reversal: n_sig=7473 \u2192 PASS (0.0s)\n[data] run2_previousvalencecontrast_TFCE_nlog10p.nii.gz already cached\n  prior-threat-activates-fear-network-weakly: n_sig=36, occipital=True \u2192 PASS (0.0s)\n[data] Downloading behaviordata_final.csv ...\n[WARN] Download failed: HTTP Error 500: Internal Server Error\n\n============================================================\nSUMMARY\n\n-----------------------------------------------------------+--------------------------+--------------------------------+-------\nCLAIM SLUG                                                 | PAPER VALUE              | REPRODUCED                     | STATUS\n-----------------------------------------------------------+--------------------------+--------------------------------+-------\ncs-plus-univariate-fear-network-acquisition                | dACC/SFG cluster confirmed, >100 total sig voxels | total=5544 voxels, dACC/SFG=1075, peak=[6.0, 15.0, 39.0] | PASS  \ncurrent-threat-activates-fear-network-reversal             | >1000 sig voxels in fear network | total=7473 voxels, peak=[-9.0, 10.0, 41.5] | PASS  \nprior-threat-activates-fear-network-weakly                 | ~36 sig voxels, occipital peak NOT fear network (MISMATCH documented) | n_sig=36, peak=[-9.0, -92.5, -6.0] | PASS  \nbehavioral-learning-confirms-contingencies                 | CS++ > CS+- > CS-+ > CS--, p<0.0001 | Download failed                | WARN  \n-----------------------------------------------------------+--------------------------+--------------------------------+-------\n\nNote: prior-threat claim PASS = documented mismatch reproduced as expected.\n3/4 claims verified (1 WARN, 0 FAIL)\n"
+}

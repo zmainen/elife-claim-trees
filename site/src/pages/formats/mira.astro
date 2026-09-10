@@ -1,0 +1,130 @@
+---
+// The MIRA working guide, rendered from the repository document rather than restated.
+//
+// docs/schema-mapping/mira-guide.md is the complete account of what MIRA is, how its data is
+// actually shaped, how we convert, how to validate, and what is still wrong. It existed for a
+// week while this site's Standards page said MIRA offers "two predicates" and drops 57% of a
+// claim tree — a claim the guide was written to correct. Publishing the guide and rendering
+// it from source is what stops the page and the document diverging again.
+import Layout from '../../layouts/Layout.astro';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
+import remarkRehype from 'remark-rehype';
+import rehypeShiki from '@shikijs/rehype';
+import rehypeStringify from 'rehype-stringify';
+
+const guideRaw = readFileSync(
+  join(process.cwd(), '../docs/schema-mapping/mira-guide.md'), 'utf8');
+const facts = JSON.parse(readFileSync(
+  join(process.cwd(), 'src/data/corpus-facts.json'), 'utf8'));
+const m = facts.mira;
+
+// Drop the document's own H1 and its lede — the page header carries both, and rendering
+// them again put the same two paragraphs on screen twice.
+const body = guideRaw
+  .replace(/^#\s+.*\n+/, '')
+  .replace(/^[\s\S]*?(?=^##\s)/m, '');
+
+// Build a contents list from the top-level headings, so a long guide is navigable.
+const toc = [...body.matchAll(/^##\s+(.+)$/gm)].map(x => {
+  const title = x[1].trim();
+  return { title, id: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') };
+});
+
+const processor = unified()
+  .use(remarkParse)
+  .use(remarkGfm)
+  .use(remarkRehype, { allowDangerousHtml: true })
+  .use(rehypeShiki, { theme: 'github-dark', fallbackLanguage: 'text' })
+  .use(rehypeStringify, { allowDangerousHtml: true });
+
+// Give each H2 the id the contents list points at.
+let html = String(await processor.process(body));
+for (const t of toc) {
+  html = html.replace(`<h2>${t.title}`, `<h2 id="${t.id}">${t.title}`);
+}
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title="MIRA — a working guide">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+
+    <header class="mb-8">
+      <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 m-0 mb-2">
+        Formats
+      </p>
+      <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 m-0 mb-3">
+        MIRA — a working guide
+      </h1>
+      <p class="text-sm text-gray-600 dark:text-gray-400 m-0 max-w-2xl leading-relaxed">
+        What MIRA is, how its data is actually shaped, how we convert to it, and where our
+        conversion falls short. Written because we published a criticism of MIRA that was a
+        fact about our own exporter, and because almost none of this is discoverable without
+        reading the schema source.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{m.carried}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          of {m.relations} relations carried
+        </div>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{m.lost}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          genuinely lost — paper-level scopes
+        </div>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{m.our_violations}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          validation violations of ours
+        </div>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{m.upstream_violations}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          from MIRA's own unsatisfiable shape
+        </div>
+      </div>
+    </div>
+
+    <nav class="mb-10 border-l-2 border-amber-500/40 pl-4">
+      <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 m-0 mb-2">
+        Contents
+      </p>
+      <ul class="m-0 p-0 list-none text-sm space-y-1">
+        {toc.map(t => (
+          <li>
+            <a href={`#${t.id}`}
+               class="text-gray-700 dark:text-gray-300 hover:text-amber-700 dark:hover:text-amber-400 no-underline">
+              {t.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <article class="method-prose" set:html={html} />
+
+    <footer class="mt-12 pt-6 border-t border-gray-100 dark:border-gray-800 text-sm flex flex-wrap gap-4">
+      <a href={`${base}/standards/`} class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline">
+        &larr; Standards
+      </a>
+      <a href="https://github.com/zmainen/elife-claim-trees/blob/main/docs/schema-mapping/mira-guide.md"
+         class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline" target="_blank">
+        Source document &nearr;
+      </a>
+      <a href="https://github.com/MIRA-science/schema"
+         class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline" target="_blank">
+        MIRA schema repository &nearr;
+      </a>
+    </footer>
+  </div>
+</Layout>
