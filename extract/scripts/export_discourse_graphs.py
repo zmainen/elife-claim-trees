@@ -58,6 +58,27 @@ RELATION_TO_DG = {
 }
 
 
+def iter_claims(node):
+    """Every Claim node in an OXA document, at whatever depth it sits.
+
+    This used to read `doc["children"]` and match `type == "Claim"` there. The
+    OXA writer wraps them one level deeper, in a `ClaimGraph`, so the match found
+    nothing — and the exporter wrote a file containing a single Source node
+    instead of failing. Twenty-seven claims went in and one node came out, in
+    valid JSON-LD that no reader would flag. Walking the tree is both correct and
+    robust to the wrapper moving again.
+    """
+    if isinstance(node, dict):
+        if node.get("type") == "Claim":
+            yield node
+            return                      # claims do not nest inside claims
+        for child in node.get("children", []) or []:
+            yield from iter_claims(child)
+    elif isinstance(node, list):
+        for child in node:
+            yield from iter_claims(child)
+
+
 def oxa_to_jsonld(oxa_path: Path) -> dict:
     """Convert an OXA Article with Claims to JSON-LD."""
     with open(oxa_path) as f:
@@ -70,7 +91,7 @@ def oxa_to_jsonld(oxa_path: Path) -> dict:
     nodes = []
     edges = []
 
-    for claim in doc.get("children", []):
+    for claim in iter_claims(doc):
         if claim.get("type") != "Claim":
             continue
 

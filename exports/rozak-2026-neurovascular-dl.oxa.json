@@ -1,0 +1,830 @@
+{
+  "type": "Document",
+  "metadata": {
+    "doi": "10.7554/eLife.95525",
+    "title": "A deep learning pipeline for mapping in situ network-level neurovascular coupling in multi-photon fluorescence microscopy",
+    "authors": [
+      "Rozak et al."
+    ]
+  },
+  "children": [
+    {
+      "type": "ClaimGraph",
+      "identifier": "rozak-2026-neurovascular-dl-claims",
+      "children": [
+        {
+          "type": "Claim",
+          "identifier": "artery-dilates-venule-unchanged-at-low-power",
+          "role": "empirical",
+          "children": [
+            {
+              "type": "Text",
+              "value": "At 1.1 mW/mm² 458 nm stimulation, a sample artery dilated 1.33±0.86 µm (p<1e-4) and a sample capillary dilated 0.42±0.39 µm (p<1e-4), while a sample venule showed no significant radius change (p=0.22), demonstrating vessel-type heterogeneity in optogenetic neurovascular responses."
+            }
+          ],
+          "relations": [
+            {
+              "xref": "vessel-radius-heterogeneity-stimulation",
+              "relationType": "cito:disagreesWith"
+            },
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "af8bc967-3346-4e25-ac9e-8ad3536313fd",
+            "concepts": [
+              "artery",
+              "venule",
+              "capillary",
+              "vessel-type heterogeneity",
+              "optogenetic neurovascular response"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "baseline-intra-vessel-radius-varies-24pct",
+          "role": "empirical",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Capillary radius varies along vessel length by 24±28% of the mean resting radius across baseline frames, such that point measurements of vessel caliber cannot accurately estimate microvessel volume changes."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:tests"
+            },
+            {
+              "xref": "novas3d-outperforms-ilastik",
+              "relationType": "claimrel:rulesOut"
+            }
+          ],
+          "metadata": {
+            "uuid": "083ef4c3-9e93-4927-9867-3c785b2c03c0",
+            "concepts": [
+              "intra-vessel radius heterogeneity",
+              "capillary morphology",
+              "point measurement limitation",
+              "vessel volume"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "blue-light-dilations-exceed-green-control",
+          "role": "control",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Capillary dilations following 458 nm ChR2 stimulation (0.90±0.93 µm at 1.1 mW/mm²; 0.90±0.78 µm at 4.3 mW/mm²) are significantly larger than those following 552 nm control illumination (0.58±0.92 µm; p<1e-4), confirming that the vascular responses are ChR2-mediated rather than photothermal artifacts."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+            "concepts": [
+              "ChR2 specificity",
+              "optogenetic control",
+              "capillary dilation",
+              "photothermal artifact",
+              "neurovascular coupling"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "capillary-efficiency-increases-4pct",
+          "role": "empirical",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Capillary network efficiency shows a median 4% increase during peak optogenetic stimulation, consistent with coordinated vasodilation improving local blood flow distribution."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "ad12a413-e736-4cb5-908f-e331c3a21478",
+            "concepts": [
+              "capillary network",
+              "efficiency",
+              "optogenetics",
+              "neurovascular coupling"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "constrictions-deeper-than-dilations",
+          "role": "empirical",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Constricting capillaries are located on average 37±179 µm deeper in cortex than dilating capillaries following 458 nm optogenetic stimulation at 4.3 mW/mm² (p<1e-4), with dilators tending toward the cortical surface across all stimulation conditions."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "dilations-nearer-neurons-than-constrictions",
+              "relationType": "cito:disagreesWith"
+            },
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+            "concepts": [
+              "cortical depth",
+              "capillary dilation",
+              "capillary constriction",
+              "optogenetics",
+              "neurovascular coupling"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "dilations-nearer-neurons-than-constrictions",
+          "role": "empirical",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Following ChR2 optogenetic activation at 458 nm, capillary dilations occur on average 16.1±14.3 µm from the nearest labeled pyramidal neuron while constrictions occur 21.9±14.6 µm away (4.3 mW/mm²; p<1e-4), and this spatial segregation is absent under control 552 nm illumination."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "constrictions-deeper-than-dilations",
+              "relationType": "cito:disagreesWith"
+            },
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "c1381a0c-47be-4721-9022-ddec7d45b3fd",
+            "concepts": [
+              "neurovascular coupling",
+              "spatial gradient",
+              "capillary dilation",
+              "capillary constriction",
+              "distance to neuron",
+              "ChR2 optogenetics"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "hypothesis-dl-pipeline-enables-network-nvc",
+          "role": "hypothesis",
+          "children": [
+            {
+              "type": "Text",
+              "value": "A deep-learning segmentation pipeline (UNet/UNETR ensemble) coupled with cross-time-point registration, vertex-wise radius estimation, and graph-theoretic network analysis can produce reliable, automated, network-level measurements of neurovascular coupling in volumetric two-photon fluorescence microscopy of cerebral microcirculation — measurements that prior point-measurement and manual-segmentation approaches could not yield at the scale of hundreds of interconnected vessels per FOV. The performance ceiling of conventional baselines (ilastik, single-time-point segmentation, point-caliber tracking) is set by their inability to handle volumetric SNR, transient RBC plugs, and within-vessel radius heterogeneity — not by an intrinsic limit of the imaging modality."
+            }
+          ],
+          "relations": [
+            {
+              "xref": "prediction-pipeline-outperforms-baselines",
+              "relationType": "claimrel:entails"
+            },
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:entails"
+            }
+          ],
+          "metadata": {
+            "uuid": "7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
+            "concepts": [
+              "deep learning segmentation",
+              "neurovascular coupling",
+              "vascular network",
+              "two-photon fluorescence microscopy",
+              "methodological hypothesis"
+            ],
+            "displayClaim": "A DL segmentation + registration + graph-analysis pipeline can deliver automated network-level neurovascular-coupling measurements across hundreds of vessels per FOV, where prior baselines (ilastik, point-caliber, single-time-point) fall short.",
+            "shortClaim": "A DL pipeline automates network-level neurovascular coupling beyond prior baselines."
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "hypothesis-network-level-nvc-coordination",
+          "role": "hypothesis",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Optogenetic activation of cortical pyramidal neurons elicits coordinated, network-level vascular responses that cannot be predicted from individual-vessel measurements alone: dilations and constrictions are spatially organised relative to active neurons, capillary responses correlate with their network neighbours' responses, and overall capillary network efficiency is modulated by stimulation. Prior point-measurement studies that interrogate vessels in isolation systematically miss this coordination because they cannot resolve within-vessel radius heterogeneity, between-vessel network topology, or stimulation-evoked changes in graph-level metrics across hundreds of interconnected vessels."
+            }
+          ],
+          "relations": [
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:entails"
+            },
+            {
+              "xref": "synthesis-individual-vessel-measurements-insufficient",
+              "relationType": "claimrel:entails"
+            }
+          ],
+          "metadata": {
+            "uuid": "9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+            "concepts": [
+              "neurovascular coupling",
+              "network coordination",
+              "optogenetic stimulation",
+              "vascular network topology",
+              "functional hyperemia"
+            ],
+            "displayClaim": "Optogenetic neuronal activation drives coordinated, network-level vascular responses (spatially organised dilations/constrictions, neighbour-correlated capillary responses, stimulation-modulated efficiency) — point measurements of individual vessels cannot resolve this coordination.",
+            "shortClaim": "Optogenetic activation drives coordinated network-level vascular responses across vessels."
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "network-assortativity-increases-stimulation",
+          "role": "empirical",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Vascular network assortativity increases by 152 ± 65% at 4.3 mW/mm² optogenetic stimulation relative to control, indicating that high-degree vessels preferentially couple with high-degree vessels during neurovascular responses."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+            "concepts": [
+              "network assortativity",
+              "optogenetics",
+              "neurovascular coupling",
+              "graph theory"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "novas3d-generalizes-qualitatively-ood",
+          "role": "empirical",
+          "children": [
+            {
+              "type": "Text",
+              "value": "The NOVAS3D segmentation model produces qualitatively reasonable vessel segmentations on out-of-distribution data including a different mouse strain (C57BL/6), a different species (Fischer rat), and a different microscope modality (light-sheet fluorescence microscopy, Miltenyi UltraMicroscope Blaze), without retraining."
+            }
+          ],
+          "metadata": {
+            "uuid": "afb63ebd-605d-4e1b-a412-9ad7eea3bc58",
+            "concepts": [
+              "model generalization",
+              "out-of-distribution",
+              "transfer learning",
+              "vessel segmentation",
+              "light-sheet microscopy"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "novas3d-outperforms-ilastik",
+          "role": "control",
+          "children": [
+            {
+              "type": "Text",
+              "value": "The NOVAS3D deep learning segmentation pipeline (UNet/UNETR) achieves significantly higher Dice scores and precision/recall for volumetric vessel segmentation than the baseline ilastik classifier on the deposited two-photon microscopy test dataset."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "vessel-radius-heterogeneity-stimulation",
+              "relationType": "cito:usesMethodIn"
+            },
+            {
+              "xref": "dilations-nearer-neurons-than-constrictions",
+              "relationType": "cito:usesMethodIn"
+            },
+            {
+              "xref": "network-assortativity-increases-stimulation",
+              "relationType": "cito:usesMethodIn"
+            },
+            {
+              "xref": "capillary-efficiency-increases-4pct",
+              "relationType": "cito:usesMethodIn"
+            },
+            {
+              "xref": "prediction-pipeline-outperforms-baselines",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "73b97665-ce32-4361-81d0-40fb149cea2b",
+            "concepts": [
+              "NOVAS3D",
+              "UNet",
+              "UNETR",
+              "Dice score",
+              "vessel segmentation",
+              "ilastik baseline"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "novas3d-single-preparation-scope",
+          "role": "scope",
+          "children": [
+            {
+              "type": "Text",
+              "value": "The NOVAS3D segmentation model was trained and quantitatively evaluated exclusively on data from Thy1-ChR2-YFP mice (line 18, 6–12 months, Texas Red vascular labeling, cranial window, isoflurane anesthesia); quantitative performance metrics are not reported for any other preparation, strain, species, or imaging modality."
+            }
+          ],
+          "epistemicStrength": "strong",
+          "relations": [
+            {
+              "xref": "unetr-outperforms-ilastik-hd95",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "novas3d-outperforms-ilastik",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "registration-doubles-vessel-count",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "radius-estimation-r2-0p68",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "vessel-radius-heterogeneity-stimulation",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "baseline-intra-vessel-radius-varies-24pct",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "dilations-nearer-neurons-than-constrictions",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "constrictions-deeper-than-dilations",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "blue-light-dilations-exceed-green-control",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "artery-dilates-venule-unchanged-at-low-power",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "network-assortativity-increases-stimulation",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "capillary-efficiency-increases-4pct",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "novas3d-generalizes-qualitatively-ood",
+              "relationType": "claimrel:scopes"
+            }
+          ],
+          "metadata": {
+            "uuid": "e52585f7-4764-4444-9919-1c9a4c6cec38",
+            "concepts": [
+              "model scope",
+              "training distribution",
+              "preparation specificity",
+              "generalization"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "prediction-pipeline-outperforms-baselines",
+          "role": "prediction",
+          "children": [
+            {
+              "type": "Text",
+              "value": "If the DL segmentation + registration + radius-estimation stack genuinely improves on conventional baselines, then (a) the UNet/UNETR ensemble should significantly outperform ilastik on volumetric segmentation metrics (HD95, Dice, precision), (b) cross-time-point registration combined with mask union should recover substantially more vessel segments per FOV than any single time-point segmentation, and (c) the boundary-detection radius estimator should recover known simulated radii with high R² and remain stable to physiologically realistic noise levels."
+            }
+          ],
+          "panel": [
+            "prediction"
+          ],
+          "relations": [
+            {
+              "xref": "hypothesis-dl-pipeline-enables-network-nvc",
+              "relationType": "cito:citesAsSourceDocument"
+            }
+          ],
+          "metadata": {
+            "uuid": "4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e",
+            "concepts": [
+              "benchmark prediction",
+              "pipeline validation",
+              "segmentation metrics",
+              "registration",
+              "radius estimation"
+            ],
+            "displayClaim": "The DL pipeline should beat ilastik on segmentation metrics, registration + mask union should roughly double recovered vessel counts per FOV, and radius estimation should match simulated ground truth at high R² and tolerate realistic noise."
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "prediction-pipeline-reveals-network-coordination",
+          "role": "prediction",
+          "children": [
+            {
+              "type": "Text",
+              "value": "If the pipeline can resolve network-level neurovascular coupling and if optogenetic activation drives coordinated vascular responses, then in Thy1-ChR2-YFP mice under 458 nm photostimulation we should observe (a) a spatial gradient of dilations vs constrictions relative to labelled neurons, (b) a network-wide rise in assortativity (high-degree vessels coupling with high-degree vessels), (c) a measurable change in capillary network efficiency, and (d) absence of these patterns under 552 nm control illumination and in wild-type mice — none of which would be visible from point-caliber measurements alone."
+            }
+          ],
+          "panel": [
+            "prediction"
+          ],
+          "relations": [
+            {
+              "xref": "hypothesis-dl-pipeline-enables-network-nvc",
+              "relationType": "cito:citesAsSourceDocument"
+            },
+            {
+              "xref": "hypothesis-network-level-nvc-coordination",
+              "relationType": "cito:citesAsSourceDocument"
+            }
+          ],
+          "metadata": {
+            "uuid": "6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+            "concepts": [
+              "network coordination prediction",
+              "optogenetic activation",
+              "assortativity",
+              "efficiency",
+              "control conditions"
+            ],
+            "displayClaim": "Under ChR2 photostimulation we should see a dilation-vs-constriction spatial gradient relative to neurons, network-wide assortativity rise, capillary efficiency change — and none of these in green-light or wild-type controls. Point measurements should miss all of them."
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "radius-estimation-r2-0p68",
+          "role": "methodological",
+          "children": [
+            {
+              "type": "Text",
+              "value": "The pipeline's boundary-detection radius estimation achieves R²=0.68 against ground-truth simulated radii across >100,000 simulations spanning 0.5×–2× dilation/constriction, and remains stable under Gaussian noise up to a standard deviation of 200 signal units (image range 0–1023 SU)."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "vessel-radius-heterogeneity-stimulation",
+              "relationType": "cito:usesMethodIn"
+            },
+            {
+              "xref": "network-assortativity-increases-stimulation",
+              "relationType": "cito:usesMethodIn"
+            },
+            {
+              "xref": "capillary-efficiency-increases-4pct",
+              "relationType": "cito:usesMethodIn"
+            },
+            {
+              "xref": "prediction-pipeline-outperforms-baselines",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+            "concepts": [
+              "radius estimation",
+              "boundary detection",
+              "validation",
+              "noise robustness",
+              "R-squared"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "registration-doubles-vessel-count",
+          "role": "methodological",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Rigid registration across time points and union of segmentation masks increases the number of identified vessel segments per FOV from 241±174 (single time point) to 412±281 (union across all time points; 507×507×250 µm, n=107 FOVs), while reducing mean squared error between acquisitions from 1306±747 to 0.008±0.003 signal units."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "network-assortativity-increases-stimulation",
+              "relationType": "cito:usesMethodIn"
+            },
+            {
+              "xref": "capillary-efficiency-increases-4pct",
+              "relationType": "cito:usesMethodIn"
+            },
+            {
+              "xref": "prediction-pipeline-outperforms-baselines",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
+            "concepts": [
+              "image registration",
+              "vessel extraction",
+              "segmentation union",
+              "transient RBC plug",
+              "capillary gap"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "responder-threshold-2sd-untested",
+          "role": "scope",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Vessels are classified as responders if their radius change exceeds twice the baseline standard deviation (2×σ); this threshold is not sensitivity-tested in the main analysis, though an alternative 10% threshold is shown in Appendix 1—figure 14 with qualitatively similar results."
+            }
+          ],
+          "relations": [
+            {
+              "xref": "vessel-radius-heterogeneity-stimulation",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "dilations-nearer-neurons-than-constrictions",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "constrictions-deeper-than-dilations",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "network-assortativity-increases-stimulation",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "capillary-efficiency-increases-4pct",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "blue-light-dilations-exceed-green-control",
+              "relationType": "claimrel:scopes"
+            }
+          ],
+          "metadata": {
+            "uuid": "ce04789d-9922-49de-b9e2-6cc87302b3f4",
+            "concepts": [
+              "responder threshold",
+              "sensitivity analysis",
+              "methodological assumption",
+              "vessel classification"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "scope-pipeline-and-application-paper",
+          "role": "scope",
+          "children": [
+            {
+              "type": "Text",
+              "value": "All findings are scoped to a method-paper-with-application envelope: a single deep-learning pipeline (UNet/UNETR ensemble + ANTsPy registration + boundary-detection radius + NetworkX graph analysis) trained and quantitatively benchmarked on Thy1-ChR2-EYFP mice (line 18, 6–12 months, Texas Red vascular labelling, cranial window over S1FL, isoflurane for structural scan, alpha-chloralose for functional scan); the in vivo demonstration uses the same single preparation (n=17 mice for biology, n=4 C57BL/6J wild-type mice for negative control). Quantitative segmentation metrics are reported for nine test images from six held-out mice; out-of-distribution generalisation (C57BL/6, Fischer rat, light-sheet) is shown only qualitatively. The paper does not test the pipeline on awake-behaving preparations, non-mammalian species, disease models, or alternative vascular labels; it does not test alternative responder thresholds beyond a single appendix supplement."
+            }
+          ],
+          "panel": [
+            "scope"
+          ],
+          "relations": [
+            {
+              "xref": "unetr-outperforms-ilastik-hd95",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "novas3d-outperforms-ilastik",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "registration-doubles-vessel-count",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "radius-estimation-r2-0p68",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "vessel-radius-heterogeneity-stimulation",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "baseline-intra-vessel-radius-varies-24pct",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "dilations-nearer-neurons-than-constrictions",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "constrictions-deeper-than-dilations",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "blue-light-dilations-exceed-green-control",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "artery-dilates-venule-unchanged-at-low-power",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "network-assortativity-increases-stimulation",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "capillary-efficiency-increases-4pct",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "wt-controls-no-blue-green-difference",
+              "relationType": "claimrel:scopes"
+            },
+            {
+              "xref": "novas3d-generalizes-qualitatively-ood",
+              "relationType": "claimrel:scopes"
+            }
+          ],
+          "metadata": {
+            "uuid": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+            "concepts": [
+              "method-paper scope",
+              "preparation envelope",
+              "training distribution",
+              "benchmark distribution",
+              "OOD evaluation"
+            ],
+            "displayClaim": "Pipeline-and-application scope: one DL stack trained on Thy1-ChR2-EYFP cranial-window 2PFM, benchmarked on six held-out mice, applied in vivo to n=17 Thy1-ChR2 + n=4 WT mice. OOD shown qualitatively only; no awake behaviour, no disease models, no alternative thresholds."
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "synthesis-individual-vessel-measurements-insufficient",
+          "role": "synthesis",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Interrogating individual vessels in isolation is insufficient to predict how blood flow is modulated across the cerebral microvascular network. The paper's combined evidence — within-vessel radius heterogeneity (24 ± 28% along vessel length at baseline), the spatial segregation of dilations and constrictions relative to active neurons, the network-wide rise in assortativity during optogenetic stimulation, and the modulation of capillary network efficiency — together argue that point-caliber and single-vessel approaches systematically miss the coordinated, graph-level structure of functional hyperemia."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "hypothesis-network-level-nvc-coordination",
+              "relationType": "cito:citesAsSourceDocument"
+            }
+          ],
+          "metadata": {
+            "uuid": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+            "concepts": [
+              "synthesis",
+              "network-level neurovascular coupling",
+              "methodological argument",
+              "point-measurement insufficiency"
+            ],
+            "displayClaim": "Single-vessel measurements cannot predict network-level blood flow modulation: within-vessel heterogeneity, neuron-relative spatial gradients, assortativity rise, and efficiency changes together require a network-level treatment.",
+            "shortClaim": "Single-vessel measurements cannot predict network-level blood flow modulation."
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "unetr-outperforms-ilastik-hd95",
+          "role": "control",
+          "children": [
+            {
+              "type": "Text",
+              "value": "UNETR ensemble segmentation shows significantly better HD95 surface distance than ilastik for both vessel and neuron channels (p<0.05 Wilcoxon signed-rank), while ilastik over-segments vessels with high recall (0.89±0.19) but low precision (0.37±0.33), evaluated on nine test images (507×507×250 µm) from six held-out mice."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "novas3d-outperforms-ilastik",
+              "relationType": "cito:disagreesWith"
+            },
+            {
+              "xref": "prediction-pipeline-outperforms-baselines",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "db0a9448-8fe8-4336-b220-0a71aa19d870",
+            "concepts": [
+              "UNETR",
+              "ilastik",
+              "HD95",
+              "vessel segmentation",
+              "Dice score",
+              "precision",
+              "recall"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "vessel-radius-heterogeneity-stimulation",
+          "role": "empirical",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Vessel radius adjustments during optogenetic stimulation show 24 ± 28% variation relative to resting diameter, with dilations averaging 16.1 ± 14.3 µm and constrictions averaging 21.9 ± 14.6 µm relative to nearby neurons."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+            "concepts": [
+              "vessel radius",
+              "dilation",
+              "constriction",
+              "optogenetics",
+              "heterogeneity"
+            ]
+          }
+        },
+        {
+          "type": "Claim",
+          "identifier": "wt-controls-no-blue-green-difference",
+          "role": "control",
+          "children": [
+            {
+              "type": "Text",
+              "value": "Wild-type C57BL/6J mice (n=4) show no statistically distinguishable capillary radius distributions following blue (458 nm) versus green (552 nm) photostimulation, confirming that vascular responses in Thy1-ChR2 mice are ChR2-specific and not attributable to photothermal or non-specific light effects."
+            }
+          ],
+          "epistemicStrength": "moderate",
+          "relations": [
+            {
+              "xref": "prediction-pipeline-reveals-network-coordination",
+              "relationType": "claimrel:tests"
+            }
+          ],
+          "metadata": {
+            "uuid": "e05b0913-66d9-4ac2-be33-40385aaf6181",
+            "concepts": [
+              "wild-type control",
+              "ChR2 specificity",
+              "photothermal artifact",
+              "C57BL/6J",
+              "negative control"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "title": [
+    {
+      "type": "Text",
+      "value": "A deep learning pipeline for mapping in situ network-level neurovascular coupling in multi-photon fluorescence microscopy"
+    }
+  ]
+}
