@@ -37,7 +37,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Model-based fMRI analysis requires computational model fitted to behavioral data. Model code in GitHub repo. Pre-computed group NIfTI results may be in fMRIresults/. Not yet executed.
 ---

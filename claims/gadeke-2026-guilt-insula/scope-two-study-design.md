@@ -64,7 +64,10 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-04-20
-    status: verified
+    status: blocked
+    blocked_by: not-applicable
+    # The two-study design: established by reading the Methods, not by running code. A design or scope claim is settled by the paper's own
+    # description, so there is no analysis to re-run and no value to compare.
     notes: >
       Confirmed by Methods inspection: Study 1 (N=40, fMRI, two sessions of ~50
       decision trials per condition); Study 2 (N=44, behavioural replication with

@@ -43,7 +43,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     original_script: https://github.com/dbheadley/InhibOnDendComp/blob/main/scripts/Fig9.ipynb
     script_execution: pre-computed
     script_execution_note: "Requires Dryad burst simulation files (1.88 GB); .npy files absent from GitHub repo"

@@ -44,7 +44,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-29
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Figure 4-Fig 4 simulations-Source code.py: computationally infeasible as written.
       The nanoclustering simulation uses dx=0.02 µm (varicosity scale), producing a
@@ -58,7 +59,7 @@ reproductions:
       Zenodo data or running on a compute cluster. Code was not assessed for correctness.
   - agent: mainen-z
     date: 2026-03-26
-    status: partial:zenodo-data-downloaded
+    status: partial
     notes: >
       Zenodo deposit (DOI 10.5281/zenodo.17664800, latest record 18046987) downloaded
       2026-03-26. The deposit contains: 5 × sim_result_*.npy (9.1 GB each — 45 GB

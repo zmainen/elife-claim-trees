@@ -42,7 +42,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Results text: "The hagstone neuropil is essentially completely filled with serotonergic
       immunoreactivity, matching the outline defined in the anti-synapsin channel." The circular

@@ -43,7 +43,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-04-20
-    status: N/A
+    status: unattempted
+    blocked_by: not-applicable
     notes: >
       Synthesis claim — not directly reproducible. Stands on the constituent empirical claims
       (`baseline-intra-vessel-radius-varies-24pct`, `dilations-nearer-neurons-than-constrictions`,

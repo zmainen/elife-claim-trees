@@ -41,7 +41,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Blocker (2026-03-30): Interpretive claim synthesized from fig3 (V1) and fig3B (LO) pairwise
       decoding results. Requires the full fMRIPrep + FSL FEAT + MVPA pipeline on ds005933 (61 GB).

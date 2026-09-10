@@ -38,7 +38,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       Responsive pixel metric from screening pipeline. Analysis code on Zenodo. Wet lab reproduction not feasible without sensor constructs. Not yet executed.
 ---

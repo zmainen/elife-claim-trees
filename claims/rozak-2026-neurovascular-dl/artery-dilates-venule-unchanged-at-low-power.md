@@ -43,7 +43,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       This is a single-example illustration (one artery, one capillary, one venule from
       one mouse) shown to demonstrate the vertex-wise tracking capability. The p-values

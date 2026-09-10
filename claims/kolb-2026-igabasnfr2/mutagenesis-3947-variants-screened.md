@@ -38,7 +38,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       These are count statistics from the screening dataset. Analysis code on Zenodo. Wet lab data required. Not yet executed.
 ---

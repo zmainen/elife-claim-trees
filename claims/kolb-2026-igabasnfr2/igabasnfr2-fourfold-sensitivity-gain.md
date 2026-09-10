@@ -39,7 +39,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       Zenodo deposit contains analysis code and source data for dose-response curves and time traces. However, primary screening data requires the sensor constructs and imaging apparatus. Analysis of deposited source data is possible without wet lab. Not yet executed.
 ---

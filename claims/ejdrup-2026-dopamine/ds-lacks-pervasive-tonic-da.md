@@ -45,7 +45,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-29
-    status: unverified:code-error
+    status: blocked
+    blocked_by: code-error
     script: verification/ejdrup-2026-dopamine/verify.py
     original_script: "https://github.com/Gether-Lab/striatal-dopamine-model/blob/main/Figure%201-Fig%201a%2C%20d%2C%20e%2C%20f-Source%20code.py"
     script_execution: patched

@@ -44,7 +44,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       Single-trial ΔF/F₀ shown in Fig 6c (no group statistics reported beyond prior slice calibration). GABA concentration estimate (~2–2.5 μM) is derived from prior calibration by Magloire et al. (2023), not directly measured in this experiment. Requires in vivo 2P setup and cranial window surgery. Epistemic rated moderate because the concentration estimate is calibration-derived, not directly measured.
 ---

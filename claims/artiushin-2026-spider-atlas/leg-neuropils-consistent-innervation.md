@@ -35,7 +35,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Fig2 in paper. BIL data required. Not yet executed.
 ---

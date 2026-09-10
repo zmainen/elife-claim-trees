@@ -48,7 +48,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       Additional phenotypes: 8/12 Kcnc1-A421V/+ mice also showed runs of epileptiform
       spikes without behavioral correlate (duration 14.5±0.7 s). Myoclonic jerks (large

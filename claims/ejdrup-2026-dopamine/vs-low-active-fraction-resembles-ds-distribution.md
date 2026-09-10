@@ -42,7 +42,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-29
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Figure 3-Fig 3b, c, e-g-Source code.py sweeps active terminal fraction across many
       values in both DS and VS. The 5% vs 100% comparison (fig3B) requires multiple simulation

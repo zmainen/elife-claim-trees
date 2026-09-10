@@ -40,7 +40,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       The 2×SD threshold is stated in the Methods ("Statistical models") and in the Results
       prose. Appendix 1—figure 14 applies a 10% threshold instead and shows "qualitatively

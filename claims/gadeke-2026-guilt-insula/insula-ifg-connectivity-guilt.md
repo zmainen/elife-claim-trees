@@ -37,7 +37,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       gPPI analysis requires individual-level GLM outputs from OpenNeuro raw data. gPPI toolbox dependency. Group-level results may be in fMRIresults/ NIfTI files. Not yet executed.
 ---

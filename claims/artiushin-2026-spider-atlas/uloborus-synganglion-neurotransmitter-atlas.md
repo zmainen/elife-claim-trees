@@ -46,7 +46,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       BIL TIFF stacks are large (likely tens of GB). elastix registration pipeline on GitHub. Computationally intensive. Not yet executed.
 ---

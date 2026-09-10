@@ -47,7 +47,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       Statistics by mixed-effects modeling. Confidence rated moderate because: (1) this
       cohort did not show hypersynchronous discharges (different from fig8B-D cohort),

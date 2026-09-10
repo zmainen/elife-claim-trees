@@ -48,7 +48,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Fig12 is the primary evidence panel, showing 9 antibody targets each in ventral and dorsal
       views of the arcuate body. Results text systematically describes each transmitter pattern

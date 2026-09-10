@@ -47,7 +47,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified:interpretive
+    status: partial
     notes: >
       Interpretive synthesis — component empirical claims verified from OSF data.
       Additivity for other-associated stimuli confirmed: interaction ≈ +0.63 Hz (near-zero,

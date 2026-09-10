@@ -47,7 +47,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified:direction-and-trend
+    status: partial
     notes: >
       Verified from G-Node Excel (WT P32-42 PV->Pyr and Kcnc1 P32-42 PV->Pyr sheets).
       uIPSC amplitude at 20Hz pulse 1: WT n=13 mean=-78.4 pA, KI n=13 mean=-143.2 pA;

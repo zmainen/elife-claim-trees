@@ -41,7 +41,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Observational anatomical claim — requires inspecting z-planes 160-190 of the standard brain
       atlas at BIL. The bilateral void pattern is described clearly in Results and visible in

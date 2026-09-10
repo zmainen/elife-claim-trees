@@ -44,7 +44,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       Behavioral data on G-Node. Statistics: two-way repeated-measures ANOVA with Tukey's
       post hoc (Barnes maze); unpaired t-test (Y-maze). Total arm entries and distance

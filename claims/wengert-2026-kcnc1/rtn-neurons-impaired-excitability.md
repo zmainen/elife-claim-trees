@@ -44,7 +44,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       n=19 Kcnc1-A421V/+ cells (N=5 mice), n=16 WT cells (N=4 mice). Significance by
       repeated-measures two-way ANOVA. RTN predominantly expresses Kv3.1 and Kv3.3

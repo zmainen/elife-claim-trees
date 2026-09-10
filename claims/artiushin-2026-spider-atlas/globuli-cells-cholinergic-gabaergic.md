@@ -41,7 +41,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Results: "We find the cluster of cells closely associated with the MB heads is revealed by
       ChAT immunoreactivity, and to a lesser extent by GAD immunoreactivity, suggesting they

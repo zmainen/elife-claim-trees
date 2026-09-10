@@ -41,7 +41,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Claims grounded in Results text: "most abundantly innervated by serotonergic as well as
       TDC2+ immunoreactivity." The adjacent medial region with overlapping TDC2/5-HT/AstA signal

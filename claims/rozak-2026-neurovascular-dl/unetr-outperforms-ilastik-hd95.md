@@ -47,7 +47,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Requires GPU inference on FRDR test data. Pre-trained model available via GitHub
       (AICONSlab/novas3d). Note: UNETR vs U-Net showed no significant difference on mean

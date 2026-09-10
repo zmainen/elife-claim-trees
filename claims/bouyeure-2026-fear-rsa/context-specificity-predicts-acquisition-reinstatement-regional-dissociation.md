@@ -42,7 +42,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: n=22-24; small sample for an individual-differences LME with interaction; effect sizes not reported
 ---
 

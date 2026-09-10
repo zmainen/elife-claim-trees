@@ -40,7 +40,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
 ---
 

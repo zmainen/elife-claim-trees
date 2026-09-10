@@ -43,7 +43,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       n=147 ROIs from five retinae (iGABASnFR1), n=346 ROIs from three retinae (iGABASnFR2). SNR comparison: p=0 (Mann-Whitney-Wilcoxon). Direction selectivity (CV): p=7.812×10⁻⁶. Mean response reliability iGABASnFR2: 0.66±0.14 vs iGABASnFR1: 0.41±0.11. Requires retinal preparation, 2P microscope, and AAV-injected mice.
 ---

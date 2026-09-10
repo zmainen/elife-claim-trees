@@ -47,7 +47,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       The spatial gradient (dilations closer, constrictions farther) was significant at
       4.3 mW/mm² (p<1e-4) and 1.1 mW/mm² (p=1.5e-3). The 16.8±13.5 µm / 22.7±16.3 µm

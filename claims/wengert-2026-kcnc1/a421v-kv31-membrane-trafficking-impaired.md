@@ -45,7 +45,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       Significance: ***p<0.001 by unpaired t-test. The analysis quantifies membrane-to-cytosol
       Kv3.1 ratio as an index of subcellular distribution. The authors note that more prominent

@@ -32,7 +32,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Blocker (2026-03-30): Same pipeline as foveal-v1-decodes-peripheral-saccade-target —
       requires full fMRIPrep + FSL FEAT + MVPA pipeline on ds005933 (61 GB). The control condition

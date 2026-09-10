@@ -48,7 +48,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Data and pre-computed posteriors accessible on OSF (https://osf.io/a62df).
       The Δloo value (14.2) and weight (0.86) require loading the Stan posterior trace

@@ -39,7 +39,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified:partial
+    status: partial
     script: verification/bouyeure-2026-fear-rsa/verify.py
     original_script: https://github.com/AntoineBouyeure/Representational-properties-of-cues-and-contexts-shape-fear-learning-and-reversal/blob/main/run_nina_analysis.py
     script_execution: pre-computed

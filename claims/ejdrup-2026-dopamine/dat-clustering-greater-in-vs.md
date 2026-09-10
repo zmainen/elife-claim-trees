@@ -46,11 +46,12 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-29
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: dSTORM localisation data deposited in Zenodo (Figure 4 data deposit); reproduction would require running DBSCAN cluster analysis on raw localization files.
   - agent: mainen-z
     date: 2026-03-26
-    status: failed:mismatch
+    status: mismatch
     notes: >
       DAT_clustering.csv downloaded from Zenodo (record 18046987). Contains 13 DS values
       and 12 VS values (semicolon-delimited, comma as decimal separator). Running Welch's

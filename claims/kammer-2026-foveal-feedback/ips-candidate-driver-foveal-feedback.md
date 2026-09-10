@@ -41,7 +41,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       RESOLVED from unverified:no-code (2026-03-30). Full text (JATS XML, Results section) confirms
       this is a reported analysis with statistics. Parametric modulation correlates block-by-block

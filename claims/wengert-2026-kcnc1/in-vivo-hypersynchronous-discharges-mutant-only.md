@@ -44,7 +44,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       7/7 penetrance is a very strong effect. The paper distinguishes this neuropil-dominated
       signal from somatic signals using a separate cohort with soma-tagged GCaMP8m. That cohort

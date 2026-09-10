@@ -54,7 +54,10 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified
+    status: blocked
+    blocked_by: not-applicable
+    # The partner was an algorithm: established by reading the Methods, not by running code. A design or scope claim is settled by the paper's own
+    # description, so there is no analysis to re-run and no value to compare.
     notes: >
       Confirmed by code inspection of Methods section (Decision task, p.15): "the partner's
       decisions were simulated using a simple algorithm that always selected the option with

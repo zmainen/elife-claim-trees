@@ -43,7 +43,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       No figure directly displays the 241→412 vessel count comparison; the numbers appear in
       the Results prose (section "Vessel extraction improvements via image registration").

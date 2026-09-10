@@ -42,7 +42,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Blocker (2026-03-30): Control condition parametric modulation, supplementary figure. Requires
       same FSL FEAT parametric modulation GLM as the experimental condition IPS analysis, run on

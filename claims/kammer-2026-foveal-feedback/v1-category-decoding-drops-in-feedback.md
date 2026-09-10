@@ -42,7 +42,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Blocker (2026-03-30): Requires separate pairwise decoding for cross-category comparisons
       relative to cross-both baseline (FovealDecoding.run_all_decoding(comparison='category')).

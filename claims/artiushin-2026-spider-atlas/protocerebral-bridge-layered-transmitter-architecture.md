@@ -46,7 +46,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Results: "Comparing further neuronal subtype preparations reveals that the PCB has a
       layered structure." Layer-by-layer description is in the Results prose for this section.

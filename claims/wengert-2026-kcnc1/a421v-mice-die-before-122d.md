@@ -35,7 +35,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified:with-nuance
+    status: partial
     script: verification/wengert-2026-kcnc1/verify.py
     original_figure: verification/originals/wengert-2026-kcnc1/fig1.jpg
     figure: verification/wengert-2026-kcnc1/fig-survival.png

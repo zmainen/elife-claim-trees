@@ -38,7 +38,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       Stopped-flow measurements require purified protein (expressed in E. coli) and an Applied Photophysics SX20 stopped-flow spectrometer. n=3 replicates from three separate protein batches. Source data on Zenodo. Wet lab not feasible without purified protein and instrument.
 ---

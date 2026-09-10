@@ -38,7 +38,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       The OOD generalization is purely qualitative — no Dice, HD95, or other quantitative
       metric is reported for the OOD datasets. The appendix shows example 2D slices of

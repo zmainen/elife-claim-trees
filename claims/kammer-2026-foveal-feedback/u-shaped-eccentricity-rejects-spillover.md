@@ -44,7 +44,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Blocker (2026-03-30): Requires retinotopic ROI construction (FSL retinotopic localizer FEAT →
       thresh_zstat{d}.nii.gz per eccentricity degree) plus eccentricity-binned decoding across 10 bins

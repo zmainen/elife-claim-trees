@@ -43,7 +43,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       iGABASnFR1 result: 0 signals across 15 trials × 5 experiments. iGABASnFR2 result: consistent evoked signals; SNR>3 may require 5–10 trial averaging. Requires Femtonics 2P system, patch clamp rig, and AAV-injected mice or biolistically transfected organotypic cultures.
 ---

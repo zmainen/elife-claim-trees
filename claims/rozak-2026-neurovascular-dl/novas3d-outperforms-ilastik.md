@@ -44,7 +44,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       GitHub: AICONSlab/novas3d. Python package with Tutorial.ipynb. FRDR data deposit. GPU required for inference. Not yet executed.
 ---

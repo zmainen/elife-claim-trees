@@ -47,7 +47,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-code
+    status: blocked
+    blocked_by: no-code
     script_execution: not-executed
     script_execution_note: "Interpretive synthesis — no script; assessed by consistency with anatomical literature"
     notes: >

@@ -44,7 +44,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       This is a baseline measurement (not a stimulation result). The 24±28% figure is reported
       in the Results prose ("Vascular morphology and heterogeneity within and among vessels")

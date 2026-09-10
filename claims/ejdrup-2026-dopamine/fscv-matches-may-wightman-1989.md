@@ -52,7 +52,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-29
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       The FSCV simulation (Figure 2-Fig 2g, h-Source code.py) requires running the full
       tissue-scale model for 10, 30, and 60 Hz stimulation conditions in both DS and VS.

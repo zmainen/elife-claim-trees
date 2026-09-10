@@ -43,7 +43,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-29
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: Raw immunostaining data not in Zenodo deposit; reproduction would require original tissue samples.
 ---
 

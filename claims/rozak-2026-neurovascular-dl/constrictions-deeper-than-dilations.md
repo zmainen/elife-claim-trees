@@ -44,7 +44,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       The 37±179 µm depth difference applies to 4.3 mW/mm² (p<1e-4). For 1.1 mW/mm², the
       difference was 58±187 µm deeper (p=0.02). There was no significant change in the mean

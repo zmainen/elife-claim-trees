@@ -42,7 +42,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:partial
+    status: partial
     notes: >
       Structural analysis performed on PDB 9D57 and 6DGV. Key findings:
 

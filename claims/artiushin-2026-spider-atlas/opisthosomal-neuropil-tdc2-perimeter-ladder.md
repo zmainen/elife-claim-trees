@@ -40,7 +40,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       The ladder-like structure in the TDC2 channel is described at z-planes 415-425 and
       448-465 of the standard brain (Fig3B, C). The perimeter tract arrows and brace

@@ -40,7 +40,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Blocker (2026-03-30): Same parametric modulation pipeline as ips-candidate-driver-foveal-feedback
       (FSL FEAT → ROI averaging, Bonferroni correction across IPS/FEF/LO). FEF: t(27)=2.07, p=0.072

@@ -38,7 +38,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified:partial
+    status: partial
     notes: >
       NeuroVault map downloaded (s1r1_CSplus_s1r1_between_vs_CSminus_s1r1_between_logpmax_size025.nii.gz).
       This is the searchlight cue-generalization (between-item RSA) map for session 1 run 1 (acquisition).

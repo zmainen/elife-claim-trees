@@ -43,7 +43,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Blocker (2026-03-30): Same pipeline as V1 decoding but with vareas=[2] and vareas=[3] passed
       to prepare_all_data(). Supplementary figure only; no per-area statistics in main text.

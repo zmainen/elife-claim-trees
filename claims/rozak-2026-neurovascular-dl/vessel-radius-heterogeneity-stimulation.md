@@ -40,7 +40,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Requires running segmentation pipeline on FRDR volumetric data. Not yet executed.
 ---

@@ -41,7 +41,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Results: "we surprisingly did not see co-expression with most of our specific neurosignaling
       molecule antibodies... only anti-allatostatin A staining showed co-expression throughout

@@ -33,7 +33,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-29
-    status: unverified:code-error
+    status: blocked
+    blocked_by: code-error
     notes: >
       Same run as vs-maintains-pervasive-tonic-da (Figure 2-Fig 2a-f-Source code.py).
       VS simulation ran to completion but matplotlib error prevented figure generation.

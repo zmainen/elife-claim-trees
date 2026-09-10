@@ -46,7 +46,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       n=4 wild-type mice is a small sample for a negative control, but the key result is
       the absence of a difference rather than presence, so the power concern is somewhat

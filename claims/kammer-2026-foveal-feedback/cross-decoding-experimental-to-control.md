@@ -38,7 +38,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Blocker (2026-03-30): Requires same full pipeline as foveal-v1-decodes-peripheral-saccade-target.
       Cross-decoding (train on experimental, test on control) is implemented in run_cross_condition_classifier()

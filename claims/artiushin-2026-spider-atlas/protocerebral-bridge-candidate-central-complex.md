@@ -39,7 +39,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Weak epistemic status: homology claim requires comparative anatomy expertise and is based on morphological/neurochemical similarity. BIL data required. Not yet executed.
 ---

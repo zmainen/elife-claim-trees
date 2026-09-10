@@ -41,7 +41,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Data accessible on OSF (Correlation_Results.xlsx contains Δw and ΔΔv per participant).
       The BFinclusion values (2458.52, 4638.74) require running Bayesian regression model

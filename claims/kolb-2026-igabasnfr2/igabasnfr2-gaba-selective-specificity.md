@@ -37,7 +37,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       Specificity data from purified protein titrations (n≥3 replicates per compound). Compounds tested include structurally related amino acids and histamine. Source data on Zenodo. Wet lab not feasible without purified protein.
 ---

@@ -47,7 +47,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       Constriction responses: 458 nm at 1.1 mW/mm² produced –1.39±1.51 µm, at 4.3 mW/mm²
       produced –1.20±1.13 µm; 552 nm control produced –0.37±0.30 µm (smaller, p=0.02).

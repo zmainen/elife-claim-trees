@@ -44,7 +44,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       n=12 WT (N=4 mice), n=12 Kcnc1-A421V/+ (N=4 mice). One significant result: rheobase
       reduced in Kcnc1-A421V/+ (*p=0.023 by unpaired t-test, Table 2). The paper does not

@@ -44,7 +44,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Blocker (2026-03-30): Eye-tracking data are NOT on OpenNeuro. The README states "Eye Tracking
       data can be obtained upon request." The gaze analysis pipeline reads raw eye-tracker CSV files

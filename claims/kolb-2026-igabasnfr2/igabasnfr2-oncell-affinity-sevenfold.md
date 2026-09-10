@@ -40,7 +40,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       On-cell titration requires sensor-expressing neurons and perfusion system. Source data on Zenodo covers dose-response curves. Wet lab reconstruction not feasible without constructs. Analysis of deposited source data not yet executed.
 ---

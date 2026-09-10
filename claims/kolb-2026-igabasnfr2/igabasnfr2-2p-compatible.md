@@ -42,7 +42,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       Photophysical measurements require purified sensor protein, Ti-Sapphire laser system, and Tecan plate reader. Table 1 reports ε, Φ, and τ values for all three sensors. Source data on Zenodo.
 ---

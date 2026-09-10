@@ -38,7 +38,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-data
+    status: blocked
+    blocked_by: no-data
     notes: >
       All three sensors measured in parallel in same primary neuron culture. Rise and decay constants computed from exponential fits; statistics by Tukey's HSD post hoc test following one-way ANOVA. p<0.001 for both comparisons vs iGABASnFR1. Requires cultured neurons and field stimulation apparatus.
 ---

@@ -50,7 +50,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified:interpretive
+    status: partial
     notes: >
       Interpretive synthesis — both component empirical claims verified from OSF data.
       Perceptual condition: self-other diff increases by +1.55 Hz from baseline (confirmed).

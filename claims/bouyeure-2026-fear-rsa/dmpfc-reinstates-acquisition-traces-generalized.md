@@ -41,7 +41,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: n=261; ROI derived from searchlight clusters (circular concern as in IFG claim)
 ---
 

@@ -33,7 +33,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:compute-infeasible
+    status: blocked
+    blocked_by: compute-infeasible
     notes: >
       Blocker (2026-03-30): No pre-computed results anywhere in repo or OpenNeuro.
       OpenNeuro ds005933 (61 GB raw BIDS) contains only raw BOLD NIfTI files — no derivatives folder,

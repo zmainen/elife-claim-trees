@@ -51,7 +51,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified
+    status: unattempted
     notes: >
       R²=0.68 is a moderate fit — the validation acknowledges appreciable variance. The paper
       also validates using fluorescent beads (nominal 7.32±0.27 µm diameter), which had a higher

@@ -42,7 +42,8 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: unverified:no-code
+    status: blocked
+    blocked_by: no-code
     notes: >
       Interpretive synthesis. No single script. Not yet executed.
 ---
