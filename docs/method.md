@@ -40,9 +40,9 @@ What this document is not: a specification of how the schema should evolve at sc
 
 ## 2. Corpus
 
-The corpus consists of 12 papers spanning the neuroscience subfield mix of eLife, plus one within-paper revision pair carried forward from the lab's own work. Of the twelve, ten are recent eLife papers selected for domain breadth (atlas neuroanatomy, fMRI, computational modelling, psychophysics, sensor engineering and structural biology, channelopathy, deep-learning image analysis); the remaining two are the v1 preprint and R1 revision of the same Meijer–Mainen serotonin manuscript, included for a within-paper, across-revision comparison of how the same body of work is reframed across submission.
+The published corpus is **{{papers}} papers** from eLife, spanning the journal's neuroscience subfield mix. Two further papers — the two bioRxiv versions of one preprint — are carried as method examples rather than corpus members: they are the only pair here that shows how a claim tree changes between a preprint and its revision, and they are counted separately everywhere ({{method_example_claims}} claims across {{method_example_papers}} versions), never folded into a corpus total.
 
-Total: **341 claim files** across 13 paper directories (10 eLife papers, which are what the public site publishes, plus 3 lab papers).
+Total: **{{claims}} claims** across {{papers}} papers, carrying **{{relations}} typed relations** — {{relation_types_used}} of the {{relation_types_defined}} relation types the vocabulary defines, and all {{roles_used}} roles.
 
 **Distribution by `role`:**
 
@@ -57,7 +57,7 @@ Total: **341 claim files** across 13 paper directories (10 eLife papers, which a
 | literature-context | 12 |
 | synthesis | 9 |
 | interpretation | 7 |
-| **Total** | **310** |
+| **Total** | **{{claims}}** |
 
 **Per-paper claim counts:** artiushin 17, bouyeure 30, ejdrup 25, gadeke 27, headley 26, kammer 23, kolb 20, meijer-orthogonal 24, meijer-additive-r1 41, rozak 23, scheller 23, wengert 31.
 
@@ -304,7 +304,7 @@ Role is the rhetorical function the claim plays in the paper's argument. The syn
 |:-----|:--------------|:-------------------|
 | `hypothesis` | The paper's organising hypothesis or framing question. Anchors deductive chains via `entails:` to predictions. | `hypothesis` |
 | `prediction` | A specific empirical prediction derivable from a hypothesis. Carries `derived-from:` back to its hypothesis and is `tests:`-targeted by empirical claims. | `prediction` |
-| `empirical` | A measured or computed result, panel-grounded. The largest role bucket (139 of 310). | `empirical` |
+| `empirical` | A measured or computed result, panel-grounded. The largest role bucket ({{largest_role_n}} of {{claims}}). | `empirical` |
 | `control` | A check ruling out an artefactual or alternative explanation. Carries `scopes:` or `rules-out:` edges. | `empirical` |
 | `scope` | A boundary condition that qualifies a set of claims (single-cell scope, dataset boundary, optogenetic-vs-physiological scope). Often global (`scopes: ["*"]`). | `assessment` |
 | `methodological` | A procedural or analytical capability that warrants a downstream interpretation (manifold-from-pooled-super-session, particular sorting pipeline). Carries `enables-method:`. | `assessment` |
@@ -494,7 +494,7 @@ Assessment claims (structural properties of code or parameterisation) are verifi
 
 ### 5.5 Per-paper coverage
 
-Of the 12 papers, 7 carry a `verify.py` script. The remaining 5 do not:
+Of the {{papers}} papers, {{verify_scripts}} carry a `verify.py` script. The remaining {{papers_without_verify}} do not:
 
 - **artiushin-2026-spider-atlas** — atlas paper; verification is image inspection rather than execution. The 17 claims carry mostly `unverified:no-data` because the underlying volumes are not consulted in this prototype.
 - **kammer-2026-foveal-feedback** — no verification script; 12 of 23 claims are `unverified:compute-infeasible`, reflecting the per-subject MVPA pipeline's compute requirements.
@@ -619,7 +619,7 @@ The comparator also lists `orphanClaims` (claims present in the graph but not su
 
 ### 7.4 What the comparator finds
 
-Two diagnostic patterns recur across the 12 papers:
+Two diagnostic patterns recur across the {{papers}} papers:
 
 1. **`rules-out` and `refutes` edges are scrubbed by abstracts.** The eliminative move is consistently flattened. The Meijer R1 abstract states the additivity finding; the synthesis surfaces both the additivity finding and the explicit refutation of the multiplicative-gain prediction. The abstract's "5-HT modulates spiking additively" carries the same proposition as the synthesis's "additive prediction confirmed and multiplicative prediction refuted, eliminating gain control as the dominant brain-wide mode," but the rhetorical move from refutation to elimination is absent. The abstract reader cannot tell that the paper is engaging an explicit alternative.
 
@@ -692,11 +692,15 @@ The methodology described above is the disciplined process the prototype would a
 
 ### Authoring discipline not strictly enforced
 
-The ten-step procedure with three independent extractions and a mandatory Step 5 review gate describes a workflow the prototype did not strictly enforce. In practice, authoring was prompt-guided LLM extraction with intermittent rather than systematic human review. The 341 claim files should be read as a draft annotation layer, not as adjudicated output. A scaled-out version — the version this document is the methodology for — would enforce the three-extraction reconciliation and the Step 5 review gate as actual procedural checkpoints. The corpus is the prototype's draft; the methodology is the discipline the draft should be brought up to.
+The ten-step procedure with three independent extractions and a mandatory Step 5 review gate describes a workflow the prototype did not strictly enforce. In practice, authoring was prompt-guided LLM extraction with intermittent rather than systematic human review. The {{claims}} claim files should be read as a draft annotation layer, not as adjudicated output. A scaled-out version — the version this document is the methodology for — would enforce the three-extraction reconciliation and the Step 5 review gate as actual procedural checkpoints. The corpus is the prototype's draft; the methodology is the discipline the draft should be brought up to.
 
 ### Verification coverage is shallow
 
-Of 7 papers with verify scripts, **only ~14 of the targeted ~27 claims are backed by live execution** in the present session. The remaining ~13 are from-notes assertions (Section 5.3) that depend on prior-session execution recorded inline in the script. A reader who consults `verify.log` alone may see PASS without seeing live-versus-from-notes provenance unless they also read the script. **5 of 12 papers have no verification script at all**, including both Meijer revisions, where verification is deferred pending the lab's own re-running.
+Of the {{papers}} papers, {{verify_scripts}} carry a verification script. Across the corpus, every claim a re-run could settle — {{eligible_with_record}} of {{eligible_claims}} empirical and control claims — carries a reproduction record. Coverage was never the problem. **Provenance was.**
+
+Until 2026-09-10 those records were *narrated*: written afterwards by an agent describing what it believed had run. Instrumenting one script to record what it actually opened showed what that costs. A record named `Code/csv/fMRI - Choices_singleTrialData.csv` while the code opened `Behav - Choices_singleTrialData.csv`. And one claim — the convergent-validity argument for the paper's central result — carried `status: verified` and a reproduced value while the function it cited raised `shapes (4,4) and (5,5) not aligned` and returned nothing at all. The bug was ours, the status was written from what the analysis was expected to show, and nobody could have caught it from the record alone.
+
+The fix is structural: a verification script now emits its own provenance — every file it opens, with size and hash, and every value beside the paper's — and the claim record carries that emitted value rather than a description of it. Gädeke has been through this; the other {{papers_without_verify_audit}} papers with scripts have not, so their `verified` statuses should be read as unaudited until they are.
 
 The ~150 claim status labels in the corpus that are not backed by either live execution or from-notes records are agentic extraction judgments — the LLM authoring agent's assessment of whether a claim is observationally direct, requires re-execution, or is methodological. These are draft annotations.
 

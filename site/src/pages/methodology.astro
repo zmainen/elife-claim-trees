@@ -11,7 +11,25 @@ import rehypeShiki from '@shikijs/rehype';
 import rehypeStringify from 'rehype-stringify';
 
 // Read method.md at build time (path relative to site/, which is process.cwd() at build).
-const methodMd = readFileSync(join(process.cwd(), '../docs/method.md'), 'utf8');
+const methodRaw = readFileSync(join(process.cwd(), '../docs/method.md'), 'utf8');
+
+// Every countable figure in the prose is a {{token}} filled from corpus-facts.json, which
+// scripts/corpus_facts.py computes from the claim files. This exists because every stale
+// number this site has shipped — "12 papers", "310 claims", "231 claims · 503 relations" —
+// was one somebody typed into a page, while the counts that stayed right were generated at
+// build. So the numbers are no longer in the prose to go stale.
+//
+// An unknown token throws rather than rendering as {{...}}: a build that fails is a problem
+// someone fixes, and a page that quietly shows its own placeholder is one nobody notices.
+const facts = JSON.parse(readFileSync(join(process.cwd(), 'src/data/corpus-facts.json'), 'utf8'));
+const methodMd = methodRaw.replace(/\{\{(\w+)\}\}/g, (_m, key) => {
+  if (!(key in facts)) {
+    throw new Error(
+      `docs/method.md uses {{${key}}}, which corpus-facts.json does not define. ` +
+      `Add it to scripts/corpus_facts.py or fix the token.`);
+  }
+  return String(facts[key]);
+});
 
 // Split the markdown by top-level "## " headings. The leading region (before the
 // first ## ) is the document intro / overview prose; everything after a `## N. Title`
