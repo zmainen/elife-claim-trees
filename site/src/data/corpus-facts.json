@@ -4,6 +4,108 @@
   "eligible_with_record": 133,
   "largest_role": "empirical",
   "largest_role_n": 113,
+  "layers": {
+    "artiushin-2026-spider-atlas": {
+      "agent_trace": false,
+      "coverage": false,
+      "formats": true,
+      "marked": false,
+      "tree": true,
+      "verification": false,
+      "verification_observed": false,
+      "verified_results": 0
+    },
+    "bouyeure-2026-fear-rsa": {
+      "agent_trace": false,
+      "coverage": false,
+      "formats": true,
+      "marked": false,
+      "tree": true,
+      "verification": true,
+      "verification_observed": true,
+      "verified_results": 3
+    },
+    "ejdrup-2026-dopamine": {
+      "agent_trace": false,
+      "coverage": false,
+      "formats": true,
+      "marked": false,
+      "tree": true,
+      "verification": true,
+      "verification_observed": true,
+      "verified_results": 0
+    },
+    "gadeke-2026-guilt-insula": {
+      "agent_trace": true,
+      "coverage": true,
+      "formats": true,
+      "marked": true,
+      "tree": true,
+      "verification": true,
+      "verification_observed": true,
+      "verified_results": 7
+    },
+    "headley-2026-inhibitory-rhythms": {
+      "agent_trace": false,
+      "coverage": false,
+      "formats": true,
+      "marked": false,
+      "tree": true,
+      "verification": true,
+      "verification_observed": true,
+      "verified_results": 4
+    },
+    "kammer-2026-foveal-feedback": {
+      "agent_trace": false,
+      "coverage": false,
+      "formats": true,
+      "marked": false,
+      "tree": true,
+      "verification": false,
+      "verification_observed": false,
+      "verified_results": 0
+    },
+    "kolb-2026-igabasnfr2": {
+      "agent_trace": false,
+      "coverage": false,
+      "formats": true,
+      "marked": false,
+      "tree": true,
+      "verification": true,
+      "verification_observed": true,
+      "verified_results": 1
+    },
+    "rozak-2026-neurovascular-dl": {
+      "agent_trace": false,
+      "coverage": false,
+      "formats": true,
+      "marked": false,
+      "tree": true,
+      "verification": false,
+      "verification_observed": false,
+      "verified_results": 0
+    },
+    "scheller-2026-self-prioritization": {
+      "agent_trace": false,
+      "coverage": false,
+      "formats": true,
+      "marked": false,
+      "tree": true,
+      "verification": true,
+      "verification_observed": true,
+      "verified_results": 8
+    },
+    "wengert-2026-kcnc1": {
+      "agent_trace": false,
+      "coverage": false,
+      "formats": true,
+      "marked": false,
+      "tree": true,
+      "verification": true,
+      "verification_observed": true,
+      "verified_results": 3
+    }
+  },
   "method_example_claims": 66,
   "method_example_papers": 2,
   "method_examples": [
@@ -20,6 +122,150 @@
     "synthesised_questions": 33,
     "upstream_violations": 161,
     "verification_records": 187
+  },
+  "mira_mapping": {
+    "relations": [
+      {
+        "declared_under": "mira:supports",
+        "description": "The source evidence confirms the destination claim.",
+        "domain": "mira:Evidence",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "confirms"
+      },
+      {
+        "declared_under": "mira:opposes",
+        "description": "The source claim contradicts the destination claim.",
+        "domain": "mira:Claim",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "contradicts"
+      },
+      {
+        "declared_under": null,
+        "description": "The source claim was derived from the destination claim; the inverse of entails.",
+        "domain": "mira:Claim",
+        "inverse_of": "entails",
+        "range": "mira:Claim",
+        "relation": "derived-from"
+      },
+      {
+        "declared_under": "mira:opposes",
+        "description": "The source result separates two things the destination claim joins.",
+        "domain": "mira:Evidence",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "dissociates-with"
+      },
+      {
+        "declared_under": null,
+        "description": "The source result makes the destination method possible.",
+        "domain": "mira:Evidence",
+        "inverse_of": null,
+        "range": "mira:Protocol",
+        "relation": "enables-method"
+      },
+      {
+        "declared_under": null,
+        "description": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to.",
+        "domain": "mira:Claim",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "entails"
+      },
+      {
+        "declared_under": "mira:supports",
+        "description": "The source claim extends the destination claim to new conditions.",
+        "domain": "mira:Claim",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "extends"
+      },
+      {
+        "declared_under": null,
+        "description": "The source claim offers a theoretical reading of the destination result.",
+        "domain": "mira:Claim",
+        "inverse_of": null,
+        "range": "mira:Evidence",
+        "relation": "interprets"
+      },
+      {
+        "declared_under": null,
+        "description": "The source narrows the destination claim's applicability.",
+        "domain": "mira:Claim",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "qualifies"
+      },
+      {
+        "declared_under": "mira:supports",
+        "description": "The source evidence independently replicates the destination claim.",
+        "domain": "mira:Evidence",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "replicates"
+      },
+      {
+        "declared_under": null,
+        "description": "The source claim depends on the destination holding. If the destination fails, the source is undermined.",
+        "domain": "mira:Claim",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "requires"
+      },
+      {
+        "declared_under": "mira:opposes",
+        "description": "The source evidence eliminates the destination claim as viable.",
+        "domain": "mira:Evidence",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "rules-out"
+      },
+      {
+        "declared_under": null,
+        "description": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes.",
+        "domain": "mira:Claim",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "scopes"
+      },
+      {
+        "declared_under": "mira:supports",
+        "description": "The source claim provides support for the destination claim.",
+        "domain": "mira:Claim",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "supports"
+      },
+      {
+        "declared_under": "mira:supports",
+        "description": "The source evidence was gathered to test the destination claim.",
+        "domain": "mira:Evidence",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "tests"
+      },
+      {
+        "declared_under": "mira:supports",
+        "description": "The source evidence validates the destination claim.",
+        "domain": "mira:Evidence",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "validates"
+      }
+    ],
+    "roles": {
+      "assessment": "mira:Claim",
+      "control": "mira:Evidence",
+      "empirical": "mira:Evidence",
+      "hypothesis": "mira:Claim",
+      "interpretation": "mira:Claim",
+      "literature-context": "dg:SourceDocument",
+      "methodological": "mira:Protocol",
+      "prediction": "mira:Claim",
+      "scope": "mira:Claim",
+      "synthesis": "mira:Claim"
+    }
   },
   "papers": 10,
   "papers_without_verify": 3,

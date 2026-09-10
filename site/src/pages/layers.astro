@@ -1,0 +1,222 @@
+---
+// Layers.
+//
+// The corpus is not one flat artifact. It is a stack of analytic layers built over the same
+// papers, each answering a different question, added at different times and covering different
+// subsets. Without this page a reader sees only the current state, cannot tell what changed or
+// when, and reads a paper's missing layer as an oversight rather than as a stated fact.
+//
+// Layer presence is detected from the artifacts on disk by scripts/corpus_facts.py, never
+// declared here, so a paper cannot claim a layer it does not have.
+import Layout from '../layouts/Layout.astro';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+const facts = JSON.parse(readFileSync(
+  join(process.cwd(), 'src/data/corpus-facts.json'), 'utf8'));
+const claims = JSON.parse(readFileSync(
+  join(process.cwd(), 'src/data/claims.json'), 'utf8'));
+
+const L = facts.layers as Record<string, any>;
+const papers = claims.papers as any[];
+const titleOf = (slug: string) =>
+  papers.find(p => p.slug === slug)?.title ?? slug;
+// The first author's surname as the authors themselves spell it.
+//
+// The slug carries the surname but folds diacritics — "gadeke" — and would print "Gadeke"
+// beside "Gädeke" everywhere else on the site. Taking the last word of the author string does
+// not work either: the corpus mixes "Antoine Bouyeure" with "Artiushin G", so that yields "G".
+// So the slug picks which token, and the author record supplies its spelling.
+const fold = (s: string) =>
+  s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+const shortOf = (slug: string) => {
+  const want = slug.split('-')[0];
+  const tokens = (papers.find(x => x.slug === slug)?.authors?.[0] ?? '').split(/\s+/);
+  return tokens.find((tok: string) => fold(tok) === want)
+      ?? want.replace(/^./, (c: string) => c.toUpperCase());
+};
+
+const slugs = Object.keys(L);
+const count = (k: string) => slugs.filter(s => L[s][k]).length;
+
+const LAYERS = [
+  {
+    v: 'v1', date: '2026-03', key: 'tree',
+    title: 'Claim trees',
+    question: 'What does this paper assert, and how do its assertions depend on each other?',
+    detail: `Each paper decomposed into claims carrying a role, a panel anchor and typed relations to other claims — ${facts.claims} claims and ${facts.relations} relations across the corpus. This is the layer everything else is built on.`,
+    covers: `${count('tree')} of ${slugs.length} papers`,
+  },
+  {
+    v: 'v2', date: '2026-09-06', key: 'verification',
+    title: 'Verification',
+    question: 'Did anyone check, and what did they find?',
+    detail: `Claims re-checked against the authors' deposited code and data, recording which function ran, against which file, and what value came out beside the published one. Partial by design: it runs where data is deposited and the analysis is re-executable. Since 2026-09-10 each run is also observed from outside — every file it opens recorded with a content hash — so a status cannot assert more than the run produced.`,
+    covers: `${count('verification')} papers have a script · ${count('verification_observed')} observed`,
+  },
+  {
+    v: 'v3', date: '2026-09-09', key: 'formats',
+    title: 'Interchange formats',
+    question: 'What survives when a claim tree leaves this format?',
+    detail: `The same trees exported to MIRA, OXA and Discourse Graphs, each with a report of what the conversion could not carry. ${facts.mira.carried} of ${facts.mira.relations} relations reach the MIRA export; the ${facts.mira.lost} that do not scope the paper as a whole, which the schema has no node for.`,
+    covers: `${count('formats')} of ${slugs.length} papers`,
+  },
+  {
+    v: 'v4', date: '2026-09-10', key: 'coverage',
+    title: 'Coverage',
+    question: 'What does the paper assert that no claim represents?',
+    detail: `The paper cut into spans, each either accounted for by a claim, adjudicated as asserting no result, or recorded as a gap. This is the layer that measures the claim tree against the paper rather than against itself, and it is the one that produces findings rather than presentation.`,
+    covers: `${count('coverage')} of ${slugs.length} papers`,
+  },
+];
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const has = (s: string, k: string) => L[s][k];
+---
+
+<Layout title="Layers">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+
+    <header class="mb-10">
+      <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">Layers</h1>
+      <p class="text-gray-600 dark:text-gray-400 m-0 max-w-2xl leading-relaxed">
+        This corpus is a stack of analytic layers built over the same {slugs.length} papers.
+        Each answers a different question and was added at a different time, and they do not
+        all cover every paper. This page states which.
+      </p>
+    </header>
+
+    <!-- Timeline -->
+    <ol class="list-none p-0 m-0 border-l-2 border-gray-200 dark:border-gray-700 ml-2 mb-14">
+      {LAYERS.map(l => (
+        <li class="relative pl-7 pb-9 last:pb-0">
+          <span class="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full bg-white dark:bg-[#0f0f0f] border-2 border-amber-600 dark:border-amber-500"></span>
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
+            <span class="font-mono text-xs font-medium text-amber-700 dark:text-amber-400">{l.v}</span>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 m-0">{l.title}</h2>
+            <span class="font-mono text-xs text-gray-400 dark:text-gray-500">{l.date}</span>
+          </div>
+          <p class="text-sm italic text-gray-600 dark:text-gray-400 m-0 mb-2">{l.question}</p>
+          <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0 mb-2">{l.detail}</p>
+          <p class="text-xs font-mono text-gray-500 dark:text-gray-400 m-0">{l.covers}</p>
+        </li>
+      ))}
+      <li class="relative pl-7">
+        <span class="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full bg-white dark:bg-[#0f0f0f] border-2 border-gray-300 dark:border-gray-600"></span>
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
+          <span class="font-mono text-xs font-medium text-gray-400 dark:text-gray-500">next</span>
+          <h2 class="text-lg font-semibold text-gray-500 dark:text-gray-400 m-0">Reproduction from the CLI</h2>
+        </div>
+        <p class="text-sm italic text-gray-500 dark:text-gray-400 m-0 mb-2">Can the published pipeline produce the corpus?</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed m-0">
+          Each paper's tree regenerated by the public pipeline and scored against the curated
+          one. Not started.
+        </p>
+      </li>
+    </ol>
+
+    <!-- Per-paper matrix -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Which papers have which layer</h2>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-5 max-w-2xl leading-relaxed">
+      Gädeke is the worked example and is the only paper carried through every layer. A blank
+      cell below means the layer has not been run for that paper — not that it was run and
+      found nothing.
+    </p>
+
+    <div class="overflow-x-auto mb-12">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="text-left text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+            <th class="py-2 pr-4 font-semibold">Paper</th>
+            <th class="py-2 px-3 font-semibold text-center">v1 tree</th>
+            <th class="py-2 px-3 font-semibold text-center">v2 verification</th>
+            <th class="py-2 px-3 font-semibold text-center">v3 formats</th>
+            <th class="py-2 px-3 font-semibold text-center">v4 coverage</th>
+          </tr>
+        </thead>
+        <tbody>
+          {slugs.map(s => (
+            <tr class="border-b border-gray-100 dark:border-gray-800">
+              <td class="py-2 pr-4">
+                <a href={`${base}/papers/${s}/`}
+                   class="text-gray-800 dark:text-gray-200 no-underline hover:text-amber-700 dark:hover:text-amber-400">
+                  {shortOf(s)}
+                </a>
+                {s === 'gadeke-2026-guilt-insula' && (
+                  <span class="ml-2 text-[10px] font-mono uppercase tracking-wider text-amber-700 dark:text-amber-400">worked example</span>
+                )}
+              </td>
+              <td class="py-2 px-3 text-center">{has(s, 'tree') ? <span class="text-emerald-600 dark:text-emerald-400">&#10003;</span> : <span class="text-gray-300 dark:text-gray-700">&mdash;</span>}</td>
+              <td class="py-2 px-3 text-center">
+                {has(s, 'verification')
+                  ? <span class="text-emerald-600 dark:text-emerald-400 font-mono text-xs">{L[s].verified_results} verified</span>
+                  : <span class="text-gray-300 dark:text-gray-700">&mdash;</span>}
+              </td>
+              <td class="py-2 px-3 text-center">{has(s, 'formats') ? <span class="text-emerald-600 dark:text-emerald-400">&#10003;</span> : <span class="text-gray-300 dark:text-gray-700">&mdash;</span>}</td>
+              <td class="py-2 px-3 text-center">{has(s, 'coverage') ? <span class="text-emerald-600 dark:text-emerald-400">&#10003;</span> : <span class="text-gray-300 dark:text-gray-700">&mdash;</span>}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- What each layer found -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">What each layer found</h2>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-5 max-w-2xl leading-relaxed">
+      Findings belong to the layer that produced them and carry the date they were found, so a
+      returning reader can see what is new rather than a page that has quietly changed.
+    </p>
+
+    <div class="space-y-6 mb-12">
+      <section class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+        <p class="font-mono text-xs text-amber-700 dark:text-amber-400 m-0 mb-1">v1 &middot; claim trees</p>
+        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0">
+          Across {facts.papers} papers the corpus holds {facts.claims} claims and
+          {' '}{facts.relations} typed relations, using {facts.relation_types_used} of the
+          {' '}{facts.relation_types_defined} defined relation types. The commonest role is
+          {' '}<code>{facts.largest_role}</code> at {facts.largest_role_n} claims.
+        </p>
+      </section>
+
+      <section class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+        <p class="font-mono text-xs text-amber-700 dark:text-amber-400 m-0 mb-1">v2 &middot; verification &middot; 2026-09-10</p>
+        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0">
+          {facts.eligible_with_record} of {facts.eligible_claims} claims that a re-run could
+          settle carry a reproduction record. Their outcomes are not uniform:
+          {' '}{Object.entries(facts.reproduction_status).map(([k, v]) => `${v} ${k}`).join(', ')}.
+          Observing the runs from outside also showed that most records were reached by reading
+          a deposit rather than by running the paper's script &mdash; the repository reports
+          that coverage per paper.
+        </p>
+      </section>
+
+      <section class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+        <p class="font-mono text-xs text-amber-700 dark:text-amber-400 m-0 mb-1">v3 &middot; formats &middot; 2026-09-10</p>
+        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0">
+          {facts.mira.carried} of {facts.mira.relations} relations reach the MIRA export, with
+          {' '}{facts.mira.our_violations} validation violations attributable to the encoding.
+          The gaps that remain are specific: {facts.mira.lost} paper-level scope relations the
+          schema has no node for, and {facts.mira.verification_records} verification records
+          for which no interchange format has a node type at all.
+          <a href={`${base}/formats/mira/`} class="text-amber-700 dark:text-amber-400 hover:underline ml-1">MIRA reference</a>
+        </p>
+      </section>
+
+      <section class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+        <p class="font-mono text-xs text-amber-700 dark:text-amber-400 m-0 mb-1">v4 &middot; coverage &middot; 2026-09-10</p>
+        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0">
+          Gädeke only. The paper was cut into spans and each adjudicated against the claim tree,
+          which is how the tree is measured against the paper rather than against itself. The
+          remaining nine papers have not been through this layer.
+        </p>
+      </section>
+    </div>
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm flex flex-wrap gap-x-6 gap-y-2">
+      <a href={`${base}/papers/`} class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline">Papers</a>
+      <a href={`${base}/methodology/`} class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline">Methodology</a>
+      <a href={`${base}/formats/`} class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline">Formats</a>
+    </footer>
+  </div>
+</Layout>

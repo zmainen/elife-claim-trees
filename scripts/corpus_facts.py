@@ -150,6 +150,64 @@ def mira_facts(site):
     return out
 
 
+def layers(site):
+    """Which analytic layer each paper has, detected from the artifacts on disk.
+
+    The corpus is not one flat thing: it is a stack of layers built over the same papers, each
+    answering a different question, and they were added at different times and cover different
+    subsets. A reader who cannot see which layers a given paper has reads a missing layer as an
+    oversight. Presence is detected from files rather than declared, so a paper cannot claim a
+    layer it does not have.
+    """
+    out = {}
+    for s in site:
+        has_tree = os.path.isdir(os.path.join(CLAIMS, s))
+        prov = os.path.join(ROOT, "verification", s, "provenance.json")
+        verified = 0
+        if os.path.isfile(prov):
+            try:
+                with open(prov, encoding="utf-8") as fh:
+                    verified = sum(1 for r in json.load(fh).get("results", [])
+                                   if r.get("status") == "PASS")
+            except Exception:                                         # noqa: BLE001
+                verified = 0
+        out[s] = {
+            "tree": has_tree,
+            "verification": os.path.isfile(
+                os.path.join(ROOT, "verification", s, "verify.py")),
+            "verification_observed": os.path.isfile(prov),
+            "verified_results": verified,
+            "formats": os.path.isfile(os.path.join(ROOT, "exports", f"{s}.mira.jsonld")),
+            "coverage": os.path.isfile(os.path.join(ROOT, "mappings", f"{s}.json")),
+            "marked": os.path.isfile(os.path.join(ROOT, "marked", f"{s}.marked.md")),
+            "agent_trace": os.path.isfile(os.path.join(ROOT, "mappings", f"{s}.json")),
+        }
+    return out
+
+
+def mira_mapping():
+    """The role and relation mapping, read from the exporter's own tables.
+
+    The site states how each claim role and each relation type is expressed in MIRA. Typing
+    that into a page is how it goes stale, so it is read from ROLE_TO_TYPE and RELATION_DEFS
+    and shipped as data.
+    """
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from export_mira import ROLE_TO_TYPE, RELATION_DEFS, INVERSE_PAIRS
+    rels = []
+    for key, spec in sorted(RELATION_DEFS.items()):
+        parent, domain, rng = spec[0], spec[1], spec[2]
+        rels.append({
+            "relation": key,
+            "declared_under": parent,
+            "domain": domain,
+            "range": rng,
+            "description": spec[3] if len(spec) > 3 else "",
+            "inverse_of": INVERSE_PAIRS.get(key),
+        })
+    return {"roles": dict(sorted(ROLE_TO_TYPE.items())), "relations": rels}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--print", dest="show", action="store_true")
@@ -185,6 +243,8 @@ def main():
         "site_corpus": site,
         "method_examples": examples,
         "mira": mira_facts(site),
+        "mira_mapping": mira_mapping(),
+        "layers": layers(site),
     }
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
