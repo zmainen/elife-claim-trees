@@ -39,8 +39,59 @@ REPO_DIR = "/tmp/gadeke"
 
 ROWS = []
 
+# ── Provenance ────────────────────────────────────────────────────────────────
+# Every data file this script opens, recorded as it opens it, with its size and
+# hash. The claim files used to carry a `data_file:` written afterwards by
+# someone describing what they believed ran — and it disagreed with the code:
+# a record named `fMRI - Choices_singleTrialData.csv` while line 86 opens
+# `Behav - Choices_singleTrialData.csv` and falls back to whichever glob match
+# sorts first. A path narrated after the fact is not provenance. The script that
+# reads the file is the only thing that knows which file it read, so it says so.
+
+PROV = {"paper": "gadeke-2026-guilt-insula",
+        "doi": "10.7554/eLife.105391",
+        "data_source": REPO_URL,
+        "opened": [], "results": []}
+
+
+def used(path, note=""):
+    """Record a data file at the moment it is opened. Returns the path."""
+    import hashlib
+    try:
+        b = open(path, "rb").read()
+        PROV["opened"].append({
+            "path": os.path.relpath(path, REPO_DIR),
+            "bytes": len(b),
+            "sha256_12": hashlib.sha256(b).hexdigest()[:12],
+            "note": note,
+        })
+    except OSError as e:
+        PROV["opened"].append({"path": str(path), "error": str(e), "note": note})
+    return path
+
+
 def row(slug, paper_val, repro_val, status):
     ROWS.append((slug, paper_val, repro_val, status))
+    PROV["results"].append({"claim": slug, "paper_value": paper_val,
+                            "reproduced_value": repro_val, "status": status})
+
+
+def write_provenance():
+    """Emit what actually ran, beside the script that ran it."""
+    import json as _json
+    from datetime import datetime, timezone
+    PROV["recorded"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    try:
+        PROV["data_commit"] = subprocess.run(
+            ["git", "-C", REPO_DIR, "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True).stdout.strip() or None
+    except Exception:
+        PROV["data_commit"] = None
+    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "provenance.json")
+    with open(out, "w", encoding="utf-8") as fh:
+        _json.dump(PROV, fh, indent=2)
+    print(f"[prov] {len(PROV['opened'])} file(s) opened, "
+          f"{len(PROV['results'])} result(s) → {out}")
 
 def print_table():
     col_w = [55, 22, 22, 6]
@@ -93,7 +144,7 @@ def verify_lottery_ev():
             row(f"{slug} [Behav]", "β>0, p<0.05", "Choices CSV not found in repo", "WARN")
             return 0
 
-        df = pd.read_csv(choices_file)
+        df = pd.read_csv(used(choices_file, "single-trial choices"))
         ev_col = next((c for c in df.columns if c in ["EVdiffMC", "SVdiff", "EVrisky"]), None)
         choice_col = next((c for c in df.columns if c in ["chooseRisky", "choseRisky"]), None)
         cond_col = next((c for c in df.columns if "condition" in c.lower() or "cond" == c.lower()), None)
@@ -155,7 +206,7 @@ def verify_happiness_partner():
     r2_fmri, r2_behav = None, None
     for fpath in all_csv:
         try:
-            df = pd.read_csv(fpath)
+            df = pd.read_csv(used(fpath, "scanned for R² values"))
             for col in df.columns:
                 try:
                     vals = pd.to_numeric(df[col], errors='coerce').dropna()
@@ -205,7 +256,7 @@ def verify_guilt_happiness():
     beta_fmri, beta_behav = None, None
     for fpath in all_csv:
         try:
-            df = pd.read_csv(fpath)
+            df = pd.read_csv(used(fpath, "scanned for R² values"))
             text = " ".join(df.columns.tolist())
             if "partnerwon" in text.lower() or "subjdecided" in text.lower():
                 for col in df.columns:
@@ -421,6 +472,7 @@ def full_pipeline():
         fn()
     generate_figures()
     print_table()
+    write_provenance()
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 
@@ -463,6 +515,7 @@ def main():
     print("\n" + "=" * 60)
     print("SUMMARY")
     print_table()
+    write_provenance()
 
     n_pass = sum(1 for _, _, _, s in ROWS if s == "PASS")
     n_warn = sum(1 for _, _, _, s in ROWS if s == "WARN")

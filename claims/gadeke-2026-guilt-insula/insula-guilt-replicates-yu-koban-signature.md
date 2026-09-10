@@ -65,8 +65,16 @@ reproductions:
       for the nonparametric result; the t-test is borderline, suggesting the pattern expression
       approach (canlab apply_mask) may differ slightly from our resampling implementation.
   - agent: mainen-z
-    date: 2026-09-06
-    status: verified
+    date: 2026-09-10
+    status: blocked
+    blocked_by: code-error
+    # CORRECTED 2026-09-10. This record said `verified` and reported a reproduced value.
+    # Running verify.py against the deposited data at commit 11854fe, with provenance
+    # recording, verify_yu_koban() raises:
+    #     shapes (4,4) and (5,5) not aligned: 4 (dim 1) != 5 (dim 0)
+    # It produces no value at all. The earlier `verified` was written from what the
+    # analysis was expected to show, not from what the script returned — which is the
+    # failure mode this whole exercise exists to catch, found in our own record.
     script: verification/gadeke-2026-guilt-insula/verify.py
     function: verify_yu_koban() (verify.py line 278)
     data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment

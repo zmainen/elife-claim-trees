@@ -78,6 +78,29 @@ RECOMMENDED = {
     "data_commit": "the commit or version of the data source",
 }
 
+# ── Who is expected to have a record ─────────────────────────────────────────
+# "19 of 27 claims have a reproduction record" is not a finding, because the
+# denominator is wrong. A hypothesis is not the kind of thing a script settles —
+# it is the proposition the paper's evidence bears on, and asking for its
+# reproduced value is a category error, not a gap. Reporting one number over all
+# claims makes a complete corpus look incomplete and hides which absences matter.
+#
+# Eligible: roles that assert something a re-run could confirm or contradict.
+# Not eligible: roles that frame, scope, interpret or cite.
+
+ELIGIBLE = {"empirical", "control"}
+NOT_ELIGIBLE = {
+    "hypothesis":         "a proposition the evidence bears on, not a measurement",
+    "prediction":         "what the hypothesis entails; its test is the empirical claim",
+    "scope":              "a boundary condition, settled by the paper's own description",
+    "methodological":     "a procedure, not a result",
+    "interpretation":     "a reading of results, not a result",
+    "synthesis":          "an aggregation across claims",
+    "assessment":         "a judgement about the work",
+    "literature-context": "an assertion about another paper",
+}
+
+
 LEGACY_STATUS = {
     "verified": "verified",
     "verified:partial": "partial",
@@ -184,6 +207,8 @@ def main():
         slugs = [CURRENT_LAYER]
     status_counts = Counter()
     gate = Counter()
+    eligible = Counter(); extra_records = Counter()
+    elig_total = 0; elig_with = 0
     per_paper = defaultdict(lambda: Counter())
     failures = []
 
@@ -196,7 +221,15 @@ def main():
             if not fn.endswith(".md") or fn == "index.md":
                 continue
             fm = load_frontmatter(os.path.join(d, fn)) or {}
+            role = fm.get("role") or fm.get("claim-type") or "empirical"
+            eligible[role if role in ELIGIBLE else "—not eligible—"] += 1
             recs = [r for r in (fm.get("reproductions") or []) if isinstance(r, dict)]
+            if role in ELIGIBLE:
+                elig_total += 1
+                if recs:
+                    elig_with += 1
+            elif recs:
+                extra_records[role] += 1
             # A claim accumulates verification attempts. The gate judges the CURRENT one —
             # the most recent by date — and treats the rest as history: an earlier attempt
             # that reached a weaker conclusion is a record of what was tried, not a claim
@@ -222,6 +255,15 @@ def main():
     print(f"  meet the gate : {gate['passes']}")
     print(f"  do not        : {gate['fails']}\n")
 
+    print(f"  claims a re-run could settle (empirical, control): {elig_total}")
+    print(f"    with a record : {elig_with}")
+    print(f"    without       : {elig_total - elig_with}")
+    if extra_records:
+        print("  records on roles a re-run cannot settle "
+              "(fine — usually 'blocked / not-applicable'):")
+        for r, n in extra_records.most_common():
+            print(f"    {r:22} {n}")
+    print()
     print("  by paper:")
     for slug in slugs:
         c = per_paper[slug]
