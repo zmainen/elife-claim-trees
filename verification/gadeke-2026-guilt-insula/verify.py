@@ -348,7 +348,16 @@ def verify_yu_koban():
         yu_img = nib.load(yu_mask[0])
 
         from nibabel.processing import resample_from_to
-        yu_resampled = resample_from_to(yu_img, guilt_img, order=0)
+        # Resample the mask onto the guilt map's SPATIAL geometry, not onto the image.
+        # The guilt map is 4D — (79, 95, 79, 40), one volume per participant — so passing
+        # the image itself makes nibabel build a 5x5 affine for the 4D space, while the 3D
+        # mask carries a 4x4, and the resample dies with
+        #     shapes (4,4) and (5,5) not aligned: 4 (dim 1) != 5 (dim 0)
+        # A (shape, affine) pair targets the three spatial dimensions, which is what a
+        # spatial mask should be aligned to. The mask is (91, 109, 91) at a different
+        # voxel size, so it does have to be resampled; order=0 keeps it binary.
+        target = (guilt_img.shape[:3], guilt_img.affine)
+        yu_resampled = resample_from_to(yu_img, target, order=0)
         yu_data = yu_resampled.get_fdata()
         guilt_data = guilt_img.get_fdata()
 
