@@ -45,6 +45,10 @@ MIRA requires every Claim to address a `mira:Question`; a claim tree has no such
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
 
+## Stance: claims this paper does not assert
+
+Every claim in this paper is asserted by it.
+
 ## Alternatives materialised as claims
 
 None: every relation in this paper points at a claim the tree asserts.

@@ -45,3 +45,11 @@ MIRA requires every Claim to address a `mira:Question`; a claim tree has no such
 - Is it the case that targeted near-saturation mutagenesis at sites in and around the Pf622 GABA-binding pocket and the cpGFP-linker interfaces can yield a successor to iGABASnFR1 with substantially improved sensitivity (ΔF/F), increased on-cell affinity within the physiologically relevant range, faster binding kinetics, and improved expression / membrane trafficking — without sacrificing GABA selectivity?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
+
+## Alternatives materialised as claims
+
+None: every relation in this paper points at a claim the tree asserts.
+
+## Paper-level scopes with no MIRA target
+
+None.

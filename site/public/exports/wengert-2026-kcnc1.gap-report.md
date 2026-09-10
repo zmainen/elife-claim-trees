@@ -46,3 +46,11 @@ MIRA requires every Claim to address a `mira:Question`; a claim tree has no such
 - Is it the case that because Kv3.1 is strongly and selectively expressed in fast-spiking neurons that rely on rapid action-potential repolarization to sustain high firing rates, haploinsufficient or dominant-negative loss of Kv3.1 should produce a cell-type- specific impairment that targets parvalbumin-positive (PV+) GABAergic interneurons while leaving excitatory neurons (which do not express Kv3.1 at functionally relevant levels) intact?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
+
+## Alternatives materialised as claims
+
+None: every relation in this paper points at a claim the tree asserts.
+
+## Paper-level scopes with no MIRA target
+
+None.

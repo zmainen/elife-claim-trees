@@ -306,6 +306,14 @@ def build_node(claim, by_slug, extended):
 
     # ── haak: extension — everything MIRA cannot express ──────────────────
     ext = {"haak:role": role}
+    # MIRA has no way to say a paper considered a proposition and rejected it. A rejected
+    # alternative emitted as a plain mira:Claim reads as something this paper asserts -- the
+    # inversion of its meaning. The strict file still carries the `rules-out` edge, declared
+    # under mira:opposes, so a MIRA-only reader gets the direction; it does not get the
+    # posture. The gap report says so per paper.
+    st = a.get("stance") or "asserts"
+    if st != "asserts":
+        ext["haak:stance"] = st
     if claim.get("epistemic"):
         ext["haak:epistemicStrength"] = claim["epistemic"]
 
@@ -613,6 +621,26 @@ def gap_report(paper_slug, claims, dropped, questions, minted=(), wildcards=()):
     L.append("")
     L.append("Override any of these by adding a `question:` field to the hypothesis's "
              "frontmatter and re-running the export.\n")
+
+    nonassert = [c for c in claims
+                 if (first_assertion(c).get("stance") or "asserts") != "asserts"]
+    L.append("## Stance: claims this paper does not assert\n")
+    if nonassert:
+        L.append(f"**{len(nonassert)} of this paper's claims are not asserted by it.** They "
+                 f"are alternative explanations it entertains, rejects, or attributes to "
+                 f"others. MIRA has no vocabulary for that distinction: it types a node as "
+                 f"`Claim` and says nothing about who stands behind it.\n")
+        L.append("The strict export still carries the `rules-out` edge that eliminated each "
+                 "one, declared under `mira:opposes`, so a MIRA-only reader can see the "
+                 "direction of the argument. What that reader cannot see is that the paper "
+                 "**denies** these propositions — so it will over-read them as assertions. "
+                 "The stance travels in the extended file as `haak:stance`.\n")
+        for c in nonassert:
+            st = first_assertion(c).get("stance")
+            L.append(f"- `{c['slug']}` — {st}")
+        L.append("")
+    else:
+        L.append("Every claim in this paper is asserted by it.\n")
 
     L.append("## Alternatives materialised as claims\n")
     if minted:

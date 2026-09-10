@@ -37,7 +37,15 @@ type Props = {
 const { paper, paperSlug, baseUrl, claimsBySlug } = Astro.props as Props;
 
 const all = paper.claims;
-const byRole = (r: string) => all.filter(c => c.role === r);
+// Only claims the paper asserts. A ruled-out alternative is functionally a hypothesis, so
+// without this filter Gaedeke's six rivals rendered as the paper's own hypotheses -- the
+// section opened with six propositions the paper denies. They get their own section below.
+const isAsserted = (c: any) => (c.stance ?? 'asserts') === 'asserts';
+const byRole = (r: string) => all.filter(c => c.role === r && isAsserted(c));
+const alternatives = all.filter(c => !isAsserted(c));
+// Which claim eliminated each alternative — read off the incoming rules-out relations.
+const eliminatorOf = (slug: string) =>
+  all.filter(c => (c['rules-out'] ?? []).includes(slug));
 
 const scopeStar = byRole('scope').filter(c => (c.scopes ?? []).includes('*'));
 const scopeTargeted = byRole('scope').filter(c => {
@@ -354,6 +362,31 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
       </summary>
       {controls.map(c => (
         <ClaimCardMini claim={c} paperSlug={paperSlug} allClaims={claimsBySlug} showChildren={false} />
+      ))}
+    </details>
+  )}
+
+  {/* ALTERNATIVES THE PAPER RULES OUT */}
+  {alternatives.length > 0 && (
+    <details class="claim-section mb-3">
+      <summary class="claim-section-summary cursor-pointer select-none">
+        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="Competing explanations the paper argues against. The paper does not assert these — they are recorded so the evidence that eliminated each one has something to point at.">
+          <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Alternatives ruled out
+        </h3>
+      </summary>
+      <p class="text-xs text-gray-500 mb-2 ml-1">
+        The paper does not assert these. Each is a competing explanation it argues against,
+        recorded so the result that eliminated it has a target.
+      </p>
+      {alternatives.map(c => (
+        <div class="mb-2">
+          <ClaimCardMini claim={c} paperSlug={paperSlug} allClaims={claimsBySlug} showChildren={false} />
+          {eliminatorOf(c.slug).length > 0 && (
+            <p class="text-xs text-gray-500 ml-4 mt-1">
+              ruled out by {eliminatorOf(c.slug).map(e => e.number ?? e.slug).join(', ')}
+            </p>
+          )}
+        </div>
       ))}
     </details>
   )}

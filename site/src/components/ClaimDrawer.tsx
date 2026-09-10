@@ -8,6 +8,7 @@ type Claim = {
   status: string;
   epistemic: string;
   role?: string | null;
+  stance?: string | null;
   'claim-type'?: string | null;
   isAssessment?: boolean;
   figureUrl?: string | null;
@@ -100,7 +101,26 @@ const EDGES: { key: keyof Claim; label: string; desc: string }[] = [
   { key: 'scopes', label: 'Scopes', desc: 'qualifies:' },
 ];
 
-function verificationBanner(status: string, role?: string | null): { bg: string; border: string; text: string; icon: string; label: string; detail: string } {
+function verificationBanner(status: string, role?: string | null, stance?: string | null): { bg: string; border: string; text: string; icon: string; label: string; detail: string } {
+  // A claim the paper does not assert is not a claim awaiting verification -- there is
+  // nothing to verify, because the paper is arguing the proposition is false. This has to
+  // come first: the role-based banners below all say the paper *states* the claim, which on
+  // a ruled-out alternative is the exact inversion of its meaning.
+  if (stance === 'rejects') return {
+    bg: '#fffbeb', border: '#fcd34d', text: '#92400e', icon: '\u2298',
+    label: 'Ruled out by this paper',
+    detail: 'The paper does not assert this. It is an alternative explanation the paper argues against — recorded so the evidence that eliminated it has something to point at. Follow the incoming rules-out relation to see which result did the work.',
+  };
+  if (stance === 'entertains') return {
+    bg: '#fffbeb', border: '#fcd34d', text: '#92400e', icon: '?',
+    label: 'Raised, not asserted',
+    detail: 'The paper raises this as a candidate and does not commit to it. No result in this tree settles it either way.',
+  };
+  if (stance === 'attributes') return {
+    bg: '#f5f3ff', border: '#ddd6fe', text: '#5b21b6', icon: '\u201C',
+    label: 'Attributed to others',
+    detail: 'This paper reports that someone else asserts this. It is not a claim of this paper.',
+  };
   // --- Role-based defaults for claims that don't get code verification ---
   // Hypotheses, predictions, literature-context, and synthesis claims are
   // assessed by their argumentative role, not by running code.
@@ -315,7 +335,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
   const claimText = (claim.displayClaim?.trim()) || claim.claim;
   const original = claim.displayClaim && claim.displayClaim.trim() !== claim.claim ? claim.claim : null;
   const dotColor = statusDotColor(claim.status);
-  const banner = verificationBanner(claim.status, claim.role);
+  const banner = verificationBanner(claim.status, claim.role, claim.stance);
 
   const hasCode = !!claim.script;
   const hasOrigFigure = !!(claim.originalFigureUrl || claim.figureUrl);
@@ -350,6 +370,11 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
                 className={`drawer-role-chip ${roleChipStyle[claim.role] ?? roleChipStyle.empirical}`}
               >
                 {claim.role.toUpperCase()}
+              </span>
+            )}
+            {claim.stance && claim.stance !== 'asserts' && (
+              <span className="drawer-stance-chip" title="This paper does not assert this claim">
+                {claim.stance === 'rejects' ? 'RULED OUT' : claim.stance.toUpperCase()}
               </span>
             )}
             {claim.panel && <span className="drawer-panel">{claim.panel}</span>}
@@ -653,6 +678,17 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           font-weight: 600;
           color: #374151;
           letter-spacing: 0.02em;
+        }
+        .drawer-stance-chip {
+          display: inline-block;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          padding: 2px 7px;
+          border-radius: 3px;
+          border: 1px dashed #b45309;
+          color: #b45309;
+          background: rgba(180, 83, 9, 0.08);
         }
         .drawer-role-chip {
           display: inline-block;

@@ -1,63 +1,461 @@
 {
   "@context": [
-    "https://mira.science/schema/context.jsonld",
+    "https://purl.org/mira-science/mira.jsonld",
     {
-      "haak": "https://haak.world/schema/claim#"
+      "haak": "https://haak.world/schema/claim#",
+      "dgb": "https://discoursegraphs.com/schema/dg_base#",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "dct": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "onProperty": {
+        "@id": "owl:onProperty",
+        "@type": "@id"
+      },
+      "hasValue": {
+        "@id": "owl:hasValue",
+        "@type": "@id"
+      }
+    },
+    {
+      "haakx": "https://haak.world/schema/claim-extended#"
     }
   ],
   "@graph": [
     {
+      "@id": "haak:agent/elife-claim-trees",
+      "@type": "UserAccount",
+      "accountName": "elife-claim-trees pipeline"
+    },
+    {
+      "@id": "haak:type/Claim",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Claim"
+      ],
+      "label": "Claim",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:type/Evidence",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Evidence"
+      ],
+      "label": "Evidence",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:type/Protocol",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Protocol"
+      ],
+      "label": "Protocol",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/derived_from",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/derived_from"
+        }
+      ],
+      "label": "derived-from",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z",
+      "inverseOf": "haak:reldef/entails"
+    },
+    {
+      "@id": "haak:reldef/derived_from/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/derived_from",
+        "dgb:RelationInstance"
+      ],
+      "label": "derived-from",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim was derived from the destination claim; the inverse of entails."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/dissociates_with",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/dissociates_with"
+        }
+      ],
+      "label": "dissociates-with",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/dissociates_with/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/dissociates_with",
+        "dgb:RelationInstance"
+      ],
+      "label": "dissociates-with",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source result separates two things the destination claim joins."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/entails"
+        }
+      ],
+      "label": "entails",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/entails",
+        "dgb:RelationInstance"
+      ],
+      "label": "entails",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/interprets",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/interprets"
+        }
+      ],
+      "label": "interprets",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/interprets/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Evidence",
+      "subClassOf": [
+        "haak:reldef/interprets",
+        "dgb:RelationInstance"
+      ],
+      "label": "interprets",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim offers a theoretical reading of the destination result."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/requires"
+        }
+      ],
+      "label": "requires",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/requires",
+        "dgb:RelationInstance"
+      ],
+      "label": "requires",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/rules_out"
+        }
+      ],
+      "label": "rules-out",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/rules_out",
+        "dgb:RelationInstance"
+      ],
+      "label": "rules-out",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence eliminates the destination claim as viable."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/scopes",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/scopes"
+        }
+      ],
+      "label": "scopes",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/scopes/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/scopes",
+        "dgb:RelationInstance"
+      ],
+      "label": "scopes",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/supports"
+        }
+      ],
+      "label": "supports",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/supports",
+        "dgb:RelationInstance"
+      ],
+      "label": "supports",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim provides support for the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/tests",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/tests"
+        }
+      ],
+      "label": "tests",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/tests/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/tests",
+        "dgb:RelationInstance"
+      ],
+      "label": "tests",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence was gathered to test the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/validates",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/validates"
+        }
+      ],
+      "label": "validates",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/validates/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/validates",
+        "dgb:RelationInstance"
+      ],
+      "label": "validates",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence validates the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
       "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that d1 and D2 receptors encode dopamine signals on distinct temporal scales due to their different binding kinetics: D1 receptors (high EC50, fast on-rate) follow extracellular DA with millisecond delay and act as detectors of transient burst events, while D2 receptors (low EC50, slow off-rate) integrate the dopamine signal over seconds and cannot resolve brief pauses or closely spaced bursts?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that d1 and D2 receptors encode dopamine signals on distinct temporal scales due to their different binding kinetics: D1 receptors (high EC50, fast on-rate) follow extracellular DA with millisecond delay and act as detectors of transient burst events, while D2 receptors (low EC50, slow off-rate) integrate the dopamine signal over seconds and cannot resolve brief pauses or closely spaced bursts?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that dAT nanoclustering acts as a possible regulator of effective DAT activity in striatum: when transporters are concentrated into dense nanoclusters rather than uniformly distributed, local depletion at the cluster surface creates a diffusion-limited bottleneck that lowers the effective Vmax even at constant total DAT expression — proposing nanoclustering as one candidate mechanism for the lower effective Vmax in VS than DS?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that dAT nanoclustering acts as a possible regulator of effective DAT activity in striatum: when transporters are concentrated into dense nanoclusters rather than uniformly distributed, local depletion at the cluster surface creates a diffusion-limited bottleneck that lowers the effective Vmax even at constant total DAT expression — proposing nanoclustering as one candidate mechanism for the lower effective Vmax in VS than DS?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that the qualitative regional contrast in extracellular dopamine dynamics between dorsal and ventral striatum — DS producing varicosity-scale hotspots with no pervasive tonic baseline versus VS producing diffuse tonic-like coverage — is principally explained by a difference in DAT Vmax (~3:1 DS:VS), rather than by differences in release-related parameters (vesicular content, release probability, active terminal fraction, or pacemaker firing rate)?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that the qualitative regional contrast in extracellular dopamine dynamics between dorsal and ventral striatum — DS producing varicosity-scale hotspots with no pervasive tonic baseline versus VS producing diffuse tonic-like coverage — is principally explained by a difference in DAT Vmax (~3:1 DS:VS), rather than by differences in release-related parameters (vesicular content, release probability, active terminal fraction, or pacemaker firing rate)?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e",
       "@type": "mira:Evidence",
-      "schema:name": "d1r-tracks-da-50ms-delay",
-      "schema:description": "D1R occupancy closely tracks extracellular DA with approximately 50 ms delay during burst firing; D1R occupancy is negligible during pacemaker activity because the EC50 of 1000 nM far exceeds tonic [DA] of ~10 nM in DS, making burst events the effective threshold for D1R engagement.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "d1r-tracks-da-50ms-delay",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "D1R occupancy closely tracks extracellular DA with approximately 50 ms delay during burst firing; D1R occupancy is negligible during pacemaker activity because the EC50 of 1000 nM far exceeds tonic [DA] of ~10 nM in DS, making burst events the effective threshold for D1R engagement."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
-        },
-        {
-          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
-        },
-        {
-          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9"
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -98,14 +496,19 @@
       "haak:analysis": "Figure 1-Fig 1h-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff",
       "@type": "mira:Protocol",
-      "schema:name": "d2r-initialization-unjustified",
-      "schema:description": "D2 receptor occupancy is initialized at 0.4 in all receptor dynamics simulations without derivation from steady state; at the modeled EC50 of 7 nM and simulated tonic [DA] of ~10 nM in DS, equilibrium occupancy would be approximately 0.59. No sensitivity analysis over this initialization is reported.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "d2r-initialization-unjustified",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "D2 receptor occupancy is initialized at 0.4 in all receptor dynamics simulations without derivation from steady state; at the modeled EC50 of 7 nM and simulated tonic [DA] of ~10 nM in DS, equilibrium occupancy would be approximately 0.59. No sensitivity analysis over this initialization is reported."
       },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "methodological",
       "haak:epistemicStrength": "weak",
       "haak:relations": {
@@ -136,31 +539,20 @@
     {
       "@id": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215",
       "@type": "mira:Evidence",
-      "schema:name": "d2r-insensitive-to-brief-pauses",
-      "schema:description": "A complete 1 s pause in firing reduces D2R occupancy from approximately 0.55 to 0.45 only; this finding is robust across an order of magnitude of D2R affinity (2–20 nM).",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "d2r-insensitive-to-brief-pauses",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "A complete 1 s pause in firing reduces D2R occupancy from approximately 0.55 to 0.45 only; this finding is robust across an order of magnitude of D2R affinity (2–20 nM)."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
-        },
-        {
-          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
-        },
-        {
-          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
+      },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "empirical",
       "haak:epistemicStrength": "weak",
       "haak:relations": {
@@ -199,36 +591,26 @@
       "haak:analysis": "Figure 1-Fig 1j-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
       "@type": "mira:Evidence",
-      "schema:name": "d2r-integrates-over-seconds",
-      "schema:description": "D2R occupancy takes at least 5 s to return to baseline after a burst due to slow off-kinetics (k_off = 0.2 s⁻¹), making D2R incapable of temporally separating closely linked bursts; the directional conclusion is robust but absolute occupancy values are sensitive to the initialization assumption.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "d2r-integrates-over-seconds",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "D2R occupancy takes at least 5 s to return to baseline after a burst due to slow off-kinetics (k_off = 0.2 s⁻¹), making D2R incapable of temporally separating closely linked bursts; the directional conclusion is robust but absolute occupancy values are sensitive to the initialization assumption."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
-        },
-        {
-          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
-        },
-        {
-          "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e"
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
       },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "empirical",
       "haak:epistemicStrength": "weak",
       "haak:relations": {
@@ -272,22 +654,26 @@
       "haak:analysis": "Figure 1-Fig 1h-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:db68e131-734a-4471-a7e6-e027f38048ac",
       "@type": "mira:Evidence",
-      "schema:name": "d2r-occupancy-higher-in-vs",
-      "schema:description": "D2R occupancy during pacemaker activity is approximately 0.8 in VS versus approximately 0.55 in DS, consistent with higher prevailing tonic DA in VS.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "d2r-occupancy-higher-in-vs",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "D2R occupancy during pacemaker activity is approximately 0.8 in VS versus approximately 0.55 in DS, consistent with higher prevailing tonic DA in VS."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
+      },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "empirical",
       "haak:epistemicStrength": "weak",
       "haak:relations": {
@@ -305,7 +691,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-29",
-          "haak:status": "unverified:compute-infeasible",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -313,36 +699,26 @@
       "haak:analysis": "Figure 2-Fig 2g, h-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:498bf1d1-2d0f-42d4-bdf7-c9996ed5af78",
       "@type": "mira:Evidence",
-      "schema:name": "dat-clustering-greater-in-vs",
-      "schema:description": "Super-resolution dSTORM imaging shows DAT is significantly more nanoclustered in VS than DS (p=0.012, Welch's two-sample t-test, n=12 DS, n=13 VS), consistent across cluster sizes 20–200 nm.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "dat-clustering-greater-in-vs",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Super-resolution dSTORM imaging shows DAT is significantly more nanoclustered in VS than DS (p=0.012, Welch's two-sample t-test, n=12 DS, n=13 VS), consistent across cluster sizes 20–200 nm."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "dSTORM super-resolution microscopy"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
-        },
-        {
-          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
-        },
-        {
-          "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f"
-        },
-        {
-          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -368,45 +744,37 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-29",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         },
         {
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-26",
-          "haak:status": "failed:mismatch",
+          "haak:status": "mismatch",
           "haak:executed": false
         }
       ],
       "haak:panel": "fig4M, fig4N"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:c714f46f-4715-4d61-90d8-fdac5fffa159",
       "@type": "mira:Evidence",
-      "schema:name": "dat-immunostaining-dorsoventral-gradient",
-      "schema:description": "DAT expression is significantly higher in dorsal than ventral striatum (p=0.0021, one-sided t-test, n=4 mice), corroborating the 3:1 Vmax ratio assumed in the model.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "dat-immunostaining-dorsoventral-gradient",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "DAT expression is significantly higher in dorsal than ventral striatum (p=0.0021, one-sided t-test, n=4 mice), corroborating the 3:1 Vmax ratio assumed in the model."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        }
-      ],
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -435,7 +803,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-29",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -444,31 +812,20 @@
     {
       "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
       "@type": "mira:Evidence",
-      "schema:name": "dat-nanoclustering-slows-clearance",
-      "schema:description": "Dense DAT nanoclusters (20 nm diameter) take approximately 400 ms to clear a 100 nM DA bolus compared to approximately 200 ms for unclustered DAT, because local [DA] at the cluster surface drops near zero creating a diffusion-limited bottleneck.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "dat-nanoclustering-slows-clearance",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Dense DAT nanoclusters (20 nm diameter) take approximately 400 ms to clear a 100 nM DA bolus compared to approximately 200 ms for unclustered DAT, because local [DA] at the cluster surface drops near zero creating a diffusion-limited bottleneck."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
-        },
-        {
-          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
-        },
-        {
-          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -499,14 +856,14 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-29",
-          "haak:status": "unverified:compute-infeasible",
+          "haak:status": "blocked",
           "haak:executed": false
         },
         {
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-26",
-          "haak:status": "partial:zenodo-data-downloaded",
+          "haak:status": "partial",
           "haak:executed": false
         }
       ],
@@ -514,36 +871,26 @@
       "haak:analysis": "Figure 4-Fig 4 simulations-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
       "@type": "mira:Evidence",
-      "schema:name": "ds-lacks-pervasive-tonic-da",
-      "schema:description": "During 4 Hz pacemaker activity, the dorsal striatum produces partially segregated DA hotspots with large fractions of the simulated volume devoid of DA — there is no pervasive tonic baseline.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "ds-lacks-pervasive-tonic-da",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "During 4 Hz pacemaker activity, the dorsal striatum produces partially segregated DA hotspots with large fractions of the simulated volume devoid of DA — there is no pervasive tonic baseline."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -576,7 +923,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-29",
-          "haak:status": "unverified:code-error",
+          "haak:status": "blocked",
           "haak:executed": false,
           "haak:script": "verification/ejdrup-2026-dopamine/verify.py"
         },
@@ -593,14 +940,19 @@
       "haak:analysis": "Figure 1-Fig 1a, d, e, f-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72",
       "@type": "mira:Claim",
-      "schema:name": "ds-vs-vmax-ratio-assumed",
-      "schema:description": "The 3:1 DS:VS DAT Vmax ratio (DS = 6 µM·s⁻¹, VS = 2 µM·s⁻¹) is assumed from published literature rather than directly measured in this study; the immunostaining gradient (Figure 2—supplement 1) corroborates this assumption at the protein level but does not directly establish the functional Vmax ratio.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "ds-vs-vmax-ratio-assumed",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The 3:1 DS:VS DAT Vmax ratio (DS = 6 µM·s⁻¹, VS = 2 µM·s⁻¹) is assumed from published literature rather than directly measured in this study; the immunostaining gradient (Figure 2—supplement 1) corroborates this assumption at the protein level but does not directly establish the functional Vmax ratio."
       },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -630,40 +982,20 @@
     {
       "@id": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
       "@type": "mira:Evidence",
-      "schema:name": "fscv-matches-may-wightman-1989",
-      "schema:description": "Simulated FSCV responses to 10, 30, and 60 Hz stimulation closely replicate May & Wightman (1989): VS reaches considerably higher peak DA than DS at all three stimulation frequencies.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "fscv-matches-may-wightman-1989",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Simulated FSCV responses to 10, 30, and 60 Hz stimulation closely replicate May & Wightman (1989): VS reaches considerably higher peak DA than DS at all three stimulation frequencies."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
-        },
-        {
-          "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
-        },
-        {
-          "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -710,7 +1042,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-29",
-          "haak:status": "unverified:compute-infeasible",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -718,14 +1050,19 @@
       "haak:analysis": "Figure 2-Fig 2g, h-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-d1-d2-temporal-distinction",
-      "schema:description": "D1 and D2 receptors encode dopamine signals on distinct temporal scales due to their different binding kinetics: D1 receptors (high EC50, fast on-rate) follow extracellular DA with millisecond delay and act as detectors of transient burst events, while D2 receptors (low EC50, slow off-rate) integrate the dopamine signal over seconds and cannot resolve brief pauses or closely spaced bursts.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "hypothesis-d1-d2-temporal-distinction",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "D1 and D2 receptors encode dopamine signals on distinct temporal scales due to their different binding kinetics: D1 receptors (high EC50, fast on-rate) follow extracellular DA with millisecond delay and act as detectors of transient burst events, while D2 receptors (low EC50, slow off-rate) integrate the dopamine signal over seconds and cannot resolve brief pauses or closely spaced bursts."
       },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -749,12 +1086,13 @@
     {
       "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-nanoclustering-regulates-vmax",
-      "schema:description": "DAT nanoclustering acts as a possible regulator of effective DAT activity in striatum: when transporters are concentrated into dense nanoclusters rather than uniformly distributed, local depletion at the cluster surface creates a diffusion-limited bottleneck that lowers the effective Vmax even at constant total DAT expression — proposing nanoclustering as one candidate mechanism for the lower effective Vmax in VS than DS.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "hypothesis-nanoclustering-regulates-vmax",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "DAT nanoclustering acts as a possible regulator of effective DAT activity in striatum: when transporters are concentrated into dense nanoclusters rather than uniformly distributed, local depletion at the cluster surface creates a diffusion-limited bottleneck that lowers the effective Vmax even at constant total DAT expression — proposing nanoclustering as one candidate mechanism for the lower effective Vmax in VS than DS."
       },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -775,12 +1113,13 @@
     {
       "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-vmax-explains-regional-difference",
-      "schema:description": "The qualitative regional contrast in extracellular dopamine dynamics between dorsal and ventral striatum — DS producing varicosity-scale hotspots with no pervasive tonic baseline versus VS producing diffuse tonic-like coverage — is principally explained by a difference in DAT Vmax (~3:1 DS:VS), rather than by differences in release-related parameters (vesicular content, release probability, active terminal fraction, or pacemaker firing rate).",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "hypothesis-vmax-explains-regional-difference",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The qualitative regional contrast in extracellular dopamine dynamics between dorsal and ventral striatum — DS producing varicosity-scale hotspots with no pervasive tonic baseline versus VS producing diffuse tonic-like coverage — is principally explained by a difference in DAT Vmax (~3:1 DS:VS), rather than by differences in release-related parameters (vesicular content, release probability, active terminal fraction, or pacemaker firing rate)."
       },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -813,12 +1152,13 @@
     {
       "@id": "urn:uuid:39079ccf-d87a-4e0b-83a9-a01369e54836",
       "@type": "dg:SourceDocument",
-      "schema:name": "interprets-cragg-rice-vmax-ratio",
-      "schema:description": "Prior voltammetry and DAT-binding literature — notably Cragg & Rice (2004, TINS) and Kennedy and colleagues on in vivo fast-scan measurements — established a roughly 3:1 ratio of dopamine transporter Vmax between dorsal and ventral striatum, with DS at approximately 4–6 µM·s⁻¹ and VS at approximately 1.5–2 µM·s⁻¹. This Vmax asymmetry is the functional correlate of the DAT protein gradient seen across the dorsoventral striatal axis and has been treated as an empirical given in computational models of striatal DA dynamics.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1016/j.tins.2004.03.011"
+      "title": "interprets-cragg-rice-vmax-ratio",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Prior voltammetry and DAT-binding literature — notably Cragg & Rice (2004, TINS) and Kennedy and colleagues on in vivo fast-scan measurements — established a roughly 3:1 ratio of dopamine transporter Vmax between dorsal and ventral striatum, with DS at approximately 4–6 µM·s⁻¹ and VS at approximately 1.5–2 µM·s⁻¹. This Vmax asymmetry is the functional correlate of the DAT protein gradient seen across the dorsoventral striatal axis and has been treated as an empirical given in computational models of striatal DA dynamics."
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "literature-context",
       "haak:epistemicStrength": "moderate",
       "haak:panel": "fig2A (implied parameterization)"
@@ -826,12 +1166,13 @@
     {
       "@id": "urn:uuid:afbf7e64-20a0-4f3f-a748-8591ddc1e2d4",
       "@type": "dg:SourceDocument",
-      "schema:name": "interprets-may-wightman-1989-fscv",
-      "schema:description": "May & Wightman (1989, Brain Research) used fast-scan cyclic voltammetry (FSCV) in rat striatal slices to measure evoked extracellular dopamine transients across 10, 30, and 60 Hz electrical stimulation in dorsal and ventral striatum, and reported that ventral striatum reached substantially higher peak DA concentrations than dorsal striatum across all three frequencies. This slice-level dataset is the canonical empirical anchor for regional differences in striatal DA release dynamics.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1016/0006-8993(89)90835-4"
+      "title": "interprets-may-wightman-1989-fscv",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "May & Wightman (1989, Brain Research) used fast-scan cyclic voltammetry (FSCV) in rat striatal slices to measure evoked extracellular dopamine transients across 10, 30, and 60 Hz electrical stimulation in dorsal and ventral striatum, and reported that ventral striatum reached substantially higher peak DA concentrations than dorsal striatum across all three frequencies. This slice-level dataset is the canonical empirical anchor for regional differences in striatal DA release dynamics."
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "literature-context",
       "haak:epistemicStrength": "moderate",
       "haak:panel": "fig2E (explicit replication comparison)"
@@ -839,20 +1180,20 @@
     {
       "@id": "urn:uuid:961ce4c4-5809-4b6b-aaa4-c5f52373612c",
       "@type": "mira:Evidence",
-      "schema:name": "low-burst-no-spillover-high-burst-does",
-      "schema:description": "3 APs at 10 Hz generates no significant DA spillover outside the burst zone; 6 APs at 20 Hz and 12 APs at 40 Hz cause frequency-dependent spillover exposing 10× and 30× the burst volume to concentrations above 100 nM respectively.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "low-burst-no-spillover-high-burst-does",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "3 APs at 10 Hz generates no significant DA spillover outside the burst zone; 6 APs at 20 Hz and 12 APs at 40 Hz cause frequency-dependent spillover exposing 10× and 30× the burst volume to concentrations above 100 nM respectively."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -875,14 +1216,19 @@
       "haak:analysis": "Figure 1-Fig 1g-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:5b351222-ab85-46be-a673-b05a6f104f80",
       "@type": "mira:Claim",
-      "schema:name": "nanoclustering-constant-vmax-constraint",
-      "schema:description": "The nanoclustering simulations hold total DAT Vmax constant across clustered and unclustered conditions — the per-voxel rate is multiplied by a normalization factor so total integrated uptake capacity is identical; if DAT nanoclustering co-occurs with increased total DAT expression in biology, the clearance-slowing result would not hold.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "nanoclustering-constant-vmax-constraint",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The nanoclustering simulations hold total DAT Vmax constant across clustered and unclustered conditions — the per-voxel rate is multiplied by a normalization factor so total integrated uptake capacity is identical; if DAT nanoclustering co-occurs with increased total DAT expression in biology, the clearance-slowing result would not hold."
       },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -910,12 +1256,13 @@
     {
       "@id": "urn:uuid:8300c7dc-9386-4a06-9763-c3b681b5c282",
       "@type": "mira:Claim",
-      "schema:name": "nanoclustering-model-varicosity-scale",
-      "schema:description": "The nanoclustering simulations (Figure 4C–F) operate in a standalone varicosity-scale model (1.8 × 1.8 µm domain, 0.02 µm voxels) architecturally separate from the tissue-level model used in Figures 1–3 (100 µm domain, 1 µm voxels); no formal coupling exists between the two models and no effective-Vmax output from the nanoclustering simulation feeds into the tissue simulation.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "nanoclustering-model-varicosity-scale",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The nanoclustering simulations (Figure 4C–F) operate in a standalone varicosity-scale model (1.8 × 1.8 µm domain, 0.02 µm voxels) architecturally separate from the tissue-level model used in Figures 1–3 (100 µm domain, 1 µm voxels); no formal coupling exists between the two models and no effective-Vmax output from the nanoclustering simulation feeds into the tissue simulation."
       },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -943,26 +1290,17 @@
     {
       "@id": "urn:uuid:73da2169-c0ce-4ae2-85b2-42fb821ec872",
       "@type": "mira:Evidence",
-      "schema:name": "vmat2-gradient-absent",
-      "schema:description": "VMAT2 immunostaining shows no significant dorsoventral gradient in striatum (p=0.0086, one-sided t-test, n=4 mice), ruling out differential release capacity as the primary explanation for regional DA differences.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "vmat2-gradient-absent",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "VMAT2 immunostaining shows no significant dorsoventral gradient in striatum (p=0.0086, one-sided t-test, n=4 mice), ruling out differential release capacity as the primary explanation for regional DA differences."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        }
-      ],
-      "mira:opposes": {
-        "schema:name": "differential VMAT2 expression / vesicular release capacity as the explanation for the DS/VS DA difference"
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -990,7 +1328,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-29",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -999,31 +1337,20 @@
     {
       "@id": "urn:uuid:59c0aba5-a0e0-41d8-8961-fa5e927d83e7",
       "@type": "mira:Evidence",
-      "schema:name": "vmax-modulation-larger-impact-in-vs",
-      "schema:description": "A ±50% change in DAT Vmax shifts tonic DA by 38 nM in VS but only 11 nM in DS, indicating VS operates closer to the Km saturation regime and is more sensitive to DAT modulation.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "vmax-modulation-larger-impact-in-vs",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "A ±50% change in DAT Vmax shifts tonic DA by 38 nM in VS but only 11 nM in DS, indicating VS operates closer to the Km saturation regime and is more sensitive to DAT modulation."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1062,47 +1389,26 @@
       "haak:analysis": "Figure 3-Fig 3k, l-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
       "@type": "mira:Evidence",
-      "schema:name": "vmax-only-parameter-driving-regional-difference",
-      "schema:description": "Across parameter sweeps of active terminal fraction, quantal size, release probability, and firing rate, only DAT Vmax generates differential responses between DS and VS; all other parameters shift both regions proportionally without altering the regional contrast.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "vmax-only-parameter-driving-regional-difference",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Across parameter sweeps of active terminal fraction, quantal size, release probability, and firing rate, only DAT Vmax generates differential responses between DS and VS; all other parameters shift both regions proportionally without altering the regional contrast."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        }
-      ],
-      "mira:opposes": [
-        {
-          "schema:name": "differential active terminal fraction as the explanation for the DS/VS DA difference"
-        },
-        {
-          "schema:name": "differential quantal release size as the explanation for the DS/VS DA difference"
-        },
-        {
-          "schema:name": "differential release probability as the explanation for the DS/VS DA difference"
-        },
-        {
-          "schema:name": "differential pacemaker firing rate as the explanation for the DS/VS DA difference"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -1153,33 +1459,26 @@
       "haak:analysis": "Figure 3-Fig 3b, c, e-g-Source code.py, Figure 3-Fig 3i-Source code.py, Figure 3-Fig 3k, l-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:e3b92961-38ad-41b2-a66f-65e328d33a2e",
       "@type": "mira:Evidence",
-      "schema:name": "vs-low-active-fraction-resembles-ds-distribution",
-      "schema:description": "VS at 5% active terminals produces a spatial DA distribution resembling DS at 100% active terminals, demonstrating VS operates in a low-focality high-coverage regime while DS requires dense terminal participation for equivalent spatial reach.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "vs-low-active-fraction-resembles-ds-distribution",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "VS at 5% active terminals produces a spatial DA distribution resembling DS at 100% active terminals, demonstrating VS operates in a low-focality high-coverage regime while DS requires dense terminal participation for equivalent spatial reach."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1207,7 +1506,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-29",
-          "haak:status": "unverified:compute-infeasible",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -1215,22 +1514,26 @@
       "haak:analysis": "Figure 3-Fig 3b, c, e-g-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:897a3449-e5bd-4f12-99f2-e701f5989c74",
       "@type": "mira:Evidence",
-      "schema:name": "vs-lowest-percentiles-above-10nm",
-      "schema:description": "Even the lowest DA concentration percentiles in VS exceed 10 nM during 4 Hz pacemaker activity.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "vs-lowest-percentiles-above-10nm",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Even the lowest DA concentration percentiles in VS exceed 10 nM during 4 Hz pacemaker activity."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1245,7 +1548,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-29",
-          "haak:status": "unverified:code-error",
+          "haak:status": "blocked",
           "haak:executed": false
         },
         {
@@ -1260,36 +1563,26 @@
       "haak:analysis": "Figure 2-Fig 2a-f-Source code.py"
     },
     {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
       "@type": "mira:Evidence",
-      "schema:name": "vs-maintains-pervasive-tonic-da",
-      "schema:description": "With DAT Vmax reduced to 33% of DS and terminal density at 90%, VS produces a diffuse tonic-like DA level throughout the simulated volume rather than segregated hotspots during 4 Hz pacemaker activity.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105214"
+      "title": "vs-maintains-pervasive-tonic-da",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "With DAT Vmax reduced to 33% of DS and terminal density at 90%, VS produces a diffuse tonic-like DA level throughout the simulated volume rather than segregated hotspots during 4 Hz pacemaker activity."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://zenodo.org/record/17664800",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mathematical modelling"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105214",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        },
-        {
-          "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+      "observationBase": {
+        "@id": "https://zenodo.org/record/17664800"
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1325,7 +1618,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-29",
-          "haak:status": "unverified:code-error",
+          "haak:status": "blocked",
           "haak:executed": false,
           "haak:script": "verification/ejdrup-2026-dopamine/verify.py"
         },
@@ -1340,6 +1633,1198 @@
       ],
       "haak:panel": "fig2A, fig2B, fig2C",
       "haak:analysis": "Figure 2-Fig 2a-f-Source code.py"
+    },
+    {
+      "@id": "https://zenodo.org/record/17664800",
+      "@type": "prov:Entity"
+    },
+    {
+      "@id": "haak:claim/ejdrup-2026-dopamine/alternative/1",
+      "@type": "mira:Claim",
+      "title": "differential VMAT2 expression / vesicular release capacity as the explanation for the DS/VS DA difference",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "differential VMAT2 expression / vesicular release capacity as the explanation for the DS/VS DA difference"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:claim/ejdrup-2026-dopamine/alternative/2",
+      "@type": "mira:Claim",
+      "title": "differential active terminal fraction as the explanation for the DS/VS DA difference",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "differential active terminal fraction as the explanation for the DS/VS DA difference"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:claim/ejdrup-2026-dopamine/alternative/3",
+      "@type": "mira:Claim",
+      "title": "differential quantal release size as the explanation for the DS/VS DA difference",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "differential quantal release size as the explanation for the DS/VS DA difference"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:claim/ejdrup-2026-dopamine/alternative/4",
+      "@type": "mira:Claim",
+      "title": "differential release probability as the explanation for the DS/VS DA difference",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "differential release probability as the explanation for the DS/VS DA difference"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:claim/ejdrup-2026-dopamine/alternative/5",
+      "@type": "mira:Claim",
+      "title": "differential pacemaker firing rate as the explanation for the DS/VS DA difference",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "differential pacemaker firing rate as the explanation for the DS/VS DA difference"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/1",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e",
+      "destination": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "title": "[[d1r-tracks-da-50ms-delay]] -dissociates-with-> [[d2r-integrates-over-seconds]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/2",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e",
+      "destination": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "title": "[[d1r-tracks-da-50ms-delay]] -supports-> [[hypothesis-d1-d2-temporal-distinction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/3",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e",
+      "destination": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "title": "[[d1r-tracks-da-50ms-delay]] -tests-> [[hypothesis-d1-d2-temporal-distinction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/4",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e",
+      "destination": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "title": "[[d1r-tracks-da-50ms-delay]] -requires-> [[ds-lacks-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/5",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e",
+      "destination": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "title": "[[d1r-tracks-da-50ms-delay]] -supports-> [[hypothesis-d1-d2-temporal-distinction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/6",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff",
+      "destination": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "title": "[[d2r-initialization-unjustified]] -scopes-> [[d2r-integrates-over-seconds]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/7",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff",
+      "destination": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215",
+      "title": "[[d2r-initialization-unjustified]] -scopes-> [[d2r-insensitive-to-brief-pauses]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/8",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff",
+      "destination": "urn:uuid:db68e131-734a-4471-a7e6-e027f38048ac",
+      "title": "[[d2r-initialization-unjustified]] -scopes-> [[d2r-occupancy-higher-in-vs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/9",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215",
+      "destination": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "title": "[[d2r-insensitive-to-brief-pauses]] -supports-> [[hypothesis-d1-d2-temporal-distinction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/10",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215",
+      "destination": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "title": "[[d2r-insensitive-to-brief-pauses]] -tests-> [[hypothesis-d1-d2-temporal-distinction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/11",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215",
+      "destination": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "title": "[[d2r-insensitive-to-brief-pauses]] -requires-> [[d2r-integrates-over-seconds]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/12",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215",
+      "destination": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff",
+      "title": "[[d2r-insensitive-to-brief-pauses]] -requires-> [[d2r-initialization-unjustified]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/13",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215",
+      "destination": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "title": "[[d2r-insensitive-to-brief-pauses]] -supports-> [[hypothesis-d1-d2-temporal-distinction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/14",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "destination": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e",
+      "title": "[[d2r-integrates-over-seconds]] -dissociates-with-> [[d1r-tracks-da-50ms-delay]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/15",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "destination": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "title": "[[d2r-integrates-over-seconds]] -supports-> [[hypothesis-d1-d2-temporal-distinction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/16",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "destination": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "title": "[[d2r-integrates-over-seconds]] -tests-> [[hypothesis-d1-d2-temporal-distinction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/17",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "destination": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "title": "[[d2r-integrates-over-seconds]] -requires-> [[ds-lacks-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/18",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "destination": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff",
+      "title": "[[d2r-integrates-over-seconds]] -requires-> [[d2r-initialization-unjustified]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/19",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "destination": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "title": "[[d2r-integrates-over-seconds]] -supports-> [[hypothesis-d1-d2-temporal-distinction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/20",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:db68e131-734a-4471-a7e6-e027f38048ac",
+      "destination": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "title": "[[d2r-occupancy-higher-in-vs]] -requires-> [[vs-maintains-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/21",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:db68e131-734a-4471-a7e6-e027f38048ac",
+      "destination": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff",
+      "title": "[[d2r-occupancy-higher-in-vs]] -requires-> [[d2r-initialization-unjustified]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/22",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:498bf1d1-2d0f-42d4-bdf7-c9996ed5af78",
+      "destination": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "title": "[[dat-clustering-greater-in-vs]] -supports-> [[hypothesis-nanoclustering-regulates-vmax]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/23",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:498bf1d1-2d0f-42d4-bdf7-c9996ed5af78",
+      "destination": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "title": "[[dat-clustering-greater-in-vs]] -tests-> [[hypothesis-nanoclustering-regulates-vmax]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/24",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:498bf1d1-2d0f-42d4-bdf7-c9996ed5af78",
+      "destination": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
+      "title": "[[dat-clustering-greater-in-vs]] -supports-> [[dat-nanoclustering-slows-clearance]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/25",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:498bf1d1-2d0f-42d4-bdf7-c9996ed5af78",
+      "destination": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "title": "[[dat-clustering-greater-in-vs]] -supports-> [[hypothesis-nanoclustering-regulates-vmax]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/26",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:c714f46f-4715-4d61-90d8-fdac5fffa159",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[dat-immunostaining-dorsoventral-gradient]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/27",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:c714f46f-4715-4d61-90d8-fdac5fffa159",
+      "destination": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72",
+      "title": "[[dat-immunostaining-dorsoventral-gradient]] -validates-> [[ds-vs-vmax-ratio-assumed]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/28",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:c714f46f-4715-4d61-90d8-fdac5fffa159",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[dat-immunostaining-dorsoventral-gradient]] -validates-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/29",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:c714f46f-4715-4d61-90d8-fdac5fffa159",
+      "destination": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72",
+      "title": "[[dat-immunostaining-dorsoventral-gradient]] -supports-> [[ds-vs-vmax-ratio-assumed]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/30",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:c714f46f-4715-4d61-90d8-fdac5fffa159",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[dat-immunostaining-dorsoventral-gradient]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/31",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
+      "destination": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "title": "[[dat-nanoclustering-slows-clearance]] -supports-> [[hypothesis-nanoclustering-regulates-vmax]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/32",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
+      "destination": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "title": "[[dat-nanoclustering-slows-clearance]] -tests-> [[hypothesis-nanoclustering-regulates-vmax]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/33",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
+      "destination": "urn:uuid:8300c7dc-9386-4a06-9763-c3b681b5c282",
+      "title": "[[dat-nanoclustering-slows-clearance]] -requires-> [[nanoclustering-model-varicosity-scale]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/34",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
+      "destination": "urn:uuid:5b351222-ab85-46be-a673-b05a6f104f80",
+      "title": "[[dat-nanoclustering-slows-clearance]] -requires-> [[nanoclustering-constant-vmax-constraint]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/35",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
+      "destination": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "title": "[[dat-nanoclustering-slows-clearance]] -supports-> [[hypothesis-nanoclustering-regulates-vmax]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/36",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "destination": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "title": "[[ds-lacks-pervasive-tonic-da]] -dissociates-with-> [[vs-maintains-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/37",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[ds-lacks-pervasive-tonic-da]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/38",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[ds-lacks-pervasive-tonic-da]] -tests-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/39",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "destination": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72",
+      "title": "[[ds-lacks-pervasive-tonic-da]] -requires-> [[ds-vs-vmax-ratio-assumed]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/40",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[ds-lacks-pervasive-tonic-da]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/41",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72",
+      "destination": "urn:uuid:39079ccf-d87a-4e0b-83a9-a01369e54836",
+      "title": "[[ds-vs-vmax-ratio-assumed]] -interprets-> [[interprets-cragg-rice-vmax-ratio]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/42",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "destination": "urn:uuid:afbf7e64-20a0-4f3f-a748-8591ddc1e2d4",
+      "title": "[[fscv-matches-may-wightman-1989]] -interprets-> [[interprets-may-wightman-1989-fscv]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/43",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[fscv-matches-may-wightman-1989]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/44",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[fscv-matches-may-wightman-1989]] -tests-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/45",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "destination": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "title": "[[fscv-matches-may-wightman-1989]] -validates-> [[vs-maintains-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/46",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "destination": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "title": "[[fscv-matches-may-wightman-1989]] -validates-> [[ds-lacks-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/47",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "destination": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72",
+      "title": "[[fscv-matches-may-wightman-1989]] -validates-> [[ds-vs-vmax-ratio-assumed]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/48",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "destination": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "title": "[[fscv-matches-may-wightman-1989]] -requires-> [[vs-maintains-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/49",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "destination": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72",
+      "title": "[[fscv-matches-may-wightman-1989]] -requires-> [[ds-vs-vmax-ratio-assumed]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/50",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[fscv-matches-may-wightman-1989]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/51",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "destination": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e",
+      "title": "[[hypothesis-d1-d2-temporal-distinction]] -entails-> [[d1r-tracks-da-50ms-delay]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/52",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "destination": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9",
+      "title": "[[hypothesis-d1-d2-temporal-distinction]] -entails-> [[d2r-integrates-over-seconds]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/53",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364",
+      "destination": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215",
+      "title": "[[hypothesis-d1-d2-temporal-distinction]] -entails-> [[d2r-insensitive-to-brief-pauses]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/54",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "destination": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
+      "title": "[[hypothesis-nanoclustering-regulates-vmax]] -entails-> [[dat-nanoclustering-slows-clearance]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/55",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "destination": "urn:uuid:498bf1d1-2d0f-42d4-bdf7-c9996ed5af78",
+      "title": "[[hypothesis-nanoclustering-regulates-vmax]] -entails-> [[dat-clustering-greater-in-vs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/56",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "destination": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "title": "[[hypothesis-vmax-explains-regional-difference]] -entails-> [[ds-lacks-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/57",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "destination": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "title": "[[hypothesis-vmax-explains-regional-difference]] -entails-> [[vs-maintains-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/58",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "destination": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "title": "[[hypothesis-vmax-explains-regional-difference]] -entails-> [[vmax-only-parameter-driving-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/59",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "destination": "urn:uuid:59c0aba5-a0e0-41d8-8961-fa5e927d83e7",
+      "title": "[[hypothesis-vmax-explains-regional-difference]] -entails-> [[vmax-modulation-larger-impact-in-vs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/60",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "destination": "urn:uuid:e3b92961-38ad-41b2-a66f-65e328d33a2e",
+      "title": "[[hypothesis-vmax-explains-regional-difference]] -entails-> [[vs-low-active-fraction-resembles-ds-distribution]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/61",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "destination": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94",
+      "title": "[[hypothesis-vmax-explains-regional-difference]] -entails-> [[fscv-matches-may-wightman-1989]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/62",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:961ce4c4-5809-4b6b-aaa4-c5f52373612c",
+      "destination": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "title": "[[low-burst-no-spillover-high-burst-does]] -requires-> [[ds-lacks-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/63",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:5b351222-ab85-46be-a673-b05a6f104f80",
+      "destination": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
+      "title": "[[nanoclustering-constant-vmax-constraint]] -scopes-> [[dat-nanoclustering-slows-clearance]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/64",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:5b351222-ab85-46be-a673-b05a6f104f80",
+      "destination": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "title": "[[nanoclustering-constant-vmax-constraint]] -scopes-> [[hypothesis-nanoclustering-regulates-vmax]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/65",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:8300c7dc-9386-4a06-9763-c3b681b5c282",
+      "destination": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f",
+      "title": "[[nanoclustering-model-varicosity-scale]] -scopes-> [[dat-nanoclustering-slows-clearance]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/66",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:8300c7dc-9386-4a06-9763-c3b681b5c282",
+      "destination": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4",
+      "title": "[[nanoclustering-model-varicosity-scale]] -scopes-> [[hypothesis-nanoclustering-regulates-vmax]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/67",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:73da2169-c0ce-4ae2-85b2-42fb821ec872",
+      "destination": "haak:claim/ejdrup-2026-dopamine/alternative/1",
+      "title": "[[vmat2-gradient-absent]] -rules-out-> [[differential VMAT2 expression / vesicular release capacity as the explanation for the DS/VS DA difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/68",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:73da2169-c0ce-4ae2-85b2-42fb821ec872",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vmat2-gradient-absent]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/69",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:73da2169-c0ce-4ae2-85b2-42fb821ec872",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vmat2-gradient-absent]] -validates-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/70",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:73da2169-c0ce-4ae2-85b2-42fb821ec872",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vmat2-gradient-absent]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/71",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:59c0aba5-a0e0-41d8-8961-fa5e927d83e7",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vmax-modulation-larger-impact-in-vs]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/72",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:59c0aba5-a0e0-41d8-8961-fa5e927d83e7",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vmax-modulation-larger-impact-in-vs]] -tests-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/73",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:59c0aba5-a0e0-41d8-8961-fa5e927d83e7",
+      "destination": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "title": "[[vmax-modulation-larger-impact-in-vs]] -requires-> [[vmax-only-parameter-driving-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/74",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:59c0aba5-a0e0-41d8-8961-fa5e927d83e7",
+      "destination": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72",
+      "title": "[[vmax-modulation-larger-impact-in-vs]] -requires-> [[ds-vs-vmax-ratio-assumed]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/75",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:59c0aba5-a0e0-41d8-8961-fa5e927d83e7",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vmax-modulation-larger-impact-in-vs]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/76",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "destination": "haak:claim/ejdrup-2026-dopamine/alternative/2",
+      "title": "[[vmax-only-parameter-driving-regional-difference]] -rules-out-> [[differential active terminal fraction as the explanation for the DS/VS DA difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/77",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "destination": "haak:claim/ejdrup-2026-dopamine/alternative/3",
+      "title": "[[vmax-only-parameter-driving-regional-difference]] -rules-out-> [[differential quantal release size as the explanation for the DS/VS DA difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/78",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "destination": "haak:claim/ejdrup-2026-dopamine/alternative/4",
+      "title": "[[vmax-only-parameter-driving-regional-difference]] -rules-out-> [[differential release probability as the explanation for the DS/VS DA difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/79",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "destination": "haak:claim/ejdrup-2026-dopamine/alternative/5",
+      "title": "[[vmax-only-parameter-driving-regional-difference]] -rules-out-> [[differential pacemaker firing rate as the explanation for the DS/VS DA difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/80",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vmax-only-parameter-driving-regional-difference]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/81",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vmax-only-parameter-driving-regional-difference]] -tests-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/82",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "destination": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "title": "[[vmax-only-parameter-driving-regional-difference]] -requires-> [[vs-maintains-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/83",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vmax-only-parameter-driving-regional-difference]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/84",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:e3b92961-38ad-41b2-a66f-65e328d33a2e",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vs-low-active-fraction-resembles-ds-distribution]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/85",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:e3b92961-38ad-41b2-a66f-65e328d33a2e",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vs-low-active-fraction-resembles-ds-distribution]] -tests-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/86",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e3b92961-38ad-41b2-a66f-65e328d33a2e",
+      "destination": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "title": "[[vs-low-active-fraction-resembles-ds-distribution]] -requires-> [[vs-maintains-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/87",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:e3b92961-38ad-41b2-a66f-65e328d33a2e",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vs-low-active-fraction-resembles-ds-distribution]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/88",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:897a3449-e5bd-4f12-99f2-e701f5989c74",
+      "destination": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "title": "[[vs-lowest-percentiles-above-10nm]] -requires-> [[vs-maintains-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/89",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "destination": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "title": "[[vs-maintains-pervasive-tonic-da]] -dissociates-with-> [[ds-lacks-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/90",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vs-maintains-pervasive-tonic-da]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/91",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vs-maintains-pervasive-tonic-da]] -tests-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/92",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "destination": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba",
+      "title": "[[vs-maintains-pervasive-tonic-da]] -requires-> [[ds-lacks-pervasive-tonic-da]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/93",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "destination": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72",
+      "title": "[[vs-maintains-pervasive-tonic-da]] -requires-> [[ds-vs-vmax-ratio-assumed]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/ejdrup-2026-dopamine/94",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d",
+      "destination": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09",
+      "title": "[[vs-maintains-pervasive-tonic-da]] -supports-> [[hypothesis-vmax-explains-regional-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     }
   ]
 }

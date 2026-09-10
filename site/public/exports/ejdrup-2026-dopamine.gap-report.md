@@ -43,3 +43,19 @@ MIRA requires every Claim to address a `mira:Question`; a claim tree has no such
 - Is it the case that the qualitative regional contrast in extracellular dopamine dynamics between dorsal and ventral striatum — DS producing varicosity-scale hotspots with no pervasive tonic baseline versus VS producing diffuse tonic-like coverage — is principally explained by a difference in DAT Vmax (~3:1 DS:VS), rather than by differences in release-related parameters (vesicular content, release probability, active terminal fraction, or pacemaker firing rate)?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
+
+## Alternatives materialised as claims
+
+**5 relation targets name something no claim file asserts.** They are alternative explanations the paper argues against, so the target exists only as the thing being excluded. Each is minted as a `mira:Claim` so the edge has a destination, and flagged `haak:materialisedFrom: relation-target` in the extended file. **None of these is an authored claim.**
+
+- differential VMAT2 expression / vesicular release capacity as the explanation for the DS/VS DA difference
+- differential active terminal fraction as the explanation for the DS/VS DA difference
+- differential pacemaker firing rate as the explanation for the DS/VS DA difference
+- differential quantal release size as the explanation for the DS/VS DA difference
+- differential release probability as the explanation for the DS/VS DA difference
+
+## Paper-level scopes with no MIRA target
+
+**1 `scopes` relations target `*`** — the claim constrains the paper as a whole rather than another claim. `mira:scopes` has `mira:Claim` as its range and MIRA has no paper-level node to point at, so no edge is emitted and no target is invented. The constraint is real and is not in the strict export.
+
+- `ds-vs-vmax-ratio-assumed` — scopes the whole paper

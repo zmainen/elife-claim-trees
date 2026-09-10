@@ -1,330 +1,753 @@
 {
   "@context": [
-    "https://mira.science/schema/context.jsonld"
+    "https://purl.org/mira-science/mira.jsonld",
+    {
+      "haak": "https://haak.world/schema/claim#",
+      "dgb": "https://discoursegraphs.com/schema/dg_base#",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "dct": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "onProperty": {
+        "@id": "owl:onProperty",
+        "@type": "@id"
+      },
+      "hasValue": {
+        "@id": "owl:hasValue",
+        "@type": "@id"
+      }
+    }
   ],
   "@graph": [
     {
+      "@id": "haak:agent/elife-claim-trees",
+      "@type": "UserAccount",
+      "accountName": "elife-claim-trees pipeline"
+    },
+    {
+      "@id": "haak:type/Claim",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Claim"
+      ],
+      "label": "Claim",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:type/Evidence",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Evidence"
+      ],
+      "label": "Evidence",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:type/Protocol",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Protocol"
+      ],
+      "label": "Protocol",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/confirms",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/confirms"
+        }
+      ],
+      "label": "confirms",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/confirms/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/confirms",
+        "dgb:RelationInstance"
+      ],
+      "label": "confirms",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence confirms the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/derived_from",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/derived_from"
+        }
+      ],
+      "label": "derived-from",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z",
+      "inverseOf": "haak:reldef/entails"
+    },
+    {
+      "@id": "haak:reldef/derived_from/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/derived_from",
+        "dgb:RelationInstance"
+      ],
+      "label": "derived-from",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim was derived from the destination claim; the inverse of entails."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/dissociates_with",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/dissociates_with"
+        }
+      ],
+      "label": "dissociates-with",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/dissociates_with/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/dissociates_with",
+        "dgb:RelationInstance"
+      ],
+      "label": "dissociates-with",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source result separates two things the destination claim joins."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/enables_method",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/enables_method"
+        }
+      ],
+      "label": "enables-method",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/enables_method/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Protocol",
+      "subClassOf": [
+        "haak:reldef/enables_method",
+        "dgb:RelationInstance"
+      ],
+      "label": "enables-method",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source result makes the destination method possible."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/entails"
+        }
+      ],
+      "label": "entails",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/entails",
+        "dgb:RelationInstance"
+      ],
+      "label": "entails",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/extends",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/extends"
+        }
+      ],
+      "label": "extends",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/extends/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/extends",
+        "dgb:RelationInstance"
+      ],
+      "label": "extends",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim extends the destination claim to new conditions."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/interprets",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/interprets"
+        }
+      ],
+      "label": "interprets",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/interprets/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Evidence",
+      "subClassOf": [
+        "haak:reldef/interprets",
+        "dgb:RelationInstance"
+      ],
+      "label": "interprets",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim offers a theoretical reading of the destination result."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/requires"
+        }
+      ],
+      "label": "requires",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/requires",
+        "dgb:RelationInstance"
+      ],
+      "label": "requires",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/scopes",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/scopes"
+        }
+      ],
+      "label": "scopes",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/scopes/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/scopes",
+        "dgb:RelationInstance"
+      ],
+      "label": "scopes",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/supports"
+        }
+      ],
+      "label": "supports",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/supports",
+        "dgb:RelationInstance"
+      ],
+      "label": "supports",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim provides support for the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/tests",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/tests"
+        }
+      ],
+      "label": "tests",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/tests/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/tests",
+        "dgb:RelationInstance"
+      ],
+      "label": "tests",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence was gathered to test the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/validates",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/validates"
+        }
+      ],
+      "label": "validates",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/validates/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/validates",
+        "dgb:RelationInstance"
+      ],
+      "label": "validates",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence validates the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
       "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that prefrontal cortex represents fear-relevant contexts as distinct multivoxel patterns (context-specific coding), and this representational distinctness is the neural substrate that enables context-dependent fear renewal: participants whose PFC encodes contexts more distinctly during reversal will show stronger reinstatement of acquisition-phase fear memory traces when later tested in the original acquisition context?"
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that prefrontal cortex represents fear-relevant contexts as distinct multivoxel patterns (context-specific coding), and this representational distinctness is the neural substrate that enables context-dependent fear renewal: participants whose PFC encodes contexts more distinctly during reversal will show stronger reinstatement of acquisition-phase fear memory traces when later tested in the original acquisition context?"
+      }
     },
     {
       "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that reversal learning recruits two simultaneous representational strategies in different brain regions: generalization (treating newly dangerous CS-+ like CS++ in fear-network territory) for cues that share their current threat status with established cue classes, and item-specific updating (distinguishing changing-valence cues such as CS+- from stable cues) in higher-order cortex?"
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that reversal learning recruits two simultaneous representational strategies in different brain regions: generalization (treating newly dangerous CS-+ like CS++ in fear-network territory) for cues that share their current threat status with established cue classes, and item-specific updating (distinguishing changing-valence cues such as CS+- from stable cues) in higher-order cortex?"
+      }
     },
     {
       "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that fear learning produces generalized (cross-item) neural representations of threatening cues in the canonical fear network: when an animal learns that a stimulus class is dangerous, the brain represents members of the class with overlapping multivoxel patterns rather than preserving item-specific patterns, so that any new exemplar of the class inherits the threat representation?"
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that fear learning produces generalized (cross-item) neural representations of threatening cues in the canonical fear network: when an animal learns that a stimulus class is dangerous, the brain represents members of the class with overlapping multivoxel patterns rather than preserving item-specific patterns, so that any new exemplar of the class inherits the threat representation?"
+      }
     },
     {
       "@id": "urn:uuid:dc36ab32-bbed-480d-b05d-f833b100b1c3",
       "@type": "mira:Evidence",
-      "schema:name": "behavioral-learning-confirms-contingencies",
-      "schema:description": "US expectancy ratings follow the hierarchy CS++ > CS+- > CS-+ > CS-- across all experimental phases (LME: CS type F=479.35, p<0.0001; phase F=125.6, p<0.001; interaction p<0.001), confirming participants learned threat contingencies and their reversals.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "behavioral-learning-confirms-contingencies",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "US expectancy ratings follow the hierarchy CS++ > CS+- > CS-+ > CS-- across all experimental phases (LME: CS type F=479.35, p<0.0001; phase F=125.6, p<0.001; interaction p<0.001), confirming participants learned threat contingencies and their reversals."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "linear mixed effects model (lme4/lmerTest, Satterthwaite df, Bonferroni-corrected post-hoc Wilcoxon)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
-        },
-        {
-          "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
-        },
-        {
-          "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
+      }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c",
       "@type": "mira:Evidence",
-      "schema:name": "context-specificity-increases-reversal",
-      "schema:description": "Neural representations of contexts become more distinct (context-specific) during reversal learning compared to acquisition, particularly in prefrontal cortex, reflecting the need to separate safe and dangerous environments.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "context-specificity-increases-reversal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Neural representations of contexts become more distinct (context-specific) during reversal learning compared to acquisition, particularly in prefrontal cortex, reflecting the need to separate safe and dangerous environments."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "RSA context specificity measure (within-context minus between-context similarity), cluster FWE 10k permutations"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:a5fe00c8-602d-4b28-a458-68a57619b2e3"
-        },
-        {
-          "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74"
-        },
-        {
-          "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
+      }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:7ca6bb4e-6e66-47c1-bf7c-52c64d17d80d",
       "@type": "mira:Evidence",
-      "schema:name": "context-specificity-predicts-acquisition-reinstatement-regional-dissociation",
-      "schema:description": "Higher reversal context specificity (PFC) interacts with CS type to predict generalized reinstatement of acquisition memory traces in ACC/SFG (favoring initially threatening CS+-, t(22)=6.25, p<0.05) and precuneus (favoring initially safe CS-+, t(22)=4.89, p<0.01), with opposite directions across regions.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "context-specificity-predicts-acquisition-reinstatement-regional-dissociation",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Higher reversal context specificity (PFC) interacts with CS type to predict generalized reinstatement of acquisition memory traces in ACC/SFG (favoring initially threatening CS+-, t(22)=6.25, p<0.05) and precuneus (favoring initially safe CS-+, t(22)=4.89, p<0.01), with opposite directions across regions."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "LME with context specificity × CS type interaction predicting generalized reinstatement; FDR correction within ROI pairs"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
-        },
-        {
-          "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
+      }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:d0bcf69c-c791-4b94-9d82-92a43bccc4ed",
       "@type": "mira:Evidence",
-      "schema:name": "context-specificity-predicts-reinstatement-new-context-mtg",
-      "schema:description": "Higher reversal context specificity (PFC) predicts greater item reinstatement of CS-+ than CS+- acquisition memory traces in MTG during test_new (t(22)=2.51, p<0.05), the phase with entirely new contexts, suggesting context specificity generalizes beyond the training context.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "context-specificity-predicts-reinstatement-new-context-mtg",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Higher reversal context specificity (PFC) predicts greater item reinstatement of CS-+ than CS+- acquisition memory traces in MTG during test_new (t(22)=2.51, p<0.05), the phase with entirely new contexts, suggesting context specificity generalizes beyond the training context."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "LME with context specificity × CS type interaction predicting item reinstatement in MTG during test_new"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e"
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
       }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e",
       "@type": "mira:Evidence",
-      "schema:name": "context-specificity-predicts-reversal-reinstatement-dmpfc",
-      "schema:description": "Higher reversal context specificity (PFC) predicts greater item reinstatement of CS-+ than CS+- reversal memory traces in dmPFC during test_old (t(22)=5.56, p<0.05), favoring reinstatement of threatening reversal memories in the same region that generalizes acquisition traces.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "context-specificity-predicts-reversal-reinstatement-dmpfc",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Higher reversal context specificity (PFC) predicts greater item reinstatement of CS-+ than CS+- reversal memory traces in dmPFC during test_old (t(22)=5.56, p<0.05), favoring reinstatement of threatening reversal memories in the same region that generalizes acquisition traces."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "LME with context specificity × CS type interaction predicting item reinstatement; FDR correction within ROI pairs"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
-        },
-        {
-          "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74"
-        },
-        {
-          "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
+      }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:364302b6-4c41-4591-8df9-7800a8c674ff",
       "@type": "mira:Evidence",
-      "schema:name": "cs-plus-univariate-fear-network-acquisition",
-      "schema:description": "During fear acquisition, threatening cues (CS+) produce significantly greater BOLD activation than safe cues (CS-) in dACC, superior frontal gyrus, caudate nucleus, and middle temporal gyrus, replicating the canonical fear network activation pattern.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "cs-plus-univariate-fear-network-acquisition",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "During fear acquisition, threatening cues (CS+) produce significantly greater BOLD activation than safe cues (CS-) in dACC, superior frontal gyrus, caudate nucleus, and middle temporal gyrus, replicating the canonical fear network activation pattern."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "second-level mass-univariate GLM, cluster FWE with 10k permutations (p_uncorr<0.001)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
       }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
       "@type": "mira:Evidence",
-      "schema:name": "cue-generalization-increases-acquisition",
-      "schema:description": "Neural representations of threatening cues (CS++) generalize across items during fear acquisition: RSA shows that patterns for different CS++ items become more similar to each other in the fear network, indicating a shared threat-cue representation.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "cue-generalization-increases-acquisition",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Neural representations of threatening cues (CS++) generalize across items during fear acquisition: RSA shows that patterns for different CS++ items become more similar to each other in the fear network, indicating a shared threat-cue representation."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "RSA searchlight + ROI analysis (BrainIAK), permutation testing (10k, cluster FWE)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:060f6390-e191-4522-a7ac-28bc91151f75"
-        },
-        {
-          "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
+      }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:411ed78e-2542-4340-b896-bca7522579ae",
       "@type": "mira:Evidence",
-      "schema:name": "cue-generalization-limited-dacc-reversal-consistent",
-      "schema:description": "During reversal, cue generalization for CS++ (always threatening) vs CS-- (always safe) is elevated only in dACC, not in the broader fear network regions where this effect was present during acquisition, suggesting that consistent threat representations are maintained more narrowly.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "cue-generalization-limited-dacc-reversal-consistent",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "During reversal, cue generalization for CS++ (always threatening) vs CS-- (always safe) is elevated only in dACC, not in the broader fear network regions where this effect was present during acquisition, suggesting that consistent threat representations are maintained more narrowly."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "RSA searchlight, cue generalization measure, cluster FWE 10k permutations (Bonferroni-corrected alpha p<0.0125)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
-        },
-        {
-          "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
+      }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:0fce9813-0814-4bb8-86fd-12cd0c33bd98",
       "@type": "mira:Evidence",
-      "schema:name": "current-threat-activates-fear-network-reversal",
-      "schema:description": "During reversal, currently threatening cues (CS++ and CS-+) produce greater BOLD activation than non-threatening cues (CS+- and CS--) across the same fear network regions as acquisition (dACC, SFG, MTG, IFG), reflecting rapid updating of neural threat responses.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "current-threat-activates-fear-network-reversal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "During reversal, currently threatening cues (CS++ and CS-+) produce greater BOLD activation than non-threatening cues (CS+- and CS--) across the same fear network regions as acquisition (dACC, SFG, MTG, IFG), reflecting rapid updating of neural threat responses."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "second-level mass-univariate GLM, cluster FWE with 10k permutations (p_uncorr<0.001)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
-        },
-        {
-          "@id": "urn:uuid:364302b6-4c41-4591-8df9-7800a8c674ff"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
+      }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
       "@type": "mira:Evidence",
-      "schema:name": "dmpfc-reinstates-acquisition-traces-generalized",
-      "schema:description": "In dmPFC during test_old, generalized reinstatement is higher for acquisition memory traces than for test_new memory traces (F(2,259)=4.01, p<0.05; t(259)=2.96, p<0.05), showing that dmPFC preferentially reinstates category-level (generalized) acquisition representations.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "dmpfc-reinstates-acquisition-traces-generalized",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "In dmPFC during test_old, generalized reinstatement is higher for acquisition memory traces than for test_new memory traces (F(2,259)=4.01, p<0.05; t(259)=2.96, p<0.05), showing that dmPFC preferentially reinstates category-level (generalized) acquisition representations."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "ROI-based LME, Wilcoxon post-hoc (FDR-corrected within ROI)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
-      },
-      "mira:opposes": {
-        "@id": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414"
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
       }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
       "@type": "mira:Claim",
-      "schema:name": "dual-strategy-reversal-generalize-plus-specify",
-      "schema:description": "Reversal learning recruits two distinct representational strategies simultaneously: generalization (treating newly dangerous CS-+ like old CS++) for currently dangerous cues, and item-specific updating (distinguishing CS+- from CS++) for cues with changing threat value.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:supports": {
-        "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
+      "title": "dual-strategy-reversal-generalize-plus-specify",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Reversal learning recruits two distinct representational strategies simultaneously: generalization (treating newly dangerous CS-+ like old CS++) for currently dangerous cues, and item-specific updating (distinguishing CS+- from CS++) for cues with changing threat value."
       }
     },
     {
       "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
       "@type": "mira:Evidence",
-      "schema:name": "generalized-pattern-cs-minus-plus-reversal",
-      "schema:description": "During reversal, the newly dangerous cue (CS-+) acquires generalized neural representations similar to the originally feared CS++, mirroring the initial acquisition pattern in fear network regions.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "generalized-pattern-cs-minus-plus-reversal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "During reversal, the newly dangerous cue (CS-+) acquires generalized neural representations similar to the originally feared CS++, mirroring the initial acquisition pattern in fear network regions."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "RSA cue generalization measure"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:753f4a2e-8ab1-4e27-89be-67280c9d9a33"
-        },
-        {
-          "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
-        },
-        {
-          "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68"
-        },
-        {
-          "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
+      }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-context-specificity-supports-renewal",
-      "schema:description": "Prefrontal cortex represents fear-relevant contexts as distinct multivoxel patterns (context-specific coding), and this representational distinctness is the neural substrate that enables context-dependent fear renewal: participants whose PFC encodes contexts more distinctly during reversal will show stronger reinstatement of acquisition-phase fear memory traces when later tested in the original acquisition context.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "hypothesis-context-specificity-supports-renewal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Prefrontal cortex represents fear-relevant contexts as distinct multivoxel patterns (context-specific coding), and this representational distinctness is the neural substrate that enables context-dependent fear renewal: participants whose PFC encodes contexts more distinctly during reversal will show stronger reinstatement of acquisition-phase fear memory traces when later tested in the original acquisition context."
       },
       "mira:addresses": {
         "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e#question"
@@ -333,11 +756,11 @@
     {
       "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-dual-strategy-reversal",
-      "schema:description": "Reversal learning recruits two simultaneous representational strategies in different brain regions: generalization (treating newly dangerous CS-+ like CS++ in fear-network territory) for cues that share their current threat status with established cue classes, and item-specific updating (distinguishing changing-valence cues such as CS+- from stable cues) in higher-order cortex. The two strategies are not redundant — they encode complementary information about the same stimulus inventory.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "hypothesis-dual-strategy-reversal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Reversal learning recruits two simultaneous representational strategies in different brain regions: generalization (treating newly dangerous CS-+ like CS++ in fear-network territory) for cues that share their current threat status with established cue classes, and item-specific updating (distinguishing changing-valence cues such as CS+- from stable cues) in higher-order cortex. The two strategies are not redundant — they encode complementary information about the same stimulus inventory."
       },
       "mira:addresses": {
         "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a#question"
@@ -346,11 +769,11 @@
     {
       "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-fear-network-generalizes-threat-cues",
-      "schema:description": "Fear learning produces generalized (cross-item) neural representations of threatening cues in the canonical fear network: when an animal learns that a stimulus class is dangerous, the brain represents members of the class with overlapping multivoxel patterns rather than preserving item-specific patterns, so that any new exemplar of the class inherits the threat representation. The same mechanism operates whenever threat is acquired, including during reversal when previously safe cues become dangerous.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "hypothesis-fear-network-generalizes-threat-cues",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Fear learning produces generalized (cross-item) neural representations of threatening cues in the canonical fear network: when an animal learns that a stimulus class is dangerous, the brain represents members of the class with overlapping multivoxel patterns rather than preserving item-specific patterns, so that any new exemplar of the class inherits the threat representation. The same mechanism operates whenever threat is acquired, including during reversal when previously safe cues become dangerous."
       },
       "mira:addresses": {
         "@id": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68#question"
@@ -359,236 +782,1134 @@
     {
       "@id": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414",
       "@type": "mira:Evidence",
-      "schema:name": "ifg-reinstates-reversal-traces-item-specific",
-      "schema:description": "In IFG during test_old, item reinstatement is higher for reversal memory traces than for acquisition or test_new memory traces (F(2,253)=5.50, p<0.01), showing that IFG preferentially reinstates the most recently learned item-specific representations.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "ifg-reinstates-reversal-traces-item-specific",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "In IFG during test_old, item reinstatement is higher for reversal memory traces than for acquisition or test_new memory traces (F(2,253)=5.50, p<0.01), showing that IFG preferentially reinstates the most recently learned item-specific representations."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "ROI-based LME (reversal > acquisition item reinstatement, Wilcoxon t(253)=-3.01 p<0.01; reversal > test_new t(253)=-2.7 p<0.05)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
-      },
-      "mira:opposes": {
-        "@id": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c"
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
       }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:500caa5d-b636-4776-98fe-422b618f8e02",
       "@type": "mira:Evidence",
-      "schema:name": "item-stability-persists-test-phases",
-      "schema:description": "Item stability (but not cue generalization) persists into test phases in the absence of a US: CS+- > CS++ item stability in MTG at test_new, and CS++ > CS-- item stability in inferior temporal gyrus at test_old, showing that individual-item memory traces outlast the training context.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "item-stability-persists-test-phases",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Item stability (but not cue generalization) persists into test phases in the absence of a US: CS+- > CS++ item stability in MTG at test_new, and CS++ > CS-- item stability in inferior temporal gyrus at test_old, showing that individual-item memory traces outlast the training context."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "RSA searchlight, item-stability measure, cluster FWE 10k permutations (p<0.0125)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
       }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0",
       "@type": "mira:Evidence",
-      "schema:name": "item-stability-precuneus-pfc-reversal",
-      "schema:description": "During reversal learning, item-specific (stable across phases) representations emerge in precuneus and prefrontal cortex for cues that change their threat value (CS+-), distinguishing the changing cue from the stable threats.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "RSA searchlight, item-stability measure"
-        }
+      "title": "item-stability-precuneus-pfc-reversal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "During reversal learning, item-specific (stable across phases) representations emerge in precuneus and prefrontal cortex for cues that change their threat value (CS+-), distinguishing the changing cue from the stable threats."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:4f0c3ed8-434a-4ab0-8ee2-bbc3f9f5d18e"
-        },
-        {
-          "@id": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787"
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
       }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:9c4f7718-812e-45ec-aecd-3218135a1e4b",
       "@type": "mira:Protocol",
-      "schema:name": "lss-unreinforced-trials-only",
-      "schema:description": "All RSA pattern similarity analyses use only unreinforced trials (no US delivered), excluding reinforced trials to avoid US-driven BOLD confounds; this exclusion reduces the effective trial count and may selectively remove trials with strongest fear responses.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "lss-unreinforced-trials-only",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "All RSA pattern similarity analyses use only unreinforced trials (no US delivered), excluding reinforced trials to avoid US-driven BOLD confounds; this exclusion reduces the effective trial count and may selectively remove trials with strongest fear responses."
       }
     },
     {
       "@id": "urn:uuid:e5023cc6-f631-4d2b-b768-ed36dbef9edb",
       "@type": "mira:Evidence",
-      "schema:name": "no-bold-differences-test-phases",
-      "schema:description": "During both test phases (test_new and test_old), no significant BOLD activation differences between any CS type contrasts are found, despite significant US expectancy differences at the behavioral level, motivating RSA over univariate analysis.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "no-bold-differences-test-phases",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "During both test phases (test_new and test_old), no significant BOLD activation differences between any CS type contrasts are found, despite significant US expectancy differences at the behavioral level, motivating RSA over univariate analysis."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "second-level mass-univariate GLM, cluster FWE with 10k permutations (p_uncorr<0.001)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
       }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:60dc4ad3-7400-4bd9-bf23-dfc403bdea39",
       "@type": "mira:Evidence",
-      "schema:name": "no-item-stability-difference-acquisition",
-      "schema:description": "During fear acquisition, item stability (within-cue neural pattern similarity) does not differ between CS+ and CS- cues anywhere in the brain, showing that threat learning selectively increases cross-item generalization but not single-item representational consistency.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "no-item-stability-difference-acquisition",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "During fear acquisition, item stability (within-cue neural pattern similarity) does not differ between CS+ and CS- cues anywhere in the brain, showing that threat learning selectively increases cross-item generalization but not single-item representational consistency."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "RSA searchlight, item-stability measure, cluster FWE 10k permutations (p<0.025 threshold)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.105126",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
-        },
-        {
-          "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2"
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
       }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74",
       "@type": "mira:Evidence",
-      "schema:name": "pfc-context-specificity-predicts-renewal",
-      "schema:description": "Prefrontal cortex context-specificity during reversal learning predicts subsequent fear renewal at test, linking context-specific neural coding to behavioral expression of fear.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.17605/OSF.IO/NGWKA",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "correlation: RSA context specificity × behavioral fear renewal"
-        }
+      "title": "pfc-context-specificity-predicts-renewal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Prefrontal cortex context-specificity during reversal learning predicts subsequent fear renewal at test, linking context-specific neural coding to behavioral expression of fear."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:12cefa80-6075-43a5-b3ec-ce2a8527ec2c"
-        },
-        {
-          "@id": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://doi.org/10.17605/OSF.IO/NGWKA"
+      }
+    },
+    {
+      "@id": "https://doi.org/10.17605/OSF.IO/NGWKA",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:a5fe00c8-602d-4b28-a458-68a57619b2e3",
       "@type": "mira:Claim",
-      "schema:name": "prediction-context-specificity-increases-during-reversal",
-      "schema:description": "If PFC context-specific coding is the substrate for context-dependent fear renewal, then context representations should become more distinct (greater within-context vs between-context pattern similarity) in PFC during reversal compared to acquisition, when context becomes newly relevant for predicting threat (the same cue can be safe in one context and dangerous in another).",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "prediction-context-specificity-increases-during-reversal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If PFC context-specific coding is the substrate for context-dependent fear renewal, then context representations should become more distinct (greater within-context vs between-context pattern similarity) in PFC during reversal compared to acquisition, when context becomes newly relevant for predicting threat (the same cue can be safe in one context and dangerous in another)."
       }
     },
     {
       "@id": "urn:uuid:753f4a2e-8ab1-4e27-89be-67280c9d9a33",
       "@type": "mira:Claim",
-      "schema:name": "prediction-cs-minus-plus-generalizes-reversal",
-      "schema:description": "If the same generalization mechanism that operates during acquisition is recruited whenever threat is acquired, then during reversal the newly dangerous cue (CS-+, previously safe) should acquire generalized neural representations in fear-network regions, mirroring the pattern seen for CS++ during acquisition.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "prediction-cs-minus-plus-generalizes-reversal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If the same generalization mechanism that operates during acquisition is recruited whenever threat is acquired, then during reversal the newly dangerous cue (CS-+, previously safe) should acquire generalized neural representations in fear-network regions, mirroring the pattern seen for CS++ during acquisition."
       }
     },
     {
       "@id": "urn:uuid:060f6390-e191-4522-a7ac-28bc91151f75",
       "@type": "mira:Claim",
-      "schema:name": "prediction-cue-generalization-fear-network-acquisition",
-      "schema:description": "If fear learning recruits a generalization mechanism that encodes threatening cues with shared representations, then during initial acquisition CS+ items should show greater between-item neural pattern similarity than CS- items in canonical fear-network regions (dACC, SFG, caudate, insula), with the generalization signal detectable as a positive CS+ > CS- contrast on the cue-generalization RSA measure.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "prediction-cue-generalization-fear-network-acquisition",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If fear learning recruits a generalization mechanism that encodes threatening cues with shared representations, then during initial acquisition CS+ items should show greater between-item neural pattern similarity than CS- items in canonical fear-network regions (dACC, SFG, caudate, insula), with the generalization signal detectable as a positive CS+ > CS- contrast on the cue-generalization RSA measure."
       }
     },
     {
       "@id": "urn:uuid:4f0c3ed8-434a-4ab0-8ee2-bbc3f9f5d18e",
       "@type": "mira:Claim",
-      "schema:name": "prediction-item-stability-changing-cues-reversal",
-      "schema:description": "If reversal learning recruits an item-specific updating strategy in addition to generalization, then changing-valence cues (CS+- and CS-+) should show elevated within-item neural pattern stability — distinguishing each item from its category-mates — in higher-order cortex (precuneus, IFG, prefrontal cortex), regions outside the canonical fear network.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "prediction-item-stability-changing-cues-reversal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If reversal learning recruits an item-specific updating strategy in addition to generalization, then changing-valence cues (CS+- and CS-+) should show elevated within-item neural pattern stability — distinguishing each item from its category-mates — in higher-order cortex (precuneus, IFG, prefrontal cortex), regions outside the canonical fear network."
       }
     },
     {
       "@id": "urn:uuid:12cefa80-6075-43a5-b3ec-ce2a8527ec2c",
       "@type": "mira:Claim",
-      "schema:name": "prediction-pfc-context-specificity-tracks-renewal",
-      "schema:description": "If PFC context-specific coding is the substrate for context-dependent fear renewal, then between-subject variability in PFC context specificity (during reversal) should covary with between-subject variability in subsequent reinstatement of acquisition-phase fear memory traces at test, with subjects who encode contexts more distinctly showing stronger reinstatement.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "prediction-pfc-context-specificity-tracks-renewal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If PFC context-specific coding is the substrate for context-dependent fear renewal, then between-subject variability in PFC context specificity (during reversal) should covary with between-subject variability in subsequent reinstatement of acquisition-phase fear memory traces at test, with subjects who encode contexts more distinctly showing stronger reinstatement."
       }
     },
     {
       "@id": "urn:uuid:db8f67a5-9139-44fb-89c1-b30613fbadf5",
       "@type": "mira:Claim",
-      "schema:name": "prior-threat-activates-fear-network-weakly",
-      "schema:description": "During reversal, cues that were threatening during acquisition but not currently threatening (CS++) vs those that were safe during acquisition and currently threatening (CS-+) still show fear network activation — (CS++ > CS+-) > (CS-+ > CS--) — though to a lesser extent than the current-threat contrast, suggesting a lingering prior fear memory trace.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
-      },
-      "mira:supports": {
-        "@id": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1"
+      "title": "prior-threat-activates-fear-network-weakly",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "During reversal, cues that were threatening during acquisition but not currently threatening (CS++) vs those that were safe during acquisition and currently threatening (CS-+) still show fear network activation — (CS++ > CS+-) > (CS-+ > CS--) — though to a lesser extent than the current-threat contrast, suggesting a lingering prior fear memory trace."
       }
     },
     {
       "@id": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
       "@type": "mira:Protocol",
-      "schema:name": "rsa-roi-derived-from-searchlight",
-      "schema:description": "ROI-based RSA analyses (Fig 4B, Fig 5D) use ROIs derived from statistically significant clusters in the preceding searchlight analyses on the same dataset, without an independent ROI definition, creating a circularity that inflates the expected significance of ROI tests.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.105126"
+      "title": "rsa-roi-derived-from-searchlight",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "ROI-based RSA analyses (Fig 4B, Fig 5D) use ROIs derived from statistically significant clusters in the preceding searchlight analyses on the same dataset, without an independent ROI definition, creating a circularity that inflates the expected significance of ROI tests."
       }
     },
     {
       "@id": "urn:uuid:d903f2eb-e683-43c7-8feb-1bc1ee72597b",
       "@type": "mira:Claim",
-      "schema:name": "trace-conditioning-hippocampus-engaged",
-      "schema:description": "Trace conditioning (temporal gap between CS and US) is used to engage hippocampus-dependent memory formation; this design assumption is not independently validated in this paper but relies on prior literature establishing hippocampal involvement in trace conditioning.",
-      "mira:epistemicStatus": "mira:Assumption"
+      "title": "trace-conditioning-hippocampus-engaged",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Trace conditioning (temporal gap between CS and US) is used to engage hippocampus-dependent memory formation; this design assumption is not independently validated in this paper but relies on prior literature establishing hippocampal involvement in trace conditioning."
+      }
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/1",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:dc36ab32-bbed-480d-b05d-f833b100b1c3",
+      "destination": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68",
+      "title": "[[behavioral-learning-confirms-contingencies]] -validates-> [[hypothesis-fear-network-generalizes-threat-cues]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/2",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:dc36ab32-bbed-480d-b05d-f833b100b1c3",
+      "destination": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a",
+      "title": "[[behavioral-learning-confirms-contingencies]] -validates-> [[hypothesis-dual-strategy-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/3",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:dc36ab32-bbed-480d-b05d-f833b100b1c3",
+      "destination": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "title": "[[behavioral-learning-confirms-contingencies]] -supports-> [[dual-strategy-reversal-generalize-plus-specify]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/4",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c",
+      "destination": "urn:uuid:a5fe00c8-602d-4b28-a458-68a57619b2e3",
+      "title": "[[context-specificity-increases-reversal]] -tests-> [[prediction-context-specificity-increases-during-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/5",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c",
+      "destination": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74",
+      "title": "[[context-specificity-increases-reversal]] -supports-> [[pfc-context-specificity-predicts-renewal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/6",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c",
+      "destination": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e",
+      "title": "[[context-specificity-increases-reversal]] -supports-> [[hypothesis-context-specificity-supports-renewal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/7",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:7ca6bb4e-6e66-47c1-bf7c-52c64d17d80d",
+      "destination": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e",
+      "title": "[[context-specificity-predicts-acquisition-reinstatement-regional-dissociation]] -validates-> [[hypothesis-context-specificity-supports-renewal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/8",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:7ca6bb4e-6e66-47c1-bf7c-52c64d17d80d",
+      "destination": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c",
+      "title": "[[context-specificity-predicts-acquisition-reinstatement-regional-dissociation]] -requires-> [[context-specificity-increases-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/9",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:7ca6bb4e-6e66-47c1-bf7c-52c64d17d80d",
+      "destination": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74",
+      "title": "[[context-specificity-predicts-acquisition-reinstatement-regional-dissociation]] -supports-> [[pfc-context-specificity-predicts-renewal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/10",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:d0bcf69c-c791-4b94-9d82-92a43bccc4ed",
+      "destination": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c",
+      "title": "[[context-specificity-predicts-reinstatement-new-context-mtg]] -requires-> [[context-specificity-increases-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/11",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:d0bcf69c-c791-4b94-9d82-92a43bccc4ed",
+      "destination": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e",
+      "title": "[[context-specificity-predicts-reinstatement-new-context-mtg]] -extends-> [[context-specificity-predicts-reversal-reinstatement-dmpfc]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/12",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e",
+      "destination": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e",
+      "title": "[[context-specificity-predicts-reversal-reinstatement-dmpfc]] -validates-> [[hypothesis-context-specificity-supports-renewal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/13",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e",
+      "destination": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c",
+      "title": "[[context-specificity-predicts-reversal-reinstatement-dmpfc]] -requires-> [[context-specificity-increases-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/14",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e",
+      "destination": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74",
+      "title": "[[context-specificity-predicts-reversal-reinstatement-dmpfc]] -supports-> [[pfc-context-specificity-predicts-renewal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/15",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e",
+      "destination": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
+      "title": "[[context-specificity-predicts-reversal-reinstatement-dmpfc]] -extends-> [[dmpfc-reinstates-acquisition-traces-generalized]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/16",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:364302b6-4c41-4591-8df9-7800a8c674ff",
+      "destination": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "title": "[[cs-plus-univariate-fear-network-acquisition]] -enables-method-> [[cue-generalization-increases-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/17",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:364302b6-4c41-4591-8df9-7800a8c674ff",
+      "destination": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "title": "[[cs-plus-univariate-fear-network-acquisition]] -supports-> [[cue-generalization-increases-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/18",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "destination": "urn:uuid:060f6390-e191-4522-a7ac-28bc91151f75",
+      "title": "[[cue-generalization-increases-acquisition]] -tests-> [[prediction-cue-generalization-fear-network-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/19",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "destination": "urn:uuid:9c4f7718-812e-45ec-aecd-3218135a1e4b",
+      "title": "[[cue-generalization-increases-acquisition]] -requires-> [[lss-unreinforced-trials-only]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/20",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "destination": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68",
+      "title": "[[cue-generalization-increases-acquisition]] -supports-> [[hypothesis-fear-network-generalizes-threat-cues]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/21",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:411ed78e-2542-4340-b896-bca7522579ae",
+      "destination": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "title": "[[cue-generalization-limited-dacc-reversal-consistent]] -extends-> [[cue-generalization-increases-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/22",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:411ed78e-2542-4340-b896-bca7522579ae",
+      "destination": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
+      "title": "[[cue-generalization-limited-dacc-reversal-consistent]] -supports-> [[generalized-pattern-cs-minus-plus-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/23",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:0fce9813-0814-4bb8-86fd-12cd0c33bd98",
+      "destination": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
+      "title": "[[current-threat-activates-fear-network-reversal]] -supports-> [[generalized-pattern-cs-minus-plus-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/24",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:0fce9813-0814-4bb8-86fd-12cd0c33bd98",
+      "destination": "urn:uuid:364302b6-4c41-4591-8df9-7800a8c674ff",
+      "title": "[[current-threat-activates-fear-network-reversal]] -extends-> [[cs-plus-univariate-fear-network-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/25",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
+      "destination": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414",
+      "title": "[[dmpfc-reinstates-acquisition-traces-generalized]] -dissociates-with-> [[ifg-reinstates-reversal-traces-item-specific]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/26",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
+      "destination": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "title": "[[dmpfc-reinstates-acquisition-traces-generalized]] -supports-> [[dual-strategy-reversal-generalize-plus-specify]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/27",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
+      "destination": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "title": "[[dmpfc-reinstates-acquisition-traces-generalized]] -requires-> [[cue-generalization-increases-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/28",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "destination": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a",
+      "title": "[[dual-strategy-reversal-generalize-plus-specify]] -confirms-> [[hypothesis-dual-strategy-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/29",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "destination": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
+      "title": "[[dual-strategy-reversal-generalize-plus-specify]] -interprets-> [[generalized-pattern-cs-minus-plus-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/30",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "destination": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0",
+      "title": "[[dual-strategy-reversal-generalize-plus-specify]] -interprets-> [[item-stability-precuneus-pfc-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/31",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "destination": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414",
+      "title": "[[dual-strategy-reversal-generalize-plus-specify]] -interprets-> [[ifg-reinstates-reversal-traces-item-specific]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/32",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "destination": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
+      "title": "[[dual-strategy-reversal-generalize-plus-specify]] -interprets-> [[dmpfc-reinstates-acquisition-traces-generalized]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/33",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
+      "destination": "urn:uuid:753f4a2e-8ab1-4e27-89be-67280c9d9a33",
+      "title": "[[generalized-pattern-cs-minus-plus-reversal]] -tests-> [[prediction-cs-minus-plus-generalizes-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/34",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
+      "destination": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "title": "[[generalized-pattern-cs-minus-plus-reversal]] -extends-> [[cue-generalization-increases-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/35",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
+      "destination": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68",
+      "title": "[[generalized-pattern-cs-minus-plus-reversal]] -supports-> [[hypothesis-fear-network-generalizes-threat-cues]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/36",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
+      "destination": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a",
+      "title": "[[generalized-pattern-cs-minus-plus-reversal]] -supports-> [[hypothesis-dual-strategy-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/37",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e",
+      "destination": "urn:uuid:a5fe00c8-602d-4b28-a458-68a57619b2e3",
+      "title": "[[hypothesis-context-specificity-supports-renewal]] -entails-> [[prediction-context-specificity-increases-during-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/38",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e",
+      "destination": "urn:uuid:12cefa80-6075-43a5-b3ec-ce2a8527ec2c",
+      "title": "[[hypothesis-context-specificity-supports-renewal]] -entails-> [[prediction-pfc-context-specificity-tracks-renewal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/39",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a",
+      "destination": "urn:uuid:753f4a2e-8ab1-4e27-89be-67280c9d9a33",
+      "title": "[[hypothesis-dual-strategy-reversal]] -entails-> [[prediction-cs-minus-plus-generalizes-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/40",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a",
+      "destination": "urn:uuid:4f0c3ed8-434a-4ab0-8ee2-bbc3f9f5d18e",
+      "title": "[[hypothesis-dual-strategy-reversal]] -entails-> [[prediction-item-stability-changing-cues-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/41",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68",
+      "destination": "urn:uuid:060f6390-e191-4522-a7ac-28bc91151f75",
+      "title": "[[hypothesis-fear-network-generalizes-threat-cues]] -entails-> [[prediction-cue-generalization-fear-network-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/42",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:291d51bd-0ff0-493a-94e1-6814e0deba68",
+      "destination": "urn:uuid:753f4a2e-8ab1-4e27-89be-67280c9d9a33",
+      "title": "[[hypothesis-fear-network-generalizes-threat-cues]] -entails-> [[prediction-cs-minus-plus-generalizes-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/43",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414",
+      "destination": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
+      "title": "[[ifg-reinstates-reversal-traces-item-specific]] -dissociates-with-> [[dmpfc-reinstates-acquisition-traces-generalized]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/44",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414",
+      "destination": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "title": "[[ifg-reinstates-reversal-traces-item-specific]] -supports-> [[dual-strategy-reversal-generalize-plus-specify]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/45",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414",
+      "destination": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0",
+      "title": "[[ifg-reinstates-reversal-traces-item-specific]] -requires-> [[item-stability-precuneus-pfc-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/46",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:500caa5d-b636-4776-98fe-422b618f8e02",
+      "destination": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "title": "[[item-stability-persists-test-phases]] -supports-> [[dual-strategy-reversal-generalize-plus-specify]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/47",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:500caa5d-b636-4776-98fe-422b618f8e02",
+      "destination": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0",
+      "title": "[[item-stability-persists-test-phases]] -requires-> [[item-stability-precuneus-pfc-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/48",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0",
+      "destination": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
+      "title": "[[item-stability-precuneus-pfc-reversal]] -dissociates-with-> [[generalized-pattern-cs-minus-plus-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/49",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0",
+      "destination": "urn:uuid:4f0c3ed8-434a-4ab0-8ee2-bbc3f9f5d18e",
+      "title": "[[item-stability-precuneus-pfc-reversal]] -tests-> [[prediction-item-stability-changing-cues-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/50",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0",
+      "destination": "urn:uuid:74eb7450-8ad4-458a-b237-24832ed57b0a",
+      "title": "[[item-stability-precuneus-pfc-reversal]] -supports-> [[hypothesis-dual-strategy-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/51",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:9c4f7718-812e-45ec-aecd-3218135a1e4b",
+      "destination": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "title": "[[lss-unreinforced-trials-only]] -scopes-> [[cue-generalization-increases-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/52",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:9c4f7718-812e-45ec-aecd-3218135a1e4b",
+      "destination": "urn:uuid:ae9a914a-11de-40a8-a291-bfd61d51a787",
+      "title": "[[lss-unreinforced-trials-only]] -scopes-> [[generalized-pattern-cs-minus-plus-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/53",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:9c4f7718-812e-45ec-aecd-3218135a1e4b",
+      "destination": "urn:uuid:411ed78e-2542-4340-b896-bca7522579ae",
+      "title": "[[lss-unreinforced-trials-only]] -scopes-> [[cue-generalization-limited-dacc-reversal-consistent]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/54",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:9c4f7718-812e-45ec-aecd-3218135a1e4b",
+      "destination": "urn:uuid:60dc4ad3-7400-4bd9-bf23-dfc403bdea39",
+      "title": "[[lss-unreinforced-trials-only]] -scopes-> [[no-item-stability-difference-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/55",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:9c4f7718-812e-45ec-aecd-3218135a1e4b",
+      "destination": "urn:uuid:aa1a7bc0-0051-4dc7-bbba-2f96300645e0",
+      "title": "[[lss-unreinforced-trials-only]] -scopes-> [[item-stability-precuneus-pfc-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/56",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:9c4f7718-812e-45ec-aecd-3218135a1e4b",
+      "destination": "urn:uuid:500caa5d-b636-4776-98fe-422b618f8e02",
+      "title": "[[lss-unreinforced-trials-only]] -scopes-> [[item-stability-persists-test-phases]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/57",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:e5023cc6-f631-4d2b-b768-ed36dbef9edb",
+      "destination": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414",
+      "title": "[[no-bold-differences-test-phases]] -enables-method-> [[ifg-reinstates-reversal-traces-item-specific]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/58",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:e5023cc6-f631-4d2b-b768-ed36dbef9edb",
+      "destination": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
+      "title": "[[no-bold-differences-test-phases]] -enables-method-> [[dmpfc-reinstates-acquisition-traces-generalized]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/59",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:e5023cc6-f631-4d2b-b768-ed36dbef9edb",
+      "destination": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "title": "[[no-bold-differences-test-phases]] -supports-> [[cue-generalization-increases-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/60",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:60dc4ad3-7400-4bd9-bf23-dfc403bdea39",
+      "destination": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "title": "[[no-item-stability-difference-acquisition]] -dissociates-with-> [[cue-generalization-increases-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/61",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:60dc4ad3-7400-4bd9-bf23-dfc403bdea39",
+      "destination": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "title": "[[no-item-stability-difference-acquisition]] -supports-> [[dual-strategy-reversal-generalize-plus-specify]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/62",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:60dc4ad3-7400-4bd9-bf23-dfc403bdea39",
+      "destination": "urn:uuid:e645b7b4-05c4-4b37-b75f-3e47c0d585b2",
+      "title": "[[no-item-stability-difference-acquisition]] -extends-> [[cue-generalization-increases-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/63",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74",
+      "destination": "urn:uuid:12cefa80-6075-43a5-b3ec-ce2a8527ec2c",
+      "title": "[[pfc-context-specificity-predicts-renewal]] -tests-> [[prediction-pfc-context-specificity-tracks-renewal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/64",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74",
+      "destination": "urn:uuid:4dbc065d-daa5-45e9-96d6-9012b33cb24c",
+      "title": "[[pfc-context-specificity-predicts-renewal]] -requires-> [[context-specificity-increases-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/65",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:2ff7f5ea-efaf-408e-9ef3-ab46fe395e74",
+      "destination": "urn:uuid:ff1e0397-2e8f-40ad-b8a3-e36eeee81b4e",
+      "title": "[[pfc-context-specificity-predicts-renewal]] -supports-> [[hypothesis-context-specificity-supports-renewal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/66",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:db8f67a5-9139-44fb-89c1-b30613fbadf5",
+      "destination": "urn:uuid:0fce9813-0814-4bb8-86fd-12cd0c33bd98",
+      "title": "[[prior-threat-activates-fear-network-weakly]] -interprets-> [[current-threat-activates-fear-network-reversal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/67",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:db8f67a5-9139-44fb-89c1-b30613fbadf5",
+      "destination": "urn:uuid:364302b6-4c41-4591-8df9-7800a8c674ff",
+      "title": "[[prior-threat-activates-fear-network-weakly]] -requires-> [[cs-plus-univariate-fear-network-acquisition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/68",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:db8f67a5-9139-44fb-89c1-b30613fbadf5",
+      "destination": "urn:uuid:6ea9d399-1100-4329-8a02-ac61dd04e3d1",
+      "title": "[[prior-threat-activates-fear-network-weakly]] -supports-> [[dual-strategy-reversal-generalize-plus-specify]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/69",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
+      "destination": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414",
+      "title": "[[rsa-roi-derived-from-searchlight]] -scopes-> [[ifg-reinstates-reversal-traces-item-specific]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/70",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
+      "destination": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
+      "title": "[[rsa-roi-derived-from-searchlight]] -scopes-> [[dmpfc-reinstates-acquisition-traces-generalized]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/71",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
+      "destination": "urn:uuid:7ca6bb4e-6e66-47c1-bf7c-52c64d17d80d",
+      "title": "[[rsa-roi-derived-from-searchlight]] -scopes-> [[context-specificity-predicts-acquisition-reinstatement-regional-dissociation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/72",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
+      "destination": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e",
+      "title": "[[rsa-roi-derived-from-searchlight]] -scopes-> [[context-specificity-predicts-reversal-reinstatement-dmpfc]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/73",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
+      "destination": "urn:uuid:d0bcf69c-c791-4b94-9d82-92a43bccc4ed",
+      "title": "[[rsa-roi-derived-from-searchlight]] -scopes-> [[context-specificity-predicts-reinstatement-new-context-mtg]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/74",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
+      "destination": "urn:uuid:bcf69f08-b30f-4571-9ecd-69ea60d15414",
+      "title": "[[rsa-roi-derived-from-searchlight]] -requires-> [[ifg-reinstates-reversal-traces-item-specific]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/75",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
+      "destination": "urn:uuid:ebc27c8f-666b-474f-8980-f41e0d25843c",
+      "title": "[[rsa-roi-derived-from-searchlight]] -requires-> [[dmpfc-reinstates-acquisition-traces-generalized]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/76",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
+      "destination": "urn:uuid:7ca6bb4e-6e66-47c1-bf7c-52c64d17d80d",
+      "title": "[[rsa-roi-derived-from-searchlight]] -requires-> [[context-specificity-predicts-acquisition-reinstatement-regional-dissociation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/bouyeure-2026-fear-rsa/77",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:7d932232-9c15-45f3-8296-958d3fe84d2a",
+      "destination": "urn:uuid:711a9296-c951-4455-b0bb-99e3d48ab36e",
+      "title": "[[rsa-roi-derived-from-searchlight]] -requires-> [[context-specificity-predicts-reversal-reinstatement-dmpfc]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     }
   ]
 }

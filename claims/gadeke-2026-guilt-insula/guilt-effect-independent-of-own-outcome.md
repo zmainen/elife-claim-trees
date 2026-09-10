@@ -19,6 +19,8 @@ concepts:
 priority: 2026-03-30
 epistemic: strong
 
+rules-out:
+  - alt-guilt-effect-driven-by-own-outcome
 validates:
   - guilt-reduces-happiness-after-partner-loss
   - hypothesis-insula-tracks-interpersonal-guilt

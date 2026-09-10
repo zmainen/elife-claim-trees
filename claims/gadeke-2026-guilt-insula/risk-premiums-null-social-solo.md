@@ -19,14 +19,14 @@ priority: 2026-03-30
 epistemic: strong
 
 rules-out:
+  - alt-social-context-shifts-risk-attitude
+qualifies:
   - solo-vs-social-choice-difference
 validates:
   - insula-tracks-guilt-effect
   - sts-tracks-partner-reward-prediction-errors
 
-belongings:
-  - relation: contradicts
-    target: solo-vs-social-choice-difference
+belongings: []
 
 assertions:
   - paper-slug: gadeke-2026-guilt-insula

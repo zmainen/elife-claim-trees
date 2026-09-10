@@ -1,6 +1,6 @@
 # gadeke-2026-guilt-insula — what each format carries
 
-27 claims, 89 typed relations between them.
+33 claims, 93 typed relations between them.
 
 One source, three targets. Each row is a relation type the paper's claim tree uses; each column is what became of it.
 
@@ -8,6 +8,7 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 |---|---:|---|---|---|
 | `scopes` | 29 | `haak:scopes`, neutral | kept | dropped |
 | `validates` | 13 | `haak:validates`, under `mira:supports` | kept | kept |
+| `rules-out` | 6 | `haak:rules-out`, under `mira:opposes` | kept | kept |
 | `confirms` | 6 | `haak:confirms`, under `mira:supports` | kept | kept |
 | `supports` | 5 | `haak:supports`, under `mira:supports` | kept | kept |
 | `tests` | 5 | `haak:tests`, under `mira:supports` | kept | kept |
@@ -18,12 +19,11 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 | `requires` | 4 | `haak:requires`, neutral | kept | dropped |
 | `extends` | 3 | `haak:extends`, under `mira:supports` | kept | kept |
 | `enables-method` | 2 | `haak:enables-method`, neutral | kept | dropped |
-| `contradicts` | 2 | `haak:contradicts`, under `mira:opposes` | kept | kept |
-| `rules-out` | 1 | `haak:rules-out`, under `mira:opposes` | kept | kept |
+| `qualifies` | 1 | `haak:qualifies`, neutral | kept | dropped |
 
 ## What MIRA has no predicate for — and what happens instead
 
-**45 of 89 relations (51%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
+**46 of 93 relations (49%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
 - `haak:scopes` (29) — a scope constraint governs another claim's validity
 - `haak:interprets` (5) — one claim interprets another
@@ -31,15 +31,17 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 - `haak:derived-from` (5) — a prediction derived from its hypothesis
 - `haak:requires` (4) — a claim depends on another holding
 - `haak:enables-method` (2) — a result makes a downstream method possible
+- `haak:qualifies` (1) — a claim narrows another's applicability
 
 Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.
 
 ## What a reader who knows only core MIRA sees
 
-Every relation keeps its own type — nothing is flattened into `supports`. 39 of the 84 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
+Every relation keeps its own type — nothing is flattened into `supports`. 42 of the 88 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
 - `scopes` (29) — neutral
 - `validates` (13) — under `mira:supports`
+- `rules-out` (6) — under `mira:opposes`
 - `confirms` (6) — under `mira:supports`
 - `supports` (5) — under `mira:supports`
 - `tests` (5) — under `mira:supports`
@@ -49,8 +51,7 @@ Every relation keeps its own type — nothing is flattened into `supports`. 39 o
 - `requires` (4) — neutral
 - `extends` (3) — under `mira:supports`
 - `enables-method` (2) — neutral
-- `contradicts` (2) — under `mira:opposes`
-- `rules-out` (1) — under `mira:opposes`
+- `qualifies` (1) — neutral
 
 ## What MIRA genuinely cannot carry
 

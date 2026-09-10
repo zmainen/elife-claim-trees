@@ -47,6 +47,71 @@ A claim can carry multiple assertion blocks, one per paper that asserts it. Each
 - `dataset` / `dataset-doi` — the data deposit used
 - `method` — the computational or experimental method
 - `confidence` — the paper's own confidence level (strong / moderate / weak)
+- `stance` — the paper's epistemic position toward the proposition (below)
+
+### Stance
+
+A paper does not only assert propositions. It also raises candidates it does not commit to,
+argues that some are false, and reports what others have claimed. `stance` records which:
+
+| Value | Meaning |
+|:------|:--------|
+| `asserts` | The paper claims the proposition is true. **Default** when the field is absent. |
+| `entertains` | The paper raises it as a candidate and does not assert it. |
+| `rejects` | The paper argues it is false. |
+| `attributes` | Someone else asserts it; this paper reports that. Requires a citation in `source`. |
+
+Stance belongs on the assertion rather than on the claim because the claim is
+paper-independent (§1). The same proposition can be asserted by one paper and rejected by
+another; when both papers' trees are read together, the claim entity carries two assertion
+blocks with opposing stances and the disagreement becomes queryable. Were stance a property of
+the claim, that case could not be represented at all.
+
+Stance says what the paper concluded. The relations say *why*: a rejected alternative normally
+carries an incoming `rules-out` edge from the evidence that eliminated it. Keep both — a paper
+can reject something by dismissal with no evidence offered, and conversely the edge names which
+control did the work, which stance cannot.
+
+There is no separate value for "rejected". A claim asserted with `entertains` and an incoming
+`rules-out` **is** a rejected alternative; one with `entertains` and no such edge is an *open*
+alternative, a rival the paper raised and did not settle.
+
+### Alternative explanations are claims
+
+When a paper rules something out — a confound, a rival mechanism, a competing account — the
+thing being ruled out is a proposition, and it gets a claim file like any other. Its role is
+whatever it functionally is (usually `hypothesis`); what marks it as a rival is its stance, not
+its role.
+
+```yaml
+---
+uuid: [uuid4]
+slug: alt-social-context-shifts-risk-attitude
+claim: >
+  The happiness difference between Social and Partner conditions reflects a
+  social-context-driven shift in risk attitude rather than responsibility-contingent guilt.
+role: hypothesis
+epistemic: weak
+assertions:
+  - paper-slug: gadeke-2026-guilt-insula
+    doi: 10.7554/eLife.104323
+    stance: rejects
+    method: agent extraction from the paper's control analyses
+---
+```
+
+and the control that kills it carries the edge:
+
+```yaml
+rules-out:
+  - alt-social-context-shifts-risk-attitude
+```
+
+**Never point `rules-out` or `contradicts` at a claim the same paper asserts.** A paper does
+not rule out what it claims. Where an alternative has no node, the temptation is to aim the
+edge at the nearest claim that does — which produces a relation that is structurally valid and
+factually false. Four such edges existed in this corpus, and one produced a contradiction
+between two compatible findings. `scripts/check_relations.py` now rejects them.
 
 ---
 

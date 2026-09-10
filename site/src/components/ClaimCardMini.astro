@@ -9,6 +9,7 @@ type Claim = {
   status: string;
   epistemic: string;
   role?: string | null;
+  stance?: string | null;
   isAssessment?: boolean;
   requires?: string[];
   figureUrl?: string | null;
@@ -86,6 +87,13 @@ const children = (claim.requires ?? [])
       {claim.role && (
         <span class={`mini-role-chip ${roleStyle[claim.role] ?? roleStyle.empirical}`}>
           {claim.role.toUpperCase()}
+        </span>
+      )}
+      {/* A claim the paper does not assert. Without this the card reads as the paper
+          claiming what it in fact argues against. */}
+      {claim.stance && claim.stance !== 'asserts' && (
+        <span class="mini-stance-chip" title="This paper does not assert this claim">
+          {claim.stance === 'rejects' ? 'RULED OUT' : claim.stance.toUpperCase()}
         </span>
       )}
       {claim.panel && claim.panel.toLowerCase() !== (claim.role ?? '').toLowerCase() && (
@@ -178,6 +186,24 @@ const children = (claim.requires ?? [])
     border-radius: 3px;
     border: 1px solid;
     text-transform: uppercase;
+  }
+  .mini-stance-chip {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px dashed #b45309;
+    color: #b45309;
+    background: rgba(180, 83, 9, 0.08);
+    text-transform: uppercase;
+  }
+  :global([data-theme="dark"]) .mini-stance-chip,
+  :global(:root:not([data-theme="light"])) .mini-stance-chip {
+    border-color: #f59e0b;
+    color: #fbbf24;
+    background: rgba(245, 158, 11, 0.12);
   }
   .mini-panel {
     color: #94a3b8;

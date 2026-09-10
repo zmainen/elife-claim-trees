@@ -19,6 +19,8 @@ concepts:
 priority: 2026-03-30
 epistemic: strong
 
+rules-out:
+  - alt-model-based-glm-invalid
 validates:
   - sts-tracks-partner-reward-prediction-errors
 

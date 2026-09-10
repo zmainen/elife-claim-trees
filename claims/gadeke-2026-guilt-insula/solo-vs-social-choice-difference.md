@@ -17,9 +17,7 @@ epistemic: moderate
 dissociates-with:
   - risk-premiums-null-social-solo
 
-belongings:
-  - relation: contradicts
-    target: risk-premiums-null-social-solo
+belongings: []
 
 assertions:
   - paper-slug: gadeke-2026-guilt-insula

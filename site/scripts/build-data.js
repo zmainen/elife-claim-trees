@@ -245,6 +245,11 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
       requires,
       supports,
       role: fm.role || null,
+      // The paper's position toward the proposition, not the analyst's confidence in it.
+      // Absent means `asserts` (docs/claim-format.md §2). This must reach the page: a claim
+      // the paper *rejects* rendered like any other says the paper asserts what it denies,
+      // which is the same over-reading the MIRA export warns about in its gap report.
+      stance: fm.assertions?.[0]?.stance || 'asserts',
       entails: fm.entails || [],
       'derived-from': fm['derived-from'] || [],
       tests: fm.tests || [],
@@ -297,8 +302,15 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
       partsOf[slug] = parts;
     };
 
+    // Claims the paper does not assert are numbered separately, at the end. They are
+    // functionally hypotheses, so without this they join the H-series -- and because their
+    // slugs sort first, Gaedeke's six rejected alternatives became H1-H6 and the paper's own
+    // hypotheses were pushed to H7-H9. A reader then meets the paper's argument as six
+    // propositions it denies. Stance decides membership of every role series below.
+    const asserted = c => (c.stance || 'asserts') === 'asserts';
+
     // 1. Hypotheses (file-read order, which is sorted alphabetical)
-    const hypotheses = claims.filter(c => c.role === 'hypothesis');
+    const hypotheses = claims.filter(c => c.role === 'hypothesis' && asserted(c));
     hypotheses.forEach((h, hi) => {
       const hNum = hi + 1;
       assign(h.slug, `H${hNum}`, ['H', hNum]);
@@ -331,28 +343,28 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
 
     // 2. Interpretations
     let iCount = 0;
-    claims.filter(c => c.role === 'interpretation' && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'interpretation' && asserted(c) && !numberOf[c.slug]).forEach(c => {
       iCount += 1;
       assign(c.slug, `I${iCount}`, ['I', iCount]);
     });
 
     // 2b. Literature-context (distinct role in Meijer paper) — L-series
     let lCount = 0;
-    claims.filter(c => c.role === 'literature-context' && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'literature-context' && asserted(c) && !numberOf[c.slug]).forEach(c => {
       lCount += 1;
       assign(c.slug, `L${lCount}`, ['L', lCount]);
     });
 
     // 3. Synthesis
     let sCount = 0;
-    claims.filter(c => c.role === 'synthesis' && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'synthesis' && asserted(c) && !numberOf[c.slug]).forEach(c => {
       sCount += 1;
       assign(c.slug, `S${sCount}`, ['S', sCount]);
     });
 
     // 4. Controls
     let cCount = 0;
-    claims.filter(c => c.role === 'control' && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'control' && asserted(c) && !numberOf[c.slug]).forEach(c => {
       cCount += 1;
       assign(c.slug, `C${cCount}`, ['C', cCount]);
     });
@@ -385,14 +397,14 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
 
     // 6. Standalone empirical (role:empirical, no number yet)
     let eCount = 0;
-    claims.filter(c => c.role === 'empirical' && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'empirical' && asserted(c) && !numberOf[c.slug]).forEach(c => {
       eCount += 1;
       assign(c.slug, `E${eCount}`, ['E', eCount]);
     });
 
     // 7. Methodological
     let mCount = 0;
-    claims.filter(c => c.role === 'methodological' && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'methodological' && asserted(c) && !numberOf[c.slug]).forEach(c => {
       mCount += 1;
       assign(c.slug, `M${mCount}`, ['M', mCount]);
     });
@@ -401,7 +413,7 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
     // (treated as targeted-by-implication) — only global-* is truly unnumbered.
     let scCount = 0;
     claims.filter(c => {
-      if (c.role !== 'scope' || numberOf[c.slug]) return false;
+      if (c.role !== 'scope' || !asserted(c) || numberOf[c.slug]) return false;
       const s = c.scopes || [];
       return !s.includes('*');
     }).forEach(c => {
@@ -411,9 +423,17 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
 
     // 9. Orphan predictions (role:prediction with no derived-from) — P-series
     let pCount = 0;
-    claims.filter(c => c.role === 'prediction' && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'prediction' && asserted(c) && !numberOf[c.slug]).forEach(c => {
       pCount += 1;
       assign(c.slug, `P${pCount}`, ['P', pCount]);
+    });
+
+    // 10. Alternatives the paper does not assert — A-series, last, so they read as what
+    // they are: rivals the paper eliminated, not steps in its own argument.
+    let aCount = 0;
+    claims.filter(c => !asserted(c) && !numberOf[c.slug]).forEach(c => {
+      aCount += 1;
+      assign(c.slug, `A${aCount}`, ['A', aCount]);
     });
 
     // Attach to claim objects

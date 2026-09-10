@@ -14,6 +14,8 @@ concepts:
 priority: 2026-03-30
 epistemic: strong
 
+rules-out:
+  - alt-participants-insensitive-to-value
 validates:
   - responsibility-modulates-guilt-computational
   - hypothesis-insula-tracks-interpersonal-guilt

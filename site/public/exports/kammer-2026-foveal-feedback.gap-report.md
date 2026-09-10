@@ -47,3 +47,16 @@ MIRA requires every Claim to address a `mira:Question`; a claim tree has no such
 - Is it the case that foveal feedback during saccade preparation uses a representational format shared with bottom-up sensory drive — that is, the population code carrying the predicted peripheral target in foveal V1 lies in the same representational space as the code evoked by direct foveal stimulation by the same image?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
+
+## Alternatives materialised as claims
+
+**4 relation targets name something no claim file asserts.** They are alternative explanations the paper argues against, so the target exists only as the thing being excluded. Each is minted as a `mira:Claim` so the edge has a destination, and flagged `haak:materialisedFrom: relation-target` in the extended file. **None of these is an authored claim.**
+
+- FEF as candidate driver of foveal feedback
+- LO as candidate driver of foveal feedback
+- generic brain-state or arousal explanation of IPS-foveal-decoding coupling
+- passive spillover from large peripheral receptive fields
+
+## Paper-level scopes with no MIRA target
+
+None.
