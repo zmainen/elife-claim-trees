@@ -165,7 +165,9 @@ class Config:
         cfg.edges_json = getattr(args, "edges_json", None)
 
         # Default prompts dir is the package's sibling prompts/ directory
-        cfg.prompts_dir = Path(__file__).resolve().parent.parent / "prompts"
+        prompts = getattr(args, "prompts_dir", None)
+        cfg.prompts_dir = (Path(prompts).expanduser().resolve() if prompts
+                           else Path(__file__).resolve().parent.parent / "prompts")
 
         output = getattr(args, "output_dir", None) or os.environ.get("ELIFE_EXTRACT_OUTPUT")
         cfg.output_dir = Path(output).expanduser().resolve() if output else Path.cwd() / "out"

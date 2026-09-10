@@ -53,8 +53,9 @@ export default defineConfig({
           label: 'Using the CLI',
           items: [
             { label: 'Install and configure', slug: 'docs/cli/install' },
-            { label: 'First paper walkthrough', slug: 'docs/cli/first-paper' },
-            { label: 'The five subcommands', slug: 'docs/cli/subcommands' },
+            { label: 'One paper end to end', slug: 'docs/cli/first-paper' },
+            { label: 'The seven subcommands', slug: 'docs/cli/subcommands' },
+            { label: 'Coverage and marks', slug: 'docs/cli/coverage-and-marks' },
             { label: 'Review modes — when to use each', slug: 'docs/cli/review-modes' },
             { label: 'Batch operation', slug: 'docs/cli/batch' },
             { label: 'Cost and performance', slug: 'docs/cli/cost' },

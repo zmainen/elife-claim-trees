@@ -142,6 +142,11 @@ def cmd_extract(args: argparse.Namespace) -> int:
             indent=2,
         )
     )
+    # `run` composes the subcommands in one process; hand the next two stages
+    # their input rather than making the caller re-derive a slug it never saw.
+    args.draft = draft_path
+    args.paper = paper.paper_slug
+
     print(f"=== Output ===")
     print(f"  draft  → {draft_path}")
     print(f"  agents → {cfg.output_dir}/agents-{paper.paper_slug}.json")
@@ -640,17 +645,14 @@ def cmd_run(args: argparse.Namespace) -> int:
     Implies --auto-approve (the human review gate is bypassed). For
     interactive use, run the three subcommands separately.
     """
-    print(f"[stub] run (composed):")
-    print(f"  doi          = {args.doi}")
-    print(f"  --auto-approve implied (review gate bypassed)")
-    print()
-    print("Sequencing extract → write → verify-refs (each currently a stub).")
+    print(f"=== run (extract → write → verify-refs) ===")
+    print(f"  doi    = {args.doi or args.pdf_path}")
+    print(f"  review = auto-approve (the Step 5 gate is bypassed)")
     print()
 
-    # Stub: just call them in sequence with the auto-approve flag set.
     args.review_mode = "auto-approve"
-    args.draft = None  # to be filled by extract's output
-    args.paper = None  # to be filled by write's output
+    # `args.draft` and `args.paper` are set by cmd_extract, from the paper it
+    # prepared — the draft it wrote and the slug it derived.
     rc = cmd_extract(args)
     if rc != 0:
         return rc
@@ -803,6 +805,11 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["confidence-tagged", "union", "intersection-only", "majority-vote"],
         default="confidence-tagged",
         help="How to handle disagreements between agents (default: confidence-tagged).",
+    )
+    p_extract.add_argument(
+        "--output-dir",
+        type=Path,
+        help="Where the draft and raw agent JSON land (default: ./out, or ELIFE_EXTRACT_OUTPUT).",
     )
     _add_common_args(p_extract)
     _add_model_args(p_extract)
@@ -1015,6 +1022,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--reconcile-strategy",
         choices=["confidence-tagged", "union", "intersection-only", "majority-vote"],
         default="confidence-tagged",
+    )
+    p_run.add_argument(
+        "--output-dir",
+        type=Path,
+        help="Where the draft and raw agent JSON land (default: ./out, or ELIFE_EXTRACT_OUTPUT).",
     )
     _add_common_args(p_run)
     _add_model_args(p_run)

@@ -498,7 +498,8 @@ if (existsSync(exportsSrc)) {
   for (const f of readdirSync(exportsSrc)) {
     // Only papers the site publishes: the corpus filter is the authority on that, and
     // shipping an export for a paper with no page would be a dangling download.
-    const slug = f.replace(/\.(mira|mira-extended)\.jsonld$|\.gap-report\.md$/, '');
+    const slug = f.replace(
+      /\.(mira|mira-extended|dg)\.jsonld$|\.(gap-report|formats)\.md$|\.(oxa|formats)\.json$/, '');
     if (!published.has(slug)) continue;
     fs.copyFileSync(join(exportsSrc, f), join(exportsDst, f));
     n++;

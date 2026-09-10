@@ -1,0 +1,1611 @@
+{
+  "@context": {
+    "dg": "https://discoursegraphs.org/ontology#",
+    "cito": "http://purl.org/spar/cito/",
+    "claimrel": "http://elife-claim-trees.org/relations/",
+    "bibo": "http://purl.org/ontology/bibo/"
+  },
+  "@graph": [
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/",
+      "@type": "https://discoursegraphs.org/ontology#Source",
+      "https://discoursegraphs.org/ontology#content": "A deep learning pipeline for mapping in situ network-level neurovascular coupling in multi-photon fluorescence microscopy",
+      "http://purl.org/ontology/bibo/doi": "10.7554/eLife.95525",
+      "https://discoursegraphs.org/ontology#authors": [
+        "Rozak et al."
+      ]
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/artery-dilates-venule-unchanged-at-low-power",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "At 1.1 mW/mm² 458 nm stimulation, a sample artery dilated 1.33±0.86 µm (p<1e-4) and a sample capillary dilated 0.42±0.39 µm (p<1e-4), while a sample venule showed no significant radius change (p=0.22), demonstrating vessel-type heterogeneity in optogenetic neurovascular responses.",
+      "https://discoursegraphs.org/ontology#role": "empirical"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/baseline-intra-vessel-radius-varies-24pct",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "Capillary radius varies along vessel length by 24±28% of the mean resting radius across baseline frames, such that point measurements of vessel caliber cannot accurately estimate microvessel volume changes.",
+      "https://discoursegraphs.org/ontology#role": "empirical",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "Capillary dilations following 458 nm ChR2 stimulation (0.90±0.93 µm at 1.1 mW/mm²; 0.90±0.78 µm at 4.3 mW/mm²) are significantly larger than those following 552 nm control illumination (0.58±0.92 µm; p<1e-4), confirming that the vascular responses are ChR2-mediated rather than photothermal artifacts.",
+      "https://discoursegraphs.org/ontology#role": "control",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "Capillary network efficiency shows a median 4% increase during peak optogenetic stimulation, consistent with coordinated vasodilation improving local blood flow distribution.",
+      "https://discoursegraphs.org/ontology#role": "empirical",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "Constricting capillaries are located on average 37±179 µm deeper in cortex than dilating capillaries following 458 nm optogenetic stimulation at 4.3 mW/mm² (p<1e-4), with dilators tending toward the cortical surface across all stimulation conditions.",
+      "https://discoursegraphs.org/ontology#role": "empirical",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "Following ChR2 optogenetic activation at 458 nm, capillary dilations occur on average 16.1±14.3 µm from the nearest labeled pyramidal neuron while constrictions occur 21.9±14.6 µm away (4.3 mW/mm²; p<1e-4), and this spatial segregation is absent under control 552 nm illumination.",
+      "https://discoursegraphs.org/ontology#role": "empirical",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "All neurovascular coupling metrics are derived from a single integrated deep learning pipeline (segmentation → registration → graph analysis); the segmentation model requires GPU inference and was trained on data from one imaging preparation (Thy1-ChR2-YFP mice, 6-12 months), so generalization to other preparations is not demonstrated in this paper.",
+      "https://discoursegraphs.org/ontology#role": "scope",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-dl-pipeline-enables-network-nvc",
+      "@type": "https://discoursegraphs.org/ontology#Claim",
+      "https://discoursegraphs.org/ontology#content": "A deep-learning segmentation pipeline (UNet/UNETR ensemble) coupled with cross-time-point registration, vertex-wise radius estimation, and graph-theoretic network analysis can produce reliable, automated, network-level measurements of neurovascular coupling in volumetric two-photon fluorescence microscopy of cerebral microcirculation — measurements that prior point-measurement and manual-segmentation approaches could not yield at the scale of hundreds of interconnected vessels per FOV. The performance ceiling of conventional baselines (ilastik, single-time-point segmentation, point-caliber tracking) is set by their inability to handle volumetric SNR, transient RBC plugs, and within-vessel radius heterogeneity — not by an intrinsic limit of the imaging modality.",
+      "https://discoursegraphs.org/ontology#role": "hypothesis"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination",
+      "@type": "https://discoursegraphs.org/ontology#Claim",
+      "https://discoursegraphs.org/ontology#content": "Optogenetic activation of cortical pyramidal neurons elicits coordinated, network-level vascular responses that cannot be predicted from individual-vessel measurements alone: dilations and constrictions are spatially organised relative to active neurons, capillary responses correlate with their network neighbours' responses, and overall capillary network efficiency is modulated by stimulation. Prior point-measurement studies that interrogate vessels in isolation systematically miss this coordination because they cannot resolve within-vessel radius heterogeneity, between-vessel network topology, or stimulation-evoked changes in graph-level metrics across hundreds of interconnected vessels.",
+      "https://discoursegraphs.org/ontology#role": "hypothesis"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "Vascular network assortativity increases by 152 ± 65% at 4.3 mW/mm² optogenetic stimulation relative to control, indicating that high-degree vessels preferentially couple with high-degree vessels during neurovascular responses.",
+      "https://discoursegraphs.org/ontology#role": "empirical",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-generalizes-qualitatively-ood",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "The NOVAS3D segmentation model produces qualitatively reasonable vessel segmentations on out-of-distribution data including a different mouse strain (C57BL/6), a different species (Fischer rat), and a different microscope modality (light-sheet fluorescence microscopy, Miltenyi UltraMicroscope Blaze), without retraining.",
+      "https://discoursegraphs.org/ontology#role": "empirical"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "The NOVAS3D deep learning segmentation pipeline (UNet/UNETR) achieves significantly higher Dice scores and precision/recall for volumetric vessel segmentation than the baseline ilastik classifier on the deposited two-photon microscopy test dataset.",
+      "https://discoursegraphs.org/ontology#role": "control",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "The NOVAS3D segmentation model was trained and quantitatively evaluated exclusively on data from Thy1-ChR2-YFP mice (line 18, 6–12 months, Texas Red vascular labeling, cranial window, isoflurane anesthesia); quantitative performance metrics are not reported for any other preparation, strain, species, or imaging modality.",
+      "https://discoursegraphs.org/ontology#role": "scope",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "strong"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-outperforms-baselines",
+      "@type": "https://discoursegraphs.org/ontology#Claim",
+      "https://discoursegraphs.org/ontology#content": "If the DL segmentation + registration + radius-estimation stack genuinely improves on conventional baselines, then (a) the UNet/UNETR ensemble should significantly outperform ilastik on volumetric segmentation metrics (HD95, Dice, precision), (b) cross-time-point registration combined with mask union should recover substantially more vessel segments per FOV than any single time-point segmentation, and (c) the boundary-detection radius estimator should recover known simulated radii with high R² and remain stable to physiologically realistic noise levels.",
+      "https://discoursegraphs.org/ontology#role": "prediction",
+      "https://discoursegraphs.org/ontology#panel": [
+        "prediction"
+      ]
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination",
+      "@type": "https://discoursegraphs.org/ontology#Claim",
+      "https://discoursegraphs.org/ontology#content": "If the pipeline can resolve network-level neurovascular coupling and if optogenetic activation drives coordinated vascular responses, then in Thy1-ChR2-YFP mice under 458 nm photostimulation we should observe (a) a spatial gradient of dilations vs constrictions relative to labelled neurons, (b) a network-wide rise in assortativity (high-degree vessels coupling with high-degree vessels), (c) a measurable change in capillary network efficiency, and (d) absence of these patterns under 552 nm control illumination and in wild-type mice — none of which would be visible from point-caliber measurements alone.",
+      "https://discoursegraphs.org/ontology#role": "prediction",
+      "https://discoursegraphs.org/ontology#panel": [
+        "prediction"
+      ]
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "The pipeline's boundary-detection radius estimation achieves R²=0.68 against ground-truth simulated radii across >100,000 simulations spanning 0.5×–2× dilation/constriction, and remains stable under Gaussian noise up to a standard deviation of 200 signal units (image range 0–1023 SU).",
+      "https://discoursegraphs.org/ontology#role": "methodological",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/registration-doubles-vessel-count",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "Rigid registration across time points and union of segmentation masks increases the number of identified vessel segments per FOV from 241±174 (single time point) to 412±281 (union across all time points; 507×507×250 µm, n=107 FOVs), while reducing mean squared error between acquisitions from 1306±747 to 0.008±0.003 signal units.",
+      "https://discoursegraphs.org/ontology#role": "methodological",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "Vessels are classified as responders if their radius change exceeds twice the baseline standard deviation (2×σ); this threshold is not sensitivity-tested in the main analysis, though an alternative 10% threshold is shown in Appendix 1—figure 14 with qualitatively similar results.",
+      "https://discoursegraphs.org/ontology#role": "scope"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "All findings are scoped to a method-paper-with-application envelope: a single deep-learning pipeline (UNet/UNETR ensemble + ANTsPy registration + boundary-detection radius + NetworkX graph analysis) trained and quantitatively benchmarked on Thy1-ChR2-EYFP mice (line 18, 6–12 months, Texas Red vascular labelling, cranial window over S1FL, isoflurane for structural scan, alpha-chloralose for functional scan); the in vivo demonstration uses the same single preparation (n=17 mice for biology, n=4 C57BL/6J wild-type mice for negative control). Quantitative segmentation metrics are reported for nine test images from six held-out mice; out-of-distribution generalisation (C57BL/6, Fischer rat, light-sheet) is shown only qualitatively. The paper does not test the pipeline on awake-behaving preparations, non-mammalian species, disease models, or alternative vascular labels; it does not test alternative responder thresholds beyond a single appendix supplement.",
+      "https://discoursegraphs.org/ontology#role": "scope",
+      "https://discoursegraphs.org/ontology#panel": [
+        "scope"
+      ]
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/synthesis-individual-vessel-measurements-insufficient",
+      "@type": "https://discoursegraphs.org/ontology#Claim",
+      "https://discoursegraphs.org/ontology#content": "Interrogating individual vessels in isolation is insufficient to predict how blood flow is modulated across the cerebral microvascular network. The paper's combined evidence — within-vessel radius heterogeneity (24 ± 28% along vessel length at baseline), the spatial segregation of dilations and constrictions relative to active neurons, the network-wide rise in assortativity during optogenetic stimulation, and the modulation of capillary network efficiency — together argue that point-caliber and single-vessel approaches systematically miss the coordinated, graph-level structure of functional hyperemia.",
+      "https://discoursegraphs.org/ontology#role": "synthesis",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/unetr-outperforms-ilastik-hd95",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "UNETR ensemble segmentation shows significantly better HD95 surface distance than ilastik for both vessel and neuron channels (p<0.05 Wilcoxon signed-rank), while ilastik over-segments vessels with high recall (0.89±0.19) but low precision (0.37±0.33), evaluated on nine test images (507×507×250 µm) from six held-out mice.",
+      "https://discoursegraphs.org/ontology#role": "control",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "Vessel radius adjustments during optogenetic stimulation show 24 ± 28% variation relative to resting diameter, with dilations averaging 16.1 ± 14.3 µm and constrictions averaging 21.9 ± 14.6 µm relative to nearby neurons.",
+      "https://discoursegraphs.org/ontology#role": "empirical",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@id": "https://elife-claim-trees.org/papers/unknown/wt-controls-no-blue-green-difference",
+      "@type": "https://discoursegraphs.org/ontology#Evidence",
+      "https://discoursegraphs.org/ontology#content": "Wild-type C57BL/6J mice (n=4) show no statistically distinguishable capillary radius distributions following blue (458 nm) versus green (552 nm) photostimulation, confirming that vascular responses in Thy1-ChR2 mice are ChR2-specific and not attributable to photothermal or non-specific light effects.",
+      "https://discoursegraphs.org/ontology#role": "control",
+      "https://discoursegraphs.org/ontology#epistemicStrength": "moderate"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/artery-dilates-venule-unchanged-at-low-power"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#opposedBy",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:disagreesWith"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/artery-dilates-venule-unchanged-at-low-power"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/artery-dilates-venule-unchanged-at-low-power"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/artery-dilates-venule-unchanged-at-low-power"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:supports"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/baseline-intra-vessel-radius-varies-24pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/baseline-intra-vessel-radius-varies-24pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#opposedBy",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:rulesOut"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/baseline-intra-vessel-radius-varies-24pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/baseline-intra-vessel-radius-varies-24pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/synthesis-individual-vessel-measurements-insufficient"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/baseline-intra-vessel-radius-varies-24pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:supports"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/baseline-intra-vessel-radius-varies-24pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#opposedBy",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:contradicts"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/wt-controls-no-blue-green-difference"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:requires",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:requires"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:supports"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/synthesis-individual-vessel-measurements-insufficient"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:requires",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:requires"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:requires",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:requires"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#opposedBy",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:disagreesWith"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:requires",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:requires"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:supports"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#opposedBy",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:disagreesWith"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/synthesis-individual-vessel-measurements-insufficient"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:requires",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:requires"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:supports"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/unetr-outperforms-ilastik-hd95"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/registration-doubles-vessel-count"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-generalizes-qualitatively-ood"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-dl-pipeline-enables-network-nvc"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-outperforms-baselines"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:entails"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-dl-pipeline-enables-network-nvc"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:entails"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:entails"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/synthesis-individual-vessel-measurements-insufficient"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:entails"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/synthesis-individual-vessel-measurements-insufficient"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:requires",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:requires"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:requires",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:requires"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-generalizes-qualitatively-ood"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-dl-pipeline-enables-network-nvc"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-generalizes-qualitatively-ood"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:extends"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:usesMethodIn"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:usesMethodIn"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:usesMethodIn"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:usesMethodIn"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-outperforms-baselines"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-dl-pipeline-enables-network-nvc"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/unetr-outperforms-ilastik-hd95"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:extends"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/unetr-outperforms-ilastik-hd95"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/registration-doubles-vessel-count"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/baseline-intra-vessel-radius-varies-24pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/artery-dilates-venule-unchanged-at-low-power"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-generalizes-qualitatively-ood"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:extends"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-outperforms-baselines"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-dl-pipeline-enables-network-nvc"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:citesAsSourceDocument"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-dl-pipeline-enables-network-nvc"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:citesAsSourceDocument"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:citesAsSourceDocument"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:usesMethodIn"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:usesMethodIn"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:usesMethodIn"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-outperforms-baselines"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/baseline-intra-vessel-radius-varies-24pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-dl-pipeline-enables-network-nvc"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:supports"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:supports"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/registration-doubles-vessel-count"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:usesMethodIn"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/registration-doubles-vessel-count"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:usesMethodIn"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/registration-doubles-vessel-count"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-outperforms-baselines"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/registration-doubles-vessel-count"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-dl-pipeline-enables-network-nvc"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/registration-doubles-vessel-count"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dl-model-scope-single-pipeline"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:supports"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/unetr-outperforms-ilastik-hd95"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/registration-doubles-vessel-count"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/baseline-intra-vessel-radius-varies-24pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/artery-dilates-venule-unchanged-at-low-power"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/network-assortativity-increases-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/capillary-efficiency-increases-4pct"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/wt-controls-no-blue-green-difference"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/scope-pipeline-and-application-paper"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-generalizes-qualitatively-ood"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:scopes",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:scopes"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/synthesis-individual-vessel-measurements-insufficient"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:citesAsSourceDocument"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/unetr-outperforms-ilastik-hd95"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#opposedBy",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:disagreesWith"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/unetr-outperforms-ilastik-hd95"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-outperforms-baselines"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/unetr-outperforms-ilastik-hd95"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-dl-pipeline-enables-network-nvc"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/unetr-outperforms-ilastik-hd95"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-single-preparation-scope"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:requires",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:requires"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/unetr-outperforms-ilastik-hd95"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/novas3d-outperforms-ilastik"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:extends"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/radius-estimation-r2-0p68"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:requires",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:requires"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/vessel-radius-heterogeneity-stimulation"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/responder-threshold-2sd-untested"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "claimrel:requires",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:requires"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/wt-controls-no-blue-green-difference"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/prediction-pipeline-reveals-network-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "claimrel:tests"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/wt-controls-no-blue-green-difference"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/wt-controls-no-blue-green-difference"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/wt-controls-no-blue-green-difference"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/constrictions-deeper-than-dilations"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/wt-controls-no-blue-green-difference"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/hypothesis-network-level-nvc-coordination"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "cito:confirms",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:confirms"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/wt-controls-no-blue-green-difference"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/blue-light-dilations-exceed-green-control"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:supports"
+    },
+    {
+      "@type": "https://discoursegraphs.org/ontology#Relation",
+      "https://discoursegraphs.org/ontology#source": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/wt-controls-no-blue-green-difference"
+      },
+      "https://discoursegraphs.org/ontology#target": {
+        "@id": "https://elife-claim-trees.org/papers/unknown/dilations-nearer-neurons-than-constrictions"
+      },
+      "https://discoursegraphs.org/ontology#relationType": "https://discoursegraphs.org/ontology#supports",
+      "https://discoursegraphs.org/ontology#originalRelationType": "cito:supports"
+    }
+  ]
+}
