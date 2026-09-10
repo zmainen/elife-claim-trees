@@ -172,42 +172,73 @@ MIRA requires every `Claim` to address a `Question`, and a claim tree has no suc
 the exporter derives one from each hypothesis and **flags it as synthesised** rather than
 presenting it as ours.
 
-### Our export does not currently validate
+### What the export achieves, and what it does not
 
-Verified, not assumed. Against the pinned shapes:
+The exporter now emits the reified form. Against the pinned shapes, all twelve papers carry
+**no violation attributable to our encoding**:
 
 ```
-Conforms: False
-Results (323)
+155 violations across 12 papers; 155 are MIRA's unsatisfiable sh:in constraint and 0 are ours.
 ```
 
-The cause is the encoding: we emit relations as predicates on claim nodes, and every node
-shape is closed. Rewriting the exporter to the reified form is outstanding work, and until it
-lands **the files in `exports/` should be treated as a lossless intermediate rather than as
-conformant MIRA.**
+That is not the same as "conformant", and the difference is the point. Every remaining
+violation is one constraint in MIRA's generated shapes that **no document can satisfy**, on
+exactly two properties, `mira:addresses` and `mira:sourceDocument`:
 
-Two things are already fixed: the context URL, and the loss. Every relation the tree holds is
-now carried — 916 of 916 corpus-wide — where the exporter previously dropped 623.
+```
+sh:class mira:Question ; sh:nodeKind sh:BlankNodeOrIRI ;
+sh:in ( Literal("RelationDef") Literal("observationBase") )
+```
+
+The shape demands an IRI and then demands that IRI be one of two strings.
+`gen-shacl` renders LinkML's `subproperty_of` this way; the list is slot names, not permitted
+values. `docs/schema-mapping/mira-sh-in-bug.jsonld` proves it in four nodes of MIRA's own
+terms — a `Question`, a `Claim` that addresses it, a `SourceDocument`, and an `Evidence` that
+cites it — and fails on both properties. Nothing in that file is ours.
+
+So a green result here means "conformant except where MIRA's shapes reject MIRA's own terms",
+and that sentence, not a checkmark, is what belongs beside any claim of compatibility.
+
+**On loss.** Every relation the tree holds is carried except three, corpus-wide out of 916.
+Those three are `scopes: '*'` — a claim constraining the paper as a whole. `scopes` has
+`mira:Claim` as its range and MIRA has no paper-level node, so no edge is emitted and none is
+invented; each paper's `gap-report.md` names them. A further 48 `derived-from` relations are
+not emitted as edges, which is not loss: they are declared `owl:inverseOf entails` and MIRA
+never materialises the reverse direction.
+
+Two earlier statements here were wrong and are worth keeping visible. "MIRA drops 57%" was a
+fact about our mapping table. "MIRA drops 100%", which the formats report printed for an hour
+after the reification landed, was a fact about a counter still looking for predicates on
+nodes after the edges had become nodes themselves. Both were measurements of our own code
+reported as properties of the schema.
 
 ### Validating
 
+The shapes are vendored at the pinned commit, so this runs offline and gives the same answer
+in a year:
+
+```bash
+python3 scripts/validate_mira.py
+```
+
+It reproduces the upstream bug first — and refuses to classify anything if that proof stops
+behaving as documented, which would mean MIRA had fixed it — then validates every export and
+splits each violation into *upstream* or *ours*, exiting non-zero if any is ours.
+
+To re-fetch the shapes, or to check `vendor/` against upstream:
+
 ```bash
 SHA=483f0b21480c0f4ced9c1519fc0f6df2b8617cfe
-mkdir -p vendor
 for f in mira.shacl mira.ttl mira.jsonld; do
   curl -fsSL "https://raw.githubusercontent.com/MIRA-science/schema/$SHA/$f" -o "vendor/$f"
 done
-pyshacl -s vendor/mira.shacl -sf turtle -e vendor/mira.ttl \
-        -df json-ld exports/<slug>.mira.jsonld
 ```
 
-A caveat that matters when reading any result: **the generated shapes have bugs of their
-own.** `gen-shacl` renders `subproperty_of` as an `sh:in` value list of slot *names*, which
-no IRI can satisfy, disabling eight predicates. `prov:Activity` and `prov:Entity` are closed
-shapes with zero allowed properties, so every `Study` fails. MIRA's own demo corpus produces
-3,707 violations against its own schema; its extractor passes only through a patch harness
-that says so. "Validates against MIRA" currently means "validates against MIRA plus
-acknowledged patches", and that is worth stating whenever a green result is reported.
+One more caveat when reading any result: `prov:Activity` and `prov:Entity` are generated as
+closed shapes with zero allowed properties, so a `prov:Entity` carrying so much as a title is
+rejected. Our dataset nodes therefore carry an `@id` and a type and nothing else. MIRA's own
+demo corpus produces 3,707 violations against its own schema, and its extractor passes only
+through a patch harness that says so.
 
 ## Open questions for the MIRA authors
 

@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `headley-2026-inhibitory-rhythms` · **Generated:** 2026-09-09
+**Paper:** `headley-2026-inhibitory-rhythms` · **Generated:** 2026-09-10
 
 26 claims, 85 typed relations between them.
 

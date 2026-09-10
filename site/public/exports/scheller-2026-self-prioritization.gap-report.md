@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `scheller-2026-self-prioritization` · **Generated:** 2026-09-09
+**Paper:** `scheller-2026-self-prioritization` · **Generated:** 2026-09-10
 
 23 claims, 90 typed relations between them.
 

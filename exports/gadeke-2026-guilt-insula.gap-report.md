@@ -46,3 +46,11 @@ MIRA requires every Claim to address a `mira:Question`; a claim tree has no such
 - Is it the case that superior temporal sulcus (STS) — a core mentalizing-network region — represents the partner's affective experience specifically when the participant is responsible for the partner's outcome?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
+
+## Alternatives materialised as claims
+
+None: every relation in this paper points at a claim the tree asserts.
+
+## Paper-level scopes with no MIRA target
+
+None.

@@ -6,19 +6,19 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
-| `dissociates-with` | 23 | → opposes | kept | kept |
-| `scopes` | 15 | declared `haak:scopes` | kept | dropped |
-| `enables-method` | 14 | declared `haak:enables-method` | kept | dropped |
-| `supports` | 5 | → supports | kept | kept |
-| `extends` | 3 | → supports | kept | kept |
-| `requires` | 2 | declared `haak:requires` | kept | dropped |
-| `derived-from` | 2 | declared `haak:derived-from` | kept | dropped |
-| `interprets` | 2 | declared `haak:interprets` | kept | dropped |
-| `confirms` | 1 | → supports | kept | kept |
+| `dissociates-with` | 23 | `haak:dissociates-with`, under `mira:opposes` | kept | kept |
+| `scopes` | 15 | `haak:scopes`, neutral | kept | dropped |
+| `enables-method` | 14 | `haak:enables-method`, neutral | kept | dropped |
+| `supports` | 5 | `haak:supports`, under `mira:supports` | kept | kept |
+| `extends` | 3 | `haak:extends`, under `mira:supports` | kept | kept |
+| `requires` | 2 | `haak:requires`, neutral | kept | dropped |
+| `derived-from` | 2 | — | kept | dropped |
+| `interprets` | 2 | `haak:interprets`, neutral | kept | dropped |
+| `confirms` | 1 | `haak:confirms`, under `mira:supports` | kept | kept |
 
 ## What MIRA has no predicate for — and what happens instead
 
-**35 of 67 relations (52%) fall outside `supports` and `opposes`.** They are not dropped and not flattened: MIRA imports a Discourse Graphs base schema in which relations are definable, so each is declared in the document as a `RelationDef` with a domain, a range and a description, then used as a predicate.
+**33 of 67 relations (49%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
 - `haak:scopes` (15) — a scope constraint governs another claim's validity
 - `haak:enables-method` (14) — a result makes a downstream method possible
@@ -26,16 +26,26 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 - `haak:derived-from` (2) — a prediction derived from its hypothesis
 - `haak:interprets` (2) — one claim interprets another
 
-A reader that knows only core MIRA still gets every node and every supports/opposes edge. One that follows the declarations gets the rest with stated semantics. Flattening these into `supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits.
+Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.
 
-## What MIRA flattens
+## What a reader who knows only core MIRA sees
 
-`tests`, `confirms`, `validates`, `extends` and `replicates` all become `mira:supports`; `contradicts`, `rules-out` and `dissociates-with` all become `mira:opposes`. The relation survives; the reason it was drawn does not.
+Every relation keeps its own type — nothing is flattened into `supports`. 32 of the 65 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
-- `dissociates-with` (23)
-- `supports` (5)
-- `extends` (3)
-- `confirms` (1)
+- `dissociates-with` (23) — under `mira:opposes`
+- `scopes` (15) — neutral
+- `enables-method` (14) — neutral
+- `supports` (5) — under `mira:supports`
+- `extends` (3) — under `mira:supports`
+- `requires` (2) — neutral
+- `interprets` (2) — neutral
+- `confirms` (1) — under `mira:supports`
+
+## What MIRA genuinely cannot carry
+
+2 `derived-from` relations are not emitted as edges. This is not loss: `derived-from` is declared `owl:inverseOf` `entails`, and MIRA never materialises the reverse direction — its own 942-node demo graph emits no inverse edges either. A reader recovers each one from the forward edge and the declaration.
+
+Nothing. Every relation in this paper reaches the export, either as an edge or as the declared inverse of one.
 
 ## What no format carries
 

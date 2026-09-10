@@ -43,7 +43,7 @@ CLAIMS_DIR = os.path.join(ROOT, "claims")
 # before validating anything. Use the PURL, never the github.io copy, which is served from a
 # stale branch and contains `"Study": "mira:Protocol"` — silently retyping every Study.
 MIRA_CONTEXT = "https://purl.org/mira-science/mira.jsonld"
-DGB = "https://mira.science/schema/discoursegraphs_base#"
+DGB = "https://discoursegraphs.com/schema/dg_base#"
 HAAK = "https://haak.world/schema/claim#"
 
 # ── Declaring the relations MIRA does not ship ───────────────────────────────
@@ -61,26 +61,63 @@ HAAK = "https://haak.world/schema/claim#"
 # description, and then used as a predicate. A reader that knows only core MIRA still reads
 # every node and every supports/opposes edge; a reader that follows the RelationDefs gets
 # the rest with stated semantics. Nothing is lost and nothing is misstated.
+# Every relation we emit, with the MIRA parent it genuinely descends from.
+#
+# `parent` is the crux. A relation that really is a kind of support or opposition says so,
+# and a MIRA reader that knows only the core vocabulary still understands it. The other six
+# are neither: `scopes` states where a claim holds, `requires` a prerequisite, `entails` and
+# `derived-from` a deductive step, `interprets` a reading, `enables-method` an affordance.
+# Declaring any of them `subClassOf mira:supports` would assert that a boundary condition is
+# evidence *for* the claim it limits — a reversal of the meaning, not a compression of it.
+# `AbstractRelationDef` is the neutral root and carries no such commitment, so they hang
+# there and the document says what they mean instead of pretending they are support.
 RELATION_DEFS = {
-    "entails":        ("mira:Claim", "mira:Claim",
-                       "The subject claim logically entails the object claim — the deductive "
-                       "step from a hypothesis to a prediction it commits to."),
-    "derived-from":   ("mira:Claim", "mira:Claim",
-                       "The subject claim was derived from the object claim; the inverse of "
-                       "entails."),
-    "requires":       ("mira:Claim", "mira:Claim",
-                       "The subject claim depends on the object holding. If the object fails, "
-                       "the subject is undermined."),
-    "scopes":         ("mira:Claim", "mira:Claim",
-                       "The subject states a boundary condition governing where the object "
-                       "claim is valid. Not support: a scope constraint narrows a claim."),
-    "interprets":     ("mira:Claim", "mira:Evidence",
-                       "The subject offers a theoretical reading of the object result."),
-    "enables-method": ("mira:Evidence", "mira:Protocol",
-                       "The subject result makes the object method possible downstream."),
-    "qualifies":      ("mira:Claim", "mira:Claim",
-                       "The subject narrows the object claim's applicability."),
+    "supports":         ("mira:supports", "mira:Claim", "mira:Claim",
+                         "The source claim provides support for the destination claim."),
+    "tests":            ("mira:supports", "mira:Evidence", "mira:Claim",
+                         "The source evidence was gathered to test the destination claim."),
+    "validates":        ("mira:supports", "mira:Evidence", "mira:Claim",
+                         "The source evidence validates the destination claim."),
+    "confirms":         ("mira:supports", "mira:Evidence", "mira:Claim",
+                         "The source evidence confirms the destination claim."),
+    "extends":          ("mira:supports", "mira:Claim", "mira:Claim",
+                         "The source claim extends the destination claim to new conditions."),
+    "replicates":       ("mira:supports", "mira:Evidence", "mira:Claim",
+                         "The source evidence independently replicates the destination claim."),
+    "contradicts":      ("mira:opposes", "mira:Claim", "mira:Claim",
+                         "The source claim contradicts the destination claim."),
+    "rules-out":        ("mira:opposes", "mira:Evidence", "mira:Claim",
+                         "The source evidence eliminates the destination claim as viable."),
+    "dissociates-with": ("mira:opposes", "mira:Evidence", "mira:Claim",
+                         "The source result separates two things the destination claim joins."),
+    # Neither supporting nor opposing — rooted at AbstractRelationDef and nothing else.
+    "entails":          (None, "mira:Claim", "mira:Claim",
+                         "The source claim logically entails the destination claim: the "
+                         "deductive step from a hypothesis to a prediction it commits to."),
+    "derived-from":     (None, "mira:Claim", "mira:Claim",
+                         "The source claim was derived from the destination claim; the "
+                         "inverse of entails."),
+    "requires":         (None, "mira:Claim", "mira:Claim",
+                         "The source claim depends on the destination holding. If the "
+                         "destination fails, the source is undermined."),
+    "scopes":           (None, "mira:Claim", "mira:Claim",
+                         "The source states a boundary condition governing where the "
+                         "destination claim is valid. Neither supports nor opposes."),
+    "interprets":       (None, "mira:Claim", "mira:Evidence",
+                         "The source claim offers a theoretical reading of the destination "
+                         "result."),
+    "enables-method":   (None, "mira:Evidence", "mira:Protocol",
+                         "The source result makes the destination method possible."),
+    "qualifies":        (None, "mira:Claim", "mira:Claim",
+                         "The source narrows the destination claim's applicability."),
 }
+
+# Declared as an inverse pair rather than as two unrelated relations, and emitted in one
+# direction only: MIRA declares inverses on the definition (`owl:inverseOf` in mira.ttl) and
+# nothing in its demo graph materialises the reverse edge.
+INVERSE_PAIRS = {"derived-from": "entails"}
+
+
 
 # ── Mapping tables ────────────────────────────────────────────────────────────
 # Every entry here is a decision that a human should be able to disagree with,
@@ -159,6 +196,16 @@ def load_paper(paper_slug):
 
 # ── Conversion ────────────────────────────────────────────────────────────────
 
+def text_item(content, fmt="text/plain"):
+    """A description as MIRA carries it.
+
+    `dct:description` is shaped `sh:class sioc:Item` — a node, not a literal. A plain string
+    fails validation, which is how we found this. `sampleData.json` writes the same shape:
+    `"description": {"@type": "Item", "format": "text/html", "content": "…"}`.
+    """
+    return {"@type": "Item", "format": fmt, "content": content}
+
+
 def node_id(claim):
     return f"urn:uuid:{claim['uuid']}"
 
@@ -192,29 +239,45 @@ def first_assertion(claim):
 def build_node(claim, by_slug, extended):
     role = claim.get("role") or claim.get("claim-type") or "empirical"
     a = first_assertion(claim)
+    extra_nodes = []
 
     node = {
         "@id": node_id(claim),
         "@type": ROLE_TO_TYPE.get(role, "mira:Claim"),
-        "schema:name": claim["slug"],
-        "schema:description": (claim.get("claim") or "").strip(),
-        "mira:epistemicStatus": epistemic_status(role, claim.get("epistemic")),
+        # `title` and `description` are MIRA's own terms; `schema:name` and
+        # `schema:description` were ours and are not in its vocabulary.
+        "title": claim["slug"],
+        "description": text_item((claim.get("claim") or "").strip()),
+
     }
 
     doi = a.get("doi") or claim.get("doi")
     if doi and doi != "~":
-        node["dg:sourceDocument"] = {"schema:identifier": f"doi:{doi}"}
+        # Only Evidence carries sourceDocument: `mira.yaml` gives Claim the single slot
+        # `addresses`, and the shape is closed, so a Claim with a sourceDocument is rejected.
+        if node["@type"] == "mira:Evidence":
+            node["sourceDocument"] = {"@id": f"https://doi.org/{doi}",
+                                      "@type": "SourceDocument"}
 
     # An Evidence node's observation base is the study that produced it.
     if node["@type"] == "mira:Evidence" and a.get("dataset"):
-        study = {
-            "@type": "mira:Study",
-            "schema:identifier": a["dataset"],
-        }
-        if a.get("method"):
-            study["mira:follows"] = {"@type": "mira:Protocol",
-                                     "schema:name": a["method"]}
-        node["mira:observationBase"] = study
+        # observationBase is "the data on which the observation is based", and its range is
+        # `prov:Entity` — the dataset itself, not the study that used it. Pointing it at a
+        # Study was our error and failed on class.
+        #
+        # The Entity node carries an @id and a type and nothing else, deliberately.
+        # `prov:Entity` and `prov:Activity` are generated as closed shapes with zero allowed
+        # properties, so any node of those types that carries a title, a description or an
+        # identifier is rejected — a MIRA bug, reported upstream as demo-MIRA-graph-data#1.
+        # An empty node is the only form that validates today, and the dataset URL is
+        # already the identifier, so nothing is lost by saying it once.
+        ds = str(a["dataset"]).strip()
+        if ds.startswith("http"):
+            node["observationBase"] = {"@id": ds}
+            # `prov:Entity` in full: the context defines the `prov` prefix but no bare
+            # `Entity` term, so an unqualified "Entity" resolves nowhere and the class
+            # constraint fails without saying why.
+            extra_nodes.append({"@id": ds, "@type": "prov:Entity"})
 
     supports, opposes, dropped = [], [], []
     for key, target in relations(claim):
@@ -227,25 +290,19 @@ def build_node(claim, by_slug, extended):
         else:
             dropped.append((key, target))
 
-    if supports:
-        node["mira:supports"] = supports if len(supports) > 1 else supports[0]
-    if opposes:
-        node["mira:opposes"] = opposes if len(opposes) > 1 else opposes[0]
+    # No relation is emitted as a property of this node. MIRA's node shapes are closed
+    # (`mira.shacl`: `mira:Claim a sh:NodeShape ; … sh:closed true`) and `supports`/`opposes`
+    # live on an `Argument` mixin that `Claim` and `Evidence` do not mix in, so an inline
+    # edge is rejected outright. Relations are reified into their own nodes by `export`.
 
-    # The relations core MIRA has no predicate for are emitted under their declared
-    # RelationDef rather than discarded. This is what makes the strict file lossless.
-    declared = {}
-    for key, target in dropped:
-        if key not in RELATION_DEFS:
-            continue
-        t = by_slug.get(target)
-        declared.setdefault(f"haak:{key}", []).append(
-            {"@id": node_id(t)} if t else {"schema:name": target})
-    for k, v in declared.items():
-        node[k] = v if len(v) > 1 else v[0]
-
+    # `epistemicStatus` is not a MIRA property — it is not among the 30 the context defines,
+    # and we had been emitting `mira:epistemicStatus` as though it were. It cannot go in the
+    # strict file either: every node shape is `sh:closed`, so MIRA admits no extension
+    # property at all, ours included. It is a real thing the corpus knows and MIRA has no
+    # term for, so it lives in the extended file and the gap report names it.
     if not extended:
-        return node, dropped
+        return node, dropped, extra_nodes
+    node["haakx:epistemicStatus"] = epistemic_status(role, claim.get("epistemic"))
 
     # ── haak: extension — everything MIRA cannot express ──────────────────
     ext = {"haak:role": role}
@@ -290,7 +347,7 @@ def build_node(claim, by_slug, extended):
         ext["haak:analysis"] = a["analysis"]
 
     node.update(ext)
-    return node, dropped
+    return node, dropped, extra_nodes
 
 
 def synthesize_questions(claims, by_slug, extended):
@@ -315,7 +372,7 @@ def synthesize_questions(claims, by_slug, extended):
         q = {
             "@id": qid,
             "@type": "mira:Question",
-            "schema:description": text,
+            "description": text_item(text),
         }
         # Flag the derivation only in the extended file — in the strict file the
         # `haak:` prefix is undeclared, so these keys would be undefined terms.
@@ -331,53 +388,168 @@ def synthesize_questions(claims, by_slug, extended):
     return questions, links
 
 
+def _rel_ids(key):
+    """Stable ids for a relation's declaration pair and its edges."""
+    safe = key.replace("-", "_")
+    return f"haak:reldef/{safe}", f"haak:reldef/{safe}/def"
+
+
+# `domain` and `range` are `sh:class dgb:NodeSchema`, and MIRA's sample satisfies that by
+# declaring its own NodeSchema nodes and pointing at those — not at `mira:Claim` directly.
+# So the document declares the node types it uses before it declares its relations.
+NODE_TYPES = {"mira:Claim": "haak:type/Claim",
+              "mira:Evidence": "haak:type/Evidence",
+              "mira:Protocol": "haak:type/Protocol"}
+
+
+def node_type_nodes(author_id, stamp):
+    return [{"@id": local, "@type": "NodeSchema", "subClassOf": [mira],
+             "label": mira.split(":")[1], "creator": author_id,
+             "created": stamp, "modified": stamp}
+            for mira, local in NODE_TYPES.items()]
+
+
+def relation_nodes(used, author_id, stamp):
+    """The declaration ladder MIRA uses for relation types.
+
+    Three nodes per relation, following `sampleData.json`: an `AbstractRelationDef` naming
+    the relation, a `RelationDef` binding its domain and range, and then one edge node per
+    instance. The `owl:Restriction` on `rdf:predicate` is reproduced from the sample for
+    fidelity; no shape checks it and no prose explains it, so it is carried rather than
+    relied on.
+    """
+    out = []
+    for key in used:
+        parent, domain, rng, desc = RELATION_DEFS[key]
+        abstract, defn = _rel_ids(key)
+        sub = [{"@type": "owl:Restriction", "onProperty": "rdf:predicate",
+                "hasValue": abstract}]
+        if parent:
+            sub.insert(0, parent)
+        node = {"@id": abstract, "@type": "AbstractRelationDef", "subClassOf": sub,
+                "label": key, "creator": author_id,
+                "created": stamp, "modified": stamp}
+        # An inverse is a property of the declaration, not of the edges.
+        if key in INVERSE_PAIRS and INVERSE_PAIRS[key] in used:
+            node["inverseOf"] = _rel_ids(INVERSE_PAIRS[key])[0]
+        out.append(node)
+        out.append({"@id": defn, "@type": "RelationDef",
+                    "domain": NODE_TYPES.get(domain, domain),
+                    "range": NODE_TYPES.get(rng, rng),
+                    "subClassOf": [abstract, "dgb:RelationInstance"],
+                    "label": key, "description": text_item(desc),
+                    "creator": author_id, "created": stamp, "modified": stamp})
+    return out
+
+
 def export(paper_slug, extended):
     claims = load_paper(paper_slug)
     by_slug = {c["slug"]: c for c in claims}
+    author_id = "haak:agent/elife-claim-trees"
+    stamp = f"{date.today().isoformat()}T00:00:00.000Z"
 
     nodes, all_dropped = [], []
     for c in claims:
-        node, dropped = build_node(c, by_slug, extended)
+        node, dropped, extra = build_node(c, by_slug, extended)
         nodes.append(node)
+        nodes.extend(extra)
         for key, target in dropped:
             all_dropped.append((c["slug"], key, target))
 
     questions, qlinks = synthesize_questions(claims, by_slug, extended)
     for node in nodes:
         for slug, qid in qlinks.items():
-            if node["schema:name"] == slug:
+            if node.get("title") == slug:
                 node["mira:addresses"] = {"@id": qid}
-    # `_derived` is bookkeeping for the report, never part of the graph.
     emitted = [{k: v for k, v in q.items() if k != "_derived"} for q in questions]
     nodes = emitted + nodes
 
-    # Declare every relation this document actually uses, so its predicates are defined
-    # rather than merely emitted.
-    used = sorted({k for _, k, _ in all_dropped})
-    defs = [{
-        "@id": f"haak:{k}",
-        "@type": "dgb:RelationDef",
-        "rdfs:domain": RELATION_DEFS[k][0],
-        "rdfs:range": RELATION_DEFS[k][1],
-        "dct:description": RELATION_DEFS[k][2],
-    } for k in used if k in RELATION_DEFS]
-    nodes = defs + nodes
+    # ── Reify every relation ────────────────────────────────────────────────
+    # One edge node per relation, carrying source and destination. `derived-from` is not
+    # emitted at all: it is declared as the inverse of `entails`, and MIRA never
+    # materialises the reverse direction.
+    #
+    # A target that names no claim in this paper is one of two things, and they are not the
+    # same. Both used to be dropped without a word, which is how 15 relations went missing
+    # from the corpus-wide count without anything saying so.
+    #
+    #   A prose target is an *eliminated alternative* -- "differential release probability
+    #   as the explanation for the DS/VS DA difference". A `rules-out` edge pointing at one
+    #   is among the most informative things a paper does, and it has no claim node only
+    #   because nobody asserted the thing being excluded. So the node is materialised: it is
+    #   a Claim in exactly MIRA's sense, and the extended file flags that the pipeline minted
+    #   it from a relation target rather than reading it off a claim file.
+    #
+    #   A `*` target means the claim scopes the whole paper. There is no paper-level node
+    #   for `scopes` to point at -- its range is Claim -- so no edge is invented. It goes to
+    #   the gap report by name.
+    edges, used, minted, wildcards, n = [], set(), {}, [], 0
+    for c in claims:
+        for key, target in relations(c):
+            if key not in RELATION_DEFS or key in INVERSE_PAIRS:
+                continue
+            t = by_slug.get(target)
+            if t:
+                dest, dest_label = node_id(t), t["slug"]
+            elif target.strip() == "*":
+                wildcards.append((c["slug"], key))
+                continue
+            else:
+                if target not in minted:
+                    minted[target] = f"haak:claim/{paper_slug}/alternative/{len(minted) + 1}"
+                dest, dest_label = minted[target], target
+            used.add(key)
+            n += 1
+            abstract, _ = _rel_ids(key)
+            edges.append({
+                "@id": f"haak:edge/{paper_slug}/{n}",
+                "@type": [abstract],
+                "source": node_id(c),
+                "destination": dest,
+                "title": f"[[{c['slug']}]] -{key}-> [[{dest_label}]]",
+                "creator": author_id, "created": stamp, "modified": stamp,
+            })
+
+    for text, mid in minted.items():
+        alt = {"@id": mid, "@type": "mira:Claim",
+               "title": text, "description": text_item(text)}
+        if extended:
+            alt["haak:materialisedFrom"] = "relation-target"
+            alt["haak:reviewNote"] = (
+                "No claim file asserts this. It is an alternative explanation named as the "
+                "target of a relation -- usually one the paper rules out -- and is minted as "
+                "a Claim so the edge has somewhere to land. Not an authored claim.")
+        nodes.append(alt)
+    # An inverse is declared whenever its forward relation is used, so the pair is legible
+    # even though only one direction is emitted.
+    for inv, fwd in INVERSE_PAIRS.items():
+        if fwd in used:
+            used.add(inv)
+
+    nodes = (node_type_nodes(author_id, stamp)
+             + relation_nodes(sorted(used), author_id, stamp) + nodes + edges)
+    nodes.insert(0, {"@id": author_id, "@type": "UserAccount",
+                     "accountName": "elife-claim-trees pipeline"})
 
     ctx = {"@context": [MIRA_CONTEXT,
-                        {"dgb": DGB, "haak": HAAK,
-                         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-                         "dct": "http://purl.org/dc/terms/"}]}
+                        {"haak": HAAK, "dgb": DGB,
+                         "owl": "http://www.w3.org/2002/07/owl#",
+                         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                         "dct": "http://purl.org/dc/terms/",
+                         "prov": "http://www.w3.org/ns/prov#",
+                         "onProperty": {"@id": "owl:onProperty", "@type": "@id"},
+                         "hasValue": {"@id": "owl:hasValue", "@type": "@id"}}]}
     if extended:
-        ctx["@context"].append({"haak": "https://haak.world/schema/claim#"})
+        ctx["@context"].append({"haakx": "https://haak.world/schema/claim-extended#"})
 
     doc = dict(ctx)
     doc["@graph"] = nodes
-    return doc, claims, all_dropped, questions
+    return doc, claims, all_dropped, questions, sorted(minted), wildcards
 
 
 # ── Reporting ─────────────────────────────────────────────────────────────────
 
-def gap_report(paper_slug, claims, dropped, questions):
+def gap_report(paper_slug, claims, dropped, questions, minted=(), wildcards=()):
     roles = {}
     for c in claims:
         roles[c.get("role") or c.get("claim-type")] = \
@@ -437,10 +609,37 @@ def gap_report(paper_slug, claims, dropped, questions):
              f"such node. **{len(auto)} questions were derived mechanically from hypothesis "
              f"text and need human review.**\n")
     for q in auto:
-        L.append(f"- {q['schema:description']}")
+        L.append(f"- {q['description']['content']}")
     L.append("")
     L.append("Override any of these by adding a `question:` field to the hypothesis's "
              "frontmatter and re-running the export.\n")
+
+    L.append("## Alternatives materialised as claims\n")
+    if minted:
+        L.append(f"**{len(minted)} relation targets name something no claim file asserts.** "
+                 f"They are alternative explanations the paper argues against, so the target "
+                 f"exists only as the thing being excluded. Each is minted as a "
+                 f"`mira:Claim` so the edge has a destination, and flagged "
+                 f"`haak:materialisedFrom: relation-target` in the extended file. **None of "
+                 f"these is an authored claim.**\n")
+        for t in minted:
+            L.append(f"- {t}")
+        L.append("")
+    else:
+        L.append("None: every relation in this paper points at a claim the tree asserts.\n")
+
+    L.append("## Paper-level scopes with no MIRA target\n")
+    if wildcards:
+        L.append(f"**{len(wildcards)} `scopes` relations target `*`** — the claim constrains "
+                 f"the paper as a whole rather than another claim. `mira:scopes` has "
+                 f"`mira:Claim` as its range and MIRA has no paper-level node to point at, "
+                 f"so no edge is emitted and no target is invented. The constraint is real "
+                 f"and is not in the strict export.\n")
+        for slug, key in wildcards:
+            L.append(f"- `{slug}` — {key} the whole paper")
+        L.append("")
+    else:
+        L.append("None.\n")
     return "\n".join(L)
 
 
@@ -501,8 +700,9 @@ def main():
 
     for slug in papers:
         try:
-            strict, claims, dropped, questions = export(slug, extended=False)
-            ext, _, _, _ = export(slug, extended=True)
+            strict, claims, dropped, questions, minted, wildcards = export(
+                slug, extended=False)
+            ext, *_ = export(slug, extended=True)
         except Exception as e:                                   # noqa: BLE001
             print(f"  {slug}: FAILED — {e}", file=sys.stderr)
             continue
@@ -515,11 +715,16 @@ def main():
 
         with open(os.path.join(out_dir, f"{slug}.gap-report.md"), "w",
                   encoding="utf-8") as f:
-            f.write(gap_report(slug, claims, dropped, questions))
+            f.write(gap_report(slug, claims, dropped, questions, minted, wildcards))
 
         total = sum(1 for c in claims for _ in relations(c))
+        extra = ""
+        if minted:
+            extra += f", {len(minted)} alternatives materialised"
+        if wildcards:
+            extra += f", {len(wildcards)} paper-level scopes unrepresentable"
         print(f"  {slug}: {len(claims)} claims, {len(strict['@graph'])} nodes, "
-              f"{len(dropped)}/{total} relations declared as RelationDefs")
+              f"{len(dropped)}/{total} relations declared as RelationDefs{extra}")
 
     print(f"\nWritten to {out_dir}/")
 

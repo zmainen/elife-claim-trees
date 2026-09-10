@@ -2,96 +2,554 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "dgb": "https://mira.science/schema/discoursegraphs_base#",
       "haak": "https://haak.world/schema/claim#",
-      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-      "dct": "http://purl.org/dc/terms/"
+      "dgb": "https://discoursegraphs.com/schema/dg_base#",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "dct": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "onProperty": {
+        "@id": "owl:onProperty",
+        "@type": "@id"
+      },
+      "hasValue": {
+        "@id": "owl:hasValue",
+        "@type": "@id"
+      }
     },
     {
-      "haak": "https://haak.world/schema/claim#"
+      "haakx": "https://haak.world/schema/claim-extended#"
     }
   ],
   "@graph": [
     {
-      "@id": "haak:derived-from",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+      "@id": "haak:agent/elife-claim-trees",
+      "@type": "UserAccount",
+      "accountName": "elife-claim-trees pipeline"
     },
     {
-      "@id": "haak:enables-method",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Evidence",
-      "rdfs:range": "mira:Protocol",
-      "dct:description": "The subject result makes the object method possible downstream."
+      "@id": "haak:type/Claim",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Claim"
+      ],
+      "label": "Claim",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:entails",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+      "@id": "haak:type/Evidence",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Evidence"
+      ],
+      "label": "Evidence",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:requires",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+      "@id": "haak:type/Protocol",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Protocol"
+      ],
+      "label": "Protocol",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:scopes",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+      "@id": "haak:reldef/confirms",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/confirms"
+        }
+      ],
+      "label": "confirms",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/confirms/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/confirms",
+        "dgb:RelationInstance"
+      ],
+      "label": "confirms",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence confirms the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/contradicts",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/contradicts"
+        }
+      ],
+      "label": "contradicts",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/contradicts/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/contradicts",
+        "dgb:RelationInstance"
+      ],
+      "label": "contradicts",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim contradicts the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/derived_from",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/derived_from"
+        }
+      ],
+      "label": "derived-from",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z",
+      "inverseOf": "haak:reldef/entails"
+    },
+    {
+      "@id": "haak:reldef/derived_from/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/derived_from",
+        "dgb:RelationInstance"
+      ],
+      "label": "derived-from",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim was derived from the destination claim; the inverse of entails."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/dissociates_with",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/dissociates_with"
+        }
+      ],
+      "label": "dissociates-with",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/dissociates_with/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/dissociates_with",
+        "dgb:RelationInstance"
+      ],
+      "label": "dissociates-with",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source result separates two things the destination claim joins."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/enables_method",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/enables_method"
+        }
+      ],
+      "label": "enables-method",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/enables_method/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Protocol",
+      "subClassOf": [
+        "haak:reldef/enables_method",
+        "dgb:RelationInstance"
+      ],
+      "label": "enables-method",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source result makes the destination method possible."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/entails"
+        }
+      ],
+      "label": "entails",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/entails",
+        "dgb:RelationInstance"
+      ],
+      "label": "entails",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/extends",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/extends"
+        }
+      ],
+      "label": "extends",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/extends/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/extends",
+        "dgb:RelationInstance"
+      ],
+      "label": "extends",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim extends the destination claim to new conditions."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/requires"
+        }
+      ],
+      "label": "requires",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/requires",
+        "dgb:RelationInstance"
+      ],
+      "label": "requires",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/rules_out"
+        }
+      ],
+      "label": "rules-out",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/rules_out",
+        "dgb:RelationInstance"
+      ],
+      "label": "rules-out",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence eliminates the destination claim as viable."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/scopes",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/scopes"
+        }
+      ],
+      "label": "scopes",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/scopes/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/scopes",
+        "dgb:RelationInstance"
+      ],
+      "label": "scopes",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/supports"
+        }
+      ],
+      "label": "supports",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/supports",
+        "dgb:RelationInstance"
+      ],
+      "label": "supports",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim provides support for the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/tests",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/tests"
+        }
+      ],
+      "label": "tests",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/tests/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/tests",
+        "dgb:RelationInstance"
+      ],
+      "label": "tests",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence was gathered to test the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/validates",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/validates"
+        }
+      ],
+      "label": "validates",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/validates/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/validates",
+        "dgb:RelationInstance"
+      ],
+      "label": "validates",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence validates the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
       "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that a deep-learning segmentation pipeline (UNet/UNETR ensemble) coupled with cross-time-point registration, vertex-wise radius estimation, and graph-theoretic network analysis can produce reliable, automated, network-level measurements of neurovascular coupling in volumetric two-photon fluorescence microscopy of cerebral microcirculation — measurements that prior point-measurement and manual-segmentation approaches could not yield at the scale of hundreds of interconnected vessels per FOV?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that a deep-learning segmentation pipeline (UNet/UNETR ensemble) coupled with cross-time-point registration, vertex-wise radius estimation, and graph-theoretic network analysis can produce reliable, automated, network-level measurements of neurovascular coupling in volumetric two-photon fluorescence microscopy of cerebral microcirculation — measurements that prior point-measurement and manual-segmentation approaches could not yield at the scale of hundreds of interconnected vessels per FOV?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that optogenetic activation of cortical pyramidal neurons elicits coordinated, network-level vascular responses that cannot be predicted from individual-vessel measurements alone: dilations and constrictions are spatially organised relative to active neurons, capillary responses correlate with their network neighbours' responses, and overall capillary network efficiency is modulated by stimulation?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that optogenetic activation of cortical pyramidal neurons elicits coordinated, network-level vascular responses that cannot be predicted from individual-vessel measurements alone: dilations and constrictions are spatially organised relative to active neurons, capillary responses correlate with their network neighbours' responses, and overall capillary network efficiency is modulated by stimulation?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd",
       "@type": "mira:Evidence",
-      "schema:name": "artery-dilates-venule-unchanged-at-low-power",
-      "schema:description": "At 1.1 mW/mm² 458 nm stimulation, a sample artery dilated 1.33±0.86 µm (p<1e-4) and a sample capillary dilated 0.42±0.39 µm (p<1e-4), while a sample venule showed no significant radius change (p=0.22), demonstrating vessel-type heterogeneity in optogenetic neurovascular responses.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "artery-dilates-venule-unchanged-at-low-power",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "At 1.1 mW/mm² 458 nm stimulation, a sample artery dilated 1.33±0.86 µm (p<1e-4) and a sample capillary dilated 0.42±0.39 µm (p<1e-4), while a sample venule showed no significant radius change (p=0.22), demonstrating vessel-type heterogeneity in optogenetic neurovascular responses."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "vertex-wise radius tracking; Mann-Whitney U test; single image stack example"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
-        },
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        },
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
       },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "empirical",
       "haak:epistemicStrength": "weak",
       "haak:relations": {
@@ -129,44 +587,26 @@
       "haak:analysis": "Tutorial.ipynb"
     },
     {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
       "@type": "mira:Evidence",
-      "schema:name": "baseline-intra-vessel-radius-varies-24pct",
-      "schema:description": "Capillary radius varies along vessel length by 24±28% of the mean resting radius across baseline frames, such that point measurements of vessel caliber cannot accurately estimate microvessel volume changes.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "baseline-intra-vessel-radius-varies-24pct",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Capillary radius varies along vessel length by 24±28% of the mean resting radius across baseline frames, such that point measurements of vessel caliber cannot accurately estimate microvessel volume changes."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "vertex-wise radius tracking along centerline, 2PFM, n=17 mice"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
-        },
-        {
-          "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
-        },
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        },
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        }
-      ],
-      "mira:opposes": [
-        {
-          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
-        },
-        {
-          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -212,48 +652,26 @@
       "haak:analysis": "Tutorial.ipynb"
     },
     {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
       "@type": "mira:Evidence",
-      "schema:name": "blue-light-dilations-exceed-green-control",
-      "schema:description": "Capillary dilations following 458 nm ChR2 stimulation (0.90±0.93 µm at 1.1 mW/mm²; 0.90±0.78 µm at 4.3 mW/mm²) are significantly larger than those following 552 nm control illumination (0.58±0.92 µm; p<1e-4), confirming that the vascular responses are ChR2-mediated rather than photothermal artifacts.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "blue-light-dilations-exceed-green-control",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Capillary dilations following 458 nm ChR2 stimulation (0.90±0.93 µm at 1.1 mW/mm²; 0.90±0.78 µm at 4.3 mW/mm²) are significantly larger than those following 552 nm control illumination (0.58±0.92 µm; p<1e-4), confirming that the vascular responses are ChR2-mediated rather than photothermal artifacts."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "mixed-effects model on responder vessel radius changes; Wilcoxon signed-rank"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        },
-        {
-          "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
-        },
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        },
-        {
-          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
-        },
-        {
-          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        }
-      ],
-      "haak:requires": {
-        "@id": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181"
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -303,41 +721,26 @@
       "haak:analysis": "Tutorial.ipynb"
     },
     {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
       "@type": "mira:Evidence",
-      "schema:name": "capillary-efficiency-increases-4pct",
-      "schema:description": "Capillary network efficiency shows a median 4% increase during peak optogenetic stimulation, consistent with coordinated vasodilation improving local blood flow distribution.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "capillary-efficiency-increases-4pct",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Capillary network efficiency shows a median 4% increase during peak optogenetic stimulation, consistent with coordinated vasodilation improving local blood flow distribution."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "graph-theoretic network analysis"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
-        },
-        {
-          "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
-        },
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        }
-      ],
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
-        },
-        {
-          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -376,39 +779,26 @@
       "haak:analysis": "Tutorial.ipynb"
     },
     {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
       "@type": "mira:Evidence",
-      "schema:name": "constrictions-deeper-than-dilations",
-      "schema:description": "Constricting capillaries are located on average 37±179 µm deeper in cortex than dilating capillaries following 458 nm optogenetic stimulation at 4.3 mW/mm² (p<1e-4), with dilators tending toward the cortical surface across all stimulation conditions.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "constrictions-deeper-than-dilations",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Constricting capillaries are located on average 37±179 µm deeper in cortex than dilating capillaries following 458 nm optogenetic stimulation at 4.3 mW/mm² (p<1e-4), with dilators tending toward the cortical surface across all stimulation conditions."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "vertex-wise cortical depth from cortical surface; mixed-effects model"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
-        },
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
       },
-      "haak:requires": {
-        "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -451,42 +841,26 @@
       "haak:analysis": "Tutorial.ipynb"
     },
     {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
       "@type": "mira:Evidence",
-      "schema:name": "dilations-nearer-neurons-than-constrictions",
-      "schema:description": "Following ChR2 optogenetic activation at 458 nm, capillary dilations occur on average 16.1±14.3 µm from the nearest labeled pyramidal neuron while constrictions occur 21.9±14.6 µm away (4.3 mW/mm²; p<1e-4), and this spatial segregation is absent under control 552 nm illumination.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "dilations-nearer-neurons-than-constrictions",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Following ChR2 optogenetic activation at 458 nm, capillary dilations occur on average 16.1±14.3 µm from the nearest labeled pyramidal neuron while constrictions occur 21.9±14.6 µm away (4.3 mW/mm²; p<1e-4), and this spatial segregation is absent under control 552 nm illumination."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "vertex-wise distance to YFP-labeled neuron; mixed-effects model; Wilcoxon test"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
-        },
-        {
-          "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
-        },
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        },
-        {
-          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
       },
-      "haak:requires": {
-        "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -532,40 +906,19 @@
       "haak:analysis": "Tutorial.ipynb"
     },
     {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
       "@type": "mira:Claim",
-      "schema:name": "dl-model-scope-single-pipeline",
-      "schema:description": "All neurovascular coupling metrics are derived from a single integrated deep learning pipeline (segmentation → registration → graph analysis); the segmentation model requires GPU inference and was trained on data from one imaging preparation (Thy1-ChR2-YFP mice, 6-12 months), so generalization to other preparations is not demonstrated in this paper.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "haak:scopes": [
-        {
-          "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
-        },
-        {
-          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
-        },
-        {
-          "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc"
-        },
-        {
-          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
-        },
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        },
-        {
-          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
-        },
-        {
-          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
-        },
-        {
-          "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58"
-        }
-      ],
+      "title": "dl-model-scope-single-pipeline",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "All neurovascular coupling metrics are derived from a single integrated deep learning pipeline (segmentation → registration → graph analysis); the segmentation model requires GPU inference and was trained on data from one imaging preparation (Thy1-ChR2-YFP mice, 6-12 months), so generalization to other preparations is not demonstrated in this paper."
+      },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -614,20 +967,13 @@
     {
       "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-dl-pipeline-enables-network-nvc",
-      "schema:description": "A deep-learning segmentation pipeline (UNet/UNETR ensemble) coupled with cross-time-point registration, vertex-wise radius estimation, and graph-theoretic network analysis can produce reliable, automated, network-level measurements of neurovascular coupling in volumetric two-photon fluorescence microscopy of cerebral microcirculation — measurements that prior point-measurement and manual-segmentation approaches could not yield at the scale of hundreds of interconnected vessels per FOV. The performance ceiling of conventional baselines (ilastik, single-time-point segmentation, point-caliber tracking) is set by their inability to handle volumetric SNR, transient RBC plugs, and within-vessel radius heterogeneity — not by an intrinsic limit of the imaging modality.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "hypothesis-dl-pipeline-enables-network-nvc",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "A deep-learning segmentation pipeline (UNet/UNETR ensemble) coupled with cross-time-point registration, vertex-wise radius estimation, and graph-theoretic network analysis can produce reliable, automated, network-level measurements of neurovascular coupling in volumetric two-photon fluorescence microscopy of cerebral microcirculation — measurements that prior point-measurement and manual-segmentation approaches could not yield at the scale of hundreds of interconnected vessels per FOV. The performance ceiling of conventional baselines (ilastik, single-time-point segmentation, point-caliber tracking) is set by their inability to handle volumetric SNR, transient RBC plugs, and within-vessel radius heterogeneity — not by an intrinsic limit of the imaging modality."
       },
-      "haak:entails": [
-        {
-          "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
-        },
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -648,20 +994,13 @@
     {
       "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-network-level-nvc-coordination",
-      "schema:description": "Optogenetic activation of cortical pyramidal neurons elicits coordinated, network-level vascular responses that cannot be predicted from individual-vessel measurements alone: dilations and constrictions are spatially organised relative to active neurons, capillary responses correlate with their network neighbours' responses, and overall capillary network efficiency is modulated by stimulation. Prior point-measurement studies that interrogate vessels in isolation systematically miss this coordination because they cannot resolve within-vessel radius heterogeneity, between-vessel network topology, or stimulation-evoked changes in graph-level metrics across hundreds of interconnected vessels.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "hypothesis-network-level-nvc-coordination",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Optogenetic activation of cortical pyramidal neurons elicits coordinated, network-level vascular responses that cannot be predicted from individual-vessel measurements alone: dilations and constrictions are spatially organised relative to active neurons, capillary responses correlate with their network neighbours' responses, and overall capillary network efficiency is modulated by stimulation. Prior point-measurement studies that interrogate vessels in isolation systematically miss this coordination because they cannot resolve within-vessel radius heterogeneity, between-vessel network topology, or stimulation-evoked changes in graph-level metrics across hundreds of interconnected vessels."
       },
-      "haak:entails": [
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        },
-        {
-          "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -682,39 +1021,20 @@
     {
       "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
       "@type": "mira:Evidence",
-      "schema:name": "network-assortativity-increases-stimulation",
-      "schema:description": "Vascular network assortativity increases by 152 ± 65% at 4.3 mW/mm² optogenetic stimulation relative to control, indicating that high-degree vessels preferentially couple with high-degree vessels during neurovascular responses.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "network-assortativity-increases-stimulation",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Vascular network assortativity increases by 152 ± 65% at 4.3 mW/mm² optogenetic stimulation relative to control, indicating that high-degree vessels preferentially couple with high-degree vessels during neurovascular responses."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "graph-theoretic network analysis"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
-        },
-        {
-          "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
-        },
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        }
-      ],
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
-        },
-        {
-          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -753,22 +1073,23 @@
       "haak:analysis": "Tutorial.ipynb"
     },
     {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58",
       "@type": "mira:Evidence",
-      "schema:name": "novas3d-generalizes-qualitatively-ood",
-      "schema:description": "The NOVAS3D segmentation model produces qualitatively reasonable vessel segmentations on out-of-distribution data including a different mouse strain (C57BL/6), a different species (Fischer rat), and a different microscope modality (light-sheet fluorescence microscopy, Miltenyi UltraMicroscope Blaze), without retraining.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "novas3d-generalizes-qualitatively-ood",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The NOVAS3D segmentation model produces qualitatively reasonable vessel segmentations on out-of-distribution data including a different mouse strain (C57BL/6), a different species (Fischer rat), and a different microscope modality (light-sheet fluorescence microscopy, Miltenyi UltraMicroscope Blaze), without retraining."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
-        },
-        {
-          "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
-        }
-      ],
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
+      },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "empirical",
       "haak:epistemicStrength": "weak",
       "haak:relations": {
@@ -797,45 +1118,20 @@
     {
       "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
       "@type": "mira:Evidence",
-      "schema:name": "novas3d-outperforms-ilastik",
-      "schema:description": "The NOVAS3D deep learning segmentation pipeline (UNet/UNETR) achieves significantly higher Dice scores and precision/recall for volumetric vessel segmentation than the baseline ilastik classifier on the deposited two-photon microscopy test dataset.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "novas3d-outperforms-ilastik",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The NOVAS3D deep learning segmentation pipeline (UNet/UNETR) achieves significantly higher Dice scores and precision/recall for volumetric vessel segmentation than the baseline ilastik classifier on the deposited two-photon microscopy test dataset."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "deep learning benchmark comparison"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
-        },
-        {
-          "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
-        },
-        {
-          "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
-        }
-      ],
-      "haak:enables-method": [
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        },
-        {
-          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
-        },
-        {
-          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -882,58 +1178,19 @@
       "haak:analysis": "Tutorial.ipynb"
     },
     {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
       "@type": "mira:Claim",
-      "schema:name": "novas3d-single-preparation-scope",
-      "schema:description": "The NOVAS3D segmentation model was trained and quantitatively evaluated exclusively on data from Thy1-ChR2-YFP mice (line 18, 6–12 months, Texas Red vascular labeling, cranial window, isoflurane anesthesia); quantitative performance metrics are not reported for any other preparation, strain, species, or imaging modality.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "novas3d-single-preparation-scope",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The NOVAS3D segmentation model was trained and quantitatively evaluated exclusively on data from Thy1-ChR2-YFP mice (line 18, 6–12 months, Texas Red vascular labeling, cranial window, isoflurane anesthesia); quantitative performance metrics are not reported for any other preparation, strain, species, or imaging modality."
       },
-      "mira:supports": {
-        "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
-      },
-      "haak:scopes": [
-        {
-          "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
-        },
-        {
-          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
-        },
-        {
-          "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc"
-        },
-        {
-          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
-        },
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        },
-        {
-          "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        },
-        {
-          "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
-        },
-        {
-          "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
-        },
-        {
-          "@id": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd"
-        },
-        {
-          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
-        },
-        {
-          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
-        },
-        {
-          "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -999,15 +1256,13 @@
     {
       "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e",
       "@type": "mira:Claim",
-      "schema:name": "prediction-pipeline-outperforms-baselines",
-      "schema:description": "If the DL segmentation + registration + radius-estimation stack genuinely improves on conventional baselines, then (a) the UNet/UNETR ensemble should significantly outperform ilastik on volumetric segmentation metrics (HD95, Dice, precision), (b) cross-time-point registration combined with mask union should recover substantially more vessel segments per FOV than any single time-point segmentation, and (c) the boundary-detection radius estimator should recover known simulated radii with high R² and remain stable to physiologically realistic noise levels.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "prediction-pipeline-outperforms-baselines",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If the DL segmentation + registration + radius-estimation stack genuinely improves on conventional baselines, then (a) the UNet/UNETR ensemble should significantly outperform ilastik on volumetric segmentation metrics (HD95, Dice, precision), (b) cross-time-point registration combined with mask union should recover substantially more vessel segments per FOV than any single time-point segmentation, and (c) the boundary-detection radius estimator should recover known simulated radii with high R² and remain stable to physiologically realistic noise levels."
       },
-      "haak:derived-from": {
-        "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
-      },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -1022,20 +1277,13 @@
     {
       "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
       "@type": "mira:Claim",
-      "schema:name": "prediction-pipeline-reveals-network-coordination",
-      "schema:description": "If the pipeline can resolve network-level neurovascular coupling and if optogenetic activation drives coordinated vascular responses, then in Thy1-ChR2-YFP mice under 458 nm photostimulation we should observe (a) a spatial gradient of dilations vs constrictions relative to labelled neurons, (b) a network-wide rise in assortativity (high-degree vessels coupling with high-degree vessels), (c) a measurable change in capillary network efficiency, and (d) absence of these patterns under 552 nm control illumination and in wild-type mice — none of which would be visible from point-caliber measurements alone.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "prediction-pipeline-reveals-network-coordination",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If the pipeline can resolve network-level neurovascular coupling and if optogenetic activation drives coordinated vascular responses, then in Thy1-ChR2-YFP mice under 458 nm photostimulation we should observe (a) a spatial gradient of dilations vs constrictions relative to labelled neurons, (b) a network-wide rise in assortativity (high-degree vessels coupling with high-degree vessels), (c) a measurable change in capillary network efficiency, and (d) absence of these patterns under 552 nm control illumination and in wild-type mice — none of which would be visible from point-caliber measurements alone."
       },
-      "haak:derived-from": [
-        {
-          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
-        },
-        {
-          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -1053,46 +1301,13 @@
     {
       "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
       "@type": "mira:Protocol",
-      "schema:name": "radius-estimation-r2-0p68",
-      "schema:description": "The pipeline's boundary-detection radius estimation achieves R²=0.68 against ground-truth simulated radii across >100,000 simulations spanning 0.5×–2× dilation/constriction, and remains stable under Gaussian noise up to a standard deviation of 200 signal units (image range 0–1023 SU).",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "radius-estimation-r2-0p68",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The pipeline's boundary-detection radius estimation achieves R²=0.68 against ground-truth simulated radii across >100,000 simulations spanning 0.5×–2× dilation/constriction, and remains stable under Gaussian noise up to a standard deviation of 200 signal units (image range 0–1023 SU)."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
-        },
-        {
-          "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
-        },
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        },
-        {
-          "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        },
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        }
-      ],
-      "haak:enables-method": [
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        },
-        {
-          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
-        },
-        {
-          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "methodological",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1152,31 +1367,13 @@
     {
       "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
       "@type": "mira:Protocol",
-      "schema:name": "registration-doubles-vessel-count",
-      "schema:description": "Rigid registration across time points and union of segmentation masks increases the number of identified vessel segments per FOV from 241±174 (single time point) to 412±281 (union across all time points; 507×507×250 µm, n=107 FOVs), while reducing mean squared error between acquisitions from 1306±747 to 0.008±0.003 signal units.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "registration-doubles-vessel-count",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Rigid registration across time points and union of segmentation masks increases the number of identified vessel segments per FOV from 241±174 (single time point) to 412±281 (union across all time points; 507×507×250 µm, n=107 FOVs), while reducing mean squared error between acquisitions from 1306±747 to 0.008±0.003 signal units."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
-        },
-        {
-          "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
-        },
-        {
-          "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
-        }
-      ],
-      "haak:enables-method": [
-        {
-          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
-        },
-        {
-          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "methodological",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1218,32 +1415,13 @@
     {
       "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
       "@type": "mira:Claim",
-      "schema:name": "responder-threshold-2sd-untested",
-      "schema:description": "Vessels are classified as responders if their radius change exceeds twice the baseline standard deviation (2×σ); this threshold is not sensitivity-tested in the main analysis, though an alternative 10% threshold is shown in Appendix 1—figure 14 with qualitatively similar results.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "responder-threshold-2sd-untested",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Vessels are classified as responders if their radius change exceeds twice the baseline standard deviation (2×σ); this threshold is not sensitivity-tested in the main analysis, though an alternative 10% threshold is shown in Appendix 1—figure 14 with qualitatively similar results."
       },
-      "haak:scopes": [
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        },
-        {
-          "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
-        },
-        {
-          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
-        },
-        {
-          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
-        },
-        {
-          "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "weak",
       "haak:relations": {
@@ -1283,56 +1461,13 @@
     {
       "@id": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
       "@type": "mira:Claim",
-      "schema:name": "scope-pipeline-and-application-paper",
-      "schema:description": "All findings are scoped to a method-paper-with-application envelope: a single deep-learning pipeline (UNet/UNETR ensemble + ANTsPy registration + boundary-detection radius + NetworkX graph analysis) trained and quantitatively benchmarked on Thy1-ChR2-EYFP mice (line 18, 6–12 months, Texas Red vascular labelling, cranial window over S1FL, isoflurane for structural scan, alpha-chloralose for functional scan); the in vivo demonstration uses the same single preparation (n=17 mice for biology, n=4 C57BL/6J wild-type mice for negative control). Quantitative segmentation metrics are reported for nine test images from six held-out mice; out-of-distribution generalisation (C57BL/6, Fischer rat, light-sheet) is shown only qualitatively. The paper does not test the pipeline on awake-behaving preparations, non-mammalian species, disease models, or alternative vascular labels; it does not test alternative responder thresholds beyond a single appendix supplement.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "scope-pipeline-and-application-paper",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "All findings are scoped to a method-paper-with-application envelope: a single deep-learning pipeline (UNet/UNETR ensemble + ANTsPy registration + boundary-detection radius + NetworkX graph analysis) trained and quantitatively benchmarked on Thy1-ChR2-EYFP mice (line 18, 6–12 months, Texas Red vascular labelling, cranial window over S1FL, isoflurane for structural scan, alpha-chloralose for functional scan); the in vivo demonstration uses the same single preparation (n=17 mice for biology, n=4 C57BL/6J wild-type mice for negative control). Quantitative segmentation metrics are reported for nine test images from six held-out mice; out-of-distribution generalisation (C57BL/6, Fischer rat, light-sheet) is shown only qualitatively. The paper does not test the pipeline on awake-behaving preparations, non-mammalian species, disease models, or alternative vascular labels; it does not test alternative responder thresholds beyond a single appendix supplement."
       },
-      "haak:scopes": [
-        {
-          "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
-        },
-        {
-          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
-        },
-        {
-          "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc"
-        },
-        {
-          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
-        },
-        {
-          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
-        },
-        {
-          "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        },
-        {
-          "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
-        },
-        {
-          "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
-        },
-        {
-          "@id": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd"
-        },
-        {
-          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
-        },
-        {
-          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
-        },
-        {
-          "@id": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181"
-        },
-        {
-          "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "weak",
       "haak:relations": {
@@ -1395,15 +1530,13 @@
     {
       "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
       "@type": "mira:Claim",
-      "schema:name": "synthesis-individual-vessel-measurements-insufficient",
-      "schema:description": "Interrogating individual vessels in isolation is insufficient to predict how blood flow is modulated across the cerebral microvascular network. The paper's combined evidence — within-vessel radius heterogeneity (24 ± 28% along vessel length at baseline), the spatial segregation of dilations and constrictions relative to active neurons, the network-wide rise in assortativity during optogenetic stimulation, and the modulation of capillary network efficiency — together argue that point-caliber and single-vessel approaches systematically miss the coordinated, graph-level structure of functional hyperemia.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "synthesis-individual-vessel-measurements-insufficient",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Interrogating individual vessels in isolation is insufficient to predict how blood flow is modulated across the cerebral microvascular network. The paper's combined evidence — within-vessel radius heterogeneity (24 ± 28% along vessel length at baseline), the spatial segregation of dilations and constrictions relative to active neurons, the network-wide rise in assortativity during optogenetic stimulation, and the modulation of capillary network efficiency — together argue that point-caliber and single-vessel approaches systematically miss the coordinated, graph-level structure of functional hyperemia."
       },
-      "haak:derived-from": {
-        "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "synthesis",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1427,37 +1560,20 @@
     {
       "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
       "@type": "mira:Evidence",
-      "schema:name": "unetr-outperforms-ilastik-hd95",
-      "schema:description": "UNETR ensemble segmentation shows significantly better HD95 surface distance than ilastik for both vessel and neuron channels (p<0.05 Wilcoxon signed-rank), while ilastik over-segments vessels with high recall (0.89±0.19) but low precision (0.37±0.33), evaluated on nine test images (507×507×250 µm) from six held-out mice.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "unetr-outperforms-ilastik-hd95",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "UNETR ensemble segmentation shows significantly better HD95 surface distance than ilastik for both vessel and neuron channels (p<0.05 Wilcoxon signed-rank), while ilastik over-segments vessels with high recall (0.89±0.19) but low precision (0.37±0.33), evaluated on nine test images (507×507×250 µm) from six held-out mice."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "Wilcoxon signed-rank test on segmentation metrics; 9 test images, 6 mice"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
-        },
-        {
-          "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
-        },
-        {
-          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
       },
-      "haak:requires": {
-        "@id": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1500,35 +1616,22 @@
       "haak:analysis": "Tutorial.ipynb"
     },
     {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
       "@type": "mira:Evidence",
-      "schema:name": "vessel-radius-heterogeneity-stimulation",
-      "schema:description": "Vessel radius adjustments during optogenetic stimulation show 24 ± 28% variation relative to resting diameter, with dilations averaging 16.1 ± 14.3 µm and constrictions averaging 21.9 ± 14.6 µm relative to nearby neurons.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "vertex-level vessel tracking, 2P microscopy"
-        }
+      "title": "vessel-radius-heterogeneity-stimulation",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Vessel radius adjustments during optogenetic stimulation show 24 ± 28% variation relative to resting diameter, with dilations averaging 16.1 ± 14.3 µm and constrictions averaging 21.9 ± 14.6 µm relative to nearby neurons."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
-        },
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        }
-      ],
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
-        },
-        {
-          "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1564,45 +1667,26 @@
       "haak:analysis": "Tutorial.ipynb"
     },
     {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
       "@type": "mira:Evidence",
-      "schema:name": "wt-controls-no-blue-green-difference",
-      "schema:description": "Wild-type C57BL/6J mice (n=4) show no statistically distinguishable capillary radius distributions following blue (458 nm) versus green (552 nm) photostimulation, confirming that vascular responses in Thy1-ChR2 mice are ChR2-specific and not attributable to photothermal or non-specific light effects.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95525"
+      "title": "wt-controls-no-blue-green-difference",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Wild-type C57BL/6J mice (n=4) show no statistically distinguishable capillary radius distributions following blue (458 nm) versus green (552 nm) photostimulation, confirming that vascular responses in Thy1-ChR2 mice are ChR2-specific and not attributable to photothermal or non-specific light effects."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.20383/103.01588",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "Wilcoxon test on capillary radius distributions; n=4 C57BL/6J mice"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95525",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
-        },
-        {
-          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
-        },
-        {
-          "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        },
-        {
-          "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
-        },
-        {
-          "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
-        },
-        {
-          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://doi.org/10.20383/103.01588"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1647,6 +1731,1522 @@
       ],
       "haak:panel": "app1fig9",
       "haak:analysis": "Tutorial.ipynb"
+    },
+    {
+      "@id": "https://doi.org/10.20383/103.01588",
+      "@type": "prov:Entity"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/1",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd",
+      "destination": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "title": "[[artery-dilates-venule-unchanged-at-low-power]] -confirms-> [[hypothesis-network-level-nvc-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/2",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[artery-dilates-venule-unchanged-at-low-power]] -dissociates-with-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/3",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[artery-dilates-venule-unchanged-at-low-power]] -tests-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/4",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[artery-dilates-venule-unchanged-at-low-power]] -supports-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/5",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
+      "destination": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "title": "[[baseline-intra-vessel-radius-varies-24pct]] -confirms-> [[hypothesis-network-level-nvc-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/6",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
+      "destination": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+      "title": "[[baseline-intra-vessel-radius-varies-24pct]] -confirms-> [[synthesis-individual-vessel-measurements-insufficient]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/7",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
+      "destination": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "title": "[[baseline-intra-vessel-radius-varies-24pct]] -rules-out-> [[novas3d-outperforms-ilastik]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/8",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[baseline-intra-vessel-radius-varies-24pct]] -tests-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/9",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[baseline-intra-vessel-radius-varies-24pct]] -supports-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/10",
+      "@type": [
+        "haak:reldef/contradicts"
+      ],
+      "source": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
+      "destination": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "title": "[[baseline-intra-vessel-radius-varies-24pct]] -contradicts-> [[novas3d-outperforms-ilastik]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/11",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[blue-light-dilations-exceed-green-control]] -tests-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/12",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[blue-light-dilations-exceed-green-control]] -validates-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/13",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "destination": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "title": "[[blue-light-dilations-exceed-green-control]] -validates-> [[constrictions-deeper-than-dilations]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/14",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[blue-light-dilations-exceed-green-control]] -validates-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/15",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "destination": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "title": "[[blue-light-dilations-exceed-green-control]] -validates-> [[network-assortativity-increases-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/16",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "destination": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "title": "[[blue-light-dilations-exceed-green-control]] -validates-> [[capillary-efficiency-increases-4pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/17",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "destination": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
+      "title": "[[blue-light-dilations-exceed-green-control]] -requires-> [[wt-controls-no-blue-green-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/18",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[blue-light-dilations-exceed-green-control]] -supports-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/19",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "destination": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "title": "[[capillary-efficiency-increases-4pct]] -confirms-> [[hypothesis-network-level-nvc-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/20",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "destination": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+      "title": "[[capillary-efficiency-increases-4pct]] -confirms-> [[synthesis-individual-vessel-measurements-insufficient]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/21",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[capillary-efficiency-increases-4pct]] -tests-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/22",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "destination": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "title": "[[capillary-efficiency-increases-4pct]] -requires-> [[responder-threshold-2sd-untested]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/23",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "destination": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "title": "[[capillary-efficiency-increases-4pct]] -requires-> [[radius-estimation-r2-0p68]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/24",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "destination": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "title": "[[constrictions-deeper-than-dilations]] -confirms-> [[hypothesis-network-level-nvc-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/25",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[constrictions-deeper-than-dilations]] -dissociates-with-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/26",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[constrictions-deeper-than-dilations]] -tests-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/27",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "destination": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "title": "[[constrictions-deeper-than-dilations]] -requires-> [[responder-threshold-2sd-untested]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/28",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[constrictions-deeper-than-dilations]] -supports-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/29",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "destination": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "title": "[[dilations-nearer-neurons-than-constrictions]] -confirms-> [[hypothesis-network-level-nvc-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/30",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "destination": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+      "title": "[[dilations-nearer-neurons-than-constrictions]] -confirms-> [[synthesis-individual-vessel-measurements-insufficient]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/31",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "destination": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "title": "[[dilations-nearer-neurons-than-constrictions]] -dissociates-with-> [[constrictions-deeper-than-dilations]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/32",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[dilations-nearer-neurons-than-constrictions]] -tests-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/33",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "destination": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "title": "[[dilations-nearer-neurons-than-constrictions]] -requires-> [[responder-threshold-2sd-untested]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/34",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "destination": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "title": "[[dilations-nearer-neurons-than-constrictions]] -supports-> [[network-assortativity-increases-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/35",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "destination": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
+      "title": "[[dl-model-scope-single-pipeline]] -scopes-> [[unetr-outperforms-ilastik-hd95]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/36",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "destination": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "title": "[[dl-model-scope-single-pipeline]] -scopes-> [[novas3d-outperforms-ilastik]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/37",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "destination": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
+      "title": "[[dl-model-scope-single-pipeline]] -scopes-> [[registration-doubles-vessel-count]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/38",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "destination": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "title": "[[dl-model-scope-single-pipeline]] -scopes-> [[radius-estimation-r2-0p68]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/39",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[dl-model-scope-single-pipeline]] -scopes-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/40",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[dl-model-scope-single-pipeline]] -scopes-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/41",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "destination": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "title": "[[dl-model-scope-single-pipeline]] -scopes-> [[network-assortativity-increases-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/42",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "destination": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "title": "[[dl-model-scope-single-pipeline]] -scopes-> [[capillary-efficiency-increases-4pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/43",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "destination": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58",
+      "title": "[[dl-model-scope-single-pipeline]] -scopes-> [[novas3d-generalizes-qualitatively-ood]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/44",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
+      "destination": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e",
+      "title": "[[hypothesis-dl-pipeline-enables-network-nvc]] -entails-> [[prediction-pipeline-outperforms-baselines]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/45",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[hypothesis-dl-pipeline-enables-network-nvc]] -entails-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/46",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[hypothesis-network-level-nvc-coordination]] -entails-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/47",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "destination": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+      "title": "[[hypothesis-network-level-nvc-coordination]] -entails-> [[synthesis-individual-vessel-measurements-insufficient]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/48",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "destination": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "title": "[[network-assortativity-increases-stimulation]] -confirms-> [[hypothesis-network-level-nvc-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/49",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "destination": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+      "title": "[[network-assortativity-increases-stimulation]] -confirms-> [[synthesis-individual-vessel-measurements-insufficient]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/50",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[network-assortativity-increases-stimulation]] -tests-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/51",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "destination": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "title": "[[network-assortativity-increases-stimulation]] -requires-> [[responder-threshold-2sd-untested]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/52",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "destination": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "title": "[[network-assortativity-increases-stimulation]] -requires-> [[radius-estimation-r2-0p68]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/53",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58",
+      "destination": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
+      "title": "[[novas3d-generalizes-qualitatively-ood]] -confirms-> [[hypothesis-dl-pipeline-enables-network-nvc]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/54",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58",
+      "destination": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "title": "[[novas3d-generalizes-qualitatively-ood]] -extends-> [[dl-model-scope-single-pipeline]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/55",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "destination": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
+      "title": "[[novas3d-outperforms-ilastik]] -confirms-> [[hypothesis-dl-pipeline-enables-network-nvc]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/56",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[novas3d-outperforms-ilastik]] -enables-method-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/57",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[novas3d-outperforms-ilastik]] -enables-method-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/58",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "destination": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "title": "[[novas3d-outperforms-ilastik]] -enables-method-> [[network-assortativity-increases-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/59",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "destination": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "title": "[[novas3d-outperforms-ilastik]] -enables-method-> [[capillary-efficiency-increases-4pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/60",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "destination": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e",
+      "title": "[[novas3d-outperforms-ilastik]] -tests-> [[prediction-pipeline-outperforms-baselines]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/61",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "destination": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
+      "title": "[[novas3d-outperforms-ilastik]] -extends-> [[unetr-outperforms-ilastik-hd95]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/62",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[unetr-outperforms-ilastik-hd95]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/63",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[novas3d-outperforms-ilastik]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/64",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[registration-doubles-vessel-count]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/65",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[radius-estimation-r2-0p68]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/66",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/67",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[baseline-intra-vessel-radius-varies-24pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/68",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/69",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[constrictions-deeper-than-dilations]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/70",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[blue-light-dilations-exceed-green-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/71",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[artery-dilates-venule-unchanged-at-low-power]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/72",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[network-assortativity-increases-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/73",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[capillary-efficiency-increases-4pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/74",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58",
+      "title": "[[novas3d-single-preparation-scope]] -scopes-> [[novas3d-generalizes-qualitatively-ood]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/75",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "destination": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "title": "[[novas3d-single-preparation-scope]] -extends-> [[dl-model-scope-single-pipeline]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/76",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "destination": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
+      "title": "[[radius-estimation-r2-0p68]] -confirms-> [[hypothesis-dl-pipeline-enables-network-nvc]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/77",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[radius-estimation-r2-0p68]] -enables-method-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/78",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "destination": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "title": "[[radius-estimation-r2-0p68]] -enables-method-> [[network-assortativity-increases-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/79",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "destination": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "title": "[[radius-estimation-r2-0p68]] -enables-method-> [[capillary-efficiency-increases-4pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/80",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "destination": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e",
+      "title": "[[radius-estimation-r2-0p68]] -tests-> [[prediction-pipeline-outperforms-baselines]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/81",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[radius-estimation-r2-0p68]] -validates-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/82",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "destination": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
+      "title": "[[radius-estimation-r2-0p68]] -validates-> [[baseline-intra-vessel-radius-varies-24pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/83",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[radius-estimation-r2-0p68]] -validates-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/84",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[radius-estimation-r2-0p68]] -supports-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/85",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[radius-estimation-r2-0p68]] -supports-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/86",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
+      "destination": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
+      "title": "[[registration-doubles-vessel-count]] -confirms-> [[hypothesis-dl-pipeline-enables-network-nvc]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/87",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
+      "destination": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "title": "[[registration-doubles-vessel-count]] -enables-method-> [[network-assortativity-increases-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/88",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
+      "destination": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "title": "[[registration-doubles-vessel-count]] -enables-method-> [[capillary-efficiency-increases-4pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/89",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
+      "destination": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e",
+      "title": "[[registration-doubles-vessel-count]] -tests-> [[prediction-pipeline-outperforms-baselines]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/90",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
+      "destination": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995",
+      "title": "[[registration-doubles-vessel-count]] -supports-> [[dl-model-scope-single-pipeline]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/91",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[responder-threshold-2sd-untested]] -scopes-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/92",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[responder-threshold-2sd-untested]] -scopes-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/93",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "destination": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "title": "[[responder-threshold-2sd-untested]] -scopes-> [[constrictions-deeper-than-dilations]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/94",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "destination": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "title": "[[responder-threshold-2sd-untested]] -scopes-> [[network-assortativity-increases-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/95",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "destination": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "title": "[[responder-threshold-2sd-untested]] -scopes-> [[capillary-efficiency-increases-4pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/96",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "destination": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "title": "[[responder-threshold-2sd-untested]] -scopes-> [[blue-light-dilations-exceed-green-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/97",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[unetr-outperforms-ilastik-hd95]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/98",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[novas3d-outperforms-ilastik]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/99",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[registration-doubles-vessel-count]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/100",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[radius-estimation-r2-0p68]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/101",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[vessel-radius-heterogeneity-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/102",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[baseline-intra-vessel-radius-varies-24pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/103",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/104",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[constrictions-deeper-than-dilations]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/105",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[blue-light-dilations-exceed-green-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/106",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[artery-dilates-venule-unchanged-at-low-power]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/107",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[network-assortativity-increases-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/108",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[capillary-efficiency-increases-4pct]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/109",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[wt-controls-no-blue-green-difference]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/110",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58",
+      "title": "[[scope-pipeline-and-application-paper]] -scopes-> [[novas3d-generalizes-qualitatively-ood]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/111",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
+      "destination": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
+      "title": "[[unetr-outperforms-ilastik-hd95]] -confirms-> [[hypothesis-dl-pipeline-enables-network-nvc]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/112",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
+      "destination": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "title": "[[unetr-outperforms-ilastik-hd95]] -dissociates-with-> [[novas3d-outperforms-ilastik]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/113",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
+      "destination": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e",
+      "title": "[[unetr-outperforms-ilastik-hd95]] -tests-> [[prediction-pipeline-outperforms-baselines]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/114",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
+      "destination": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38",
+      "title": "[[unetr-outperforms-ilastik-hd95]] -requires-> [[novas3d-single-preparation-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/115",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870",
+      "destination": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
+      "title": "[[unetr-outperforms-ilastik-hd95]] -extends-> [[novas3d-outperforms-ilastik]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/116",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "destination": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "title": "[[vessel-radius-heterogeneity-stimulation]] -confirms-> [[hypothesis-network-level-nvc-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/117",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[vessel-radius-heterogeneity-stimulation]] -tests-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/118",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "destination": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
+      "title": "[[vessel-radius-heterogeneity-stimulation]] -requires-> [[radius-estimation-r2-0p68]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/119",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae",
+      "destination": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4",
+      "title": "[[vessel-radius-heterogeneity-stimulation]] -requires-> [[responder-threshold-2sd-untested]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/120",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
+      "destination": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77",
+      "title": "[[wt-controls-no-blue-green-difference]] -confirms-> [[hypothesis-network-level-nvc-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/121",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
+      "destination": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d",
+      "title": "[[wt-controls-no-blue-green-difference]] -tests-> [[prediction-pipeline-reveals-network-coordination]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/122",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
+      "destination": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "title": "[[wt-controls-no-blue-green-difference]] -validates-> [[blue-light-dilations-exceed-green-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/123",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[wt-controls-no-blue-green-difference]] -validates-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/124",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
+      "destination": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a",
+      "title": "[[wt-controls-no-blue-green-difference]] -validates-> [[constrictions-deeper-than-dilations]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/125",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
+      "destination": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
+      "title": "[[wt-controls-no-blue-green-difference]] -supports-> [[blue-light-dilations-exceed-green-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/126",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181",
+      "destination": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd",
+      "title": "[[wt-controls-no-blue-green-difference]] -supports-> [[dilations-nearer-neurons-than-constrictions]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     }
   ]
 }

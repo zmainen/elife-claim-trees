@@ -35,6 +35,14 @@ node, motivated by a corpus rather than by an opinion about what ought to be exp
 
 This directory previously argued that MIRA drops 57% of what a claim tree holds. That was a
 fact about our exporter, not about MIRA, and it came from reading our own mapping table
-instead of the schema. The number is now zero. The real gap is narrower, and different in
-kind: our export uses inline predicates where MIRA reifies relations as nodes, so it does not
-validate. `mira-guide.md` records what the schema actually requires, with the source quoted.
+instead of the schema. The same mistake recurred in a second form: after the exporter moved
+to MIRA's reified encoding, the report printed "MIRA drops 100%", because the counter was
+still looking for relations as properties on claim nodes after they had become nodes in their
+own right.
+
+Both numbers described our code. The real figure is **3 relations out of 916** — claims that
+scope the paper as a whole, which MIRA has no node to point at. The export otherwise carries
+everything and validates, except against one constraint in MIRA's generated shapes that no
+document can satisfy; `mira-guide.md` records what the schema actually requires, with the
+source quoted, and `scripts/validate_mira.py` reproduces that bug before reporting any
+result.

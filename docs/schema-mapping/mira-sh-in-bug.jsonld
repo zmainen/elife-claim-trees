@@ -1,0 +1,27 @@
+{
+  "_comment": [
+    "A four-node document using only MIRA's own terms, each node correctly typed, that",
+    "cannot validate against MIRA's own generated shapes. It exists to separate a bug in",
+    "the schema from a bug in our exporter, because for a week we assumed the failures",
+    "were ours.",
+    "",
+    "`mira:addresses` and `mira:sourceDocument` each carry an sh:in list of two string",
+    "literals -- ('RelationDef', 'observationBase') -- alongside an sh:class and an",
+    "sh:nodeKind of sh:BlankNodeOrIRI. Nothing satisfies both: the shape demands an IRI",
+    "and then demands that IRI be one of two strings. gen-shacl renders LinkML's",
+    "`subproperty_of` this way; the list is slot names, not permitted values.",
+    "",
+    "Run:  pyshacl -s vendor/mira.shacl -sf turtle -e vendor/mira.ttl \\",
+    "              -df json-ld docs/schema-mapping/mira-sh-in-bug.jsonld",
+    "Expect: Conforms: False, two violations, one per property."
+  ],
+  "@context": "https://purl.org/mira-science/mira.jsonld",
+  "@graph": [
+    { "@id": "http://example.org/q1", "@type": "Question" },
+    { "@id": "http://example.org/c1", "@type": "Claim",
+      "addresses": "http://example.org/q1" },
+    { "@id": "http://example.org/d1", "@type": "SourceDocument" },
+    { "@id": "http://example.org/e1", "@type": "Evidence",
+      "sourceDocument": "http://example.org/d1" }
+  ]
+}

@@ -44,3 +44,11 @@ MIRA requires every Claim to address a `mira:Question`; a claim tree has no such
 - Is it the case that optogenetic activation of cortical pyramidal neurons elicits coordinated, network-level vascular responses that cannot be predicted from individual-vessel measurements alone: dilations and constrictions are spatially organised relative to active neurons, capillary responses correlate with their network neighbours' responses, and overall capillary network efficiency is modulated by stimulation?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
+
+## Alternatives materialised as claims
+
+None: every relation in this paper points at a claim the tree asserts.
+
+## Paper-level scopes with no MIRA target
+
+None.

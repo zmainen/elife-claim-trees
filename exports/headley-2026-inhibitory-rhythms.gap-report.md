@@ -43,3 +43,14 @@ MIRA requires every Claim to address a `mira:Question`; a claim tree has no such
 - Is it the case that the optimal frequency of rhythmic inhibition for modulating a given dendritic computation is determined by matching the rhythm's cycle period to the intrinsic timescale of the spike process at the target compartment: fast (gamma) for perisomatic Na+/AP processes, slow (beta) for distal Ca²⁺/NMDA dendritic spike processes?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
+
+## Alternatives materialised as claims
+
+None: every relation in this paper points at a claim the tree asserts.
+
+## Paper-level scopes with no MIRA target
+
+**2 `scopes` relations target `*`** — the claim constrains the paper as a whole rather than another claim. `mira:scopes` has `mira:Claim` as its range and MIRA has no paper-level node to point at, so no edge is emitted and no target is invented. The constraint is real and is not in the strict export.
+
+- `l5-model-single-cell-scope` — scopes the whole paper
+- `naturalistic-drive-parameterization` — scopes the whole paper

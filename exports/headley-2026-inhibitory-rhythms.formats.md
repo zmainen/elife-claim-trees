@@ -6,18 +6,18 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
-| `requires` | 28 | declared `haak:requires` | kept | dropped |
-| `supports` | 26 | → supports | kept | kept |
-| `tests` | 8 | → supports | kept | kept |
-| `entails` | 6 | declared `haak:entails` | kept | dropped |
-| `derived-from` | 6 | declared `haak:derived-from` | kept | dropped |
-| `interprets` | 5 | declared `haak:interprets` | kept | dropped |
-| `dissociates-with` | 4 | → opposes | kept | kept |
-| `scopes` | 2 | declared `haak:scopes` | kept | dropped |
+| `requires` | 28 | `haak:requires`, neutral | kept | dropped |
+| `supports` | 26 | `haak:supports`, under `mira:supports` | kept | kept |
+| `tests` | 8 | `haak:tests`, under `mira:supports` | kept | kept |
+| `entails` | 6 | `haak:entails`, neutral | kept | dropped |
+| `derived-from` | 6 | — | kept | dropped |
+| `interprets` | 5 | `haak:interprets`, neutral | kept | dropped |
+| `dissociates-with` | 4 | `haak:dissociates-with`, under `mira:opposes` | kept | kept |
+| `scopes` | 2 | — | kept | dropped |
 
 ## What MIRA has no predicate for — and what happens instead
 
-**47 of 85 relations (55%) fall outside `supports` and `opposes`.** They are not dropped and not flattened: MIRA imports a Discourse Graphs base schema in which relations are definable, so each is declared in the document as a `RelationDef` with a domain, a range and a description, then used as a predicate.
+**39 of 85 relations (46%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
 - `haak:requires` (28) — a claim depends on another holding
 - `haak:entails` (6) — a hypothesis entails its prediction — the deductive step
@@ -25,15 +25,24 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 - `haak:interprets` (5) — one claim interprets another
 - `haak:scopes` (2) — a scope constraint governs another claim's validity
 
-A reader that knows only core MIRA still gets every node and every supports/opposes edge. One that follows the declarations gets the rest with stated semantics. Flattening these into `supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits.
+Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.
 
-## What MIRA flattens
+## What a reader who knows only core MIRA sees
 
-`tests`, `confirms`, `validates`, `extends` and `replicates` all become `mira:supports`; `contradicts`, `rules-out` and `dissociates-with` all become `mira:opposes`. The relation survives; the reason it was drawn does not.
+Every relation keeps its own type — nothing is flattened into `supports`. 38 of the 77 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
-- `supports` (26)
-- `tests` (8)
-- `dissociates-with` (4)
+- `requires` (28) — neutral
+- `supports` (26) — under `mira:supports`
+- `tests` (8) — under `mira:supports`
+- `entails` (6) — neutral
+- `interprets` (5) — neutral
+- `dissociates-with` (4) — under `mira:opposes`
+
+## What MIRA genuinely cannot carry
+
+6 `derived-from` relations are not emitted as edges. This is not loss: `derived-from` is declared `owl:inverseOf` `entails`, and MIRA never materialises the reverse direction — its own 942-node demo graph emits no inverse edges either. A reader recovers each one from the forward edge and the declaration.
+
+**2 relations are lost.** They target `*` — the claim constrains the paper as a whole rather than another claim. `scopes` has `mira:Claim` as its range and MIRA has no paper-level node, so no edge is emitted and none is invented. The paper's `gap-report.md` names them.
 
 ## What no format carries
 

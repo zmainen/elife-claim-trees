@@ -29,6 +29,9 @@ import re
 import sys
 from collections import Counter
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from export_mira import INVERSE_PAIRS  # noqa: E402  the inverse pairs are declared once
+
 try:
     import yaml
 except ImportError:
@@ -65,8 +68,14 @@ def frontmatter(path):
 
 
 def tree_relations(slug):
-    """Relation types and counts in the claim tree — the source of truth."""
+    """Relation types and counts in the claim tree — the source of truth.
+
+    `wild` counts relations whose target is `*`, meaning the claim constrains the paper as a
+    whole. They are relations the tree holds and MIRA cannot express, so they are counted
+    apart from the ones it can.
+    """
     counts = Counter()
+    wild = Counter()
     claims = 0
     verif = Counter()
     d = os.path.join(CLAIMS, slug)
@@ -81,28 +90,56 @@ def tree_relations(slug):
             for t in (fm.get(k) or []):
                 if isinstance(t, str):
                     counts[k] += 1
+                    if t.strip() == "*":
+                        wild[k] += 1
         for item in (fm.get("belongings") or []):
             if isinstance(item, dict) and item.get("relation"):
                 counts[item["relation"]] += 1
+                if str(item.get("target", "")).strip() == "*":
+                    wild[item["relation"]] += 1
         recs = [r for r in (fm.get("reproductions") or []) if isinstance(r, dict)]
         if recs:
             verif[max(recs, key=lambda r: str(r.get("date", ""))).get("status", "—")] += 1
-    return claims, counts, verif
+    return claims, counts, verif, wild
 
 
 def mira_edges(slug):
+    """Count MIRA edges by relation, reading the declarations the document itself carries.
+
+    MIRA reifies relations: an edge is a node with `source` and `destination`, typed by a
+    relation declaration, never a predicate hanging off a claim. Counting node *properties*
+    -- which this function used to do -- therefore found nothing after the exporter moved
+    to the reified encoding, and the report announced that MIRA drops 100% of relations.
+    It drops none. That is the second time a number about our own code was written down as
+    a fact about MIRA, so nothing here is hardcoded: the relation's name and its parent are
+    both read back out of the file being measured.
+
+    Returns (counts by relation, parent by relation) where a parent is `mira:supports`,
+    `mira:opposes`, or None for a relation declared with no such commitment.
+    """
     p = os.path.join(EXPORTS, f"{slug}.mira.jsonld")
     if not os.path.exists(p):
-        return None
+        return None, None
     g = json.load(open(p, encoding="utf-8")).get("@graph", [])
-    c = Counter()
+
+    label, parent = {}, {}
     for n in g:
-        for k, v in n.items():
-            # Core MIRA predicates, plus the relations declared as RelationDefs in this
-            # document. Both are carried; only the second needs the declaration read.
-            if k in ("mira:supports", "mira:opposes") or k.startswith("haak:"):
-                c[k] += len(v) if isinstance(v, list) else 1
-    return c
+        if n.get("@type") != "AbstractRelationDef":
+            continue
+        label[n["@id"]] = n.get("label", n["@id"])
+        parent[n["@id"]] = next(
+            (s for s in (n.get("subClassOf") or [])
+             if isinstance(s, str) and s in ("mira:supports", "mira:opposes")), None)
+
+    counts, parents = Counter(), {}
+    for n in g:
+        if "source" not in n or "destination" not in n:
+            continue
+        for t in (n["@type"] if isinstance(n.get("@type"), list) else [n.get("@type")]):
+            if t in label:
+                counts[label[t]] += 1
+                parents[label[t]] = parent[t]
+    return counts, parents
 
 
 def oxa_edges(slug):
@@ -139,29 +176,42 @@ def dg_edges(slug):
 
 
 def report(slug):
-    claims, tree, verif = tree_relations(slug)
+    claims, tree, verif, wild = tree_relations(slug)
     total = sum(tree.values())
-    mira = mira_edges(slug) or Counter()
+    mira, parents = mira_edges(slug)
+    mira = mira or Counter()
+    parents = parents or {}
     oxa = oxa_edges(slug) or Counter()
     dg = dg_edges(slug) or Counter()
 
     mira_kept = sum(mira.values())
-    mira_core = sum(v for k, v in mira.items() if k.startswith("mira:"))
-    mira_declared = mira_kept - mira_core
+    # The gap between the tree and the export is two unlike things, and calling both "dropped"
+    # overstated the loss by twentyfold. An inverse relation is declared with `owl:inverseOf`
+    # and emitted one direction only -- MIRA's own practice, and its 942-node demo graph
+    # materialises no inverses either -- so a reader recovers it from the forward edge plus
+    # the declaration. A `*` target has nowhere to point and is genuinely lost.
+    inverse_only = {k: tree[k] for k in INVERSE_PAIRS if tree.get(k)}
+    unrepresentable = {k: v for k, v in wild.items() if v}
+    lost = sum(unrepresentable.values())
+    # Every relation keeps its own declared type. The split is what a reader who knows only
+    # core MIRA can still infer: a relation declared under `mira:supports` or `mira:opposes`
+    # tells such a reader something; one declared neutrally tells it only that an edge exists.
+    inherits = sum(v for k, v in mira.items() if parents.get(k))
+    neutral = mira_kept - inherits
     dropped = {k: v for k, v in tree.items() if k in GAPS}
-    flattened = {k: v for k, v in tree.items() if k in SUPPORTS or k in OPPOSES}
 
     return {
         "paper": slug,
         "claims": claims,
         "relations": total,
         "by_type": dict(tree.most_common()),
-        "mira": {"kept": mira_kept, "dropped": total - mira_kept,
-                 "core": mira_core, "declared": mira_declared,
-                 "edges": dict(mira), "declared_types": dropped},
+        "mira": {"kept": mira_kept, "lost": lost,
+                 "inverse_only": inverse_only, "unrepresentable": unrepresentable,
+                 "inherits_core": inherits, "neutral": neutral,
+                 "edges": dict(mira.most_common()), "parents": parents,
+                 "declared_types": dropped},
         "oxa": {"kept": sum(oxa.values()), "edges": dict(oxa.most_common())},
         "dg": {"kept": sum(dg.values()), "edges": dict(dg.most_common())},
-        "flattened": flattened,
         "verification": dict(verif.most_common()),
     }
 
@@ -174,14 +224,11 @@ def markdown(r):
          "| Relation | In the tree | MIRA | OXA | Discourse Graphs |",
          "|---|---:|---|---|---|"]
 
-    oxa_by_rel = r["oxa"]["edges"]
+    parents = r["mira"]["parents"]
     for rel, n in r["by_type"].items():
-        if rel in GAPS:
-            mira_cell = f"declared `haak:{rel}`"
-        elif rel in SUPPORTS:
-            mira_cell = "→ supports"
-        else:
-            mira_cell = "→ opposes"
+        p = parents.get(rel)
+        mira_cell = (f"`haak:{rel}`, under `{p}`" if p else
+                     f"`haak:{rel}`, neutral" if rel in parents else "—")
         oxa_cell = "kept" if r["oxa"]["kept"] else "—"
         dg_cell = "kept" if rel not in GAPS and r["dg"]["kept"] else (
             "dropped" if rel in GAPS else "—")
@@ -189,30 +236,52 @@ def markdown(r):
 
     L += ["", "## What MIRA has no predicate for — and what happens instead", ""]
     if r["mira"]["declared_types"]:
-        L.append(f"**{r['mira']['declared']} of {r['relations']} relations "
-                 f"({round(100 * r['mira']['declared'] / max(r['relations'], 1))}%) fall outside "
-                 f"`supports` and `opposes`.** They are not dropped and not flattened: MIRA "
-                 f"imports a Discourse Graphs base schema in which relations are definable, so "
-                 f"each is declared in the document as a `RelationDef` with a domain, a range "
-                 f"and a description, then used as a predicate.")
+        neutral = r["mira"]["neutral"]
+        L.append(f"**{neutral} of {r['relations']} relations "
+                 f"({round(100 * neutral / max(r['relations'], 1))}%) are neither support nor "
+                 f"opposition.** They are not dropped and not flattened. MIRA imports a "
+                 f"Discourse Graphs base schema in which relations are definable, and its "
+                 f"`AbstractRelationDef` is a neutral root — it carries no supporting or "
+                 f"opposing commitment — so each is declared in the document with a domain, a "
+                 f"range and a description, and the edges are typed by that declaration.")
         L.append("")
         for k, v in sorted(r["mira"]["declared_types"].items(), key=lambda x: -x[1]):
             L.append(f"- `haak:{k}` ({v}) — {GAPS[k]}")
         L.append("")
-        L.append("A reader that knows only core MIRA still gets every node and every "
-                 "supports/opposes edge. One that follows the declarations gets the rest with "
-                 "stated semantics. Flattening these into `supports` would have been worse "
-                 "than dropping them: it would assert that a boundary condition is evidence "
-                 "*for* the claim it limits.")
+        L.append("Declaring them under `mira:supports` would have been worse than dropping "
+                 "them: it would assert that a boundary condition is evidence *for* the claim "
+                 "it limits, which reverses the meaning.")
     else:
         L.append("Nothing: this paper uses only relations core MIRA already names.")
 
-    L += ["", "## What MIRA flattens", "",
-          "`tests`, `confirms`, `validates`, `extends` and `replicates` all become "
-          "`mira:supports`; `contradicts`, `rules-out` and `dissociates-with` all become "
-          "`mira:opposes`. The relation survives; the reason it was drawn does not.", ""]
-    for k, v in sorted(r["flattened"].items(), key=lambda x: -x[1]):
-        L.append(f"- `{k}` ({v})")
+    L += ["", "## What a reader who knows only core MIRA sees", "",
+          f"Every relation keeps its own type — nothing is flattened into `supports`. "
+          f"{r['mira']['inherits_core']} of the {r['mira']['kept']} edges are declared "
+          f"under `mira:supports` or `mira:opposes`, so a reader that follows only those two "
+          f"still gets their direction; the reason the edge was drawn is in the declaration "
+          f"rather than lost.", ""]
+    for k, v in sorted(r["mira"]["edges"].items(), key=lambda x: -x[1]):
+        p = parents.get(k)
+        L.append(f"- `{k}` ({v}) — {'under `' + p + '`' if p else 'neutral'}")
+
+    L += ["", "## What MIRA genuinely cannot carry", ""]
+    if r["mira"]["inverse_only"]:
+        n = sum(r["mira"]["inverse_only"].values())
+        L.append(f"{n} `derived-from` relations are not emitted as edges. This is not loss: "
+                 f"`derived-from` is declared `owl:inverseOf` `entails`, and MIRA never "
+                 f"materialises the reverse direction — its own 942-node demo graph emits no "
+                 f"inverse edges either. A reader recovers each one from the forward edge and "
+                 f"the declaration.")
+        L.append("")
+    if r["mira"]["unrepresentable"]:
+        n = r["mira"]["lost"]
+        L.append(f"**{n} relations are lost.** They target `*` — the claim constrains the "
+                 f"paper as a whole rather than another claim. `scopes` has `mira:Claim` as "
+                 f"its range and MIRA has no paper-level node, so no edge is emitted and "
+                 f"none is invented. The paper's `gap-report.md` names them.")
+    else:
+        L.append("Nothing. Every relation in this paper reaches the export, either as an "
+                 "edge or as the declared inverse of one.")
 
     L += ["", "## What no format carries", "",
           "Verification — that a claim was checked, by what code, against what deposited "
@@ -253,9 +322,10 @@ def main():
         open(os.path.join(EXPORTS, f"{slug}.formats.md"), "w", encoding="utf-8").write(markdown(r))
         open(os.path.join(EXPORTS, f"{slug}.formats.json"), "w", encoding="utf-8").write(
             json.dumps(r, indent=2) + "\n")
-        pct = round(100 * r["mira"]["dropped"] / max(r["relations"], 1))
-        print(f"  {slug:38} {r['relations']:>4} relations · MIRA drops {r['mira']['dropped']:>3} "
-              f"({pct:>2}%) · OXA {r['oxa']['kept']:>3} · DG {r['dg']['kept']:>3}")
+        inv = sum(r["mira"]["inverse_only"].values())
+        print(f"  {slug:38} {r['relations']:>4} relations · MIRA loses "
+              f"{r['mira']['lost']:>2} ({inv:>2} inverse-only) · "
+              f"OXA {r['oxa']['kept']:>3} · DG {r['dg']['kept']:>3}")
     return 0
 
 

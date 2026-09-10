@@ -2,442 +2,540 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "dgb": "https://mira.science/schema/discoursegraphs_base#",
       "haak": "https://haak.world/schema/claim#",
-      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-      "dct": "http://purl.org/dc/terms/"
+      "dgb": "https://discoursegraphs.com/schema/dg_base#",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "dct": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "onProperty": {
+        "@id": "owl:onProperty",
+        "@type": "@id"
+      },
+      "hasValue": {
+        "@id": "owl:hasValue",
+        "@type": "@id"
+      }
     }
   ],
   "@graph": [
     {
-      "@id": "haak:derived-from",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+      "@id": "haak:agent/elife-claim-trees",
+      "@type": "UserAccount",
+      "accountName": "elife-claim-trees pipeline"
     },
     {
-      "@id": "haak:entails",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+      "@id": "haak:type/Claim",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Claim"
+      ],
+      "label": "Claim",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:interprets",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Evidence",
-      "dct:description": "The subject offers a theoretical reading of the object result."
+      "@id": "haak:type/Evidence",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Evidence"
+      ],
+      "label": "Evidence",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:requires",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+      "@id": "haak:type/Protocol",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Protocol"
+      ],
+      "label": "Protocol",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:scopes",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+      "@id": "haak:reldef/derived_from",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/derived_from"
+        }
+      ],
+      "label": "derived-from",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z",
+      "inverseOf": "haak:reldef/entails"
+    },
+    {
+      "@id": "haak:reldef/derived_from/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/derived_from",
+        "dgb:RelationInstance"
+      ],
+      "label": "derived-from",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim was derived from the destination claim; the inverse of entails."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/dissociates_with",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/dissociates_with"
+        }
+      ],
+      "label": "dissociates-with",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/dissociates_with/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/dissociates_with",
+        "dgb:RelationInstance"
+      ],
+      "label": "dissociates-with",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source result separates two things the destination claim joins."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/entails"
+        }
+      ],
+      "label": "entails",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/entails",
+        "dgb:RelationInstance"
+      ],
+      "label": "entails",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/interprets",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/interprets"
+        }
+      ],
+      "label": "interprets",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/interprets/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Evidence",
+      "subClassOf": [
+        "haak:reldef/interprets",
+        "dgb:RelationInstance"
+      ],
+      "label": "interprets",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim offers a theoretical reading of the destination result."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/requires"
+        }
+      ],
+      "label": "requires",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/requires",
+        "dgb:RelationInstance"
+      ],
+      "label": "requires",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/supports"
+        }
+      ],
+      "label": "supports",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/supports",
+        "dgb:RelationInstance"
+      ],
+      "label": "supports",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim provides support for the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/tests",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/tests"
+        }
+      ],
+      "label": "tests",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/tests/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/tests",
+        "dgb:RelationInstance"
+      ],
+      "label": "tests",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence was gathered to test the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
       "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that perisomatic and distal dendritic inhibition serve distinct computational roles in layer 5 pyramidal neurons: perisomatic inhibition principally regulates somatic action potential generation (gain and threshold of axonal output), while distal dendritic inhibition principally regulates dendritic spike incidence and the temporal coupling of dendritic spikes to somatic APs?"
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that perisomatic and distal dendritic inhibition serve distinct computational roles in layer 5 pyramidal neurons: perisomatic inhibition principally regulates somatic action potential generation (gain and threshold of axonal output), while distal dendritic inhibition principally regulates dendritic spike incidence and the temporal coupling of dendritic spikes to somatic APs?"
+      }
     },
     {
       "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that the optimal frequency of rhythmic inhibition for modulating a given dendritic computation is determined by matching the rhythm's cycle period to the intrinsic timescale of the spike process at the target compartment: fast (gamma) for perisomatic Na+/AP processes, slow (beta) for distal Ca²⁺/NMDA dendritic spike processes?"
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that the optimal frequency of rhythmic inhibition for modulating a given dendritic computation is determined by matching the rhythm's cycle period to the intrinsic timescale of the spike process at the target compartment: fast (gamma) for perisomatic Na+/AP processes, slow (beta) for distal Ca²⁺/NMDA dendritic spike processes?"
+      }
     },
     {
       "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
       "@type": "mira:Evidence",
-      "schema:name": "beta-bidirectional-dendritic-control",
-      "schema:description": "Beta-frequency rhythms at distal dendritic locations produce bidirectional control of dendritic spike probability: enhanced dendritic spike occurrence during inhibitory troughs and suppressed occurrence during inhibitory peaks within the same oscillatory cycle.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "beta-bidirectional-dendritic-control",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Beta-frequency rhythms at distal dendritic locations produce bidirectional control of dendritic spike probability: enhanced dendritic spike occurrence during inhibitory troughs and suppressed occurrence during inhibitory peaks within the same oscillatory cycle."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — phase-binned dendritic spike analysis"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
-      },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
-        },
-        {
-          "@id": "urn:uuid:9c3d1464-1a51-4381-a466-fcb1ca6fca65"
-        },
-        {
-          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
+      }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
       "@type": "mira:Evidence",
-      "schema:name": "beta-gates-distal-apical-inputs",
-      "schema:description": "Beta-frequency rhythmic inhibition at distal dendritic locations gates the transmission of clustered synaptic inputs from apical dendrites to somatic output: inputs arriving during inhibitory troughs are transmitted, while inputs arriving during peaks are blocked.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "beta-gates-distal-apical-inputs",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Beta-frequency rhythmic inhibition at distal dendritic locations gates the transmission of clustered synaptic inputs from apical dendrites to somatic output: inputs arriving during inhibitory troughs are transmitted, while inputs arriving during peaks are blocked."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — clustered input gating experiment"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf"
-        },
-        {
-          "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
-        },
-        {
-          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21"
-      },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
-        },
-        {
-          "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
-        },
-        {
-          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
+      }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
       "@type": "mira:Evidence",
-      "schema:name": "beta-optimal-distal-dendritic-entrainment",
-      "schema:description": "In a frequency sweep from 0.5 to 80 Hz, beta frequencies near 20 Hz produce the strongest phase-dependent entrainment of dendritic Ca²⁺ and NMDA spike onsets by distal rhythmic inhibition, as measured by Pairwise Phase Consistency.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "beta-optimal-distal-dendritic-entrainment",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "In a frequency sweep from 0.5 to 80 Hz, beta frequencies near 20 Hz produce the strongest phase-dependent entrainment of dendritic Ca²⁺ and NMDA spike onsets by distal rhythmic inhibition, as measured by Pairwise Phase Consistency."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — frequency sweep, Pairwise Phase Consistency (PPC)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:d0c2d8d6-82ea-46a0-928f-16e6c33d36a8"
-        },
-        {
-          "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
-        },
-        {
-          "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
-        },
-        {
-          "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
-        },
-        {
-          "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
-        }
-      ],
-      "haak:requires": {
-        "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
       }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:34c1a5fd-714f-4cde-ba8b-1c230af108db",
       "@type": "mira:Evidence",
-      "schema:name": "burst-effects-emerge-first-cycles",
-      "schema:description": "Phase-dependent modulation of dendritic spike probability and action potential timing by oscillatory bursts of beta or gamma emerges within the first few cycles of the burst, indicating rapid engagement of the inhibitory control mechanism.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "burst-effects-emerge-first-cycles",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Phase-dependent modulation of dendritic spike probability and action potential timing by oscillatory bursts of beta or gamma emerges within the first few cycles of the burst, indicating rapid engagement of the inhibitory control mechanism."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — burst onset analysis"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
-        },
-        {
-          "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
-        },
-        {
-          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
+      }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:9c3d1464-1a51-4381-a466-fcb1ca6fca65",
       "@type": "mira:Evidence",
-      "schema:name": "ca-spikes-couple-20ms-before-ap",
-      "schema:description": "Ca²⁺ spikes in apical tuft dendrites precede somatic action potentials by approximately 20 ms in spike-triggered averages, with the strongest coupling in apical compartments distal from the soma.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "ca-spikes-couple-20ms-before-ap",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Ca²⁺ spikes in apical tuft dendrites precede somatic action potentials by approximately 20 ms in spike-triggered averages, with the strongest coupling in apical compartments distal from the soma."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "spike-triggered average analysis"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
-        },
-        {
-          "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
-        }
-      ],
-      "haak:requires": {
-        "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
       }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
       "@type": "mira:Evidence",
-      "schema:name": "distal-inhib-drops-firing-02hz",
-      "schema:description": "Doubling the strength of distal dendritic inhibition reduces somatic firing rate from a baseline of approximately 5.5 Hz to approximately 0.2 Hz, primarily by suppressing the occurrence of dendritic Ca²⁺ and NMDA spikes rather than by directly raising AP threshold.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "distal-inhib-drops-firing-02hz",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Doubling the strength of distal dendritic inhibition reduces somatic firing rate from a baseline of approximately 5.5 Hz to approximately 0.2 Hz, primarily by suppressing the occurrence of dendritic Ca²⁺ and NMDA spikes rather than by directly raising AP threshold."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — inhibition magnitude sweep"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:f924648f-6829-41cb-9722-0bd97fec6ad3"
-        },
-        {
-          "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
-        },
-        {
-          "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
-        },
-        {
-          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b"
-      },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
-        },
-        {
-          "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
+      }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:b88c89df-7f9c-4d11-9dc4-1ec829d6b413",
       "@type": "mira:Evidence",
-      "schema:name": "ei-lag-sensitivity-firing-rate",
-      "schema:description": "Varying the excitatory-inhibitory coupling lag from 4 to 500 ms has modest effects on total somatic firing rate but substantially alters which dendritic compartments contribute most to driving action potentials, demonstrating that timing shapes dendritic computation even when overall output rate is similar.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "ei-lag-sensitivity-firing-rate",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Varying the excitatory-inhibitory coupling lag from 4 to 500 ms has modest effects on total somatic firing rate but substantially alters which dendritic compartments contribute most to driving action potentials, demonstrating that timing shapes dendritic computation even when overall output rate is similar."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — E/I lag sweep"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
-        },
-        {
-          "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
+      }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
       "@type": "mira:Evidence",
-      "schema:name": "gamma-gates-proximal-basal-inputs",
-      "schema:description": "Gamma-frequency rhythmic inhibition at perisomatic locations gates the transmission of clustered synaptic inputs from proximal and basal dendrites to somatic output in a phase-dependent manner, while leaving distal apical inputs relatively unaffected.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "gamma-gates-proximal-basal-inputs",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Gamma-frequency rhythmic inhibition at perisomatic locations gates the transmission of clustered synaptic inputs from proximal and basal dendrites to somatic output in a phase-dependent manner, while leaving distal apical inputs relatively unaffected."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — clustered input gating experiment"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf"
-        },
-        {
-          "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
-        },
-        {
-          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
-      },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
-        },
-        {
-          "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b"
-        },
-        {
-          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
+      }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
       "@type": "mira:Evidence",
-      "schema:name": "gamma-optimal-perisomatic-ap-modulation",
-      "schema:description": "In a sweep across 11 frequencies from 0.5 to 80 Hz, gamma frequencies (40–80 Hz) produce the strongest phase-dependent modulation of somatic action potential voltage threshold by perisomatic rhythmic inhibition.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "gamma-optimal-perisomatic-ap-modulation",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "In a sweep across 11 frequencies from 0.5 to 80 Hz, gamma frequencies (40–80 Hz) produce the strongest phase-dependent modulation of somatic action potential voltage threshold by perisomatic rhythmic inhibition."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — perisomatic frequency sweep"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:874d0787-6f89-43fa-aa72-d183d242fd91"
-        },
-        {
-          "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b"
-        },
-        {
-          "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21"
-        },
-        {
-          "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
-        },
-        {
-          "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
-        }
-      ],
-      "haak:requires": {
-        "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
       }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
       "@type": "mira:Evidence",
-      "schema:name": "gamma-perisomatic-no-dendritic-spike-change",
-      "schema:description": "Gamma-frequency perisomatic rhythms phase-modulate action potential threshold without substantially altering overall dendritic spike rates, demonstrating functional orthogonality between the perisomatic-gamma and distal-beta inhibitory streams.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "gamma-perisomatic-no-dendritic-spike-change",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Gamma-frequency perisomatic rhythms phase-modulate action potential threshold without substantially altering overall dendritic spike rates, demonstrating functional orthogonality between the perisomatic-gamma and distal-beta inhibitory streams."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — dendritic event rate comparison"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b"
-        },
-        {
-          "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0"
-        },
-        {
-          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
-        }
-      ],
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b"
-        },
-        {
-          "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
-        },
-        {
-          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
+      }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-distinct-compartmental-roles",
-      "schema:description": "Perisomatic and distal dendritic inhibition serve distinct computational roles in layer 5 pyramidal neurons: perisomatic inhibition principally regulates somatic action potential generation (gain and threshold of axonal output), while distal dendritic inhibition principally regulates dendritic spike incidence and the temporal coupling of dendritic spikes to somatic APs.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "hypothesis-distinct-compartmental-roles",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Perisomatic and distal dendritic inhibition serve distinct computational roles in layer 5 pyramidal neurons: perisomatic inhibition principally regulates somatic action potential generation (gain and threshold of axonal output), while distal dendritic inhibition principally regulates dendritic spike incidence and the temporal coupling of dendritic spikes to somatic APs."
       },
-      "haak:entails": [
-        {
-          "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b"
-        },
-        {
-          "@id": "urn:uuid:f924648f-6829-41cb-9722-0bd97fec6ad3"
-        },
-        {
-          "@id": "urn:uuid:d8d26ce3-8c2d-4075-ad06-cf37c2fee73c"
-        },
-        {
-          "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf"
-        }
-      ],
       "mira:addresses": {
         "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d#question"
       }
@@ -445,20 +543,12 @@
     {
       "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-frequency-compartment-matching",
-      "schema:description": "The optimal frequency of rhythmic inhibition for modulating a given dendritic computation is determined by matching the rhythm's cycle period to the intrinsic timescale of the spike process at the target compartment: fast (gamma) for perisomatic Na+/AP processes, slow (beta) for distal Ca²⁺/NMDA dendritic spike processes.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "hypothesis-frequency-compartment-matching",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The optimal frequency of rhythmic inhibition for modulating a given dendritic computation is determined by matching the rhythm's cycle period to the intrinsic timescale of the spike process at the target compartment: fast (gamma) for perisomatic Na+/AP processes, slow (beta) for distal Ca²⁺/NMDA dendritic spike processes."
       },
-      "haak:entails": [
-        {
-          "@id": "urn:uuid:d0c2d8d6-82ea-46a0-928f-16e6c33d36a8"
-        },
-        {
-          "@id": "urn:uuid:874d0787-6f89-43fa-aa72-d183d242fd91"
-        }
-      ],
       "mira:addresses": {
         "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1#question"
       }
@@ -466,268 +556,1110 @@
     {
       "@id": "urn:uuid:2f988e78-8a82-41d3-a121-1e90636d3460",
       "@type": "dg:SourceDocument",
-      "schema:name": "interprets-pv-gamma-sst-beta-associations",
-      "schema:description": "Empirical work across the cortical-interneuron literature has established two correlated associations: parvalbumin-positive (PV+) fast-spiking interneurons target perisomatic compartments and are implicated in the generation and entrainment of cortical gamma rhythms (40–80 Hz), while somatostatin-positive (SST+) interneurons target distal dendritic compartments and are preferentially associated with beta rhythms (12–35 Hz). These are literature claims about anatomical targeting patterns and their correlation with specific oscillatory bands, not results of the present paper.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1038/nature08002"
+      "title": "interprets-pv-gamma-sst-beta-associations",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Empirical work across the cortical-interneuron literature has established two correlated associations: parvalbumin-positive (PV+) fast-spiking interneurons target perisomatic compartments and are implicated in the generation and entrainment of cortical gamma rhythms (40–80 Hz), while somatostatin-positive (SST+) interneurons target distal dendritic compartments and are preferentially associated with beta rhythms (12–35 Hz). These are literature claims about anatomical targeting patterns and their correlation with specific oscillatory bands, not results of the present paper."
       }
     },
     {
       "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
       "@type": "mira:Claim",
-      "schema:name": "l5-model-single-cell-scope",
-      "schema:description": "All results derive from a single-cell compartmental model of one layer 5 pyramidal neuron; no network dynamics, recurrent excitation, or population-level inhibitory effects are simulated, and all firing rate effects are for a single isolated neuron receiving naturalistic presynaptic drive.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
-      },
-      "haak:scopes": {
-        "schema:name": "*"
+      "title": "l5-model-single-cell-scope",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "All results derive from a single-cell compartmental model of one layer 5 pyramidal neuron; no network dynamics, recurrent excitation, or population-level inhibitory effects are simulated, and all firing rate effects are for a single isolated neuron receiving naturalistic presynaptic drive."
       }
     },
     {
       "@id": "urn:uuid:fb9ac5da-3094-4370-b277-fe34853856b1",
       "@type": "mira:Evidence",
-      "schema:name": "na-spikes-couple-2to3ms-before-ap",
-      "schema:description": "Na+ dendritic spikes in proximal compartments peak in spike-triggered averages 2–3 ms before somatic action potentials, with coupling strength declining with electrotonic distance from the soma.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "na-spikes-couple-2to3ms-before-ap",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Na+ dendritic spikes in proximal compartments peak in spike-triggered averages 2–3 ms before somatic action potentials, with coupling strength declining with electrotonic distance from the soma."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "spike-triggered average analysis"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c"
-      },
-      "haak:requires": {
-        "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
       }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c",
       "@type": "mira:Claim",
-      "schema:name": "naturalistic-drive-parameterization",
-      "schema:description": "The model is driven by ~26,000 excitatory and ~4,500 inhibitory synapses with parameters (release probability, PSC amplitude, temporal kinetics) taken from published experimental measurements, producing a baseline somatic firing rate of approximately 5.3 Hz that matches typical in vivo layer 5 firing rates; no sensitivity analysis over these synaptic parameter choices is presented.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
-      },
-      "haak:scopes": {
-        "schema:name": "*"
+      "title": "naturalistic-drive-parameterization",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The model is driven by ~26,000 excitatory and ~4,500 inhibitory synapses with parameters (release probability, PSC amplitude, temporal kinetics) taken from published experimental measurements, producing a baseline somatic firing rate of approximately 5.3 Hz that matches typical in vivo layer 5 firing rates; no sensitivity analysis over these synaptic parameter choices is presented."
       }
     },
     {
       "@id": "urn:uuid:920d7adb-9ab1-4bc0-8185-de3e5de3a71e",
       "@type": "mira:Evidence",
-      "schema:name": "nmda-spikes-couple-25ms-before-ap",
-      "schema:description": "NMDA spikes show peak spike-triggered average approximately 25 ms before somatic action potentials, reflecting their slower kinetics relative to Na+ spikes.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "nmda-spikes-couple-25ms-before-ap",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "NMDA spikes show peak spike-triggered average approximately 25 ms before somatic action potentials, reflecting their slower kinetics relative to Na+ spikes."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "spike-triggered average analysis"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
-      },
-      "haak:requires": {
-        "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
       }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
       "@type": "mira:Evidence",
-      "schema:name": "perisomatic-inhib-drops-firing-07hz",
-      "schema:description": "Doubling perisomatic inhibition reduces somatic firing from approximately 5.5 Hz to approximately 0.7 Hz by elevating action potential voltage threshold, while dendritic spike rates are relatively preserved.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "perisomatic-inhib-drops-firing-07hz",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Doubling perisomatic inhibition reduces somatic firing from approximately 5.5 Hz to approximately 0.7 Hz by elevating action potential voltage threshold, while dendritic spike rates are relatively preserved."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — inhibition magnitude sweep"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b"
-        },
-        {
-          "@id": "urn:uuid:702332b6-1ba1-40b9-9319-f9f3053d59dd"
-        },
-        {
-          "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b"
-        },
-        {
-          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c"
-      },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
-        },
-        {
-          "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
+      }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:702332b6-1ba1-40b9-9319-f9f3053d59dd",
       "@type": "mira:Evidence",
-      "schema:name": "perisomatic-inhib-subtractive-divisive",
-      "schema:description": "Perisomatic inhibition reduces both the baseline firing rate (subtractive effect) and the slope of the input-output relationship (divisive effect), thereby compressing the neuron's dynamic range rather than merely shifting its operating point.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
+      "title": "perisomatic-inhib-subtractive-divisive",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Perisomatic inhibition reduces both the baseline firing rate (subtractive effect) and the slope of the input-output relationship (divisive effect), thereby compressing the neuron's dynamic range rather than merely shifting its operating point."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "compartmental modelling — I/O curve analysis"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.7554/eLife.95562",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:d8d26ce3-8c2d-4075-ad06-cf37c2fee73c"
-        },
-        {
-          "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
-        }
-      ],
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b"
-        },
-        {
-          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
-        }
-      ]
+      "observationBase": {
+        "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8"
+      }
+    },
+    {
+      "@id": "https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:d0c2d8d6-82ea-46a0-928f-16e6c33d36a8",
       "@type": "mira:Claim",
-      "schema:name": "prediction-beta-optimal-distal",
-      "schema:description": "If the optimal frequency of rhythmic inhibition at a compartment is set by matching the rhythm period to the local spike timescale, then distal inhibition — where apical Ca²⁺ and NMDA spikes lead the soma by ~20 ms and ~25 ms respectively — should be maximally effective at beta frequencies (~20 Hz), whose period (~50 ms) matches the dendritic-spike lead time.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
-      },
-      "haak:derived-from": {
-        "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
+      "title": "prediction-beta-optimal-distal",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If the optimal frequency of rhythmic inhibition at a compartment is set by matching the rhythm period to the local spike timescale, then distal inhibition — where apical Ca²⁺ and NMDA spikes lead the soma by ~20 ms and ~25 ms respectively — should be maximally effective at beta frequencies (~20 Hz), whose period (~50 ms) matches the dendritic-spike lead time."
       }
     },
     {
       "@id": "urn:uuid:f924648f-6829-41cb-9722-0bd97fec6ad3",
       "@type": "mira:Claim",
-      "schema:name": "prediction-distal-dendritic-spike-mechanism",
-      "schema:description": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then doubling distal dendritic inhibition should reduce somatic firing primarily by suppressing apical Ca²⁺ and NMDA dendritic spikes, with little change in the somatic AP voltage threshold.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
-      },
-      "haak:derived-from": {
-        "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+      "title": "prediction-distal-dendritic-spike-mechanism",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then doubling distal dendritic inhibition should reduce somatic firing primarily by suppressing apical Ca²⁺ and NMDA dendritic spikes, with little change in the somatic AP voltage threshold."
       }
     },
     {
       "@id": "urn:uuid:874d0787-6f89-43fa-aa72-d183d242fd91",
       "@type": "mira:Claim",
-      "schema:name": "prediction-gamma-optimal-perisomatic",
-      "schema:description": "If the optimal frequency of rhythmic inhibition at a compartment is set by matching the rhythm period to the local spike timescale, then perisomatic inhibition — where Na+ spikes lead the soma by 2–3 ms — should be maximally effective at gamma frequencies (40–80 Hz), whose periods are commensurate with the 2–3 ms timescale.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
-      },
-      "haak:derived-from": {
-        "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
+      "title": "prediction-gamma-optimal-perisomatic",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If the optimal frequency of rhythmic inhibition at a compartment is set by matching the rhythm period to the local spike timescale, then perisomatic inhibition — where Na+ spikes lead the soma by 2–3 ms — should be maximally effective at gamma frequencies (40–80 Hz), whose periods are commensurate with the 2–3 ms timescale."
       }
     },
     {
       "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf",
       "@type": "mira:Claim",
-      "schema:name": "prediction-orthogonal-input-gating",
-      "schema:description": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then beta-frequency distal inhibition should gate clustered apical inputs phase-dependently (via dendritic spike control), gamma-frequency perisomatic inhibition should gate clustered proximal/basal inputs phase-dependently (via threshold modulation), and the two gating regimes should be largely independent of each other.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
-      },
-      "haak:derived-from": {
-        "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+      "title": "prediction-orthogonal-input-gating",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then beta-frequency distal inhibition should gate clustered apical inputs phase-dependently (via dendritic spike control), gamma-frequency perisomatic inhibition should gate clustered proximal/basal inputs phase-dependently (via threshold modulation), and the two gating regimes should be largely independent of each other."
       }
     },
     {
       "@id": "urn:uuid:d8d26ce3-8c2d-4075-ad06-cf37c2fee73c",
       "@type": "mira:Claim",
-      "schema:name": "prediction-perisomatic-input-output-shaping",
-      "schema:description": "If perisomatic inhibition principally regulates somatic action potential generation, then it should reshape the somatic input-output curve through both subtractive (threshold shift) and divisive (gain reduction) effects, rather than producing a pure translation of the operating point.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
-      },
-      "haak:derived-from": {
-        "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+      "title": "prediction-perisomatic-input-output-shaping",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If perisomatic inhibition principally regulates somatic action potential generation, then it should reshape the somatic input-output curve through both subtractive (threshold shift) and divisive (gain reduction) effects, rather than producing a pure translation of the operating point."
       }
     },
     {
       "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b",
       "@type": "mira:Claim",
-      "schema:name": "prediction-perisomatic-threshold-mechanism",
-      "schema:description": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then doubling perisomatic inhibition should reduce somatic firing primarily by raising the action potential voltage threshold, while leaving apical Ca²⁺ and NMDA dendritic spike rates largely intact.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
-      },
-      "haak:derived-from": {
-        "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+      "title": "prediction-perisomatic-threshold-mechanism",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then doubling perisomatic inhibition should reduce somatic firing primarily by raising the action potential voltage threshold, while leaving apical Ca²⁺ and NMDA dendritic spike rates largely intact."
       }
     },
     {
       "@id": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
       "@type": "mira:Claim",
-      "schema:name": "pv-gamma-sst-beta-correspondence",
-      "schema:description": "The model provides mechanistic grounding for the empirical association of parvalbumin-positive interneurons with gamma rhythms and somatostatin-positive interneurons with beta rhythms: PV+ neurons target perisomatic locations where gamma is optimal for AP threshold modulation, while SST+ neurons target distal dendrites where beta is optimal for dendritic spike entrainment.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.7554/eLife.95562"
-      },
-      "haak:interprets": [
-        {
-          "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
-        },
-        {
-          "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
-        },
-        {
-          "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
-        },
-        {
-          "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21"
-        },
-        {
-          "@id": "urn:uuid:2f988e78-8a82-41d3-a121-1e90636d3460"
-        }
-      ]
+      "title": "pv-gamma-sst-beta-correspondence",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The model provides mechanistic grounding for the empirical association of parvalbumin-positive interneurons with gamma rhythms and somatostatin-positive interneurons with beta rhythms: PV+ neurons target perisomatic locations where gamma is optimal for AP threshold modulation, while SST+ neurons target distal dendrites where beta is optimal for dendritic spike entrainment."
+      }
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/1",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
+      "destination": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "title": "[[beta-bidirectional-dendritic-control]] -requires-> [[beta-optimal-distal-dendritic-entrainment]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/2",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
+      "destination": "urn:uuid:9c3d1464-1a51-4381-a466-fcb1ca6fca65",
+      "title": "[[beta-bidirectional-dendritic-control]] -requires-> [[ca-spikes-couple-20ms-before-ap]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/3",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[beta-bidirectional-dendritic-control]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/4",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
+      "destination": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "title": "[[beta-bidirectional-dendritic-control]] -supports-> [[beta-gates-distal-apical-inputs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/5",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "destination": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "title": "[[beta-gates-distal-apical-inputs]] -dissociates-with-> [[gamma-gates-proximal-basal-inputs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/6",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "destination": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf",
+      "title": "[[beta-gates-distal-apical-inputs]] -tests-> [[prediction-orthogonal-input-gating]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/7",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "destination": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
+      "title": "[[beta-gates-distal-apical-inputs]] -requires-> [[beta-bidirectional-dendritic-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/8",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "destination": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "title": "[[beta-gates-distal-apical-inputs]] -requires-> [[beta-optimal-distal-dendritic-entrainment]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/9",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[beta-gates-distal-apical-inputs]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/10",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "destination": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "title": "[[beta-gates-distal-apical-inputs]] -supports-> [[pv-gamma-sst-beta-correspondence]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/11",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "destination": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "title": "[[beta-gates-distal-apical-inputs]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/12",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "destination": "urn:uuid:d0c2d8d6-82ea-46a0-928f-16e6c33d36a8",
+      "title": "[[beta-optimal-distal-dendritic-entrainment]] -tests-> [[prediction-beta-optimal-distal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/13",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[beta-optimal-distal-dendritic-entrainment]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/14",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "destination": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
+      "title": "[[beta-optimal-distal-dendritic-entrainment]] -supports-> [[beta-bidirectional-dendritic-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/15",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "destination": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "title": "[[beta-optimal-distal-dendritic-entrainment]] -supports-> [[beta-gates-distal-apical-inputs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/16",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "destination": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "title": "[[beta-optimal-distal-dendritic-entrainment]] -supports-> [[pv-gamma-sst-beta-correspondence]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/17",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "destination": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1",
+      "title": "[[beta-optimal-distal-dendritic-entrainment]] -supports-> [[hypothesis-frequency-compartment-matching]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/18",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:34c1a5fd-714f-4cde-ba8b-1c230af108db",
+      "destination": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
+      "title": "[[burst-effects-emerge-first-cycles]] -requires-> [[beta-bidirectional-dendritic-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/19",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:34c1a5fd-714f-4cde-ba8b-1c230af108db",
+      "destination": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "title": "[[burst-effects-emerge-first-cycles]] -requires-> [[gamma-optimal-perisomatic-ap-modulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/20",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:34c1a5fd-714f-4cde-ba8b-1c230af108db",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[burst-effects-emerge-first-cycles]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/21",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:9c3d1464-1a51-4381-a466-fcb1ca6fca65",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[ca-spikes-couple-20ms-before-ap]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/22",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:9c3d1464-1a51-4381-a466-fcb1ca6fca65",
+      "destination": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
+      "title": "[[ca-spikes-couple-20ms-before-ap]] -supports-> [[beta-bidirectional-dendritic-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/23",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:9c3d1464-1a51-4381-a466-fcb1ca6fca65",
+      "destination": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "title": "[[ca-spikes-couple-20ms-before-ap]] -supports-> [[beta-gates-distal-apical-inputs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/24",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "destination": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "title": "[[distal-inhib-drops-firing-02hz]] -dissociates-with-> [[perisomatic-inhib-drops-firing-07hz]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/25",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "destination": "urn:uuid:f924648f-6829-41cb-9722-0bd97fec6ad3",
+      "title": "[[distal-inhib-drops-firing-02hz]] -tests-> [[prediction-distal-dendritic-spike-mechanism]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/26",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[distal-inhib-drops-firing-02hz]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/27",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "destination": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c",
+      "title": "[[distal-inhib-drops-firing-02hz]] -requires-> [[naturalistic-drive-parameterization]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/28",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "destination": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f",
+      "title": "[[distal-inhib-drops-firing-02hz]] -supports-> [[beta-bidirectional-dendritic-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/29",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "destination": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "title": "[[distal-inhib-drops-firing-02hz]] -supports-> [[beta-gates-distal-apical-inputs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/30",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "destination": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "title": "[[distal-inhib-drops-firing-02hz]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/31",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:b88c89df-7f9c-4d11-9dc4-1ec829d6b413",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[ei-lag-sensitivity-firing-rate]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/32",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:b88c89df-7f9c-4d11-9dc4-1ec829d6b413",
+      "destination": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c",
+      "title": "[[ei-lag-sensitivity-firing-rate]] -requires-> [[naturalistic-drive-parameterization]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/33",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "destination": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "title": "[[gamma-gates-proximal-basal-inputs]] -dissociates-with-> [[beta-gates-distal-apical-inputs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/34",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "destination": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf",
+      "title": "[[gamma-gates-proximal-basal-inputs]] -tests-> [[prediction-orthogonal-input-gating]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/35",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "destination": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "title": "[[gamma-gates-proximal-basal-inputs]] -requires-> [[gamma-optimal-perisomatic-ap-modulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/36",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "destination": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "title": "[[gamma-gates-proximal-basal-inputs]] -requires-> [[gamma-perisomatic-no-dendritic-spike-change]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/37",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[gamma-gates-proximal-basal-inputs]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/38",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "destination": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "title": "[[gamma-gates-proximal-basal-inputs]] -supports-> [[pv-gamma-sst-beta-correspondence]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/39",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "destination": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "title": "[[gamma-gates-proximal-basal-inputs]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/40",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "destination": "urn:uuid:874d0787-6f89-43fa-aa72-d183d242fd91",
+      "title": "[[gamma-optimal-perisomatic-ap-modulation]] -tests-> [[prediction-gamma-optimal-perisomatic]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/41",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[gamma-optimal-perisomatic-ap-modulation]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/42",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "destination": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "title": "[[gamma-optimal-perisomatic-ap-modulation]] -supports-> [[gamma-perisomatic-no-dendritic-spike-change]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/43",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "destination": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "title": "[[gamma-optimal-perisomatic-ap-modulation]] -supports-> [[gamma-gates-proximal-basal-inputs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/44",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "destination": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "title": "[[gamma-optimal-perisomatic-ap-modulation]] -supports-> [[pv-gamma-sst-beta-correspondence]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/45",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "destination": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1",
+      "title": "[[gamma-optimal-perisomatic-ap-modulation]] -supports-> [[hypothesis-frequency-compartment-matching]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/46",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "destination": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b",
+      "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -tests-> [[prediction-perisomatic-threshold-mechanism]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/47",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "destination": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -requires-> [[perisomatic-inhib-drops-firing-07hz]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/48",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "destination": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -requires-> [[gamma-optimal-perisomatic-ap-modulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/49",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/50",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "destination": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -supports-> [[pv-gamma-sst-beta-correspondence]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/51",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "destination": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/52",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "destination": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b",
+      "title": "[[hypothesis-distinct-compartmental-roles]] -entails-> [[prediction-perisomatic-threshold-mechanism]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/53",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "destination": "urn:uuid:f924648f-6829-41cb-9722-0bd97fec6ad3",
+      "title": "[[hypothesis-distinct-compartmental-roles]] -entails-> [[prediction-distal-dendritic-spike-mechanism]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/54",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "destination": "urn:uuid:d8d26ce3-8c2d-4075-ad06-cf37c2fee73c",
+      "title": "[[hypothesis-distinct-compartmental-roles]] -entails-> [[prediction-perisomatic-input-output-shaping]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/55",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "destination": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf",
+      "title": "[[hypothesis-distinct-compartmental-roles]] -entails-> [[prediction-orthogonal-input-gating]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/56",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1",
+      "destination": "urn:uuid:d0c2d8d6-82ea-46a0-928f-16e6c33d36a8",
+      "title": "[[hypothesis-frequency-compartment-matching]] -entails-> [[prediction-beta-optimal-distal]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/57",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1",
+      "destination": "urn:uuid:874d0787-6f89-43fa-aa72-d183d242fd91",
+      "title": "[[hypothesis-frequency-compartment-matching]] -entails-> [[prediction-gamma-optimal-perisomatic]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/58",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:fb9ac5da-3094-4370-b277-fe34853856b1",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[na-spikes-couple-2to3ms-before-ap]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/59",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:fb9ac5da-3094-4370-b277-fe34853856b1",
+      "destination": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "title": "[[na-spikes-couple-2to3ms-before-ap]] -supports-> [[distal-inhib-drops-firing-02hz]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/60",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:920d7adb-9ab1-4bc0-8185-de3e5de3a71e",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[nmda-spikes-couple-25ms-before-ap]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/61",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:920d7adb-9ab1-4bc0-8185-de3e5de3a71e",
+      "destination": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "title": "[[nmda-spikes-couple-25ms-before-ap]] -supports-> [[beta-optimal-distal-dendritic-entrainment]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/62",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "destination": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "title": "[[perisomatic-inhib-drops-firing-07hz]] -dissociates-with-> [[distal-inhib-drops-firing-02hz]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/63",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "destination": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b",
+      "title": "[[perisomatic-inhib-drops-firing-07hz]] -tests-> [[prediction-perisomatic-threshold-mechanism]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/64",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[perisomatic-inhib-drops-firing-07hz]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/65",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "destination": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c",
+      "title": "[[perisomatic-inhib-drops-firing-07hz]] -requires-> [[naturalistic-drive-parameterization]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/66",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "destination": "urn:uuid:702332b6-1ba1-40b9-9319-f9f3053d59dd",
+      "title": "[[perisomatic-inhib-drops-firing-07hz]] -supports-> [[perisomatic-inhib-subtractive-divisive]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/67",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "destination": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "title": "[[perisomatic-inhib-drops-firing-07hz]] -supports-> [[gamma-perisomatic-no-dendritic-spike-change]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/68",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "destination": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "title": "[[perisomatic-inhib-drops-firing-07hz]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/69",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:702332b6-1ba1-40b9-9319-f9f3053d59dd",
+      "destination": "urn:uuid:d8d26ce3-8c2d-4075-ad06-cf37c2fee73c",
+      "title": "[[perisomatic-inhib-subtractive-divisive]] -tests-> [[prediction-perisomatic-input-output-shaping]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/70",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:702332b6-1ba1-40b9-9319-f9f3053d59dd",
+      "destination": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b",
+      "title": "[[perisomatic-inhib-subtractive-divisive]] -requires-> [[perisomatic-inhib-drops-firing-07hz]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/71",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:702332b6-1ba1-40b9-9319-f9f3053d59dd",
+      "destination": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1",
+      "title": "[[perisomatic-inhib-subtractive-divisive]] -requires-> [[l5-model-single-cell-scope]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/72",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:702332b6-1ba1-40b9-9319-f9f3053d59dd",
+      "destination": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d",
+      "title": "[[perisomatic-inhib-subtractive-divisive]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/73",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "destination": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76",
+      "title": "[[pv-gamma-sst-beta-correspondence]] -interprets-> [[beta-optimal-distal-dendritic-entrainment]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/74",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "destination": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e",
+      "title": "[[pv-gamma-sst-beta-correspondence]] -interprets-> [[gamma-optimal-perisomatic-ap-modulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/75",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "destination": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba",
+      "title": "[[pv-gamma-sst-beta-correspondence]] -interprets-> [[beta-gates-distal-apical-inputs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/76",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "destination": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21",
+      "title": "[[pv-gamma-sst-beta-correspondence]] -interprets-> [[gamma-gates-proximal-basal-inputs]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/77",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:f22677a4-7db6-4fa1-80f6-1d08081293f0",
+      "destination": "urn:uuid:2f988e78-8a82-41d3-a121-1e90636d3460",
+      "title": "[[pv-gamma-sst-beta-correspondence]] -interprets-> [[interprets-pv-gamma-sst-beta-associations]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     }
   ]
 }

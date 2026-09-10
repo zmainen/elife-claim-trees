@@ -2,118 +2,456 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "dgb": "https://mira.science/schema/discoursegraphs_base#",
       "haak": "https://haak.world/schema/claim#",
-      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-      "dct": "http://purl.org/dc/terms/"
+      "dgb": "https://discoursegraphs.com/schema/dg_base#",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "dct": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "onProperty": {
+        "@id": "owl:onProperty",
+        "@type": "@id"
+      },
+      "hasValue": {
+        "@id": "owl:hasValue",
+        "@type": "@id"
+      }
     },
     {
-      "haak": "https://haak.world/schema/claim#"
+      "haakx": "https://haak.world/schema/claim-extended#"
     }
   ],
   "@graph": [
     {
-      "@id": "haak:derived-from",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+      "@id": "haak:agent/elife-claim-trees",
+      "@type": "UserAccount",
+      "accountName": "elife-claim-trees pipeline"
     },
     {
-      "@id": "haak:enables-method",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Evidence",
-      "rdfs:range": "mira:Protocol",
-      "dct:description": "The subject result makes the object method possible downstream."
+      "@id": "haak:type/Claim",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Claim"
+      ],
+      "label": "Claim",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:entails",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+      "@id": "haak:type/Evidence",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Evidence"
+      ],
+      "label": "Evidence",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:interprets",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Evidence",
-      "dct:description": "The subject offers a theoretical reading of the object result."
+      "@id": "haak:type/Protocol",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Protocol"
+      ],
+      "label": "Protocol",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:requires",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+      "@id": "haak:reldef/confirms",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/confirms"
+        }
+      ],
+      "label": "confirms",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:scopes",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+      "@id": "haak:reldef/confirms/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/confirms",
+        "dgb:RelationInstance"
+      ],
+      "label": "confirms",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence confirms the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/derived_from",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/derived_from"
+        }
+      ],
+      "label": "derived-from",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z",
+      "inverseOf": "haak:reldef/entails"
+    },
+    {
+      "@id": "haak:reldef/derived_from/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/derived_from",
+        "dgb:RelationInstance"
+      ],
+      "label": "derived-from",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim was derived from the destination claim; the inverse of entails."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/enables_method",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/enables_method"
+        }
+      ],
+      "label": "enables-method",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/enables_method/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Protocol",
+      "subClassOf": [
+        "haak:reldef/enables_method",
+        "dgb:RelationInstance"
+      ],
+      "label": "enables-method",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source result makes the destination method possible."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/entails"
+        }
+      ],
+      "label": "entails",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/entails",
+        "dgb:RelationInstance"
+      ],
+      "label": "entails",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/interprets",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/interprets"
+        }
+      ],
+      "label": "interprets",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/interprets/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Evidence",
+      "subClassOf": [
+        "haak:reldef/interprets",
+        "dgb:RelationInstance"
+      ],
+      "label": "interprets",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim offers a theoretical reading of the destination result."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/requires"
+        }
+      ],
+      "label": "requires",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/requires",
+        "dgb:RelationInstance"
+      ],
+      "label": "requires",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/rules_out"
+        }
+      ],
+      "label": "rules-out",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/rules_out",
+        "dgb:RelationInstance"
+      ],
+      "label": "rules-out",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence eliminates the destination claim as viable."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/scopes",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/scopes"
+        }
+      ],
+      "label": "scopes",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/scopes/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/scopes",
+        "dgb:RelationInstance"
+      ],
+      "label": "scopes",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/supports"
+        }
+      ],
+      "label": "supports",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/supports",
+        "dgb:RelationInstance"
+      ],
+      "label": "supports",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim provides support for the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/validates",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/validates"
+        }
+      ],
+      "label": "validates",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/validates/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/validates",
+        "dgb:RelationInstance"
+      ],
+      "label": "validates",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence validates the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
       "@id": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that phasic dorsal-raphe serotonin release functions as a surprise / belief-updating signal — therefore, optogenetically driven 5-HT release during a perceptual decision-making task should accelerate the rate at which the animal updates its prior, increase behavioral flexibility, and/or measurably alter the trade-off between sensory evidence and prior expectation in the choice computation?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that phasic dorsal-raphe serotonin release functions as a surprise / belief-updating signal — therefore, optogenetically driven 5-HT release during a perceptual decision-making task should accelerate the rate at which the animal updates its prior, increase behavioral flexibility, and/or measurably alter the trade-off between sensory evidence and prior expectation in the choice computation?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that a neuromodulatory signal can produce strong, brain-wide single-neuron modulation while leaving ongoing task-driven behavior unaffected if the modulation is geometrically confined to a population subspace orthogonal to the readout dimensions used by downstream circuits to extract task variables (here, the upcoming choice)?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that a neuromodulatory signal can produce strong, brain-wide single-neuron modulation while leaving ongoing task-driven behavior unaffected if the modulation is geometrically confined to a population subspace orthogonal to the readout dimensions used by downstream circuits to extract task variables (here, the upcoming choice)?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that a phasic burst of serotonin release from the dorsal raphe nucleus drives a rapid switch in internal arousal/behavioral state in the awake quiescent animal — from an \"offline\" state characterized by low arousal, hippocampal sharp-wave ripples, and minimal exploratory movement, to an \"online\" state characterized by pupil dilation, ripple suppression, and active exploration (whisking, sniffing)?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that a phasic burst of serotonin release from the dorsal raphe nucleus drives a rapid switch in internal arousal/behavioral state in the awake quiescent animal — from an \"offline\" state characterized by low arousal, hippocampal sharp-wave ripples, and minimal exploratory movement, to an \"online\" state characterized by pupil dilation, ripple suppression, and active exploration (whisking, sniffing)?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "@type": "mira:Evidence",
-      "schema:name": "5ht-axis-orthogonal-to-choice-axis",
-      "schema:description": "In the manifold analysis built from a pooled super-session of trial-averaged peri-event PETHs across all neurons, sessions, and mice, the 5-HT effect axis (defined as the displacement vector between mean stimulated and mean unstimulated trajectories in 3-D PCA space, averaged across choice) is significantly more orthogonal to the choice axis (the displacement between mean left and mean right trajectories, averaged across stimulation) than expected from a block-aware shuffle null distribution. The orthogonality measure (1 - |dot product| of unit-normalized direction vectors) increases over the pre-choice timecourse and is significant in the time window approaching the choice moment.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "5ht-axis-orthogonal-to-choice-axis",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "In the manifold analysis built from a pooled super-session of trial-averaged peri-event PETHs across all neurons, sessions, and mice, the 5-HT effect axis (defined as the displacement vector between mean stimulated and mean unstimulated trajectories in 3-D PCA space, averaged across choice) is significantly more orthogonal to the choice axis (the displacement between mean left and mean right trajectories, averaged across stimulation) than expected from a block-aware shuffle null distribution. The orthogonality measure (1 - |dot product| of unit-normalized direction vectors) increases over the pre-choice timecourse and is significant in the time window approaching the choice moment."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "PCA on mean-subtracted PETH super-session, vector definitions of choice axis and 5-HT axis, orthogonality = 1 - |dot product|, null = block-aware pseudo-stimulation shuffles"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:4a9fe28d-cf62-4539-98f9-0f0e00126047"
-        },
-        {
-          "@id": "urn:uuid:4f28c881-0692-4fcf-8595-2f4bcd0716af"
-        },
-        {
-          "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020"
-        },
-        {
-          "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020"
-        }
-      ],
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2"
-        },
-        {
-          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -157,34 +495,17 @@
     {
       "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "@type": "mira:Evidence",
-      "schema:name": "5ht-modulates-all-recorded-regions-bidirectionally",
-      "schema:description": "Optogenetic activation of dorsal-raphe serotonergic neurons during quiet wakefulness significantly modulates 10–60% of single neurons in every one of the 13 recorded brain regions (all exceeding the 5% chance level), with bidirectional sign — every region contains both 5-HT-excited and 5-HT-suppressed neurons, and no region shows pure brain-wide excitation or pure brain-wide suppression.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "5ht-modulates-all-recorded-regions-bidirectionally",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Optogenetic activation of dorsal-raphe serotonergic neurons during quiet wakefulness significantly modulates 10–60% of single neurons in every one of the 13 recorded brain regions (all exceeding the 5% chance level), with bidirectional sign — every region contains both 5-HT-excited and 5-HT-suppressed neurons, and no region shows pure brain-wide excitation or pure brain-wide suppression."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "per-neuron ZETA test for significant modulation; modulation index = ratio of post-stimulus to baseline firing rate"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363"
-        },
-        {
-          "@id": "urn:uuid:275ffb65-3c47-4736-9649-2fb33c1934ad"
-        },
-        {
-          "@id": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f"
-        },
-        {
-          "@id": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -218,23 +539,17 @@
     {
       "@id": "urn:uuid:275ffb65-3c47-4736-9649-2fb33c1934ad",
       "@type": "mira:Evidence",
-      "schema:name": "5ht-modulation-fraction-tracks-chr2-expression",
-      "schema:description": "The fraction of significantly 5-HT-modulated neurons recorded per animal is positively correlated with the histologically measured channelrhodopsin expression level in that animal's DRN (Pearson r = 0.77, p = 0.005), establishing that the magnitude of the neural effect scales with the optogenetic drive — and ruling out a stimulation-condition-related artifact common across animals.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "5ht-modulation-fraction-tracks-chr2-expression",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The fraction of significantly 5-HT-modulated neurons recorded per animal is positively correlated with the histologically measured channelrhodopsin expression level in that animal's DRN (Pearson r = 0.77, p = 0.005), establishing that the magnitude of the neural effect scales with the optogenetic drive — and ruling out a stimulation-condition-related artifact common across animals."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "Pearson correlation between per-mouse modulated-neuron fraction and per-mouse DRN/control fluorescence ratio"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -259,28 +574,17 @@
     {
       "@id": "urn:uuid:e1a5b240-e31b-4ecc-abdc-eaa0437e7067",
       "@type": "mira:Evidence",
-      "schema:name": "5ht-modulation-weaker-during-task",
-      "schema:description": "Across brain regions, the percentage of significantly 5-HT-modulated neurons is significantly lower during steering-wheel task performance (typically 20–40% per region, ~5% in amygdala) than during quiet-wakefulness passive stimulation (10–60%); paired t-test across regions, p = 0.012.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "5ht-modulation-weaker-during-task",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Across brain regions, the percentage of significantly 5-HT-modulated neurons is significantly lower during steering-wheel task performance (typically 20–40% per region, ~5% in amygdala) than during quiet-wakefulness passive stimulation (10–60%); paired t-test across regions, p = 0.012."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "per-region paired t-test on percent significantly modulated neurons (passive vs task)"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
-        },
-        {
-          "@id": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -308,31 +612,17 @@
     {
       "@id": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063",
       "@type": "mira:Evidence",
-      "schema:name": "5ht-stim-dilates-pupil",
-      "schema:description": "A 1-second optogenetic activation of dorsal-raphe serotonergic neurons in SERT-Cre mice produces a significant increase in pupil size relative to baseline, with the divergence from wild-type controls becoming significant approximately 2 seconds after stimulation offset.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "5ht-stim-dilates-pupil",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "A 1-second optogenetic activation of dorsal-raphe serotonergic neurons in SERT-Cre mice produces a significant increase in pupil size relative to baseline, with the divergence from wild-type controls becoming significant approximately 2 seconds after stimulation offset."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "head-fixed video pupillometry, DLC tracking, SERT-Cre vs WT comparison"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13"
-        },
-        {
-          "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13"
-        }
-      ],
-      "haak:requires": {
-        "@id": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -365,31 +655,17 @@
     {
       "@id": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0",
       "@type": "mira:Evidence",
-      "schema:name": "5ht-stim-increases-exploratory-behaviors",
-      "schema:description": "Optogenetic activation of dorsal-raphe serotonergic neurons during quiet wakefulness increases exploratory motor behaviors at short latency in SERT-Cre mice — specifically, whisking (movement energy in a region of interest around the whisker pad) and sniffing (frame-to-frame movement of a tracked DLC point on the nose tip) both rise relative to WT controls within the seconds following stimulation onset.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "5ht-stim-increases-exploratory-behaviors",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Optogenetic activation of dorsal-raphe serotonergic neurons during quiet wakefulness increases exploratory motor behaviors at short latency in SERT-Cre mice — specifically, whisking (movement energy in a region of interest around the whisker pad) and sniffing (frame-to-frame movement of a tracked DLC point on the nose tip) both rise relative to WT controls within the seconds following stimulation onset."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "video-derived motion energy and DLC point tracking, head-fixed"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13"
-        },
-        {
-          "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13"
-        }
-      ],
-      "haak:requires": {
-        "@id": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -422,23 +698,17 @@
     {
       "@id": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2",
       "@type": "mira:Evidence",
-      "schema:name": "5ht-stim-leaves-decision-behavior-intact",
-      "schema:description": "In the IBL steering-wheel perceptual decision-making task, optogenetic activation of dorsal-raphe serotonergic neurons starting at visual stimulus onset and lasting until choice (or 1 s, whichever is shorter) produces no detectable change in any of: psychometric slope (visual acuity), bias (prior influence), lapse rate (motivation), percent-correct, median reaction time, the speed of choice-bias updating after a prior-probability block switch, or the per-predictor weights of a probabilistic choice model fitting visual evidence, prior, and past choice with separate stimulated / unstimulated coefficients.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "5ht-stim-leaves-decision-behavior-intact",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "In the IBL steering-wheel perceptual decision-making task, optogenetic activation of dorsal-raphe serotonergic neurons starting at visual stimulus onset and lasting until choice (or 1 s, whichever is shorter) produces no detectable change in any of: psychometric slope (visual acuity), bias (prior influence), lapse rate (motivation), percent-correct, median reaction time, the speed of choice-bias updating after a prior-probability block switch, or the per-predictor weights of a probabilistic choice model fitting visual evidence, prior, and past choice with separate stimulated / unstimulated coefficients."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "psychometric error-function fit, paired t-test on RT, regularized maximum-likelihood logistic choice model, paired t-tests against zero and per-predictor"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "haak:requires": {
-        "@id": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -463,31 +733,17 @@
     {
       "@id": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449",
       "@type": "mira:Evidence",
-      "schema:name": "5ht-stim-suppresses-sharp-wave-ripples",
-      "schema:description": "Optogenetic activation of dorsal-raphe serotonergic neurons during quiet wakefulness significantly reduces the frequency of hippocampal sharp-wave ripples detected in CA1 local-field potential, consistent with a transition out of the offline / quiescent state in which ripples preferentially occur.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "5ht-stim-suppresses-sharp-wave-ripples",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Optogenetic activation of dorsal-raphe serotonergic neurons during quiet wakefulness significantly reduces the frequency of hippocampal sharp-wave ripples detected in CA1 local-field potential, consistent with a transition out of the offline / quiescent state in which ripples preferentially occur."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "CA1 LFP ripple detection, event-aligned to passive 5-HT stimulation"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13"
-        },
-        {
-          "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13"
-        }
-      ],
-      "haak:requires": {
-        "@id": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -520,23 +776,17 @@
     {
       "@id": "urn:uuid:43dc14e4-5475-40a6-b981-fcbd00914ad4",
       "@type": "mira:Evidence",
-      "schema:name": "cortical-layers-show-no-differential-modulation",
-      "schema:description": "When cortical Neuropixel recordings are split by cortical layer, neither the percentage of significantly 5-HT-modulated neurons, the sign of the modulation, nor the onset latency shows a layer-dependent pattern — implying that any layer-specific receptor expression or axonal-targeting biases of dorsal-raphe serotonergic projections do not translate into a layer-specific population effect at this measurement scale.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "cortical-layers-show-no-differential-modulation",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "When cortical Neuropixel recordings are split by cortical layer, neither the percentage of significantly 5-HT-modulated neurons, the sign of the modulation, nor the onset latency shows a layer-dependent pattern — implying that any layer-specific receptor expression or axonal-targeting biases of dorsal-raphe serotonergic projections do not translate into a layer-specific population effect at this measurement scale."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "layer assignment from histology-aligned probe coordinates; per-layer comparison of fraction, sign, and latency"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "haak:requires": {
-        "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -561,20 +811,13 @@
     {
       "@id": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-5ht-codes-surprise",
-      "schema:description": "Phasic dorsal-raphe serotonin release functions as a surprise / belief-updating signal — therefore, optogenetically driven 5-HT release during a perceptual decision-making task should accelerate the rate at which the animal updates its prior, increase behavioral flexibility, and/or measurably alter the trade-off between sensory evidence and prior expectation in the choice computation.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "hypothesis-5ht-codes-surprise",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Phasic dorsal-raphe serotonin release functions as a surprise / belief-updating signal — therefore, optogenetically driven 5-HT release during a perceptual decision-making task should accelerate the rate at which the animal updates its prior, increase behavioral flexibility, and/or measurably alter the trade-off between sensory evidence and prior expectation in the choice computation."
       },
-      "haak:entails": [
-        {
-          "@id": "urn:uuid:984ff53f-048b-4598-a0ef-6293bb0d7158"
-        },
-        {
-          "@id": "urn:uuid:1a5cd255-9f81-4e90-9fbc-e49873ac4e36"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -595,20 +838,13 @@
     {
       "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-orthogonal-neuromodulatory-subspace",
-      "schema:description": "A neuromodulatory signal can produce strong, brain-wide single-neuron modulation while leaving ongoing task-driven behavior unaffected if the modulation is geometrically confined to a population subspace orthogonal to the readout dimensions used by downstream circuits to extract task variables (here, the upcoming choice). Orthogonality permits a linear-readout downstream region to project onto either the choice subspace or the neuromodulatory subspace independently.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "hypothesis-orthogonal-neuromodulatory-subspace",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "A neuromodulatory signal can produce strong, brain-wide single-neuron modulation while leaving ongoing task-driven behavior unaffected if the modulation is geometrically confined to a population subspace orthogonal to the readout dimensions used by downstream circuits to extract task variables (here, the upcoming choice). Orthogonality permits a linear-readout downstream region to project onto either the choice subspace or the neuromodulatory subspace independently."
       },
-      "haak:entails": [
-        {
-          "@id": "urn:uuid:4a9fe28d-cf62-4539-98f9-0f0e00126047"
-        },
-        {
-          "@id": "urn:uuid:4f28c881-0692-4fcf-8595-2f4bcd0716af"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -629,12 +865,13 @@
     {
       "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-state-switch-by-5ht",
-      "schema:description": "A phasic burst of serotonin release from the dorsal raphe nucleus drives a rapid switch in internal arousal/behavioral state in the awake quiescent animal — from an \"offline\" state characterized by low arousal, hippocampal sharp-wave ripples, and minimal exploratory movement, to an \"online\" state characterized by pupil dilation, ripple suppression, and active exploration (whisking, sniffing).",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "hypothesis-state-switch-by-5ht",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "A phasic burst of serotonin release from the dorsal raphe nucleus drives a rapid switch in internal arousal/behavioral state in the awake quiescent animal — from an \"offline\" state characterized by low arousal, hippocampal sharp-wave ripples, and minimal exploratory movement, to an \"online\" state characterized by pupil dilation, ripple suppression, and active exploration (whisking, sniffing)."
       },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:panel": "hypothesis",
@@ -645,31 +882,17 @@
     {
       "@id": "urn:uuid:84677204-94c6-4bc3-928e-93449079091c",
       "@type": "mira:Evidence",
-      "schema:name": "inhibition-fast-excitation-slow",
-      "schema:description": "Across the 13 recorded brain regions, the mean onset latency of 5-HT modulation is positively correlated with mean modulation index — regions in which 5-HT suppresses activity respond at short latencies (e.g. hippocampus, ~25 ms after stimulation onset), while regions in which 5-HT excites activity respond at longer latencies (e.g. medial prefrontal cortex). The cross-region Pearson correlation between mean latency and mean modulation index is r = 0.61, p = 0.028.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "inhibition-fast-excitation-slow",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Across the 13 recorded brain regions, the mean onset latency of 5-HT modulation is positively correlated with mean modulation index — regions in which 5-HT suppresses activity respond at short latencies (e.g. hippocampus, ~25 ms after stimulation onset), while regions in which 5-HT excites activity respond at longer latencies (e.g. medial prefrontal cortex). The cross-region Pearson correlation between mean latency and mean modulation index is r = 0.61, p = 0.028."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "per-neuron ZETA-test latency, region-mean correlation against region-mean modulation index"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "mira:opposes": {
-        "@id": "urn:uuid:c4a03387-7441-4430-bffb-d7cfec4e0d75"
-      },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
-        },
-        {
-          "@id": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -702,12 +925,13 @@
     {
       "@id": "urn:uuid:83d656ca-94ec-4a0f-bfb1-1138605cc136",
       "@type": "dg:SourceDocument",
-      "schema:name": "interprets-paquelet-correlated-ensembles",
-      "schema:description": "Paquelet et al. (2022, Neuron) used calcium imaging in awake behaving mice to characterize population activity of DRN serotonergic neurons. Sucrose consumption activated correlated ensembles comprising up to ~59% of recorded serotonergic neurons; footshock activated correlated ensembles comprising up to ~45%. Across exploratory and social behaviors, serotonergic neurons were recruited as structured, correlated subpopulations with mixed selectivity — not as a uniform population-wide burst.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1016/j.neuron.2022.05.015"
+      "title": "interprets-paquelet-correlated-ensembles",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Paquelet et al. (2022, Neuron) used calcium imaging in awake behaving mice to characterize population activity of DRN serotonergic neurons. Sucrose consumption activated correlated ensembles comprising up to ~59% of recorded serotonergic neurons; footshock activated correlated ensembles comprising up to ~45%. Across exploratory and social behaviors, serotonergic neurons were recruited as structured, correlated subpopulations with mixed selectivity — not as a uniform population-wide burst."
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "literature-context",
       "haak:epistemicStrength": "moderate",
       "haak:panel": "discussion (optogenetics-vs-endogenous scope paragraph)"
@@ -715,28 +939,13 @@
     {
       "@id": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
       "@type": "mira:Protocol",
-      "schema:name": "manifold-from-pooled-super-session",
-      "schema:description": "The manifold and orthogonality analyses (Fig. 5) are computed from a single pooled super-session: trial-averaged peri-event-time histograms (12.5 ms bins, 20 ms Gaussian smoothing) of every neuron from every session and every mouse are concatenated along the neuron axis, mean-subtracted per neuron, and projected to the first three principal components. Trials with reaction time <0.1 s or >1.2 s are excluded. Null distributions are generated by within-prior-block choice shuffles (preserving prior-induced choice structure) and by pseudo-stimulation-blocks (preserving block-length statistics) to avoid inflating significance through within-block temporal autocorrelation.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "manifold-from-pooled-super-session",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The manifold and orthogonality analyses (Fig. 5) are computed from a single pooled super-session: trial-averaged peri-event-time histograms (12.5 ms bins, 20 ms Gaussian smoothing) of every neuron from every session and every mouse are concatenated along the neuron axis, mean-subtracted per neuron, and projected to the first three principal components. Trials with reaction time <0.1 s or >1.2 s are excluded. Null distributions are generated by within-prior-block choice shuffles (preserving prior-induced choice structure) and by pseudo-stimulation-blocks (preserving block-length statistics) to avoid inflating significance through within-block temporal autocorrelation."
       },
-      "haak:enables-method": [
-        {
-          "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b"
-        },
-        {
-          "@id": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681"
-        }
-      ],
-      "haak:scopes": [
-        {
-          "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b"
-        },
-        {
-          "@id": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "methodological",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -772,26 +981,17 @@
     {
       "@id": "urn:uuid:c4a03387-7441-4430-bffb-d7cfec4e0d75",
       "@type": "mira:Evidence",
-      "schema:name": "narrow-spike-interneurons-not-driver-of-rapid-inhibition",
-      "schema:description": "Narrow-spiking putative fast-spiking interneurons (separated from wide-spiking neurons by spike width, with their higher firing rates confirming the classification) are only marginally more likely to be 5-HT modulated than wide-spiking neurons, and show no significant difference in modulation index — ruling out preferential rapid recruitment of fast-spiking interneurons as the mechanism for the rapid inhibition observed in short-latency-suppressed regions.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "narrow-spike-interneurons-not-driver-of-rapid-inhibition",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Narrow-spiking putative fast-spiking interneurons (separated from wide-spiking neurons by spike width, with their higher firing rates confirming the classification) are only marginally more likely to be 5-HT modulated than wide-spiking neurons, and show no significant difference in modulation index — ruling out preferential rapid recruitment of fast-spiking interneurons as the mechanism for the rapid inhibition observed in short-latency-suppressed regions."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "spike-width threshold classification of narrow vs wide; firing-rate validation; per-class fraction modulated and modulation-index comparison"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "mira:opposes": {
-        "schema:name": "rapid-fs-interneuron-recruitment-as-mechanism"
-      },
-      "haak:requires": {
-        "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -821,26 +1021,13 @@
     {
       "@id": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
       "@type": "mira:Claim",
-      "schema:name": "optogenetic-activation-not-physiological-pattern",
-      "schema:description": "SERT-Cre-mediated channelrhodopsin activation drives DRN serotonergic neurons broadly and more uniformly than endogenous serotonin release, which engages anatomically and functionally distinct subpopulations with distinct projection targets and behavioral correlates. Optogenetic drive itself is not spatially uniform either — light intensity falls off steeply from the fiber tip and ChR2-expressing neurons show frequency-dependent adaptation — but it nevertheless produces a coordinated phasic response unlike the ensemble-structured patterns observed during natural behavior.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "optogenetic-activation-not-physiological-pattern",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "SERT-Cre-mediated channelrhodopsin activation drives DRN serotonergic neurons broadly and more uniformly than endogenous serotonin release, which engages anatomically and functionally distinct subpopulations with distinct projection targets and behavioral correlates. Optogenetic drive itself is not spatially uniform either — light intensity falls off steeply from the fiber tip and ChR2-expressing neurons show frequency-dependent adaptation — but it nevertheless produces a coordinated phasic response unlike the ensemble-structured patterns observed during natural behavior."
       },
-      "haak:interprets": {
-        "@id": "urn:uuid:83d656ca-94ec-4a0f-bfb1-1138605cc136"
-      },
-      "haak:scopes": [
-        {
-          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
-        },
-        {
-          "@id": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2"
-        },
-        {
-          "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -875,31 +1062,17 @@
     {
       "@id": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
       "@type": "mira:Evidence",
-      "schema:name": "orthogonality-significant-in-mpfc-vis-m2",
-      "schema:description": "When the manifold orthogonality analysis is repeated separately for each brain region, at the last time point before the choice moment, the orthogonality between the 5-HT effect axis and the choice axis significantly exceeds the shuffle null distribution in three regions: medial prefrontal cortex, visual cortex, and supplementary motor area (M2). Other regions either lack significant choice or 5-HT separation (and so cannot be tested) or show non-significant orthogonality.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "orthogonality-significant-in-mpfc-vis-m2",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "When the manifold orthogonality analysis is repeated separately for each brain region, at the last time point before the choice moment, the orthogonality between the 5-HT effect axis and the choice axis significantly exceeds the shuffle null distribution in three regions: medial prefrontal cortex, visual cortex, and supplementary motor area (M2). Other regions either lack significant choice or 5-HT separation (and so cannot be tested) or show non-significant orthogonality."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "per-region manifold analysis at last pre-choice timepoint, permutation test against block-aware null"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "mira:supports": {
-        "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020"
-      },
-      "haak:requires": [
-        {
-          "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b"
-        },
-        {
-          "@id": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -932,15 +1105,13 @@
     {
       "@id": "urn:uuid:1a5cd255-9f81-4e90-9fbc-e49873ac4e36",
       "@type": "mira:Claim",
-      "schema:name": "prediction-5ht-accelerates-prior-update",
-      "schema:description": "If 5-HT signals surprise and supports cognitive flexibility, then optogenetic 5-HT stimulation across blocks of trials should accelerate the rate at which the animal updates its choice bias after a prior-probability block switch — for example, after the prior switches from 80% left to 80% right, 5-HT-stimulated mice should reach the new rightward bias in fewer trials than unstimulated mice.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "prediction-5ht-accelerates-prior-update",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If 5-HT signals surprise and supports cognitive flexibility, then optogenetic 5-HT stimulation across blocks of trials should accelerate the rate at which the animal updates its choice bias after a prior-probability block switch — for example, after the prior switches from 80% left to 80% right, 5-HT-stimulated mice should reach the new rightward bias in fewer trials than unstimulated mice."
       },
-      "haak:derived-from": {
-        "@id": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417"
-      },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -955,15 +1126,13 @@
     {
       "@id": "urn:uuid:4a9fe28d-cf62-4539-98f9-0f0e00126047",
       "@type": "mira:Claim",
-      "schema:name": "prediction-5ht-axis-orthogonal-to-choice",
-      "schema:description": "If brain-wide 5-HT modulation is structurally separable from the choice computation, then in a low-dimensional projection of the population response (here, the first three principal components), the vector that separates 5-HT-stimulated from unstimulated trials should be near-orthogonal to the vector that separates left-choice from right-choice trials, with orthogonality measured as 1 - |dot product| of unit-normalized direction vectors.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "prediction-5ht-axis-orthogonal-to-choice",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If brain-wide 5-HT modulation is structurally separable from the choice computation, then in a low-dimensional projection of the population response (here, the first three principal components), the vector that separates 5-HT-stimulated from unstimulated trials should be near-orthogonal to the vector that separates left-choice from right-choice trials, with orthogonality measured as 1 - |dot product| of unit-normalized direction vectors."
       },
-      "haak:derived-from": {
-        "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020"
-      },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -978,15 +1147,13 @@
     {
       "@id": "urn:uuid:984ff53f-048b-4598-a0ef-6293bb0d7158",
       "@type": "mira:Claim",
-      "schema:name": "prediction-5ht-shifts-psychometric",
-      "schema:description": "If 5-HT functions as a surprise / belief-updating signal that scales prior dependence or motivation, then optogenetic 5-HT stimulation during the steering-wheel task should produce measurable shifts in at least one of: psychometric slope (visual acuity), bias (prior influence), lapse rate (motivation), percent-correct, reaction time, or in the weight assigned to the visual-evidence / prior / past-choice predictors of a probabilistic choice model.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "prediction-5ht-shifts-psychometric",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If 5-HT functions as a surprise / belief-updating signal that scales prior dependence or motivation, then optogenetic 5-HT stimulation during the steering-wheel task should produce measurable shifts in at least one of: psychometric slope (visual acuity), bias (prior influence), lapse rate (motivation), percent-correct, reaction time, or in the weight assigned to the visual-evidence / prior / past-choice predictors of a probabilistic choice model."
       },
-      "haak:derived-from": {
-        "@id": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417"
-      },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -1001,15 +1168,13 @@
     {
       "@id": "urn:uuid:4f28c881-0692-4fcf-8595-2f4bcd0716af",
       "@type": "mira:Claim",
-      "schema:name": "prediction-orthogonality-grows-toward-choice",
-      "schema:description": "If the 5-HT modulation specifically avoids the choice readout dimension as that dimension becomes informative, then the orthogonality between the 5-HT axis and the choice axis should not be constant — it should grow over the trial timecourse, becoming maximal in the hundreds of milliseconds leading up to the choice moment, when the choice axis has separated maximally and the readout demand is greatest.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "prediction-orthogonality-grows-toward-choice",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If the 5-HT modulation specifically avoids the choice readout dimension as that dimension becomes informative, then the orthogonality between the 5-HT axis and the choice axis should not be constant — it should grow over the trial timecourse, becoming maximal in the hundreds of milliseconds leading up to the choice moment, when the choice axis has separated maximally and the readout demand is greatest."
       },
-      "haak:derived-from": {
-        "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020"
-      },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -1024,29 +1189,13 @@
     {
       "@id": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
       "@type": "mira:Claim",
-      "schema:name": "seven-target-trajectories-13-regions-7478-neurons",
-      "schema:description": "All brain-wide claims in the paper rest on a recording dataset of 7,478 neurons sorted via the IBL spike-sorting pipeline from 86 dual-Neuropixel insertions across 57 recording sessions in 17 head-fixed awake mice (11 SERT-Cre, 6 WT), with insertion trajectories targeting seven planned brain locations and post-hoc histology-aligned to 13 brain regions in Allen atlas space.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "seven-target-trajectories-13-regions-7478-neurons",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "All brain-wide claims in the paper rest on a recording dataset of 7,478 neurons sorted via the IBL spike-sorting pipeline from 86 dual-Neuropixel insertions across 57 recording sessions in 17 head-fixed awake mice (11 SERT-Cre, 6 WT), with insertion trajectories targeting seven planned brain locations and post-hoc histology-aligned to 13 brain regions in Allen atlas space."
       },
-      "haak:scopes": [
-        {
-          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
-        },
-        {
-          "@id": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2"
-        },
-        {
-          "@id": "urn:uuid:e1a5b240-e31b-4ecc-abdc-eaa0437e7067"
-        },
-        {
-          "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b"
-        },
-        {
-          "@id": "urn:uuid:84677204-94c6-4bc3-928e-93449079091c"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -1083,37 +1232,17 @@
     {
       "@id": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
       "@type": "mira:Evidence",
-      "schema:name": "wt-controls-rule-out-light-artifact",
-      "schema:description": "Wild-type control mice (n=6), which received the same surgical procedure, optical fiber implantation, and optogenetic stimulation protocol but lack Cre-dependent ChR2 expression in DRN serotonergic neurons, show baseline-level DRN/control fluorescence ratio (Fig. 1c) and chance-level (~5%) significantly modulated neurons (Fig. 2f) — ruling out light delivery, optical-fiber heating, viral injection, surgical artifact, or other non-specific effects of the procedure as drivers of the observed pupil, ripple, and neural modulation effects.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      "title": "wt-controls-rule-out-light-artifact",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Wild-type control mice (n=6), which received the same surgical procedure, optical fiber implantation, and optogenetic stimulation protocol but lack Cre-dependent ChR2 expression in DRN serotonergic neurons, show baseline-level DRN/control fluorescence ratio (Fig. 1c) and chance-level (~5%) significantly modulated neurons (Fig. 2f) — ruling out light delivery, optical-fiber heating, viral injection, surgical artifact, or other non-specific effects of the procedure as drivers of the observed pupil, ripple, and neural modulation effects."
       },
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "IBL ONE protocol",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "SERT-Cre vs WT comparison; matched surgical, viral, and stimulation procedure"
-        }
+      "sourceDocument": {
+        "@id": "https://doi.org/10.1101/2025.08.01.668048",
+        "@type": "SourceDocument"
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063"
-        },
-        {
-          "@id": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449"
-        },
-        {
-          "@id": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0"
-        },
-        {
-          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
-        }
-      ],
-      "mira:opposes": {
-        "schema:name": "light-or-heat-mediated-modulation"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -1148,6 +1277,678 @@
       ],
       "haak:panel": "fig1c, fig2f",
       "haak:analysis": "figure-generation scripts in https://github.com/guidomeijer/SerotoninStimulation"
+    },
+    {
+      "@id": "haak:claim/meijer-2025-serotonin-orthogonal/alternative/1",
+      "@type": "mira:Claim",
+      "title": "rapid-fs-interneuron-recruitment-as-mechanism",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "rapid-fs-interneuron-recruitment-as-mechanism"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:claim/meijer-2025-serotonin-orthogonal/alternative/2",
+      "@type": "mira:Claim",
+      "title": "light-or-heat-mediated-modulation",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "light-or-heat-mediated-modulation"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/1",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "destination": "urn:uuid:4a9fe28d-cf62-4539-98f9-0f0e00126047",
+      "title": "[[5ht-axis-orthogonal-to-choice-axis]] -confirms-> [[prediction-5ht-axis-orthogonal-to-choice]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/2",
+      "@type": [
+        "haak:reldef/confirms"
+      ],
+      "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "destination": "urn:uuid:4f28c881-0692-4fcf-8595-2f4bcd0716af",
+      "title": "[[5ht-axis-orthogonal-to-choice-axis]] -confirms-> [[prediction-orthogonality-grows-toward-choice]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/3",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "destination": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
+      "title": "[[5ht-axis-orthogonal-to-choice-axis]] -supports-> [[hypothesis-orthogonal-neuromodulatory-subspace]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/4",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "destination": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
+      "title": "[[5ht-axis-orthogonal-to-choice-axis]] -requires-> [[manifold-from-pooled-super-session]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/5",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "title": "[[5ht-axis-orthogonal-to-choice-axis]] -requires-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/6",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "destination": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
+      "title": "[[5ht-axis-orthogonal-to-choice-axis]] -supports-> [[hypothesis-orthogonal-neuromodulatory-subspace]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/7",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "destination": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
+      "title": "[[5ht-modulates-all-recorded-regions-bidirectionally]] -requires-> [[wt-controls-rule-out-light-artifact]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/8",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "destination": "urn:uuid:275ffb65-3c47-4736-9649-2fb33c1934ad",
+      "title": "[[5ht-modulates-all-recorded-regions-bidirectionally]] -requires-> [[5ht-modulation-fraction-tracks-chr2-expression]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/9",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "destination": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
+      "title": "[[5ht-modulates-all-recorded-regions-bidirectionally]] -requires-> [[seven-target-trajectories-13-regions-7478-neurons]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/10",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "destination": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
+      "title": "[[5ht-modulates-all-recorded-regions-bidirectionally]] -requires-> [[optogenetic-activation-not-physiological-pattern]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/11",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:275ffb65-3c47-4736-9649-2fb33c1934ad",
+      "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "title": "[[5ht-modulation-fraction-tracks-chr2-expression]] -validates-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/12",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e1a5b240-e31b-4ecc-abdc-eaa0437e7067",
+      "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "title": "[[5ht-modulation-weaker-during-task]] -requires-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/13",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e1a5b240-e31b-4ecc-abdc-eaa0437e7067",
+      "destination": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
+      "title": "[[5ht-modulation-weaker-during-task]] -requires-> [[seven-target-trajectories-13-regions-7478-neurons]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/14",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063",
+      "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
+      "title": "[[5ht-stim-dilates-pupil]] -supports-> [[hypothesis-state-switch-by-5ht]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/15",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063",
+      "destination": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
+      "title": "[[5ht-stim-dilates-pupil]] -requires-> [[wt-controls-rule-out-light-artifact]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/16",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063",
+      "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
+      "title": "[[5ht-stim-dilates-pupil]] -supports-> [[hypothesis-state-switch-by-5ht]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/17",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0",
+      "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
+      "title": "[[5ht-stim-increases-exploratory-behaviors]] -supports-> [[hypothesis-state-switch-by-5ht]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/18",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0",
+      "destination": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
+      "title": "[[5ht-stim-increases-exploratory-behaviors]] -requires-> [[wt-controls-rule-out-light-artifact]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/19",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0",
+      "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
+      "title": "[[5ht-stim-increases-exploratory-behaviors]] -supports-> [[hypothesis-state-switch-by-5ht]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/20",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2",
+      "destination": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
+      "title": "[[5ht-stim-leaves-decision-behavior-intact]] -requires-> [[seven-target-trajectories-13-regions-7478-neurons]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/21",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449",
+      "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
+      "title": "[[5ht-stim-suppresses-sharp-wave-ripples]] -supports-> [[hypothesis-state-switch-by-5ht]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/22",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449",
+      "destination": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
+      "title": "[[5ht-stim-suppresses-sharp-wave-ripples]] -requires-> [[wt-controls-rule-out-light-artifact]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/23",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449",
+      "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
+      "title": "[[5ht-stim-suppresses-sharp-wave-ripples]] -supports-> [[hypothesis-state-switch-by-5ht]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/24",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:43dc14e4-5475-40a6-b981-fcbd00914ad4",
+      "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "title": "[[cortical-layers-show-no-differential-modulation]] -requires-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/25",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417",
+      "destination": "urn:uuid:984ff53f-048b-4598-a0ef-6293bb0d7158",
+      "title": "[[hypothesis-5ht-codes-surprise]] -entails-> [[prediction-5ht-shifts-psychometric]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/26",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417",
+      "destination": "urn:uuid:1a5cd255-9f81-4e90-9fbc-e49873ac4e36",
+      "title": "[[hypothesis-5ht-codes-surprise]] -entails-> [[prediction-5ht-accelerates-prior-update]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/27",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
+      "destination": "urn:uuid:4a9fe28d-cf62-4539-98f9-0f0e00126047",
+      "title": "[[hypothesis-orthogonal-neuromodulatory-subspace]] -entails-> [[prediction-5ht-axis-orthogonal-to-choice]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/28",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
+      "destination": "urn:uuid:4f28c881-0692-4fcf-8595-2f4bcd0716af",
+      "title": "[[hypothesis-orthogonal-neuromodulatory-subspace]] -entails-> [[prediction-orthogonality-grows-toward-choice]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/29",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:84677204-94c6-4bc3-928e-93449079091c",
+      "destination": "urn:uuid:c4a03387-7441-4430-bffb-d7cfec4e0d75",
+      "title": "[[inhibition-fast-excitation-slow]] -rules-out-> [[narrow-spike-interneurons-not-driver-of-rapid-inhibition]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/30",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:84677204-94c6-4bc3-928e-93449079091c",
+      "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "title": "[[inhibition-fast-excitation-slow]] -requires-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/31",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:84677204-94c6-4bc3-928e-93449079091c",
+      "destination": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
+      "title": "[[inhibition-fast-excitation-slow]] -requires-> [[seven-target-trajectories-13-regions-7478-neurons]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/32",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
+      "destination": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "title": "[[manifold-from-pooled-super-session]] -enables-method-> [[5ht-axis-orthogonal-to-choice-axis]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/33",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
+      "destination": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
+      "title": "[[manifold-from-pooled-super-session]] -enables-method-> [[orthogonality-significant-in-mpfc-vis-m2]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/34",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
+      "destination": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "title": "[[manifold-from-pooled-super-session]] -scopes-> [[5ht-axis-orthogonal-to-choice-axis]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/35",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
+      "destination": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
+      "title": "[[manifold-from-pooled-super-session]] -scopes-> [[orthogonality-significant-in-mpfc-vis-m2]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/36",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:c4a03387-7441-4430-bffb-d7cfec4e0d75",
+      "destination": "haak:claim/meijer-2025-serotonin-orthogonal/alternative/1",
+      "title": "[[narrow-spike-interneurons-not-driver-of-rapid-inhibition]] -rules-out-> [[rapid-fs-interneuron-recruitment-as-mechanism]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/37",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:c4a03387-7441-4430-bffb-d7cfec4e0d75",
+      "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "title": "[[narrow-spike-interneurons-not-driver-of-rapid-inhibition]] -requires-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/38",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
+      "destination": "urn:uuid:83d656ca-94ec-4a0f-bfb1-1138605cc136",
+      "title": "[[optogenetic-activation-not-physiological-pattern]] -interprets-> [[interprets-paquelet-correlated-ensembles]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/39",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
+      "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "title": "[[optogenetic-activation-not-physiological-pattern]] -scopes-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/40",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
+      "destination": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2",
+      "title": "[[optogenetic-activation-not-physiological-pattern]] -scopes-> [[5ht-stim-leaves-decision-behavior-intact]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/41",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
+      "destination": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "title": "[[optogenetic-activation-not-physiological-pattern]] -scopes-> [[5ht-axis-orthogonal-to-choice-axis]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/42",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
+      "destination": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "title": "[[orthogonality-significant-in-mpfc-vis-m2]] -requires-> [[5ht-axis-orthogonal-to-choice-axis]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/43",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
+      "destination": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
+      "title": "[[orthogonality-significant-in-mpfc-vis-m2]] -requires-> [[manifold-from-pooled-super-session]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/44",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
+      "destination": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
+      "title": "[[orthogonality-significant-in-mpfc-vis-m2]] -supports-> [[hypothesis-orthogonal-neuromodulatory-subspace]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/45",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
+      "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "title": "[[seven-target-trajectories-13-regions-7478-neurons]] -scopes-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/46",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
+      "destination": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2",
+      "title": "[[seven-target-trajectories-13-regions-7478-neurons]] -scopes-> [[5ht-stim-leaves-decision-behavior-intact]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/47",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
+      "destination": "urn:uuid:e1a5b240-e31b-4ecc-abdc-eaa0437e7067",
+      "title": "[[seven-target-trajectories-13-regions-7478-neurons]] -scopes-> [[5ht-modulation-weaker-during-task]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/48",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
+      "destination": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
+      "title": "[[seven-target-trajectories-13-regions-7478-neurons]] -scopes-> [[5ht-axis-orthogonal-to-choice-axis]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/49",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
+      "destination": "urn:uuid:84677204-94c6-4bc3-928e-93449079091c",
+      "title": "[[seven-target-trajectories-13-regions-7478-neurons]] -scopes-> [[inhibition-fast-excitation-slow]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/50",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
+      "destination": "haak:claim/meijer-2025-serotonin-orthogonal/alternative/2",
+      "title": "[[wt-controls-rule-out-light-artifact]] -rules-out-> [[light-or-heat-mediated-modulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/51",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
+      "destination": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063",
+      "title": "[[wt-controls-rule-out-light-artifact]] -validates-> [[5ht-stim-dilates-pupil]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/52",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
+      "destination": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449",
+      "title": "[[wt-controls-rule-out-light-artifact]] -validates-> [[5ht-stim-suppresses-sharp-wave-ripples]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/53",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
+      "destination": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0",
+      "title": "[[wt-controls-rule-out-light-artifact]] -validates-> [[5ht-stim-increases-exploratory-behaviors]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/54",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
+      "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
+      "title": "[[wt-controls-rule-out-light-artifact]] -validates-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     }
   ]
 }

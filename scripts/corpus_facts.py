@@ -156,8 +156,12 @@ def main():
     print(f"  {facts['papers']} papers · {facts['claims']} claims · "
           f"{facts['relations']} typed relations "
           f"({facts['relation_types_used']} of {facts['relation_types_defined']} types used)")
+    # "133/133 have a record" is true and reads as success. A record can say `blocked` or
+    # `unattempted`, and most of them do, so the outcome is printed alongside the coverage --
+    # never the coverage alone.
     print(f"  {facts['eligible_with_record']}/{facts['eligible_claims']} claims a re-run "
-          f"could settle have a record")
+          f"could settle have a record — "
+          + ", ".join(f"{v} {k}" for k, v in facts["reproduction_status"].items()))
     print(f"  {facts['method_example_papers']} method-example paper(s), "
           f"{facts['method_example_claims']} claims — counted separately, never in the total")
     if a.show:

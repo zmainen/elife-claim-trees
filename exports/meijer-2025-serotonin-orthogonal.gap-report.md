@@ -46,3 +46,14 @@ MIRA requires every Claim to address a `mira:Question`; a claim tree has no such
 - Is it the case that a phasic burst of serotonin release from the dorsal raphe nucleus drives a rapid switch in internal arousal/behavioral state in the awake quiescent animal — from an "offline" state characterized by low arousal, hippocampal sharp-wave ripples, and minimal exploratory movement, to an "online" state characterized by pupil dilation, ripple suppression, and active exploration (whisking, sniffing)?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
+
+## Alternatives materialised as claims
+
+**2 relation targets name something no claim file asserts.** They are alternative explanations the paper argues against, so the target exists only as the thing being excluded. Each is minted as a `mira:Claim` so the edge has a destination, and flagged `haak:materialisedFrom: relation-target` in the extended file. **None of these is an authored claim.**
+
+- light-or-heat-mediated-modulation
+- rapid-fs-interneuron-recruitment-as-mechanism
+
+## Paper-level scopes with no MIRA target
+
+None.

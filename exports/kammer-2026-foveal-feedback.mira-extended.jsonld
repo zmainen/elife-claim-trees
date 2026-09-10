@@ -2,101 +2,525 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "dgb": "https://mira.science/schema/discoursegraphs_base#",
       "haak": "https://haak.world/schema/claim#",
-      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-      "dct": "http://purl.org/dc/terms/"
+      "dgb": "https://discoursegraphs.com/schema/dg_base#",
+      "owl": "http://www.w3.org/2002/07/owl#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "dct": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "onProperty": {
+        "@id": "owl:onProperty",
+        "@type": "@id"
+      },
+      "hasValue": {
+        "@id": "owl:hasValue",
+        "@type": "@id"
+      }
     },
     {
-      "haak": "https://haak.world/schema/claim#"
+      "haakx": "https://haak.world/schema/claim-extended#"
     }
   ],
   "@graph": [
     {
-      "@id": "haak:derived-from",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+      "@id": "haak:agent/elife-claim-trees",
+      "@type": "UserAccount",
+      "accountName": "elife-claim-trees pipeline"
     },
     {
-      "@id": "haak:enables-method",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Evidence",
-      "rdfs:range": "mira:Protocol",
-      "dct:description": "The subject result makes the object method possible downstream."
+      "@id": "haak:type/Claim",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Claim"
+      ],
+      "label": "Claim",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:entails",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+      "@id": "haak:type/Evidence",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Evidence"
+      ],
+      "label": "Evidence",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:interprets",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Evidence",
-      "dct:description": "The subject offers a theoretical reading of the object result."
+      "@id": "haak:type/Protocol",
+      "@type": "NodeSchema",
+      "subClassOf": [
+        "mira:Protocol"
+      ],
+      "label": "Protocol",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:requires",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+      "@id": "haak:reldef/derived_from",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/derived_from"
+        }
+      ],
+      "label": "derived-from",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z",
+      "inverseOf": "haak:reldef/entails"
     },
     {
-      "@id": "haak:scopes",
-      "@type": "dgb:RelationDef",
-      "rdfs:domain": "mira:Claim",
-      "rdfs:range": "mira:Claim",
-      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+      "@id": "haak:reldef/derived_from/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/derived_from",
+        "dgb:RelationInstance"
+      ],
+      "label": "derived-from",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim was derived from the destination claim; the inverse of entails."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/dissociates_with",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/dissociates_with"
+        }
+      ],
+      "label": "dissociates-with",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/dissociates_with/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/dissociates_with",
+        "dgb:RelationInstance"
+      ],
+      "label": "dissociates-with",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source result separates two things the destination claim joins."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/enables_method",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/enables_method"
+        }
+      ],
+      "label": "enables-method",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/enables_method/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Protocol",
+      "subClassOf": [
+        "haak:reldef/enables_method",
+        "dgb:RelationInstance"
+      ],
+      "label": "enables-method",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source result makes the destination method possible."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/entails"
+        }
+      ],
+      "label": "entails",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/entails/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/entails",
+        "dgb:RelationInstance"
+      ],
+      "label": "entails",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/extends",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/extends"
+        }
+      ],
+      "label": "extends",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/extends/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/extends",
+        "dgb:RelationInstance"
+      ],
+      "label": "extends",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim extends the destination claim to new conditions."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/interprets",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/interprets"
+        }
+      ],
+      "label": "interprets",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/interprets/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Evidence",
+      "subClassOf": [
+        "haak:reldef/interprets",
+        "dgb:RelationInstance"
+      ],
+      "label": "interprets",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim offers a theoretical reading of the destination result."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/requires"
+        }
+      ],
+      "label": "requires",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/requires/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/requires",
+        "dgb:RelationInstance"
+      ],
+      "label": "requires",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/rules_out"
+        }
+      ],
+      "label": "rules-out",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/rules_out",
+        "dgb:RelationInstance"
+      ],
+      "label": "rules-out",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence eliminates the destination claim as viable."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/scopes",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/scopes"
+        }
+      ],
+      "label": "scopes",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/scopes/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/scopes",
+        "dgb:RelationInstance"
+      ],
+      "label": "scopes",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/supports"
+        }
+      ],
+      "label": "supports",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/supports/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Claim",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/supports",
+        "dgb:RelationInstance"
+      ],
+      "label": "supports",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source claim provides support for the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/tests",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/tests"
+        }
+      ],
+      "label": "tests",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/tests/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/tests",
+        "dgb:RelationInstance"
+      ],
+      "label": "tests",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence was gathered to test the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/validates",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:supports",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/validates"
+        }
+      ],
+      "label": "validates",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/validates/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/validates",
+        "dgb:RelationInstance"
+      ],
+      "label": "validates",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence validates the destination claim."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     },
     {
       "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that foveal feedback to early visual cortex carries low-to-mid-level visual feature information (shape) rather than high-level semantic category information about the saccade target, reflecting the representational level appropriate to early visual cortex rather than to ventral object-selective cortex?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that foveal feedback to early visual cortex carries low-to-mid-level visual feature information (shape) rather than high-level semantic category information about the saccade target, reflecting the representational level appropriate to early visual cortex rather than to ventral object-selective cortex?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that foveal V1 decoding of peripheral saccade targets reflects genuine top-down feedback from higher cortical areas, not passive spillover from large peripheral receptive fields whose tails extend into the foveal representation?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that foveal V1 decoding of peripheral saccade targets reflects genuine top-down feedback from higher cortical areas, not passive spillover from large peripheral receptive fields whose tails extend into the foveal representation?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:6c3d4e5f-7a8b-4c01-9d02-3e4f5a6b7c8d#question",
       "@type": "mira:Question",
-      "schema:description": "Is it the case that foveal feedback during saccade preparation uses a representational format shared with bottom-up sensory drive — that is, the population code carrying the predicted peripheral target in foveal V1 lies in the same representational space as the code evoked by direct foveal stimulation by the same image?",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that foveal feedback during saccade preparation uses a representational format shared with bottom-up sensory drive — that is, the population code carrying the predicted peripheral target in foveal V1 lies in the same representational space as the code evoked by direct foveal stimulation by the same image?"
+      },
       "haak:autoDerived": true,
       "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa",
       "@type": "mira:Evidence",
-      "schema:name": "cross-decoding-experimental-to-control",
-      "schema:description": "Cross-decoding from experimental (feedback) to control (direct stimulation) condition yields 57.2% accuracy (t(27)=5.22, p<0.001), indicating that the representational format of foveal feedback is similar to that of direct foveal stimulation.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "cross-condition multivariate decoding, fMRI"
-        }
+      "title": "cross-decoding-experimental-to-control",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Cross-decoding from experimental (feedback) to control (direct stimulation) condition yields 57.2% accuracy (t(27)=5.22, p<0.001), indicating that the representational format of foveal feedback is similar to that of direct foveal stimulation."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:5d4e5f6a-7b8c-4d01-9e02-4f5a6b7c8d9e"
-        },
-        {
-          "@id": "urn:uuid:6c3d4e5f-7a8b-4c01-9d02-3e4f5a6b7c8d"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -124,25 +548,19 @@
       "haak:analysis": "Lucakaemmer/FovealFeedback (GitHub)"
     },
     {
+      "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
       "@type": "mira:Claim",
-      "schema:name": "decoding-shape-sensitive-not-semantic",
-      "schema:description": "Foveal V1 feedback contains low-to-mid-level visual information (shape-sensitive) but not higher-level semantic category information (animal vs instrument not decodable), indicating that feedback signals represent low-level feature properties of the saccade target.",
-      "mira:epistemicStatus": "mira:Claim",
-      "haak:derived-from": [
-        {
-          "@id": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0"
-        },
-        {
-          "@id": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66"
-        },
-        {
-          "@id": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38"
-        }
-      ],
-      "haak:interprets": {
-        "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f"
+      "title": "decoding-shape-sensitive-not-semantic",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Foveal V1 feedback contains low-to-mid-level visual information (shape-sensitive) but not higher-level semantic category information (animal vs instrument not decodable), indicating that feedback signals represent low-level feature properties of the saccade target."
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "synthesis",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -178,28 +596,16 @@
     {
       "@id": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
       "@type": "mira:Evidence",
-      "schema:name": "fef-lo-nonsignificant-after-correction",
-      "schema:description": "Frontal eye fields (FEF) and lateral occipital area (LO) show trends in the expected direction but do not survive Bonferroni correction for multiple comparisons in the parametric modulation analysis (LO: t(27)=0.67, p=0.767; FEF: t(27)=2.07, p=0.072), making IPS the only ROI significantly associated with foveal decoding after correction.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "parametric modulation analysis (FSL FEAT), Bonferroni correction"
-        }
+      "title": "fef-lo-nonsignificant-after-correction",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Frontal eye fields (FEF) and lateral occipital area (LO) show trends in the expected direction but do not survive Bonferroni correction for multiple comparisons in the parametric modulation analysis (LO: t(27)=0.67, p=0.767; FEF: t(27)=2.07, p=0.072), making IPS the only ROI significantly associated with foveal decoding after correction."
       },
-      "mira:supports": {
-        "@id": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13"
+      "observationBase": {
+        "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0"
       },
-      "mira:opposes": [
-        {
-          "schema:name": "FEF as candidate driver of foveal feedback"
-        },
-        {
-          "schema:name": "LO as candidate driver of foveal feedback"
-        }
-      ],
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -230,19 +636,22 @@
       "haak:analysis": "Lucakaemmer/FovealFeedback (GitHub)"
     },
     {
+      "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:6271606c-1989-4bb6-a6da-a14145a46145",
       "@type": "mira:Evidence",
-      "schema:name": "foveal-feedback-below-direct-stimulation",
-      "schema:description": "Foveal feedback decoding (57.43%) is significantly below direct foveal stimulation decoding (84.06%, t(27)=19.92, p<0.001), indicating that feedback information is weaker than direct sensory input in foveal V1.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "multivariate decoding, condition comparison"
-        }
+      "title": "foveal-feedback-below-direct-stimulation",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Foveal feedback decoding (57.43%) is significantly below direct foveal stimulation decoding (84.06%, t(27)=19.92, p<0.001), indicating that feedback information is weaker than direct sensory input in foveal V1."
       },
+      "observationBase": {
+        "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:verification": [
@@ -256,21 +665,24 @@
       ],
       "haak:panel": "fig2A",
       "haak:analysis": "Lucakaemmer/FovealFeedback (GitHub)"
+    },
+    {
+      "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
+      "@type": "prov:Entity"
     },
     {
       "@id": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df",
       "@type": "mira:Evidence",
-      "schema:name": "foveal-v1-decodes-peripheral-saccade-target",
-      "schema:description": "Saccade target identity (4 stimuli varying in shape and semantic category) can be decoded from foveal V1 BOLD signal above chance in the experimental condition where targets disappear before fixation: 57.43% accuracy (t(27)=8.81, p<0.001), significantly above 50% chance.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "multivariate decoding (cross-validated classification), fMRI"
-        }
+      "title": "foveal-v1-decodes-peripheral-saccade-target",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Saccade target identity (4 stimuli varying in shape and semantic category) can be decoded from foveal V1 BOLD signal above chance in the experimental condition where targets disappear before fixation: 57.43% accuracy (t(27)=8.81, p<0.001), significantly above 50% chance."
       },
+      "observationBase": {
+        "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:verification": [
@@ -286,19 +698,19 @@
       "haak:analysis": "Lucakaemmer/FovealFeedback (GitHub)"
     },
     {
+      "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-feedback-carries-shape-not-category",
-      "schema:description": "Foveal feedback to early visual cortex carries low-to-mid-level visual feature information (shape) rather than high-level semantic category information about the saccade target, reflecting the representational level appropriate to early visual cortex rather than to ventral object-selective cortex.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "haak:entails": [
-        {
-          "@id": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a"
-        },
-        {
-          "@id": "urn:uuid:2a7b8c9d-0e1f-4a01-b002-7c8d9e0f1a2b"
-        }
-      ],
+      "title": "hypothesis-feedback-carries-shape-not-category",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Foveal feedback to early visual cortex carries low-to-mid-level visual feature information (shape) rather than high-level semantic category information about the saccade target, reflecting the representational level appropriate to early visual cortex rather than to ventral object-selective cortex."
+      },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -320,15 +732,13 @@
     {
       "@id": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-feedback-not-spillover",
-      "schema:description": "Foveal V1 decoding of peripheral saccade targets reflects genuine top-down feedback from higher cortical areas, not passive spillover from large peripheral receptive fields whose tails extend into the foveal representation.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "haak:entails": {
-        "@id": "urn:uuid:7b2c3d4e-5f6a-4b01-9c02-2d3e4f5a6b7c"
+      "title": "hypothesis-feedback-not-spillover",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Foveal V1 decoding of peripheral saccade targets reflects genuine top-down feedback from higher cortical areas, not passive spillover from large peripheral receptive fields whose tails extend into the foveal representation."
       },
-      "haak:interprets": {
-        "@id": "urn:uuid:9713afa8-c74b-413e-916e-b8ff811ca2ea"
-      },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -352,12 +762,13 @@
     {
       "@id": "urn:uuid:6c3d4e5f-7a8b-4c01-9d02-3e4f5a6b7c8d",
       "@type": "mira:Claim",
-      "schema:name": "hypothesis-shared-representational-format",
-      "schema:description": "Foveal feedback during saccade preparation uses a representational format shared with bottom-up sensory drive — that is, the population code carrying the predicted peripheral target in foveal V1 lies in the same representational space as the code evoked by direct foveal stimulation by the same image.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "haak:entails": {
-        "@id": "urn:uuid:5d4e5f6a-7b8c-4d01-9e02-4f5a6b7c8d9e"
+      "title": "hypothesis-shared-representational-format",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Foveal feedback during saccade preparation uses a representational format shared with bottom-up sensory drive — that is, the population code carrying the predicted peripheral target in foveal V1 lies in the same representational space as the code evoked by direct foveal stimulation by the same image."
       },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -376,12 +787,13 @@
     {
       "@id": "urn:uuid:9713afa8-c74b-413e-916e-b8ff811ca2ea",
       "@type": "dg:SourceDocument",
-      "schema:name": "interprets-williams-2008-peripheral-spillover",
-      "schema:description": "Williams et al. (2008, Nature Neuroscience) reported that foveal primary visual cortex carries information about stimuli presented at peripheral locations, a result they attributed to top-down feedback. Subsequent work in the foveal-feedback literature has raised the alternative that such foveal decoding can reflect passive spillover from large peripheral receptive fields whose tails extend into the foveal representation, especially in retinotopic areas where receptive-field size scales with eccentricity. The spillover alternative makes the empirical prediction that foveal decoding accuracy should vary monotonically with eccentricity rather than show a fovea-specific signature.",
-      "mira:epistemicStatus": "mira:Claim",
-      "dg:sourceDocument": {
-        "schema:identifier": "doi:10.1038/nn.2218"
+      "title": "interprets-williams-2008-peripheral-spillover",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Williams et al. (2008, Nature Neuroscience) reported that foveal primary visual cortex carries information about stimuli presented at peripheral locations, a result they attributed to top-down feedback. Subsequent work in the foveal-feedback literature has raised the alternative that such foveal decoding can reflect passive spillover from large peripheral receptive fields whose tails extend into the foveal representation, especially in retinotopic areas where receptive-field size scales with eccentricity. The spillover alternative makes the empirical prediction that foveal decoding accuracy should vary monotonically with eccentricity rather than show a fovea-specific signature."
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "literature-context",
       "haak:epistemicStrength": "moderate",
       "haak:panel": "hypothesis (spillover alternative), fig2B (U-shape test)"
@@ -389,20 +801,13 @@
     {
       "@id": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
       "@type": "mira:Claim",
-      "schema:name": "ips-candidate-driver-foveal-feedback",
-      "schema:description": "IPS activity is significantly more strongly associated with foveal decoding than with peripheral decoding in the experimental condition (t(27)=2.53, p=0.026, difference=4.22), making IPS a candidate mediator of foveal feedback during saccade preparation.",
-      "mira:epistemicStatus": "mira:Claim",
-      "haak:derived-from": [
-        {
-          "@id": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535"
-        },
-        {
-          "@id": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9"
-        }
-      ],
-      "haak:requires": {
-        "@id": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c"
+      "title": "ips-candidate-driver-foveal-feedback",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "IPS activity is significantly more strongly associated with foveal decoding than with peripheral decoding in the experimental condition (t(27)=2.53, p=0.026, difference=4.22), making IPS a candidate mediator of foveal feedback during saccade preparation."
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "synthesis",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -435,31 +840,16 @@
     {
       "@id": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
       "@type": "mira:Evidence",
-      "schema:name": "ips-foveal-effect-reverses-in-control",
-      "schema:description": "In the control condition (direct foveal stimulation), IPS activation is significantly negatively associated with foveal decoding (t(27)=−3.61, p=0.004, difference=11.6), the opposite direction to the experimental condition, confirming that the IPS–foveal decoding relationship is specific to the feedback context.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "parametric modulation analysis (FSL FEAT), control condition"
-        }
+      "title": "ips-foveal-effect-reverses-in-control",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "In the control condition (direct foveal stimulation), IPS activation is significantly negatively associated with foveal decoding (t(27)=−3.61, p=0.004, difference=11.6), the opposite direction to the experimental condition, confirming that the IPS–foveal decoding relationship is specific to the feedback context."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13"
-        },
-        {
-          "@id": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13"
-        },
-        {
-          "@id": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535"
-        }
-      ],
-      "mira:opposes": {
-        "schema:name": "generic brain-state or arousal explanation of IPS-foveal-decoding coupling"
+      "observationBase": {
+        "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0"
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -497,36 +887,22 @@
       "haak:analysis": "Lucakaemmer/FovealFeedback (GitHub)"
     },
     {
+      "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
       "@type": "mira:Evidence",
-      "schema:name": "lo-shows-reversed-specificity",
-      "schema:description": "In lateral occipital cortex (LO), the information-content pattern reverses relative to foveal V1: cross-shape decoding drops significantly (experimental: t(27)=3.41, p=0.002, difference=5.31%; control: t(27)=7.25, p<0.001, difference=6.7%) while cross-category decoding remains high, indicating that LO captures semantic category rather than low-level shape.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "pairwise MVPA decoding in LO ROI, paired t-test vs baseline"
-        }
+      "title": "lo-shows-reversed-specificity",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "In lateral occipital cortex (LO), the information-content pattern reverses relative to foveal V1: cross-shape decoding drops significantly (experimental: t(27)=3.41, p=0.002, difference=5.31%; control: t(27)=7.25, p<0.001, difference=6.7%) while cross-category decoding remains high, indicating that LO captures semantic category rather than low-level shape."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:2a7b8c9d-0e1f-4a01-b002-7c8d9e0f1a2b"
-        },
-        {
-          "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f"
-        },
-        {
-          "@id": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b"
-        },
-        {
-          "@id": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0"
+      "observationBase": {
+        "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0"
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -567,22 +943,19 @@
       "haak:analysis": "Lucakaemmer/FovealFeedback (GitHub)"
     },
     {
+      "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c",
       "@type": "mira:Claim",
-      "schema:name": "parametric-modulation-exploratory-not-preregistered",
-      "schema:description": "The parametric modulation analysis linking IPS, FEF, and LO activity to foveal decoding fluctuations (Figure 4) was explicitly conducted as an exploratory analysis and was not included in the preregistered analysis plan, reducing its confirmatory weight relative to the main MVPA decoding results.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "haak:scopes": [
-        {
-          "@id": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13"
-        },
-        {
-          "@id": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535"
-        },
-        {
-          "@id": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9"
-        }
-      ],
+      "title": "parametric-modulation-exploratory-not-preregistered",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The parametric modulation analysis linking IPS, FEF, and LO activity to foveal decoding fluctuations (Figure 4) was explicitly conducted as an exploratory analysis and was not included in the preregistered analysis plan, reducing its confirmatory weight relative to the main MVPA decoding results."
+      },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -613,12 +986,13 @@
     {
       "@id": "urn:uuid:5d4e5f6a-7b8c-4d01-9e02-4f5a6b7c8d9e",
       "@type": "mira:Claim",
-      "schema:name": "prediction-cross-decoding-generalizes",
-      "schema:description": "If foveal feedback shares a representational format with bottom-up sensory drive, a classifier trained on foveal V1 responses in the experimental (feedback) condition should generalize above chance to foveal V1 responses in the control (direct stimulation) condition for the same images.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "haak:derived-from": {
-        "@id": "urn:uuid:6c3d4e5f-7a8b-4c01-9d02-3e4f5a6b7c8d"
+      "title": "prediction-cross-decoding-generalizes",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If foveal feedback shares a representational format with bottom-up sensory drive, a classifier trained on foveal V1 responses in the experimental (feedback) condition should generalize above chance to foveal V1 responses in the control (direct stimulation) condition for the same images."
       },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -634,12 +1008,13 @@
     {
       "@id": "urn:uuid:2a7b8c9d-0e1f-4a01-b002-7c8d9e0f1a2b",
       "@type": "mira:Claim",
-      "schema:name": "prediction-lo-inverse-pattern",
-      "schema:description": "If feedback content is selected by the representational level of the receiving cortex, then lateral occipital cortex (LO) — a high-level object-selective region — should show the inverse profile to foveal V1 under feedback: cross-shape decoding should drop while cross-category decoding should remain preserved.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "haak:derived-from": {
-        "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f"
+      "title": "prediction-lo-inverse-pattern",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If feedback content is selected by the representational level of the receiving cortex, then lateral occipital cortex (LO) — a high-level object-selective region — should show the inverse profile to foveal V1 under feedback: cross-shape decoding should drop while cross-category decoding should remain preserved."
       },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -655,12 +1030,13 @@
     {
       "@id": "urn:uuid:7b2c3d4e-5f6a-4b01-9c02-2d3e4f5a6b7c",
       "@type": "mira:Claim",
-      "schema:name": "prediction-u-shape-eccentricity",
-      "schema:description": "If foveal V1 decoding is genuine top-down feedback rather than passive spillover from large peripheral receptive fields, the eccentricity profile of decoding accuracy in early visual cortex should dip parafoveally and rise again at the fovea (a U-shaped curve), rather than decay monotonically from the peripheral target representation toward the fovea.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "haak:derived-from": {
-        "@id": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c"
+      "title": "prediction-u-shape-eccentricity",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If foveal V1 decoding is genuine top-down feedback rather than passive spillover from large peripheral receptive fields, the eccentricity profile of decoding accuracy in early visual cortex should dip parafoveally and rise again at the fovea (a U-shaped curve), rather than decay monotonically from the peripheral target representation toward the fovea."
       },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -676,12 +1052,13 @@
     {
       "@id": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a",
       "@type": "mira:Claim",
-      "schema:name": "prediction-v1-category-drops-shape-preserved",
-      "schema:description": "If foveal feedback carries shape but not semantic category information, then in foveal V1, cross-category decoding should drop significantly under feedback (relative to direct stimulation or to a within-category baseline), while cross-shape decoding should remain comparatively preserved.",
-      "mira:epistemicStatus": "mira:Hypothesis",
-      "haak:derived-from": {
-        "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f"
+      "title": "prediction-v1-category-drops-shape-preserved",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "If foveal feedback carries shape but not semantic category information, then in foveal V1, cross-category decoding should drop significantly under feedback (relative to direct stimulation or to a within-category baseline), while cross-shape decoding should remain comparatively preserved."
       },
+      "haakx:epistemicStatus": "mira:Hypothesis",
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -697,38 +1074,13 @@
     {
       "@id": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "@type": "mira:Protocol",
-      "schema:name": "preregistered-design-validates-mvpa",
-      "schema:description": "The preregistered analysis plan (osf.io/rxacd) specifies the MVPA decoding pipeline, ROI definitions, and statistical tests in advance, reducing the risk of analytic flexibility inflating the decoding accuracy results.",
-      "mira:epistemicStatus": "mira:Claim",
-      "haak:enables-method": [
-        {
-          "@id": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df"
-        },
-        {
-          "@id": "urn:uuid:6271606c-1989-4bb6-a6da-a14145a46145"
-        },
-        {
-          "@id": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa"
-        },
-        {
-          "@id": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b"
-        },
-        {
-          "@id": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0"
-        },
-        {
-          "@id": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66"
-        },
-        {
-          "@id": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38"
-        },
-        {
-          "@id": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a"
-        }
-      ],
-      "haak:requires": {
-        "@id": "urn:uuid:1f206f40-a766-4818-ba18-73042a082df9"
+      "title": "preregistered-design-validates-mvpa",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The preregistered analysis plan (osf.io/rxacd) specifies the MVPA decoding pipeline, ROI definitions, and statistical tests in advance, reducing the risk of analytic flexibility inflating the decoding accuracy results."
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "methodological",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -779,12 +1131,13 @@
     {
       "@id": "urn:uuid:1f206f40-a766-4818-ba18-73042a082df9",
       "@type": "mira:Claim",
-      "schema:name": "preregistration-submitted-after-manuscript",
-      "schema:description": "Despite the preregistration text (osf.io/rxacd) being written before data collection, it was submitted to OSF only after the manuscript was submitted, with the authors relying on website timestamps to establish that the text predates data collection and was not altered.",
-      "mira:epistemicStatus": "mira:Assumption",
-      "haak:scopes": {
-        "@id": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756"
+      "title": "preregistration-submitted-after-manuscript",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Despite the preregistration text (osf.io/rxacd) being written before data collection, it was submitted to OSF only after the manuscript was submitted, with the authors relying on website timestamps to establish that the text predates data collection and was not altered."
       },
+      "haakx:epistemicStatus": "mira:Assumption",
       "haak:role": "scope",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -809,38 +1162,13 @@
     {
       "@id": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "@type": "mira:Protocol",
-      "schema:name": "target-excluded-fovea-in-99pct-saccades",
-      "schema:description": "The gaze-contingent paradigm successfully excluded the peripheral target from the central fovea (within 2° of visual angle) in 99.27% of saccades, validating that the decoded information was not due to direct foveal viewing of the target.",
-      "mira:epistemicStatus": "mira:Claim",
-      "haak:enables-method": [
-        {
-          "@id": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df"
-        },
-        {
-          "@id": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b"
-        },
-        {
-          "@id": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0"
-        },
-        {
-          "@id": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38"
-        },
-        {
-          "@id": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa"
-        },
-        {
-          "@id": "urn:uuid:6271606c-1989-4bb6-a6da-a14145a46145"
-        },
-        {
-          "@id": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a"
-        },
-        {
-          "@id": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9"
-        },
-        {
-          "@id": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13"
-        }
-      ],
+      "title": "target-excluded-fovea-in-99pct-saccades",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The gaze-contingent paradigm successfully excluded the peripheral target from the central fovea (within 2° of visual angle) in 99.27% of saccades, validating that the decoded information was not due to direct foveal viewing of the target."
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "methodological",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -889,34 +1217,16 @@
     {
       "@id": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
       "@type": "mira:Evidence",
-      "schema:name": "u-shaped-eccentricity-rejects-spillover",
-      "schema:description": "Decoding accuracy in the experimental condition follows a U-shaped function of eccentricity — stronger at foveal and peripheral regions, weaker at parafoveal regions — in all early visual areas (V1: t(27)=3.98, p=0.008; V2: t(27)=3.03, p=0.02; V3: t(27)=2.776, p=0.025, one-sided quadratic curvature), ruling out peripheral spillover as an explanation for foveal decoding.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "weighted quadratic regression on eccentricity-binned decoding accuracy, fMRI"
-        }
+      "title": "u-shaped-eccentricity-rejects-spillover",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Decoding accuracy in the experimental condition follows a U-shaped function of eccentricity — stronger at foveal and peripheral regions, weaker at parafoveal regions — in all early visual areas (V1: t(27)=3.98, p=0.008; V2: t(27)=3.03, p=0.02; V3: t(27)=2.776, p=0.025, one-sided quadratic curvature), ruling out peripheral spillover as an explanation for foveal decoding."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:7b2c3d4e-5f6a-4b01-9c02-2d3e4f5a6b7c"
-        },
-        {
-          "@id": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df"
-        },
-        {
-          "@id": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c"
-        }
-      ],
-      "mira:opposes": {
-        "schema:name": "passive spillover from large peripheral receptive fields"
+      "observationBase": {
+        "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0"
       },
-      "haak:interprets": {
-        "@id": "urn:uuid:9713afa8-c74b-413e-916e-b8ff811ca2ea"
-      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "control",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -957,33 +1267,22 @@
       "haak:analysis": "Lucakaemmer/FovealFeedback (GitHub)"
     },
     {
+      "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
       "@type": "mira:Evidence",
-      "schema:name": "v1-category-decoding-drops-in-feedback",
-      "schema:description": "In foveal V1, decoding across semantic category drops significantly relative to baseline in the experimental condition (t(27)=2.25, p=0.033, difference=3.03%), while decoding across visual shape remains high, indicating that foveal feedback carries shape but not category information.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "pairwise MVPA decoding, paired t-test vs baseline"
-        }
+      "title": "v1-category-decoding-drops-in-feedback",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "In foveal V1, decoding across semantic category drops significantly relative to baseline in the experimental condition (t(27)=2.25, p=0.033, difference=3.03%), while decoding across visual shape remains high, indicating that foveal feedback carries shape but not category information."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a"
-        },
-        {
-          "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f"
-        },
-        {
-          "@id": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b"
-        }
-      ],
-      "mira:opposes": {
-        "@id": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66"
+      "observationBase": {
+        "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0"
       },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1019,33 +1318,22 @@
       "haak:analysis": "Lucakaemmer/FovealFeedback (GitHub)"
     },
     {
+      "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
+      "@type": "prov:Entity"
+    },
+    {
       "@id": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
       "@type": "mira:Evidence",
-      "schema:name": "v2-v3-generalize-shape-not-category",
-      "schema:description": "The shape-sensitive, category-insensitive pattern of foveal feedback decoding found in V1 generalizes to foveal regions of V2 and V3, as shown in supplementary figure analyses, suggesting that low-level feature specificity is a property of early visual cortex as a whole rather than V1 specifically.",
-      "mira:epistemicStatus": "mira:Claim",
-      "mira:observationBase": {
-        "@type": "mira:Study",
-        "schema:identifier": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
-        "mira:follows": {
-          "@type": "mira:Protocol",
-          "schema:name": "pairwise MVPA decoding in foveal V2/V3 ROIs"
-        }
+      "title": "v2-v3-generalize-shape-not-category",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The shape-sensitive, category-insensitive pattern of foveal feedback decoding found in V1 generalizes to foveal regions of V2 and V3, as shown in supplementary figure analyses, suggesting that low-level feature specificity is a property of early visual cortex as a whole rather than V1 specifically."
       },
-      "mira:supports": [
-        {
-          "@id": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a"
-        },
-        {
-          "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f"
-        },
-        {
-          "@id": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b"
-        },
-        {
-          "@id": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0"
-        }
-      ],
+      "observationBase": {
+        "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0"
+      },
+      "haakx:epistemicStatus": "mira:Claim",
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1079,6 +1367,730 @@
       ],
       "haak:panel": "fig3-figure-supplement-1",
       "haak:analysis": "Lucakaemmer/FovealFeedback (GitHub)"
+    },
+    {
+      "@id": "https://doi.org/10.18112/openneuro.ds005933.v1.0.0",
+      "@type": "prov:Entity"
+    },
+    {
+      "@id": "haak:claim/kammer-2026-foveal-feedback/alternative/1",
+      "@type": "mira:Claim",
+      "title": "FEF as candidate driver of foveal feedback",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "FEF as candidate driver of foveal feedback"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:claim/kammer-2026-foveal-feedback/alternative/2",
+      "@type": "mira:Claim",
+      "title": "LO as candidate driver of foveal feedback",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "LO as candidate driver of foveal feedback"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:claim/kammer-2026-foveal-feedback/alternative/3",
+      "@type": "mira:Claim",
+      "title": "generic brain-state or arousal explanation of IPS-foveal-decoding coupling",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "generic brain-state or arousal explanation of IPS-foveal-decoding coupling"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:claim/kammer-2026-foveal-feedback/alternative/4",
+      "@type": "mira:Claim",
+      "title": "passive spillover from large peripheral receptive fields",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "passive spillover from large peripheral receptive fields"
+      },
+      "haak:materialisedFrom": "relation-target",
+      "haak:reviewNote": "No claim file asserts this. It is an alternative explanation named as the target of a relation -- usually one the paper rules out -- and is minted as a Claim so the edge has somewhere to land. Not an authored claim."
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/1",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa",
+      "destination": "urn:uuid:5d4e5f6a-7b8c-4d01-9e02-4f5a6b7c8d9e",
+      "title": "[[cross-decoding-experimental-to-control]] -tests-> [[prediction-cross-decoding-generalizes]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/2",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa",
+      "destination": "urn:uuid:6c3d4e5f-7a8b-4c01-9d02-3e4f5a6b7c8d",
+      "title": "[[cross-decoding-experimental-to-control]] -supports-> [[hypothesis-shared-representational-format]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/3",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
+      "destination": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
+      "title": "[[decoding-shape-sensitive-not-semantic]] -interprets-> [[hypothesis-feedback-carries-shape-not-category]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/4",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
+      "destination": "haak:claim/kammer-2026-foveal-feedback/alternative/1",
+      "title": "[[fef-lo-nonsignificant-after-correction]] -rules-out-> [[FEF as candidate driver of foveal feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/5",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
+      "destination": "haak:claim/kammer-2026-foveal-feedback/alternative/2",
+      "title": "[[fef-lo-nonsignificant-after-correction]] -rules-out-> [[LO as candidate driver of foveal feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/6",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
+      "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
+      "title": "[[fef-lo-nonsignificant-after-correction]] -supports-> [[ips-candidate-driver-foveal-feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/7",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
+      "destination": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a",
+      "title": "[[hypothesis-feedback-carries-shape-not-category]] -entails-> [[prediction-v1-category-drops-shape-preserved]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/8",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
+      "destination": "urn:uuid:2a7b8c9d-0e1f-4a01-b002-7c8d9e0f1a2b",
+      "title": "[[hypothesis-feedback-carries-shape-not-category]] -entails-> [[prediction-lo-inverse-pattern]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/9",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c",
+      "destination": "urn:uuid:7b2c3d4e-5f6a-4b01-9c02-2d3e4f5a6b7c",
+      "title": "[[hypothesis-feedback-not-spillover]] -entails-> [[prediction-u-shape-eccentricity]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/10",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c",
+      "destination": "urn:uuid:9713afa8-c74b-413e-916e-b8ff811ca2ea",
+      "title": "[[hypothesis-feedback-not-spillover]] -interprets-> [[interprets-williams-2008-peripheral-spillover]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/11",
+      "@type": [
+        "haak:reldef/entails"
+      ],
+      "source": "urn:uuid:6c3d4e5f-7a8b-4c01-9d02-3e4f5a6b7c8d",
+      "destination": "urn:uuid:5d4e5f6a-7b8c-4d01-9e02-4f5a6b7c8d9e",
+      "title": "[[hypothesis-shared-representational-format]] -entails-> [[prediction-cross-decoding-generalizes]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/12",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
+      "destination": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c",
+      "title": "[[ips-candidate-driver-foveal-feedback]] -requires-> [[parametric-modulation-exploratory-not-preregistered]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/13",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
+      "destination": "haak:claim/kammer-2026-foveal-feedback/alternative/3",
+      "title": "[[ips-foveal-effect-reverses-in-control]] -rules-out-> [[generic brain-state or arousal explanation of IPS-foveal-decoding coupling]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/14",
+      "@type": [
+        "haak:reldef/validates"
+      ],
+      "source": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
+      "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
+      "title": "[[ips-foveal-effect-reverses-in-control]] -validates-> [[ips-candidate-driver-foveal-feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/15",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
+      "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
+      "title": "[[ips-foveal-effect-reverses-in-control]] -supports-> [[ips-candidate-driver-foveal-feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/16",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
+      "destination": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
+      "title": "[[ips-foveal-effect-reverses-in-control]] -extends-> [[fef-lo-nonsignificant-after-correction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/17",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
+      "destination": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
+      "title": "[[lo-shows-reversed-specificity]] -dissociates-with-> [[v1-category-decoding-drops-in-feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/18",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
+      "destination": "urn:uuid:2a7b8c9d-0e1f-4a01-b002-7c8d9e0f1a2b",
+      "title": "[[lo-shows-reversed-specificity]] -tests-> [[prediction-lo-inverse-pattern]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/19",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
+      "destination": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
+      "title": "[[lo-shows-reversed-specificity]] -supports-> [[hypothesis-feedback-carries-shape-not-category]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/20",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
+      "destination": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
+      "title": "[[lo-shows-reversed-specificity]] -supports-> [[decoding-shape-sensitive-not-semantic]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/21",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
+      "destination": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
+      "title": "[[lo-shows-reversed-specificity]] -extends-> [[v1-category-decoding-drops-in-feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/22",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c",
+      "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
+      "title": "[[parametric-modulation-exploratory-not-preregistered]] -scopes-> [[ips-candidate-driver-foveal-feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/23",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c",
+      "destination": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
+      "title": "[[parametric-modulation-exploratory-not-preregistered]] -scopes-> [[fef-lo-nonsignificant-after-correction]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/24",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c",
+      "destination": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
+      "title": "[[parametric-modulation-exploratory-not-preregistered]] -scopes-> [[ips-foveal-effect-reverses-in-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/25",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
+      "destination": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df",
+      "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[foveal-v1-decodes-peripheral-saccade-target]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/26",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
+      "destination": "urn:uuid:6271606c-1989-4bb6-a6da-a14145a46145",
+      "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[foveal-feedback-below-direct-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/27",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
+      "destination": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa",
+      "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[cross-decoding-experimental-to-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/28",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
+      "destination": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
+      "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[decoding-shape-sensitive-not-semantic]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/29",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
+      "destination": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
+      "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[v1-category-decoding-drops-in-feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/30",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
+      "destination": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
+      "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[lo-shows-reversed-specificity]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/31",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
+      "destination": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
+      "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[v2-v3-generalize-shape-not-category]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/32",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
+      "destination": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
+      "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[u-shaped-eccentricity-rejects-spillover]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/33",
+      "@type": [
+        "haak:reldef/requires"
+      ],
+      "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
+      "destination": "urn:uuid:1f206f40-a766-4818-ba18-73042a082df9",
+      "title": "[[preregistered-design-validates-mvpa]] -requires-> [[preregistration-submitted-after-manuscript]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/34",
+      "@type": [
+        "haak:reldef/scopes"
+      ],
+      "source": "urn:uuid:1f206f40-a766-4818-ba18-73042a082df9",
+      "destination": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
+      "title": "[[preregistration-submitted-after-manuscript]] -scopes-> [[preregistered-design-validates-mvpa]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/35",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
+      "destination": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df",
+      "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[foveal-v1-decodes-peripheral-saccade-target]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/36",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
+      "destination": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
+      "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[decoding-shape-sensitive-not-semantic]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/37",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
+      "destination": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
+      "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[v1-category-decoding-drops-in-feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/38",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
+      "destination": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
+      "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[v2-v3-generalize-shape-not-category]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/39",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
+      "destination": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa",
+      "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[cross-decoding-experimental-to-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/40",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
+      "destination": "urn:uuid:6271606c-1989-4bb6-a6da-a14145a46145",
+      "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[foveal-feedback-below-direct-stimulation]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/41",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
+      "destination": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
+      "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[u-shaped-eccentricity-rejects-spillover]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/42",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
+      "destination": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
+      "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[ips-foveal-effect-reverses-in-control]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/43",
+      "@type": [
+        "haak:reldef/enables_method"
+      ],
+      "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
+      "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
+      "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[ips-candidate-driver-foveal-feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/44",
+      "@type": [
+        "haak:reldef/interprets"
+      ],
+      "source": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
+      "destination": "urn:uuid:9713afa8-c74b-413e-916e-b8ff811ca2ea",
+      "title": "[[u-shaped-eccentricity-rejects-spillover]] -interprets-> [[interprets-williams-2008-peripheral-spillover]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/45",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
+      "destination": "haak:claim/kammer-2026-foveal-feedback/alternative/4",
+      "title": "[[u-shaped-eccentricity-rejects-spillover]] -rules-out-> [[passive spillover from large peripheral receptive fields]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/46",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
+      "destination": "urn:uuid:7b2c3d4e-5f6a-4b01-9c02-2d3e4f5a6b7c",
+      "title": "[[u-shaped-eccentricity-rejects-spillover]] -tests-> [[prediction-u-shape-eccentricity]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/47",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
+      "destination": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df",
+      "title": "[[u-shaped-eccentricity-rejects-spillover]] -supports-> [[foveal-v1-decodes-peripheral-saccade-target]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/48",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
+      "destination": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c",
+      "title": "[[u-shaped-eccentricity-rejects-spillover]] -supports-> [[hypothesis-feedback-not-spillover]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/49",
+      "@type": [
+        "haak:reldef/dissociates_with"
+      ],
+      "source": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
+      "destination": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
+      "title": "[[v1-category-decoding-drops-in-feedback]] -dissociates-with-> [[lo-shows-reversed-specificity]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/50",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
+      "destination": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a",
+      "title": "[[v1-category-decoding-drops-in-feedback]] -tests-> [[prediction-v1-category-drops-shape-preserved]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/51",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
+      "destination": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
+      "title": "[[v1-category-decoding-drops-in-feedback]] -supports-> [[hypothesis-feedback-carries-shape-not-category]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/52",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
+      "destination": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
+      "title": "[[v1-category-decoding-drops-in-feedback]] -supports-> [[decoding-shape-sensitive-not-semantic]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/53",
+      "@type": [
+        "haak:reldef/tests"
+      ],
+      "source": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
+      "destination": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a",
+      "title": "[[v2-v3-generalize-shape-not-category]] -tests-> [[prediction-v1-category-drops-shape-preserved]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/54",
+      "@type": [
+        "haak:reldef/supports"
+      ],
+      "source": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
+      "destination": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
+      "title": "[[v2-v3-generalize-shape-not-category]] -supports-> [[hypothesis-feedback-carries-shape-not-category]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/55",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
+      "destination": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
+      "title": "[[v2-v3-generalize-shape-not-category]] -extends-> [[decoding-shape-sensitive-not-semantic]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/kammer-2026-foveal-feedback/56",
+      "@type": [
+        "haak:reldef/extends"
+      ],
+      "source": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
+      "destination": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
+      "title": "[[v2-v3-generalize-shape-not-category]] -extends-> [[v1-category-decoding-drops-in-feedback]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
     }
   ]
 }

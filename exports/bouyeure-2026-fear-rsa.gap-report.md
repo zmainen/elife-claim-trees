@@ -47,3 +47,11 @@ MIRA requires every Claim to address a `mira:Question`; a claim tree has no such
 - Is it the case that fear learning produces generalized (cross-item) neural representations of threatening cues in the canonical fear network: when an animal learns that a stimulus class is dangerous, the brain represents members of the class with overlapping multivoxel patterns rather than preserving item-specific patterns, so that any new exemplar of the class inherits the threat representation?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
+
+## Alternatives materialised as claims
+
+None: every relation in this paper points at a claim the tree asserts.
+
+## Paper-level scopes with no MIRA target
+
+None.
