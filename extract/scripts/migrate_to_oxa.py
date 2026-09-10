@@ -36,6 +36,10 @@ EDGE_MAP = {
     "rules-out": "claimrel:rulesOut",
     "replicates": "claimrel:replicates",
     "contradicts": "claimrel:contradicts",
+    # Were missing entirely, so every relation of these two types was silently dropped —
+    # 19 of Gädeke's 89 alone. `validates` is the corpus's most-used positive relation.
+    "validates": "cito:confirms",
+    "confirms": "cito:confirms",
 }
 
 EDGE_KEYS = set(EDGE_MAP.keys())
@@ -50,8 +54,19 @@ def parse_claim_file(path: Path) -> dict | None:
     if len(parts) < 3:
         return None
     try:
-        fm = yaml.safe_load(parts[1])
-    except yaml.YAMLError:
+        # Several committed files write an empty list on the line *after* its key, at
+        # column 0 (`belongings:\n[]`), which strict YAML rejects. Every other loader in
+        # this repository normalises it; this one did not, so those files raised, returned
+        # None, and were skipped — silently. Five of Gädeke's 27 claims were missing from
+        # its OXA export, and they were the five carrying verification records.
+        body = re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2",
+                      parts[1], flags=re.M)
+        fm = yaml.safe_load(body)
+    except yaml.YAMLError as e:
+        # Loud, not silent. A claim that cannot be parsed is a claim missing from the
+        # export, and an export quietly short of five claims looks exactly like an export.
+        print(f"[warn] {path}: unparseable frontmatter, claim EXCLUDED: {e}",
+              file=sys.stderr)
         return None
     if not isinstance(fm, dict) or "claim" not in fm:
         return None
@@ -78,17 +93,28 @@ def to_oxa_claim(fm: dict) -> dict:
     raw_epistemic = fm.get("epistemic", "")
     epistemic = raw_epistemic if raw_epistemic in _VALID_STRENGTHS else None
 
-    # Build relations from edge keys
+    # Build relations from BOTH places the corpus stores them. Reading only the top-level
+    # keys missed everything under `belongings:` — 14 of Gädeke's 89 relations, and all of
+    # its `requires` and `supports`. This is the third exporter to have had this bug; the
+    # corpus stores one fact two ways and every reader has to know both.
     relations = []
-    for edge_key, cito_type in EDGE_MAP.items():
+    pairs = []
+    for edge_key in EDGE_MAP:
         targets = fm.get(edge_key, [])
         if isinstance(targets, str):
             targets = [targets]
-        if not targets or targets == [None]:
-            continue
-        for target in targets:
+        for target in (targets or []):
             if target:
-                relations.append({"xref": target, "relationType": cito_type})
+                pairs.append((edge_key, target))
+    for item in (fm.get("belongings") or []):
+        if isinstance(item, dict) and item.get("relation") and item.get("target"):
+            pairs.append((item["relation"], item["target"]))
+
+    for edge_key, target in pairs:
+        cito_type = EDGE_MAP.get(edge_key)
+        if not cito_type:
+            continue
+        relations.append({"xref": target, "relationType": cito_type})
 
     # Build the OXA node
     node = {
