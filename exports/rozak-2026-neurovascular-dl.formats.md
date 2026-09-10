@@ -1,6 +1,6 @@
 # rozak-2026-neurovascular-dl — what each format carries
 
-23 claims, 130 typed relations between them.
+24 claims, 129 typed relations between them.
 
 One source, three targets. Each row is a relation type the paper's claim tree uses; each column is what became of it.
 
@@ -18,11 +18,10 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 | `extends` | 4 | `haak:extends`, under `mira:supports` | kept | kept |
 | `derived-from` | 4 | — | kept | dropped |
 | `rules-out` | 1 | `haak:rules-out`, under `mira:opposes` | kept | kept |
-| `contradicts` | 1 | `haak:contradicts`, under `mira:opposes` | kept | kept |
 
 ## What MIRA has no predicate for — and what happens instead
 
-**65 of 130 relations (50%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
+**65 of 129 relations (50%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
 - `haak:scopes` (42) — a scope constraint governs another claim's validity
 - `haak:requires` (10) — a claim depends on another holding
@@ -34,7 +33,7 @@ Declaring them under `mira:supports` would have been worse than dropping them: i
 
 ## What a reader who knows only core MIRA sees
 
-Every relation keeps its own type — nothing is flattened into `supports`. 61 of the 126 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
+Every relation keeps its own type — nothing is flattened into `supports`. 60 of the 125 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
 - `scopes` (42) — neutral
 - `confirms` (17) — under `mira:supports`
@@ -47,7 +46,6 @@ Every relation keeps its own type — nothing is flattened into `supports`. 61 o
 - `entails` (4) — neutral
 - `extends` (4) — under `mira:supports`
 - `rules-out` (1) — under `mira:opposes`
-- `contradicts` (1) — under `mira:opposes`
 
 ## What MIRA genuinely cannot carry
 

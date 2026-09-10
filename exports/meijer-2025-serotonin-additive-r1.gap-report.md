@@ -2,7 +2,7 @@
 
 **Paper:** `meijer-2025-serotonin-additive-r1` · **Generated:** 2026-09-10
 
-41 claims, 84 typed relations between them.
+41 claims, 82 typed relations between them.
 
 ## Claims by role
 
@@ -17,14 +17,14 @@
 
 ## Relations dropped
 
-**70 of 84 relations (83%) have no MIRA predicate and are absent from the strict export.**
+**68 of 82 relations (83%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
-| `requires` | 31 | a claim depends on another holding |
+| `requires` | 30 | a claim depends on another holding |
 | `scopes` | 17 | a scope constraint governs another claim's validity |
 | `derived-from` | 9 | prediction derived from its hypothesis (inverse of entails) |
-| `entails` | 7 | hypothesis entails its prediction — the deductive step |
+| `entails` | 6 | hypothesis entails its prediction — the deductive step |
 | `interprets` | 4 | one claim interprets another |
 | `enables-method` | 2 | a result makes a downstream method possible |
 
@@ -51,7 +51,11 @@ Override any of these by adding a `question:` field to the hypothesis's frontmat
 
 ## Stance: claims this paper does not assert
 
-Every claim in this paper is asserted by it.
+**1 of this paper's claims are not asserted by it.** They are alternative explanations it entertains, rejects, or attributes to others. MIRA has no vocabulary for that distinction: it types a node as `Claim` and says nothing about who stands behind it.
+
+The strict export still carries the `rules-out` edge that eliminated each one, declared under `mira:opposes`, so a MIRA-only reader can see the direction of the argument. What that reader cannot see is that the paper **denies** these propositions — so it will over-read them as assertions. The stance travels in the extended file as `haak:stance`.
+
+- `interprets-gain-control-default-framework` — rejects
 
 ## Alternatives materialised as claims
 

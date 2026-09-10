@@ -2,13 +2,13 @@
 
 **Paper:** `wengert-2026-kcnc1` · **Generated:** 2026-09-10
 
-31 claims, 122 typed relations between them.
+32 claims, 122 typed relations between them.
 
 ## Claims by role
 
 - **empirical** — 14
 - **prediction** — 9
-- **hypothesis** — 3
+- **hypothesis** — 4
 - **control** — 2
 - **methodological** — 1
 - **scope** — 1
@@ -39,8 +39,9 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Questions synthesized
 
-MIRA requires every Claim to address a `mira:Question`; a claim tree has no such node. **3 questions were derived mechanically from hypothesis text and need human review.**
+MIRA requires every Claim to address a `mira:Question`; a claim tree has no such node. **4 questions were derived mechanically from hypothesis text and need human review.**
 
+- Is it the case that inhibitory dysfunction in Kcnc1-A421V/+ mice is already established at the juvenile stage (P16-21) rather than emerging with age, so the phenotype is developmentally static rather than progressive?
 - Is it the case that the recurrent missense variant KCNC1-p.Ala421Val (A421V) in the Kv3.1 voltage-gated potassium channel causes a loss of channel function via impaired delivery of channel protein to the plasma membrane (a trafficking defect), rather than via altered gating or conductance of channels that do reach the surface?
 - Is it the case that cell-autonomous loss of Kv3.1 function in PV-INs is sufficient to drive the network-level developmental and epileptic encephalopathy phenotype of KCNC1 disease?
 - Is it the case that because Kv3.1 is strongly and selectively expressed in fast-spiking neurons that rely on rapid action-potential repolarization to sustain high firing rates, haploinsufficient or dominant-negative loss of Kv3.1 should produce a cell-type- specific impairment that targets parvalbumin-positive (PV+) GABAergic interneurons while leaving excitatory neurons (which do not express Kv3.1 at functionally relevant levels) intact?
@@ -49,7 +50,11 @@ Override any of these by adding a `question:` field to the hypothesis's frontmat
 
 ## Stance: claims this paper does not assert
 
-Every claim in this paper is asserted by it.
+**1 of this paper's claims are not asserted by it.** They are alternative explanations it entertains, rejects, or attributes to others. MIRA has no vocabulary for that distinction: it types a node as `Claim` and says nothing about who stands behind it.
+
+The strict export still carries the `rules-out` edge that eliminated each one, declared under `mira:opposes`, so a MIRA-only reader can see the direction of the argument. What that reader cannot see is that the paper **denies** these propositions — so it will over-read them as assertions. The stance travels in the extended file as `haak:stance`.
+
+- `alt-inhibitory-dysfunction-present-juvenile` — rejects
 
 ## Alternatives materialised as claims
 

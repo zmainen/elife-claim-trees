@@ -32,7 +32,7 @@ belongings:
     target: near-zero-choice-by-stim-interaction
   - relation: requires
     target: prediction-multiplicative-gain-yields-significant-interaction
-  - relation: requires
+  - relation: rules-out
     target: interprets-gain-control-default-framework
 
 interprets:

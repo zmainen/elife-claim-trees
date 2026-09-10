@@ -1,6 +1,6 @@
 # wengert-2026-kcnc1 — what each format carries
 
-31 claims, 122 typed relations between them.
+32 claims, 122 typed relations between them.
 
 One source, three targets. Each row is a relation type the paper's claim tree uses; each column is what became of it.
 
@@ -18,7 +18,7 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 | `interprets` | 4 | `haak:interprets`, neutral | kept | dropped |
 | `validates` | 3 | `haak:validates`, under `mira:supports` | kept | kept |
 | `requires` | 2 | `haak:requires`, neutral | kept | dropped |
-| `contradicts` | 1 | `haak:contradicts`, under `mira:opposes` | kept | kept |
+| `rules-out` | 1 | `haak:rules-out`, under `mira:opposes` | kept | kept |
 
 ## What MIRA has no predicate for — and what happens instead
 
@@ -48,7 +48,7 @@ Every relation keeps its own type — nothing is flattened into `supports`. 64 o
 - `interprets` (4) — neutral
 - `validates` (3) — under `mira:supports`
 - `requires` (2) — neutral
-- `contradicts` (1) — under `mira:opposes`
+- `rules-out` (1) — under `mira:opposes`
 
 ## What MIRA genuinely cannot carry
 

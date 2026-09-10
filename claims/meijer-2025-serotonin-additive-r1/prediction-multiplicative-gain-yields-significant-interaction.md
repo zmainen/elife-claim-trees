@@ -29,8 +29,6 @@ derived-from:
 
 belongings: []
 
-contradicts:
-  - prediction-near-zero-choice-stim-interaction
 
 assertions:
   - paper-slug: meijer-2025-serotonin-additive-r1

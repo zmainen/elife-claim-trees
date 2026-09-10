@@ -19,7 +19,7 @@ validates:
   - igabasnfr2-single-bouton-hippocampus
   - igabasnfr2-invivo-barrel-cortex
 rules-out:
-  - igabasnfr2-fourfold-sensitivity-gain
+  - alt-signal-from-cross-reactivity
 
 belongings: []
 

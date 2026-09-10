@@ -93,41 +93,6 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/contradicts",
-      "@type": "AbstractRelationDef",
-      "subClassOf": [
-        "mira:opposes",
-        {
-          "@type": "owl:Restriction",
-          "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/contradicts"
-        }
-      ],
-      "label": "contradicts",
-      "creator": "haak:agent/elife-claim-trees",
-      "created": "2026-09-10T00:00:00.000Z",
-      "modified": "2026-09-10T00:00:00.000Z"
-    },
-    {
-      "@id": "haak:reldef/contradicts/def",
-      "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
-      "subClassOf": [
-        "haak:reldef/contradicts",
-        "dgb:RelationInstance"
-      ],
-      "label": "contradicts",
-      "description": {
-        "@type": "Item",
-        "format": "text/plain",
-        "content": "The source claim contradicts the destination claim."
-      },
-      "creator": "haak:agent/elife-claim-trees",
-      "created": "2026-09-10T00:00:00.000Z",
-      "modified": "2026-09-10T00:00:00.000Z"
-    },
-    {
       "@id": "haak:reldef/derived_from",
       "@type": "AbstractRelationDef",
       "subClassOf": [
@@ -509,6 +474,15 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
+      "@id": "urn:uuid:d58f5ce7-bd4f-461e-9b01-4550aa813eff#question",
+      "@type": "mira:Question",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that vessel caliber measured at a single point along a capillary is an adequate estimate of microvessel volume change, so point measurements suffice for quantifying neurovascular coupling without volumetric segmentation?"
+      }
+    },
+    {
       "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52#question",
       "@type": "mira:Question",
       "description": {
@@ -524,6 +498,19 @@
         "@type": "Item",
         "format": "text/plain",
         "content": "Is it the case that optogenetic activation of cortical pyramidal neurons elicits coordinated, network-level vascular responses that cannot be predicted from individual-vessel measurements alone: dilations and constrictions are spatially organised relative to active neurons, capillary responses correlate with their network neighbours' responses, and overall capillary network efficiency is modulated by stimulation?"
+      }
+    },
+    {
+      "@id": "urn:uuid:d58f5ce7-bd4f-461e-9b01-4550aa813eff",
+      "@type": "mira:Claim",
+      "title": "alt-point-measurement-estimates-vessel-volume",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Vessel caliber measured at a single point along a capillary is an adequate estimate of microvessel volume change, so point measurements suffice for quantifying neurovascular coupling without volumetric segmentation."
+      },
+      "mira:addresses": {
+        "@id": "urn:uuid:d58f5ce7-bd4f-461e-9b01-4550aa813eff#question"
       }
     },
     {
@@ -961,8 +948,8 @@
         "haak:reldef/rules_out"
       ],
       "source": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
-      "destination": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
-      "title": "[[baseline-intra-vessel-radius-varies-24pct]] -rules-out-> [[novas3d-outperforms-ilastik]]",
+      "destination": "urn:uuid:d58f5ce7-bd4f-461e-9b01-4550aa813eff",
+      "title": "[[baseline-intra-vessel-radius-varies-24pct]] -rules-out-> [[alt-point-measurement-estimates-vessel-volume]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
@@ -994,18 +981,6 @@
     {
       "@id": "haak:edge/rozak-2026-neurovascular-dl/10",
       "@type": [
-        "haak:reldef/contradicts"
-      ],
-      "source": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0",
-      "destination": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b",
-      "title": "[[baseline-intra-vessel-radius-varies-24pct]] -contradicts-> [[novas3d-outperforms-ilastik]]",
-      "creator": "haak:agent/elife-claim-trees",
-      "created": "2026-09-10T00:00:00.000Z",
-      "modified": "2026-09-10T00:00:00.000Z"
-    },
-    {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/11",
-      "@type": [
         "haak:reldef/tests"
       ],
       "source": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd",
@@ -1016,7 +991,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/12",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/11",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -1028,7 +1003,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/13",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/12",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -1040,7 +1015,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/14",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/13",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -1052,7 +1027,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/15",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/14",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -1064,7 +1039,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/16",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/15",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -1076,7 +1051,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/17",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/16",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1088,7 +1063,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/18",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/17",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1100,7 +1075,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/19",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/18",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1112,7 +1087,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/20",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/19",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1124,7 +1099,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/21",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/20",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1136,7 +1111,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/22",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/21",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1148,7 +1123,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/23",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/22",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1160,7 +1135,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/24",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/23",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1172,7 +1147,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/25",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/24",
       "@type": [
         "haak:reldef/dissociates_with"
       ],
@@ -1184,7 +1159,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/26",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/25",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1196,7 +1171,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/27",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/26",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1208,7 +1183,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/28",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/27",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1220,7 +1195,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/29",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/28",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1232,7 +1207,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/30",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/29",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1244,7 +1219,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/31",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/30",
       "@type": [
         "haak:reldef/dissociates_with"
       ],
@@ -1256,7 +1231,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/32",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/31",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1268,7 +1243,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/33",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/32",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1280,7 +1255,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/34",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/33",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1292,7 +1267,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/35",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/34",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1304,7 +1279,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/36",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/35",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1316,7 +1291,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/37",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/36",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1328,7 +1303,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/38",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/37",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1340,7 +1315,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/39",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/38",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1352,7 +1327,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/40",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/39",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1364,7 +1339,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/41",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/40",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1376,7 +1351,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/42",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/41",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1388,7 +1363,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/43",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/42",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1400,7 +1375,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/44",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/43",
       "@type": [
         "haak:reldef/entails"
       ],
@@ -1412,7 +1387,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/45",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/44",
       "@type": [
         "haak:reldef/entails"
       ],
@@ -1424,7 +1399,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/46",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/45",
       "@type": [
         "haak:reldef/entails"
       ],
@@ -1436,7 +1411,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/47",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/46",
       "@type": [
         "haak:reldef/entails"
       ],
@@ -1448,7 +1423,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/48",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/47",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1460,7 +1435,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/49",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/48",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1472,7 +1447,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/50",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/49",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1484,7 +1459,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/51",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/50",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1496,7 +1471,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/52",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/51",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1508,7 +1483,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/53",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/52",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1520,7 +1495,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/54",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/53",
       "@type": [
         "haak:reldef/extends"
       ],
@@ -1532,7 +1507,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/55",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/54",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1544,7 +1519,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/56",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/55",
       "@type": [
         "haak:reldef/enables_method"
       ],
@@ -1556,7 +1531,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/57",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/56",
       "@type": [
         "haak:reldef/enables_method"
       ],
@@ -1568,7 +1543,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/58",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/57",
       "@type": [
         "haak:reldef/enables_method"
       ],
@@ -1580,7 +1555,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/59",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/58",
       "@type": [
         "haak:reldef/enables_method"
       ],
@@ -1592,7 +1567,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/60",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/59",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1604,7 +1579,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/61",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/60",
       "@type": [
         "haak:reldef/extends"
       ],
@@ -1616,7 +1591,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/62",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/61",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1628,7 +1603,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/63",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/62",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1640,7 +1615,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/64",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/63",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1652,7 +1627,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/65",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/64",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1664,7 +1639,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/66",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/65",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1676,7 +1651,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/67",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/66",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1688,7 +1663,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/68",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/67",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1700,7 +1675,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/69",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/68",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1712,7 +1687,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/70",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/69",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1724,7 +1699,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/71",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/70",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1736,7 +1711,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/72",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/71",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1748,7 +1723,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/73",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/72",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1760,7 +1735,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/74",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/73",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1772,7 +1747,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/75",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/74",
       "@type": [
         "haak:reldef/extends"
       ],
@@ -1784,7 +1759,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/76",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/75",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1796,7 +1771,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/77",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/76",
       "@type": [
         "haak:reldef/enables_method"
       ],
@@ -1808,7 +1783,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/78",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/77",
       "@type": [
         "haak:reldef/enables_method"
       ],
@@ -1820,7 +1795,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/79",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/78",
       "@type": [
         "haak:reldef/enables_method"
       ],
@@ -1832,7 +1807,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/80",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/79",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1844,7 +1819,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/81",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/80",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -1856,7 +1831,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/82",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/81",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -1868,7 +1843,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/83",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/82",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -1880,7 +1855,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/84",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/83",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1892,7 +1867,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/85",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/84",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1904,7 +1879,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/86",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/85",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -1916,7 +1891,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/87",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/86",
       "@type": [
         "haak:reldef/enables_method"
       ],
@@ -1928,7 +1903,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/88",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/87",
       "@type": [
         "haak:reldef/enables_method"
       ],
@@ -1940,7 +1915,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/89",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/88",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1952,7 +1927,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/90",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/89",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1964,7 +1939,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/91",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/90",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1976,7 +1951,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/92",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/91",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -1988,7 +1963,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/93",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/92",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2000,7 +1975,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/94",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/93",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2012,7 +1987,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/95",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/94",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2024,7 +1999,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/96",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/95",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2036,7 +2011,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/97",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/96",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2048,7 +2023,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/98",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/97",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2060,7 +2035,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/99",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/98",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2072,7 +2047,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/100",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/99",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2084,7 +2059,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/101",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/100",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2096,7 +2071,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/102",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/101",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2108,7 +2083,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/103",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/102",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2120,7 +2095,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/104",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/103",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2132,7 +2107,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/105",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/104",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2144,7 +2119,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/106",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/105",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2156,7 +2131,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/107",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/106",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2168,7 +2143,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/108",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/107",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2180,7 +2155,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/109",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/108",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2192,7 +2167,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/110",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/109",
       "@type": [
         "haak:reldef/scopes"
       ],
@@ -2204,7 +2179,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/111",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/110",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -2216,7 +2191,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/112",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/111",
       "@type": [
         "haak:reldef/dissociates_with"
       ],
@@ -2228,7 +2203,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/113",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/112",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -2240,7 +2215,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/114",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/113",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -2252,7 +2227,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/115",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/114",
       "@type": [
         "haak:reldef/extends"
       ],
@@ -2264,7 +2239,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/116",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/115",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -2276,7 +2251,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/117",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/116",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -2288,7 +2263,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/118",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/117",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -2300,7 +2275,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/119",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/118",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -2312,7 +2287,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/120",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/119",
       "@type": [
         "haak:reldef/confirms"
       ],
@@ -2324,7 +2299,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/121",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/120",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -2336,7 +2311,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/122",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/121",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -2348,7 +2323,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/123",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/122",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -2360,7 +2335,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/124",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/123",
       "@type": [
         "haak:reldef/validates"
       ],
@@ -2372,7 +2347,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/125",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/124",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -2384,7 +2359,7 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/rozak-2026-neurovascular-dl/126",
+      "@id": "haak:edge/rozak-2026-neurovascular-dl/125",
       "@type": [
         "haak:reldef/supports"
       ],

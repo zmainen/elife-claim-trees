@@ -22,13 +22,11 @@ confirms:
   - hypothesis-network-level-nvc-coordination
   - synthesis-individual-vessel-measurements-insufficient
 rules-out:
-  - novas3d-outperforms-ilastik
+  - alt-point-measurement-estimates-vessel-volume
 
 belongings:
   - relation: supports
     target: vessel-radius-heterogeneity-stimulation
-  - relation: contradicts
-    target: novas3d-outperforms-ilastik
 
 assertions:
   - paper-slug: rozak-2026-neurovascular-dl

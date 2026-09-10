@@ -96,41 +96,6 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/contradicts",
-      "@type": "AbstractRelationDef",
-      "subClassOf": [
-        "mira:opposes",
-        {
-          "@type": "owl:Restriction",
-          "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/contradicts"
-        }
-      ],
-      "label": "contradicts",
-      "creator": "haak:agent/elife-claim-trees",
-      "created": "2026-09-10T00:00:00.000Z",
-      "modified": "2026-09-10T00:00:00.000Z"
-    },
-    {
-      "@id": "haak:reldef/contradicts/def",
-      "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
-      "subClassOf": [
-        "haak:reldef/contradicts",
-        "dgb:RelationInstance"
-      ],
-      "label": "contradicts",
-      "description": {
-        "@type": "Item",
-        "format": "text/plain",
-        "content": "The source claim contradicts the destination claim."
-      },
-      "creator": "haak:agent/elife-claim-trees",
-      "created": "2026-09-10T00:00:00.000Z",
-      "modified": "2026-09-10T00:00:00.000Z"
-    },
-    {
       "@id": "haak:reldef/derived_from",
       "@type": "AbstractRelationDef",
       "subClassOf": [
@@ -372,6 +337,41 @@
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
+      "@id": "haak:reldef/rules_out",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/rules_out"
+        }
+      ],
+      "label": "rules-out",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/rules_out",
+        "dgb:RelationInstance"
+      ],
+      "label": "rules-out",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence eliminates the destination claim as viable."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-09-10T00:00:00.000Z",
+      "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
       "@id": "haak:reldef/scopes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
@@ -509,6 +509,17 @@
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "@id": "urn:uuid:8f0f1866-b184-4166-8ed7-97af70a45e88#question",
+      "@type": "mira:Question",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that inhibitory dysfunction in Kcnc1-A421V/+ mice is already established at the juvenile stage (P16-21) rather than emerging with age, so the phenotype is developmentally static rather than progressive?"
+      },
+      "haak:autoDerived": true,
+      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:6b95034b-bded-485f-b080-2e7db1856e34#question",
@@ -746,6 +757,23 @@
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
       "@type": "prov:Entity"
+    },
+    {
+      "@id": "urn:uuid:8f0f1866-b184-4166-8ed7-97af70a45e88",
+      "@type": "mira:Claim",
+      "title": "alt-inhibitory-dysfunction-present-juvenile",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Inhibitory dysfunction in Kcnc1-A421V/+ mice is already established at the juvenile stage (P16-21) rather than emerging with age, so the phenotype is developmentally static rather than progressive."
+      },
+      "haakx:epistemicStatus": "mira:Hypothesis",
+      "haak:role": "hypothesis",
+      "haak:stance": "rejects",
+      "haak:epistemicStrength": "weak",
+      "mira:addresses": {
+        "@id": "urn:uuid:8f0f1866-b184-4166-8ed7-97af70a45e88#question"
+      }
     },
     {
       "@id": "urn:uuid:3df55d45-b8a0-42c6-9807-0323c08e8815",
@@ -1584,14 +1612,14 @@
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
-        "contradicts": [
-          {
-            "@id": "urn:uuid:a2af2706-be34-44a7-b65b-6a11ae98c2a8"
-          }
-        ],
         "dissociates-with": [
           {
             "@id": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a"
+          }
+        ],
+        "rules-out": [
+          {
+            "@id": "urn:uuid:8f0f1866-b184-4166-8ed7-97af70a45e88"
           }
         ],
         "supports": [
@@ -2828,11 +2856,11 @@
     {
       "@id": "haak:edge/wengert-2026-kcnc1/77",
       "@type": [
-        "haak:reldef/contradicts"
+        "haak:reldef/rules_out"
       ],
       "source": "urn:uuid:dbc34885-27d0-4b6e-afbb-6a34befb9b98",
-      "destination": "urn:uuid:a2af2706-be34-44a7-b65b-6a11ae98c2a8",
-      "title": "[[pv-in-inhibitory-synapse-intact-juvenile]] -contradicts-> [[inhibitory-dysfunction-progresses-to-adulthood]]",
+      "destination": "urn:uuid:8f0f1866-b184-4166-8ed7-97af70a45e88",
+      "title": "[[pv-in-inhibitory-synapse-intact-juvenile]] -rules-out-> [[alt-inhibitory-dysfunction-present-juvenile]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"

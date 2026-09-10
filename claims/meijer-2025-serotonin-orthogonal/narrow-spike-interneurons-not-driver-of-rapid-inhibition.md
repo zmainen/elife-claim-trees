@@ -24,7 +24,7 @@ priority: 2026-04-20
 epistemic: moderate
 
 rules-out:
-  - rapid-fs-interneuron-recruitment-as-mechanism
+  - alt-rapid-fs-interneuron-recruitment
 
 belongings:
   - relation: requires

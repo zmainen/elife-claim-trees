@@ -2,13 +2,13 @@
 
 **Paper:** `kolb-2026-igabasnfr2` · **Generated:** 2026-09-10
 
-20 claims, 90 typed relations between them.
+21 claims, 90 typed relations between them.
 
 ## Claims by role
 
 - **empirical** — 9
+- **hypothesis** — 3
 - **methodological** — 3
-- **hypothesis** — 2
 - **prediction** — 2
 - **scope** — 2
 - **control** — 1
@@ -39,12 +39,21 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Questions synthesized
 
-MIRA requires every Claim to address a `mira:Question`; a claim tree has no such node. **2 questions were derived mechanically from hypothesis text and need human review.**
+MIRA requires every Claim to address a `mira:Question`; a claim tree has no such node. **3 questions were derived mechanically from hypothesis text and need human review.**
 
+- Is it the case that the fluorescence response attributed to iGABASnFR2 reflects binding of, or interference by, compounds structurally related to GABA rather than GABA itself, so the reported sensitivity is not a measure of GABA detection?
 - Is it the case that a GABA sensor with sufficiently improved sensitivity, kinetics, and affinity will cross qualitative capability thresholds — not merely improve signal-to-noise on measurements iGABASnFR1 could already make, but enable measurements that iGABASnFR1 cannot make at all?
 - Is it the case that targeted near-saturation mutagenesis at sites in and around the Pf622 GABA-binding pocket and the cpGFP-linker interfaces can yield a successor to iGABASnFR1 with substantially improved sensitivity (ΔF/F), increased on-cell affinity within the physiologically relevant range, faster binding kinetics, and improved expression / membrane trafficking — without sacrificing GABA selectivity?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
+
+## Stance: claims this paper does not assert
+
+**1 of this paper's claims are not asserted by it.** They are alternative explanations it entertains, rejects, or attributes to others. MIRA has no vocabulary for that distinction: it types a node as `Claim` and says nothing about who stands behind it.
+
+The strict export still carries the `rules-out` edge that eliminated each one, declared under `mira:opposes`, so a MIRA-only reader can see the direction of the argument. What that reader cannot see is that the paper **denies** these propositions — so it will over-read them as assertions. The stance travels in the extended file as `haak:stance`.
+
+- `alt-signal-from-cross-reactivity` — rejects
 
 ## Alternatives materialised as claims
 

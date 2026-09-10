@@ -28,8 +28,6 @@ belongings:
   - relation: requires
     target: seven-target-trajectories-13-regions-7478-neurons
 
-rules-out:
-  - narrow-spike-interneurons-not-driver-of-rapid-inhibition
 
 assertions:
   - paper-slug: meijer-2025-serotonin-orthogonal

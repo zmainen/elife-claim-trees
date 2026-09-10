@@ -25,8 +25,8 @@ dissociates-with:
   - pv-in-inhibitory-synapse-altered-adult
 
 belongings:
-  - relation: contradicts
-    target: inhibitory-dysfunction-progresses-to-adulthood
+  - relation: rules-out
+    target: alt-inhibitory-dysfunction-present-juvenile
   - relation: supports
     target: inhibitory-dysfunction-progresses-to-adulthood
 
@@ -55,9 +55,13 @@ reproductions:
       extraction, consistent with a few cells missing some frequency sweeps).
 ---
 
-Note: the `contradicts` relation here is intentionally nuanced — this claim both supports
-and contradicts the developmental progression claim depending on the angle. It supports
-the temporal framing (juvenile normal, adult altered) but contradicts a naive reading
-of "inhibitory dysfunction present at juvenile." The resolution is that firing-frequency
-impairment is present juvenile but synaptic-per-spike function is not. The distinction
-matters for mechanistic interpretation.
+Note: this claim used to carry both `contradicts` and `supports` pointing at
+`inhibitory-dysfunction-progresses-to-adulthood`, with a note explaining that it supports the
+temporal framing (juvenile normal, adult altered) but contradicts "a naive reading of
+'inhibitory dysfunction present at juvenile.'" That naive reading is now a claim of its own,
+`alt-inhibitory-dysfunction-present-juvenile`, and the opposition points at it. The result
+supports the progression claim and rules out the static one — no longer both at once.
+
+The resolution the old note gave still holds and is the substance: firing-frequency impairment
+is present in juveniles but synaptic-per-spike function is not. The distinction matters for
+mechanistic interpretation.

@@ -1,6 +1,6 @@
 # kolb-2026-igabasnfr2 — what each format carries
 
-20 claims, 90 typed relations between them.
+21 claims, 90 typed relations between them.
 
 One source, three targets. Each row is a relation type the paper's claim tree uses; each column is what became of it.
 

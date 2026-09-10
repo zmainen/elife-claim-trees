@@ -29,7 +29,6 @@ belongings: []
 
 entails:
   - prediction-near-zero-choice-stim-interaction
-  - prediction-multiplicative-gain-yields-significant-interaction
   - orthogonality-derived-from-additivity
 
 assertions:

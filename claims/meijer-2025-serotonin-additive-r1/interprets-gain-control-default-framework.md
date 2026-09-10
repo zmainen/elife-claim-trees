@@ -32,6 +32,7 @@ assertions:
     dataset-doi: ~
     method: literature interpretation; cited at three points in R1 (introduction reframing, results contrastive prediction setup, discussion eliminative claim)
     confidence: moderate
+    stance: rejects
 
 reproductions: []
 ---
