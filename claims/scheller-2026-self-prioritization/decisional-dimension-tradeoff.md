@@ -44,7 +44,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified
+    status: partial
     notes: >
       Partially verified from Correlation_Results.xlsx (OSF cross-exp folder). Pearson r
       computed from ΔΔv_Per vs ΔΔv_Soc for Exp1 (N=63): r = -0.211, p = 0.096

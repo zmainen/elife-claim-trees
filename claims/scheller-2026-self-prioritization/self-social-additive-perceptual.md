@@ -44,7 +44,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified
+    status: partial
     notes: >
       Partially verified from estimates_indiv_C.csv (Exp2, OSF https://osf.io/a62df).
       The additivity test can be computed from v_p/v_r per condition: other-associated

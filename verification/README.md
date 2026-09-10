@@ -14,17 +14,55 @@ run, and how the reproduced values compare to paper-reported values.
 Install dependencies once:
 
 ```bash
-pip install pandas scipy nibabel numpy statsmodels biopython openpyxl lifelines requests
+pip install -r verification/requirements.txt
 ```
 
-Run any script:
+**Use an interpreter that has them, and check it before you conclude anything.** These
+scripts need pandas, numpy and scipy, which a system `python3` on macOS does not have — the
+instruction here used to read simply `python verify.py`, and following it produces
+`ModuleNotFoundError: No module named 'pandas'` on a stock machine. Point at whichever
+interpreter you installed into:
 
 ```bash
-python verification/{paper-slug}/verify.py
+python3 -c "import pandas, numpy, scipy; print('ok')"
+python3 verification/{paper-slug}/verify.py
 ```
+
+This matters more than a missing package usually does, because **a missing dependency does
+not always stop a script.** `meijer-2025-serotonin-additive-r1` catches the ImportError and
+records `WARN — statsmodels/sklearn not installed`, so the claim comes out partially
+verified and nothing on the page says the environment is the reason. A verdict produced by
+an incomplete environment is not the verdict the script would give. `verification/audit_run.py`
+records missing dependencies in `provenance.json` and marks the run degraded, so this cannot
+pass silently again.
 
 Each script downloads data from public deposits automatically. Network access required.
 Large downloads (neuroimaging data, GitHub repos) may take several minutes.
+
+## Auditing a run
+
+Reading a script tells you what it appears to do. Running it under observation tells you what
+it did:
+
+```bash
+python3 verification/audit_run.py --all --timeout 900     # observe every script
+python3 scripts/audit_verifications.py                    # reconcile against the claims
+```
+
+`audit_run.py` patches `open` and the data loaders, runs each script in its own interpreter,
+and writes `verification/<paper>/provenance.json`: every file opened with its size and
+content hash, every result produced, any exception raised, and the interpreter used. Nothing
+is taken from the script's own account of itself.
+
+`audit_verifications.py` then compares that record against the `reproductions:` blocks in the
+claim files and reports every disagreement — a claim recorded `verified` that the run never
+produced a result for, a status that contradicts the run's verdict, a `data_file` the run
+never opened. It exits non-zero when any is found.
+
+This exists because the one script that was audited had two such faults: a claim recorded
+`verified` while the function named in its record raised `shapes (4,4) and (5,5) not
+aligned`, and a record naming `fMRI - Choices_singleTrialData.csv` while the code opened
+`Behav - Choices_singleTrialData.csv`. Neither is visible by reading.
 
 ## Output Format
 
@@ -53,15 +91,24 @@ See the corresponding claim `.md` file in `claims/{paper}/` for full notes.
 
 ## Papers Covered
 
-| Directory | Paper | Claims Verified |
-|:----------|:------|:----------------|
-| `gadeke-2026-guilt-insula/` | Gadeke et al. 2026 — guilt and anterior insula | 5 |
-| `bouyeure-2026-fear-rsa/` | Bouyeure et al. 2026 — fear RSA | 4 |
-| `scheller-2026-self-prioritization/` | Scheller et al. 2026 — self-prioritization TVA | 6 |
-| `wengert-2026-kcnc1/` | Wengert et al. 2026 — Kcnc1-A421V | 4 |
-| `ejdrup-2026-dopamine/` | Ejdrup et al. 2026 — striatal dopamine model | 4 |
-| `kolb-2026-igabasnfr2/` | Kolb et al. 2026 — iGABASnFR2 structure | 1 |
-| `headley-2026-inhibitory-rhythms/` | Headley et al. 2026 — inhibitory rhythms | 4 |
+<!-- generated: papers-covered -->
+
+| Directory | Corpus | Claims covered | Last observed run | Run on |
+|:----------|:-------|:---------------|:------------------|:-------|
+| `bouyeure-2026-fear-rsa/` | site corpus | 3/17 | 3 PASS · 1 WARN | 2026-09-10 |
+| `ejdrup-2026-dopamine/` | site corpus | 0/16 | not yet run ⚠ Timeout | — |
+| `gadeke-2026-guilt-insula/` | site corpus | 4/16 | 7 PASS | 2026-09-10 |
+| `headley-2026-inhibitory-rhythms/` | site corpus | 4/14 | 4 PASS | 2026-09-10 |
+| `kolb-2026-igabasnfr2/` | site corpus | 0/10 | 1 PASS | 2026-09-10 |
+| `meijer-2025-serotonin-additive-r1/` | method example | 10/19 | 14 PASS | 2026-09-10 |
+| `meijer-2025-serotonin-orthogonal/` | method example | 11/13 | 2 FAIL · 9 PASS · 1 WARN | 2026-09-10 |
+| `scheller-2026-self-prioritization/` | site corpus | 4/10 | 8 PASS | 2026-09-10 |
+| `wengert-2026-kcnc1/` | site corpus | 4/16 | 3 PASS · 1 WARN | 2026-09-10 |
+
+**Claims covered** is how many of the paper's claims that a re-run could settle — its `empirical` and `control` claims carrying a reproduction record — the script actually produces a result for. Corpus-wide that is **40 of 131**. The remaining 91 carry a status an agent reached by reading a deposit rather than by running this code. That is a weaker kind of verification, and the number is here because nothing else on the site says so.
+
+9 scripts. Generated by `scripts/audit_verifications.py --update-readme` from the directories and from each run's `provenance.json` — never typed by hand.
+<!-- /generated -->
 
 ## Running Modes
 

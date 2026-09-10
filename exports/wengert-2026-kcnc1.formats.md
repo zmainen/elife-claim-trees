@@ -60,7 +60,7 @@ Nothing. Every relation in this paper reaches the export, either as an edge or a
 
 Verification — that a claim was checked, by what code, against what deposited data, with what result beside the published value. None of the three has a node for it.
 
-This paper's records: 10 blocked, 6 verified, 2 partial.
+This paper's records: 10 blocked, 5 verified, 3 partial.
 
 ---
 

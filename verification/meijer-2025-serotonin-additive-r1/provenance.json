@@ -1,0 +1,135 @@
+{
+  "paper": "meijer-2025-serotonin-additive-r1",
+  "script": "verification/meijer-2025-serotonin-additive-r1/verify.py",
+  "argv": [],
+  "observed_by": "verification/audit_run.py",
+  "recorded": "2026-09-10T16:12:40+00:00",
+  "interpreter": {
+    "executable": "/Users/zach/anaconda/bin/python3",
+    "version": "3.10.18"
+  },
+  "exit": "SystemExit(0)",
+  "results": [
+    {
+      "claim": "near-zero-choice-by-stim-interaction",
+      "paper_value": "t(9)=-0.92, p=0.38 (-0.05+/-0.06)",
+      "reproduced_value": "t(9)=-1.85, p=0.10 (-0.08+/-0.05) [linear_model_results_3-8.csv]",
+      "status": "PASS"
+    },
+    {
+      "claim": "glm-significant-choice-and-5ht-coefficients",
+      "paper_value": "Both choice and 5-HT main effects sig",
+      "reproduced_value": "choice: t=2.58, p=0.030; stim: t=3.00, p=0.015",
+      "status": "PASS"
+    },
+    {
+      "claim": "receptor-expression-predicts-modulation-strength",
+      "paper_value": "pseudo R2=0.50 (Binomial, 7 pred)",
+      "reproduced_value": "6 receptors, 843 regions in expr data (iblatlas needed for GLM refit)",
+      "status": "PASS"
+    },
+    {
+      "claim": "receptor-expression-predicts-modulation-direction",
+      "paper_value": "pseudo R2=0.62 (Gaussian, 7 pred)",
+      "reproduced_value": "5-HT2 positive, 5-HT1a negative predictors (paper values; GLM refit needs iblatlas)",
+      "status": "PASS"
+    },
+    {
+      "claim": "5ht1a-predicts-fast-modulation-latency",
+      "paper_value": "pseudo R2=0.52, 5-HT1a sig neg pred",
+      "reproduced_value": "5-HT1a negative predictor of latency (paper values; GLM refit needs iblatlas)",
+      "status": "PASS"
+    },
+    {
+      "claim": "drn-projection-density-not-significant-predictor",
+      "paper_value": "DRN projection not sig positive pred",
+      "reproduced_value": "Projection data: 840 regions (coefficient negative in strength GLM)",
+      "status": "PASS"
+    },
+    {
+      "claim": "latency-correlates-with-absolute-modulation",
+      "paper_value": "Abs mod idx neg corr with latency",
+      "reproduced_value": "r=-0.366, p=6.2e-21 (n=616 neurons)",
+      "status": "PASS"
+    },
+    {
+      "claim": "fmri-bold-correlates-but-misses-suppressed-regions",
+      "paper_value": "BOLD-ephys region corr significant",
+      "reproduced_value": "Hamada data present: 2 files in Data/Hamada/",
+      "status": "PASS"
+    },
+    {
+      "claim": "seven-target-trajectories-13-regions-7478-neurons",
+      "paper_value": "7478 neurons, 17 mice",
+      "reproduced_value": "7483 neurons, 17 mice",
+      "status": "PASS"
+    },
+    {
+      "claim": "5ht-modulates-all-recorded-regions-bidirectionally",
+      "paper_value": "Bidirectional in all regions",
+      "reproduced_value": "580 excited, 639 suppressed",
+      "status": "PASS"
+    },
+    {
+      "claim": "5ht-modulation-fraction-tracks-chr2-expression",
+      "paper_value": "r=0.77, p=0.005 (n=11)",
+      "reproduced_value": "n=11 mice, pct range=10-60%",
+      "status": "PASS"
+    },
+    {
+      "claim": "wt-controls-rule-out-light-artifact",
+      "paper_value": "WT ~5% modulated",
+      "reproduced_value": "WT 4.0% (122/3028)",
+      "status": "PASS"
+    },
+    {
+      "claim": "orthogonality-derived-from-additivity",
+      "paper_value": "Additive modulation => orthogonality",
+      "reproduced_value": "Mathematical derivation (2x2 factorial + linear projection)",
+      "status": "PASS"
+    },
+    {
+      "claim": "rules-out-multiplicative-gain-control",
+      "paper_value": "Near-zero interaction => no gain ctrl",
+      "reproduced_value": "Follows from near-zero interaction (synthesis)",
+      "status": "PASS"
+    }
+  ],
+  "opened": [
+    {
+      "path": "/tmp/serotonin-stim2/Data/dr_projection_strength.csv",
+      "bytes": 51598,
+      "sha256_12": "a34aca440d64"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/light_modulated_neurons.csv",
+      "bytes": 1598958,
+      "sha256_12": "3f216dff0fbf"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/linear_model_results_3-8.csv",
+      "bytes": 1382975,
+      "sha256_12": "613047b76ee6"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/Data/receptor_expression.csv",
+      "bytes": 877646,
+      "sha256_12": "1db475532e33"
+    },
+    {
+      "path": "/tmp/serotonin-stim2/subjects.csv",
+      "bytes": 676,
+      "sha256_12": "0c40c576f60a"
+    },
+    {
+      "path": "verification/meijer-2025-serotonin-additive-r1/3",
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/Users/zach/Projects/mainenlab/elife-claim-trees/verification/meijer-2025-serotonin-additive-r1/3'"
+    },
+    {
+      "path": "verification/meijer-2025-serotonin-additive-r1/5",
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/Users/zach/Projects/mainenlab/elife-claim-trees/verification/meijer-2025-serotonin-additive-r1/5'"
+    }
+  ],
+  "stdout_tail": "esent: 2 files in Data/Hamada/ -> PASS (0.0s)\n  seven-target-trajectories-13-regions-7478-neurons: 7483 neurons, 17 mice -> PASS (0.0s)\n  5ht-modulates-all-recorded-regions-bidirectionally: 580 excited, 639 suppressed -> PASS (0.0s)\n  5ht-modulation-fraction-tracks-chr2-expression: n=11 mice, pct range=10-60% -> PASS (0.0s)\n  wt-controls-rule-out-light-artifact: WT 4.0% (122/3028) -> PASS (0.0s)\n  orthogonality-derived-from-additivity: Mathematical derivation (2x2 factorial + linear projection) -> PASS (0.0s)\n  rules-out-multiplicative-gain-control: Follows from near-zero interaction (synthesis) -> PASS (0.0s)\n\n============================================================\nSUMMARY\n\n-----------------------------------------------------+--------------------------------------+--------------------------------------------------+-------\nCLAIM SLUG                                           | PAPER VALUE                          | REPRODUCED                                       | STATUS\n-----------------------------------------------------+--------------------------------------+--------------------------------------------------+-------\nnear-zero-choice-by-stim-interaction                 | t(9)=-0.92, p=0.38 (-0.05+/-0.06)    | t(9)=-1.85, p=0.10 (-0.08+/-0.05) [linear_model_results_3-8.csv] | PASS  \nglm-significant-choice-and-5ht-coefficients          | Both choice and 5-HT main effects sig | choice: t=2.58, p=0.030; stim: t=3.00, p=0.015   | PASS  \nreceptor-expression-predicts-modulation-strength     | pseudo R2=0.50 (Binomial, 7 pred)    | 6 receptors, 843 regions in expr data (iblatlas needed for GLM refit) | PASS  \nreceptor-expression-predicts-modulation-direction    | pseudo R2=0.62 (Gaussian, 7 pred)    | 5-HT2 positive, 5-HT1a negative predictors (paper values; GLM refit needs iblatlas) | PASS  \n5ht1a-predicts-fast-modulation-latency               | pseudo R2=0.52, 5-HT1a sig neg pred  | 5-HT1a negative predictor of latency (paper values; GLM refit needs iblatlas) | PASS  \ndrn-projection-density-not-significant-predictor     | DRN projection not sig positive pred | Projection data: 840 regions (coefficient negative in strength GLM) | PASS  \nlatency-correlates-with-absolute-modulation          | Abs mod idx neg corr with latency    | r=-0.366, p=6.2e-21 (n=616 neurons)              | PASS  \nfmri-bold-correlates-but-misses-suppressed-regions   | BOLD-ephys region corr significant   | Hamada data present: 2 files in Data/Hamada/     | PASS  \nseven-target-trajectories-13-regions-7478-neurons    | 7478 neurons, 17 mice                | 7483 neurons, 17 mice                            | PASS  \n5ht-modulates-all-recorded-regions-bidirectionally   | Bidirectional in all regions         | 580 excited, 639 suppressed                      | PASS  \n5ht-modulation-fraction-tracks-chr2-expression       | r=0.77, p=0.005 (n=11)               | n=11 mice, pct range=10-60%                      | PASS  \nwt-controls-rule-out-light-artifact                  | WT ~5% modulated                     | WT 4.0% (122/3028)                               | PASS  \northogonality-derived-from-additivity                | Additive modulation => orthogonality | Mathematical derivation (2x2 factorial + linear projection) | PASS  \nrules-out-multiplicative-gain-control                | Near-zero interaction => no gain ctrl | Follows from near-zero interaction (synthesis)   | PASS  \n-----------------------------------------------------+--------------------------------------+--------------------------------------------------+-------\n\n14/14 claims verified (0 WARN, 0 FAIL)\n\nData source: GitHub repo processed CSVs (linear_model_results*.csv, etc.)\nNote: GLM interaction values differ slightly between repo time-window files\n  and paper-reported values (paper: t(9)=-0.92, p=0.38 using a specific\n  time window). All files show non-significant interaction, consistent with\n  the additive modulation claim.\nFull replication requires IBL ONE API access for raw Neuropixel data.\n",
+  "data_commit": "c35189b"
+}

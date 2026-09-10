@@ -46,7 +46,7 @@ assertions:
 reproductions:
   - agent: mainen-z
     date: 2026-03-30
-    status: verified
+    status: partial
     original_script: https://github.com/dbheadley/InhibOnDendComp/blob/main/scripts/Fig5.ipynb
     script_execution: pre-computed
     script_execution_note: "Static case verified from pre-computed CSV; rhythmic gamma panels require 1.88 GB Dryad data"
