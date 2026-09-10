@@ -71,7 +71,13 @@ reproductions:
     function: verify_yu_koban() (verify.py line 278)
     data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
     data_commit: 11854fe
-    data_file: "fMRIresults/outcome/guiltEffectEachPartic.nii (4D, 40 participants; shipped in the deposit as .nii.zip) x Code/bin/Yu_guilt_SVM_sxpo_sxpx_EmotionForwardmask.nii (50,860 mask voxels)"
+    data_file:
+      - fMRIresults/outcome/guiltEffectEachPartic.nii.zip
+      - Code/bin/Yu_guilt_SVM_sxpo_sxpx_EmotionForwardmask.nii
+    data_note: >
+      The first is 4D over 40 participants and ships in the deposit as .nii.zip; the
+      second is the Yu & Koban signature mask, 50,860 voxels. The comparison is a dot
+      product of the two.
     script_execution: executed
     script_execution_note: "Executed 2026-09-06 in Python (fast mode, ~3 min) against the authors' deposited analysis tables and thresholded maps. The authors' original MATLAB/SPM12 pipeline was NOT re-run; that is full mode, requiring OpenNeuro ds005588 (~15 GB) plus MATLAB and SPM12."
     paper_value: "sign test p < 0.05"

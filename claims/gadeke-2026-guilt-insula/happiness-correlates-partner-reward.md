@@ -65,7 +65,10 @@ reproductions:
     function: verify_happiness_partner() (verify.py line 147)
     data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
     data_commit: 11854fe
-    data_file: "Code/csv/ — happiness-by-model tables, both cohorts (auto-detected by column matching; see caveat below)"
+    data_file: Code/csv/
+    data_note: >
+      Happiness-by-model tables for both cohorts, located by column matching rather than
+      filename; see the caveat in notes.
     script_execution: executed
     script_execution_note: "Executed 2026-09-06 in Python (fast mode, ~3 min) against the authors' deposited analysis tables and thresholded maps. The authors' original MATLAB/SPM12 pipeline was NOT re-run; that is full mode, requiring OpenNeuro ds005588 (~15 GB) plus MATLAB and SPM12."
     paper_value: "R2 = 0.185 (fMRI cohort), 0.147 (behavioural cohort)"

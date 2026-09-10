@@ -66,7 +66,11 @@ reproductions:
     function: verify_guilt_happiness() (verify.py line 197)
     data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
     data_commit: 11854fe
-    data_file: "Code/csv/ — single-trial happiness tables, both cohorts (auto-detected by column matching; see caveat below)"
+    data_file: Code/csv/
+    data_note: >
+      Single-trial happiness tables for both cohorts. The script locates them by matching
+      column names rather than by filename, so the directory is the addressable unit here;
+      see the caveat in notes.
     script_execution: executed
     script_execution_note: "Executed 2026-09-06 in Python (fast mode, ~3 min) against the authors' deposited analysis tables and thresholded maps. The authors' original MATLAB/SPM12 pipeline was NOT re-run; that is full mode, requiring OpenNeuro ds005588 (~15 GB) plus MATLAB and SPM12."
     paper_value: "beta = 0.33 (fMRI cohort), 0.39 (behavioural cohort)"

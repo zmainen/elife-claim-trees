@@ -64,7 +64,7 @@ reproductions:
     function: verify_lottery_ev() (verify.py line 74)
     data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
     data_commit: 11854fe
-    data_file: Code/csv/fMRI - Choices_singleTrialData.csv
+    data_file: "Code/csv/fMRI - Choices_singleTrialData.csv"
     script_execution: executed
     script_execution_note: "Executed 2026-09-06 in Python (fast mode, ~3 min) against the authors' deposited analysis tables and thresholded maps. The authors' original MATLAB/SPM12 pipeline was NOT re-run; that is full mode, requiring OpenNeuro ds005588 (~15 GB) plus MATLAB and SPM12."
     paper_value: "beta > 0, p < 0.05"
