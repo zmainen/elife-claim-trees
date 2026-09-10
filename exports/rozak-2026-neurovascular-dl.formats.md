@@ -6,29 +6,31 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
-| `scopes` | 42 | **dropped** | kept | dropped |
+| `scopes` | 42 | declared `haak:scopes` | kept | dropped |
 | `confirms` | 17 | → supports | kept | kept |
 | `tests` | 13 | → supports | kept | kept |
 | `validates` | 11 | → supports | kept | kept |
 | `supports` | 10 | → supports | kept | kept |
-| `requires` | 10 | **dropped** | kept | dropped |
-| `enables-method` | 9 | **dropped** | kept | dropped |
+| `requires` | 10 | declared `haak:requires` | kept | dropped |
+| `enables-method` | 9 | declared `haak:enables-method` | kept | dropped |
 | `dissociates-with` | 4 | → opposes | kept | kept |
-| `entails` | 4 | **dropped** | kept | dropped |
+| `entails` | 4 | declared `haak:entails` | kept | dropped |
 | `extends` | 4 | → supports | kept | kept |
-| `derived-from` | 4 | **dropped** | kept | dropped |
+| `derived-from` | 4 | declared `haak:derived-from` | kept | dropped |
 | `rules-out` | 1 | → opposes | kept | kept |
 | `contradicts` | 1 | → opposes | kept | kept |
 
-## What MIRA drops
+## What MIRA has no predicate for — and what happens instead
 
-**69 of 130 relations (53%) have no MIRA predicate and are absent from the strict export.**
+**69 of 130 relations (53%) fall outside `supports` and `opposes`.** They are not dropped and not flattened: MIRA imports a Discourse Graphs base schema in which relations are definable, so each is declared in the document as a `RelationDef` with a domain, a range and a description, then used as a predicate.
 
-- `scopes` (42) — a scope constraint governs another claim's validity
-- `requires` (10) — a claim depends on another holding
-- `enables-method` (9) — a result makes a downstream method possible
-- `entails` (4) — a hypothesis entails its prediction — the deductive step
-- `derived-from` (4) — a prediction derived from its hypothesis
+- `haak:scopes` (42) — a scope constraint governs another claim's validity
+- `haak:requires` (10) — a claim depends on another holding
+- `haak:enables-method` (9) — a result makes a downstream method possible
+- `haak:entails` (4) — a hypothesis entails its prediction — the deductive step
+- `haak:derived-from` (4) — a prediction derived from its hypothesis
+
+A reader that knows only core MIRA still gets every node and every supports/opposes edge. One that follows the declarations gets the rest with stated semantics. Flattening these into `supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits.
 
 ## What MIRA flattens
 

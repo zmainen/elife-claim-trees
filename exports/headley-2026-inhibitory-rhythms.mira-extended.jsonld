@@ -1,11 +1,52 @@
 {
   "@context": [
-    "https://mira.science/schema/context.jsonld",
+    "http://purl.org/mira-science/mira#",
+    {
+      "dgb": "https://mira.science/schema/discoursegraphs_base#",
+      "haak": "https://haak.world/schema/claim#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "dct": "http://purl.org/dc/terms/"
+    },
     {
       "haak": "https://haak.world/schema/claim#"
     }
   ],
   "@graph": [
+    {
+      "@id": "haak:derived-from",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+    },
+    {
+      "@id": "haak:entails",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+    },
+    {
+      "@id": "haak:interprets",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Evidence",
+      "dct:description": "The subject offers a theoretical reading of the object result."
+    },
+    {
+      "@id": "haak:requires",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+    },
+    {
+      "@id": "haak:scopes",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+    },
     {
       "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d#question",
       "@type": "mira:Question",
@@ -40,6 +81,17 @@
       "mira:supports": {
         "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
+        },
+        {
+          "@id": "urn:uuid:9c3d1464-1a51-4381-a466-fcb1ca6fca65"
+        },
+        {
+          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -65,7 +117,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -103,6 +155,17 @@
       "mira:opposes": {
         "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21"
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
+        },
+        {
+          "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
+        },
+        {
+          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -141,7 +204,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -182,6 +245,9 @@
           "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
         }
       ],
+      "haak:requires": {
+        "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+      },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -215,7 +281,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -239,6 +305,17 @@
           "schema:name": "compartmental modelling — burst onset analysis"
         }
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:bf7efeee-2819-485d-a06d-1fc3782ce66f"
+        },
+        {
+          "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
+        },
+        {
+          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -259,7 +336,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -291,6 +368,9 @@
           "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
         }
       ],
+      "haak:requires": {
+        "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+      },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -354,6 +434,14 @@
       "mira:opposes": {
         "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b"
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+        },
+        {
+          "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -417,6 +505,14 @@
           "schema:name": "compartmental modelling — E/I lag sweep"
         }
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+        },
+        {
+          "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -434,7 +530,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -472,6 +568,17 @@
       "mira:opposes": {
         "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
+        },
+        {
+          "@id": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b"
+        },
+        {
+          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -510,7 +617,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -551,6 +658,9 @@
           "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
         }
       ],
+      "haak:requires": {
+        "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+      },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -584,7 +694,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -617,6 +727,17 @@
         },
         {
           "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+        }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b"
+        },
+        {
+          "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
+        },
+        {
+          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
         }
       ],
       "haak:role": "empirical",
@@ -668,6 +789,20 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:58617715-2aaf-4762-b29d-c32aae1cdf0b"
+        },
+        {
+          "@id": "urn:uuid:f924648f-6829-41cb-9722-0bd97fec6ad3"
+        },
+        {
+          "@id": "urn:uuid:d8d26ce3-8c2d-4075-ad06-cf37c2fee73c"
+        },
+        {
+          "@id": "urn:uuid:26ddf94e-5d21-4218-8b6a-8d53e3f228cf"
+        }
+      ],
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -700,6 +835,14 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:d0c2d8d6-82ea-46a0-928f-16e6c33d36a8"
+        },
+        {
+          "@id": "urn:uuid:874d0787-6f89-43fa-aa72-d183d242fd91"
+        }
+      ],
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -738,6 +881,9 @@
       "mira:epistemicStatus": "mira:Assumption",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:scopes": {
+        "schema:name": "*"
       },
       "haak:role": "scope",
       "haak:epistemicStrength": "moderate",
@@ -780,6 +926,9 @@
       "mira:supports": {
         "@id": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c"
       },
+      "haak:requires": {
+        "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+      },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -815,6 +964,9 @@
       "mira:epistemicStatus": "mira:Assumption",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:scopes": {
+        "schema:name": "*"
       },
       "haak:role": "scope",
       "haak:epistemicStrength": "moderate",
@@ -856,6 +1008,9 @@
       },
       "mira:supports": {
         "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
       },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
@@ -918,6 +1073,14 @@
       "mira:opposes": {
         "@id": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c"
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+        },
+        {
+          "@id": "urn:uuid:d0caf4f6-21bb-4fae-985d-5c9ebab6504c"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -989,6 +1152,14 @@
           "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
         }
       ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:27009c70-e2bf-49c1-81c5-2663096ca45b"
+        },
+        {
+          "@id": "urn:uuid:5037933c-103b-4f19-992e-1abb330ea4f1"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1032,6 +1203,9 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
       },
+      "haak:derived-from": {
+        "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
+      },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -1051,6 +1225,9 @@
       "mira:epistemicStatus": "mira:Hypothesis",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:derived-from": {
+        "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
       },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
@@ -1072,6 +1249,9 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
       },
+      "haak:derived-from": {
+        "@id": "urn:uuid:163fe42f-c4ee-480c-8f49-927d6bc22ef1"
+      },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -1091,6 +1271,9 @@
       "mira:epistemicStatus": "mira:Hypothesis",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:derived-from": {
+        "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
       },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
@@ -1112,6 +1295,9 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
       },
+      "haak:derived-from": {
+        "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
+      },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -1131,6 +1317,9 @@
       "mira:epistemicStatus": "mira:Hypothesis",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
+      },
+      "haak:derived-from": {
+        "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d"
       },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
@@ -1152,6 +1341,23 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95562"
       },
+      "haak:interprets": [
+        {
+          "@id": "urn:uuid:4ee66306-a11b-4333-86cf-47ea92155e76"
+        },
+        {
+          "@id": "urn:uuid:568bd16c-91dc-4bf0-8841-1836968cf68e"
+        },
+        {
+          "@id": "urn:uuid:7b7dd3fd-3946-4947-9799-a4f8a8821aba"
+        },
+        {
+          "@id": "urn:uuid:e1ce7be2-5fe7-4cda-80cb-775473b52e21"
+        },
+        {
+          "@id": "urn:uuid:2f988e78-8a82-41d3-a121-1e90636d3460"
+        }
+      ],
       "haak:role": "interpretation",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -1178,7 +1384,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-code",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],

@@ -1,8 +1,49 @@
 {
   "@context": [
-    "https://mira.science/schema/context.jsonld"
+    "http://purl.org/mira-science/mira#",
+    {
+      "dgb": "https://mira.science/schema/discoursegraphs_base#",
+      "haak": "https://haak.world/schema/claim#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "dct": "http://purl.org/dc/terms/"
+    }
   ],
   "@graph": [
+    {
+      "@id": "haak:derived-from",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+    },
+    {
+      "@id": "haak:enables-method",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Evidence",
+      "rdfs:range": "mira:Protocol",
+      "dct:description": "The subject result makes the object method possible downstream."
+    },
+    {
+      "@id": "haak:interprets",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Evidence",
+      "dct:description": "The subject offers a theoretical reading of the object result."
+    },
+    {
+      "@id": "haak:requires",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+    },
+    {
+      "@id": "haak:scopes",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+    },
     {
       "@id": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526",
       "@type": "mira:Evidence",
@@ -60,7 +101,54 @@
       "@type": "mira:Claim",
       "schema:name": "atlas-observational-scope",
       "schema:description": "All primary claims in this paper are observational anatomical facts about the presence and distribution of neurotransmitters in identified neuropils; none are statistical in the conventional sense — the evidence is the 3D atlas itself, and reproduction means re-registering the same volumes or inspecting the deposited atlas, not re-computing statistics.",
-      "mira:epistemicStatus": "mira:Assumption"
+      "mira:epistemicStatus": "mira:Assumption",
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5"
+        },
+        {
+          "@id": "urn:uuid:b7856315-9b56-4c97-97c7-4f3e2e2a785d"
+        },
+        {
+          "@id": "urn:uuid:a527b1e4-3c93-4579-9e3f-4e079a34a78f"
+        },
+        {
+          "@id": "urn:uuid:a7565a82-5c41-40d9-a3d3-5e9194904515"
+        },
+        {
+          "@id": "urn:uuid:0f8cb9fa-41a6-4a5d-8634-d8b670609fe8"
+        },
+        {
+          "@id": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c"
+        },
+        {
+          "@id": "urn:uuid:7498d258-3c0e-4a77-bd98-49b7deff2950"
+        },
+        {
+          "@id": "urn:uuid:80deef22-24b8-4140-8141-276873993f34"
+        },
+        {
+          "@id": "urn:uuid:01384854-d4e5-4e8c-bf0b-239409c22675"
+        },
+        {
+          "@id": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c"
+        },
+        {
+          "@id": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75"
+        },
+        {
+          "@id": "urn:uuid:b8667945-1d0c-4f6d-973b-b64bb9972ea0"
+        },
+        {
+          "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0"
+        },
+        {
+          "@id": "urn:uuid:eb91b6b6-92c0-483d-8f88-d75708ac94c6"
+        },
+        {
+          "@id": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c",
@@ -96,7 +184,15 @@
       "mira:epistemicStatus": "mira:Claim",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.107732"
-      }
+      },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0"
+        },
+        {
+          "@id": "urn:uuid:01384854-d4e5-4e8c-bf0b-239409c22675"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:01384854-d4e5-4e8c-bf0b-239409c22675",
@@ -288,7 +384,23 @@
       "@type": "mira:Claim",
       "schema:name": "protocerebral-bridge-candidate-central-complex",
       "schema:description": "A structure consistent with a protocerebral bridge (potential spider equivalent of the insect central complex) is identified in the atlas, suggesting the spider brain contains a candidate homolog of circuits involved in path integration.",
-      "mira:epistemicStatus": "mira:Assumption"
+      "mira:epistemicStatus": "mira:Assumption",
+      "haak:derived-from": [
+        {
+          "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0"
+        },
+        {
+          "@id": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526"
+        }
+      ],
+      "haak:interprets": [
+        {
+          "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0"
+        },
+        {
+          "@id": "urn:uuid:eb91b6b6-92c0-483d-8f88-d75708ac94c6"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
@@ -381,7 +493,51 @@
       "@type": "mira:Protocol",
       "schema:name": "uloborus-synganglion-neurotransmitter-atlas",
       "schema:description": "A three-dimensional immunofluorescence atlas of the Uloborus diversus synganglion is established, mapping the distributions of GABA, acetylcholine, serotonin, octopamine/tyramine, and a subset of neuropeptides across all identified neuropils using elastix-registered confocal volumes.",
-      "mira:epistemicStatus": "mira:Claim"
+      "mira:epistemicStatus": "mira:Claim",
+      "haak:enables-method": [
+        {
+          "@id": "urn:uuid:b7856315-9b56-4c97-97c7-4f3e2e2a785d"
+        },
+        {
+          "@id": "urn:uuid:a527b1e4-3c93-4579-9e3f-4e079a34a78f"
+        },
+        {
+          "@id": "urn:uuid:a7565a82-5c41-40d9-a3d3-5e9194904515"
+        },
+        {
+          "@id": "urn:uuid:0f8cb9fa-41a6-4a5d-8634-d8b670609fe8"
+        },
+        {
+          "@id": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c"
+        },
+        {
+          "@id": "urn:uuid:7498d258-3c0e-4a77-bd98-49b7deff2950"
+        },
+        {
+          "@id": "urn:uuid:80deef22-24b8-4140-8141-276873993f34"
+        },
+        {
+          "@id": "urn:uuid:01384854-d4e5-4e8c-bf0b-239409c22675"
+        },
+        {
+          "@id": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c"
+        },
+        {
+          "@id": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75"
+        },
+        {
+          "@id": "urn:uuid:b8667945-1d0c-4f6d-973b-b64bb9972ea0"
+        },
+        {
+          "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0"
+        },
+        {
+          "@id": "urn:uuid:eb91b6b6-92c0-483d-8f88-d75708ac94c6"
+        },
+        {
+          "@id": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526"
+        }
+      ]
     }
   ]
 }

@@ -97,9 +97,11 @@ def mira_edges(slug):
     g = json.load(open(p, encoding="utf-8")).get("@graph", [])
     c = Counter()
     for n in g:
-        for k in ("mira:supports", "mira:opposes"):
-            if k in n:
-                c[k] += len(n[k]) if isinstance(n[k], list) else 1
+        for k, v in n.items():
+            # Core MIRA predicates, plus the relations declared as RelationDefs in this
+            # document. Both are carried; only the second needs the declaration read.
+            if k in ("mira:supports", "mira:opposes") or k.startswith("haak:"):
+                c[k] += len(v) if isinstance(v, list) else 1
     return c
 
 
@@ -144,6 +146,8 @@ def report(slug):
     dg = dg_edges(slug) or Counter()
 
     mira_kept = sum(mira.values())
+    mira_core = sum(v for k, v in mira.items() if k.startswith("mira:"))
+    mira_declared = mira_kept - mira_core
     dropped = {k: v for k, v in tree.items() if k in GAPS}
     flattened = {k: v for k, v in tree.items() if k in SUPPORTS or k in OPPOSES}
 
@@ -153,7 +157,8 @@ def report(slug):
         "relations": total,
         "by_type": dict(tree.most_common()),
         "mira": {"kept": mira_kept, "dropped": total - mira_kept,
-                 "edges": dict(mira), "dropped_types": dropped},
+                 "core": mira_core, "declared": mira_declared,
+                 "edges": dict(mira), "declared_types": dropped},
         "oxa": {"kept": sum(oxa.values()), "edges": dict(oxa.most_common())},
         "dg": {"kept": sum(dg.values()), "edges": dict(dg.most_common())},
         "flattened": flattened,
@@ -172,7 +177,7 @@ def markdown(r):
     oxa_by_rel = r["oxa"]["edges"]
     for rel, n in r["by_type"].items():
         if rel in GAPS:
-            mira_cell = "**dropped**"
+            mira_cell = f"declared `haak:{rel}`"
         elif rel in SUPPORTS:
             mira_cell = "→ supports"
         else:
@@ -182,16 +187,25 @@ def markdown(r):
             "dropped" if rel in GAPS else "—")
         L.append(f"| `{rel}` | {n} | {mira_cell} | {oxa_cell} | {dg_cell} |")
 
-    L += ["", "## What MIRA drops", ""]
-    if r["mira"]["dropped_types"]:
-        L.append(f"**{r['mira']['dropped']} of {r['relations']} relations "
-                 f"({round(100 * r['mira']['dropped'] / max(r['relations'], 1))}%) have no MIRA "
-                 f"predicate and are absent from the strict export.**")
+    L += ["", "## What MIRA has no predicate for — and what happens instead", ""]
+    if r["mira"]["declared_types"]:
+        L.append(f"**{r['mira']['declared']} of {r['relations']} relations "
+                 f"({round(100 * r['mira']['declared'] / max(r['relations'], 1))}%) fall outside "
+                 f"`supports` and `opposes`.** They are not dropped and not flattened: MIRA "
+                 f"imports a Discourse Graphs base schema in which relations are definable, so "
+                 f"each is declared in the document as a `RelationDef` with a domain, a range "
+                 f"and a description, then used as a predicate.")
         L.append("")
-        for k, v in sorted(r["mira"]["dropped_types"].items(), key=lambda x: -x[1]):
-            L.append(f"- `{k}` ({v}) — {GAPS[k]}")
+        for k, v in sorted(r["mira"]["declared_types"].items(), key=lambda x: -x[1]):
+            L.append(f"- `haak:{k}` ({v}) — {GAPS[k]}")
+        L.append("")
+        L.append("A reader that knows only core MIRA still gets every node and every "
+                 "supports/opposes edge. One that follows the declarations gets the rest with "
+                 "stated semantics. Flattening these into `supports` would have been worse "
+                 "than dropping them: it would assert that a boundary condition is evidence "
+                 "*for* the claim it limits.")
     else:
-        L.append("Nothing: this paper uses no relation type MIRA lacks.")
+        L.append("Nothing: this paper uses only relations core MIRA already names.")
 
     L += ["", "## What MIRA flattens", "",
           "`tests`, `confirms`, `validates`, `extends` and `replicates` all become "

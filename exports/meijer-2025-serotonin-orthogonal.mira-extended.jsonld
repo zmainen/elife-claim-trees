@@ -1,11 +1,59 @@
 {
   "@context": [
-    "https://mira.science/schema/context.jsonld",
+    "http://purl.org/mira-science/mira#",
+    {
+      "dgb": "https://mira.science/schema/discoursegraphs_base#",
+      "haak": "https://haak.world/schema/claim#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "dct": "http://purl.org/dc/terms/"
+    },
     {
       "haak": "https://haak.world/schema/claim#"
     }
   ],
   "@graph": [
+    {
+      "@id": "haak:derived-from",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+    },
+    {
+      "@id": "haak:enables-method",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Evidence",
+      "rdfs:range": "mira:Protocol",
+      "dct:description": "The subject result makes the object method possible downstream."
+    },
+    {
+      "@id": "haak:entails",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+    },
+    {
+      "@id": "haak:interprets",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Evidence",
+      "dct:description": "The subject offers a theoretical reading of the object result."
+    },
+    {
+      "@id": "haak:requires",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+    },
+    {
+      "@id": "haak:scopes",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+    },
     {
       "@id": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417#question",
       "@type": "mira:Question",
@@ -56,6 +104,14 @@
         },
         {
           "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020"
+        }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2"
+        },
+        {
+          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
         }
       ],
       "haak:role": "empirical",
@@ -115,6 +171,20 @@
           "schema:name": "per-neuron ZETA test for significant modulation; modulation index = ratio of post-stimulus to baseline firing rate"
         }
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363"
+        },
+        {
+          "@id": "urn:uuid:275ffb65-3c47-4736-9649-2fb33c1934ad"
+        },
+        {
+          "@id": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f"
+        },
+        {
+          "@id": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -203,6 +273,14 @@
           "schema:name": "per-region paired t-test on percent significantly modulated neurons (passive vs task)"
         }
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
+        },
+        {
+          "@id": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -252,6 +330,9 @@
           "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13"
         }
       ],
+      "haak:requires": {
+        "@id": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363"
+      },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -306,6 +387,9 @@
           "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13"
         }
       ],
+      "haak:requires": {
+        "@id": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363"
+      },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -351,6 +435,9 @@
           "@type": "mira:Protocol",
           "schema:name": "psychometric error-function fit, paired t-test on RT, regularized maximum-likelihood logistic choice model, paired t-tests against zero and per-predictor"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f"
       },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
@@ -398,6 +485,9 @@
           "@id": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13"
         }
       ],
+      "haak:requires": {
+        "@id": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363"
+      },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -444,6 +534,9 @@
           "schema:name": "layer assignment from histology-aligned probe coordinates; per-layer comparison of fraction, sign, and latency"
         }
       },
+      "haak:requires": {
+        "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
+      },
       "haak:role": "control",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -474,6 +567,14 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.1101/2025.08.01.668048"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:984ff53f-048b-4598-a0ef-6293bb0d7158"
+        },
+        {
+          "@id": "urn:uuid:1a5cd255-9f81-4e90-9fbc-e49873ac4e36"
+        }
+      ],
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -500,6 +601,14 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.1101/2025.08.01.668048"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:4a9fe28d-cf62-4539-98f9-0f0e00126047"
+        },
+        {
+          "@id": "urn:uuid:4f28c881-0692-4fcf-8595-2f4bcd0716af"
+        }
+      ],
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -553,6 +662,14 @@
       "mira:opposes": {
         "@id": "urn:uuid:c4a03387-7441-4430-bffb-d7cfec4e0d75"
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
+        },
+        {
+          "@id": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -604,6 +721,22 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.1101/2025.08.01.668048"
       },
+      "haak:enables-method": [
+        {
+          "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b"
+        },
+        {
+          "@id": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681"
+        }
+      ],
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b"
+        },
+        {
+          "@id": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681"
+        }
+      ],
       "haak:role": "methodological",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -656,6 +789,9 @@
       "mira:opposes": {
         "schema:name": "rapid-fs-interneuron-recruitment-as-mechanism"
       },
+      "haak:requires": {
+        "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
+      },
       "haak:role": "control",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -691,6 +827,20 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.1101/2025.08.01.668048"
       },
+      "haak:interprets": {
+        "@id": "urn:uuid:83d656ca-94ec-4a0f-bfb1-1138605cc136"
+      },
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
+        },
+        {
+          "@id": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2"
+        },
+        {
+          "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b"
+        }
+      ],
       "haak:role": "scope",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -742,6 +892,14 @@
       "mira:supports": {
         "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020"
       },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b"
+        },
+        {
+          "@id": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2"
+        }
+      ],
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -780,6 +938,9 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.1101/2025.08.01.668048"
       },
+      "haak:derived-from": {
+        "@id": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417"
+      },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -799,6 +960,9 @@
       "mira:epistemicStatus": "mira:Hypothesis",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      },
+      "haak:derived-from": {
+        "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020"
       },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
@@ -820,6 +984,9 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.1101/2025.08.01.668048"
       },
+      "haak:derived-from": {
+        "@id": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417"
+      },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -839,6 +1006,9 @@
       "mira:epistemicStatus": "mira:Hypothesis",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.1101/2025.08.01.668048"
+      },
+      "haak:derived-from": {
+        "@id": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020"
       },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
@@ -860,6 +1030,23 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.1101/2025.08.01.668048"
       },
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0"
+        },
+        {
+          "@id": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2"
+        },
+        {
+          "@id": "urn:uuid:e1a5b240-e31b-4ecc-abdc-eaa0437e7067"
+        },
+        {
+          "@id": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b"
+        },
+        {
+          "@id": "urn:uuid:84677204-94c6-4bc3-928e-93449079091c"
+        }
+      ],
       "haak:role": "scope",
       "haak:epistemicStrength": "strong",
       "haak:relations": {

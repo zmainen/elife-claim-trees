@@ -1,8 +1,56 @@
 {
   "@context": [
-    "https://mira.science/schema/context.jsonld"
+    "http://purl.org/mira-science/mira#",
+    {
+      "dgb": "https://mira.science/schema/discoursegraphs_base#",
+      "haak": "https://haak.world/schema/claim#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "dct": "http://purl.org/dc/terms/"
+    }
   ],
   "@graph": [
+    {
+      "@id": "haak:derived-from",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+    },
+    {
+      "@id": "haak:enables-method",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Evidence",
+      "rdfs:range": "mira:Protocol",
+      "dct:description": "The subject result makes the object method possible downstream."
+    },
+    {
+      "@id": "haak:entails",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+    },
+    {
+      "@id": "haak:interprets",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Evidence",
+      "dct:description": "The subject offers a theoretical reading of the object result."
+    },
+    {
+      "@id": "haak:requires",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+    },
+    {
+      "@id": "haak:scopes",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+    },
     {
       "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f#question",
       "@type": "mira:Question",
@@ -46,7 +94,21 @@
       "@type": "mira:Claim",
       "schema:name": "decoding-shape-sensitive-not-semantic",
       "schema:description": "Foveal V1 feedback contains low-to-mid-level visual information (shape-sensitive) but not higher-level semantic category information (animal vs instrument not decodable), indicating that feedback signals represent low-level feature properties of the saccade target.",
-      "mira:epistemicStatus": "mira:Claim"
+      "mira:epistemicStatus": "mira:Claim",
+      "haak:derived-from": [
+        {
+          "@id": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0"
+        },
+        {
+          "@id": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66"
+        },
+        {
+          "@id": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38"
+        }
+      ],
+      "haak:interprets": {
+        "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f"
+      }
     },
     {
       "@id": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
@@ -110,6 +172,14 @@
       "schema:name": "hypothesis-feedback-carries-shape-not-category",
       "schema:description": "Foveal feedback to early visual cortex carries low-to-mid-level visual feature information (shape) rather than high-level semantic category information about the saccade target, reflecting the representational level appropriate to early visual cortex rather than to ventral object-selective cortex.",
       "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a"
+        },
+        {
+          "@id": "urn:uuid:2a7b8c9d-0e1f-4a01-b002-7c8d9e0f1a2b"
+        }
+      ],
       "mira:addresses": {
         "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f#question"
       }
@@ -120,6 +190,12 @@
       "schema:name": "hypothesis-feedback-not-spillover",
       "schema:description": "Foveal V1 decoding of peripheral saccade targets reflects genuine top-down feedback from higher cortical areas, not passive spillover from large peripheral receptive fields whose tails extend into the foveal representation.",
       "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:entails": {
+        "@id": "urn:uuid:7b2c3d4e-5f6a-4b01-9c02-2d3e4f5a6b7c"
+      },
+      "haak:interprets": {
+        "@id": "urn:uuid:9713afa8-c74b-413e-916e-b8ff811ca2ea"
+      },
       "mira:addresses": {
         "@id": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c#question"
       }
@@ -130,6 +206,9 @@
       "schema:name": "hypothesis-shared-representational-format",
       "schema:description": "Foveal feedback during saccade preparation uses a representational format shared with bottom-up sensory drive — that is, the population code carrying the predicted peripheral target in foveal V1 lies in the same representational space as the code evoked by direct foveal stimulation by the same image.",
       "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:entails": {
+        "@id": "urn:uuid:5d4e5f6a-7b8c-4d01-9e02-4f5a6b7c8d9e"
+      },
       "mira:addresses": {
         "@id": "urn:uuid:6c3d4e5f-7a8b-4c01-9d02-3e4f5a6b7c8d#question"
       }
@@ -149,7 +228,18 @@
       "@type": "mira:Claim",
       "schema:name": "ips-candidate-driver-foveal-feedback",
       "schema:description": "IPS activity is significantly more strongly associated with foveal decoding than with peripheral decoding in the experimental condition (t(27)=2.53, p=0.026, difference=4.22), making IPS a candidate mediator of foveal feedback during saccade preparation.",
-      "mira:epistemicStatus": "mira:Claim"
+      "mira:epistemicStatus": "mira:Claim",
+      "haak:derived-from": [
+        {
+          "@id": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535"
+        },
+        {
+          "@id": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9"
+        }
+      ],
+      "haak:requires": {
+        "@id": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c"
+      }
     },
     {
       "@id": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
@@ -217,56 +307,140 @@
       "@type": "mira:Claim",
       "schema:name": "parametric-modulation-exploratory-not-preregistered",
       "schema:description": "The parametric modulation analysis linking IPS, FEF, and LO activity to foveal decoding fluctuations (Figure 4) was explicitly conducted as an exploratory analysis and was not included in the preregistered analysis plan, reducing its confirmatory weight relative to the main MVPA decoding results.",
-      "mira:epistemicStatus": "mira:Assumption"
+      "mira:epistemicStatus": "mira:Assumption",
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13"
+        },
+        {
+          "@id": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535"
+        },
+        {
+          "@id": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:5d4e5f6a-7b8c-4d01-9e02-4f5a6b7c8d9e",
       "@type": "mira:Claim",
       "schema:name": "prediction-cross-decoding-generalizes",
       "schema:description": "If foveal feedback shares a representational format with bottom-up sensory drive, a classifier trained on foveal V1 responses in the experimental (feedback) condition should generalize above chance to foveal V1 responses in the control (direct stimulation) condition for the same images.",
-      "mira:epistemicStatus": "mira:Hypothesis"
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:derived-from": {
+        "@id": "urn:uuid:6c3d4e5f-7a8b-4c01-9d02-3e4f5a6b7c8d"
+      }
     },
     {
       "@id": "urn:uuid:2a7b8c9d-0e1f-4a01-b002-7c8d9e0f1a2b",
       "@type": "mira:Claim",
       "schema:name": "prediction-lo-inverse-pattern",
       "schema:description": "If feedback content is selected by the representational level of the receiving cortex, then lateral occipital cortex (LO) — a high-level object-selective region — should show the inverse profile to foveal V1 under feedback: cross-shape decoding should drop while cross-category decoding should remain preserved.",
-      "mira:epistemicStatus": "mira:Hypothesis"
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:derived-from": {
+        "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f"
+      }
     },
     {
       "@id": "urn:uuid:7b2c3d4e-5f6a-4b01-9c02-2d3e4f5a6b7c",
       "@type": "mira:Claim",
       "schema:name": "prediction-u-shape-eccentricity",
       "schema:description": "If foveal V1 decoding is genuine top-down feedback rather than passive spillover from large peripheral receptive fields, the eccentricity profile of decoding accuracy in early visual cortex should dip parafoveally and rise again at the fovea (a U-shaped curve), rather than decay monotonically from the peripheral target representation toward the fovea.",
-      "mira:epistemicStatus": "mira:Hypothesis"
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:derived-from": {
+        "@id": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c"
+      }
     },
     {
       "@id": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a",
       "@type": "mira:Claim",
       "schema:name": "prediction-v1-category-drops-shape-preserved",
       "schema:description": "If foveal feedback carries shape but not semantic category information, then in foveal V1, cross-category decoding should drop significantly under feedback (relative to direct stimulation or to a within-category baseline), while cross-shape decoding should remain comparatively preserved.",
-      "mira:epistemicStatus": "mira:Hypothesis"
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:derived-from": {
+        "@id": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f"
+      }
     },
     {
       "@id": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "@type": "mira:Protocol",
       "schema:name": "preregistered-design-validates-mvpa",
       "schema:description": "The preregistered analysis plan (osf.io/rxacd) specifies the MVPA decoding pipeline, ROI definitions, and statistical tests in advance, reducing the risk of analytic flexibility inflating the decoding accuracy results.",
-      "mira:epistemicStatus": "mira:Claim"
+      "mira:epistemicStatus": "mira:Claim",
+      "haak:enables-method": [
+        {
+          "@id": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df"
+        },
+        {
+          "@id": "urn:uuid:6271606c-1989-4bb6-a6da-a14145a46145"
+        },
+        {
+          "@id": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa"
+        },
+        {
+          "@id": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b"
+        },
+        {
+          "@id": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0"
+        },
+        {
+          "@id": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66"
+        },
+        {
+          "@id": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38"
+        },
+        {
+          "@id": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a"
+        }
+      ],
+      "haak:requires": {
+        "@id": "urn:uuid:1f206f40-a766-4818-ba18-73042a082df9"
+      }
     },
     {
       "@id": "urn:uuid:1f206f40-a766-4818-ba18-73042a082df9",
       "@type": "mira:Claim",
       "schema:name": "preregistration-submitted-after-manuscript",
       "schema:description": "Despite the preregistration text (osf.io/rxacd) being written before data collection, it was submitted to OSF only after the manuscript was submitted, with the authors relying on website timestamps to establish that the text predates data collection and was not altered.",
-      "mira:epistemicStatus": "mira:Assumption"
+      "mira:epistemicStatus": "mira:Assumption",
+      "haak:scopes": {
+        "@id": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756"
+      }
     },
     {
       "@id": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "@type": "mira:Protocol",
       "schema:name": "target-excluded-fovea-in-99pct-saccades",
       "schema:description": "The gaze-contingent paradigm successfully excluded the peripheral target from the central fovea (within 2° of visual angle) in 99.27% of saccades, validating that the decoded information was not due to direct foveal viewing of the target.",
-      "mira:epistemicStatus": "mira:Claim"
+      "mira:epistemicStatus": "mira:Claim",
+      "haak:enables-method": [
+        {
+          "@id": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df"
+        },
+        {
+          "@id": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b"
+        },
+        {
+          "@id": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0"
+        },
+        {
+          "@id": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38"
+        },
+        {
+          "@id": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa"
+        },
+        {
+          "@id": "urn:uuid:6271606c-1989-4bb6-a6da-a14145a46145"
+        },
+        {
+          "@id": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a"
+        },
+        {
+          "@id": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9"
+        },
+        {
+          "@id": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
@@ -295,6 +469,9 @@
       ],
       "mira:opposes": {
         "schema:name": "passive spillover from large peripheral receptive fields"
+      },
+      "haak:interprets": {
+        "@id": "urn:uuid:9713afa8-c74b-413e-916e-b8ff811ca2ea"
       }
     },
     {

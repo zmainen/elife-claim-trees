@@ -1,8 +1,42 @@
 {
   "@context": [
-    "https://mira.science/schema/context.jsonld"
+    "http://purl.org/mira-science/mira#",
+    {
+      "dgb": "https://mira.science/schema/discoursegraphs_base#",
+      "haak": "https://haak.world/schema/claim#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "dct": "http://purl.org/dc/terms/"
+    }
   ],
   "@graph": [
+    {
+      "@id": "haak:entails",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+    },
+    {
+      "@id": "haak:interprets",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Evidence",
+      "dct:description": "The subject offers a theoretical reading of the object result."
+    },
+    {
+      "@id": "haak:requires",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+    },
+    {
+      "@id": "haak:scopes",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+    },
     {
       "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364#question",
       "@type": "mira:Question",
@@ -48,6 +82,9 @@
       ],
       "mira:opposes": {
         "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9"
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
       }
     },
     {
@@ -58,7 +95,18 @@
       "mira:epistemicStatus": "mira:Assumption",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.105214"
-      }
+      },
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9"
+        },
+        {
+          "@id": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215"
+        },
+        {
+          "@id": "urn:uuid:db68e131-734a-4471-a7e6-e027f38048ac"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215",
@@ -86,6 +134,14 @@
         },
         {
           "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364"
+        }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9"
+        },
+        {
+          "@id": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff"
         }
       ]
     },
@@ -119,7 +175,15 @@
       ],
       "mira:opposes": {
         "@id": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e"
-      }
+      },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+        },
+        {
+          "@id": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:db68e131-734a-4471-a7e6-e027f38048ac",
@@ -137,7 +201,15 @@
           "@type": "mira:Protocol",
           "schema:name": "mathematical modelling"
         }
-      }
+      },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+        },
+        {
+          "@id": "urn:uuid:006a2982-b056-4c8c-b1f5-6c9819c1eaff"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:498bf1d1-2d0f-42d4-bdf7-c9996ed5af78",
@@ -225,6 +297,14 @@
         {
           "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
         }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:8300c7dc-9386-4a06-9763-c3b681b5c282"
+        },
+        {
+          "@id": "urn:uuid:5b351222-ab85-46be-a673-b05a6f104f80"
+        }
       ]
     },
     {
@@ -257,6 +337,9 @@
       ],
       "mira:opposes": {
         "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
       }
     },
     {
@@ -267,6 +350,12 @@
       "mira:epistemicStatus": "mira:Assumption",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.105214"
+      },
+      "haak:interprets": {
+        "@id": "urn:uuid:39079ccf-d87a-4e0b-83a9-a01369e54836"
+      },
+      "haak:scopes": {
+        "schema:name": "*"
       }
     },
     {
@@ -305,6 +394,17 @@
         {
           "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
         }
+      ],
+      "haak:interprets": {
+        "@id": "urn:uuid:afbf7e64-20a0-4f3f-a748-8591ddc1e2d4"
+      },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+        },
+        {
+          "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+        }
       ]
     },
     {
@@ -316,6 +416,17 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.105214"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:2ec8fd67-7f5e-432f-b400-4e608348a74e"
+        },
+        {
+          "@id": "urn:uuid:d6a177f1-603e-4318-a7e0-3ec10fe39da9"
+        },
+        {
+          "@id": "urn:uuid:06c675dd-5a37-4e64-8af8-f02b15870215"
+        }
+      ],
       "mira:addresses": {
         "@id": "urn:uuid:4f75bdf1-62f6-4027-a3f4-b3ef47129364#question"
       }
@@ -329,6 +440,14 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.105214"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f"
+        },
+        {
+          "@id": "urn:uuid:498bf1d1-2d0f-42d4-bdf7-c9996ed5af78"
+        }
+      ],
       "mira:addresses": {
         "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4#question"
       }
@@ -342,6 +461,26 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.105214"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+        },
+        {
+          "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+        },
+        {
+          "@id": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795"
+        },
+        {
+          "@id": "urn:uuid:59c0aba5-a0e0-41d8-8961-fa5e927d83e7"
+        },
+        {
+          "@id": "urn:uuid:e3b92961-38ad-41b2-a66f-65e328d33a2e"
+        },
+        {
+          "@id": "urn:uuid:cc992651-67bd-4d1b-9237-fa13d9f9ec94"
+        }
+      ],
       "mira:addresses": {
         "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09#question"
       }
@@ -382,6 +521,9 @@
           "@type": "mira:Protocol",
           "schema:name": "mathematical modelling"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
       }
     },
     {
@@ -392,7 +534,15 @@
       "mira:epistemicStatus": "mira:Assumption",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.105214"
-      }
+      },
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f"
+        },
+        {
+          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:8300c7dc-9386-4a06-9763-c3b681b5c282",
@@ -402,7 +552,15 @@
       "mira:epistemicStatus": "mira:Assumption",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.105214"
-      }
+      },
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:dba3c7b4-0a96-48cb-97d4-9aca0edbe90f"
+        },
+        {
+          "@id": "urn:uuid:08b37324-70f4-4ff9-bf37-c73d2b8a43c4"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:73da2169-c0ce-4ae2-85b2-42fb821ec872",
@@ -455,6 +613,14 @@
         {
           "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
         }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:1e689f9b-1bf5-4abd-98b9-daa3af67c795"
+        },
+        {
+          "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+        }
       ]
     },
     {
@@ -498,7 +664,10 @@
         {
           "schema:name": "differential pacemaker firing rate as the explanation for the DS/VS DA difference"
         }
-      ]
+      ],
+      "haak:requires": {
+        "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+      }
     },
     {
       "@id": "urn:uuid:e3b92961-38ad-41b2-a66f-65e328d33a2e",
@@ -527,7 +696,10 @@
         {
           "@id": "urn:uuid:49eb1a86-3a61-4e0f-aa8e-f5c225b9df09"
         }
-      ]
+      ],
+      "haak:requires": {
+        "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
+      }
     },
     {
       "@id": "urn:uuid:897a3449-e5bd-4f12-99f2-e701f5989c74",
@@ -545,6 +717,9 @@
           "@type": "mira:Protocol",
           "schema:name": "mathematical modelling"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:1ef1d1ae-1c10-4951-bd72-5fe9e3df202d"
       }
     },
     {
@@ -577,7 +752,15 @@
       ],
       "mira:opposes": {
         "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
-      }
+      },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:2ac9b38d-8f72-436d-905a-b98b7e8dc3ba"
+        },
+        {
+          "@id": "urn:uuid:c3130ba5-465d-4f1a-a851-6796e72a1d72"
+        }
+      ]
     }
   ]
 }

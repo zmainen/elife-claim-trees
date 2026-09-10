@@ -1,8 +1,56 @@
 {
   "@context": [
-    "https://mira.science/schema/context.jsonld"
+    "http://purl.org/mira-science/mira#",
+    {
+      "dgb": "https://mira.science/schema/discoursegraphs_base#",
+      "haak": "https://haak.world/schema/claim#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "dct": "http://purl.org/dc/terms/"
+    }
   ],
   "@graph": [
+    {
+      "@id": "haak:derived-from",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+    },
+    {
+      "@id": "haak:enables-method",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Evidence",
+      "rdfs:range": "mira:Protocol",
+      "dct:description": "The subject result makes the object method possible downstream."
+    },
+    {
+      "@id": "haak:entails",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+    },
+    {
+      "@id": "haak:interprets",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Evidence",
+      "dct:description": "The subject offers a theoretical reading of the object result."
+    },
+    {
+      "@id": "haak:requires",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+    },
+    {
+      "@id": "haak:scopes",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+    },
     {
       "@id": "urn:uuid:44342a68-670e-4c00-8ae6-2c503adfd0ee#question",
       "@type": "mira:Question",
@@ -53,6 +101,14 @@
         {
           "@id": "urn:uuid:2e0f1cb9-4f6a-4009-b3b2-dea39d6c6749"
         }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:4866b2ce-c761-4b10-9d1c-b1a5d76bf2b2"
+        },
+        {
+          "@id": "urn:uuid:3709a410-d465-4bb2-9386-e08e680a19a1"
+        }
       ]
     },
     {
@@ -68,7 +124,21 @@
           "@type": "mira:Protocol",
           "schema:name": "per-neuron ZETA test for significant modulation; modulation index = 2 × (auROC - 0.5) for [0.3, 0.8] s post-stim vs baseline window"
         }
-      }
+      },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:daf9cbad-8a15-458b-ab7f-30b397330a18"
+        },
+        {
+          "@id": "urn:uuid:87e4d6e1-5f61-419f-a05a-782fb5950745"
+        },
+        {
+          "@id": "urn:uuid:444c03ce-bd5a-40db-9bdf-f3325b935ce0"
+        },
+        {
+          "@id": "urn:uuid:476a1ca2-1ad8-4d72-833a-15f0af2528c0"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:87e4d6e1-5f61-419f-a05a-782fb5950745",
@@ -101,6 +171,9 @@
           "@type": "mira:Protocol",
           "schema:name": "paired t-test on per-region 5-HT-modulated fraction across the task vs. quiet-wakefulness conditions, two-sample ZETA test for stimulated vs. unstimulated trial activity per neuron"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:444c03ce-bd5a-40db-9bdf-f3325b935ce0"
       }
     },
     {
@@ -119,6 +192,9 @@
       },
       "mira:supports": {
         "@id": "urn:uuid:21ac3222-1750-46d2-a590-c97db788ab04"
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:daf9cbad-8a15-458b-ab7f-30b397330a18"
       }
     },
     {
@@ -137,6 +213,9 @@
       },
       "mira:supports": {
         "@id": "urn:uuid:21ac3222-1750-46d2-a590-c97db788ab04"
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:daf9cbad-8a15-458b-ab7f-30b397330a18"
       }
     },
     {
@@ -152,6 +231,9 @@
           "@type": "mira:Protocol",
           "schema:name": "psychometric error-function fit (psychofit), paired t-test on RT, regularized maximum-likelihood logistic choice model, paired t-tests against zero and per-predictor"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:444c03ce-bd5a-40db-9bdf-f3325b935ce0"
       }
     },
     {
@@ -185,6 +267,9 @@
           "@type": "mira:Protocol",
           "schema:name": "per-Beryl-region GLM (Gamma family, log link) on mean per-neuron modulation latency, latencies estimated via latenZy (ref. 27)"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:8382db52-dd38-45c6-ba10-0bbe54a1960c"
       }
     },
     {
@@ -215,6 +300,9 @@
           "@type": "mira:Protocol",
           "schema:name": "per-Beryl-region GLM coefficient for DRN projection density (z-scored) as one of seven predictors of modulation strength (Binomial family)"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:8382db52-dd38-45c6-ba10-0bbe54a1960c"
       }
     },
     {
@@ -230,6 +318,9 @@
           "@type": "mira:Protocol",
           "schema:name": "per-region correlation between Hamada et al. (2024) BOLD beta values and present-study mean modulation index, with per-region comparison of activation vs bidirectional sign"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:3709a410-d465-4bb2-9386-e08e680a19a1"
       }
     },
     {
@@ -245,6 +336,9 @@
           "@type": "mira:Protocol",
           "schema:name": "per-neuron GLM with choice, stimulation, and choice × stimulation predictors; absolute-valued coefficients averaged per animal"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:444c03ce-bd5a-40db-9bdf-f3325b935ce0"
       }
     },
     {
@@ -253,6 +347,14 @@
       "schema:name": "hypothesis-5ht-codes-surprise",
       "schema:description": "Phasic dorsal-raphe serotonin release functions as a surprise / belief-updating signal — therefore, optogenetically driven 5-HT release during a perceptual decision-making task should accelerate the rate at which the animal updates its prior, increase behavioral flexibility, and/or measurably alter the trade-off between sensory evidence and prior expectation in the choice computation.",
       "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:4cb18399-fbab-44a0-9050-b8cb19c5794b"
+        },
+        {
+          "@id": "urn:uuid:fc813dc5-c8ce-4e72-95fc-085a366f3b3d"
+        }
+      ],
       "mira:addresses": {
         "@id": "urn:uuid:44342a68-670e-4c00-8ae6-2c503adfd0ee#question"
       }
@@ -263,6 +365,17 @@
       "schema:name": "hypothesis-additive-modulation",
       "schema:description": "Optogenetic activation of dorsal-raphe serotonergic neurons modulates downstream single-neuron spiking activity additively rather than multiplicatively — that is, the 5-HT effect on a neuron's firing rate is well approximated by a constant additive offset that is independent of the choice-related component of activity, rather than by a gain factor that scales the choice-related component. As a per-neuron statistical statement this predicts a near-zero choice-by-stimulation interaction term in a generalized linear model with separate choice, stimulation, and choice×stimulation predictors.",
       "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:2b60c032-f0f3-4a4c-8f39-b09a97005d9b"
+        },
+        {
+          "@id": "urn:uuid:1fe51410-07cb-4c4b-b42d-0b87648b06bb"
+        },
+        {
+          "@id": "urn:uuid:9ac2766f-915b-4a39-822b-1c02e58bca31"
+        }
+      ],
       "mira:addresses": {
         "@id": "urn:uuid:12a7d6d9-5768-4559-8dfe-60e9163a461b#question"
       }
@@ -273,6 +386,17 @@
       "schema:name": "hypothesis-orthogonal-neuromodulatory-subspace",
       "schema:description": "A neuromodulatory signal can produce strong, brain-wide single-neuron modulation while leaving ongoing task-driven behavior unaffected if the modulation is geometrically confined to a population subspace orthogonal to the readout dimensions used by downstream circuits to extract task variables. In the R1 framing, this is not an independent hypothesis but a geometric consequence of additive (rather than multiplicative) modulation, derivable from the additivity hypothesis under a 2×2 factorial choice × stimulation design.",
       "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:derived-from": {
+        "@id": "urn:uuid:12a7d6d9-5768-4559-8dfe-60e9163a461b"
+      },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:ec7c50b1-ca2a-4704-ab2d-c17def3b6de1"
+        },
+        {
+          "@id": "urn:uuid:2e458fe4-f624-418b-af31-9c24c17f5ffa"
+        }
+      ],
       "mira:addresses": {
         "@id": "urn:uuid:2e0f1cb9-4f6a-4009-b3b2-dea39d6c6749#question"
       }
@@ -350,6 +474,9 @@
           "@type": "mira:Protocol",
           "schema:name": "per-neuron latency estimation via latenZy (ref. 27 — Haak & Heimel 2025), Pearson correlation between absolute modulation index and onset latency, manual inspection of shortest-latency neurons"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:444c03ce-bd5a-40db-9bdf-f3325b935ce0"
       }
     },
     {
@@ -357,7 +484,23 @@
       "@type": "mira:Protocol",
       "schema:name": "manifold-from-pooled-super-session",
       "schema:description": "The manifold and orthogonality analyses (Fig. 5) are computed from a single pooled super-session: trial-averaged peri-event-time histograms (12.5 ms bins, 20 ms Gaussian smoothing) of every neuron from every session and every mouse are concatenated along the neuron axis, mean-subtracted per neuron, and projected to the first three principal components. Trials with reaction time <0.1 s or >1.2 s are excluded. Null distributions are generated by within-prior-block choice shuffles (preserving prior-induced choice structure) and by pseudo-stimulation-blocks (preserving block-length statistics) to avoid inflating significance through within-block temporal autocorrelation.",
-      "mira:epistemicStatus": "mira:Claim"
+      "mira:epistemicStatus": "mira:Claim",
+      "haak:enables-method": [
+        {
+          "@id": "urn:uuid:a95a99d0-5af2-4711-8941-be2d0713688c"
+        },
+        {
+          "@id": "urn:uuid:47d9bcc6-5d0f-4f6b-826d-c6638e2069d8"
+        }
+      ],
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:a95a99d0-5af2-4711-8941-be2d0713688c"
+        },
+        {
+          "@id": "urn:uuid:47d9bcc6-5d0f-4f6b-826d-c6638e2069d8"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:a8ac5541-3763-40ad-86d8-471af9f63df3",
@@ -401,6 +544,14 @@
         {
           "@id": "urn:uuid:12a7d6d9-5768-4559-8dfe-60e9163a461b"
         }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:e3b1dbf0-1b42-4d06-ae59-6458e88e7485"
+        },
+        {
+          "@id": "urn:uuid:444c03ce-bd5a-40db-9bdf-f3325b935ce0"
+        }
       ]
     },
     {
@@ -408,14 +559,50 @@
       "@type": "mira:Claim",
       "schema:name": "optogenetic-activation-not-physiological-pattern",
       "schema:description": "SERT-Cre + ChR2-mediated optogenetic activation drives DRN serotonergic neurons more broadly and uniformly than endogenous serotonin release, which engages anatomically and functionally distinct subpopulations with distinct projection targets and behavioral correlates. Optogenetic drive itself is not spatially uniform either — light intensity falls off steeply from the fiber tip and ChR2-expressing neurons show frequency-dependent adaptation (Dugué et al. 2014) — but it nevertheless produces a coordinated phasic response unlike the correlated-ensemble patterns observed during natural behavior (Paquelet et al. 2022, calcium imaging).",
-      "mira:epistemicStatus": "mira:Assumption"
+      "mira:epistemicStatus": "mira:Assumption",
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:3709a410-d465-4bb2-9386-e08e680a19a1"
+        },
+        {
+          "@id": "urn:uuid:4bad74a6-ab11-4870-947d-a0b8b0d68ddc"
+        },
+        {
+          "@id": "urn:uuid:a95a99d0-5af2-4711-8941-be2d0713688c"
+        },
+        {
+          "@id": "urn:uuid:3ec20b3f-8573-4f5f-8907-4cfd0319a5c7"
+        },
+        {
+          "@id": "urn:uuid:12a7d6d9-5768-4559-8dfe-60e9163a461b"
+        }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:70f673a2-d528-4d47-ae37-df7cd4e26044"
+        },
+        {
+          "@id": "urn:uuid:7ebb813f-b228-40bc-ab80-af31a6d7eb3c"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:9ac2766f-915b-4a39-822b-1c02e58bca31",
       "@type": "mira:Claim",
       "schema:name": "orthogonality-derived-from-additivity",
       "schema:description": "In a 2 × 2 factorial choice × stimulation experimental design with linear (PCA) projection of the population response, additive 5-HT modulation entails geometric orthogonality between the stimulation-effect direction and the choice direction. Under additive modulation, every choice trajectory is displaced by the same vector (the stimulation effect), so the displacement that distinguishes the stimulated from the unstimulated trajectories — averaged across choice — is by definition orthogonal to the displacement that distinguishes the choice trajectories — averaged across stimulation. The orthogonality result in PCA space (`5ht-axis-orthogonal-to-choice-axis`) is therefore a geometric corollary of the GLM additivity finding, not an independent empirical claim.",
-      "mira:epistemicStatus": "mira:Claim"
+      "mira:epistemicStatus": "mira:Claim",
+      "haak:derived-from": {
+        "@id": "urn:uuid:12a7d6d9-5768-4559-8dfe-60e9163a461b"
+      },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:12a7d6d9-5768-4559-8dfe-60e9163a461b"
+        },
+        {
+          "@id": "urn:uuid:4866b2ce-c761-4b10-9d1c-b1a5d76bf2b2"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:47d9bcc6-5d0f-4f6b-826d-c6638e2069d8",
@@ -430,28 +617,50 @@
           "@type": "mira:Protocol",
           "schema:name": "per-region manifold analysis at last pre-choice time bin, permutation testing against block-aware null"
         }
-      }
+      },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:4866b2ce-c761-4b10-9d1c-b1a5d76bf2b2"
+        },
+        {
+          "@id": "urn:uuid:a95a99d0-5af2-4711-8941-be2d0713688c"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:fc813dc5-c8ce-4e72-95fc-085a366f3b3d",
       "@type": "mira:Claim",
       "schema:name": "prediction-5ht-accelerates-prior-update",
       "schema:description": "If phasic 5-HT release functions as a surprise / belief-updating signal, then stimulation during the period after a prior-probability block switch should accelerate the rate at which the mouse updates its choice bias toward the new dominant side.",
-      "mira:epistemicStatus": "mira:Hypothesis"
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:derived-from": {
+        "@id": "urn:uuid:44342a68-670e-4c00-8ae6-2c503adfd0ee"
+      }
     },
     {
       "@id": "urn:uuid:ec7c50b1-ca2a-4704-ab2d-c17def3b6de1",
       "@type": "mira:Claim",
       "schema:name": "prediction-5ht-axis-orthogonal-to-choice",
       "schema:description": "If brain-wide 5-HT modulation is structurally separable from the choice computation (under additive modulation), then in a low-dimensional projection of the population response (here, the first three principal components), the vector that separates 5-HT-stimulated from unstimulated trials should be near-orthogonal to the vector that separates left-choice from right-choice trials, with orthogonality measured as 1 - |dot product| of unit-normalized direction vectors.",
-      "mira:epistemicStatus": "mira:Hypothesis"
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:derived-from": [
+        {
+          "@id": "urn:uuid:2e0f1cb9-4f6a-4009-b3b2-dea39d6c6749"
+        },
+        {
+          "@id": "urn:uuid:9ac2766f-915b-4a39-822b-1c02e58bca31"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:4cb18399-fbab-44a0-9050-b8cb19c5794b",
       "@type": "mira:Claim",
       "schema:name": "prediction-5ht-shifts-psychometric",
       "schema:description": "If phasic 5-HT release alters how the animal weighs sensory evidence against prior expectation, or alters motivation, attention, or visual sensitivity, then 5-HT stimulation should produce detectable changes in psychometric slope, lapse rate, bias, reaction time, or any of the predictor weights of a probabilistic choice model fitting visual evidence, prior, and past choice with separate stimulated/unstimulated coefficients.",
-      "mira:epistemicStatus": "mira:Hypothesis"
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:derived-from": {
+        "@id": "urn:uuid:44342a68-670e-4c00-8ae6-2c503adfd0ee"
+      }
     },
     {
       "@id": "urn:uuid:1fe51410-07cb-4c4b-b42d-0b87648b06bb",
@@ -461,6 +670,9 @@
       "mira:epistemicStatus": "mira:Hypothesis",
       "mira:opposes": {
         "@id": "urn:uuid:2b60c032-f0f3-4a4c-8f39-b09a97005d9b"
+      },
+      "haak:derived-from": {
+        "@id": "urn:uuid:2cc94e19-2dac-419d-aea0-d0672cc3ecf0"
       }
     },
     {
@@ -468,14 +680,20 @@
       "@type": "mira:Claim",
       "schema:name": "prediction-near-zero-choice-stim-interaction",
       "schema:description": "If serotonergic modulation combines additively with choice-related activity, then a generalized linear model fitted to per-neuron trial-by-trial spike counts with separate predictors for choice (left/right), 5-HT stimulation (on/off), and their interaction (choice × stimulation) should yield a near-zero interaction coefficient when averaged across animals and tested against zero with a one-sample t-test.",
-      "mira:epistemicStatus": "mira:Hypothesis"
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:derived-from": {
+        "@id": "urn:uuid:12a7d6d9-5768-4559-8dfe-60e9163a461b"
+      }
     },
     {
       "@id": "urn:uuid:2e458fe4-f624-418b-af31-9c24c17f5ffa",
       "@type": "mira:Claim",
       "schema:name": "prediction-orthogonality-grows-toward-choice",
       "schema:description": "If 5-HT modulation occupies a subspace orthogonal to the choice readout dimensions, then the orthogonality measure between the 5-HT effect axis and the choice axis should increase over the pre-choice timecourse — as the choice axis emerges and stabilizes approaching the choice moment, the 5-HT axis should remain in the orthogonal complement rather than aligning with it.",
-      "mira:epistemicStatus": "mira:Hypothesis"
+      "mira:epistemicStatus": "mira:Hypothesis",
+      "haak:derived-from": {
+        "@id": "urn:uuid:2e0f1cb9-4f6a-4009-b3b2-dea39d6c6749"
+      }
     },
     {
       "@id": "urn:uuid:d7fc27da-fdcb-4182-8bae-5d2ee8830a72",
@@ -490,6 +708,9 @@
           "@type": "mira:Protocol",
           "schema:name": "per-Beryl-region GLM (Gaussian family, identity link) on signed mean modulation index"
         }
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:8382db52-dd38-45c6-ba10-0bbe54a1960c"
       }
     },
     {
@@ -505,28 +726,94 @@
           "@type": "mira:Protocol",
           "schema:name": "per-Beryl-region GLM (Binomial family, Logit link) with seven z-scored predictors (six receptors + DRN projection density); leave-one-region-out cross-validation; VIF check"
         }
-      }
+      },
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:444c03ce-bd5a-40db-9bdf-f3325b935ce0"
+        },
+        {
+          "@id": "urn:uuid:3709a410-d465-4bb2-9386-e08e680a19a1"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:f2b05632-4058-416f-8b38-211dc0ee00bd",
       "@type": "mira:Claim",
       "schema:name": "reconciles-5ht1a-baseline-suppression-with-5ht2a-gain-control",
       "schema:description": "The brain-wide additive signature of 5-HT modulation is consistent with — and may reflect the dominance of — a 5-HT1A-mediated stimulus-independent baseline-suppression component, while the previously demonstrated 5-HT2A-mediated multiplicative gain modulation of evoked sensory responses in visual cortex (Azimi 2020, Barzan 2024) operates as a separable, receptor-specific component. Azimi et al. (2020) explicitly dissociated the two components: 5-HT1A mediates an additive baseline suppression independent of stimulus drive, and 5-HT2A mediates a multiplicative gain on evoked responses. The brain-wide additive mode observed here likely reflects dominance of the 5-HT1A component across most regions, with 5-HT2A gain control persisting locally where 5-HT2A density is high.",
-      "mira:epistemicStatus": "mira:Claim"
+      "mira:epistemicStatus": "mira:Claim",
+      "haak:interprets": [
+        {
+          "@id": "urn:uuid:834db64b-2b33-49b2-86f5-e98667d95148"
+        },
+        {
+          "@id": "urn:uuid:7317a05d-1490-4dbb-90d5-69ab4da0bfc4"
+        }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:12a7d6d9-5768-4559-8dfe-60e9163a461b"
+        },
+        {
+          "@id": "urn:uuid:3709a410-d465-4bb2-9386-e08e680a19a1"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:492e197a-6d02-41c1-95e8-b425f6af9678",
       "@type": "mira:Claim",
       "schema:name": "rules-out-multiplicative-gain-control",
       "schema:description": "The near-zero choice-by-stimulation interaction in the per-neuron GLM is inconsistent with multiplicative gain modulation as the dominant brain-wide mode of serotonergic action during the perceptual decision task. The dominant computational framework for neuromodulators since Servan-Schreiber et al. (1990) — that they act as multiplicative gain controllers scaling neural input-output functions — is therefore eliminated as the primary explanation of brain-wide 5-HT effects, although the result does not rule out gain-control mechanisms operating in specific regions, on specific timescales, or via specific receptors.",
-      "mira:epistemicStatus": "mira:Claim"
+      "mira:epistemicStatus": "mira:Claim",
+      "haak:interprets": [
+        {
+          "@id": "urn:uuid:2cc94e19-2dac-419d-aea0-d0672cc3ecf0"
+        },
+        {
+          "@id": "urn:uuid:834db64b-2b33-49b2-86f5-e98667d95148"
+        }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:3ec20b3f-8573-4f5f-8907-4cfd0319a5c7"
+        },
+        {
+          "@id": "urn:uuid:1fe51410-07cb-4c4b-b42d-0b87648b06bb"
+        },
+        {
+          "@id": "urn:uuid:2cc94e19-2dac-419d-aea0-d0672cc3ecf0"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:444c03ce-bd5a-40db-9bdf-f3325b935ce0",
       "@type": "mira:Claim",
       "schema:name": "seven-target-trajectories-13-regions-7478-neurons",
       "schema:description": "All brain-wide claims in the paper rest on a recording dataset of 7,478 neurons sorted via the IBL spike-sorting pipeline from 86 dual-Neuropixel insertions across 57 recording sessions in 17 head-fixed awake mice (11 SERT-Cre, 6 WT), with insertion trajectories targeting seven planned brain locations and post-hoc histology-aligned to 13 brain regions in Allen atlas space.",
-      "mira:epistemicStatus": "mira:Assumption"
+      "mira:epistemicStatus": "mira:Assumption",
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:3709a410-d465-4bb2-9386-e08e680a19a1"
+        },
+        {
+          "@id": "urn:uuid:4bad74a6-ab11-4870-947d-a0b8b0d68ddc"
+        },
+        {
+          "@id": "urn:uuid:f47f8b52-3bc1-44e1-a80a-affbbabde32f"
+        },
+        {
+          "@id": "urn:uuid:a95a99d0-5af2-4711-8941-be2d0713688c"
+        },
+        {
+          "schema:name": "inhibition-fast-excitation-slow"
+        },
+        {
+          "@id": "urn:uuid:3ec20b3f-8573-4f5f-8907-4cfd0319a5c7"
+        },
+        {
+          "@id": "urn:uuid:e3b1dbf0-1b42-4d06-ae59-6458e88e7485"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:daf9cbad-8a15-458b-ab7f-30b397330a18",
@@ -541,7 +828,18 @@
           "@type": "mira:Protocol",
           "schema:name": "identical optogenetic protocol applied to non-SERT-Cre wild-type mice (n=6) with histological confirmation of absent ChR2 expression and per-neuron ZETA-test modulation analysis"
         }
-      }
+      },
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:3709a410-d465-4bb2-9386-e08e680a19a1"
+        },
+        {
+          "@id": "urn:uuid:e29dd47b-417d-49ba-9fb0-c28f7eb3806a"
+        },
+        {
+          "@id": "urn:uuid:5df1fd28-8409-47d8-a2a4-b10874716f7d"
+        }
+      ]
     }
   ]
 }

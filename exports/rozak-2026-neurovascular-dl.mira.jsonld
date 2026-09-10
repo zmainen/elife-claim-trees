@@ -1,8 +1,49 @@
 {
   "@context": [
-    "https://mira.science/schema/context.jsonld"
+    "http://purl.org/mira-science/mira#",
+    {
+      "dgb": "https://mira.science/schema/discoursegraphs_base#",
+      "haak": "https://haak.world/schema/claim#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "dct": "http://purl.org/dc/terms/"
+    }
   ],
   "@graph": [
+    {
+      "@id": "haak:derived-from",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+    },
+    {
+      "@id": "haak:enables-method",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Evidence",
+      "rdfs:range": "mira:Protocol",
+      "dct:description": "The subject result makes the object method possible downstream."
+    },
+    {
+      "@id": "haak:entails",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+    },
+    {
+      "@id": "haak:requires",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+    },
+    {
+      "@id": "haak:scopes",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+    },
     {
       "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52#question",
       "@type": "mira:Question",
@@ -124,7 +165,10 @@
         {
           "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
         }
-      ]
+      ],
+      "haak:requires": {
+        "@id": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181"
+      }
     },
     {
       "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478",
@@ -152,6 +196,14 @@
         },
         {
           "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
+        },
+        {
+          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
         }
       ]
     },
@@ -185,6 +237,9 @@
       ],
       "mira:opposes": {
         "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
       }
     },
     {
@@ -220,6 +275,9 @@
       ],
       "mira:opposes": {
         "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
       }
     },
     {
@@ -227,7 +285,36 @@
       "@type": "mira:Claim",
       "schema:name": "dl-model-scope-single-pipeline",
       "schema:description": "All neurovascular coupling metrics are derived from a single integrated deep learning pipeline (segmentation → registration → graph analysis); the segmentation model requires GPU inference and was trained on data from one imaging preparation (Thy1-ChR2-YFP mice, 6-12 months), so generalization to other preparations is not demonstrated in this paper.",
-      "mira:epistemicStatus": "mira:Assumption"
+      "mira:epistemicStatus": "mira:Assumption",
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
+        },
+        {
+          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+        },
+        {
+          "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc"
+        },
+        {
+          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
+        },
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        },
+        {
+          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+        },
+        {
+          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+        },
+        {
+          "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52",
@@ -238,6 +325,14 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95525"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e"
+        },
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        }
+      ],
       "mira:addresses": {
         "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52#question"
       }
@@ -251,6 +346,14 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95525"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        },
+        {
+          "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+        }
+      ],
       "mira:addresses": {
         "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77#question"
       }
@@ -281,6 +384,14 @@
         },
         {
           "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
+        },
+        {
+          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
         }
       ]
     },
@@ -329,6 +440,20 @@
         {
           "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
         }
+      ],
+      "haak:enables-method": [
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        },
+        {
+          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+        },
+        {
+          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+        }
       ]
     },
     {
@@ -342,7 +467,48 @@
       },
       "mira:supports": {
         "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
-      }
+      },
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
+        },
+        {
+          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+        },
+        {
+          "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc"
+        },
+        {
+          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
+        },
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        },
+        {
+          "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        },
+        {
+          "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+        },
+        {
+          "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
+        },
+        {
+          "@id": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd"
+        },
+        {
+          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+        },
+        {
+          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+        },
+        {
+          "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:4e5d8b2c-7a91-4c3f-b1e0-2d3f4a5b6c7e",
@@ -352,6 +518,9 @@
       "mira:epistemicStatus": "mira:Hypothesis",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "haak:derived-from": {
+        "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
       }
     },
     {
@@ -362,7 +531,15 @@
       "mira:epistemicStatus": "mira:Hypothesis",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95525"
-      }
+      },
+      "haak:derived-from": [
+        {
+          "@id": "urn:uuid:7c9a1f6b-2b8c-4e1a-9d31-3f0b6c1e8a52"
+        },
+        {
+          "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb",
@@ -395,6 +572,17 @@
         {
           "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
         }
+      ],
+      "haak:enables-method": [
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        },
+        {
+          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+        },
+        {
+          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+        }
       ]
     },
     {
@@ -416,6 +604,14 @@
         {
           "@id": "urn:uuid:6fb7137d-c89c-4651-9271-014bd6823995"
         }
+      ],
+      "haak:enables-method": [
+        {
+          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+        },
+        {
+          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+        }
       ]
     },
     {
@@ -426,7 +622,27 @@
       "mira:epistemicStatus": "mira:Assumption",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95525"
-      }
+      },
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        },
+        {
+          "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+        },
+        {
+          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+        },
+        {
+          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+        },
+        {
+          "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
@@ -436,7 +652,51 @@
       "mira:epistemicStatus": "mira:Assumption",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95525"
-      }
+      },
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:db0a9448-8fe8-4336-b220-0a71aa19d870"
+        },
+        {
+          "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+        },
+        {
+          "@id": "urn:uuid:2d67695f-3ee3-45e9-b4bc-ff547691c4bc"
+        },
+        {
+          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
+        },
+        {
+          "@id": "urn:uuid:de368a2f-dfdf-4cb5-9c5f-24e3e0cf3aae"
+        },
+        {
+          "@id": "urn:uuid:083ef4c3-9e93-4927-9867-3c785b2c03c0"
+        },
+        {
+          "@id": "urn:uuid:c1381a0c-47be-4721-9022-ddec7d45b3fd"
+        },
+        {
+          "@id": "urn:uuid:a3ca491f-f3b6-456f-b69c-6f9449183c4a"
+        },
+        {
+          "@id": "urn:uuid:a68ebd2f-95bf-43a9-b0e0-f9ce7a3fa5bd"
+        },
+        {
+          "@id": "urn:uuid:af8bc967-3346-4e25-ac9e-8ad3536313fd"
+        },
+        {
+          "@id": "urn:uuid:e93b7cce-2578-4075-8e9b-cc9910fc5fd4"
+        },
+        {
+          "@id": "urn:uuid:ad12a413-e736-4cb5-908f-e331c3a21478"
+        },
+        {
+          "@id": "urn:uuid:e05b0913-66d9-4ac2-be33-40385aaf6181"
+        },
+        {
+          "@id": "urn:uuid:afb63ebd-605d-4e1b-a412-9ad7eea3bc58"
+        }
+      ]
     },
     {
       "@id": "urn:uuid:8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
@@ -446,6 +706,9 @@
       "mira:epistemicStatus": "mira:Claim",
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.95525"
+      },
+      "haak:derived-from": {
+        "@id": "urn:uuid:9a1c4f3e-5d2b-4f8a-8c71-1e6f2b9d0a77"
       }
     },
     {
@@ -478,6 +741,9 @@
       ],
       "mira:opposes": {
         "@id": "urn:uuid:73b97665-ce32-4361-81d0-40fb149cea2b"
+      },
+      "haak:requires": {
+        "@id": "urn:uuid:e52585f7-4764-4444-9919-1c9a4c6cec38"
       }
     },
     {
@@ -500,6 +766,14 @@
         },
         {
           "@id": "urn:uuid:6f7a8b9c-3e4d-5a6b-7c8d-9e0f1a2b3c4d"
+        }
+      ],
+      "haak:requires": [
+        {
+          "@id": "urn:uuid:9639b9cb-4a39-4046-ba35-db6f8f88dfbb"
+        },
+        {
+          "@id": "urn:uuid:ce04789d-9922-49de-b9e2-6cc87302b3f4"
         }
       ]
     },

@@ -36,7 +36,47 @@ except ImportError:
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CLAIMS_DIR = os.path.join(ROOT, "claims")
 
-MIRA_CONTEXT = "https://mira.science/schema/context.jsonld"
+# The schema's own id. The context URL previously used here — /schema/context.jsonld —
+# returns 404; the published identifier is this PURL.
+MIRA_CONTEXT = "http://purl.org/mira-science/mira#"
+DGB = "https://mira.science/schema/discoursegraphs_base#"
+HAAK = "https://haak.world/schema/claim#"
+
+# ── Declaring the relations MIRA does not ship ───────────────────────────────
+# MIRA is not limited to `supports` and `opposes`. It imports a Discourse Graphs base
+# schema defining `AbstractRelationDef`, `RelationDef` (carrying `rdfs:domain` and
+# `rdfs:range`) and `RelationInstance` — relations are first-class definable things, and
+# supports/opposes are simply the two MIRA ships with.
+#
+# So a relation with no MIRA predicate need not be dropped, and need not be flattened into
+# `supports` either. Flattening would be worse than dropping for several of these: mapping
+# `scopes` to `supports` would assert that a boundary condition is evidence *for* the claim
+# it limits, which is not a compression of the meaning but a reversal of it.
+#
+# Instead each is declared, once per document, as a RelationDef with a domain, a range and a
+# description, and then used as a predicate. A reader that knows only core MIRA still reads
+# every node and every supports/opposes edge; a reader that follows the RelationDefs gets
+# the rest with stated semantics. Nothing is lost and nothing is misstated.
+RELATION_DEFS = {
+    "entails":        ("mira:Claim", "mira:Claim",
+                       "The subject claim logically entails the object claim — the deductive "
+                       "step from a hypothesis to a prediction it commits to."),
+    "derived-from":   ("mira:Claim", "mira:Claim",
+                       "The subject claim was derived from the object claim; the inverse of "
+                       "entails."),
+    "requires":       ("mira:Claim", "mira:Claim",
+                       "The subject claim depends on the object holding. If the object fails, "
+                       "the subject is undermined."),
+    "scopes":         ("mira:Claim", "mira:Claim",
+                       "The subject states a boundary condition governing where the object "
+                       "claim is valid. Not support: a scope constraint narrows a claim."),
+    "interprets":     ("mira:Claim", "mira:Evidence",
+                       "The subject offers a theoretical reading of the object result."),
+    "enables-method": ("mira:Evidence", "mira:Protocol",
+                       "The subject result makes the object method possible downstream."),
+    "qualifies":      ("mira:Claim", "mira:Claim",
+                       "The subject narrows the object claim's applicability."),
+}
 
 # ── Mapping tables ────────────────────────────────────────────────────────────
 # Every entry here is a decision that a human should be able to disagree with,
@@ -188,6 +228,18 @@ def build_node(claim, by_slug, extended):
     if opposes:
         node["mira:opposes"] = opposes if len(opposes) > 1 else opposes[0]
 
+    # The relations core MIRA has no predicate for are emitted under their declared
+    # RelationDef rather than discarded. This is what makes the strict file lossless.
+    declared = {}
+    for key, target in dropped:
+        if key not in RELATION_DEFS:
+            continue
+        t = by_slug.get(target)
+        declared.setdefault(f"haak:{key}", []).append(
+            {"@id": node_id(t)} if t else {"schema:name": target})
+    for k, v in declared.items():
+        node[k] = v if len(v) > 1 else v[0]
+
     if not extended:
         return node, dropped
 
@@ -295,7 +347,22 @@ def export(paper_slug, extended):
     emitted = [{k: v for k, v in q.items() if k != "_derived"} for q in questions]
     nodes = emitted + nodes
 
-    ctx = {"@context": [MIRA_CONTEXT]}
+    # Declare every relation this document actually uses, so its predicates are defined
+    # rather than merely emitted.
+    used = sorted({k for _, k, _ in all_dropped})
+    defs = [{
+        "@id": f"haak:{k}",
+        "@type": "dgb:RelationDef",
+        "rdfs:domain": RELATION_DEFS[k][0],
+        "rdfs:range": RELATION_DEFS[k][1],
+        "dct:description": RELATION_DEFS[k][2],
+    } for k in used if k in RELATION_DEFS]
+    nodes = defs + nodes
+
+    ctx = {"@context": [MIRA_CONTEXT,
+                        {"dgb": DGB, "haak": HAAK,
+                         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                         "dct": "http://purl.org/dc/terms/"}]}
     if extended:
         ctx["@context"].append({"haak": "https://haak.world/schema/claim#"})
 
@@ -448,7 +515,7 @@ def main():
 
         total = sum(1 for c in claims for _ in relations(c))
         print(f"  {slug}: {len(claims)} claims, {len(strict['@graph'])} nodes, "
-              f"{len(dropped)}/{total} relations dropped")
+              f"{len(dropped)}/{total} relations declared as RelationDefs")
 
     print(f"\nWritten to {out_dir}/")
 

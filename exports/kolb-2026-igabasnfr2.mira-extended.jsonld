@@ -1,11 +1,59 @@
 {
   "@context": [
-    "https://mira.science/schema/context.jsonld",
+    "http://purl.org/mira-science/mira#",
+    {
+      "dgb": "https://mira.science/schema/discoursegraphs_base#",
+      "haak": "https://haak.world/schema/claim#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "dct": "http://purl.org/dc/terms/"
+    },
     {
       "haak": "https://haak.world/schema/claim#"
     }
   ],
   "@graph": [
+    {
+      "@id": "haak:derived-from",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim was derived from the object claim; the inverse of entails."
+    },
+    {
+      "@id": "haak:enables-method",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Evidence",
+      "rdfs:range": "mira:Protocol",
+      "dct:description": "The subject result makes the object method possible downstream."
+    },
+    {
+      "@id": "haak:entails",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim logically entails the object claim — the deductive step from a hypothesis to a prediction it commits to."
+    },
+    {
+      "@id": "haak:interprets",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Evidence",
+      "dct:description": "The subject offers a theoretical reading of the object result."
+    },
+    {
+      "@id": "haak:requires",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject claim depends on the object holding. If the object fails, the subject is undermined."
+    },
+    {
+      "@id": "haak:scopes",
+      "@type": "dgb:RelationDef",
+      "rdfs:domain": "mira:Claim",
+      "rdfs:range": "mira:Claim",
+      "dct:description": "The subject states a boundary condition governing where the object claim is valid. Not support: a scope constraint narrows a claim."
+    },
     {
       "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe#question",
       "@type": "mira:Question",
@@ -26,6 +74,9 @@
       "schema:name": "crystal-structure-pdb-9d57",
       "schema:description": "The crystal structure of iGABASnFR2 is deposited at the Protein Data Bank (accession 9D57), providing atomic-resolution structural information on the binding pocket and cpGFP domain arrangement.",
       "mira:epistemicStatus": "mira:Claim",
+      "haak:enables-method": {
+        "@id": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc"
+      },
       "haak:role": "methodological",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -57,6 +108,17 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.108319"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+        },
+        {
+          "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+        },
+        {
+          "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8"
+        }
+      ],
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -86,6 +148,14 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.108319"
       },
+      "haak:entails": [
+        {
+          "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
+        },
+        {
+          "@id": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216"
+        }
+      ],
       "haak:role": "hypothesis",
       "haak:epistemicStrength": "hypothesis",
       "haak:relations": {
@@ -152,7 +222,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -179,6 +249,17 @@
       "mira:opposes": {
         "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
       },
+      "haak:enables-method": [
+        {
+          "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+        },
+        {
+          "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+        },
+        {
+          "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8"
+        }
+      ],
       "haak:role": "methodological",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -212,7 +293,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -238,6 +319,9 @@
       ],
       "mira:opposes": {
         "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+      },
+      "haak:interprets": {
+        "@id": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7"
       },
       "haak:role": "interpretation",
       "haak:epistemicStrength": "strong",
@@ -268,7 +352,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:partial",
+          "haak:status": "partial",
           "haak:executed": false
         }
       ],
@@ -324,7 +408,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -387,7 +471,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -430,6 +514,9 @@
           "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
         }
       ],
+      "haak:requires": {
+        "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff"
+      },
       "haak:role": "empirical",
       "haak:epistemicStrength": "moderate",
       "haak:relations": {
@@ -467,7 +554,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -526,7 +613,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -593,7 +680,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -631,6 +718,9 @@
       "mira:opposes": {
         "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
       },
+      "haak:requires": {
+        "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff"
+      },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -665,7 +755,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -703,6 +793,9 @@
       "mira:opposes": {
         "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
       },
+      "haak:requires": {
+        "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff"
+      },
       "haak:role": "empirical",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -737,7 +830,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -796,7 +889,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -860,7 +953,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -876,6 +969,17 @@
       "mira:supports": {
         "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
       },
+      "haak:enables-method": [
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        },
+        {
+          "@id": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb"
+        },
+        {
+          "@id": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6"
+        }
+      ],
       "haak:role": "methodological",
       "haak:epistemicStrength": "strong",
       "haak:relations": {
@@ -901,7 +1005,7 @@
           "@type": "haak:VerificationRecord",
           "haak:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unverified:no-data",
+          "haak:status": "blocked",
           "haak:executed": false
         }
       ],
@@ -917,6 +1021,14 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.108319"
       },
+      "haak:derived-from": [
+        {
+          "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
+        },
+        {
+          "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+        }
+      ],
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -940,6 +1052,9 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.108319"
       },
+      "haak:derived-from": {
+        "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
+      },
       "haak:role": "prediction",
       "haak:epistemicStrength": "prediction",
       "haak:relations": {
@@ -960,6 +1075,50 @@
       "dg:sourceDocument": {
         "schema:identifier": "doi:10.7554/eLife.108319"
       },
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9"
+        },
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        },
+        {
+          "@id": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb"
+        },
+        {
+          "@id": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6"
+        },
+        {
+          "@id": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee"
+        },
+        {
+          "@id": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7"
+        },
+        {
+          "@id": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc"
+        },
+        {
+          "@id": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d"
+        },
+        {
+          "@id": "urn:uuid:837eae22-f6f6-4d29-9696-c998ee633b7f"
+        },
+        {
+          "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff"
+        },
+        {
+          "@id": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c"
+        },
+        {
+          "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+        },
+        {
+          "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+        },
+        {
+          "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8"
+        }
+      ],
       "haak:role": "scope",
       "haak:epistemicStrength": "weak",
       "haak:relations": {
@@ -1025,6 +1184,47 @@
       "schema:name": "screening-scope-wet-lab-only",
       "schema:description": "The primary claims of iGABASnFR2 performance (sensitivity, kinetics, SNR) are established through wet-lab measurements (fluorescence imaging in cultured neurons, stopped-flow kinetics, two-photon excitation spectroscopy) that cannot be reproduced from deposited code and data alone; computational analysis of deposited source data covers only figure generation, not the underlying measurements.",
       "mira:epistemicStatus": "mira:Assumption",
+      "haak:scopes": [
+        {
+          "@id": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9"
+        },
+        {
+          "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
+        },
+        {
+          "@id": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb"
+        },
+        {
+          "@id": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6"
+        },
+        {
+          "@id": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee"
+        },
+        {
+          "@id": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc"
+        },
+        {
+          "@id": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d"
+        },
+        {
+          "@id": "urn:uuid:837eae22-f6f6-4d29-9696-c998ee633b7f"
+        },
+        {
+          "@id": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff"
+        },
+        {
+          "@id": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c"
+        },
+        {
+          "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
+        },
+        {
+          "@id": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5"
+        },
+        {
+          "@id": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8"
+        }
+      ],
       "haak:role": "scope",
       "haak:epistemicStrength": "strong",
       "haak:relations": {

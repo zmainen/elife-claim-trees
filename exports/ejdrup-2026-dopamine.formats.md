@@ -7,23 +7,25 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
 | `supports` | 28 | → supports | kept | kept |
-| `requires` | 20 | **dropped** | kept | dropped |
+| `requires` | 20 | declared `haak:requires` | kept | dropped |
 | `tests` | 11 | → supports | kept | kept |
-| `entails` | 11 | **dropped** | kept | dropped |
-| `scopes` | 8 | **dropped** | kept | dropped |
+| `entails` | 11 | declared `haak:entails` | kept | dropped |
+| `scopes` | 8 | declared `haak:scopes` | kept | dropped |
 | `validates` | 6 | → supports | kept | kept |
 | `rules-out` | 5 | → opposes | kept | kept |
 | `dissociates-with` | 4 | → opposes | kept | kept |
-| `interprets` | 2 | **dropped** | kept | dropped |
+| `interprets` | 2 | declared `haak:interprets` | kept | dropped |
 
-## What MIRA drops
+## What MIRA has no predicate for — and what happens instead
 
-**41 of 95 relations (43%) have no MIRA predicate and are absent from the strict export.**
+**41 of 95 relations (43%) fall outside `supports` and `opposes`.** They are not dropped and not flattened: MIRA imports a Discourse Graphs base schema in which relations are definable, so each is declared in the document as a `RelationDef` with a domain, a range and a description, then used as a predicate.
 
-- `requires` (20) — a claim depends on another holding
-- `entails` (11) — a hypothesis entails its prediction — the deductive step
-- `scopes` (8) — a scope constraint governs another claim's validity
-- `interprets` (2) — one claim interprets another
+- `haak:requires` (20) — a claim depends on another holding
+- `haak:entails` (11) — a hypothesis entails its prediction — the deductive step
+- `haak:scopes` (8) — a scope constraint governs another claim's validity
+- `haak:interprets` (2) — one claim interprets another
+
+A reader that knows only core MIRA still gets every node and every supports/opposes edge. One that follows the declarations gets the rest with stated semantics. Flattening these into `supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits.
 
 ## What MIRA flattens
 
