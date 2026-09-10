@@ -22,3 +22,177 @@
   max-width: 320px;
   pointer-events: none;
 }
+
+/* ── Rendered-markdown prose ───────────────────────────────────────────────────
+   Lived in a `<style is:global>` inside methodology.astro, which meant Astro shipped
+   it with that page and no other. The MIRA guide at /formats/mira used the same class
+   and got none of the CSS, rendering as a wall of unstyled HTML. Any page that renders
+   a repository document needs these, so they live here.
+
+   The colours were also light-mode literals — dark text on the dark shell — so they are
+   tokens now, defined for both themes below. */
+:root {
+  --prose-body: #374151;
+  --prose-muted: #4b5563;
+  --prose-head: #111827;
+  --prose-strong: #1f2937;
+  --prose-rule: #e5e7eb;
+  --prose-rule-strong: #d1d5db;
+  --prose-rule-soft: #f3f4f6;
+  --prose-sunk: #f9fafb;
+  --prose-code: #be185d;
+  --prose-link: #2563eb;
+  --prose-link-hover: #1d4ed8;
+}
+html.dark {
+  --prose-body: #cbd5e1;
+  --prose-muted: #9aa4b2;
+  --prose-head: #f1f5f9;
+  --prose-strong: #e2e8f0;
+  --prose-rule: #30363d;
+  --prose-rule-strong: #3d444d;
+  --prose-rule-soft: #23282e;
+  --prose-sunk: #1a1e23;
+  --prose-code: #f9a8d4;
+  --prose-link: #7cb0f5;
+  --prose-link-hover: #a3c9fb;
+}
+
+.method-prose {
+    color: var(--prose-body);
+    font-size: 15px;
+    line-height: 1.65;
+    max-width: none;
+  }
+  .method-prose .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--prose-head);
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--prose-rule-soft);
+  }
+  .method-prose h1,
+  .method-prose h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--prose-strong);
+    margin: 2rem 0 0.75rem;
+    line-height: 1.35;
+  }
+  .method-prose h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--prose-body);
+    margin: 1.5rem 0 0.5rem;
+  }
+  .method-prose h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--prose-muted);
+    margin: 1.25rem 0 0.4rem;
+  }
+  .method-prose p {
+    margin: 0 0 1rem;
+  }
+  .method-prose strong { color: var(--prose-head); font-weight: 600; }
+  .method-prose em { font-style: italic; }
+
+  .method-prose ul,
+  .method-prose ol {
+    margin: 0 0 1rem;
+    padding-left: 1.5rem;
+  }
+  .method-prose ul { list-style: disc; }
+  .method-prose ol { list-style: decimal; }
+  .method-prose li {
+    margin: 0.25rem 0;
+  }
+  .method-prose li > p {
+    margin: 0.25rem 0;
+  }
+
+  .method-prose a {
+    color: var(--prose-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .method-prose a:hover { color: var(--prose-link-hover); }
+
+  .method-prose code {
+    background: var(--prose-rule-soft);
+    color: var(--prose-code);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.875em;
+    border: 1px solid var(--prose-rule);
+  }
+  .method-prose pre {
+    background: var(--prose-strong);
+    color: var(--prose-rule-soft);
+    padding: 1rem 1.25rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-size: 0.85em;
+    line-height: 1.5;
+  }
+  .method-prose pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    font-size: inherit;
+  }
+
+  .method-prose blockquote {
+    border-left: 3px solid var(--prose-rule-strong);
+    padding: 0.25rem 0 0.25rem 1rem;
+    margin: 1rem 0;
+    color: var(--prose-muted);
+    font-style: italic;
+  }
+
+  .method-prose hr {
+    border: none;
+    border-top: 1px solid var(--prose-rule);
+    margin: 2rem 0;
+  }
+
+  .method-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.25rem 0;
+    font-size: 0.9em;
+    display: block;
+    overflow-x: auto;
+  }
+  .method-prose table thead {
+    background: var(--prose-sunk);
+  }
+  .method-prose table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--prose-strong);
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--prose-rule);
+    border-bottom: 2px solid var(--prose-rule-strong);
+  }
+  .method-prose table td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--prose-rule);
+    vertical-align: top;
+  }
+  .method-prose table tbody tr:nth-child(even) {
+    background: var(--prose-sunk);
+  }
+  .method-prose table th[align='right'],
+  .method-prose table td[align='right'] {
+    text-align: right;
+  }
+  .method-prose table th[align='center'],
+  .method-prose table td[align='center'] {
+    text-align: center;
+  }
