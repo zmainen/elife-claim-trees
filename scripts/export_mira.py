@@ -36,9 +36,13 @@ except ImportError:
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CLAIMS_DIR = os.path.join(ROOT, "claims")
 
-# The schema's own id. The context URL previously used here — /schema/context.jsonld —
-# returns 404; the published identifier is this PURL.
-MIRA_CONTEXT = "http://purl.org/mira-science/mira#"
+# The published JSON-LD context. Two wrong values preceded it:
+#   /schema/context.jsonld           404s
+#   http://purl.org/mira-science/mira#   the ontology NAMESPACE, not a context document —
+#                                        a JSON-LD parser fetches it, gets RDF, and dies
+# before validating anything. Use the PURL, never the github.io copy, which is served from a
+# stale branch and contains `"Study": "mira:Protocol"` — silently retyping every Study.
+MIRA_CONTEXT = "https://purl.org/mira-science/mira.jsonld"
 DGB = "https://mira.science/schema/discoursegraphs_base#"
 HAAK = "https://haak.world/schema/claim#"
 

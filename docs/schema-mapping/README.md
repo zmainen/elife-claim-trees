@@ -7,6 +7,7 @@ what it cannot do.
 
 | Document | Target | What it covers |
 |---|---|---|
+| [`mira-guide.md`](mira-guide.md) | **MIRA** — the working guide | what the schema actually is, how its data is shaped, how we convert, how to validate, and what is still wrong |
 | [`mira-mapping.md`](mira-mapping.md) | **MIRA** — the discourse-graph schema eLife's article platform reads | node and relation mapping, the 57% of typed relations MIRA has no predicate for, the verification records it has no node type for, and the Questions the export has to synthesise |
 | [`oxa-claim-schema.md`](oxa-claim-schema.md) | **OXA** — Curvenote/Stencila/eLife document format | the proposed `Claim` block node: role, panel anchor, typed edges |
 | [`cito-mapping.md`](cito-mapping.md) | **CiTO** — Citation Typing Ontology | which of our edge types map to existing CiTO properties, and which need extensions |
