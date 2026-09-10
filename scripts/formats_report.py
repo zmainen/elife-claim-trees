@@ -280,8 +280,11 @@ def markdown(r):
                  f"its range and MIRA has no paper-level node, so no edge is emitted and "
                  f"none is invented. The paper's `gap-report.md` names them.")
     else:
-        L.append("Nothing. Every relation in this paper reaches the export, either as an "
-                 "edge or as the declared inverse of one.")
+        # Following the inverse-only paragraph, a bare "Nothing." reads as a
+        # contradiction of the sentence above it rather than as a conclusion.
+        L.append(("Beyond those, nothing" if r["mira"]["inverse_only"] else "Nothing") +
+                 ". Every relation in this paper reaches the export, either as an edge or "
+                 "as the declared inverse of one.")
 
     L += ["", "## What no format carries", "",
           "Verification — that a claim was checked, by what code, against what deposited "

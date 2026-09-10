@@ -1,8 +1,29 @@
 ---
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import Layout from '../layouts/Layout.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (path: string) => `${base}${path}/`;
+
+// Counted, not typed in. This page carried "245 claims, 916 relations, 57% with
+// no MIRA predicate" long after all three stopped being true — the 57% in
+// particular was a fact about an early version of our measuring code rather than
+// about MIRA. The numbers now come from the same files /formats renders.
+const facts = JSON.parse(readFileSync(join(process.cwd(), 'src/data/corpus-facts.json'), 'utf8'));
+const exportsDir = join(process.cwd(), '..', 'exports');
+const reports = readdirSync(exportsDir)
+  .filter(f => f.endsWith('.formats.json'))
+  .map(f => JSON.parse(readFileSync(join(exportsDir, f), 'utf8')));
+const sum = (fn: (r: any) => number) => reports.reduce((s, r) => s + fn(r), 0);
+const mira = {
+  relations: sum(r => r.relations),
+  neutral: sum(r => r.mira.neutral),
+  lost: sum(r => r.mira.lost),
+  verificationRecords: Object.values(facts.reproduction_status as Record<string, number>)
+    .reduce((a, b) => a + b, 0),
+};
+const neutralPct = Math.round((100 * mira.neutral) / Math.max(mira.relations, 1));
 ---
 
 <Layout title="Standards">
@@ -112,21 +133,21 @@ const url = (path: string) => `${base}${path}/`;
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-10 mb-3">The evidence</h2>
     <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <p>
-        The full 10-paper eLife corpus is expressed in this format: 245 claims, 916 typed relations, all 9 roles and 14 edge types. Also exported as <a href="https://discoursegraphs.com" class="text-amber-700 dark:text-amber-400 hover:underline" target="_blank">Discourse Graphs</a> JSON-LD and as <a href="#mira" class="text-amber-700 dark:text-amber-400 hover:underline">MIRA</a>.
+        The full 10-paper eLife corpus is expressed in this format: {facts.claims} claims, {facts.relations} typed relations, all 9 roles and {facts.relation_types_used} edge types. Also exported as <a href="https://discoursegraphs.com" class="text-amber-700 dark:text-amber-400 hover:underline" target="_blank">Discourse Graphs</a> JSON-LD and as <a href="#mira" class="text-amber-700 dark:text-amber-400 hover:underline">MIRA</a>.
       </p>
     </div>
 
     <div class="grid grid-cols-3 gap-4 mb-8">
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">245</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{facts.claims}</div>
         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">claims</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">916</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{facts.relations}</div>
         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">typed relations</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">10</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{facts.papers}</div>
         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">eLife papers</div>
       </div>
     </div>
@@ -135,31 +156,34 @@ const url = (path: string) => `${base}${path}/`;
     <h2 id="mira" class="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-10 mb-3">MIRA, and what conversion costs</h2>
     <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <p>
-        <strong>MIRA</strong> (Modular Interoperable Research Attribution) is the discourse-graph schema eLife&rsquo;s article platform reads, and it is a real advance on the three standards above for this purpose: it has Claim, Evidence, Question and Study as first-class nodes, and an explicit epistemic status. Its gap is narrower and more specific. MIRA represents the <em>nodes</em> well and the <em>edges</em> thinly &mdash; two predicates, <code>supports</code> and <code>opposes</code>, against the 14 this corpus uses &mdash; and it has no vocabulary for the fact that a claim was independently checked.
+        <strong>MIRA</strong> (Modular Interoperable Research Attribution) is the discourse-graph schema eLife&rsquo;s article platform reads, and it is a real advance on the three standards above for this purpose: it has Claim, Evidence, Question and Study as first-class nodes, and an explicit epistemic status. Its gap is narrower and more specific. Core MIRA names two relations, <code>supports</code> and <code>opposes</code>, against the {facts.relation_types_used} this corpus uses &mdash; and it has no vocabulary at all for the fact that a claim was independently checked.
       </p>
       <p>
-        Every paper exports to MIRA, and each export ships with a gap report saying exactly what the strict file could not carry. The numbers below are produced by the exporter, not estimated, and <code>python3 scripts/export_mira.py --all</code> regenerates all of them byte-for-byte.
+        The first two of those gaps turn out to be softer than they look. MIRA imports a Discourse Graphs base schema in which relations are <em>definable</em>, so a relation that is neither support nor opposition is declared in the document rather than dropped or flattened. The third is real: there is no verification node, and nothing to put one in.
+      </p>
+      <p>
+        Every paper exports to MIRA, and each export ships with a gap report saying exactly what the strict file could not carry. The numbers below are measured from those exports, not estimated; <code>python3 scripts/export_mira.py --all</code> regenerates them byte-for-byte, and the <a href={url('/formats')} class="text-amber-700 dark:text-amber-400 hover:underline">formats pages</a> compare all three targets per paper.
       </p>
     </div>
 
     <div class="grid grid-cols-3 gap-4 mb-6">
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">57%</div>
-        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">of typed relations have no MIRA predicate</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{neutralPct}%</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">of typed relations are neither support nor opposition &mdash; declared, not dropped</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">225</div>
-        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">verification records with no node type</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{mira.lost}</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">relations genuinely lost &mdash; they target the paper, not a claim</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">31</div>
-        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Questions the export had to synthesise</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{mira.verificationRecords}</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">verification records with no node type in any format</div>
       </div>
     </div>
 
     <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <p>
-        The most consequential loss is the <code>entails</code> / <code>derived-from</code> pair &mdash; together, a paper&rsquo;s deductive spine. A strict MIRA export still contains every hypothesis and every prediction, and gives no way to tell which belongs to which, and therefore no way to see what would have counted as the hypothesis being wrong. <code>scopes</code> and <code>requires</code>, the two largest categories, fail more quietly: a claim that holds only under a stated condition, exported without that condition, does not read as narrower than it is &mdash; it reads as unconditional.
+        A reader who knows only core MIRA still gets the direction of every relation declared under <code>mira:supports</code> or <code>mira:opposes</code>. What such a reader does not get for free is the {neutralPct}% that are neither: <code>entails</code> and <code>derived-from</code>, together a paper&rsquo;s deductive spine, and <code>scopes</code> and <code>requires</code>, the two largest categories. Those are in the document, declared with a domain, a range and a description &mdash; recoverable by a reader who follows the declarations, invisible to one who does not. Declaring them under <code>mira:supports</code> instead would be worse than dropping them: it would assert that a boundary condition is evidence <em>for</em> the claim it limits.
       </p>
       <p>
         None of this is an objection to MIRA. Two of the three gaps are additive, and could be proposed as extensions without changing anything MIRA already does: a richer relation vocabulary, and a Verification node carrying code location, data identifier, data commit, and reproduced-versus-published values. The third &mdash; requiring a Question per Claim &mdash; is reasonable for graphs built by hand from reading, and manufactures rhetoric for graphs induced from a finished paper.
