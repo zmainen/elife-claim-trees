@@ -111,6 +111,45 @@ def scan(slugs):
     return claims, rels, roles, repro, eligible, with_record
 
 
+def mira_facts(site):
+    """What the MIRA export actually does, read from the generated files.
+
+    The standards page carried "57% of typed relations have no MIRA predicate" for weeks. That
+    number described an exporter that emitted only supports/opposes; it was never a fact about
+    MIRA, whose relation vocabulary is extensible. It stayed live because it was typed into a
+    page. So it is computed here instead, and the page reads it.
+    """
+    lost = inverse = rels = questions = records = 0
+    for s in site:
+        fj = os.path.join(ROOT, "exports", f"{s}.formats.json")
+        if os.path.exists(fj):
+            with open(fj, encoding="utf-8") as fh:
+                d = json.load(fh)
+            rels += d["relations"]
+            lost += d["mira"]["lost"]
+            inverse += sum(d["mira"]["inverse_only"].values())
+        gr = os.path.join(ROOT, "exports", f"{s}.gap-report.md")
+        if os.path.exists(gr):
+            txt = open(gr, encoding="utf-8").read()
+            m = re.search(r"\*\*(\d+) questions were derived", txt)
+            if m:
+                questions += int(m.group(1))
+            m = re.search(r"\*\*(\d+) verification records", txt)
+            if m:
+                records += int(m.group(1))
+    out = {"relations": rels, "lost": lost, "inverse_only": inverse,
+           "carried": rels - lost,
+           "synthesised_questions": questions, "verification_records": records}
+    v = os.path.join(ROOT, "site", "src", "data", "mira-validation.json")
+    if os.path.exists(v):
+        with open(v, encoding="utf-8") as fh:
+            val = json.load(fh)
+        out["our_violations"] = val.get("our_violations")
+        out["upstream_violations"] = val.get("upstream_violations")
+        out["pinned_schema_commit"] = val.get("pinned_schema_commit")
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--print", dest="show", action="store_true")
@@ -145,6 +184,7 @@ def main():
         "method_example_claims": ex_claims,
         "site_corpus": site,
         "method_examples": examples,
+        "mira": mira_facts(site),
     }
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
@@ -162,6 +202,9 @@ def main():
     print(f"  {facts['eligible_with_record']}/{facts['eligible_claims']} claims a re-run "
           f"could settle have a record — "
           + ", ".join(f"{v} {k}" for k, v in facts["reproduction_status"].items()))
+    m = facts["mira"]
+    print(f"  MIRA: {m['carried']}/{m['relations']} relations carried, {m['lost']} lost, "
+          f"{m['our_violations']} violations of ours")
     print(f"  {facts['method_example_papers']} method-example paper(s), "
           f"{facts['method_example_claims']} claims — counted separately, never in the total")
     if a.show:

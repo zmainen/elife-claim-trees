@@ -1,5 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import facts from '../data/corpus-facts.json';
+
+// Every figure in the MIRA section below is read from here, never typed. This page carried
+// "57% of typed relations have no MIRA predicate" for weeks — a number about an exporter that
+// emitted only supports/opposes, published as a fact about MIRA, whose relation vocabulary is
+// extensible. It survived because it was a literal in the markup.
+const m = facts.mira;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (path: string) => `${base}${path}/`;
@@ -74,7 +81,7 @@ const url = (path: string) => `${base}${path}/`;
       <div class="border-l-2 border-amber-300 dark:border-amber-700 pl-4">
         <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-1">Typed edges to other claims</h3>
         <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
-          Following the same pattern OXA uses for citations (RFC0005), each edge carries a relation type from the CiTO vocabulary. Six of our 14 edge types map directly to CiTO. Eight require extensions — defined as CiTO subproperties so that standard queries still find them:
+          Following the same pattern OXA uses for citations (RFC0005), each edge carries a relation type from the CiTO vocabulary. Six of our {facts.relation_types_defined} relation types map directly to CiTO. The rest require extensions — defined as CiTO subproperties so that standard queries still find them:
         </p>
         <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-gray-600 dark:text-gray-400">
           <div><span class="text-green-700 dark:text-green-400 font-medium">CiTO:</span> supports, extends, qualifies, disagreesWith, usesMethodIn, citesAsSourceDocument</div>
@@ -112,7 +119,7 @@ const url = (path: string) => `${base}${path}/`;
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-10 mb-3">The evidence</h2>
     <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <p>
-        The full 10-paper eLife corpus is expressed in this format: 245 claims, 916 typed relations, all 9 roles and 14 edge types. Also exported as <a href="https://discoursegraphs.com" class="text-amber-700 dark:text-amber-400 hover:underline" target="_blank">Discourse Graphs</a> JSON-LD and as <a href="#mira" class="text-amber-700 dark:text-amber-400 hover:underline">MIRA</a>.
+        The full eLife corpus is expressed in this format: {facts.papers} papers, {facts.claims} claims, {facts.relations} typed relations, {facts.roles_used} roles and {facts.relation_types_used} of {facts.relation_types_defined} defined relation types. Also exported as <a href="https://discoursegraphs.com" class="text-amber-700 dark:text-amber-400 hover:underline" target="_blank">Discourse Graphs</a> JSON-LD and as <a href="#mira" class="text-amber-700 dark:text-amber-400 hover:underline">MIRA</a>.
       </p>
     </div>
 
@@ -135,47 +142,56 @@ const url = (path: string) => `${base}${path}/`;
     <h2 id="mira" class="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-10 mb-3">MIRA, and what conversion costs</h2>
     <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <p>
-        <strong>MIRA</strong> (Modular Interoperable Research Attribution) is the discourse-graph schema eLife&rsquo;s article platform reads, and it is a real advance on the three standards above for this purpose: it has Claim, Evidence, Question and Study as first-class nodes, and an explicit epistemic status. Its gap is narrower and more specific. MIRA represents the <em>nodes</em> well and the <em>edges</em> thinly &mdash; two predicates, <code>supports</code> and <code>opposes</code>, against the 14 this corpus uses &mdash; and it has no vocabulary for the fact that a claim was independently checked.
+        <strong>MIRA</strong> (Modular Interoperable Research Attribution) is the discourse-graph schema eLife&rsquo;s article platform reads: Claim, Evidence, Question and Study as first-class nodes, with relations reified as nodes of their own rather than as predicates hanging off a claim.
       </p>
       <p>
-        Every paper exports to MIRA, and each export ships with a gap report saying exactly what the strict file could not carry. The numbers below are produced by the exporter, not estimated, and <code>python3 scripts/export_mira.py --all</code> regenerates all of them byte-for-byte.
+        <strong>A correction, kept visible.</strong> This page previously said MIRA offers &ldquo;two predicates, <code>supports</code> and <code>opposes</code>&rdquo; and drops 57% of what a claim tree holds. That was wrong, and it was wrong in a specific and instructive way: it was a fact about <em>our exporter</em>, which at the time emitted only those two, read back as a fact about MIRA. MIRA imports a Discourse Graphs base schema in which relations are <em>definable</em> &mdash; <code>AbstractRelationDef</code> is a neutral root carrying no supporting or opposing commitment &mdash; so a relation MIRA does not name can be declared rather than dropped or flattened.
+      </p>
+      <p>
+        The exporter now declares all of them. Of the {m.relations} typed relations in this corpus, <strong>{m.carried} are carried</strong>. Nothing is flattened: <code>tests</code>, <code>validates</code> and <code>confirms</code> keep their own types, declared under <code>mira:supports</code> so a reader who knows only core MIRA still gets the direction.
+      </p>
+      <p>
+        Every figure below is generated by <code>scripts/corpus_facts.py</code> from the export files themselves, not typed into this page. The full account &mdash; what the schema actually requires, the two context URLs that look right and are not, how relations are reified, and what is still wrong &mdash; is in the <a href={`${base}/formats/mira/`} class="text-amber-700 dark:text-amber-400 hover:underline">MIRA working guide</a>.
       </p>
     </div>
 
     <div class="grid grid-cols-3 gap-4 mb-6">
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">57%</div>
-        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">of typed relations have no MIRA predicate</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{m.lost}</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">of {m.relations} relations genuinely lost &mdash; claims that scope the whole paper, which MIRA has no node to point at</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">225</div>
-        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">verification records with no node type</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{m.verification_records}</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">verification records with no MIRA node type &mdash; the one real gap</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">31</div>
-        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Questions the export had to synthesise</div>
+        <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{m.synthesised_questions}</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Questions the export had to synthesise, each flagged as derived</div>
       </div>
     </div>
 
     <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <p>
-        The most consequential loss is the <code>entails</code> / <code>derived-from</code> pair &mdash; together, a paper&rsquo;s deductive spine. A strict MIRA export still contains every hypothesis and every prediction, and gives no way to tell which belongs to which, and therefore no way to see what would have counted as the hypothesis being wrong. <code>scopes</code> and <code>requires</code>, the two largest categories, fail more quietly: a claim that holds only under a stated condition, exported without that condition, does not read as narrower than it is &mdash; it reads as unconditional.
+        The deductive spine survives. <code>entails</code> is declared and emitted; <code>derived-from</code> is declared as its inverse and emitted one direction only, which is MIRA's own practice &mdash; its 942-node demo graph materialises no inverse edges either. {m.inverse_only} relations are recoverable this way rather than lost.
       </p>
       <p>
-        None of this is an objection to MIRA. Two of the three gaps are additive, and could be proposed as extensions without changing anything MIRA already does: a richer relation vocabulary, and a Verification node carrying code location, data identifier, data commit, and reproduced-versus-published values. The third &mdash; requiring a Question per Claim &mdash; is reasonable for graphs built by hand from reading, and manufactures rhetoric for graphs induced from a finished paper.
+        <strong>What MIRA genuinely has no vocabulary for is verification</strong> &mdash; not what a claim rests on, which <code>observationBase</code> covers, but whether anyone recomputed the value and what came out. A search across the whole MIRA organisation returns no hits for &ldquo;verif&rdquo;, &ldquo;replicat&rdquo; or &ldquo;reproduc&rdquo; outside a licence file. That is the one gap this corpus can motivate with evidence rather than opinion, and it is offered as a proposal, not a complaint. A second, narrower gap: MIRA cannot say that a paper <em>considered and rejected</em> a proposition, so a ruled-out alternative exported as a plain <code>mira:Claim</code> reads as something the paper asserts.
+      </p>
+      <p>
+        <strong>On validation.</strong> Against MIRA's shapes pinned at <code>{m.pinned_schema_commit?.slice(0,8)}</code>, the exports carry <strong>{m.our_violations} violations attributable to our encoding</strong>. The {m.upstream_violations} that remain are one constraint in MIRA's own generated shapes that no document can satisfy &mdash; <code>gen-shacl</code> renders two properties with an <code>sh:in</code> list of slot names alongside an <code>sh:class</code>, so the shape demands an IRI and then demands that IRI be one of two strings. A four-node file using only MIRA's own terms fails the same way. So &ldquo;validates against MIRA&rdquo; here means <em>conformant except where MIRA's own shapes reject MIRA's own terms</em> &mdash; a sentence that belongs beside any green result.
       </p>
     </div>
 
     <!-- Downloads -->
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">Downloads</h2>
     <div class="space-y-3 mb-8">
-      <a href="/elife-claim-trees/exports/headley.oxa.json" class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all no-underline group" target="_blank">
+      <a href={`${base}/exports/gadeke-2026-guilt-insula.oxa.json`} class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all no-underline group" target="_blank">
         <code class="text-xs text-amber-700 dark:text-amber-400">JSON</code>
-        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Headley 2026 — OXA format (26 claims)</span>
+        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">G&auml;deke 2026 &mdash; OXA article JSON</span>
       </a>
-      <a href="/elife-claim-trees/exports/headley.dg.jsonld" class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all no-underline group" target="_blank">
+      <a href={`${base}/exports/gadeke-2026-guilt-insula.dg.jsonld`} class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all no-underline group" target="_blank">
         <code class="text-xs text-blue-700 dark:text-blue-400">JSONLD</code>
-        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Headley 2026 — Discourse Graphs export</span>
+        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">G&auml;deke 2026 &mdash; Discourse Graphs JSON-LD</span>
       </a>
       <a href="/elife-claim-trees/exports/gadeke-2026-guilt-insula.mira.jsonld" class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all no-underline group" target="_blank">
         <code class="text-xs text-blue-700 dark:text-blue-400">JSONLD</code>
