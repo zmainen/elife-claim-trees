@@ -142,7 +142,7 @@ def test_model_answered_layers_declare_where_to_find_the_model():
     """
     decl = _declaration()
     for lid in ("results-reader", "caption-reader", "structure-reader", "reconcile",
-                "external-review", "edge-inference"):
+                "external-review", "edge-inference", "questions"):
         assert decl[lid].get("by_from") == "model", f"{lid} does not declare by_from"
 
 
@@ -304,7 +304,7 @@ def test_every_model_answered_layer_can_be_dumped_and_answered():
     """
     choices = cli.build_parser()._subparsers._group_actions[0].choices
     for name in ("results-reader", "caption-reader", "structure-reader",
-                 "reconcile", "external-review", "edge-inference"):
+                 "reconcile", "external-review", "edge-inference", "questions"):
         opts = {o for a in choices[name]._actions for o in a.option_strings}
         assert "--dump-prompt" in opts, f"{name} cannot be asked for its prompt"
         assert "--answer" in opts, f"{name} cannot be given an answer"

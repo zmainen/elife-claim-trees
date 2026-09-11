@@ -24,6 +24,7 @@ Each element of `claims`:
 | `panel` (optional) | `string` or `null` | As for a reader. Where readers disagree, the caption reader's panel. |
 | `claim_type` | `empirical` / `interpretive` / `existence` / `synthesis` / `assessment` / `hypothesis` / `prediction` | See the vocabulary. |
 | `role` | `hypothesis` / `prediction` / `empirical` / `control` / `scope` / `methodological` / `synthesis` / `interpretation` / `literature-context` | See the vocabulary. |
+| `addresses` (optional) | `string` or `null` | For a hypothesis or an alternative explanation, the research question it answers, as the paper states it or in one sentence; null for every other role. |
 | `confidence` | `high` / `contested` / `single-source` | A fact about agreement: single-source for one reader, high for several who agree, contested for several who disagree. |
 | `sources` | list of `results` / `caption` / `structure` / `reviewer` | The readers that surfaced this claim: results, caption, structure; reviewer for a claim the review pass added. |
 | `evidence_by_agent` (optional) | object | For each reader in sources, the verbatim quote it gave. |

@@ -36,6 +36,22 @@ Type is a property of the claim entity — it describes the nature of the propos
 
 **Epistemic** is the analyst's assessment of how strongly the claim is supported across its assertion(s): `strong`, `moderate`, `weak`, or `contested`. This should be updated when new assertions or reproductions come in. A claim that was `strong` from one paper and `failed:mismatch` in a reproduction should be moved to `contested`.
 
+**`addresses`** names the research question this claim answers, as a `q<N>` id defined on the paper (below). Only two roles carry it: a `hypothesis` — the answer the paper commits to — and a rejected alternative (an `alt-` claim with `stance: rejects`), which is one of the *other* answers to the same question. Every other claim omits the field. A hypothesis and the alternatives it competes with usually share one `addresses`, because they are rival answers to the same question.
+
+### Questions
+
+A **question** is what the paper set out to answer. It is not a claim — a claim is a declarative sentence, and a question is not — so it is not a node in the graph; it lives on the paper. The asserting paper's `index.md` carries the list in its frontmatter:
+
+```yaml
+questions:
+  - id: q1
+    text: "Does the anterior insula encode responsibility-contingent interpersonal guilt?"
+  - id: q2
+    text: "Is momentary happiness governed by a responsibility-weighted rule over partner reward prediction errors?"
+```
+
+The hypotheses answer these questions and the rejected alternatives are the answers the paper turns down; each names its question through `addresses` (above). Questions are recorded at extraction time for a fresh tree and retrofitted onto an existing one by the `questions` layer. In the MIRA export they become real `mira:Question` nodes, and a hypothesis with no stated question falls back to a mechanically derived one.
+
 ---
 
 ## 2. Assertions

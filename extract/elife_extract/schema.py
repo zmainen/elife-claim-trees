@@ -53,6 +53,9 @@ class CandidateClaim(BaseModel):
         "for a claim no panel shows."))
     claim_type: ClaimType = Field(..., description="The kind of proposition; see the vocabulary.")
     role: Role = Field(..., description="The work it does in the argument; see the vocabulary.")
+    addresses: str | None = Field(None, description=(
+        "For a hypothesis or an alternative explanation, the research question it answers, as "
+        "the paper states it or in one sentence; null for every other role."))
     evidence: str = Field(..., min_length=1, description=(
         "A verbatim quote from the text you were given, at most two sentences, that grounds "
         "the claim. It is checked against the source."))
@@ -89,6 +92,9 @@ class ReconciledClaim(BaseModel):
         "As for a reader. Where readers disagree, the caption reader's panel."))
     claim_type: ClaimType = Field(..., description="See the vocabulary.")
     role: Role = Field(..., description="See the vocabulary.")
+    addresses: str | None = Field(None, description=(
+        "For a hypothesis or an alternative explanation, the research question it answers, as "
+        "the paper states it or in one sentence; null for every other role."))
     confidence: ReconciledConfidence = Field(..., description=(
         "A fact about agreement: single-source for one reader, high for several who agree, "
         "contested for several who disagree."))

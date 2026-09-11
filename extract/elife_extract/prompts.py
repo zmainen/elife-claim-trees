@@ -30,6 +30,9 @@ ROLES: dict[str, tuple[str, list[str]]] = {
     # no contract file yet, and the declaration says the same.
     "edge-inference": ("edge-inference.md", []),
     "coverage-adjudicator": ("coverage-adjudicator.md", []),
+    # Questions gets the vocabulary — it needs the definition of a hypothesis and of a question
+    # — but not the claim schema: it returns questions, not claims.
+    "questions": ("questions.md", [_VOCAB]),
 }
 
 

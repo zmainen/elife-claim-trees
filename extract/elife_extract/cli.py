@@ -246,6 +246,25 @@ def cmd_write(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_questions(args: argparse.Namespace) -> int:
+    """Layer `questions` — the research questions the paper's hypotheses answer."""
+    from .layers import questions_layer, questions_request
+
+    cfg = _cfg(args)
+    if _dump(args, lambda: questions_request(args.paper, cfg), "questions"):
+        return 0
+    path, payload = questions_layer(args.paper, cfg, answer=args.answer)
+    print(f"=== questions — {args.paper} ===")
+    print(f"  model     = {payload['model']}")
+    print(f"  questions = {len(payload['questions'])}")
+    for q in payload["questions"]:
+        addressed = [s for s, qid in payload["addresses"].items() if qid == q["id"]]
+        print(f"    {q['id']}: {q['text']}")
+        print(f"       ← {', '.join(addressed) if addressed else '(no claim addresses it)'}")
+    print(f"  written: {path}")
+    return 0
+
+
 def cmd_verify_refs(args: argparse.Namespace) -> int:
     """Layer `reference-check` — do the cited references resolve, and to what?"""
     import json
@@ -773,6 +792,23 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common_args(p_edge)
     _add_model_args(p_edge)
     p_edge.set_defaults(func=cmd_edge_inference)
+
+    # ── questions ────────────────────────────────────────────────────────
+    p_q = sub.add_parser(
+        "questions", help="Layer `questions` — the research questions the paper answers.",
+        description=(
+            "A question is not a claim, so it lives on the paper. Given the abstract (and the "
+            "Introduction when prepare carries it) and the paper's existing hypothesis and "
+            "alt- claims, return the questions the paper states and which claim answers which, "
+            "then write `questions:` into index.md and `addresses:` into the named claim files. "
+            "A retrofit for papers whose trees were built before questions were first-class."
+        ),
+    )
+    p_q.add_argument("--paper", required=True, help="Paper slug.")
+    _add_answerable_args(p_q, "the questions and addresses are validated against this tree.")
+    _add_common_args(p_q)
+    _add_model_args(p_q)
+    p_q.set_defaults(func=cmd_questions)
 
     # ── write (claim-tree) ───────────────────────────────────────────────
     p_write = sub.add_parser(

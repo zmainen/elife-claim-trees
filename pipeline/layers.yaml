@@ -434,6 +434,35 @@ layers:
     produces: ["claims/{paper}/alt-*.md"]
     views: [graph, list]
 
+  # A question is not a claim — a claim is a declarative sentence — so it lives on the paper,
+  # in `index.md`'s frontmatter, and each hypothesis and rejected alternative names the one it
+  # answers with `addresses`. `write.py` records this at extraction time for a fresh tree; this
+  # layer is the retrofit for the papers whose trees predate the field. A `feature` for the
+  # reason `stance` is: it revises artifacts that already exist rather than making a new kind.
+  - id: questions
+    kind: feature
+    scope: paper
+    title: Research questions
+    question: What did this paper set out to answer, and which claim answers each question?
+    how: >
+      Given the abstract (and the Introduction where the prepared paper carries it) and the
+      paper's existing hypothesis and `alt-` claims — slug and sentence — it returns the
+      questions the paper states and which claim answers which. A hypothesis is the answer the
+      paper commits to; the alternatives it rules out are the other answers to the same
+      question. It then writes `questions:` onto the paper's `index.md` and `addresses:` onto
+      the named claim files, editing their frontmatter in place.
+
+      `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back
+      through the same validation — an invented slug or a question no claim addresses is
+      dropped rather than written — so a model that has no backend here can still answer it.
+    added: "2026-09-11"
+    needs: [claim-tree, prepare]
+    reads: [extract/prompts/questions.md, extract/prompts/contract/vocabulary.md]
+    produces: ["runs/{paper}/questions.output.json"]
+    views: [table]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli questions --paper {paper}"
+
   # Resolves the literature-context claims against CrossRef and writes the DOIs it confirms
   # back into the claim files. A `feature` for the same reason `stance` is one: it revises
   # artifacts that already exist rather than producing a new kind of thing.

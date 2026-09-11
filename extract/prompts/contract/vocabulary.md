@@ -16,13 +16,17 @@ A claim is one declarative sentence in active voice, quantitative where the resu
 | `hypothesis` | a proposition bet on, not yet evidenced by this paper's results |
 | `prediction` | a deduced expectation, to be tested by an empirical claim |
 
+## Questions
+
+A **question** is what the paper set out to answer. It is not a claim — a claim is a declarative sentence — so it is recorded on the paper rather than as a node in the graph. The paper states it, in the abstract or in the opening of the Introduction. Each `hypothesis` and each rejected alternative addresses one: the hypothesis is the answer the paper commits to, and the alternatives it rules out are the other answers to the same question. Never turn a question into a hollow hypothesis such as "X involves neural mechanisms" — return the question the paper actually asked, or return none.
+
 ## Roles
 
 Nine roles. The signal phrases are what the prose says when it is doing that work; they are cues, not tests.
 
 ### `hypothesis`
 
-The proposition the paper bets on: the organising question, stated as a claim about the world. It carries no empirical content of its own; it is what the predictions are deduced from and what the results are gathered for. Most papers have one to three.
+An answer the paper commits to, to a question it states: the proposition it bets on, phrased as a claim about the world rather than as the question. It carries no empirical content of its own; it is what the predictions are deduced from and what the results are gathered for, and the alternatives the paper rules out are the other answers to the same question. Each hypothesis carries `addresses`, the question it answers. Most papers have one to three.
 
 - Typical claim type: `hypothesis`
 - Signals: “we hypothesize”, “we propose that”, “we asked whether”, “we sought to test”, “the central question is whether”
