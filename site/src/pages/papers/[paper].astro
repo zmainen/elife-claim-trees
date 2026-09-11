@@ -1,18 +1,24 @@
 ---
+// One paper. The paper first, and the claims reached from it.
+//
+// This page used to open at the graph's altitude: a generated summary, a counts line, and a
+// tab bar whose default view was seven collapsed sections of role vocabulary. The paper the
+// claims are about was not on it. See docs/design/2026-09-11-the-reader.html — the note this
+// implements — and 2026-09-11-the-paper-page.html, which sorted the tabs by category and is
+// the reason the row below holds only the three things that are about us.
+//
+// What the reader needs is assembled in lib/reader.ts and rendered by one island. The
+// masthead stays here, above the three depths, so a reader switching between them never
+// loses the paper's identity.
 import Layout from '../../layouts/Layout.astro';
-import ClaimCardMini from '../../components/ClaimCardMini.astro';
-import ClaimStructure from '../../components/ClaimStructure.astro';
-import PaperTabs from '../../components/PaperTabs.astro';
-import ClaimDrawer from '../../components/ClaimDrawer.tsx';
-import corpus from '../../data/claims.json';
-import { cells, fill_of, groups as layerGroups, STATE_LABEL } from '../../lib/pipeline';
-import PipelineExplorer from '../../components/PipelineExplorer';
+import Reader from '../../components/Reader.tsx';
 import PaperArtifacts from '../../components/PaperArtifacts.astro';
+import PipelineExplorer from '../../components/PipelineExplorer';
 import ClaimDAG from '../../components/ClaimDAG.tsx';
+import corpus from '../../data/claims.json';
+import { readerData } from '../../lib/reader';
+import { fill_of } from '../../lib/pipeline';
 import { paperExplorer } from '../../lib/explorer';
-import paperSummaries from '../../data/paper-summaries.json';
-
-// Eager-glob all abstract mappings; resolve current paper at runtime.
 
 export function getStaticPaths() {
   return corpus.papers.map(p => ({ params: { paper: p.slug } }));
@@ -20,311 +26,134 @@ export function getStaticPaths() {
 
 const { paper: paperSlug } = Astro.params;
 const paperData = corpus.papers.find(p => p.slug === paperSlug)!;
-
-// ---------- Paper-level summary ----------
-// Prefer the three-part prose summary from paper-summaries.json. If this paper
-// has no entry (null lookup), fall back to a single-sentence template generated
-// from the claim graph so the page still renders.
-const summary = (paperSummaries as Record<string, any>)[paperSlug] ?? null;
-
-function summaryText(c: any): string {
-  const s = ((c.shortClaim ?? '').trim()
-    || (c.displayClaim ?? '').trim()
-    || (c.claim ?? '').trim());
-  return s.replace(/[.!?]+$/, '');
-}
-const hypothesisClaims = paperData.claims.filter((c: any) => c.role === 'hypothesis');
-const synthesisClaims = paperData.claims.filter((c: any) => c.role === 'synthesis');
-const empiricalClaims = paperData.claims.filter((c: any) => c.role === 'empirical');
-const totalClaims = paperData.claims.length;
-
-let paperSummaryFallback: string;
-if (hypothesisClaims.length >= 2) {
-  const picks = hypothesisClaims.map((h: any) => summaryText(h));
-  paperSummaryFallback = `This paper tests ${hypothesisClaims.length} hypotheses: ${picks.join('; ')}.`;
-} else if (hypothesisClaims.length === 1) {
-  paperSummaryFallback = `This paper tests the hypothesis that ${summaryText(hypothesisClaims[0])}.`;
-} else if (synthesisClaims.length >= 1) {
-  paperSummaryFallback = `This paper presents ${totalClaims} claims. Central finding: ${summaryText(synthesisClaims[0])}.`;
-} else {
-  paperSummaryFallback = `This paper presents ${empiricalClaims.length || totalClaims} empirical claims.`;
-}
-
-
+const data = readerData(paperSlug!);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const url = (path: string) => `${base}${path}/`;
 
-// Counted, not graded. `reran` is how many of this paper's claims we re-ran and the numbers
-// matched; it is a fact about our effort, and there is no honest one-word summary of a
-// paper's reproduction state, so the paper-level badge is gone.
-const reran = paperData.claims.filter((c: any) => c.status.startsWith('verified')).length;
-
+const fill = fill_of(paperSlug!);
 const stageLabel: Record<string, string> = {
-  published: '',
-  preprint: 'preprint',
-  revision: 'under review',
-  draft: 'draft',
+  published: '', preprint: 'preprint', revision: 'under review', draft: 'draft',
 };
 const stage = stageLabel[(paperData as any).stage] || '';
-
-const claimsBySlug: Record<string, any> = {};
-for (const c of paperData.claims) claimsBySlug[c.slug] = c;
-
-// Detect whether this paper carries role markers — if any claim has a non-null
-// `role`, the new role-grouped view renders. Otherwise we fall back to the
-// existing requires-cascade.
-const hasRoles = paperData.claims.some(c => (c as any).role);
-
-// Cascade fallback (non-role papers).
-const requiredSet = new Set<string>();
-for (const c of paperData.claims) {
-  for (const r of (c.requires ?? [])) requiredSet.add(r);
-}
-const rootClaims = paperData.claims.filter(c => !requiredSet.has(c.slug));
-const defaultRoots = [...rootClaims].sort((a, b) => a.slug.localeCompare(b.slug));
-const conclusionsHeading = defaultRoots.length === 1 ? 'Conclusion' : 'Conclusions';
-
-// Sorted alphabetical index for the bottom of the page.
-const alphaClaims = [...paperData.claims].sort((a, b) => a.slug.localeCompare(b.slug));
-
-// Resolve abstract-to-claims mapping for this paper, if one exists.
-
-// Tabs configuration. Show only tabs with content.
-// Note: the `structure` id is preserved (not renamed to `claims`) to avoid
-// breaking existing ?view=structure bookmarks. The label is "Claims".
-// Four views of this paper, in the order it is asked about: what does it claim, how do the
-// claims hold each other up, what can I take away, how was it made. See
-// docs/design/2026-09-11-the-paper-page.html.
-//
-// `abstract-map` and `synthesis` used to be tabs here. Both are layers, and a tab gave one
-// layer a place at the top of the page that the other twenty had to earn inside the pipeline
-// view — a privilege with nothing behind it but having arrived first. They now render on
-// their own cells, where they have a version, a ledger entry and an approval they lack.
-const tabs = [
-  { id: 'structure', label: 'Claims' },
-  { id: 'graph', label: 'Graph' },
-  { id: 'artifacts', label: 'Artifacts' },
-  { id: 'pipeline', label: 'Pipeline' },
-];
 ---
 
 <Layout title={paperData.title}>
-  <div class="site-frame py-10">
-    <!-- Header -->
-    <div class="mb-8">
-      <div class="flex items-start gap-4 mb-1">
-        <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100 leading-snug flex-1 m-0">{paperData.title}</h1>
-        
-      </div>
-      <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-        {paperData.authors.join(', ')} · {(paperData as any).journal}
-        {stage && <span class="italic"> · {stage}</span>}
-      </div>
-      <div class="flex flex-wrap gap-3 text-xs">
+  <div class="site-frame py-8">
+    <!-- Identity. The one part that is unambiguously the paper, and the one part that does
+         not change when the reader changes depth. -->
+    <header class="mast">
+      <p class="journal">
+        {paperData.journal}{data.year && ` · ${data.year}`} · Research article
+        {stage && <span class="stage"> · {stage}</span>}
+      </p>
+      <h1>{paperData.title}</h1>
+      <p class="authors">{paperData.authors.join(', ')}</p>
+      <p class="links">
         {paperData.doi && (
-          <a href={`https://doi.org/${paperData.doi}`} target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">
-            DOI: {paperData.doi} ↗
-          </a>
+          <a href={`https://doi.org/${paperData.doi}`} target="_blank" rel="noopener">doi {paperData.doi}</a>
+        )}
+        {(paperData as any).url && (
+          <a href={(paperData as any).url} target="_blank" rel="noopener">Read at {paperData.journal}</a>
         )}
         {paperData.github && (
-          <a href={paperData.github} target="_blank" class="text-gray-600 dark:text-gray-400 hover:underline">
-            GitHub ↗
-          </a>
+          <a href={paperData.github} target="_blank" rel="noopener">Code and data</a>
         )}
-      </div>
-
-    </div>
-
-    <!-- Paper summary: three labeled paragraphs (hypotheses/subject, claims, inferences).
-         Falls back to a single-sentence template if no entry exists in paper-summaries.json. -->
-    {summary ? (
-      <div class="paper-summary">
-        {summary.hypotheses && (
-          <p><span class="summary-label">Hypotheses</span> {summary.hypotheses}</p>
-        )}
-        {summary.subject && (
-          <p><span class="summary-label">Subject</span> {summary.subject}</p>
-        )}
-        {summary.claims && (
-          <p><span class="summary-label">Claims</span> {summary.claims}</p>
-        )}
-        {summary.inferences && (
-          <p><span class="summary-label">Inferences</span> {summary.inferences}</p>
-        )}
-      </div>
-    ) : (
-      <p class="paper-summary paper-summary-fallback">{paperSummaryFallback}</p>
-    )}
-
-    <!-- Where this paper has got to.
-         This was a green banner reading `L4 · We re-analysed their deposited data`, typed per
-         paper into a literal in build-data.js — the one figure on the site nobody generated,
-         in the one colour the site had just agreed means "correct" when what it reports is
-         our own effort. The counts below are computed; the rung stays because "we ran their
-         script" and "we wrote our own analysis" is a real distinction the layer state does
-         not carry, but it is a qualifier now rather than the loudest thing on a page about
-         somebody else's work. -->
-    <div class="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
-      <span class="tabular-nums">{paperData.claimCount} claims</span>
-      <span class="tabular-nums" title="A layer counts as filled when it produced something. Whether the run that produced it was observed is the second number.">
-        {fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} layers have output
-      </span>
-      <span class="tabular-nums" title="Runs the ledger watched, and can therefore still check against their inputs.">
-        {fill_of(paperData.slug).observed} with an observed run
-      </span>
-      {reran > 0 && <span class="tabular-nums">{reran} re-run from deposited code</span>}
-      <span class="tabular-nums">0 approved by a person</span>
-      {(paperData as any).verificationLevel && (paperData as any).verificationLevel !== 'unknown' && (
-        <span class="text-gray-400 dark:text-gray-500" title={(paperData as any).verificationDetail}>
-          {(paperData as any).verificationLevel === 'unverified'
-            ? 're-run not attempted'
-            : `${(paperData as any).verificationLevel} — ${String((paperData as any).verificationLabel).toLowerCase()}`}
-        </span>
-      )}
-    </div>
-
-    <PaperTabs tabs={tabs} defaultTab="structure" />
-
-    <!-- Tab: Claims (id remains `structure` for URL back-compat) -->
-    <div class="paper-tab-panel claims-tab-panel" data-tab-id="structure" data-tab-active="true">
-      {hasRoles ? (
-        <ClaimStructure
-          paper={paperData}
-          paperSlug={paperSlug}
-          baseUrl={base}
-          claimsBySlug={claimsBySlug}
-        />
-      ) : (
-        <section class="mb-6">
-          <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide mb-4">
-            {conclusionsHeading}
-          </h2>
-          {defaultRoots.length === 0 ? (
-            <p class="text-xs text-gray-500 dark:text-gray-400 italic leading-relaxed max-w-3xl">
-              (no root claims identified — graph may be cyclic or all claims have downstream dependencies)
-            </p>
-          ) : (
-            defaultRoots.map(root => (
-              <ClaimCardMini
-                claim={root}
-                paperSlug={paperSlug}
-                allClaims={claimsBySlug}
-                showChildren={true}
-              />
-            ))
-          )}
-        </section>
-      )}
-
-      <!-- Alphabetical claim index, collapsed by default -->
-      <details class="alpha-index-details mt-6">
-        <summary class="alpha-index-summary cursor-pointer select-none">
-          <span class="alpha-index-chevron mr-1 text-gray-400">▸</span>All claims (alphabetical)
-        </summary>
-        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-xs mt-3">
-          {alphaClaims.map(c => (
-            <li>
-              <a
-                href={url(`/papers/${paperSlug}/${c.slug}`)}
-                class="text-blue-600 dark:text-blue-400 hover:underline font-mono"
-              >{c.slug}</a>
-              {c.panel && <span class="text-gray-400 ml-2">{c.panel}</span>}
-            </li>
-          ))}
-        </ul>
-      </details>
-    </div>
-
-    <!-- Tab: Graph — the claim tree as the graph it is. The component existed and was
-         imported nowhere; clicking a node opens the same drawer the Claims view uses. -->
-    <div class="paper-tab-panel" data-tab-id="graph" data-tab-active="false">
-      <p class="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mb-3">
-        Claims, and what rests on what. Solid edges are <code class="text-[12.5px]">requires</code>,
-        dashed are <code class="text-[12.5px]">supports</code>.
       </p>
-      <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden" style="height: 700px">
-        <ClaimDAG client:load claims={paperData.claims} paperSlug={paperSlug} />
-      </div>
-    </div>
+    </header>
 
-    <!-- Tab: Artifacts -->
-    <div class="paper-tab-panel" data-tab-id="artifacts" data-tab-active="false">
-      <PaperArtifacts paper={paperData.slug} />
-    </div>
+    <Reader client:load data={data} base={base} />
 
-    <!-- Tab: Pipeline — provenance, which is a question about us and comes after the paper. -->
-    <div class="paper-tab-panel" data-tab-id="pipeline" data-tab-active="false">
-      <div class="flex items-baseline justify-between gap-3 mb-2">
-        <p class="text-sm text-gray-600 dark:text-gray-400 max-w-2xl m-0">
-          The layers this paper has been through, and what each rests on. A cell is filled when
-          the layer produced something; <em>run not observed</em> means the output is there and
-          the run that made it was reconstructed rather than watched, so its inputs were never
-          hashed and nothing can say whether it is still current.
-        </p>
-        <span class="text-xs font-mono text-gray-400 dark:text-gray-500 tabular-nums whitespace-nowrap">
-          {fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} with output ·
-          {fill_of(paperData.slug).observed} observed ·
-          <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">all papers</a>
-        </span>
-      </div>
-      <PipelineExplorer client:load data={paperExplorer(paperData.slug, base)} base={base} height={520} />
-    </div>
+    <!-- How this record was made, which is a question about us and comes after the paper.
+         It was a row of tabs beside the paper's own views; three of the four things in that
+         row were about the pipeline, and a reader who cannot yet read the paper is not helped
+         by the layer map. -->
+    <section class="record" id="record">
+      <h2>About this record</h2>
+      <p class="record-note">
+        {data.counts.claims} claims, of which {data.counts.rerun} were re-run from the authors' deposited
+        data. {fill.done} of {fill.total} layers have produced something; {fill.observed} of those runs were
+        observed. Nobody has approved any of it —
+        <a href={`${base}/pipeline/method/`}>every claim here was written by a model</a>.
+      </p>
 
+      <details class="rec">
+        <summary>The claim graph <span>{data.counts.claims} claims, and what rests on what</span></summary>
+        <div class="rec-body">
+          <p>Solid edges are <code>requires</code>, dashed are <code>supports</code>. Clicking a node opens its card.</p>
+          <div class="dag"><ClaimDAG client:visible claims={paperData.claims} paperSlug={paperSlug} /></div>
+        </div>
+      </details>
+
+      <details class="rec">
+        <summary>Files <span>what this paper produced, and what each format drops</span></summary>
+        <div class="rec-body"><PaperArtifacts paper={paperData.slug} /></div>
+      </details>
+
+      <details class="rec">
+        <summary>Pipeline <span>{fill.done}/{fill.total} layers with output · {fill.observed} observed</span></summary>
+        <div class="rec-body">
+          <p>
+            A cell is filled when the layer produced something. <em>Run not observed</em> means the output
+            is there and the run that made it was reconstructed rather than watched, so its inputs were
+            never hashed and nothing can say whether it is still current.
+            <a href={`${base}/pipeline/`}>All papers</a>.
+          </p>
+          <PipelineExplorer client:visible data={paperExplorer(paperData.slug, base)} base={base} height={480} />
+        </div>
+      </details>
+    </section>
   </div>
-
-  <ClaimDrawer
-    client:load
-    allClaims={paperData.claims}
-    paperSlug={paperSlug}
-    baseUrl={base}
-  />
 </Layout>
 
+<script is:inline>
+  // The Argument view links here; a link to a closed <details> lands on nothing.
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href="#record"]');
+    if (!a) return;
+    document.getElementById('record')?.scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+
 <style>
-  .paper-summary {
-    font-size: 17px;
-    line-height: 1.55;
-    color: var(--card-body);
-    margin: 0 0 1.5rem 0;
-    max-width: 56rem;
-    font-weight: 400;
+  .mast { padding: 0.5rem 0 0; max-width: 68ch; }
+  .journal {
+    font-size: 11.5px; letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--card-muted); margin: 0 0 0.9rem;
   }
-  .paper-summary p {
-    margin: 0 0 0.85rem 0;
+  .journal .stage { font-style: italic; text-transform: none; letter-spacing: 0; }
+  .mast h1 {
+    font-size: clamp(1.6rem, 3vw, 2.05rem); font-weight: 600; line-height: 1.18;
+    letter-spacing: -0.012em; margin: 0 0 0.8rem; color: var(--card-head); text-wrap: balance;
   }
-  .paper-summary p:last-child {
-    margin-bottom: 0;
-  }
-  .paper-summary .summary-label {
-    display: inline-block;
-    margin-right: 0.4rem;
-    font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--card-muted);
-    vertical-align: baseline;
-  }
+  .authors { font-size: 15px; color: var(--card-strong); margin: 0 0 0.55rem; }
+  .links { display: flex; flex-wrap: wrap; gap: 0.35rem 1.15rem; font-size: 12.5px; margin: 0 0 1.5rem; }
+  .links a { color: var(--card-muted); text-decoration: none; border-bottom: 1px solid var(--card-border); }
+  .links a:hover { color: var(--card-head); }
 
+  .record { margin-top: 4.5rem; border-top: 1px solid var(--card-border-hover); padding-top: 1.5rem; }
+  .record h2 {
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--card-muted); margin: 0 0 0.6rem;
+  }
+  .record-note { font-size: 13.5px; color: var(--card-body); max-width: 62ch; margin: 0 0 1.25rem; line-height: 1.55; }
+  .record-note a { color: var(--claim-strong); }
 
-  /* Alphabetical claim index at the bottom of the Claims tab */
-  .alpha-index-details > summary {
-    list-style: none;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--card-muted);
-    padding: 0.25rem 0;
+  .rec { border-top: 1px solid var(--card-border); }
+  .rec:last-child { border-bottom: 1px solid var(--card-border); }
+  .rec > summary {
+    list-style: none; cursor: pointer; padding: 0.7rem 0; font-size: 14px; color: var(--card-head);
+    display: flex; align-items: baseline; gap: 0.7rem;
   }
-  .alpha-index-details > summary::-webkit-details-marker {
-    display: none;
+  .rec > summary::-webkit-details-marker { display: none; }
+  .rec > summary::before {
+    content: ''; width: 6px; height: 6px; flex: none;
+    border-right: 1.5px solid var(--card-muted); border-bottom: 1.5px solid var(--card-muted);
+    transform: rotate(-45deg); transition: transform 0.15s;
   }
-  .alpha-index-details .alpha-index-chevron {
-    display: inline-block;
-    transition: transform 0.15s ease;
-  }
-  .alpha-index-details[open] .alpha-index-chevron {
-    transform: rotate(90deg);
-  }
+  .rec[open] > summary::before { transform: rotate(45deg); }
+  .rec > summary span { color: var(--card-muted); font-size: 12.5px; }
+  .rec > summary:hover { color: var(--claim-strong); }
+  .rec-body { padding: 0.25rem 0 1.5rem; }
+  .rec-body p { font-size: 13px; color: var(--card-muted); max-width: 64ch; margin: 0 0 0.9rem; line-height: 1.55; }
+  .rec-body p a { color: var(--claim-strong); }
+  .dag { border: 1px solid var(--card-border); border-radius: 6px; overflow: hidden; height: 620px; }
 </style>
