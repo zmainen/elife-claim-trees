@@ -433,235 +433,11 @@ A single example per role, drawn from the corpus:
 
 ---
 
-## 5. Verification procedure
-
-Verification is the re-enactment of a paper's analysis against its deposited code and data, with the reproduced numerics compared against those reported in the paper. The unit of verification is the claim, not the figure; a single figure may host several claims, and a single verification script typically targets several claims at once.
-
-### 5.1 The `verify.py` pattern
-
-Verification scripts are authored at `verification/<paper-slug>/verify.py`. Each script follows a common pattern:
-
-1. **Acquire data.** Clone the deposited GitHub repository (`git clone --depth=1`) or download the public deposit (NeuroVault collection, OpenNeuro CSV/NIfTI bundle, RCSB PDB file, G-Node Excel, OSF posterior CSV, Dryad archive). Record the deposit URL in the script header. Cache to `/tmp/<paper-slug>/`.
-
-2. **Construct environment.** Conda or pip; apply patches where deposited code has been broken by upstream API drift. The Ejdrup script applies a `matplotlib` patch (`w_xaxis` → `xaxis`) automatically before executing the deposited figure-generation scripts; absent the patch, the deposited code errors at the rendering step.
-
-3. **Execute targeted analyses.** Either re-run the deposited notebook end-to-end, or load pre-computed intermediates (CSV, NPY, NIfTI) and run the figure-generation step only. Most scripts implement both modes and switch on a `--full` flag (Section 5.2).
-
-4. **Compare to paper-reported numerics.** Reproduce point estimates, statistics, p-values, panel coordinates, or in the imaging case, voxel counts and peak coordinates. Tolerance for "match" is per-claim and recorded inline.
-
-5. **Write a per-claim row to `verify.log`.** Each row carries the claim slug, the paper-reported value, the reproduced value, and a status of `PASS` / `WARN` / `FAIL`. The log is committed to the repository and is the audit trail for the corpus.
-
-The script is invokable from the command line in three modes:
-
-- `python verify.py` — fast mode (default), runs all claims on cached/pre-computed data
-- `python verify.py --full` — full pipeline (long simulation, raw preprocessing)
-- `python verify.py --claim <slug>` — single-claim verification
-
-### 5.2 FAST vs FULL mode
-
-The deposit-first principle (run the figure-generation step from pre-computed intermediates rather than rerun the simulation or preprocessing pipeline) governs the FAST mode. FULL mode is the end-to-end re-execution.
-
-For computationally expensive papers, FAST is the only path that completes within prototype time. Examples:
-
-- **Headley:** FAST loads `Figure4a.csv` from the GitHub repo and reads the pre-computed firing-rate means (control = 5.5, dendritic = 0.2, somatic = 0.7 Hz), confirming the central claim from a 90-row CSV in ~2 minutes. FULL would download the 1.88 GB Dryad archive, install NEURON, and run the oscillation notebooks for ~6 hours.
-
-- **Scheller:** FAST attempts to download pre-computed Stan posterior CSVs from OSF (`estimates_indiv_C.csv`) and reproduce TVA statistics directly. FULL would download raw behavioural CSVs and run the hierarchical Stan model (~12 hours on 8 cores).
-
-- **Ejdrup:** FAST runs the per-figure source scripts against the GitHub repo (with the matplotlib patch). FULL would re-run the full Vmax sweep (50³ grid × 39 Vmax values × 2 regions, ~5–10 minutes per condition; the sweep timed out at 600 seconds in the present session under CPU load).
-
-The FAST/FULL split makes the deposit-first path explicit in the script. Where deposited intermediates are available, they are the primary verification target; the underlying simulation or preprocessing is verified by inspection of the deposited code rather than by full re-execution.
-
-### 5.3 The from-notes fallback
-
-When a download fails, when the script times out, or when a long simulation that completed in a prior session does not complete in the current session, the verify function falls through to hard-coded values carried forward from the prior verification session and still emits `PASS`. This pattern is documented because it appears in actual scripts.
-
-A representative case is the Scheller verification. The OSF download fails in the current session (`Exp1 estimates CSV not accessible`, `Exp2 estimates CSV not accessible`). The script falls through to a `verify_from_notes()` function that emits the claim-by-claim table from values recorded at the original verification session, with `repro_str` strings of the form `"6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20)"`. All eight claims are reported `PASS`. The log records:
-
-```
-Note: Values are from pre-computed OSF Stan posterior CSVs (estimates_indiv_C.csv).
-Exact match (within rounding) to paper throughout.
-```
-
-This is honest in one sense — the values were reproduced live in a prior session and the script is recording the prior outcome — but the PASS in the current log is not backed by current execution. The corresponding claim files carry these reproduction notes, so the evidentiary trail exists; but a reader who consults only `verify.log` will see PASS without seeing the live-versus-from-notes provenance unless they read the script.
-
-A representative case in the other direction is the Headley verification. The repo is cached at `/tmp/headley`, the CSVs are present, the values are read live, and the log records actual reproduced means (control = 5.50, dendritic = 0.20, somatic = 0.70 Hz from the 90-row CSV). The PASS entries in the Headley log are backed by current execution.
-
-A representative mismatch case is Bouyeure prior-threat. The verification reports `PASS` with the note "documented mismatch reproduced as expected": the reproduction finds 36 significant voxels at peak `[-9.0, -92.5, -6.0]` (occipital pole) where the paper reports a fear-network localisation. The PASS records that the discrepancy itself is reproduced; the mismatch is preserved as a documented `failed:mismatch` on the underlying claim.
-
-A representative quantitative-mismatch case is Wengert maximal firing. The verification reproduces the direction (WT > KI) but not the magnitude or significance: `WT=207.8 (n=20), KI=175.8 (n=37), p=0.1661` against the paper's `WT≈201, KI≈126, p<0.001`. The log records `WARN`; the claim file records `verified:with-nuance` or `verified:direction-and-trend` and notes the discrepancy.
-
-### 5.4 Status vocabulary — verification criteria
-
-| Status | Criterion |
-|:-------|:----------|
-| `verified` | Live execution against deposited code and data reproduced the published numerics within tolerance, in this prototype's session or a logged prior session whose script and notes are committed. |
-| `verified:partial` | A defined subset of the claim's quantitative content was reproduced; the rest is either inaccessible or outside the script's targeted scope. The matched portion is documented in `notes`. |
-| `verified:with-nuance` / `verified:direction-and-trend` | Direction or trend reproduced; magnitude or statistical significance does not match. The discrepancy is recorded; the claim is not promoted to plain `verified`. |
-| `unverified` | Not yet attempted, reason genuinely unknown (default for claim files in papers without a verify script). |
-| `unverified:no-data` | Data deposit is documented but not accessible to this prototype. |
-| `unverified:no-code` | Code is documented but not accessible. |
-| `unverified:code-error` | Code is accessible and runs, but errors before producing output. The exact error is recorded; if a workaround exists (e.g., the matplotlib patch), it is recorded too. |
-| `unverified:compute-infeasible` | Code is accessible and would run end-to-end, but the runtime exceeds available compute. The estimated runtime is recorded. The deposit-first path (pre-computed intermediates) is checked before assigning this status. |
-| `failed:mismatch` | Live execution produced output that does not match the published numerics. The discrepancy is recorded in `notes` with enough precision to diagnose the cause. |
-
-Assessment claims (structural properties of code or parameterisation) are verified by code inspection; mark `verified` and record in `notes` that verification was by code reading rather than execution. The Ejdrup `d2r-initialization-unjustified` claim is verified this way: code inspection of `Figure 1-Fig 1h-Source code.py` confirmed the initialisation `occ_D2 = 0.4`, and the Hill-equation calculation against the paper's own EC50 was carried out inline.
-
-### 5.5 Per-paper coverage
-
-Of the {{papers}} papers, {{verify_scripts}} carry a `verify.py` script. The remaining {{papers_without_verify}} do not:
-
-- **artiushin-2026-spider-atlas** — atlas paper; verification is image inspection rather than execution. The 17 claims carry mostly `unverified:no-data` because the underlying volumes are not consulted in this prototype.
-- **kammer-2026-foveal-feedback** — no verification script; 12 of 23 claims are `unverified:compute-infeasible`, reflecting the per-subject MVPA pipeline's compute requirements.
-- **meijer-2025-serotonin-orthogonal** and **meijer-2025-serotonin-additive-r1** — no verification script in this prototype; verification is deferred pending the lab's own re-running of analyses.
-- **rozak-2026-neurovascular-dl** — no verification script; the deep-learning pipeline's training set is not redistributable to this prototype.
-
-Among the 7 papers with verify scripts, the live-execution coverage of the targeted ~27 specific quantitative claims is:
-
-| Paper | Script present | Live execution? | Deposit source | Outcome |
-|:------|:---:|:---|:---|:---|
-| bouyeure-2026-fear-rsa | yes | yes | NeuroVault collection 23032 + OSF | 4 claims live; prior-threat anatomical mismatch documented as `failed:mismatch` reproduced as expected |
-| ejdrup-2026-dopamine | yes | partial | github.com/Gether-Lab/striatal-dopamine-model + Zenodo | 3 claims; Vmax-sweep timed out at 600 s in current session, verified live in prior session, `from notes` in current log; matplotlib patch auto-applied |
-| gadeke-2026-guilt-insula | yes | yes | OpenNeuro CSV + NIfTI | 5 claims; logistic regression β = 0.032, p = 9.55e-68; R² = 0.184 vs paper 0.185; MNI peak [-28, 24, -4] exact match |
-| headley-2026-inhibitory-rhythms | yes | yes | github.com/dbheadley/InhibOnDendComp | 4 claims; firing-rate (control 5.5 → distal 0.2, somatic 0.7 Hz) and STA spike-AP timings reproduced from CSVs |
-| kolb-2026-igabasnfr2 | yes | yes | RCSB PDB 9D57 | 1 claim (sensor-engineering paper; deposit metadata extracted: X-ray 2.60 Å, 6 chains, ABU + CRO ligands present) |
-| scheller-2026-self-prioritization | yes | no (current session) | OSF (downloads failed) | 8 claims; all PASS entries are hard-coded values from prior session, figures generated from synthetic data |
-| wengert-2026-kcnc1 | yes | yes | G-Node Excel | 4 claims; K⁺ current density WT = 1883 / KI = 757, p = 3.34e-5 reproduced cleanly. Maximal firing reproduced as WT = 207.8 / KI = 175.8, p = 0.166 (paper reports WT ≈ 201, KI ≈ 126, p < 0.001); flagged WARN |
-
-Aggregate: of ~27 specific quantitative claims targeted by the 7 scripts, **~14 are backed by live execution against deposited data in this prototype**; **~13 are affirmed via hard-coded values carried forward from prior sessions** when downloads failed or re-runs timed out. **Two documented mismatches** persist: bouyeure prior-threat (anatomical: occipital pole vs claimed fear network) and wengert maximal firing (quantitative: direction correct, magnitude and significance off).
-
-The remaining ~150 claim status labels in the corpus reflect agentic extraction judgments rather than executed reproduction. They are draft annotations and should be read as such.
-
-[↑ Contents](#contents)
-
----
-
-## 6. Paper summaries
-
-A paper summary is a three-part prose rendering of the paper's argument, stored in `site/src/data/paper-summaries.json`. Summaries are authored separately from the claim graph and are designed to be read on their own, without graph traversal.
-
-### 6.1 The three-part structure
-
-Each summary has three fields, totalling roughly 150–220 words:
-
-- **`hypotheses`** — what the paper sets out to test or argue. Frames the bets the rest of the work makes good on. For atlas papers, this field is renamed **`subject`** because there is no hypothesis structure — the work is observational and the framing is descriptive.
-
-- **`claims`** — what the paper actually establishes empirically. The middle layer between hypotheses and inferences; the body of evidence.
-
-- **`inferences`** — what the paper concludes and what it says those conclusions imply. The interpretive layer that the discussion section typically articulates.
-
-The three fields map onto the rhetorical sequence motivation → evidence → interpretation, but they are not summaries of three different sections of the paper. A claim mentioned in `inferences` may be grounded in an empirical result mentioned in `claims`; the same body of evidence is being presented at different levels of generality.
-
-### 6.2 Atlas papers — Subject in place of Hypotheses
-
-The artiushin-2026-spider-atlas summary illustrates the atlas exception:
-
-```
-subject: A three-dimensional immunofluorescence atlas of the synganglion of the
-hackled-orb weaver spider Uloborus diversus, built from whole-mount synapsin
-staining and registered to a common reference volume…
-claims: The work resolves transmitter architecture across leg, opisthosomal,
-pedipalpal, and cheliceral neuropils, describes layered organization of the
-arcuate body into four sublayers with differential transmitter content, and
-documents two previously uncharacterized protocerebral structures…
-inferences: Together the tonsillar neuropil and candidate protocerebral bridge
-are proposed as components of a spider equivalent of the insect central complex…
-```
-
-The replacement is honest about what an atlas paper is doing: it is not testing a hypothesis, it is delivering a reference resource. The structural slot is preserved; the field name is corrected.
-
-### 6.3 Generation procedure
-
-Summaries are generated per paper by an agent that reads the claim graph (the paper's claim-file list with frontmatter), the abstract, and any available prose, and writes the three-part summary. The agent is instructed to honour the schema's role labels: hypotheses come from `role: hypothesis` claims, the claims field aggregates `role: empirical` and `role: control` content, and the inferences field aggregates `role: synthesis` and `role: interpretation` content. The agent is allowed to use the abstract for framing where the claim graph is sparse on motivation, but the empirical content of the `claims` field is bound to claims actually present in the graph.
-
-### 6.4 Why separate authoring rather than concatenation
-
-A natural question is whether `displayClaim` or `shortClaim` fields could be programmatically concatenated to produce the summary. The answer is no, for two reasons.
-
-First, readable prose requires composition, not concatenation. The Headley `hypotheses` field reads "The paper tests whether rhythmic inhibition onto distinct compartments of a layer 5 pyramidal neuron regulates integration in a compartment-specific and frequency-specific manner — specifically, whether perisomatic inhibition is optimally tuned to gamma while distal dendritic inhibition is optimally tuned to beta." This sentence integrates two hypotheses (`hypothesis-distinct-compartmental-roles` and `hypothesis-frequency-compartment-matching`) into a framing that previews the paper's structure. Concatenating the two short-form claims would name the hypotheses without integrating them; the reader would have to do the synthesis.
-
-Second, the claims field is selective. A paper with 30 empirical claims cannot surface all 30 in a 70-word summary; the author chooses which carry the central evidentiary load. This is a judgment that requires reading the claim graph as an argument rather than as a list. The synthesis pipeline (Section 7) does the same selection for a different purpose — articulating the full argumentative structure rather than the headline.
-
-The two pipelines are complementary: paper summaries are written for a reader who wants to understand the paper without traversing the graph; synthesis is written to test whether the graph alone carries the paper's argument.
-
-[↑ Contents](#contents)
-
----
-
-## 7. Synthesis and comparator pipeline
-
-The synthesis pipeline asks a different question from the paper summary: not "what does this paper argue?" (the summary's question) but "if you give an agent only the claim graph, with no abstract, no PDF, no published prose, can it reconstruct the paper's argument?" The comparator then asks: when the reconstruction is set against the published abstract, what is preserved, what is lost, what is added?
-
-### 7.1 Strict isolation
-
-The synthesis agent reads only `site/src/data/claims.json` filtered by `paperSlug`. It does not see the paper's title, abstract, authors, or prose. It does not see the paper-summary. It sees only the claim sentences, panel attributions, role labels, epistemic markers, and the typed edges between claims.
-
-Isolation matters: any contamination by the abstract would let the agent recover the paper's framing without the graph having to carry it. The diagnostic value of the synthesis is precisely the comparison against the abstract — what the agent recovers from the graph alone is what the graph is doing the work of carrying; what the agent fails to recover is what the abstract adds beyond the graph.
-
-### 7.2 Synthesizer prompt
-
-The prompt explicitly enumerates argumentative moves and reasoning forms. The v3 prompt (representative excerpt):
-
-> The claim graph carries multiple kinds of relation, each representing a different argumentative move:
-> - `requires` — A depends on B being true. Mechanistic / hierarchical chain.
-> - `entails` / `derived-from` — Hypothesis → prediction. Deductive entailment.
-> - `tests` — Empirical claim → prediction it tests.
-> - `supports` / `refutes` — Empirical claim → hypothesis it supports or refutes. Abductive inference.
-> - `rules-out` — A's evidence eliminates an alternative. Argument by elimination.
-> - `dissociates-with` — A and B jointly establish a dissociation. Argument by contrast.
-> - `validates` — A is a control or sign-flip that strengthens B. Argument by disconfirmation.
-> - `predicts` / `confirms` — predictive validation across model and experiment.
-> - `scopes` — A is a boundary condition on B. Argument by qualified scope.
-> - `interprets` — A reframes empirical B through theoretical / literature lens.
-> - `enables-method` — A is the methodological capability that warrants B's interpretability.
->
-> Scientific argument typically combines three reasoning forms:
-> - Deduction — `entails`/`derived-from` edges.
-> - Induction — `requires`/`supports` edges.
-> - Abduction — `supports`/`refutes` from observation back to hypothesis.
->
-> Use the right rhetorical move for the right structural relation. When `refutes:` edges are present, articulate the refutation explicitly. When a hypothesis is `derived-from:` another, articulate it as a logical consequence rather than as an independent finding. When `rules-out:` is present, surface the eliminated alternative.
-
-The prompt's job is to license the right rhetorical move for the right edge type. Without explicit guidance, the agent tends to flatten `refutes` into `is consistent with` and to omit `rules-out` entirely; the prompt has been iterated to push back on these defaults.
-
-The agent emits two outputs: a synthesis paragraph (200–400 words) and a per-sentence traceback that names the claims and edges each sentence draws on. The traceback is the audit trail.
-
-### 7.3 The comparator
-
-The comparator is run separately, with both texts available — the synthesised reconstruction and the published abstract. It produces a sentence-by-sentence mapping (`site/src/data/abstract-mapping/<paper-slug>.json`) that records, for each abstract sentence: its type (`background` / `claim`), the claim slugs it maps onto, the kind of mapping (`direct` / `combined` / `compressed` / `flattened`), and a free-text note about what is preserved or lost.
-
-The comparator also lists `orphanClaims` (claims present in the graph but not surfaced in the abstract) and `orphanSentences` (abstract content with no graph counterpart). These are the divergence inventory.
-
-### 7.4 What the comparator finds
-
-Two diagnostic patterns recur across the {{papers}} papers:
-
-1. **`rules-out` and `refutes` edges are scrubbed by abstracts.** The eliminative move is consistently flattened. The Meijer R1 abstract states the additivity finding; the synthesis surfaces both the additivity finding and the explicit refutation of the multiplicative-gain prediction. The abstract's "5-HT modulates spiking additively" carries the same proposition as the synthesis's "additive prediction confirmed and multiplicative prediction refuted, eliminating gain control as the dominant brain-wide mode," but the rhetorical move from refutation to elimination is absent. The abstract reader cannot tell that the paper is engaging an explicit alternative.
-
-2. **`validates` edges (controls) are absorbed.** The Meijer R1 abstract names the 7,478-neuron / 13-region scope but does not mention that wild-type controls rule out the light artefact, that narrow-spike interneurons rule out an FSI-driven mechanism, or that layer-stratified analysis rules out a layer-specific cortical mechanism. The synthesis surfaces all three; the abstract presents the empirical findings as if the controls had not needed to be run.
-
-These findings are robust to LLM stylistic variation — they describe structural properties of the abstract relative to the graph (which edges are absent as rhetorical moves), not surface features. The magnitude of the gap is less robust (Section 9).
-
-### 7.5 Iteration history
-
-The synthesis pipeline went through three iterations.
-
-**v1 — hierarchical-only synthesis** (`site/src/data/synthesis/`). The first prompt used only `requires` edges (read as a directed acyclic graph) and asked for a paragraph in the style of an abstract. The output read as a flattened restatement of the empirical findings, organised hierarchically. Hypotheses were not surfaced because v1 did not use the role labels; the hypothetico-deductive structure was invisible.
-
-**v2 — enriched edges** (deprecated; not preserved as a separate directory). The second iteration added `supports`, `tests`, `entails`, `derived-from`, `dissociates-with`, and `interprets` to the prompt, and organised the synthesis around the `role: hypothesis` claims. The output recovered the deductive structure but underplayed the abductive loop — empirical claims supported hypotheses without explicitly closing the prediction-test loop.
-
-**v3 — explicit hypothetico-deductive surfacing with refutation arc** (`site/src/data/synthesis-v3/`). The third iteration is the current production prompt. It enumerates the eleven edge types explicitly, names the three reasoning forms (deduction / induction / abduction) with edge-form mappings, instructs the agent to articulate refutations explicitly when `refutes:` edges are present and to surface eliminated alternatives explicitly when `rules-out:` is present, and to mark `derived-from:` between hypotheses (as in the Meijer R1 case where `hypothesis-orthogonal-neuromodulatory-subspace` is `derived-from: hypothesis-additive-modulation`) as logical consequence rather than independent finding.
-
-The v3 outputs are the basis for the comparator findings above. v1 outputs are preserved for the five papers where they were generated, as a rough lineage of how the pipeline's diagnostic resolution improved.
-
-[↑ Contents](#contents)
-
----
-
-## 8. Literature-context as cross-paper primitive
+## 5. Literature-context as cross-paper primitive
 
 `literature-context` is the ninth role, added in iteration 4 of the schema. It treats cited prior work as a first-class claim node — not a citation in a bibliography, but a proposition with the same schema as any other claim, that the present paper's argument inherits.
 
-### 8.1 Distribution
+### 5.1 Distribution
 
 Twelve `literature-context` claims appear across eight papers in the present corpus:
 
@@ -678,7 +454,7 @@ Twelve `literature-context` claims appear across eight papers in the present cor
 
 The Meijer R1 paper is the densest case because its central reframing (additivity rather than gain control) requires explicit engagement with the prior-literature gain-control framework. Without literature-context nodes, the `rules-out: multiplicative-gain-control` synthesis claim would have no explicit referent for "multiplicative gain control" — the move would be eliminative against an unnamed alternative. The literature-context node `interprets-gain-control-default-framework` makes the Servan-Schreiber lineage explicit, so that the eliminative move has something specific to engage.
 
-### 8.2 Structural function
+### 5.2 Structural function
 
 A literature-context claim is structurally distinct from an interpretation claim in two respects.
 
@@ -688,7 +464,7 @@ Second, its role in the graph is to give downstream synthesis or scope claims an
 
 The role makes inherited premises auditable. Where a paper's interpretation depends on a literature claim that is itself contested, the literature-context node is the place that contest is recorded; downstream claims that `requires:` or `interprets:` the literature-context node inherit the contest.
 
-### 8.3 Cross-paper deduplication
+### 5.3 Cross-paper deduplication
 
 The schema is designed so that a single literature-context node — say `interprets-servan-schreiber-1990-gain-control` — could be referenced by multiple papers' claims. In the present corpus this is not exploited; each literature-context claim lives in the asserting paper's directory with one assertion block. But the UUID-based identity is constructed so that, at scale, such a claim could migrate to a flat `claims/` namespace, accumulate assertion blocks from each paper that cites Servan-Schreiber 1990 in this role, and become a corpus-level node with a single graph identity.
 
@@ -700,7 +476,7 @@ The forward construction case (claim graphs assembled by authors at submission) 
 
 ---
 
-## 9. Limits and openings
+## 6. Limits and openings
 
 The methodology described above is the disciplined process the prototype would adopt at scale. The prototype's actual workflow falls short of this discipline in several respects, and the document is honest about the gap.
 

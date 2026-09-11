@@ -22,6 +22,7 @@ import LayerOutput from '../../components/LayerOutput.astro';
 import LayerState from '../../components/LayerState.astro';
 import { layers, papers, cell, shortOf } from '../../lib/pipeline';
 import { output } from '../../lib/layer-source';
+import { readLayerDoc, renderMd } from '../../lib/markdown';
 
 export function getStaticPaths() {
   return layers.map(l => ({ params: { layer: l.id }, props: { layer: l } }));
@@ -40,12 +41,24 @@ const example = layer.scope === 'corpus'
 const corpusOutput = layer.scope === 'corpus'
   ? (layer.produces ?? []).filter(p => !p.includes('{paper}'))
   : [];
+
+// How this layer works, from pipeline/layers/<id>.md. The declaration says what it asks;
+// this says how it goes about it, and it is the same file /method assembles.
+const doc = readLayerDoc(layer.id);
+const docHtml = doc ? await renderMd(doc) : null;
 ---
 
 <Layout title={`${layer.title} — pipeline`} description={layer.question}>
   <div class="site-frame column py-12">
     <LayerHeader layer={layer} />
     <LayerDefinition layer={layer} />
+
+    {docHtml && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">How it works</h2>
+        <article class="method-prose" set:html={docHtml}></article>
+      </section>
+    )}
 
     {example && (
       <LayerOutput layer={layer} paper={example.paper} produces={example.produces}
