@@ -877,6 +877,13 @@ export default function Reader({ data, base }: Props) {
         .rd-rrow:hover { color: var(--card-head); background: var(--claim-wash); }
         .rd-rrow.near { color: var(--card-head); box-shadow: inset 2px 0 0 var(--claim); padding-left: 0.5rem; }
         .rd-rrow .rd-dot { position: relative; top: -1px; }
+        /* The text is placed, not flowed. Dot renders nothing for a claim a re-run cannot
+           settle — a hypothesis, a prediction, a scope, and now every part — so that row has
+           one child, and a single child in a two-track grid lands in the first track: the 8px
+           one meant for the dot. The sentence then wrapped one word per line down a 288px
+           column of empty space. It showed up the moment the parts retrofit put ten dotless
+           claims in Gädeke's lane. */
+        .rd-rrow .rd-rt { grid-column: 2; }
         /* A part folds beneath its whole: indented, quieter, and joined by a left rule so the
            two grains read as one claim and its components rather than two peers. */
         .rd-rgroup { display: contents; }
