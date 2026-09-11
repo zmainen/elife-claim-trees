@@ -140,6 +140,11 @@ EXAMPLE = {
     "scopes": ("headley-2026-inhibitory-rhythms", "l5-model-single-cell-scope", "*"),
     "extends": ("kammer-2026-foveal-feedback", "v2-v3-generalize-shape-not-category",
                 "decoding-shape-sensitive-not-semantic"),
+    # The low-minus-high difference is one measure of the insula ROI guilt result, which states
+    # the same contrast "even after subtracting responses to high outcomes". Retrofitted onto
+    # Gädeke's claim-tree v2 by the `parts` layer (#75).
+    "part-of": ("gadeke-2026-guilt-insula", "difference-response-between-low-high",
+                "insula-rois-responded-more-low"),
 }
 
 # The pairs a reader most often confuses, each with what separates them. The contract renders

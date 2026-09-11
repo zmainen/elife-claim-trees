@@ -1,32 +1,34 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `gadeke-2026-guilt-insula` · **Claims registered:** 2026-03-30 – 2026-09-10
+**Paper:** `gadeke-2026-guilt-insula` · **Claims registered:** 2026-09-10 – 2026-09-11
 
-33 claims, 93 typed relations between them.
+74 claims, 91 typed relations between them.
 
 ## Claims by role
 
-- **empirical** — 11
-- **hypothesis** — 9
-- **control** — 5
-- **prediction** — 4
-- **scope** — 2
-- **interpretation** — 1
-- **literature-context** — 1
+- **empirical** — 23
+- **methodological** — 12
+- **control** — 11
+- **hypothesis** — 10
+- **prediction** — 5
+- **interpretation** — 4
+- **scope** — 4
+- **literature-context** — 3
+- **synthesis** — 2
 
 ## Relations dropped
 
-**51 of 93 relations (55%) have no MIRA predicate and are absent from the strict export.**
+**59 of 91 relations (65%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
-| `scopes` | 29 | a scope constraint governs another claim's validity |
+| `requires` | 24 | a claim depends on another holding |
+| `part-of` | 10 | a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone |
+| `scopes` | 10 | a scope constraint governs another claim's validity |
 | `derived-from` | 5 | a prediction derived from its hypothesis (inverse of entails) |
 | `entails` | 5 | a hypothesis entails its prediction — the deductive step |
-| `interprets` | 5 | one claim interprets another |
-| `requires` | 4 | a claim depends on another holding |
-| `enables-method` | 2 | a result makes a downstream method possible |
-| `qualifies` | 1 | a claim narrows another's applicability |
+| `interprets` | 4 | one claim interprets another |
+| `enables-method` | 1 | a result makes a downstream method possible |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.
 
@@ -42,9 +44,9 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 **3 question(s) are stated on the paper** (in `index.md`) and answered by the hypotheses and rejected alternatives that `addresses` them. These are emitted as real `mira:Question` nodes, not derived.
 
-- Does the anterior insula encode interpersonal guilt — the responsibility-contingent affect that arises specifically when a participant's own choice causes a negative outcome for their partner, as distinct from empathy for partner loss or regret over one's own loss?
-- Is momentary happiness during social decisions under risk governed by a responsibility-weighted rule in which partner reward prediction errors caused by the participant's own choice carry an independent, non-zero weight — so that the larger happiness drop after low partner outcomes when the participant chose reflects interpersonal guilt rather than another cause?
-- Does the superior temporal sulcus represent the partner's affective state — tracking partner reward prediction errors — specifically when the participant is responsible for the partner's outcome?
+- Does the larger decrease in momentary happiness after a low outcome for the partner when the participant made the choice reflect responsibility-contingent interpersonal guilt, rather than general agency aversion, disappointment over the participant's own outcome, a social shift in risk attitude, or inattentive task engagement?
+- Is the anterior insula, together with its condition- and choice-dependent connectivity to prefrontal cortex, the neural substrate of this interpersonal guilt, responding more when the participant is responsible for a partner's low outcome?
+- Does a neural substrate track the participant's responsibility for the partner's outcomes, representing partner reward prediction errors more strongly when they arise from the participant's own choice than from the partner's choice?
 
 ## Questions synthesized
 

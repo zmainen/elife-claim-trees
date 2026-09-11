@@ -10,6 +10,8 @@ role: control
 concepts: []
 priority: '2026-09-11'
 epistemic: tentative
+part-of:
+- both-studies-participants-felt-worse
 rules-out:
 - alt-guilt-effect-driven-by-own-outcome
 belongings:
