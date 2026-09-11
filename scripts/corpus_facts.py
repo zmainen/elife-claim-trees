@@ -258,6 +258,27 @@ def mira_mapping():
     return {"roles": dict(sorted(ROLE_TO_TYPE.items())), "relations": rels}
 
 
+def pipeline_state():
+    """The layer x paper matrix, or None when the declaration cannot be read.
+
+    Kept non-fatal: corpus_facts.py is run by the site build, and a pipeline declaration
+    that does not load should not stop the site from building the facts it already had.
+    """
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import pipeline
+        decl = pipeline.load()
+        return {
+            "layers": [{k: v for k, v in l.items() if k != "command"}
+                       for l in decl["layers"]],
+            "groups": decl.get("groups") or {},
+            "state": pipeline.state(decl),
+        }
+    except Exception as e:                                            # noqa: BLE001
+        print(f"  warning: pipeline state unavailable — {e}")
+        return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--print", dest="show", action="store_true")
@@ -296,6 +317,10 @@ def main():
         "mira_mapping": mira_mapping(),
         "layers": layers(site),
         "dangling_rules_out": dangling_eliminations(site),
+        # Computed state per layer x paper, from pipeline/layers.yaml and the run ledgers.
+        # `layers` above detects presence from artifacts on disk and stays as the simpler
+        # answer; this says *current / stale / absent / blocked*, which presence cannot.
+        "pipeline": pipeline_state(),
     }
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)

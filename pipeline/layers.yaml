@@ -1,0 +1,277 @@
+# The pipeline, declared.
+#
+# A layer is a node in a versioned processing graph: it runs against a paper (or across the
+# corpus), consumes declared inputs, and produces a new version of something. This file is the
+# only place the graph is written down. Everything else — the state matrix, the site's
+# navigation, staleness, propagation — is computed from it.
+#
+# Design note: docs/design/2026-09-11-layers-as-pipeline.html
+#
+# FIELDS
+#   id          stable identifier, used in paths and the ledger
+#   group       optional parent; a group is a layer with children, not a display convention
+#   kind        step | candidate | judgement | feature | question
+#   scope       paper | corpus
+#   question    what this layer asks. Not a description of what it does — the question is what
+#               makes a layer worth being a layer.
+#   needs       layer ids this depends on. Staleness flows along these edges.
+#   reads       paths that are inputs but not other layers' outputs: scripts, prompts, schema.
+#               Hashed like any input, so changing a prompt makes every run that used it stale.
+#   produces    paths this writes. `{paper}` is substituted per paper.
+#   views       how a version of this layer can be looked at
+#   command     what runs it. `{paper}` and `{doi}` substituted. Absent means no runner exists.
+#
+# KINDS
+#   step        mechanical, re-runnable from declared inputs
+#   candidate   one of several parallel outputs, kept rather than collapsed
+#   judgement   a decision by a person or an agent, stored because recomputing destroys it
+#   feature     a capability that revises existing artifacts; runs once, then it is the schema
+#   question    a decision about meaning, then a propagation of it
+
+version: 1
+
+groups:
+  induction:
+    title: Induction
+    question: What did the readers find, and what survived reconciliation?
+  interchange:
+    title: Interchange
+    question: What survives when a claim tree leaves this format?
+
+layers:
+
+  # ── corpus scope ───────────────────────────────────────────────────────────
+  # These have edges into almost everything below, which is why a schema decision is
+  # never a small change.
+
+  - id: claim-format
+    kind: feature
+    scope: corpus
+    title: Claim format
+    question: What is a claim, and what may be said about one?
+    reads: [docs/claim-format.md]
+    views: [document]
+
+  - id: relation-vocab
+    kind: question
+    scope: corpus
+    title: Relation semantics
+    question: What does each relation assert, and which are oppositions?
+    needs: [claim-format]
+    reads: [scripts/check_relations.py, exports/claim-relations.ttl]
+    views: [table, comparison]
+    issue: 19
+    open: true                 # no decision yet; everything downstream is provisional
+
+  - id: epistemic-vocab
+    kind: question
+    scope: corpus
+    title: Epistemic vocabulary
+    question: Does `epistemic` record support strength, or restate the role?
+    needs: [claim-format]
+    views: [table]
+    issue: 20
+    open: true
+
+  # ── induction ──────────────────────────────────────────────────────────────
+  # Fans in: three readers given different slices, reconciled to one draft. The three are
+  # `candidate` rather than `step` because keeping them apart is the point — agreement
+  # between them is the informative case, and collapsing them loses it.
+
+  - id: results-reader
+    group: induction
+    kind: candidate
+    scope: paper
+    title: Results reader
+    question: What does the Results section assert?
+    reads: [extract/prompts/results-reader.md]
+    produces: ["runs/{paper}/results-reader.output.json"]
+    views: [list, table]
+
+  - id: caption-reader
+    group: induction
+    kind: candidate
+    scope: paper
+    title: Caption reader
+    question: What do the figure captions assert?
+    reads: [extract/prompts/caption-reader.md]
+    produces: ["runs/{paper}/caption-reader.output.json"]
+    views: [list, table]
+
+  - id: structure-reader
+    group: induction
+    kind: candidate
+    scope: paper
+    title: Structure reader
+    question: What is the paper's argument structure?
+    reads: [extract/prompts/structure-reader.md]
+    produces: ["runs/{paper}/structure-reader.output.json"]
+    views: [list, table]
+
+  - id: reconcile
+    group: induction
+    kind: step
+    scope: paper
+    title: Reconciliation
+    question: Which candidates survive, and which readers agreed?
+    needs: [results-reader, caption-reader, structure-reader]
+    reads: [extract/prompts/reconciler.md]
+    produces: ["runs/{paper}/reconciler.output.json"]
+    views: [table, overlap]
+
+  - id: edge-inference
+    group: induction
+    kind: step
+    scope: paper
+    title: Edge inference
+    question: Which claims depend on which?
+    needs: [reconcile, relation-vocab]
+    produces: ["runs/{paper}/edge-inference.output.json"]
+    views: [graph, table]
+
+  # ── the tree, and what revises it ──────────────────────────────────────────
+
+  - id: claim-tree
+    kind: step
+    scope: paper
+    title: Claim tree
+    question: What does this paper assert, and how do its assertions depend on each other?
+    needs: [reconcile, edge-inference, claim-format]
+    produces: ["claims/{paper}/*.md"]
+    views: [graph, list, table]
+    command: "cd extract && python3 -m elife_extract.cli write --draft out/draft-{paper}.json --corpus-dir ../claims"
+
+  # The methodology's Step 5 gate. It is declared here and absent everywhere, which is the
+  # honest rendering of "no human checks this corpus": not a disclaimer in prose but an empty
+  # column in the matrix. A review targets the version it read — when claim-tree produces a
+  # new version, the review of the old one is stale, and the site says so rather than
+  # carrying a tick earned against different text.
+  - id: review
+    kind: judgement
+    scope: paper
+    title: Human review
+    question: Has a person read this tree and approved it?
+    needs: [claim-tree]
+    produces: ["reviews/{paper}.json"]
+    views: [table, comparison]
+    reviews: claim-tree
+    requires_human: true
+
+  - id: stance
+    kind: feature
+    scope: paper
+    title: Alternatives and stance
+    question: What does this paper rule out, and what does it merely entertain?
+    needs: [claim-tree, claim-format]
+    produces: ["claims/{paper}/alt-*.md"]
+    views: [graph, list]
+
+  - id: abstract-map
+    kind: step
+    scope: paper
+    title: Abstract ↔ claims
+    question: Which claims does the abstract carry, and which does it drop?
+    needs: [claim-tree]
+    produces: ["site/src/data/abstract-mapping/{paper}.json"]
+    views: [document, comparison]
+
+  # ── measures ───────────────────────────────────────────────────────────────
+
+  - id: verification
+    kind: step
+    scope: paper
+    title: Verification
+    question: Did anyone check, and what did they find?
+    needs: [claim-tree]
+    reads: ["verification/{paper}/verify.py"]
+    produces: ["verification/{paper}/provenance.json"]
+    views: [graph, table, comparison]
+    command: "python3 verification/audit_run.py {paper}"
+
+  # The only layer that reads the paper again after induction, which is why it is the one
+  # that can find what everything else missed.
+  - id: coverage
+    kind: step
+    scope: paper
+    title: Coverage
+    question: What does the paper assert that no claim represents?
+    needs: [claim-tree]
+    produces: ["coverage/{paper}.json"]
+    views: [document, table]
+    command: "cd extract && python3 -m elife_extract.cli coverage --doi {doi} --paper-slug {paper} --claims-dir ../claims/{paper} --json ../coverage/{paper}.json"
+
+  - id: adjudication
+    kind: judgement
+    scope: paper
+    title: Coverage adjudication
+    question: Of the spans the matcher could not resolve, which are real gaps?
+    needs: [coverage]
+    produces: ["mappings/{paper}.json"]
+    views: [table]
+    reviews: coverage
+
+  - id: marks
+    kind: step
+    scope: paper
+    title: Marked paper
+    question: Where, in the document itself, is each claim and each gap?
+    needs: [adjudication, claim-tree]
+    produces: ["marked/{paper}.marked.md"]
+    views: [document]
+    command: "cd extract && python3 -m elife_extract.cli mark --doi {doi} --paper-slug {paper} --claims-dir ../claims/{paper} --mapping ../mappings/{paper}.json -o ../marked/{paper}.marked.md"
+
+  # ── interchange ────────────────────────────────────────────────────────────
+  # Fans out: one tree into three encodings that never rejoin.
+
+  - id: mira-export
+    group: interchange
+    kind: step
+    scope: paper
+    title: MIRA export
+    question: What does the schema eLife reads carry, and what does it drop?
+    needs: [claim-tree, stance, relation-vocab]
+    reads: [scripts/export_mira.py]
+    produces:
+      - exports/{paper}.mira.jsonld
+      - exports/{paper}.mira-extended.jsonld
+      - exports/{paper}.gap-report.md
+    views: [graph, table]
+    command: "python3 scripts/export_mira.py {paper}"
+
+  - id: oxa-export
+    group: interchange
+    kind: step
+    scope: paper
+    title: OXA export
+    question: What does the open document architecture carry?
+    needs: [claim-tree, stance]
+    reads: [extract/scripts/migrate_to_oxa.py]
+    produces: ["exports/{paper}.oxa.json"]
+    views: [table]
+    command: "cd extract && python3 scripts/migrate_to_oxa.py ../claims/{paper} --output-dir ../exports"
+
+  - id: dg-export
+    group: interchange
+    kind: step
+    scope: paper
+    title: Discourse Graphs export
+    question: What does the Q/C/E/S ontology carry?
+    needs: [oxa-export]
+    reads: [extract/scripts/export_discourse_graphs.py]
+    produces: ["exports/{paper}.dg.jsonld"]
+    views: [graph, table]
+    command: "cd extract && python3 scripts/export_discourse_graphs.py ../exports/{paper}.oxa.json --output ../exports/{paper}.dg.jsonld"
+
+  - id: formats-report
+    group: interchange
+    kind: step
+    scope: paper
+    title: Formats comparison
+    question: Measured from the exports, what did each conversion cost?
+    needs: [mira-export, oxa-export, dg-export]
+    reads: [scripts/formats_report.py]
+    produces:
+      - exports/{paper}.formats.md
+      - exports/{paper}.formats.json
+    views: [table, comparison]
+    command: "python3 scripts/formats_report.py {paper}"

@@ -291,6 +291,1722 @@
   "papers": 10,
   "papers_without_verify": 3,
   "papers_without_verify_audit": 6,
+  "pipeline": {
+    "groups": {
+      "induction": {
+        "question": "What did the readers find, and what survived reconciliation?",
+        "title": "Induction"
+      },
+      "interchange": {
+        "question": "What survives when a claim tree leaves this format?",
+        "title": "Interchange"
+      }
+    },
+    "layers": [
+      {
+        "id": "claim-format",
+        "kind": "feature",
+        "question": "What is a claim, and what may be said about one?",
+        "reads": [
+          "docs/claim-format.md"
+        ],
+        "scope": "corpus",
+        "title": "Claim format",
+        "views": [
+          "document"
+        ]
+      },
+      {
+        "id": "relation-vocab",
+        "issue": 19,
+        "kind": "question",
+        "needs": [
+          "claim-format"
+        ],
+        "open": true,
+        "question": "What does each relation assert, and which are oppositions?",
+        "reads": [
+          "scripts/check_relations.py",
+          "exports/claim-relations.ttl"
+        ],
+        "scope": "corpus",
+        "title": "Relation semantics",
+        "views": [
+          "table",
+          "comparison"
+        ]
+      },
+      {
+        "id": "epistemic-vocab",
+        "issue": 20,
+        "kind": "question",
+        "needs": [
+          "claim-format"
+        ],
+        "open": true,
+        "question": "Does `epistemic` record support strength, or restate the role?",
+        "scope": "corpus",
+        "title": "Epistemic vocabulary",
+        "views": [
+          "table"
+        ]
+      },
+      {
+        "group": "induction",
+        "id": "results-reader",
+        "kind": "candidate",
+        "produces": [
+          "runs/{paper}/results-reader.output.json"
+        ],
+        "question": "What does the Results section assert?",
+        "reads": [
+          "extract/prompts/results-reader.md"
+        ],
+        "scope": "paper",
+        "title": "Results reader",
+        "views": [
+          "list",
+          "table"
+        ]
+      },
+      {
+        "group": "induction",
+        "id": "caption-reader",
+        "kind": "candidate",
+        "produces": [
+          "runs/{paper}/caption-reader.output.json"
+        ],
+        "question": "What do the figure captions assert?",
+        "reads": [
+          "extract/prompts/caption-reader.md"
+        ],
+        "scope": "paper",
+        "title": "Caption reader",
+        "views": [
+          "list",
+          "table"
+        ]
+      },
+      {
+        "group": "induction",
+        "id": "structure-reader",
+        "kind": "candidate",
+        "produces": [
+          "runs/{paper}/structure-reader.output.json"
+        ],
+        "question": "What is the paper's argument structure?",
+        "reads": [
+          "extract/prompts/structure-reader.md"
+        ],
+        "scope": "paper",
+        "title": "Structure reader",
+        "views": [
+          "list",
+          "table"
+        ]
+      },
+      {
+        "group": "induction",
+        "id": "reconcile",
+        "kind": "step",
+        "needs": [
+          "results-reader",
+          "caption-reader",
+          "structure-reader"
+        ],
+        "produces": [
+          "runs/{paper}/reconciler.output.json"
+        ],
+        "question": "Which candidates survive, and which readers agreed?",
+        "reads": [
+          "extract/prompts/reconciler.md"
+        ],
+        "scope": "paper",
+        "title": "Reconciliation",
+        "views": [
+          "table",
+          "overlap"
+        ]
+      },
+      {
+        "group": "induction",
+        "id": "edge-inference",
+        "kind": "step",
+        "needs": [
+          "reconcile",
+          "relation-vocab"
+        ],
+        "produces": [
+          "runs/{paper}/edge-inference.output.json"
+        ],
+        "question": "Which claims depend on which?",
+        "scope": "paper",
+        "title": "Edge inference",
+        "views": [
+          "graph",
+          "table"
+        ]
+      },
+      {
+        "id": "claim-tree",
+        "kind": "step",
+        "needs": [
+          "reconcile",
+          "edge-inference",
+          "claim-format"
+        ],
+        "produces": [
+          "claims/{paper}/*.md"
+        ],
+        "question": "What does this paper assert, and how do its assertions depend on each other?",
+        "scope": "paper",
+        "title": "Claim tree",
+        "views": [
+          "graph",
+          "list",
+          "table"
+        ]
+      },
+      {
+        "id": "review",
+        "kind": "judgement",
+        "needs": [
+          "claim-tree"
+        ],
+        "produces": [
+          "reviews/{paper}.json"
+        ],
+        "question": "Has a person read this tree and approved it?",
+        "requires_human": true,
+        "reviews": "claim-tree",
+        "scope": "paper",
+        "title": "Human review",
+        "views": [
+          "table",
+          "comparison"
+        ]
+      },
+      {
+        "id": "stance",
+        "kind": "feature",
+        "needs": [
+          "claim-tree",
+          "claim-format"
+        ],
+        "produces": [
+          "claims/{paper}/alt-*.md"
+        ],
+        "question": "What does this paper rule out, and what does it merely entertain?",
+        "scope": "paper",
+        "title": "Alternatives and stance",
+        "views": [
+          "graph",
+          "list"
+        ]
+      },
+      {
+        "id": "abstract-map",
+        "kind": "step",
+        "needs": [
+          "claim-tree"
+        ],
+        "produces": [
+          "site/src/data/abstract-mapping/{paper}.json"
+        ],
+        "question": "Which claims does the abstract carry, and which does it drop?",
+        "scope": "paper",
+        "title": "Abstract \u2194 claims",
+        "views": [
+          "document",
+          "comparison"
+        ]
+      },
+      {
+        "id": "verification",
+        "kind": "step",
+        "needs": [
+          "claim-tree"
+        ],
+        "produces": [
+          "verification/{paper}/provenance.json"
+        ],
+        "question": "Did anyone check, and what did they find?",
+        "reads": [
+          "verification/{paper}/verify.py"
+        ],
+        "scope": "paper",
+        "title": "Verification",
+        "views": [
+          "graph",
+          "table",
+          "comparison"
+        ]
+      },
+      {
+        "id": "coverage",
+        "kind": "step",
+        "needs": [
+          "claim-tree"
+        ],
+        "produces": [
+          "coverage/{paper}.json"
+        ],
+        "question": "What does the paper assert that no claim represents?",
+        "scope": "paper",
+        "title": "Coverage",
+        "views": [
+          "document",
+          "table"
+        ]
+      },
+      {
+        "id": "adjudication",
+        "kind": "judgement",
+        "needs": [
+          "coverage"
+        ],
+        "produces": [
+          "mappings/{paper}.json"
+        ],
+        "question": "Of the spans the matcher could not resolve, which are real gaps?",
+        "reviews": "coverage",
+        "scope": "paper",
+        "title": "Coverage adjudication",
+        "views": [
+          "table"
+        ]
+      },
+      {
+        "id": "marks",
+        "kind": "step",
+        "needs": [
+          "adjudication",
+          "claim-tree"
+        ],
+        "produces": [
+          "marked/{paper}.marked.md"
+        ],
+        "question": "Where, in the document itself, is each claim and each gap?",
+        "scope": "paper",
+        "title": "Marked paper",
+        "views": [
+          "document"
+        ]
+      },
+      {
+        "group": "interchange",
+        "id": "mira-export",
+        "kind": "step",
+        "needs": [
+          "claim-tree",
+          "stance",
+          "relation-vocab"
+        ],
+        "produces": [
+          "exports/{paper}.mira.jsonld",
+          "exports/{paper}.mira-extended.jsonld",
+          "exports/{paper}.gap-report.md"
+        ],
+        "question": "What does the schema eLife reads carry, and what does it drop?",
+        "reads": [
+          "scripts/export_mira.py"
+        ],
+        "scope": "paper",
+        "title": "MIRA export",
+        "views": [
+          "graph",
+          "table"
+        ]
+      },
+      {
+        "group": "interchange",
+        "id": "oxa-export",
+        "kind": "step",
+        "needs": [
+          "claim-tree",
+          "stance"
+        ],
+        "produces": [
+          "exports/{paper}.oxa.json"
+        ],
+        "question": "What does the open document architecture carry?",
+        "reads": [
+          "extract/scripts/migrate_to_oxa.py"
+        ],
+        "scope": "paper",
+        "title": "OXA export",
+        "views": [
+          "table"
+        ]
+      },
+      {
+        "group": "interchange",
+        "id": "dg-export",
+        "kind": "step",
+        "needs": [
+          "oxa-export"
+        ],
+        "produces": [
+          "exports/{paper}.dg.jsonld"
+        ],
+        "question": "What does the Q/C/E/S ontology carry?",
+        "reads": [
+          "extract/scripts/export_discourse_graphs.py"
+        ],
+        "scope": "paper",
+        "title": "Discourse Graphs export",
+        "views": [
+          "graph",
+          "table"
+        ]
+      },
+      {
+        "group": "interchange",
+        "id": "formats-report",
+        "kind": "step",
+        "needs": [
+          "mira-export",
+          "oxa-export",
+          "dg-export"
+        ],
+        "produces": [
+          "exports/{paper}.formats.md",
+          "exports/{paper}.formats.json"
+        ],
+        "question": "Measured from the exports, what did each conversion cost?",
+        "reads": [
+          "scripts/formats_report.py"
+        ],
+        "scope": "paper",
+        "title": "Formats comparison",
+        "views": [
+          "table",
+          "comparison"
+        ]
+      }
+    ],
+    "state": {
+      "artiushin-2026-spider-atlas": {
+        "abstract-map": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-20T03:48:50Z",
+          "state": "current",
+          "v": 1
+        },
+        "adjudication": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "coverage"
+          ]
+        },
+        "caption-reader": {
+          "state": "absent"
+        },
+        "claim-format": {
+          "scope": "corpus",
+          "state": "current"
+        },
+        "claim-tree": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T09:48:01Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "reconcile",
+            "edge-inference"
+          ],
+          "v": 1
+        },
+        "coverage": {
+          "state": "absent"
+        },
+        "dg-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "edge-inference": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
+        "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "formats-report": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:37:36Z",
+          "state": "current",
+          "v": 1
+        },
+        "marks": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "adjudication"
+          ]
+        },
+        "mira-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T15:50:03Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "oxa-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T12:50:38Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "reconcile": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "results-reader",
+            "caption-reader",
+            "structure-reader"
+          ]
+        },
+        "relation-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "results-reader": {
+          "state": "absent"
+        },
+        "review": {
+          "state": "absent"
+        },
+        "stance": {
+          "state": "absent"
+        },
+        "structure-reader": {
+          "state": "absent"
+        },
+        "verification": {
+          "state": "absent"
+        }
+      },
+      "bouyeure-2026-fear-rsa": {
+        "abstract-map": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-20T03:48:50Z",
+          "state": "current",
+          "v": 1
+        },
+        "adjudication": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "coverage"
+          ]
+        },
+        "caption-reader": {
+          "state": "absent"
+        },
+        "claim-format": {
+          "scope": "corpus",
+          "state": "current"
+        },
+        "claim-tree": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T09:48:01Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "reconcile",
+            "edge-inference"
+          ],
+          "v": 1
+        },
+        "coverage": {
+          "state": "absent"
+        },
+        "dg-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "edge-inference": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
+        "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "formats-report": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:37:36Z",
+          "state": "current",
+          "v": 1
+        },
+        "marks": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "adjudication"
+          ]
+        },
+        "mira-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T15:50:03Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "oxa-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T12:50:38Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "reconcile": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "results-reader",
+            "caption-reader",
+            "structure-reader"
+          ]
+        },
+        "relation-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "results-reader": {
+          "state": "absent"
+        },
+        "review": {
+          "state": "absent"
+        },
+        "stance": {
+          "state": "absent"
+        },
+        "structure-reader": {
+          "state": "absent"
+        },
+        "verification": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:20:18Z",
+          "state": "current",
+          "v": 1
+        }
+      },
+      "ejdrup-2026-dopamine": {
+        "abstract-map": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-20T00:17:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "adjudication": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "coverage"
+          ]
+        },
+        "caption-reader": {
+          "state": "absent"
+        },
+        "claim-format": {
+          "scope": "corpus",
+          "state": "current"
+        },
+        "claim-tree": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-26T15:52:15Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "reconcile",
+            "edge-inference"
+          ],
+          "v": 1
+        },
+        "coverage": {
+          "state": "absent"
+        },
+        "dg-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "edge-inference": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
+        "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "formats-report": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T15:50:03Z",
+          "state": "current",
+          "v": 1
+        },
+        "marks": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "adjudication"
+          ]
+        },
+        "mira-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T15:50:03Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "oxa-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T12:50:38Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "reconcile": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "results-reader",
+            "caption-reader",
+            "structure-reader"
+          ]
+        },
+        "relation-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "results-reader": {
+          "state": "absent"
+        },
+        "review": {
+          "state": "absent"
+        },
+        "stance": {
+          "state": "absent"
+        },
+        "structure-reader": {
+          "state": "absent"
+        },
+        "verification": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:20:18Z",
+          "state": "current",
+          "v": 1
+        }
+      },
+      "gadeke-2026-guilt-insula": {
+        "abstract-map": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-20T03:48:50Z",
+          "state": "current",
+          "v": 1
+        },
+        "adjudication": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-09T11:55:22Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "coverage"
+          ],
+          "v": 1
+        },
+        "caption-reader": {
+          "by": "deepseek/deepseek-chat",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from runs/manifest.json",
+          "ran": "2026-09-10",
+          "state": "current",
+          "v": 1
+        },
+        "claim-format": {
+          "scope": "corpus",
+          "state": "current"
+        },
+        "claim-tree": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:07:29Z",
+          "state": "current",
+          "v": 1
+        },
+        "coverage": {
+          "state": "absent"
+        },
+        "dg-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "edge-inference": {
+          "by": "claude-opus-5 (agent, not the configured backend)",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from runs/manifest.json",
+          "ran": "2026-09-10",
+          "state": "current",
+          "v": 1
+        },
+        "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "formats-report": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:07:29Z",
+          "state": "current",
+          "v": 1
+        },
+        "marks": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T09:56:15Z",
+          "state": "current",
+          "v": 1
+        },
+        "mira-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:07:29Z",
+          "state": "current",
+          "v": 1
+        },
+        "oxa-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "reconcile": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T09:40:52Z",
+          "state": "current",
+          "v": 1
+        },
+        "relation-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "results-reader": {
+          "by": "deepseek/deepseek-chat",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from runs/manifest.json",
+          "ran": "2026-09-10",
+          "state": "current",
+          "v": 1
+        },
+        "review": {
+          "state": "absent"
+        },
+        "stance": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T16:37:02Z",
+          "state": "current",
+          "v": 1
+        },
+        "structure-reader": {
+          "by": "deepseek/deepseek-chat",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from runs/manifest.json",
+          "ran": "2026-09-10",
+          "state": "current",
+          "v": 1
+        },
+        "verification": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:07:29Z",
+          "state": "current",
+          "v": 1
+        }
+      },
+      "headley-2026-inhibitory-rhythms": {
+        "abstract-map": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-19T22:58:52Z",
+          "state": "current",
+          "v": 1
+        },
+        "adjudication": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "coverage"
+          ]
+        },
+        "caption-reader": {
+          "state": "absent"
+        },
+        "claim-format": {
+          "scope": "corpus",
+          "state": "current"
+        },
+        "claim-tree": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T09:48:01Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "reconcile",
+            "edge-inference"
+          ],
+          "v": 1
+        },
+        "coverage": {
+          "state": "absent"
+        },
+        "dg-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "edge-inference": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
+        "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "formats-report": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:20:18Z",
+          "state": "current",
+          "v": 1
+        },
+        "marks": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "adjudication"
+          ]
+        },
+        "mira-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T15:50:03Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "oxa-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T12:50:38Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "reconcile": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "results-reader",
+            "caption-reader",
+            "structure-reader"
+          ]
+        },
+        "relation-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "results-reader": {
+          "state": "absent"
+        },
+        "review": {
+          "state": "absent"
+        },
+        "stance": {
+          "state": "absent"
+        },
+        "structure-reader": {
+          "state": "absent"
+        },
+        "verification": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:20:18Z",
+          "state": "current",
+          "v": 1
+        }
+      },
+      "kammer-2026-foveal-feedback": {
+        "abstract-map": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-19T22:58:52Z",
+          "state": "current",
+          "v": 1
+        },
+        "adjudication": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "coverage"
+          ]
+        },
+        "caption-reader": {
+          "state": "absent"
+        },
+        "claim-format": {
+          "scope": "corpus",
+          "state": "current"
+        },
+        "claim-tree": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T09:48:01Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "reconcile",
+            "edge-inference"
+          ],
+          "v": 1
+        },
+        "coverage": {
+          "state": "absent"
+        },
+        "dg-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "edge-inference": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
+        "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "formats-report": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:37:36Z",
+          "state": "current",
+          "v": 1
+        },
+        "marks": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "adjudication"
+          ]
+        },
+        "mira-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T15:50:03Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "oxa-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T12:50:38Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "reconcile": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "results-reader",
+            "caption-reader",
+            "structure-reader"
+          ]
+        },
+        "relation-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "results-reader": {
+          "state": "absent"
+        },
+        "review": {
+          "state": "absent"
+        },
+        "stance": {
+          "state": "absent"
+        },
+        "structure-reader": {
+          "state": "absent"
+        },
+        "verification": {
+          "state": "absent"
+        }
+      },
+      "kolb-2026-igabasnfr2": {
+        "abstract-map": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-20T04:35:53Z",
+          "state": "current",
+          "v": 1
+        },
+        "adjudication": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "coverage"
+          ]
+        },
+        "caption-reader": {
+          "state": "absent"
+        },
+        "claim-format": {
+          "scope": "corpus",
+          "state": "current"
+        },
+        "claim-tree": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:11:33Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "reconcile",
+            "edge-inference"
+          ],
+          "v": 1
+        },
+        "coverage": {
+          "state": "absent"
+        },
+        "dg-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "edge-inference": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
+        "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "formats-report": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:37:36Z",
+          "state": "current",
+          "v": 1
+        },
+        "marks": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "adjudication"
+          ]
+        },
+        "mira-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:11:33Z",
+          "state": "current",
+          "v": 1
+        },
+        "oxa-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "reconcile": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "results-reader",
+            "caption-reader",
+            "structure-reader"
+          ]
+        },
+        "relation-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "results-reader": {
+          "state": "absent"
+        },
+        "review": {
+          "state": "absent"
+        },
+        "stance": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:11:33Z",
+          "state": "current",
+          "v": 1
+        },
+        "structure-reader": {
+          "state": "absent"
+        },
+        "verification": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:20:18Z",
+          "state": "current",
+          "v": 1
+        }
+      },
+      "rozak-2026-neurovascular-dl": {
+        "abstract-map": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-20T04:35:53Z",
+          "state": "current",
+          "v": 1
+        },
+        "adjudication": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "coverage"
+          ]
+        },
+        "caption-reader": {
+          "state": "absent"
+        },
+        "claim-format": {
+          "scope": "corpus",
+          "state": "current"
+        },
+        "claim-tree": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:11:33Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "reconcile",
+            "edge-inference"
+          ],
+          "v": 1
+        },
+        "coverage": {
+          "state": "absent"
+        },
+        "dg-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "edge-inference": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
+        "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "formats-report": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:37:36Z",
+          "state": "current",
+          "v": 1
+        },
+        "marks": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "adjudication"
+          ]
+        },
+        "mira-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:11:33Z",
+          "state": "current",
+          "v": 1
+        },
+        "oxa-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "reconcile": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "results-reader",
+            "caption-reader",
+            "structure-reader"
+          ]
+        },
+        "relation-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "results-reader": {
+          "state": "absent"
+        },
+        "review": {
+          "state": "absent"
+        },
+        "stance": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:11:33Z",
+          "state": "current",
+          "v": 1
+        },
+        "structure-reader": {
+          "state": "absent"
+        },
+        "verification": {
+          "state": "absent"
+        }
+      },
+      "scheller-2026-self-prioritization": {
+        "abstract-map": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-20T04:35:53Z",
+          "state": "current",
+          "v": 1
+        },
+        "adjudication": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "coverage"
+          ]
+        },
+        "caption-reader": {
+          "state": "absent"
+        },
+        "claim-format": {
+          "scope": "corpus",
+          "state": "current"
+        },
+        "claim-tree": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:20:18Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "reconcile",
+            "edge-inference"
+          ],
+          "v": 1
+        },
+        "coverage": {
+          "state": "absent"
+        },
+        "dg-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "edge-inference": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
+        "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "formats-report": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:54:11Z",
+          "state": "current",
+          "v": 1
+        },
+        "marks": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "adjudication"
+          ]
+        },
+        "mira-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T15:50:03Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "oxa-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T12:50:38Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "stance"
+          ],
+          "v": 1
+        },
+        "reconcile": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "results-reader",
+            "caption-reader",
+            "structure-reader"
+          ]
+        },
+        "relation-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "results-reader": {
+          "state": "absent"
+        },
+        "review": {
+          "state": "absent"
+        },
+        "stance": {
+          "state": "absent"
+        },
+        "structure-reader": {
+          "state": "absent"
+        },
+        "verification": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:20:18Z",
+          "state": "current",
+          "v": 1
+        }
+      },
+      "wengert-2026-kcnc1": {
+        "abstract-map": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-04-20T04:35:53Z",
+          "state": "current",
+          "v": 1
+        },
+        "adjudication": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "coverage"
+          ]
+        },
+        "caption-reader": {
+          "state": "absent"
+        },
+        "claim-format": {
+          "scope": "corpus",
+          "state": "current"
+        },
+        "claim-tree": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T09:48:01Z",
+          "state": "current",
+          "unrecorded_upstream": [
+            "reconcile",
+            "edge-inference"
+          ],
+          "v": 1
+        },
+        "coverage": {
+          "state": "absent"
+        },
+        "dg-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "edge-inference": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
+        "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "formats-report": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:54:11Z",
+          "state": "current",
+          "v": 1
+        },
+        "marks": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "adjudication"
+          ]
+        },
+        "mira-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:11:33Z",
+          "state": "current",
+          "v": 1
+        },
+        "oxa-export": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-11T08:12:34Z",
+          "state": "current",
+          "v": 1
+        },
+        "reconcile": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "results-reader",
+            "caption-reader",
+            "structure-reader"
+          ]
+        },
+        "relation-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "results-reader": {
+          "state": "absent"
+        },
+        "review": {
+          "state": "absent"
+        },
+        "stance": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:11:33Z",
+          "state": "current",
+          "v": 1
+        },
+        "structure-reader": {
+          "state": "absent"
+        },
+        "verification": {
+          "by": "unrecorded",
+          "lost": [],
+          "moved": [],
+          "note": "backfilled from the artifact on disk",
+          "ran": "2026-09-10T17:20:18Z",
+          "state": "current",
+          "v": 1
+        }
+      }
+    }
+  },
   "relation_counts": {
     "confirms": 69,
     "derived-from": 48,
