@@ -8,7 +8,7 @@ claim: >
   responsibility for a negative outcome befalling the partner.
 claim-type: interpretive
 role: hypothesis
-addresses: q2
+addresses: q1
 concepts:
   - agency
   - responsibility

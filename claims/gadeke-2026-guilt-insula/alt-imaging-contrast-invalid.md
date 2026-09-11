@@ -8,7 +8,7 @@ claim: >
   experimental manipulation.
 claim-type: interpretive
 role: hypothesis
-addresses: q1
+addresses: q2
 concepts:
   - imaging validity
   - replication check

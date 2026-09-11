@@ -9,7 +9,7 @@ claim: >
   interpersonal guilt.
 claim-type: interpretive
 role: hypothesis
-addresses: q2
+addresses: q1
 concepts:
   - risk aversion
   - social context

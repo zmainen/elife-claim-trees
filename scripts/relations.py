@@ -115,25 +115,26 @@ EXAMPLE = {
               "prediction-distal-dendritic-spike-mechanism"),
     "refutes": ("meijer-2025-serotonin-additive-r1", "5ht-stim-leaves-decision-behavior-intact",
                 "prediction-5ht-shifts-psychometric"),
-    "rules-out": ("gadeke-2026-guilt-insula", "agency-reduces-happiness",
+    # Gädeke's claim-tree v2 renamed the claim that carries this eliminative edge; the alt- node
+    # is the one carried across from v1. `qualifies` left the corpus with the v1 tree — no claim
+    # of any paper uses it now — so it has no example, which the contract renders as such.
+    "rules-out": ("gadeke-2026-guilt-insula", "participant-happiness-lower-when-participant",
                   "alt-agency-aversion-not-guilt"),
     "dissociates-with": ("headley-2026-inhibitory-rhythms", "distal-inhib-drops-firing-02hz",
                          "perisomatic-inhib-drops-firing-07hz"),
-    "validates": ("gadeke-2026-guilt-insula", "guilt-effect-independent-of-own-outcome",
-                  "guilt-reduces-happiness-after-partner-loss"),
+    "validates": ("meijer-2025-serotonin-orthogonal", "wt-controls-rule-out-light-artifact",
+                  "5ht-stim-dilates-pupil"),
     "predicts": ("meijer-2025-serotonin-orthogonal", "hypothesis-state-switch-by-5ht",
                  "5ht-stim-dilates-pupil"),
-    "confirms": ("gadeke-2026-guilt-insula", "guilt-reduces-happiness-after-partner-loss",
-                 "hypothesis-insula-tracks-interpersonal-guilt"),
+    "confirms": ("meijer-2025-serotonin-orthogonal", "5ht-axis-orthogonal-to-choice-axis",
+                 "prediction-5ht-axis-orthogonal-to-choice"),
     "interprets": ("headley-2026-inhibitory-rhythms", "pv-gamma-sst-beta-correspondence",
                    "beta-optimal-distal-dendritic-entrainment"),
     "enables-method": ("kammer-2026-foveal-feedback", "preregistered-design-validates-mvpa",
                        "foveal-v1-decodes-peripheral-saccade-target"),
     "scopes": ("headley-2026-inhibitory-rhythms", "l5-model-single-cell-scope", "*"),
-    "extends": ("gadeke-2026-guilt-insula", "guilt-signature-no-individual-difference",
-                "insula-guilt-replicates-yu-koban-signature"),
-    "qualifies": ("gadeke-2026-guilt-insula", "risk-premiums-null-social-solo",
-                  "solo-vs-social-choice-difference"),
+    "extends": ("kammer-2026-foveal-feedback", "v2-v3-generalize-shape-not-category",
+                "decoding-shape-sensitive-not-semantic"),
 }
 
 # The pairs a reader most often confuses, each with what separates them. The contract renders

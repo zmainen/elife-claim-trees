@@ -86,7 +86,7 @@ ROLES = [
         "signals": ["rules out", "excludes", "is not due to", "no significant effect of",
                     "control condition", "manipulation check", "regardless of"],
         "carries": "`rules-out` to the alternative it eliminates; `validates` to the claim it defends",
-        "example": ("gadeke-2026-guilt-insula", "risk-premiums-null-social-solo"),
+        "example": ("gadeke-2026-guilt-insula", "risk-premiums-not-differ-between"),
     },
     {
         "role": "scope",
@@ -164,8 +164,8 @@ ROLE_CONFUSABLE = [
      "Both are measurements. Ask what the result is *for*: if it demonstrates the effect the "
      "paper is about, it is empirical; if it shows that something else does not explain that "
      "effect, or that the manipulation worked, it is a control.",
-     ("gadeke-2026-guilt-insula", "risk-premiums-null-social-solo"),
-     ("gadeke-2026-guilt-insula", "guilt-reduces-happiness-after-partner-loss")),
+     ("gadeke-2026-guilt-insula", "risk-premiums-not-differ-between"),
+     ("gadeke-2026-guilt-insula", "when-partner-received-low-lottery")),
     ("synthesis", "interpretation",
      "Synthesis stays inside the paper's own evidence and says what several results jointly "
      "establish. Interpretation reaches outside it, to a framework, a mechanism or a literature, "
