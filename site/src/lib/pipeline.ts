@@ -29,6 +29,11 @@ export interface LayerDecl {
   views?: string[];
   command?: string;
   issue?: number;
+  /** Lifecycle of the declaration itself (#31). A layer's declaration is a proposal: it says
+   *  a step should exist and what it does, and at some point that is accepted. Absent means
+   *  unstated — not accepted. Only `proposed` is rendered, so an undeclared status never
+   *  claims an approval nobody granted. */
+  status?: 'proposed' | 'accepted' | 'superseded';
   open?: boolean;
   requires_human?: boolean;
   added?: string;

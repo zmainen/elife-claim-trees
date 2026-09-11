@@ -29,7 +29,7 @@
       "formats": true,
       "marked": false,
       "review": true,
-      "review_n": 3,
+      "review_n": 8,
       "review_pending": 3,
       "tree": true,
       "verification": true,
@@ -59,7 +59,7 @@
       "formats": true,
       "marked": true,
       "review": true,
-      "review_n": 4,
+      "review_n": 8,
       "review_pending": 4,
       "tree": true,
       "verification": true,
@@ -74,7 +74,7 @@
       "formats": true,
       "marked": false,
       "review": true,
-      "review_n": 2,
+      "review_n": 8,
       "review_pending": 2,
       "tree": true,
       "verification": true,
@@ -89,7 +89,7 @@
       "formats": true,
       "marked": false,
       "review": true,
-      "review_n": 1,
+      "review_n": 5,
       "review_pending": 1,
       "tree": true,
       "verification": false,
@@ -104,7 +104,7 @@
       "formats": true,
       "marked": false,
       "review": true,
-      "review_n": 10,
+      "review_n": 12,
       "review_pending": 10,
       "tree": true,
       "verification": true,
@@ -119,7 +119,7 @@
       "formats": true,
       "marked": false,
       "review": true,
-      "review_n": 3,
+      "review_n": 5,
       "review_pending": 3,
       "tree": true,
       "verification": false,
@@ -134,7 +134,7 @@
       "formats": true,
       "marked": false,
       "review": true,
-      "review_n": 3,
+      "review_n": 7,
       "review_pending": 3,
       "tree": true,
       "verification": true,
@@ -149,7 +149,7 @@
       "formats": true,
       "marked": false,
       "review": true,
-      "review_n": 4,
+      "review_n": 13,
       "review_pending": 4,
       "tree": true,
       "verification": true,
@@ -377,6 +377,32 @@
         "question": "Does `epistemic` record support strength, or restate the role?",
         "scope": "corpus",
         "title": "Epistemic vocabulary",
+        "views": [
+          "table"
+        ]
+      },
+      {
+        "added": "2026-09-11",
+        "command": "python3 scripts/prediction_outcome.py --write",
+        "found": "`tests` is neutral by design, so a tree can record that a prediction was tested and never whether it was met. Of {{prediction_outcome_total}} predictions, {{prediction_outcome_unrecorded}} carry a `tests` edge and no outcome at all. Three wiring conventions are in use and they split by paper, not by case. And the vocabulary is asymmetric: `confirms` exists, nothing means \"the result came out against this\", so a failed prediction cannot be written down.\n",
+        "id": "prediction-outcome",
+        "issue": 28,
+        "kind": "question",
+        "needs": [
+          "claim-format",
+          "relation-vocab"
+        ],
+        "open": true,
+        "produces": [
+          "review/prediction-outcome.json"
+        ],
+        "question": "Did the paper's predictions come out, and does the tree say so?",
+        "reads": [
+          "scripts/prediction_outcome.py"
+        ],
+        "scope": "corpus",
+        "status": "proposed",
+        "title": "Prediction outcomes",
         "views": [
           "table"
         ]
@@ -8787,6 +8813,10 @@
           ],
           "v": 1
         },
+        "prediction-outcome": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -8911,6 +8941,10 @@
             "stance"
           ],
           "v": 1
+        },
+        "prediction-outcome": {
+          "scope": "corpus",
+          "state": "open"
         },
         "reconcile": {
           "state": "absent",
@@ -9042,6 +9076,10 @@
             "stance"
           ],
           "v": 1
+        },
+        "prediction-outcome": {
+          "scope": "corpus",
+          "state": "open"
         },
         "reconcile": {
           "state": "absent",
@@ -9184,6 +9222,10 @@
           "ran": "2026-09-11T08:12:34Z",
           "state": "current",
           "v": 1
+        },
+        "prediction-outcome": {
+          "scope": "corpus",
+          "state": "open"
         },
         "reconcile": {
           "by": "unrecorded",
@@ -9335,6 +9377,10 @@
           ],
           "v": 1
         },
+        "prediction-outcome": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9466,6 +9512,10 @@
           ],
           "v": 1
         },
+        "prediction-outcome": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9587,6 +9637,10 @@
           "ran": "2026-09-11T08:12:34Z",
           "state": "current",
           "v": 1
+        },
+        "prediction-outcome": {
+          "scope": "corpus",
+          "state": "open"
         },
         "reconcile": {
           "state": "absent",
@@ -9722,6 +9776,10 @@
           "state": "current",
           "v": 1
         },
+        "prediction-outcome": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9853,6 +9911,10 @@
           ],
           "v": 1
         },
+        "prediction-outcome": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9978,6 +10040,10 @@
           "state": "current",
           "v": 1
         },
+        "prediction-outcome": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -10019,6 +10085,56 @@
         }
       }
     }
+  },
+  "prediction_outcome": {
+    "abstained": 6,
+    "buckets": {
+      "abstain:conjunction": 1,
+      "abstain:convention": 5,
+      "recorded": 8,
+      "unrecorded": 27,
+      "untested": 5
+    },
+    "convention_kinds": 4,
+    "conventions": {
+      "bouyeure-2026-fear-rsa": {
+        "tests only": 5
+      },
+      "gadeke-2026-guilt-insula": {
+        "tests only": 4
+      },
+      "headley-2026-inhibitory-rhythms": {
+        "tests only": 6
+      },
+      "kammer-2026-foveal-feedback": {
+        "tests only": 4
+      },
+      "kolb-2026-igabasnfr2": {
+        "tests only": 2
+      },
+      "meijer-2025-serotonin-additive-r1": {
+        "confirms only": 3,
+        "neither": 3
+      },
+      "meijer-2025-serotonin-orthogonal": {
+        "confirms only": 2,
+        "neither": 2
+      },
+      "rozak-2026-neurovascular-dl": {
+        "tests only": 2
+      },
+      "scheller-2026-self-prioritization": {
+        "tests only": 4
+      },
+      "wengert-2026-kcnc1": {
+        "tests+confirms": 9
+      }
+    },
+    "recorded": 8,
+    "rule_version": 2,
+    "total": 46,
+    "unrecorded": 27,
+    "untested": 5
   },
   "relation_counts": {
     "confirms": 69,
