@@ -358,7 +358,8 @@ def questions_layer(paper: str, cfg: Config, *,
 
     system, user = questions_request(paper, cfg)
     if answer is not None:
-        raw, model = Path(answer).read_text(encoding="utf-8"), f"supplied:{answer}"
+        p, model = answer_file(answer, cfg)
+        raw = p.read_text(encoding="utf-8")
     else:
         model = cfg.model_reconcile
         raw = stream_text(cfg, model=model, system=system, user=user, label="questions")
