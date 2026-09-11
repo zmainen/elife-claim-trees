@@ -400,6 +400,93 @@ def cmd_state(args) -> int:
     return 0
 
 
+def cmd_run(args) -> int:
+    """Run a layer for one paper, and its unmet dependencies first.
+
+    The command comes from the declaration, so there is one definition of how a layer is
+    produced and the site's copy-and-run text cannot drift from what actually runs. A layer
+    already `current` is skipped: re-running it would produce the same bytes and a second
+    ledger entry claiming to be a new version.
+    """
+    decl = load()
+    by_id = decl["by_id"]
+    if args.layer not in by_id:
+        print(f"error: no layer {args.layer!r}", file=sys.stderr)
+        return 2
+    if args.paper not in papers():
+        print(f"error: no paper {args.paper!r}", file=sys.stderr)
+        return 2
+
+    st = state(decl, [args.paper])[args.paper]
+
+    # Dependency order, restricted to this layer's ancestors.
+    wanted, seen = [], set()
+
+    def walk(lid):
+        if lid in seen:
+            return
+        seen.add(lid)
+        for dep in by_id[lid].get("needs") or []:
+            walk(dep)
+        wanted.append(lid)
+
+    walk(args.layer)
+    if args.no_deps:
+        wanted = [args.layer]
+
+    doi = _doi_of(args.paper)
+    ran = 0
+    for lid in wanted:
+        layer = by_id[lid]
+        if layer.get("scope") == "corpus":
+            continue
+        cur = st.get(lid, {}).get("state")
+        if lid != args.layer and cur == CURRENT:
+            continue
+        if layer.get("requires_human"):
+            print(f"  {lid}: requires a person — not runnable from here")
+            if lid == args.layer:
+                return 3
+            continue
+        cmd = layer.get("command")
+        if not cmd:
+            print(f"  {lid}: no runner declared — skipping"
+                  f"{' (this is the layer you asked for)' if lid == args.layer else ''}")
+            if lid == args.layer:
+                return 3
+            continue
+
+        cmd = cmd.replace("{paper}", args.paper).replace("{doi}", doi or "")
+        print(f"  {lid}: {cmd}")
+        if args.dry_run:
+            continue
+        rc = subprocess.run(cmd, shell=True, cwd=ROOT).returncode
+        if rc != 0:
+            print(f"  {lid}: exited {rc}", file=sys.stderr)
+            return rc
+        rec = record(args.paper, layer, by_id,
+                     note=args.note or "ran via scripts/pipeline.py",
+                     by="scripts/pipeline.py run", doi=doi)
+        # The command is the record. Deriving `by` from its first token gave "cd" for every
+        # layer whose command starts by changing directory.
+        rec["cmd"] = cmd
+        append(args.paper, rec)
+        ran += 1
+
+    print(f"\n{ran} layer(s) run" + (" (dry run)" if args.dry_run else ""))
+    return 0
+
+
+def _doi_of(paper: str) -> str | None:
+    """The paper's DOI, from its claim-tree index."""
+    p = os.path.join(ROOT, "claims", paper, "index.md")
+    if not os.path.isfile(p):
+        return None
+    import re
+    m = re.search(r"^doi:\s*(\S+)", open(p, encoding="utf-8").read(), re.M)
+    return m.group(1).strip("'\"") if m else None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -412,6 +499,13 @@ def main() -> int:
     s.add_argument("--json", action="store_true")
     s.add_argument("--fail-on-stale", action="store_true", help="exit non-zero if any cell is stale")
     s.set_defaults(fn=cmd_state)
+    r = sub.add_parser("run", help="run a layer for one paper, and its unmet dependencies")
+    r.add_argument("paper")
+    r.add_argument("layer")
+    r.add_argument("--no-deps", action="store_true", help="run only the named layer")
+    r.add_argument("--dry-run", action="store_true", help="print the commands, run nothing")
+    r.add_argument("--note", help="the changelog line for the ledger entry")
+    r.set_defaults(fn=cmd_run)
     args = ap.parse_args()
     return args.fn(args)
 

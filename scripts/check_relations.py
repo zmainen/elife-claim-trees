@@ -15,7 +15,7 @@ relation types mean.
   2. Supporting and opposing the same target.
      Fourteen pairs do. `contradicts` alongside `supports` is incoherent under any reading;
      the rest are `dissociates-with` paired with a supporting relation, which is a signal
-     that the term is not being used oppositionally at all (issue #7).
+     that the term is not being used oppositionally at all (issue #19).
 
   3. Attributing a claim to someone without saying to whom.
      `stance: attributes` without a `source` is indistinguishable from an invented rival.
@@ -49,7 +49,7 @@ SUPPORTS = {"supports", "tests", "validates", "confirms", "extends", "replicates
 # is used 65 times -- more than the other two combined -- and 11 of those sit alongside a
 # *supporting* relation on the same pair, which is only coherent if the term means "these two
 # things come apart" rather than "the target is wrong". Whether it is an opposition at all is
-# open (issue #7), and a checker that assumed the answer would report 65 errors and force the
+# open (issue #19), and a checker that assumed the answer would report 65 errors and force the
 # question closed by attrition. So they are counted and shown for review, never failed.
 CONTRARY = {"contradicts", "rules-out"}
 DISTINGUISHES = {"dissociates-with"}
@@ -119,7 +119,7 @@ def main():
     ap.add_argument("paper", nargs="?")
     ap.add_argument("--warnings", action="store_true", help="also list dangling targets")
     ap.add_argument("--review", action="store_true",
-                    help="list the dissociates-with cases held open under issue #7")
+                    help="list the dissociates-with cases held open under issue #19")
     a = ap.parse_args()
 
     slugs = [a.paper] if a.paper else public_papers()
@@ -146,7 +146,7 @@ def main():
     print(f"\n{total_e} error(s) across {len(slugs)} paper(s)")
     print(f"{total_w} dangling target(s)"
           + ("" if a.warnings else " — --warnings to list"))
-    print(f"{total_r} dissociates-with case(s) awaiting issue #7"
+    print(f"{total_r} dissociates-with case(s) awaiting issue #19"
           + ("" if a.review else " — --review to list"))
     return 1 if total_e else 0
 

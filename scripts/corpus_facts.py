@@ -269,10 +269,14 @@ def pipeline_state():
         import pipeline
         decl = pipeline.load()
         return {
-            "layers": [{k: v for k, v in l.items() if k != "command"}
-                       for l in decl["layers"]],
+            # `command` travels too: an absent cell is navigable only if the site can
+            # show what would fill it.
+            "layers": decl["layers"],
             "groups": decl.get("groups") or {},
             "state": pipeline.state(decl),
+            # The ledger itself, not only the latest state. A version history is the list of
+            # runs, so the site can show one without a separate changelog to keep in step.
+            "ledger": {p: pipeline.read_ledger(p) for p in pipeline.papers()},
         }
     except Exception as e:                                            # noqa: BLE001
         print(f"  warning: pipeline state unavailable — {e}")
