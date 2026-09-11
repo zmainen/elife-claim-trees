@@ -29,7 +29,7 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: site/package-lock.json
-      # The generators are standard library only, by design — nothing to install for them.
+      - run: pip install -r requirements.txt
       - run: cd site && npm ci
       - run: make fresh
 
@@ -41,6 +41,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: pip install -r requirements.txt
       - run: make check
 
   mira:
@@ -51,7 +52,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install pyshacl
+      - run: pip install -r requirements.txt
       # Exits non-zero only for violations attributable to our encoding; the known upstream
       # generator bug is classified separately and does not fail the build.
       - run: make validate
@@ -69,4 +70,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: pip install -r requirements.txt
       - run: make report

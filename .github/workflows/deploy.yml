@@ -27,7 +27,9 @@ jobs:
           cache: npm
           cache-dependency-path: site/package-lock.json
       - name: Install dependencies
-        run: cd site && npm ci
+        run: |
+          pip install -r requirements.txt
+          cd site && npm ci
       # Regenerates every data file, then builds. Previously this ran build-data.js twice —
       # once with CORPUS=elife, then again inside `npm run build`, which has no CORPUS set
       # and so discarded the first run's filter. It happened to be harmless because `elife`

@@ -1,0 +1,11 @@
+# What the corpus scripts need beyond the standard library.
+#
+# The data generators were described as standard-library-only when this was first wired, and
+# CI failed on all three Python jobs because they are not: corpus_facts, export_mira,
+# pipeline and validate_mira all read YAML. It passed locally only because PyYAML happened to
+# be installed. Pinned loosely — nothing here depends on a specific version.
+PyYAML>=6.0
+
+# SHACL validation of the MIRA exports (scripts/validate_mira.py shells out to `pyshacl`).
+# Kept here rather than installed ad hoc in the workflow so there is one list to read.
+pyshacl>=0.25
