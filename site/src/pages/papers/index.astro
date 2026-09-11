@@ -1,55 +1,108 @@
 ---
+// The corpus, as a list of papers and how far each has got.
+//
+// The card used to carry one hand-typed line — `L4: We re-analysed their deposited data` —
+// from a literal in build-data.js. It was the only figure on the site nobody generated, it
+// said nothing about the twenty-two layers, and it was the same sentence whether a paper had
+// been through six of them or sixteen.
+//
+// What a reader wants from this page is which papers are furthest along and what is missing
+// from the rest. That is the pipeline's own state, which is computed, so the card shows it:
+// a strip of the layers with the ones that have run filled in, and counts beneath. The rung
+// stays as a qualifier, because "we ran their script" and "we wrote our own analysis" is a
+// real distinction the layer state does not carry — but it is a footnote now, not a banner.
 import Layout from '../../layouts/Layout.astro';
 import corpus from '../../data/claims.json';
+import { cells, fill_of, approvedCells, STATE_LABEL } from '../../lib/pipeline';
 
 const { papers } = corpus;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (path: string) => `${base}${path}/`;
 
+const RELATIONS = ['requires','supports','entails','derived-from','tests','refutes','rules-out',
+  'dissociates-with','validates','predicts','confirms','interprets','enables-method','scopes'];
+
+const approvedBySlug = new Set(approvedCells().map(c => `${c.paper}/${c.layer.id}`));
+
+const rows = papers.map((p: any) => {
+  const cs = cells(p.slug);
+  const relations = p.claims.reduce((n: number, c: any) =>
+    n + RELATIONS.reduce((m, r) => m + ((c[r] ?? []).filter((t: string) => t !== '*').length), 0), 0);
+  return {
+    p,
+    cs,
+    fill: fill_of(p.slug),
+    relations,
+    reran: p.claims.filter((c: any) => c.status?.startsWith('verified')).length,
+    approved: cs.filter(c => approvedBySlug.has(`${p.slug}/${c.layer.id}`)).length,
+  };
+}).sort((a, b) => b.fill.done - a.fill.done);
+
 const stageLabel: Record<string, string> = {
-  published: '',
-  preprint: 'preprint',
-  revision: 'under review',
-  draft: 'draft',
+  published: '', preprint: 'preprint', revision: 'under review', draft: 'draft',
 };
 ---
 
 <Layout title="Papers">
   <div class="site-frame py-12">
-    <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-8">Papers</h1>
+    <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Papers</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-8 max-w-2xl">
+      Ten eLife neuroscience papers, ordered by how much of the pipeline each has been
+      through. Each strip is the {rows[0]?.fill.total ?? 0} layers a paper can go through, in
+      dependency order; a filled cell has run. No paper has been approved by a person.
+    </p>
+
     <div class="space-y-3">
-      {papers.map(p => {
-        const stage = stageLabel[(p as any).stage] || '';
+      {rows.map(({ p, cs, fill, relations, reran, approved }) => {
+        const stage = stageLabel[p.stage] || '';
         return (
-          <a href={url(`/papers/${p.slug}`)} class="flex items-start gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-gray-400 hover:shadow-sm transition-all no-underline group">
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-3 mb-1">
-                <h2 class="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-700 leading-snug">{p.title}</h2>
-                
+          <a href={url(`/papers/${p.slug}`)}
+             class="block p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm transition-all no-underline group">
+
+            <h2 class="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-amber-700 dark:group-hover:text-amber-400 leading-snug m-0 mb-1">
+              {p.title}
+            </h2>
+            <div class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+              {p.authors.join(', ')} · {p.journal}
+              {stage && <span class="italic"> · {stage}</span>}
+            </div>
+
+            {/* The layer strip: the same vocabulary as the matrix on /pipeline, one row of it. */}
+            <div class="flex items-center gap-3 mb-2">
+              <div class="flex gap-[2px]" title={cs.map(c => `${c.layer.id}: ${STATE_LABEL[c.state]}`).join('\n')}>
+                {cs.map(c => (
+                  <i class="inline-block w-[9px] h-[14px] rounded-[1.5px]"
+                     style={`background: var(--st-${c.state === 'n/a' ? 'na' : c.state})`}></i>
+                ))}
               </div>
-              <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                {p.authors.join(', ')} · {p.journal}
-                {stage && <span class="italic"> · {stage}</span>}
-                {p.doi && <span> · DOI: {p.doi}</span>}
-              </div>
-              <div class="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-x-3">
-                <span>{p.claimCount} claims</span>
-                {(p as any).verificationLevel && (p as any).verificationLevel !== 'unknown' && (
-                  <span class={`font-medium ${
-                    /* A ramp, not a grade. L1–L4 is how far we got re-running a paper, and
-                       green on the higher rungs made it a score. */
-                    (p as any).verificationLevel === 'unverified' ? 'text-gray-400' :
-                    (p as any).verificationLevel === 'L1' ? 'text-slate-400' :
-                    (p as any).verificationLevel === 'L2' ? 'text-slate-500' :
-                    (p as any).verificationLevel === 'L3' ? 'text-slate-600 dark:text-slate-400' :
-                    (p as any).verificationLevel === 'L4' ? 'text-slate-700 dark:text-slate-300' : 'text-gray-400'
-                  }`}>{(p as any).verificationLevel}: {(p as any).verificationLabel}</span>
-                )}
-              </div>
+              <span class="font-mono text-[11px] text-gray-500 dark:text-gray-400 tabular-nums">
+                {fill.done}/{fill.total} layers
+              </span>
+            </div>
+
+            <div class="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-x-3 gap-y-1">
+              <span class="tabular-nums">{p.claimCount} claims</span>
+              <span class="tabular-nums">{relations} relations</span>
+              <span class="tabular-nums">{reran} re-run</span>
+              <span class="tabular-nums">{approved} approved</span>
+              {p.verificationLevel && p.verificationLevel !== 'unknown' && (
+                <span class="text-gray-400 dark:text-gray-500">
+                  {p.verificationLevel === 'unverified' ? 'not attempted' : `${p.verificationLevel} — ${String(p.verificationLabel).toLowerCase()}`}
+                </span>
+              )}
             </div>
           </a>
         );
       })}
+    </div>
+
+    <div class="flex flex-wrap gap-x-4 gap-y-2 mt-6 text-[11px] text-gray-500 dark:text-gray-400">
+      {[['current','has run'],['stale','out of date'],['unrecorded','ran before the ledger'],['absent','not run']].map(([s, label]) => (
+        <span class="flex items-center gap-1.5">
+          <i class="inline-block w-[9px] h-[14px] rounded-[1.5px]" style={`background: var(--st-${s})`}></i>{label}
+        </span>
+      ))}
+      <a href={url('/pipeline')} class="ml-auto text-amber-700 dark:text-amber-400 no-underline hover:underline">the whole matrix →</a>
     </div>
   </div>
 </Layout>

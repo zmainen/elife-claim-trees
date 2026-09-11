@@ -7,8 +7,11 @@
 // to the drawer — rather than moving every claim URL to make room.
 import Layout from '../../../layouts/Layout.astro';
 import LayerState from '../../../components/LayerState.astro';
+import AbstractAlignment from '../../../components/AbstractAlignment.astro';
+import ArgumentFromGraph from '../../../components/ArgumentFromGraph.astro';
 import { getCollection, render } from 'astro:content';
 import { paperLayers, byId, cell, STATE_LABEL } from '../../../lib/pipeline';
+import { artifacts, isDirectory } from '../../../lib/artifacts';
 import corpus from '../../../data/claims.json';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -39,6 +42,17 @@ export async function getStaticPaths() {
   return paths;
 }
 
+// A layer's own rendering of what it produced, on the cell that produced it. These were
+// tabs on the paper page, which privileged two layers over the other twenty for no reason
+// beyond arriving first — see docs/design/2026-09-11-the-paper-page.html.
+const abstractMappings = import.meta.glob('../../../data/abstract-mapping/*.json', { eager: true }) as Record<string, { default: any }>;
+const synthesisV3 = import.meta.glob('../../../data/synthesis-v3/*.json', { eager: true }) as Record<string, { default: any }>;
+const synthesisWrapped = import.meta.glob('../../../data/synthesis/*.json', { eager: true }) as Record<string, { default: any }>;
+const pick = (m: Record<string, { default: any }>, slug: string) => {
+  const k = Object.keys(m).find(x => x.endsWith(`/${slug}.json`));
+  return k ? m[k].default : null;
+};
+
 const { kind, layerId, claimSlug, paper, report } = Astro.props as any;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (p: string) => `${base}${p}/`;
@@ -49,6 +63,16 @@ if (kind === 'claim') {
 
 const layer = byId[layerId];
 const c = cell(paper.slug, layerId)!;
+
+const abstractMapping = layerId === 'abstract-map' ? pick(abstractMappings, paper.slug) : null;
+// Three papers have a richer block — a comparison against the abstract — under a wrapper
+// written before the flat v3 files. Prefer it where it exists rather than showing the
+// thinner of two accounts of the same run.
+const synthesisBlock = layerId === 'synthesis'
+  ? (pick(synthesisWrapped, paper.slug)?.synthesisV3 ?? pick(synthesisV3, paper.slug))
+  : null;
+const claimsBySlug: Record<string, any> = {};
+if (abstractMapping || synthesisBlock) for (const cl of paper.claims) claimsBySlug[cl.slug] = cl;
 const rendered = report ? await render(report) : null;
 const showReport = layerId === 'formats-report' && rendered && c.state !== 'absent';
 const Content = rendered?.Content;
@@ -171,6 +195,20 @@ const TONE: Record<string, string> = {
       </section>
     )}
 
+    {abstractMapping && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">What this layer produced</h2>
+        <AbstractAlignment mapping={abstractMapping} paperSlug={paper.slug} baseUrl={base} claimsBySlug={claimsBySlug} />
+      </section>
+    )}
+
+    {synthesisBlock && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">What this layer produced</h2>
+        <ArgumentFromGraph synthesis={synthesisBlock} version={synthesisBlock.version ?? 'v3'} claimsBySlug={claimsBySlug} />
+      </section>
+    )}
+
     {run && (
       <section class="mb-10">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">
@@ -202,12 +240,18 @@ const TONE: Record<string, string> = {
       <section class="mb-10">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Artifacts</h2>
         <ul class="list-none p-0 m-0 space-y-1.5">
-          {c.produces.map((p: string) => (
+          {artifacts(c.produces.filter((x: string) => !isDirectory(x)), base).map(a => (
             <li class="text-sm">
-              {p.startsWith('exports/')
-                ? <a href={`${base}/${p}`} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{p}</a>
-                : <span class="font-mono text-xs text-gray-600 dark:text-gray-400">{p}</span>}
+              <a href={a.href}
+                 download={a.downloadable ? '' : undefined}
+                 target={a.downloadable ? undefined : '_blank'}
+                 rel={a.downloadable ? undefined : 'noopener'}
+                 class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{a.path}</a>
+              {!a.downloadable && <span class="text-xs text-gray-400 dark:text-gray-500"> · in the repository</span>}
             </li>
+          ))}
+          {c.produces.filter(isDirectory).map((d: string) => (
+            <li class="text-sm font-mono text-xs text-gray-600 dark:text-gray-400">{d}</li>
           ))}
         </ul>
       </section>

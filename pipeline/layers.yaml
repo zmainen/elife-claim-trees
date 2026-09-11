@@ -286,6 +286,23 @@ layers:
 
   # ── measures ───────────────────────────────────────────────────────────────
 
+  # The paper's argument, restated from the graph alone and then held against its abstract.
+  #
+  # Declared late, and the lateness is the point. The artifact has existed for twelve papers
+  # since the v3 run and no layer accounted for it, so it had a tab on the paper page and no
+  # version, no ledger entry, and no way to go stale when the tree beneath it changed. An
+  # output nothing declares is exactly the gap this pipeline exists to close, and it was open
+  # here. It reports `unrecorded` until a run is logged: the files predate the ledger.
+  - id: synthesis
+    kind: step
+    scope: paper
+    title: Argument from graph
+    question: Restated from the claim graph alone, what does this paper argue — and where does that part from its abstract?
+    added: "2026-09-11"
+    needs: [claim-tree, abstract-map]
+    produces: ["site/src/data/synthesis-v3/{paper}.json"]
+    views: [document, comparison]
+
   - id: verification
     kind: step
     scope: paper

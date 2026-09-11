@@ -2,8 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import ClaimCardMini from '../../components/ClaimCardMini.astro';
 import ClaimStructure from '../../components/ClaimStructure.astro';
-import AbstractAlignment from '../../components/AbstractAlignment.astro';
-import ArgumentFromGraph from '../../components/ArgumentFromGraph.astro';
 import PaperTabs from '../../components/PaperTabs.astro';
 import ClaimDrawer from '../../components/ClaimDrawer.tsx';
 import ReviewTab from '../../components/ReviewTab.tsx';
@@ -16,8 +14,6 @@ import { paperExplorer } from '../../lib/explorer';
 import paperSummaries from '../../data/paper-summaries.json';
 
 // Eager-glob all abstract mappings; resolve current paper at runtime.
-const abstractMappings = import.meta.glob('../../data/abstract-mapping/*.json', { eager: true }) as Record<string, { default: any }>;
-const synthesisFiles = import.meta.glob('../../data/synthesis/*.json', { eager: true }) as Record<string, { default: any }>;
 
 export function getStaticPaths() {
   return corpus.papers.map(p => ({ params: { paper: p.slug } }));
@@ -93,29 +89,26 @@ const conclusionsHeading = defaultRoots.length === 1 ? 'Conclusion' : 'Conclusio
 const alphaClaims = [...paperData.claims].sort((a, b) => a.slug.localeCompare(b.slug));
 
 // Resolve abstract-to-claims mapping for this paper, if one exists.
-const mappingKey = Object.keys(abstractMappings).find(k => k.endsWith(`/${paperSlug}.json`));
-const abstractMapping = mappingKey ? abstractMappings[mappingKey].default : null;
-
-// Resolve synthesis for this paper. Prefer v3 if present; fall back to v2.
-const synthesisKey = Object.keys(synthesisFiles).find(k => k.endsWith(`/${paperSlug}.json`));
-const synthesisData = synthesisKey ? synthesisFiles[synthesisKey].default : null;
-const synthesisBlock = synthesisData?.synthesisV3 ?? synthesisData?.synthesisV2 ?? null;
-const synthesisVersion = synthesisData?.synthesisV3 ? 'v3' : (synthesisData?.synthesisV2 ? 'v2' : null);
 
 // Tabs configuration. Show only tabs with content.
 // Note: the `structure` id is preserved (not renamed to `claims`) to avoid
 // breaking existing ?view=structure bookmarks. The label is "Claims".
 // Four views of this paper, in the order it is asked about: what does it claim, how do the
 // claims hold each other up, what can I take away, how was it made. See
-// docs/design/2026-09-11-the-paper-page.html. The three that follow are views of *layers*
-// rather than of the paper and are due to move to them — steps 4-6 of that note.
+// docs/design/2026-09-11-the-paper-page.html.
+//
+// `abstract-map` and `synthesis` used to be tabs here. Both are layers, and a tab gave one
+// layer a place at the top of the page that the other twenty had to earn inside the pipeline
+// view — a privilege with nothing behind it but having arrived first. They now render on
+// their own cells, where they have a version, a ledger entry and an approval they lack.
+//
+// Review is not a layer and not this paper: it is a live call to a persona service. It stays
+// until it has somewhere of its own to be.
 const tabs = [
   { id: 'structure', label: 'Claims' },
   { id: 'graph', label: 'Graph' },
   { id: 'artifacts', label: 'Artifacts' },
   { id: 'pipeline', label: 'Pipeline' },
-  ...(abstractMapping ? [{ id: 'abstract', label: 'Abstract \u2194 claims' }] : []),
-  ...(synthesisBlock ? [{ id: 'argument', label: 'Argument from graph' }] : []),
   { id: 'review', label: 'Review' },
 ];
 ---
@@ -145,18 +138,6 @@ const tabs = [
         )}
       </div>
 
-      <!-- Verification level -->
-      {(paperData as any).verificationLevel && (
-        <div class={`mt-4 px-3 py-2 rounded-md border text-xs verif-badge verif-${
-          ['L1','L2','L3','L4'].includes((paperData as any).verificationLevel)
-            ? (paperData as any).verificationLevel : 'none'}`}>
-          <span class="font-semibold">{(paperData as any).verificationLevel}</span>
-          <span class="mx-1">·</span>
-          <span class="font-medium">{(paperData as any).verificationLabel}</span>
-          <span class="mx-1">—</span>
-          <span class="verif-detail">{(paperData as any).verificationDetail}</span>
-        </div>
-      )}
     </div>
 
     <!-- Paper summary: three labeled paragraphs (hypotheses/subject, claims, inferences).
@@ -180,12 +161,24 @@ const tabs = [
       <p class="paper-summary paper-summary-fallback">{paperSummaryFallback}</p>
     )}
 
-    <!-- Claim count, and how many of them we re-ran -->
-    <div class="mb-6 flex items-center gap-3">
-      <span class="text-sm text-gray-500 dark:text-gray-400">{paperData.claimCount} claims</span>
-      {reran > 0 && (
-        <span class="text-sm text-slate-600 dark:text-slate-400">
-          {reran} re-run from deposited code
+    <!-- Where this paper has got to.
+         This was a green banner reading `L4 · We re-analysed their deposited data`, typed per
+         paper into a literal in build-data.js — the one figure on the site nobody generated,
+         in the one colour the site had just agreed means "correct" when what it reports is
+         our own effort. The counts below are computed; the rung stays because "we ran their
+         script" and "we wrote our own analysis" is a real distinction the layer state does
+         not carry, but it is a qualifier now rather than the loudest thing on a page about
+         somebody else's work. -->
+    <div class="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
+      <span class="tabular-nums">{paperData.claimCount} claims</span>
+      <span class="tabular-nums">{fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} layers</span>
+      {reran > 0 && <span class="tabular-nums">{reran} re-run from deposited code</span>}
+      <span class="tabular-nums">0 approved by a person</span>
+      {(paperData as any).verificationLevel && (paperData as any).verificationLevel !== 'unknown' && (
+        <span class="text-gray-400 dark:text-gray-500" title={(paperData as any).verificationDetail}>
+          {(paperData as any).verificationLevel === 'unverified'
+            ? 're-run not attempted'
+            : `${(paperData as any).verificationLevel} — ${String((paperData as any).verificationLabel).toLowerCase()}`}
         </span>
       )}
     </div>
@@ -274,25 +267,6 @@ const tabs = [
       </div>
       <PipelineExplorer client:load data={paperExplorer(paperData.slug, base)} base={base} height={520} />
     </div>
-
-    <!-- Tab: Abstract -->
-    {abstractMapping && (
-      <div class="paper-tab-panel" data-tab-id="abstract" data-tab-active="false">
-        <AbstractAlignment
-          mapping={abstractMapping}
-          paperSlug={paperSlug}
-          baseUrl={base}
-          claimsBySlug={claimsBySlug}
-        />
-      </div>
-    )}
-
-    <!-- Tab: Argument from graph -->
-    {synthesisBlock && (
-      <div class="paper-tab-panel" data-tab-id="argument" data-tab-active="false">
-        <ArgumentFromGraph synthesis={synthesisBlock} version={synthesisVersion} claimsBySlug={claimsBySlug} />
-      </div>
-    )}
 
     <!-- Tab: Review -->
     <div class="paper-tab-panel" data-tab-id="review" data-tab-active="false">
