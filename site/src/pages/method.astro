@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import MethodTabs from '../components/MethodTabs.astro';
 import { readDoc, renderMd } from '../lib/markdown';
+import { columns, groups as layerGroups, byId } from '../lib/pipeline';
 
 // Reading the document and filling its {{token}}s is shared with /docs, which renders
 // docs/cli/*.md the same way. It lived here, so the convention and its build-failing guard
@@ -86,7 +87,22 @@ const renderedSections = await Promise.all(
   sections.map(async s => ({ ...s, html: await renderMd(s.body) }))
 );
 
-const tabs = renderedSections.map(s => ({ id: s.id, label: s.label }));
+// The prose above is a narrative of induction and is worth writing by hand: the access
+// strategies, why the three readers are partitioned as they are, the failure modes each one
+// catches. None of that is in the declaration.
+//
+// The *inventory* of layers is a different thing, and writing it by hand is what went wrong:
+// the document described a ten-step process while the pipeline declared twenty-five layers,
+// and fourteen of them — `stance`, `mira-export`, `prediction-outcome` among them — were
+// named nowhere in it. A second description of one machine drifts from the first the moment
+// somebody declares a layer and does not think to come here.
+//
+// So this section is generated from pipeline/layers.yaml, in dependency order. A layer
+// declared tomorrow appears in the methodology tomorrow, and a layer that never existed
+// cannot appear at all.
+const layerCols = columns();
+const tabs = [...renderedSections.map(s => ({ id: s.id, label: s.label })),
+              { id: 'layers', label: 'Layers' }];
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
@@ -112,6 +128,44 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           <div set:html={s.html} />
         </article>
       ))}
+
+      <article class="method-tab-panel method-prose" data-tab-id="layers" data-tab-active="false">
+        <h2 class="section-title">The layers, as declared</h2>
+        <p>
+          Every question this pipeline asks of a paper, in dependency order — read from
+          <a href="https://github.com/zmainen/elife-claim-trees/blob/main/pipeline/layers.yaml"
+             target="_blank" rel="noopener"><code>layers.yaml</code></a> rather than restated
+          here, so the two cannot disagree. The narrative above explains how induction works;
+          this is the whole set as it stands, including the layers that came after the
+          narrative was written.
+        </p>
+        {layerCols.map((col, depth) => (
+          <section class="not-prose mb-7">
+            <h3 class="text-[11px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3 mt-0">
+              Depth {depth}
+            </h3>
+            <div class="space-y-3">
+              {col.map(l => (
+                <div class="border-l-2 border-gray-200 dark:border-gray-700 pl-3">
+                  <a href={`${base}/pipeline/${l.id}/`}
+                     class="font-mono text-[13px] text-amber-700 dark:text-amber-400 no-underline hover:underline">{l.id}</a>
+                  <span class="text-xs text-gray-400 dark:text-gray-500 ml-2">
+                    {l.kind}{l.scope === 'corpus' ? ' · every paper' : ''}
+                    {l.group && layerGroups[l.group] ? ` · ${layerGroups[l.group].title.toLowerCase()}` : ''}
+                  </span>
+                  <span class="block text-sm text-gray-700 dark:text-gray-300 leading-snug"
+                        set:html={l.question.replace(/`([^`]+)`/g, '<code>$1</code>')}></span>
+                  {l.needs && l.needs.length > 0 && (
+                    <span class="block text-xs text-gray-500 dark:text-gray-400 font-mono mt-0.5">
+                      rests on {l.needs.filter(n => byId[n]).join(', ')}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </article>
     </div>
 
     <footer class="mt-12 pt-6 border-t border-gray-100 dark:border-gray-800 text-sm">
