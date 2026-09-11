@@ -190,13 +190,13 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
     supplied = args.answer or args.edges_json
     if supplied:
         from .edges import edges_from_raw
-        from .layers import _write_json
+        from .layers import _write_json, answer_file
         draft, _ = best_draft(args.paper, cfg)
-        edges = edges_from_raw(Path(supplied).read_text(encoding="utf-8"),
-                               _unique_slugs(draft.claims),
-                               source=f"supplied:{supplied}")
+        p, label = answer_file(supplied, cfg)
+        edges = edges_from_raw(p.read_text(encoding="utf-8"), _unique_slugs(draft.claims),
+                               source=label)
         path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), {
-            "paper_slug": args.paper, "model": f"supplied:{supplied}", "edges": edges,
+            "paper_slug": args.paper, "model": label, "edges": edges,
         })
     else:
         path, edges = edge_inference_layer(args.paper, cfg)
