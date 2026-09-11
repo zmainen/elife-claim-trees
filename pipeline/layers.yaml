@@ -180,6 +180,7 @@ layers:
     kind: step
     scope: paper
     title: Prepared paper
+    implements: 1
     question: What text did the readers actually read?
     doc: /docs/layers/#prepare--the-paper-the-readers-read
     how: >
@@ -202,6 +203,7 @@ layers:
     kind: candidate
     scope: paper
     title: Results reader
+    implements: 3
     question: What does the Results section assert?
     doc: /docs/layers/#the-three-readers
     how: >
@@ -226,6 +228,7 @@ layers:
     kind: candidate
     scope: paper
     title: Caption reader
+    implements: 3
     question: What do the figure captions assert?
     doc: /docs/layers/#the-three-readers
     how: >
@@ -248,6 +251,7 @@ layers:
     kind: candidate
     scope: paper
     title: Structure reader
+    implements: 3
     question: What is the paper's argument structure?
     doc: /docs/layers/#the-three-readers
     how: >
@@ -268,6 +272,7 @@ layers:
     kind: step
     scope: paper
     title: Reconciliation
+    implements: 4
     question: Which candidates survive, and which readers agreed?
     doc: /docs/layers/#reconcile--which-candidates-survive
     how: >
@@ -297,6 +302,7 @@ layers:
     kind: step
     scope: paper
     title: External review
+    implements: 5
     question: What structure did the three readers systematically miss?
     doc: /docs/layers/#external-review--what-the-readers-systematically-miss
     how: >
@@ -321,6 +327,7 @@ layers:
     kind: step
     scope: paper
     title: Edge inference
+    implements: 6
     question: Which claims depend on which?
     doc: /docs/layers/#edge-inference--which-claims-depend-on-which
     how: >
@@ -347,6 +354,7 @@ layers:
     kind: step
     scope: paper
     title: Claim tree
+    implements: 7
     question: What does this paper assert, and how do its assertions depend on each other?
     doc: /docs/layers/#write--the-claim-tree
     how: >
@@ -473,6 +481,7 @@ layers:
     kind: step
     scope: paper
     title: Verification
+    implements: 8
     question: Did anyone check, and what did they find?
     how: >
       Runs the paper's own deposited script under observation and records what it actually did —
@@ -499,6 +508,7 @@ layers:
     kind: step
     scope: paper
     title: Coverage
+    implements: 9
     question: What does the paper assert that no claim represents?
     doc: /docs/layers/#coverage-and-mark
     how: >
@@ -521,6 +531,7 @@ layers:
     kind: judgement
     scope: paper
     title: Coverage adjudication
+    implements: 9
     question: Of the spans the matcher could not resolve, which are real gaps?
     doc: /docs/layers/#coverage-and-mark
     how: >
@@ -541,6 +552,7 @@ layers:
     kind: step
     scope: paper
     title: Marked paper
+    implements: 9
     question: Where, in the document itself, is each claim and each gap?
     doc: /docs/layers/#coverage-and-mark
     how: >
@@ -584,6 +596,7 @@ layers:
     kind: step
     scope: paper
     title: MIRA export
+    implements: 10
     question: What does the schema eLife reads carry, and what does it drop?
     how: >
       Writes two files and a gap report. `<paper>.mira.jsonld` is strict MIRA core, safe to hand to
@@ -611,6 +624,7 @@ layers:
     kind: step
     scope: paper
     title: OXA export
+    implements: 10
     question: What does the open document architecture carry?
     how: >
       Reads the claim files and writes the paper as one OXA Article JSON with a Claim node per
@@ -630,6 +644,7 @@ layers:
     kind: step
     scope: paper
     title: Discourse Graphs export
+    implements: 10
     question: What does the Q/C/E/S ontology carry?
     how: >
       Maps the OXA nodes onto the Discourse Graphs Q/C/E/S ontology: hypothesis, prediction,
@@ -650,6 +665,7 @@ layers:
     kind: step
     scope: paper
     title: Formats comparison
+    implements: 10
     question: Measured from the exports, what did each conversion cost?
     how: >
       Measures each conversion from the generated files rather than from the mapping tables. A

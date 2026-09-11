@@ -30,7 +30,7 @@ The method has two distinct phases. **Claim induction** is the process of readin
 
 The two phases are separable. A claim graph is valuable before any verification runs — it makes the paper's argument structure explicit and navigable. Verification adds an empirical layer: did the computation actually produce the reported result? But induction comes first, and induction is where provenance should be captured — figure URIs, panel assignments, dataset links — because the agent performing induction has the paper's structured source (JATS XML, PDF) in front of it. Deferring provenance capture to a later build step (e.g. guessing figure filenames from panel labels) is fragile and loses information that was available at induction time.
 
-The corpus is a 12-paper prototype assembled to test whether the schema is expressive enough to capture the argumentative structure of recent neuroscience papers, whether the verification step can re-enact published analyses against deposited data and code, and whether downstream pipelines (paper summaries, synthesis from the claim graph alone, comparison against the published abstract) yield findings that would not be visible from the prose alone. It is reverse-engineered from finished papers; forward construction by authors at submission would look different.
+The corpus is a {{papers}}-paper prototype assembled to test whether the schema is expressive enough to capture the argumentative structure of recent neuroscience papers, whether the verification step can re-enact published analyses against deposited data and code, and whether downstream pipelines (paper summaries, synthesis from the claim graph alone, comparison against the published abstract) yield findings that would not be visible from the prose alone. It is reverse-engineered from finished papers; forward construction by authors at submission would look different.
 
 What this document is not: a specification of how the schema should evolve at scale, a proposal for editorial workflow, or a comparison with related schemes (Wikidata, Semantic Web claim representations, micropublications). Those discussions belong elsewhere.
 
@@ -332,20 +332,20 @@ Edges are propositions about logical structure between claim entities, not citat
 
 | Edge | Reasoning form | Meaning | Count in corpus |
 |:-----|:---------------|:--------|---:|
-| `requires` | dependency | A would be invalid if B were false (mechanistic / hierarchical dependency). | 148 |
-| `supports` | abduction (induction) | A provides evidence for B; multiple supports drive the abductive loop. | 126 |
-| `entails` | deduction | A (typically a hypothesis) deductively implies B (typically a prediction). | 65 |
-| `derived-from` | deduction | A is the deductive consequence of B; reciprocal of `entails`. | 61 |
-| `tests` | deduction → empirical loop | Empirical claim A tests prediction B (closes the hypothesis-prediction-test loop). | 73 |
-| `refutes` | abduction (negative) | A's evidence is incompatible with B (B is the prediction, hypothesis, or alternative being refuted). | 8 |
-| `rules-out` | elimination | A's evidence eliminates an alternative explanation B. | 15 |
-| `dissociates-with` | dissociation | A and B jointly establish a dissociation (symmetric edge between two empirical claims that together form a contrast). | 65 |
-| `validates` | disconfirmation control | A is a control or sign-flip whose specific result strengthens the warrant for B. | 54 |
-| `predicts` | predictive validation | A predicts B (typically model-to-experiment). | 3 |
-| `confirms` | predictive validation | Reciprocal of `predicts`; populated at build. | 74 |
-| `interprets` | reframing | A reframes empirical B through theoretical lens (this is an act of mapping, not a derivation). | 42 |
-| `enables-method` | methodological warrant | A is the methodological capability that warrants B's interpretability. | 79 |
-| `scopes` | scope qualification | A is a boundary condition on B (or, if `["*"]`, on every empirical claim in the paper). | 197 |
+| `requires` | dependency | A would be invalid if B were false (mechanistic / hierarchical dependency). | {{relation_counts.requires}} |
+| `supports` | abduction (induction) | A provides evidence for B; multiple supports drive the abductive loop. | {{relation_counts.supports}} |
+| `entails` | deduction | A (typically a hypothesis) deductively implies B (typically a prediction). | {{relation_counts.entails}} |
+| `derived-from` | deduction | A is the deductive consequence of B; reciprocal of `entails`. | {{relation_counts.derived-from}} |
+| `tests` | deduction → empirical loop | Empirical claim A tests prediction B (closes the hypothesis-prediction-test loop). | {{relation_counts.tests}} |
+| `refutes` | abduction (negative) | A's evidence is incompatible with B (B is the prediction, hypothesis, or alternative being refuted). | {{relation_counts.refutes}} |
+| `rules-out` | elimination | A's evidence eliminates an alternative explanation B. | {{relation_counts.rules-out}} |
+| `dissociates-with` | dissociation | A and B jointly establish a dissociation (symmetric edge between two empirical claims that together form a contrast). | {{relation_counts.dissociates-with}} |
+| `validates` | disconfirmation control | A is a control or sign-flip whose specific result strengthens the warrant for B. | {{relation_counts.validates}} |
+| `predicts` | predictive validation | A predicts B (typically model-to-experiment). | {{relation_counts.predicts}} |
+| `confirms` | predictive validation | Reciprocal of `predicts`; populated at build. | {{relation_counts.confirms}} |
+| `interprets` | reframing | A reframes empirical B through theoretical lens (this is an act of mapping, not a derivation). | {{relation_counts.interprets}} |
+| `enables-method` | methodological warrant | A is the methodological capability that warrants B's interpretability. | {{relation_counts.enables-method}} |
+| `scopes` | scope qualification | A is a boundary condition on B (or, if `["*"]`, on every empirical claim in the paper). | {{relation_counts.scopes}} |
 
 ### 4.4 Edge-to-reasoning-form mapping
 

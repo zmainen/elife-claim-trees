@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import MethodTabs from '../components/MethodTabs.astro';
 import { readDoc, renderMd } from '../lib/markdown';
-import { columns, groups as layerGroups, byId } from '../lib/pipeline';
+import { columns, groups as layerGroups, byId, layers as allLayers } from '../lib/pipeline';
 
 // Reading the document and filling its {{token}}s is shared with /docs, which renders
 // docs/cli/*.md the same way. It lived here, so the convention and its build-failing guard
@@ -82,9 +82,44 @@ function makeSection(title: string, body: string): Section {
   return { id, label: title, title, body };
 }
 
-const sections = splitSections(methodMd);
+// The document's own table of contents. On the page the tabs are the table of contents, so
+// this was a tab whose content was a list of the other tabs.
+const sections = splitSections(methodMd).filter(s => s.id !== 'contents');
+
+// Each narrative step names the layers that run it, and the naming is generated.
+//
+// The steps describe the work — how a paper is read, why the readers are partitioned, what
+// each catches — and the layers are what actually runs. Eight of the ten steps named no
+// layer at all, so the two accounts sat side by side with nothing joining them: a reader of
+// "Step 3: Three independent extractions" had no way to know that is `results-reader`,
+// `caption-reader` and `structure-reader`, or to go and see what they produced.
+//
+// The mapping is declared on the layer (`implements:` in layers.yaml), not listed here, so a
+// step cannot cite a layer that does not exist and a new layer forces the question of where
+// in the method it belongs.
+const byStep = new Map<number, typeof allLayers>();
+for (const l of allLayers) {
+  if (l.implements === undefined) continue;
+  byStep.set(l.implements, [...(byStep.get(l.implements) ?? []), l]);
+}
+const base0 = import.meta.env.BASE_URL.replace(/\/$/, '');
+const stepRun = (n: number) => {
+  const ls = byStep.get(n);
+  if (!ls?.length) return '';
+  const links = ls.map(l =>
+    `<a href="${base0}/pipeline/${l.id}/"><code>${l.id}</code></a>`).join(' · ');
+  return `<p class="step-runs">Runs as ${links}</p>`;
+};
+
 const renderedSections = await Promise.all(
-  sections.map(async s => ({ ...s, html: await renderMd(s.body) }))
+  sections.map(async s => {
+    let html = await renderMd(s.body);
+    // Inject after the step's own heading. remark gives each `### Step N: …` an id, so the
+    // anchor is stable and the match does not depend on the heading's wording.
+    html = html.replace(/(<h3[^>]*>\s*Step\s+(\d+)[:.][\s\S]*?<\/h3>)/g,
+                        (m, heading, n) => heading + stepRun(Number(n)));
+    return { ...s, html };
+  })
 );
 
 // The prose above is a narrative of induction and is worth writing by hand: the access
@@ -149,6 +184,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
                   <span class="text-xs text-gray-400 dark:text-gray-500 ml-2">
                     {l.kind}{l.scope === 'corpus' ? ' · every paper' : ''}
                     {l.group && layerGroups[l.group] ? ` · ${layerGroups[l.group].title.toLowerCase()}` : ''}
+                    {l.implements !== undefined
+                      ? ` · step ${l.implements}`
+                      : l.scope === 'corpus' ? '' : ' · no step describes it'}
                   </span>
                   <span class="block text-sm text-gray-700 dark:text-gray-300 leading-snug"
                         set:html={l.question.replace(/`([^`]+)`/g, '<code>$1</code>')}></span>
