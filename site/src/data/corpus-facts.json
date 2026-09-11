@@ -406,6 +406,18 @@
       "interchange": {
         "question": "What survives when a claim tree leaves this format?",
         "title": "Interchange"
+      },
+      "measures": {
+        "question": "What can be measured over the tree - its coverage, its wording, whether its code re-runs?",
+        "title": "Measures"
+      },
+      "source": {
+        "question": "What text did the readers read, and what does the paper itself say?",
+        "title": "Source"
+      },
+      "tree": {
+        "question": "What does the paper assert, and how do its claims depend on each other?",
+        "title": "Tree"
       }
     },
     "layers": [
@@ -493,7 +505,7 @@
       {
         "command": "cd extract && python3 -m elife_extract.cli prepare --paper {paper} --doi {doi}",
         "doc": "/docs/layers/#prepare--the-paper-the-readers-read",
-        "group": "induction",
+        "group": "source",
         "how": "Fetches the paper and cuts it into the slices the three readers each get: the abstract, the Introduction, the Results, the Discussion, the figure and table captions, the methods and the appendices. It also builds a panel inventory \u2014 one line per figure and table, its panel ids and the head of its caption \u2014 and numbers the whole paper into the spans coverage segments, so a reader can cite the id in front of a sentence. For an eLife DOI that is JATS XML from the CDN, which gives labelled sections, typed figures and caption text; for anything else it is pdfplumber with regex section detection. Which path was taken is recorded in the output, because it constrains what the readers can possibly extract. The fetch is cached, so every later layer on the same paper runs offline and free.\nCheck the slice sizes when a paper extracts badly. A short `results` almost always means section detection failed, and then all three readers read the wrong text and every claim below them is wrong for the same single reason.\n",
         "id": "prepare",
         "kind": "step",
@@ -513,7 +525,7 @@
       {
         "added": "2026-09-11",
         "command": "python3 scripts/article_json.py {paper}",
-        "group": "induction",
+        "group": "source",
         "how": "Parses the cached JATS into the structure a page needs: the section tree with its headings, each paragraph with its inline markup and its cross-references, each figure with its caption and the image eLife serves, each table with its rows. The abstract is split into sentences here; the body's sentences are not, because those come from the marked paper, and splitting them twice by two rules would give the site two sentences to reconcile where the claim assignments are.\nSub-articles are excluded. eLife's JATS carries the editor assessment, the referee reports and the author response inside the same document, each with a `<body>` of its own, and a search that reaches into them renders the reviews as part of the paper.\n",
         "id": "article",
         "kind": "step",
@@ -707,6 +719,7 @@
         "command": "cd extract && python3 -m elife_extract.cli write --paper {paper} --replace",
         "doc": "/docs/layers/#write--the-claim-tree",
         "found": "Across {{papers}} papers the corpus holds {{claims}} claims and {{parts}} parts, carrying {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.\n",
+        "group": "tree",
         "how": "Assigns each surviving claim a slug and a UUID, attaches the edges `edge-inference` produced, and writes one markdown file per claim into `claims/<paper>/` with the paper's `index.md` beside them. It calls no model and needs no credentials \u2014 the reasoning already happened upstream \u2014 but it does need those edges. Run it without them and the claims are written with no structure, and it says so.\nIt refuses to overwrite a non-empty paper directory. The claim files are edited afterwards by hand and by later layers, and a silent overwrite would discard work no ledger records. A run of this layer is by definition a new version, so the command passes `--replace`: it moves the current tree to runs/<paper>/claim-tree.v<N>/ \u2014 keeping every version's bytes addressable \u2014 then writes the new one and carries forward the `alt-` claims, `rules-out` edges and reproduction records the induction chain does not itself produce.\n",
         "id": "claim-tree",
         "kind": "step",
@@ -732,6 +745,7 @@
       {
         "added": "2026-09-10",
         "found": "A missing node does not only lose information, it misdirects the edges that would have pointed at it. Five eliminative relations were found aiming at claims their own paper asserts. {{dangling_rules_out}} eliminative edges still name prose that resolves to no claim.\n",
+        "group": "tree",
         "how": "Adds the claims a paper argues against. Each is an ordinary claim file \u2014 prefixed `alt-` \u2014 whose `assertions` entry carries `stance: rejects` rather than `asserts`, so an alternative the paper rules out is a node in the graph like any other and an eliminative edge has something correct to point at.\nBefore these existed, a rejected alternative lived only as prose inside the claim that dismissed it, and an edge that should have pointed at it pointed at whatever claim was nearest.\n",
         "id": "stance",
         "kind": "feature",
@@ -754,6 +768,7 @@
         "added": "2026-09-11",
         "by_from": "model",
         "command": "cd extract && python3 -m elife_extract.cli questions --paper {paper}",
+        "group": "tree",
         "how": "Given the abstract (and the Introduction where the prepared paper carries it) and the paper's existing hypothesis and `alt-` claims \u2014 slug and sentence \u2014 it returns the questions the paper states and which claim answers which. A hypothesis is the answer the paper commits to; the alternatives it rules out are the other answers to the same question. It then writes `questions:` onto the paper's `index.md` and `addresses:` onto the named claim files, editing their frontmatter in place.\n`--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through the same validation \u2014 an invented slug or a question no claim addresses is dropped rather than written \u2014 so a model that has no backend here can still answer it.\n",
         "id": "questions",
         "kind": "feature",
@@ -779,6 +794,7 @@
         "added": "2026-09-11",
         "by_from": "model",
         "command": "cd extract && python3 -m elife_extract.cli parts --paper {paper}",
+        "group": "tree",
         "how": "Reads the tree, not the paper \u2014 each claim's slug, role, panel, sentence and existing edges \u2014 and returns the `part-of` edges it holds: every claim that states one comparison, condition, measure or study of a proposition another claim states whole. The graph half-says composition already, since a part usually carries a `supports` or `tests` edge into its whole, but support is evidence and composition is not, so the definition decides, not the edge. It then writes `part-of:` into each part's claim file, editing the frontmatter in place.\n`--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through the same validation \u2014 an unknown slug, a self-edge, a second whole for one part, or an edge that would close a cycle is dropped rather than written \u2014 so a model with no backend here can still answer it.\n",
         "id": "parts",
         "kind": "feature",
@@ -805,6 +821,7 @@
         "added": "2026-09-11",
         "command": "cd extract && python3 -m elife_extract.cli verify-refs --paper {paper}",
         "doc": "/docs/layers/#verify-refs--the-reference-check",
+        "group": "tree",
         "how": "Two different operations under one name, and the difference is the whole of what this layer is worth. Where a `role: literature-context` claim already carries a top-level `doi:`, the layer confirms with CrossRef that it resolves to a real paper: that is the anti-hallucination check. Where there is no DOI, it extracts hints from the claim text and slug, queries CrossRef, and writes back the highest-scoring match above a threshold \u2014 a search, which can return a confident match to the wrong paper.\nThe report is what the layer produces; the confirmed DOIs land in the claim files themselves. Two earlier implementations both edited those files and disagreed about the result, and one of them recorded a fuzzy title match as a confirmed DOI.\n",
         "id": "reference-check",
         "kind": "feature",
@@ -825,6 +842,7 @@
         ]
       },
       {
+        "group": "tree",
         "how": "Cuts the abstract into sentences and asks of each which claims carry it, and of each claim whether any sentence of the abstract does. The output holds both directions, and the interesting column is the empty one: claims the tree holds that the abstract drops, and abstract sentences no claim accounts for.\nAn abstract is the paper's own summary of itself, so the difference between the two lists is the difference between what a paper found and what it advertises.\n",
         "id": "abstract-map",
         "kind": "step",
@@ -844,6 +862,7 @@
       },
       {
         "added": "2026-09-11",
+        "group": "measures",
         "how": "Restates the paper's argument from the claim graph alone \u2014 no abstract, no prose \u2014 and then holds that restatement against the abstract the authors wrote. Every sentence of the restatement carries the claims and edges it was built from, so any of it can be followed back to the nodes that produced it.\nIt is the closest thing in the pipeline to a test of whether the graph was worth building: if the tree carries the argument, a restatement from it should be recognisable as the same paper.\n",
         "id": "synthesis",
         "kind": "step",
@@ -863,6 +882,7 @@
         ]
       },
       {
+        "group": "measures",
         "id": "summaries",
         "kind": "step",
         "needs": [
@@ -882,6 +902,7 @@
         "added": "2026-09-11",
         "by_from": "model",
         "command": "python3 scripts/plain_claims.py {paper}",
+        "group": "measures",
         "how": "One call per paper: every claim of that paper \u2014 its role, its stance, its panel and the authors' wording \u2014 and back one sentence each, under about 130 characters, carrying no statistics. The terms of art the claim is *about* are kept, because a reader who does not know what the anterior insula is still learns the claim is about a brain region; the jargon that is about the analysis rather than the finding is translated.\nA validator gates the write: every slug answered and no slug invented, one sentence each, and none of the eight shapes a statistic takes. Nothing is written until it passes, so the artifact cannot hold a wording that quietly failed the rule the prompt states.\n`--dump-prompt` and `--answer` are the pair every layer a model answers carries, and the corpus's own wordings came through them: written by a model that is not the one wired in, fed back through the same validator, and recorded as `supplied:` rather than as a call that never happened.\n",
         "id": "plain-claim",
         "kind": "step",
@@ -907,6 +928,7 @@
         "added": "2026-09-06",
         "command": "python3 verification/audit_run.py {paper}",
         "found": "{{eligible_with_record}} of {{eligible_claims}} claims that a re-run could settle carry a reproduction record, and their outcomes are not uniform. Observing the runs from outside also showed that most records were reached by reading a deposit rather than by running the paper's own script.\n",
+        "group": "measures",
         "how": "Runs the paper's own deposited script under observation and records what it actually did \u2014 every path it opened, every value it computed \u2014 rather than what its output said it did. Nothing is taken from the script's own account of itself, because that is precisely what failed: the first script audited had a claim recorded `verified` while the function named in its record raised a shape-mismatch error, and a reproduction record naming a file the code never opened.\nThis is not replication. It re-runs the authors' code on the authors' data, so it can catch a record that does not match its own run and it cannot tell you whether the finding is true.\n",
         "id": "verification",
         "kind": "step",
@@ -934,6 +956,7 @@
         "command": "cd extract && python3 -m elife_extract.cli coverage --paper {paper} --json ../coverage/{paper}.json",
         "doc": "/docs/layers/#coverage-and-mark",
         "found": "G\u00e4deke first. The paper cut into spans and each adjudicated against the claim tree, which is how a tree is measured against its paper rather than against another tree. The mechanical match left 36 spans unaccounted for; 22 were the matcher being wrong and 14 were real.\n",
+        "group": "measures",
         "how": "Takes its denominator from the paper rather than from the claim set. It builds the paper's own inventories \u2014 every panel, every table, every reported statistic \u2014 cuts the whole text into one-sentence spans, and asks of each span whether any claim accounts for it. Comparing two claim sets cannot see what this sees: two trees can agree perfectly over a third of a paper.\nIt calls no model, so it is free and fast enough to run corpus-wide. What it cannot do is tell a real gap from a string match that failed, which is what `adjudication` is for.\n",
         "id": "coverage",
         "kind": "step",
@@ -956,6 +979,7 @@
         "by_from": "by",
         "command": "python3 scripts/adjudicate.py {paper} --answer runs/{paper}/adjudication.answer.json",
         "doc": "/docs/layers/#coverage-and-mark",
+        "group": "measures",
         "how": "Reads the spans the mechanical match could not resolve and returns a verdict for each: the span is covered by a claim after all, it states a result no claim carries, or it asserts nothing at all. The verdicts are stored rather than recomputed \u2014 a verdict is a judgement about meaning, and re-running it would quietly produce a different one.\nOn G\u00e4deke the matcher left 36 spans unaccounted for. Adjudication found that 22 were the matcher being wrong and 14 were real.\n",
         "id": "adjudication",
         "kind": "judgement",
@@ -980,6 +1004,7 @@
       {
         "command": "cd extract && python3 -m elife_extract.cli mark --paper {paper} --mapping ../mappings/{paper}.json -o ../marked/{paper}.marked.md",
         "doc": "/docs/layers/#coverage-and-mark",
+        "group": "measures",
         "how": "Writes the adjudicated verdicts into the document itself, as marks carrying each claim's UUID, so a gap is something a reader sees in the paper rather than a number in a report. A span that states no result says so; a span carrying a result no claim states is marked as a gap.\nThe marks are read straight back after writing and checked against the assignments they were written from. A marked document that cannot reproduce them is not a record of anything.\n",
         "id": "marks",
         "kind": "step",
@@ -1002,6 +1027,7 @@
         "by_from": "model",
         "command": "python3 scripts/gap_claims.py {paper} --answer runs/{paper}/gap-claim.answer.json",
         "doc": "The edge back. Everything upstream of `marks` asks what this paper claims; `coverage` and `adjudication` then ask what it asserts that no claim represents, and until this layer existed the answer went into the marked document and stopped. The graph ended at the measurement, so a gap was something the corpus could report about itself and not something it could act on.\nNote what that cost, because it is the argument for this layer in one line: `external-review` asks \"what structure did the three readers systematically miss?\" \u2014 the same question \u2014 but it needs only `reconcile`, so it runs before the claim tree exists and answers from the candidates alone. The question was asked where it could only be guessed at, and not asked where it had been measured.\nThis layer drafts the claim each gap needs and writes it as a candidate. It never writes to `claims/`: promoting a draft is a judgement about what a paper asserts, and this corpus already carries the warning that no person has checked any of it. A layer that wrote claim files would put a model's drafting inside the artifact that warning is about. `--dump-prompt` and `--answer` are the pair every model-answered layer carries.\nPromoting a draft makes the verdict that recorded the gap stale on its own: a `gap` verdict carries the fingerprint of which claims existed when it was judged, and the ledger notices a claim file that appeared. Neither was true before; between them they turn a report into a loop.\n",
+        "group": "measures",
         "id": "gap-claim",
         "kind": "candidate",
         "needs": [
@@ -1022,6 +1048,7 @@
         ]
       },
       {
+        "group": "measures",
         "how": "Nothing runs here, and the layer is declared so that the absence is a column rather than an omission. The `replicates` relation is defined in the schema and used zero times: no claim in this corpus has been checked against an independent study.\nIt is a different question from `verification`, answered by different evidence. Verification re-runs the authors' own code on their own data and can tell you the record matches the run. Only replication can tell you the finding holds.\n",
         "id": "replication",
         "kind": "step",

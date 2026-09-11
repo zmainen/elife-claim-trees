@@ -31,6 +31,24 @@ const TONE: Record<string, string> = {
   unrecorded: 'bg-gray-300 dark:bg-gray-600',
 };
 const totalCells = papers.reduce((n, p) => n + cells(p).length, 0);
+
+// The matrix columns run in layer order, which is phase order, so a layer's group is a
+// contiguous span of columns. Grouping the rotated labels under a phase header turns
+// seventeen abbreviations into five readable phases — the grouping the design note's diagram
+// draws (source, induction, tree, measures, interchange). Corpus-scope layers are not in the
+// matrix, so every column has a phase.
+const phaseSpans: { group: string | null; title: string; span: number }[] = [];
+for (const l of paperLayers) {
+  const g = l.group ?? null;
+  const last = phaseSpans[phaseSpans.length - 1];
+  if (last && last.group === g) last.span++;
+  else phaseSpans.push({ group: g, title: g ? (groups[g]?.title ?? g) : '', span: 1 });
+}
+// Column indices where a phase begins — the vertical rules that make the bands line up.
+const phaseStart = new Set<number>();
+{ let acc = 0; for (const ph of phaseSpans) { if (acc > 0) phaseStart.add(acc); acc += ph.span; } }
+const edge = (i: number) => (phaseStart.has(i) ? ' border-l border-gray-200 dark:border-gray-700' : '');
+
 const counts: Record<string, number> = {};
 for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.state] ?? 0) + 1;
 ---
@@ -79,14 +97,27 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
     <div class="overflow-x-auto mb-4">
       <table class="w-full text-sm border-collapse">
         <thead>
+          {/* Phase header: each group spans its contiguous run of columns. The border-left
+              marks where one phase ends and the next begins, so the five phases read as
+              bands across the seventeen columns. */}
+          <tr>
+            <th></th>
+            {phaseSpans.map((ph, i) => (
+              <th colspan={ph.span}
+                  class={`py-1 px-1 text-center text-[10px] font-mono uppercase tracking-wider text-gray-500 dark:text-gray-400 font-medium ${i > 0 ? 'border-l border-gray-200 dark:border-gray-700' : ''}`}>
+                {ph.title}
+              </th>
+            ))}
+            <th></th>
+          </tr>
           <tr>
             <th class="text-left py-2 pr-3 text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 font-medium">Paper</th>
             {/* Rotated rather than truncated. Seventeen columns do not leave room for a
                 horizontal label, and clipping them to eight characters made the axis of the
                 matrix unreadable — `structure-reader` and `adjudication` arrived as STRUCTUR
                 and ADJUDICA, with nothing to say they had been cut. */}
-            {paperLayers.map(l => (
-              <th class="py-2 px-1 align-bottom font-medium">
+            {paperLayers.map((l, i) => (
+              <th class={`py-2 px-1 align-bottom font-medium${edge(i)}`}>
                 <a href={`#layer=${l.id}`}
                    title={l.question}
                    class="block h-28 mx-auto w-fit whitespace-nowrap no-underline text-[9.5px] font-mono uppercase tracking-wide text-gray-400 dark:text-gray-500 hover:text-amber-700 dark:hover:text-amber-400 [writing-mode:vertical-rl] rotate-180">
@@ -107,8 +138,8 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
                     {shortOf(p)}
                   </a>
                 </td>
-                {cells(p).map(c => (
-                  <td class="py-1.5 px-1 text-center">
+                {cells(p).map((c, i) => (
+                  <td class={`py-1.5 px-1 text-center${edge(i)}`}>
                     <a href={`#layer=${c.layer.id}`}
                        title={`${c.layer.title} — ${STATE_LABEL[c.state]}${c.v ? ` (v${c.v})` : ''}`}
                        class={`inline-block w-3.5 h-3.5 rounded-sm ${TONE[c.state] ?? TONE.absent}`}></a>
