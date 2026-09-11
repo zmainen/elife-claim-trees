@@ -166,11 +166,20 @@ export function inState(...states: CellState[]): Cell[] {
   return papers.flatMap(p => cells(p).filter(c => states.includes(c.state)));
 }
 
-/** How full a paper is: the jagged edge, as a fraction. */
+/** How full a paper is: the jagged edge, as a fraction.
+ *
+ *  Filled means the cell holds an answer, which is a fact about the corpus. Whether that
+ *  answer's inputs can still be checked is a fact about the ledger, and the two were being
+ *  conflated: counting only `current` meant a cell whose output exists but predates the
+ *  ledger read as not done. Gädeke reported 4 of 21 while holding 18 answers, and the number
+ *  moved when runs were re-recorded without a single claim changing.
+ *
+ *  `absent` is the only state that is genuinely empty. What is checkable is counted
+ *  separately, on /pipeline, where the distinction is the subject rather than a side effect. */
 export function fill_of(paper: string): { done: number; total: number } {
   const cs = cells(paper);
   return {
-    done: cs.filter(c => c.state === 'current' || c.state === 'n/a').length,
+    done: cs.filter(c => c.state !== 'absent').length,
     total: cs.length,
   };
 }

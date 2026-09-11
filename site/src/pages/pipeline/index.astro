@@ -8,7 +8,7 @@ import PipelineExplorer from '../../components/PipelineExplorer';
 import { corpusExplorer } from '../../lib/explorer';
 import {
   layers, groups, papers, cells, titleOf, fill_of, inState, byId,
-  corpusLayers, paperLayers, STATE_LABEL, allHistory, approvedCells, shortOf,
+  corpusLayers, paperLayers, STATE_LABEL, allHistory, shortOf,
 } from '../../lib/pipeline';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -30,7 +30,6 @@ const TONE: Record<string, string> = {
   open:    'bg-blue-200 dark:bg-blue-900',
   unrecorded: 'bg-gray-300 dark:bg-gray-600',
 };
-const approved = approvedCells();
 const totalCells = papers.reduce((n, p) => n + cells(p).length, 0);
 const counts: Record<string, number> = {};
 for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.state] ?? 0) + 1;
@@ -48,8 +47,8 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
         behind its inputs says so.
       </p>
       <p class="text-gray-600 dark:text-gray-400 mt-3 m-0 leading-relaxed">
-        {papers.length} papers, {paperLayers.length} layers each. {counts.current ?? 0} of the
-        {totalCells} answers are current. None has been read and approved by a person.
+        {papers.length} papers, {paperLayers.length} layers each. {(counts.current ?? 0) + (counts.unrecorded ?? 0)} of
+        the {totalCells} cells hold an answer. None of them has been read and approved by a person.
       </p>
       <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 m-0">
         <a href={url('/pipeline/method')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">How a paper is taken apart</a>,
@@ -135,64 +134,81 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
     </div>
 
     <!-- ── approval, which is not a state ────────────────────────── -->
-    <section class="mb-12 border-l-2 border-amber-400 dark:border-amber-600 pl-4">
-      <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 m-0 mb-1">
-        Approved by a person: <span class="font-mono">{approved.length} of {totalCells}</span>
+    <!-- ── the open questions ────────────────────────────────────
+         First, because they are the only thing on this page a reader can act on: three
+         decisions about what the vocabulary means, each with everything downstream of it
+         provisional until somebody rules. -->
+    <section class="mb-12">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">
+        Undecided <span class="font-mono text-base text-gray-400 dark:text-gray-500">{open.length}</span>
       </h2>
-      <p class="text-sm text-gray-700 dark:text-gray-300 m-0 max-w-3xl leading-relaxed">
-        Approval is an operation on a version, not a layer of its own: a person reads what a
-        layer produced and approves <em>that output</em>. The approval names the version it was
-        granted to, so running the layer again does not carry it forward. Every cell above can
-        be current — its inputs unchanged since it ran — and unread by anyone.
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+        Questions the corpus has not answered. Each is a decision about what the schema means,
+        and every claim tree built under one is provisional until it is taken.
       </p>
+      <div class="grid md:grid-cols-3 gap-4">
+        {open.map(l => (
+          <a href={url(`/pipeline/${l.id}`)}
+             class="block border border-gray-200 dark:border-gray-700 rounded-lg p-4 no-underline hover:border-amber-500 dark:hover:border-amber-500 transition-colors">
+            <span class="block text-[15px] font-medium text-gray-900 dark:text-gray-100 mb-1">{l.title}</span>
+            <span class="block text-sm text-gray-600 dark:text-gray-400 leading-snug mb-2"
+                  set:html={l.question.replace(/`([^`]+)`/g, '<code class="text-[12.5px]">$1</code>')}></span>
+            {l.issue && (
+              <span class="font-mono text-xs text-amber-700 dark:text-amber-400">#{l.issue}</span>
+            )}
+          </a>
+        ))}
+      </div>
     </section>
 
-    <!-- ── the two standing queries ──────────────────────────────── -->
-    <div class="grid md:grid-cols-2 gap-6 mb-12">
-      <section>
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
-          Out of date <span class="font-mono text-sm text-gray-400 dark:text-gray-500">{stale.length}</span>
-        </h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
-          A cell whose declared inputs have changed since it ran, or which sits behind one.
-        </p>
-        {stale.length === 0 ? (
-          <p class="text-sm text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg p-4 m-0">
-            Nothing. Every recorded run still matches the files it read.
+    <!-- ── what the ledger can and cannot vouch for ──────────────────
+         "Out of date: 0" was true and misleading. Staleness is computed by comparing a run's
+         recorded input hashes against the files now; a cell with no recorded run has nothing
+         to compare, so it cannot be found stale however old it is. Reporting the zero without
+         the denominator let a reader take it for "everything here is current". -->
+    <section class="mb-12">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">How much of this is checkable</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+        A cell goes stale when a file it read has changed since. That comparison needs a
+        recorded run, and most of this corpus predates the ledger.
+      </p>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <span class="block text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{counts.current ?? 0}</span>
+          <span class="block text-sm text-gray-600 dark:text-gray-400 leading-snug mt-1">
+            ran with their inputs recorded, and every one still matches the files it read
+          </span>
+        </div>
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <span class="block text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{counts.unrecorded ?? 0}</span>
+          <span class="block text-sm text-gray-600 dark:text-gray-400 leading-snug mt-1">
+            produced an output before the ledger existed. Whether they are current is not
+            known and cannot be worked out from what was kept
+          </span>
+        </div>
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <span class="block text-2xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{absent.length}</span>
+          <span class="block text-sm text-gray-600 dark:text-gray-400 leading-snug mt-1">
+            have never been run
+          </span>
+        </div>
+      </div>
+      {stale.length > 0 && (
+        <div class="mt-4 border-l-2 border-amber-400 dark:border-amber-600 pl-4">
+          <p class="text-sm text-gray-700 dark:text-gray-300 m-0 mb-2">
+            {stale.length} cell{stale.length === 1 ? ' has' : 's have'} fallen behind an input:
           </p>
-        ) : (
           <ul class="list-none p-0 m-0 space-y-1.5">
             {stale.map(c => (
               <li class="text-sm">
-                <span class="font-mono text-xs text-amber-700 dark:text-amber-400">{c.paper} · {c.layer.id}</span>
+                <a href={url(`/papers/${c.paper}/${c.layer.id}`)} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{shortOf(c.paper)} · {c.layer.id}</a>
                 {c.moved && <span class="block text-xs text-gray-500 dark:text-gray-400 font-mono">← {c.moved[0]}</span>}
               </li>
             ))}
           </ul>
-        )}
-      </section>
-
-      <section>
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
-          Undecided <span class="font-mono text-sm text-gray-400 dark:text-gray-500">{open.length}</span>
-        </h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
-          Question layers with no answer yet. Everything downstream of one is provisional.
-        </p>
-        <ul class="list-none p-0 m-0 space-y-2">
-          {open.map(l => (
-            <li>
-              <a href={url(`/pipeline/${l.id}`)} class="text-sm text-amber-700 dark:text-amber-400 no-underline hover:underline font-medium">{l.title}</a>
-              <span class="block text-sm text-gray-600 dark:text-gray-400 leading-snug">{l.question}</span>
-              {l.issue && (
-                <a href={`https://github.com/zmainen/elife-claim-trees/issues/${l.issue}`}
-                   class="text-xs font-mono text-gray-500 dark:text-gray-400 no-underline hover:underline" target="_blank">#{l.issue}</a>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
-    </div>
+        </div>
+      )}
+    </section>
 
     <!-- ── what has run lately ───────────────────────────────────── -->
     {recent.length > 0 && (
@@ -223,8 +239,14 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
       {' '}{absent.length} cells not yet run ·
       <a href={`${base}/data/index.json`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline"> the whole matrix as JSON</a>
       <span class="block mt-1.5 text-xs">
-        Declared in <code>pipeline/layers.yaml</code>, recorded in <code>runs/&lt;paper&gt;/ledger.jsonl</code>,
-        each cell at <code>/data/&lt;paper&gt;/&lt;layer&gt;.json</code>.
+        {/* Named paths are worth printing only if a reader can open them; the per-cell URL
+            pattern is documented by the "cell as JSON" link on every cell instead. */}
+        Declared in
+        <a href="https://github.com/zmainen/elife-claim-trees/blob/main/pipeline/layers.yaml"
+           target="_blank" rel="noopener" class="text-amber-700 dark:text-amber-400 no-underline hover:underline"><code>layers.yaml</code></a>,
+        recorded in
+        <a href="https://github.com/zmainen/elife-claim-trees/tree/main/runs"
+           target="_blank" rel="noopener" class="text-amber-700 dark:text-amber-400 no-underline hover:underline"><code>runs/</code></a>.
       </span>
     </footer>
 
