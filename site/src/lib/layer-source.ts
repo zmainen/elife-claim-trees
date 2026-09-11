@@ -317,3 +317,43 @@ export function layerVersions(paper: string, layerId: string, produces: string[]
     .filter(ver => ver.claims.length > 0)
     .sort((a, b) => b.v - a.v || (a.source === 'current' ? -1 : 1));
 }
+
+// ── evaluation ──────────────────────────────────────────────────────────────────
+//
+// runs/<paper>/evaluation/ holds a scorecard and the matcher's alignments: scores.md, and one
+// match.v<N>.pairs.json per re-run scored. It is not a layer yet (#85 will make it one), so it
+// has no cell of its own — it is read here and shown on the paper's claim-tree cell, where a
+// reader asking what this tree is worth is already looking.
+
+export interface MatchPair { committed: string; rerun: string; note?: string }
+export interface Evaluation {
+  /** The scorecard markdown, as written. */
+  scores: string | null;
+  /** The matcher's alignments, one entry per scored re-run, newest first. */
+  pairs: { v: number; rows: MatchPair[] }[];
+  dir: string;
+}
+
+/** The evaluation for a paper, or null when the directory does not exist. */
+export function evaluation(paper: string): Evaluation | null {
+  const dir = `runs/${paper}/evaluation`;
+  const abs = join(ROOT, dir);
+  if (!existsSync(abs)) return null;
+  const scoresPath = join(abs, 'scores.md');
+  const scores = existsSync(scoresPath) ? readFileSync(scoresPath, 'utf8') : null;
+
+  const pairs: { v: number; rows: MatchPair[] }[] = [];
+  let names: string[] = [];
+  try { names = readdirSync(abs); } catch { /* none */ }
+  for (const name of names) {
+    const m = name.match(/^match\.v(\d+)\.pairs\.json$/);
+    if (!m) continue;
+    try {
+      const rows = JSON.parse(readFileSync(join(abs, name), 'utf8'));
+      if (Array.isArray(rows)) pairs.push({ v: Number(m[1]), rows });
+    } catch { /* skip an unparseable alignment */ }
+  }
+  pairs.sort((a, b) => b.v - a.v);
+  if (!scores && pairs.length === 0) return null;
+  return { scores, pairs, dir };
+}

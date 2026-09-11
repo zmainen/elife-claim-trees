@@ -15,7 +15,8 @@ import ArgumentFromGraph from '../../../components/ArgumentFromGraph.astro';
 import { getCollection, render } from 'astro:content';
 import { paperLayers, byId, cell, STATE_LABEL } from '../../../lib/pipeline';
 import { artifacts, isDirectory } from '../../../lib/artifacts';
-import { layerVersions } from '../../../lib/layer-source';
+import { layerVersions, evaluation } from '../../../lib/layer-source';
+import { renderMd } from '../../../lib/markdown';
 import corpus from '../../../data/claims.json';
 
 export async function getStaticPaths() {
@@ -84,6 +85,11 @@ const comparable = (layer.views ?? []).includes('comparison')
   : [];
 const current = comparable[0] ?? null;
 const earlier = comparable.slice(1);
+
+// The evaluation scorecard, shown on the claim-tree cell where it belongs until #85 makes it
+// a layer of its own. runs/<paper>/evaluation/ holds a re-run scored against this tree.
+const evalData = layerId === 'claim-tree' ? evaluation(paper.slug) : null;
+const evalScoresHtml = evalData?.scores ? await renderMd(evalData.scores) : null;
 
 const rendered = report ? await render(report) : null;
 const showReport = layerId === 'formats-report' && rendered && c.state !== 'absent';
@@ -235,6 +241,49 @@ const TONE: Record<string, string> = {
         </p>
         {earlier.map(old => <LayerComparison older={old} newer={current} />)}
       </div>
+    )}
+
+    {evalData && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Scored against the previous version</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl leading-relaxed">
+          A re-run of the pipeline on this paper, aligned to the committed tree by a matcher and
+          scored for recovery, role agreement and panel agreement. The matcher was one model
+          subagent per tree, unreviewed — so a match is that model's judgement, not a checked
+          one. Evaluation is not yet a layer of its own; <a href="https://github.com/zmainen/elife-claim-trees/issues/85" target="_blank" rel="noopener" class="text-amber-700 dark:text-amber-400 no-underline hover:underline">#85</a> will make it one, with its own version, inputs and seat for approval.
+          Read from <span class="font-mono text-xs">{evalData.dir}/</span>.
+        </p>
+        {evalScoresHtml && (
+          <article class="method-prose mb-6" set:html={evalScoresHtml} />
+        )}
+        {evalData.pairs.map(pr => (
+          <details class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden mb-3">
+            <summary class="cursor-pointer list-none px-4 py-2.5 text-sm text-amber-700 dark:text-amber-400 hover:bg-gray-50 dark:hover:bg-gray-800/40">
+              The matcher's alignment for v{pr.v} — {pr.rows.length} matched pairs →
+            </summary>
+            <div class="overflow-x-auto border-t border-gray-100 dark:border-gray-800">
+              <table class="w-full text-sm border-collapse">
+                <thead>
+                  <tr class="text-left text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-200 dark:border-gray-700">
+                    <th class="py-2 px-3 font-medium">committed</th>
+                    <th class="py-2 px-3 font-medium">re-run</th>
+                    <th class="py-2 px-3 font-medium min-w-[14rem]">why the matcher paired them</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pr.rows.map(row => (
+                    <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0 align-top">
+                      <td class="py-2 px-3 font-mono text-[11px] text-gray-700 dark:text-gray-300">{row.committed}</td>
+                      <td class="py-2 px-3 font-mono text-[11px] text-gray-700 dark:text-gray-300">{row.rerun}</td>
+                      <td class="py-2 px-3 text-xs text-gray-600 dark:text-gray-400 leading-snug">{row.note ?? ''}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </details>
+        ))}
+      </section>
     )}
 
     <LayerDefinition layer={layer} paper={paper.slug} />
