@@ -111,9 +111,7 @@ export default function PipelineExplorer({ data, base, height = 460 }: Props) {
           <i className="inline-block w-2.5 h-2.5 rounded-sm border border-dashed"
              style={{ borderColor: 'var(--map-corpus-border)' }} />corpus-scope
         </span>
-        <span className="ml-auto">
-          Click a layer for detail{view === 'graph' ? ' · hover to light its dependencies' : ''}
-        </span>
+
       </div>
 
       <LayerDrawer data={data} layer={layer} onSelect={select} base={base} />
