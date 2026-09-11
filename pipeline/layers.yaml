@@ -700,6 +700,39 @@ layers:
   # question, with a different kind of evidence, and one this corpus has never asked. The
   # `replicates` relation is defined in the schema and used zero times. Declared so that the
   # gap is a column rather than an omission.
+  - id: gap-claim
+    kind: candidate
+    question: What claim would close each gap?
+    needs: [adjudication, claim-tree, claim-format]
+    reads: [extract/prompts/gap-claim.md, scripts/gap_claims.py]
+    produces: ["runs/{paper}/gap-claim.output.json"]
+    by_from: model
+    views: [table]
+    command: "python3 scripts/gap_claims.py {paper} --answer runs/{paper}/gap-claim.answer.json"
+    doc: >
+      The edge back. Everything upstream of `marks` asks what this paper claims; `coverage` and
+      `adjudication` then ask what it asserts that no claim represents, and until this layer
+      existed the answer went into the marked document and stopped. The graph ended at the
+      measurement, so a gap was something the corpus could report about itself and not
+      something it could act on.
+
+      Note what that cost, because it is the argument for this layer in one line:
+      `external-review` asks "what structure did the three readers systematically miss?" — the
+      same question — but it needs only `reconcile`, so it runs before the claim tree exists
+      and answers from the candidates alone. The question was asked where it could only be
+      guessed at, and not asked where it had been measured.
+
+      This layer drafts the claim each gap needs and writes it as a candidate. It never writes
+      to `claims/`: promoting a draft is a judgement about what a paper asserts, and this
+      corpus already carries the warning that no person has checked any of it. A layer that
+      wrote claim files would put a model's drafting inside the artifact that warning is
+      about. `--dump-prompt` and `--answer` are the pair every model-answered layer carries.
+
+      Promoting a draft makes the verdict that recorded the gap stale on its own: a `gap`
+      verdict carries the fingerprint of which claims existed when it was judged, and the
+      ledger notices a claim file that appeared. Neither was true before; between them they
+      turn a report into a loop.
+
   - id: replication
     kind: step
     scope: paper

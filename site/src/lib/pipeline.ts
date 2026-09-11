@@ -61,6 +61,9 @@ export interface Cell {
   /** Inputs whose content changed since the run — why a cell is stale. */
   moved?: string[];
   lost?: string[];
+  /** Input patterns whose membership changed: a file they match appeared or was removed.
+   *  Adding a claim to close a gap is this, and nothing else detects it. */
+  appeared?: string[];
   blockedBy?: string[];
   /** Upstream layers with no ledger entry. Not a fault in this cell; a gap in its account. */
   unrecordedUpstream?: string[];
@@ -152,6 +155,7 @@ export function cell(paper: string, layerId: string): Cell | null {
     by: raw.by,
     moved: raw.moved?.length ? raw.moved : undefined,
     lost: raw.lost?.length ? raw.lost : undefined,
+    appeared: raw.appeared?.length ? raw.appeared : undefined,
     blockedBy: raw.blocked_by,
     unrecordedUpstream: raw.unrecorded_upstream,
     backfilled: raw.backfilled,

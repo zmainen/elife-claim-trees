@@ -2,14 +2,15 @@
  "paper": "headley-2026-inhibitory-rhythms",
  "adjudicated": "2026-09-11",
  "by": "supplied:runs/headley-2026-inhibitory-rhythms/adjudication.answer.json",
- "note": "Verdicts for spans the mechanical match could not resolve. covered = a claim does account for it; gap = a real hole; not-an-assertion = the span states no result of its own. Each verdict carries `sha`, the fingerprint of the sentence it was made about; a verdict whose fingerprint no longer matches is discarded by `coverage` rather than reattached to text nobody judged.",
+ "note": "Verdicts for spans the mechanical match could not resolve. covered = a claim does account for it; gap = a real hole; not-an-assertion = the span states no result of its own. Every verdict carries `sha`, the fingerprint of the sentence it judged. A `gap` also carries `tree`, the fingerprint of which claims existed when it was judged, and a `covered` carries `claim_sha`, the wording of the claim it named — because a gap is a statement about the tree, and closing one is exactly the edit that used to leave the verdict standing over nothing. `coverage` discards a verdict whose fingerprints no longer match rather than applying a judgement nobody made about what is there now.",
  "spans": [
   {
    "uid": "results-003",
    "verdict": "gap",
    "claim": null,
    "why": "No claim in the tree records that the model itself reproduces all three classes of dendritic spike plus backpropagating action potentials.",
-   "sha": "6863ce0b"
+   "sha": "6863ce0b",
+   "tree": "d9995058"
   },
   {
    "uid": "results-014",
@@ -23,35 +24,40 @@
    "verdict": "gap",
    "claim": null,
    "why": "That the model's basal and apical dendrites generate Na+ and NMDA spikes is asserted here but claimed nowhere in the tree.",
-   "sha": "bede850f"
+   "sha": "bede850f",
+   "tree": "d9995058"
   },
   {
    "uid": "results-021",
    "verdict": "gap",
    "claim": null,
    "why": "The sub-millisecond, non-backpropagation-driven character of dendritic Na+ spikes is asserted here but no claim characterises the spike types the model produces.",
-   "sha": "b2ff001b"
+   "sha": "b2ff001b",
+   "tree": "d9995058"
   },
   {
    "uid": "results-023",
    "verdict": "gap",
    "claim": null,
    "why": "The generative conditions for NMDA spikes are asserted here, and the tree has no claim describing how the model's NMDA spikes arise.",
-   "sha": "7291c964"
+   "sha": "7291c964",
+   "tree": "d9995058"
   },
   {
    "uid": "results-025",
    "verdict": "gap",
    "claim": null,
    "why": "The nexus origin and Ca2+-channel basis of Ca2+ spikes is asserted here with no corresponding claim in the tree.",
-   "sha": "5f917162"
+   "sha": "5f917162",
+   "tree": "d9995058"
   },
   {
    "uid": "results-031",
    "verdict": "gap",
    "claim": null,
    "why": "The long apical trunk of L5 neurons and its consequence for tuft-driven spiking is background the tree never states as a claim.",
-   "sha": "3ef23816"
+   "sha": "3ef23816",
+   "tree": "d9995058"
   },
   {
    "uid": "results-036",
@@ -79,49 +85,56 @@
    "verdict": "gap",
    "claim": null,
    "why": "That the model's compartments differ systematically in electrotonic coupling to the soma is asserted here but not claimed anywhere.",
-   "sha": "7e8d6c1c"
+   "sha": "7e8d6c1c",
+   "tree": "d9995058"
   },
   {
    "uid": "results-052",
    "verdict": "covered",
    "claim": "na-spikes-couple-2to3ms-before-ap",
    "why": "This is the 2-3 ms lead of dendritic Na+ spikes over somatic action potentials that the claim states.",
-   "sha": "02d2ce09"
+   "sha": "02d2ce09",
+   "claim_sha": "ce79d257"
   },
   {
    "uid": "results-055",
    "verdict": "covered",
    "claim": "nmda-spikes-couple-25ms-before-ap",
    "why": "This is the ~25 ms NMDA-spike lead over somatic action potentials that the claim states.",
-   "sha": "7e397d64"
+   "sha": "7e397d64",
+   "claim_sha": "79f1ec67"
   },
   {
    "uid": "results-059",
    "verdict": "gap",
    "claim": null,
    "why": "The electrotonic proximity of the nexus to the apical trunk, and its role in Ca2+ spike propagation, is asserted here with no claim behind it.",
-   "sha": "836080f3"
+   "sha": "836080f3",
+   "tree": "d9995058"
   },
   {
    "uid": "results-060",
    "verdict": "covered",
    "claim": "ca-spikes-couple-20ms-before-ap",
    "why": "This is the ~20 ms lead of nexus Ca2+ spikes over somatic action potentials that the claim states.",
-   "sha": "00b511e1"
+   "sha": "00b511e1",
+   "claim_sha": "50ed9864"
   },
   {
    "uid": "results-061",
    "verdict": "gap",
    "claim": null,
    "why": "The ordering of apical NMDA spikes before Ca2+ spikes is a result with no claim in the tree.",
-   "sha": "7ee8ab6e"
+   "sha": "7ee8ab6e",
+   "tree": "d9995058"
   },
   {
    "uid": "results-063",
    "verdict": "gap",
    "claim": null,
    "why": "The proposal that tuft NMDA spikes drive somatic output indirectly, via Ca2+ spikes, is not stated by any claim.",
-   "sha": "f36542c7"
+   "sha": "f36542c7",
+   "tree": "d9995058"
   },
   {
    "uid": "results-065",
@@ -135,7 +148,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "The null result for basal dendrites is a reported finding that no claim accounts for.",
-   "sha": "bdc01511"
+   "sha": "bdc01511",
+   "tree": "d9995058"
   },
   {
    "uid": "results-069",
@@ -170,7 +184,8 @@
    "verdict": "covered",
    "claim": "distal-inhib-drops-firing-02hz",
    "why": "These are the control, distal and perisomatic firing rates the claim states, 5.5 Hz falling to 0.2 Hz under doubled distal inhibition.",
-   "sha": "41617b38"
+   "sha": "41617b38",
+   "claim_sha": "ab6e917a"
   },
   {
    "uid": "results-084",
@@ -233,28 +248,32 @@
    "verdict": "covered",
    "claim": "distal-inhib-drops-firing-02hz",
    "why": "The claim's 0.2 Hz under distal versus 0.7 Hz under perisomatic inhibition is exactly this comparison of which manipulation cuts firing most.",
-   "sha": "6afd0bac"
+   "sha": "6afd0bac",
+   "claim_sha": "ab6e917a"
   },
   {
    "uid": "results-108",
    "verdict": "covered",
    "claim": "perisomatic-inhib-drops-firing-07hz",
    "why": "The claim states that perisomatic inhibition leaves dendritic spike rates relatively preserved, which is what this reports.",
-   "sha": "1008a490"
+   "sha": "1008a490",
+   "claim_sha": "01608804"
   },
   {
    "uid": "results-109",
    "verdict": "covered",
    "claim": "distal-inhib-drops-firing-02hz",
    "why": "The claim attributes the distal effect to suppression of Ca2+ and NMDA spikes, which is the decrease reported here.",
-   "sha": "cd681390"
+   "sha": "cd681390",
+   "claim_sha": "ab6e917a"
   },
   {
    "uid": "results-110",
    "verdict": "gap",
    "claim": null,
    "why": "No claim states that Na+ spike rates survive tonic distal inhibition, which matters because the rhythmic case later behaves differently.",
-   "sha": "8b8a7bd5"
+   "sha": "8b8a7bd5",
+   "tree": "d9995058"
   },
   {
    "uid": "results-119",
@@ -268,7 +287,8 @@
    "verdict": "covered",
    "claim": "ei-lag-sensitivity-firing-rate",
    "why": "The claim that E-I lag reshapes dendritic spiking and its coupling to output is what this example illustrates.",
-   "sha": "3332145f"
+   "sha": "3332145f",
+   "claim_sha": "5c6a828c"
   },
   {
    "uid": "results-125",
@@ -282,14 +302,16 @@
    "verdict": "gap",
    "claim": null,
    "why": "The non-monotonic lag profile, with distal suppression peaking near 125 ms and recovering by 500 ms, is a specific result the tree's lag claim does not capture.",
-   "sha": "a13949cb"
+   "sha": "a13949cb",
+   "tree": "d9995058"
   },
   {
    "uid": "results-127",
    "verdict": "covered",
    "claim": "ei-lag-sensitivity-firing-rate",
    "why": "Loss of Ca2+-to-soma coordination with increasing lag is the claim's point that timing reshapes dendritic contribution.",
-   "sha": "d2df9151"
+   "sha": "d2df9151",
+   "claim_sha": "5c6a828c"
   },
   {
    "uid": "results-134",
@@ -303,7 +325,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "The paper's parameterization claim covers synaptic drive but not this calibration of rhythm modulation depth against in vivo beta and gamma bursts.",
-   "sha": "701a62b9"
+   "sha": "701a62b9",
+   "tree": "d9995058"
   },
   {
    "uid": "results-140",
@@ -352,21 +375,24 @@
    "verdict": "covered",
    "claim": "beta-bidirectional-dendritic-control",
    "why": "The claim asserts phase-dependent control of dendritic spike occurrence by distal beta, which is the modulation reported here.",
-   "sha": "93075071"
+   "sha": "93075071",
+   "claim_sha": "aca00b26"
   },
   {
    "uid": "results-162",
    "verdict": "gap",
    "claim": null,
    "why": "The dissociation between rhythmic and tonic distal inhibition for Na+ spikes is flagged as unexpected here but no claim states it.",
-   "sha": "c9c3951d"
+   "sha": "c9c3951d",
+   "tree": "d9995058"
   },
   {
    "uid": "results-163",
    "verdict": "covered",
    "claim": "gamma-perisomatic-no-dendritic-spike-change",
    "why": "The claim states that perisomatic gamma leaves dendritic spike rates substantially unaltered.",
-   "sha": "d53e364b"
+   "sha": "d53e364b",
+   "claim_sha": "25b33f21"
   },
   {
    "uid": "results-167",
@@ -380,21 +406,24 @@
    "verdict": "covered",
    "claim": "gamma-optimal-perisomatic-ap-modulation",
    "why": "The claim asserts phase-dependent modulation of somatic AP voltage threshold by perisomatic gamma, which is the trough-phase threshold drop reported here.",
-   "sha": "9620b0c9"
+   "sha": "9620b0c9",
+   "claim_sha": "324f7407"
   },
   {
    "uid": "results-171",
    "verdict": "gap",
    "claim": null,
    "why": "A threshold increase during the beta peak, and the off-path shunting account of it, is asserted here while the tree's distal claims predict little threshold change.",
-   "sha": "5c7fb63c"
+   "sha": "5c7fb63c",
+   "tree": "d9995058"
   },
   {
    "uid": "results-172",
    "verdict": "gap",
    "claim": null,
    "why": "The membrane-potential decrease during the beta peak, and its attribution to suppressed dendritic spikes, is claimed nowhere.",
-   "sha": "494a04fb"
+   "sha": "494a04fb",
+   "tree": "d9995058"
   },
   {
    "uid": "results-180",
@@ -408,49 +437,56 @@
    "verdict": "gap",
    "claim": null,
    "why": "The swapped-location control, where phase modulation of firing survives but overall spiking collapses, has no claim behind it.",
-   "sha": "c7e2c0de"
+   "sha": "c7e2c0de",
+   "tree": "d9995058"
   },
   {
    "uid": "results-194",
    "verdict": "gap",
    "claim": null,
    "why": "The null effect on Ca2+ and NMDA spikes when each rhythm is delivered to the wrong compartment is an unclaimed control result.",
-   "sha": "2b08b78e"
+   "sha": "2b08b78e",
+   "tree": "d9995058"
   },
   {
    "uid": "results-195",
    "verdict": "covered",
    "claim": "hypothesis-frequency-compartment-matching",
    "why": "This is the claim's timescale-matching logic in action: slow Ca2+ and NMDA processes escape gamma while sub-millisecond Na+ spikes follow it.",
-   "sha": "16425abf"
+   "sha": "16425abf",
+   "claim_sha": "aa6a4e83"
   },
   {
    "uid": "results-197",
    "verdict": "gap",
    "claim": null,
    "why": "Dendritic gamma sparing AP threshold while hyperpolarizing the soma is a control result with no claim in the tree.",
-   "sha": "40de16be"
+   "sha": "40de16be",
+   "tree": "d9995058"
   },
   {
    "uid": "results-199",
    "verdict": "gap",
    "claim": null,
    "why": "Somatically delivered beta raising threshold and hyperpolarizing at the peak is a control result the tree does not claim.",
-   "sha": "bf845f38"
+   "sha": "bf845f38",
+   "tree": "d9995058"
   },
   {
    "uid": "results-206",
    "verdict": "covered",
    "claim": "beta-optimal-distal-dendritic-entrainment",
    "why": "The claim locates peak distal entrainment near 20 Hz, which is the fall-off above 20 Hz reported here.",
-   "sha": "2b310c59"
+   "sha": "2b310c59",
+   "claim_sha": "8ac5c889"
   },
   {
    "uid": "results-211",
    "verdict": "covered",
    "claim": "beta-optimal-distal-dendritic-entrainment",
    "why": "The caption states the frequency dependence of distal entrainment that the claim makes.",
-   "sha": "8e049914"
+   "sha": "8e049914",
+   "claim_sha": "8ac5c889"
   },
   {
    "uid": "results-214",
@@ -471,7 +507,8 @@
    "verdict": "covered",
    "claim": "beta-bidirectional-dendritic-control",
    "why": "Onsets in the trough and offsets at the peak is precisely the bidirectional, within-cycle control the claim asserts.",
-   "sha": "43f8fe82"
+   "sha": "43f8fe82",
+   "claim_sha": "aca00b26"
   },
   {
    "uid": "results-223",
@@ -485,14 +522,16 @@
    "verdict": "gap",
    "claim": null,
    "why": "Phase-dependent shifts in mean somatic membrane potential at low rhythm frequencies are unclaimed; the tree's perisomatic sweep claim covers threshold only.",
-   "sha": "2e0fbf04"
+   "sha": "2e0fbf04",
+   "tree": "d9995058"
   },
   {
    "uid": "results-232",
    "verdict": "gap",
    "claim": null,
    "why": "The divergence of momentary membrane-potential fluctuations between peak and trough as frequency rises is a separate result no claim states.",
-   "sha": "a49aead1"
+   "sha": "a49aead1",
+   "tree": "d9995058"
   },
   {
    "uid": "results-239",
@@ -541,21 +580,24 @@
    "verdict": "covered",
    "claim": "burst-effects-emerge-first-cycles",
    "why": "The claim asserts that gamma bursts phase-modulate action potential timing across the burst, which is the entrainment reported here.",
-   "sha": "0a0bf2e2"
+   "sha": "0a0bf2e2",
+   "claim_sha": "822832de"
   },
   {
    "uid": "results-260",
    "verdict": "covered",
    "claim": "gamma-perisomatic-no-dendritic-spike-change",
    "why": "The claim's orthogonality point, that perisomatic gamma leaves dendritic spikes alone, holds for bursts as well as tonic rhythms.",
-   "sha": "3012a8d6"
+   "sha": "3012a8d6",
+   "claim_sha": "25b33f21"
   },
   {
    "uid": "results-261",
    "verdict": "covered",
    "claim": "burst-effects-emerge-first-cycles",
    "why": "The claim asserts that beta bursts phase-modulate both dendritic spikes and action potential timing, which is the entrainment reported here.",
-   "sha": "f6f1a3fd"
+   "sha": "f6f1a3fd",
+   "claim_sha": "822832de"
   },
   {
    "uid": "results-264",
@@ -590,28 +632,32 @@
    "verdict": "covered",
    "claim": "beta-gates-distal-apical-inputs",
    "why": "Transmission of distal inputs in the trough and blockade at the peak is exactly the gating the claim asserts.",
-   "sha": "5d022f02"
+   "sha": "5d022f02",
+   "claim_sha": "1f8f1334"
   },
   {
    "uid": "results-282",
    "verdict": "gap",
    "claim": null,
    "why": "Beta's suppressive effect on proximal clustered inputs is reported here but no claim covers what beta does outside the distal apical compartment.",
-   "sha": "e336ac79"
+   "sha": "e336ac79",
+   "tree": "d9995058"
   },
   {
    "uid": "results-284",
    "verdict": "covered",
    "claim": "gamma-gates-proximal-basal-inputs",
    "why": "Gamma enhancing proximal inputs in the trough and suppressing them at the peak, while barely touching distal inputs, is the claim's gating pattern.",
-   "sha": "9726f4a1"
+   "sha": "9726f4a1",
+   "claim_sha": "afcfaedc"
   },
   {
    "uid": "results-285",
    "verdict": "gap",
    "claim": null,
    "why": "The gamma half of this summary is claimed, but the suppression of proximal input transmission by beta is not stated anywhere in the tree.",
-   "sha": "0139677a"
+   "sha": "0139677a",
+   "tree": "d9995058"
   },
   {
    "uid": "captions-052",
