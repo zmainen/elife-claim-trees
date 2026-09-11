@@ -71,42 +71,24 @@ def _format_paper_context(paper: PreparedPaper, max_results_chars: int = 60000) 
     return "\n".join(parts)
 
 
-def external_review(
-    paper: PreparedPaper,
-    draft: DraftClaimTable,
-    cfg: Config,
-) -> DraftClaimTable:
-    """Run the external Opus reviewer pass on a reconciled draft.
-
-    Returns a revised DraftClaimTable. Preserves the original draft on
-    the caller side (caller is responsible for saving the original
-    separately if it wants both).
-    """
-    system_prompt = load_reviewer_prompt(cfg)
-    paper_context = _format_paper_context(paper)
-    draft_json = draft.model_dump_json(indent=2)
-
-    user_message = (
-        f"{paper_context}\n\n"
+def build_review_request(paper: PreparedPaper, draft: DraftClaimTable,
+                         cfg: Config) -> tuple[str, str]:
+    """The exact (system, user) the reviewer would send."""
+    return load_reviewer_prompt(cfg), (
+        f"{_format_paper_context(paper)}\n\n"
         f"## Reconciled draft claim table (your input to revise)\n\n"
-        f"```json\n{draft_json}\n```\n\n"
+        f"```json\n{draft.model_dump_json(indent=2)}\n```\n\n"
         f"Return the revised JSON claim table per your instructions. "
         f"JSON only — no surrounding prose."
     )
 
-    logger.info(
-        "external review: paper=%s claims=%d via %s",
-        paper.paper_slug, len(draft.claims), cfg.model_reconcile,
-    )
-    raw = stream_text(
-        cfg,
-        model=cfg.model_reconcile,  # same model class as reconciliation
-        system=system_prompt,
-        user=user_message,
-        max_tokens=32768,
-        label="external-reviewer",
-    )
 
+def review_from_raw(raw: str, draft: DraftClaimTable) -> DraftClaimTable:
+    """Validate a raw reviewer answer into a revised DraftClaimTable.
+
+    Every route in goes through here, so the fields the draft owns — how the paper was read,
+    the per-agent counts — survive whoever answered.
+    """
     parsed = parse_json_response(raw)
     if not isinstance(parsed, dict):
         raise ValueError(
@@ -129,3 +111,31 @@ def external_review(
     parsed["config_snapshot"]["external_review"] = True
 
     return DraftClaimTable(**parsed)
+
+def external_review(
+    paper: PreparedPaper,
+    draft: DraftClaimTable,
+    cfg: Config,
+) -> DraftClaimTable:
+    """Run the external Opus reviewer pass on a reconciled draft.
+
+    Returns a revised DraftClaimTable. Preserves the original draft on
+    the caller side (caller is responsible for saving the original
+    separately if it wants both).
+    """
+    system_prompt, user_message = build_review_request(paper, draft, cfg)
+
+    logger.info(
+        "external review: paper=%s claims=%d via %s",
+        paper.paper_slug, len(draft.claims), cfg.model_reconcile,
+    )
+    raw = stream_text(
+        cfg,
+        model=cfg.model_reconcile,  # same model class as reconciliation
+        system=system_prompt,
+        user=user_message,
+        max_tokens=32768,
+        label="external-reviewer",
+    )
+
+    return review_from_raw(raw, draft)

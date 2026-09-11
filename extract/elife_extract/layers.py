@@ -102,14 +102,29 @@ READER_OUTPUT = {"results": "results-reader.output.json",
                  "structure": "structure-reader.output.json"}
 
 
-def reader_layer(agent: str, paper: str, cfg: Config) -> tuple[Path, AgentExtraction]:
-    """One reader against its slice. The three stay apart because agreement is the signal."""
-    from .agents import run_agent
+def reader_layer(agent: str, paper: str, cfg: Config, *,
+                 answer: str | None = None) -> tuple[Path, AgentExtraction]:
+    """One reader against its slice. The three stay apart because agreement is the signal.
 
-    extraction = run_agent(agent, read_prepared(paper, cfg), cfg)
+    `answer` is a raw reply from somewhere other than the configured backend. It goes through
+    the same validation, and records who produced it, so the ledger's `by` distinguishes a
+    backend call from an agent answering the same prompt.
+    """
+    from .agents import model_for, reader_from_raw, run_agent
+
+    if answer is not None:
+        extraction = reader_from_raw(agent, paper, f"supplied:{answer}",
+                                     Path(answer).read_text(encoding="utf-8"))
+    else:
+        extraction = run_agent(agent, read_prepared(paper, cfg), cfg)
     path = _write_json(run_file(paper, READER_OUTPUT[agent], cfg),
                        json.loads(extraction.model_dump_json()))
     return path, extraction
+
+
+def reader_request(agent: str, paper: str, cfg: Config) -> tuple[str, str]:
+    from .agents import build_reader_request
+    return build_reader_request(agent, read_prepared(paper, cfg), cfg)
 
 
 def read_reader(agent: str, paper: str, cfg: Config) -> AgentExtraction:
@@ -120,10 +135,32 @@ def read_reader(agent: str, paper: str, cfg: Config) -> AgentExtraction:
 # ── reconcile, external review, edges ────────────────────────────────────
 
 
-def reconcile_layer(paper: str, cfg: Config) -> tuple[Path, DraftClaimTable]:
-    from .reconcile import reconcile
+def _three_readers(paper: str, cfg: Config):
+    return (read_reader("results", paper, cfg), read_reader("caption", paper, cfg),
+            read_reader("structure", paper, cfg))
+
+
+def reconcile_request(paper: str, cfg: Config) -> tuple[str, str]:
+    from .reconcile import build_reconcile_request
+    p = read_prepared(paper, cfg)
+    r, c, st = _three_readers(paper, cfg)
+    return build_reconcile_request(r, c, st, cfg, p.doi, p.title)
+
+
+def reconcile_layer(paper: str, cfg: Config, *,
+                    answer: str | None = None) -> tuple[Path, DraftClaimTable]:
+    from .reconcile import draft_from_raw, reconcile
 
     prepared = read_prepared(paper, cfg)
+    if answer is not None:
+        r, c, st = _three_readers(paper, cfg)
+        draft = draft_from_raw(Path(answer).read_text(encoding="utf-8"), r, c, st, cfg,
+                               prepared.doi, prepared.title,
+                               prepared.extraction_path, prepared.extraction_path_note)
+        draft.model = f"supplied:{answer}"
+        path = _write_json(run_file(paper, "reconciler.output.json", cfg),
+                           json.loads(draft.model_dump_json()))
+        return path, draft
     draft = reconcile(
         read_reader("results", paper, cfg),
         read_reader("caption", paper, cfg),
@@ -138,18 +175,30 @@ def reconcile_layer(paper: str, cfg: Config) -> tuple[Path, DraftClaimTable]:
     return path, draft
 
 
-def external_review_layer(paper: str, cfg: Config) -> tuple[Path, DraftClaimTable]:
+def external_review_request(paper: str, cfg: Config) -> tuple[str, str]:
+    from .external_review import build_review_request
+    draft = DraftClaimTable(**_require(
+        run_file(paper, "reconciler.output.json", cfg), "external-review", "reconcile"))
+    return build_review_request(read_prepared(paper, cfg), draft, cfg)
+
+
+def external_review_layer(paper: str, cfg: Config, *,
+                          answer: str | None = None) -> tuple[Path, DraftClaimTable]:
     """The Opus pass that recovers structure the three readers systematically miss.
 
     Was `--review-mode external`. It is a step, not review: it changes the artifact, and it
     runs before the version it would have approved exists.
     """
-    from .external_review import external_review
+    from .external_review import external_review, review_from_raw
 
     draft = DraftClaimTable(**_require(
         run_file(paper, "reconciler.output.json", cfg), "external-review", "reconcile"))
-    revised = external_review(read_prepared(paper, cfg), draft, cfg)
-    revised.model = cfg.model_reconcile
+    if answer is not None:
+        revised = review_from_raw(Path(answer).read_text(encoding="utf-8"), draft)
+        revised.model = f"supplied:{answer}"
+    else:
+        revised = external_review(read_prepared(paper, cfg), draft, cfg)
+        revised.model = cfg.model_reconcile
     path = _write_json(run_file(paper, "external-review.output.json", cfg),
                        json.loads(revised.model_dump_json()))
     return path, revised
