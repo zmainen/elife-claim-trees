@@ -47,6 +47,24 @@ def _logging(verbose: bool = False) -> None:
     )
 
 
+def _dump(args: argparse.Namespace, request, label: str) -> bool:
+    """Write the exact prompt this layer would send, and stop.
+
+    Whatever answers it then answers the question the layer would have asked, rather than a
+    paraphrase of it written from memory. The answer comes back through `--answer` and gets
+    the same validation a backend reply would.
+    """
+    if not getattr(args, "dump_prompt", None):
+        return False
+    system, user = request()
+    out = Path(args.dump_prompt).expanduser()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
+    print(f"  {label}: prompt written to {out}  ({len(system)}c system + {len(user)}c user)")
+    print(f"  answer it, then: --answer <file>")
+    return True
+
+
 def _cfg(args: argparse.Namespace) -> Config:
     cfg = Config.from_args(args)
     errors = cfg.validate()
@@ -84,10 +102,12 @@ def cmd_prepare(args: argparse.Namespace) -> int:
 
 def _reader(agent: str):
     def run(args: argparse.Namespace) -> int:
-        from .layers import reader_layer
+        from .layers import reader_layer, reader_request
 
         cfg = _cfg(args)
-        path, extraction = reader_layer(agent, args.paper, cfg)
+        if _dump(args, lambda: reader_request(agent, args.paper, cfg), f"{agent}-reader"):
+            return 0
+        path, extraction = reader_layer(agent, args.paper, cfg, answer=args.answer)
         print(f"=== {agent}-reader — {args.paper} ===")
         print(f"  model    = {extraction.model}")
         print(f"  proposed = {len(extraction.claims)} candidate claim(s)")
@@ -98,10 +118,12 @@ def _reader(agent: str):
 
 def cmd_reconcile(args: argparse.Namespace) -> int:
     """Layer `reconcile` — which candidates survive, and which readers agreed."""
-    from .layers import reconcile_layer
+    from .layers import reconcile_layer, reconcile_request
 
     cfg = _cfg(args)
-    path, draft = reconcile_layer(args.paper, cfg)
+    if _dump(args, lambda: reconcile_request(args.paper, cfg), "reconcile"):
+        return 0
+    path, draft = reconcile_layer(args.paper, cfg, answer=args.answer)
     by_conf: dict[str, int] = {}
     for c in draft.claims:
         by_conf[c.confidence] = by_conf.get(c.confidence, 0) + 1
@@ -117,14 +139,16 @@ def cmd_reconcile(args: argparse.Namespace) -> int:
 
 def cmd_external_review(args: argparse.Namespace) -> int:
     """Layer `external-review` — recover the structure the three readers miss."""
-    from .layers import external_review_layer, run_file
+    from .layers import external_review_layer, external_review_request, run_file
     import json
 
     cfg = _cfg(args)
+    if _dump(args, lambda: external_review_request(args.paper, cfg), "external-review"):
+        return 0
     before = len(json.loads(run_file(args.paper, "reconciler.output.json", cfg)
                             .read_text(encoding="utf-8"))["claims"]) \
         if run_file(args.paper, "reconciler.output.json", cfg).is_file() else 0
-    path, revised = external_review_layer(args.paper, cfg)
+    path, revised = external_review_layer(args.paper, cfg, answer=args.answer)
     print(f"=== external-review — {args.paper} ===")
     print(f"  model  = {revised.model}")
     print(f"  claims = {before} → {len(revised.claims)}")
@@ -153,22 +177,25 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
         print(f"  answer it with a JSON array, then re-run with --edges-json <answer.json>")
         return 0
 
-    if args.edges_json:
+    supplied = args.answer or args.edges_json
+    if supplied:
         from .edges import edges_from_raw
         from .layers import _write_json
         draft, _ = best_draft(args.paper, cfg)
-        edges = edges_from_raw(Path(args.edges_json).read_text(encoding="utf-8"),
+        edges = edges_from_raw(Path(supplied).read_text(encoding="utf-8"),
                                _unique_slugs(draft.claims),
-                               source=f"supplied:{args.edges_json}")
+                               source=f"supplied:{supplied}")
         path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), {
-            "paper_slug": args.paper, "model": f"supplied:{args.edges_json}", "edges": edges,
+            "paper_slug": args.paper, "model": f"supplied:{supplied}", "edges": edges,
         })
     else:
         path, edges = edge_inference_layer(args.paper, cfg)
 
     kinds: dict[str, int] = {}
     for e in edges:
-        k = e.get("relationType", "?")
+        # `relation` is the key edges.py emits; reading `relationType` counted every
+        # edge as one unknown kind and reported "1 relation type" for any answer.
+        k = e.get("relation", "?")
         kinds[k] = kinds.get(k, 0) + 1
     print(f"=== edge-inference — {args.paper} ===")
     print(f"  edges = {len(edges)} across {len(kinds)} relation type(s)")
@@ -593,6 +620,23 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
     _add_backend_args(parser)
 
 
+def _add_answerable_args(parser: argparse.ArgumentParser, what: str) -> None:
+    """Let something other than the configured backend answer this layer.
+
+    `edge-inference` has had this pair since a provider outage took the edges while every
+    other stage succeeded. Every layer a model answers has that failure mode, and the same
+    escape: ask for the prompt, answer it anywhere, hand back the reply.
+    """
+    parser.add_argument(
+        "--dump-prompt", metavar="PATH",
+        help=f"Write the exact prompt this layer would send to PATH and exit, so whatever "
+             f"answers it answers the same question. Nothing is run.")
+    parser.add_argument(
+        "--answer", metavar="PATH",
+        help=f"Record this file as the answer instead of calling a backend. It goes through "
+             f"the same validation as a backend reply; {what}")
+
+
 def _add_model_args(parser: argparse.ArgumentParser) -> None:
     """Model-routing knobs for the subcommands that call a model."""
     parser.add_argument("--model-results", default=None,
@@ -665,6 +709,7 @@ def build_parser() -> argparse.ArgumentParser:
             ),
         )
         p.add_argument("--paper", required=True, help="Paper slug.")
+        _add_answerable_args(p, "the model recorded is the file it came from.")
         _add_common_args(p)
         _add_model_args(p)
         p.set_defaults(func=_reader(agent))
@@ -682,6 +727,7 @@ def build_parser() -> argparse.ArgumentParser:
                        choices=["confidence-tagged", "union", "intersection-only",
                                 "majority-vote"],
                        default="confidence-tagged")
+    _add_answerable_args(p_rec, "the fields the pipeline owns are filled either way.")
     _add_common_args(p_rec)
     _add_model_args(p_rec)
     p_rec.set_defaults(func=cmd_reconcile)
@@ -697,6 +743,7 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     p_ext.add_argument("--paper", required=True, help="Paper slug.")
+    _add_answerable_args(p_ext, "the draft's own fields survive whoever answered.")
     _add_common_args(p_ext)
     _add_model_args(p_ext)
     p_ext.set_defaults(func=cmd_external_review)
@@ -711,12 +758,8 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     p_edge.add_argument("--paper", required=True, help="Paper slug.")
-    p_edge.add_argument("--dump-prompt", metavar="PATH",
-                        help="Write the exact prompt to PATH and exit, so whatever answers "
-                             "it answers the same question the layer would have asked.")
-    p_edge.add_argument("--edges-json",
-                        help="Record this file's edge answer instead of calling a backend. "
-                             "It goes through the same validation as an inferred one.")
+    _add_answerable_args(p_edge, "unknown slugs and self-edges are dropped either way.")
+    p_edge.add_argument("--edges-json", help=argparse.SUPPRESS)   # the older name for --answer
     _add_common_args(p_edge)
     _add_model_args(p_edge)
     p_edge.set_defaults(func=cmd_edge_inference)

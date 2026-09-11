@@ -118,15 +118,31 @@ hypothesis to prediction and `tests` back from the empirical result.
 
 `--dump-prompt` writes the exact request and exits, so that whatever answers it — an analyst, a
 reasoning agent, a different provider — answers the same question the layer would have asked
-rather than a paraphrase of it written from memory. `--edges-json` records that answer, and it
-goes through exactly the same validation an inferred one gets: edges naming an unknown slug, or
+rather than a paraphrase of it written from memory. `--answer` records that reply, and it goes
+through exactly the same validation an inferred one gets: edges naming an unknown slug, or
 pointing at themselves, are dropped either way. An invented target is worse than a missing edge,
 and that has to hold no matter who produced the answer.
 
 Reach for `--dump-prompt` when the backend is unavailable or you want a specific model to
 answer. Edges are the part of a tree most easily lost to a failed call — every other stage can
-succeed and leave you with claims and no structure — and this is the way to supply them
-without the answer being produced against a different question.
+succeed and leave you with claims and no structure — and this is the way to supply them without
+the answer being produced against a different question.
+
+## Answering a layer from outside the backend
+
+`--dump-prompt` and `--answer` are on **every layer a model answers** — the three readers,
+`reconcile`, `external-review` and `edge-inference` — not just this one. Any of them can stop
+when a provider does, and the escape is the same:
+
+```bash
+elife-extract reconcile --paper <slug> --dump-prompt /tmp/q.txt
+# answer it anywhere — another model, another provider, a person
+elife-extract reconcile --paper <slug> --answer /tmp/a.json
+```
+
+A supplied answer is validated exactly as a backend reply is, and its output records
+`model: supplied:<path>` rather than naming a model that never ran — so the ledger's `by` field
+distinguishes a backend call from something else answering the same prompt.
 
 ## `write` — the claim tree
 

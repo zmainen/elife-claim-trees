@@ -249,7 +249,6 @@ def render_schema_draft() -> str:
         "paper_slug": "headley-2026-inhibitory-rhythms",
         "paper_doi": "10.7554/eLife.95562",
         "paper_title": "Spatially targeted inhibitory rhythms differentially affect neuronal integration",
-        "extraction_path": "jats",
         "per_agent_counts": {"results": 18, "caption": 22, "structure": 7},
         "claims": [{
             "claim": "Doubling distal dendritic inhibition reduces somatic firing from approximately "

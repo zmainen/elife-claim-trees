@@ -9,7 +9,7 @@ A single JSON object and nothing else — no prose before or after, no code fenc
 | `paper_slug` | `string` | As given in the input. |
 | `paper_doi` | `string` | As given in the input. |
 | `paper_title` (optional) | `string` or `null` | As given in the input. |
-| `extraction_path` (optional) | `jats` / `pdf` / `github-readme` / `elife-api` / `web-fetch` | As given in the input. |
+| `extraction_path` (optional) | `jats` / `pdf` or `null` | Filled by the runner from prepared.json. Leave null. |
 | `extraction_path_note` (optional) | `string` or `null` |  |
 | `per_agent_counts` (optional) | object | How many candidates each reader proposed. |
 | `model` (optional) | `string` or `null` |  |
@@ -34,7 +34,6 @@ Each element of `claims`:
   "paper_slug": "headley-2026-inhibitory-rhythms",
   "paper_doi": "10.7554/eLife.95562",
   "paper_title": "Spatially targeted inhibitory rhythms differentially affect neuronal integration",
-  "extraction_path": "jats",
   "per_agent_counts": {
     "results": 18,
     "caption": 22,

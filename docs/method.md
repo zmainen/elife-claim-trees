@@ -28,7 +28,7 @@ The unit of work is the claim, not the figure. A figure panel records where a pa
 
 The method has two distinct phases. **Claim induction** is the process of reading a paper and extracting its claim structure — the propositions, their roles, their logical dependencies, and their provenance (which figure panel, which analysis, which dataset). Claim induction is a reading act: it requires comprehension of the paper's argument and judgment about what constitutes a claim. It produces a claim graph. **Claim verification** is the process of running code against deposited data to check whether an induced claim reproduces. Verification is an execution act: it requires data, code, and compute. It produces a pass/fail/warn verdict per claim, optionally with reproduced figures that can be compared to the published originals.
 
-The two phases are separable. A claim graph is valuable before any verification runs — it makes the paper's argument structure explicit and navigable. Verification adds an empirical layer: did the computation actually produce the reported result? But induction comes first, and induction is where provenance should be captured — figure URIs, panel assignments, dataset links — because the agent performing induction has the paper's structured source (JATS XML, PDF) in front of it. Deferring provenance capture to a later build step (e.g. guessing figure filenames from panel labels) is fragile and loses information that was available at induction time.
+The two phases are separable. A claim graph is valuable before any verification runs — it makes the paper's argument structure explicit and navigable. Verification adds an empirical layer: did the computation actually produce the reported result? But induction comes first, and induction is where provenance should be captured — figure URIs, panel assignments, dataset links — because the agent performing induction has the paper's structured source in front of it — JATS XML, whose figure elements carry the publisher's own ids ([what the readers are actually given](#what-the-readers-are-actually-given)). Deferring provenance capture to a later build step (e.g. guessing figure filenames from panel labels) is fragile and loses information that was available at induction time.
 
 The corpus is a {{papers}}-paper prototype assembled to test whether the schema is expressive enough to capture the argumentative structure of recent neuroscience papers, whether the verification step can re-enact published analyses against deposited data and code, and whether downstream pipelines (paper summaries, synthesis from the claim graph alone, comparison against the published abstract) yield findings that would not be visible from the prose alone. It is reverse-engineered from finished papers; forward construction by authors at submission would look different.
 
@@ -106,6 +106,64 @@ Induction is not one act but a sequence of them, and each is a declared layer wi
 question, its own inputs and its own record of having run. What each does, and how, is
 documented beside its declaration in `pipeline/layers/` and gathered in the
 [Layers](#layers) section. What follows here is what holds across all of them.
+
+### What the readers are actually given
+
+Before any reading happens, the paper has to be turned into text, and the format that text
+comes in bounds everything downstream. This step is the `prepare` layer, and it is stated here
+because a method that says "three agents read the paper" without saying *what they read* has
+skipped the decision that constrains the rest.
+
+**For an eLife DOI the source is JATS XML, not the PDF and not the web page.** JATS — the
+Journal Article Tag Suite, the archival XML that eLife and most journals typeset from — is
+fetched from the article's CDN URL:
+
+```
+https://cdn.elifesciences.org/articles/<article-id>/elife-<article-id>-v1.xml
+```
+
+The choice is not incidental. JATS carries the structure a claim tree needs and a PDF has
+already discarded:
+
+| | JATS XML | PDF |
+|:--|:--|:--|
+| Section boundaries | tagged (`<abstract>`, `<sec>`) | inferred by regex against heading text |
+| Figure captions | tagged, one element per figure, with its own id | recovered from body text by position |
+| Figure identity | eLife's own `<fig id>` — `fig2`, `fig3s1` | guessed from a label like "Figure 2" |
+| Reading order | explicit | a column-order guess from `pdfplumber` |
+| Tables | `<table-wrap>` with a caption | text that may or may not still be a table |
+
+The panel-level grounding the whole format rests on — every empirical claim naming the panel it
+came from — is only as good as the figure structure at intake. Read from a PDF, a claim's
+`panel` field is an inference about a label in running text; read from JATS, it is the
+publisher's own element id.
+
+The PDF path still exists and is still used, but only deliberately: `--input-format pdf`, or
+`--pdf-path` for a paper that is not on the eLife CDN. There is **no silent fallback** — with a
+DOI and the default `--input-format auto`, the intake is JATS or it fails. A method that
+quietly degraded to PDF when a fetch failed would make every claim below it weaker without
+saying so.
+
+What `prepare` writes is `runs/<paper>/prepared.json`: the four slices the readers are given —
+abstract, results, figure captions, methods — the typed figure captions, and
+`extraction_path` recording which route was taken, with the source URL. That file is the
+verbatim text the model saw, which is what makes an extraction re-examinable rather than merely
+re-runnable. For Gädeke it records:
+
+```
+extraction_path  jats
+source           https://cdn.elifesciences.org/articles/105391/elife-105391-v1.xml
+abstract          1,931 characters
+results          33,886 characters
+captions          8,496 characters   (7 typed figure captions)
+methods          32,690 characters
+```
+
+The fetch is cached under `~/.cache/elife-extract/`, so every later layer on the same paper
+runs offline and costs nothing. The practical consequence for anyone debugging a bad
+extraction: check the slice sizes first. A short `results` means section detection failed, and
+everything downstream read the wrong text — which is a fault in intake presenting as a fault in
+reading.
 
 ### Reading the abstract first
 

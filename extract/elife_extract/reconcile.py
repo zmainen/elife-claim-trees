@@ -76,29 +76,16 @@ def _format_agent_input(extraction: AgentExtraction) -> str:
     return "\n".join(lines)
 
 
-def reconcile(
+def build_reconcile_request(
     results: AgentExtraction,
     caption: AgentExtraction,
     structure: AgentExtraction,
     cfg: Config,
     paper_doi: str,
     paper_title: str | None = None,
-) -> DraftClaimTable:
-    """Reconcile three extractions into a draft claim table via Opus.
-
-    The reconciler sees all three lists at once. It returns a DraftClaimTable
-    matching the schema in schema.py — with confidence (high / contested /
-    single-source), the list of agent sources per claim, and per-agent
-    evidence quotes preserved.
-    """
-    if cfg.reconcile_strategy != "confidence-tagged":
-        raise NotImplementedError(
-            f"reconcile_strategy={cfg.reconcile_strategy!r} not yet implemented "
-            f"(only 'confidence-tagged' available in Phase D)"
-        )
-
-    system_prompt = load_reconciler_prompt(cfg)
-    user_message = (
+) -> tuple[str, str]:
+    """The exact (system, user) reconciliation would send."""
+    return load_reconciler_prompt(cfg), (
         f"# Paper: {paper_title or 'unknown'}\n"
         f"DOI: {paper_doi}\n"
         f"Slug: {results.paper_slug}\n\n"
@@ -109,21 +96,24 @@ def reconcile(
         f"draft claim table per the schema in your instructions. Return JSON only."
     )
 
-    logger.info(
-        "reconciling %d (results) + %d (caption) + %d (structure) claims via %s",
-        len(results.claims),
-        len(caption.claims),
-        len(structure.claims),
-        cfg.model_reconcile,
-    )
-    raw = stream_text(
-        cfg,
-        model=cfg.model_reconcile,
-        system=system_prompt,
-        user=user_message,
-        max_tokens=32768,  # reconciliation output can be large; budget headroom
-        label="reconciler",
-    )
+
+def draft_from_raw(
+    raw: str,
+    results: AgentExtraction,
+    caption: AgentExtraction,
+    structure: AgentExtraction,
+    cfg: Config,
+    paper_doi: str,
+    paper_title: str | None = None,
+    extraction_path: str | None = None,
+    extraction_path_note: str | None = None,
+) -> DraftClaimTable:
+    """Validate a raw reconciliation answer into a DraftClaimTable.
+
+    Every route in goes through here — the configured backend, or an answer supplied
+    from outside it — so the fields the pipeline knows and the model should not be
+    trusted to echo are filled the same way either way.
+    """
     parsed = parse_json_response(raw)
     if not isinstance(parsed, dict):
         raise ValueError(
@@ -157,4 +147,58 @@ def reconcile(
             "reconcile_strategy": cfg.reconcile_strategy,
         },
     )
+    # How the paper was read is a fact the pipeline already holds, so it is set here rather
+    # than read back out of the model's reply. It was previously neither: the prompt's output
+    # example hardcoded "pdf", so the model dutifully echoed it, and the schema's default
+    # supplied the same answer when it did not. A language model should not be the transport
+    # for provenance the caller can state.
+    if extraction_path is not None:
+        parsed["extraction_path"] = extraction_path
+        parsed["extraction_path_note"] = extraction_path_note
+
     return DraftClaimTable(**parsed)
+
+
+def reconcile(
+    results: AgentExtraction,
+    caption: AgentExtraction,
+    structure: AgentExtraction,
+    cfg: Config,
+    paper_doi: str,
+    paper_title: str | None = None,
+    extraction_path: str | None = None,
+    extraction_path_note: str | None = None,
+) -> DraftClaimTable:
+    """Reconcile three extractions into a draft claim table via Opus.
+
+    The reconciler sees all three lists at once. It returns a DraftClaimTable
+    matching the schema in schema.py — with confidence (high / contested /
+    single-source), the list of agent sources per claim, and per-agent
+    evidence quotes preserved.
+    """
+    if cfg.reconcile_strategy != "confidence-tagged":
+        raise NotImplementedError(
+            f"reconcile_strategy={cfg.reconcile_strategy!r} not yet implemented "
+            f"(only 'confidence-tagged' available in Phase D)"
+        )
+
+    system_prompt, user_message = build_reconcile_request(
+        results, caption, structure, cfg, paper_doi, paper_title)
+
+    logger.info(
+        "reconciling %d (results) + %d (caption) + %d (structure) claims via %s",
+        len(results.claims),
+        len(caption.claims),
+        len(structure.claims),
+        cfg.model_reconcile,
+    )
+    raw = stream_text(
+        cfg,
+        model=cfg.model_reconcile,
+        system=system_prompt,
+        user=user_message,
+        max_tokens=32768,  # reconciliation output can be large; budget headroom
+        label="reconciler",
+    )
+    return draft_from_raw(raw, results, caption, structure, cfg, paper_doi,
+                          paper_title, extraction_path, extraction_path_note)

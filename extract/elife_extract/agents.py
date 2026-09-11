@@ -342,6 +342,35 @@ class _Progress:
 # ── Single-agent invocation ─────────────────────────────────────────────
 
 
+def model_for(agent: AgentName, cfg: Config) -> str:
+    return {"results": cfg.model_results, "caption": cfg.model_caption,
+            "structure": cfg.model_structure}[agent]
+
+
+def build_reader_request(agent: AgentName, paper: PreparedPaper,
+                         cfg: Config) -> tuple[str, str]:
+    """The exact (system, user) this reader would send.
+
+    Separated from the call so the question can be asked of something other than the
+    configured backend — an analyst, a reasoning agent, another provider — and the answer
+    still goes through the same validation. `edge-inference` has had this seam since the run
+    where a provider outage took the edges while every other stage succeeded; every layer a
+    model answers has the same failure mode and now the same escape.
+    """
+    return load_prompt(agent, cfg), slice_for_agent(agent, paper)
+
+
+def reader_from_raw(agent: AgentName, paper_slug: str, model: str,
+                    raw: str) -> AgentExtraction:
+    """Validate a raw reader answer into an AgentExtraction.
+
+    Every route in goes through here: the backend, a supplied file, an agent's reply. The
+    route differs; the checks do not.
+    """
+    claims = [CandidateClaim(**c) for c in _as_claim_list(parse_json_response(raw), agent)]
+    return AgentExtraction(agent=agent, paper_slug=paper_slug, model=model, claims=claims)
+
+
 def run_agent(
     agent: AgentName,
     paper: PreparedPaper,
@@ -354,14 +383,8 @@ def run_agent(
     Returns the validated AgentExtraction. Raises on unrecoverable error.
     Retries with exponential backoff on rate limits (429).
     """
-    model = {
-        "results": cfg.model_results,
-        "caption": cfg.model_caption,
-        "structure": cfg.model_structure,
-    }[agent]
-
-    system_prompt = load_prompt(agent, cfg)
-    paper_slice = slice_for_agent(agent, paper)
+    model = model_for(agent, cfg)
+    system_prompt, paper_slice = build_reader_request(agent, paper, cfg)
 
     if not paper_slice.strip() or len(paper_slice) < 200:
         logger.warning(
@@ -401,26 +424,20 @@ def run_agent(
 
     assert raw is not None
     try:
-        parsed = parse_json_response(raw)
+        return reader_from_raw(agent, paper.paper_slug, model, raw)
     except Exception as parse_err:
-        # Save raw response for debugging then re-raise with context
+        # Keep the raw reply before re-raising: a reply that failed to parse is the only
+        # evidence of what went wrong, and it is gone the moment this returns.
         from pathlib import Path
         debug_path = Path(f"/tmp/elife-extract-debug-{agent}-{paper.paper_slug}.txt")
         debug_path.write_text(raw)
         logger.error(
-            "agent=%s JSON parse failed: %s. Raw response saved to %s (%d chars)",
+            "agent=%s answer unusable: %s. Raw reply saved to %s (%d chars)",
             agent, parse_err, debug_path, len(raw),
         )
         logger.error("first 500 chars: %r", raw[:500])
         logger.error("last 500 chars: %r", raw[-500:])
         raise
-
-    parsed = _as_claim_list(parsed, agent)
-
-    claims = [CandidateClaim(**c) for c in parsed]
-    return AgentExtraction(
-        agent=agent, paper_slug=paper.paper_slug, model=model, claims=claims
-    )
 
 
 def run_all_agents(
