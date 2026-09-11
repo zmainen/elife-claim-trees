@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `wengert-2026-kcnc1` · **Generated:** 2026-09-11
+**Paper:** `wengert-2026-kcnc1` · **Claims registered:** 2026-03-30 – 2026-09-10
 
 32 claims, 122 typed relations between them.
 

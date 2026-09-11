@@ -62,10 +62,8 @@ reviewer on the seven-bias prompt, against the ten public eLife papers.
 Recovery passes by a wide margin and its median is 100% — on half the corpus, every reference
 claim has a corresponding extraction, and the worst paper still reaches 87%.
 
-This ran when external review was `--review-mode external` rather than a layer. The chain it
-measured is unchanged, so the numbers still describe what runs today; what changed is that the
-reviewer prompt is now a hashed input, so a sweep and the corpus it scores can no longer
-silently disagree about which prompt produced them.
+The chain these numbers measured is the one that runs today. Re-run the sweep after any
+prompt change before trusting them again — that is what the tool is for.
 
 ### Panel agreement is the standing failure
 

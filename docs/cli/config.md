@@ -84,14 +84,12 @@ claim file.
 
 ## What is not configurable
 
-**Where a layer writes.** That comes from `pipeline/layers.yaml`, and a runner that wrote
-somewhere else would produce artifacts the ledger could not hash. `--root` moves the whole tree;
-nothing moves one layer's output within it.
+**Where a layer writes.** That comes from `pipeline/layers.yaml`. `--root` moves the whole
+tree; nothing moves one layer's output within it.
 
-**Whether a run is recorded.** `scripts/pipeline.py run` always appends to the ledger. There is
-no quiet mode, because a run nobody can account for is the thing the ledger exists to prevent.
+**Whether a run is recorded.** `scripts/pipeline.py run` always appends to the ledger. There
+is no quiet mode.
 
-**The review gate.** There isn't one. `--review-mode` used to take `interactive`, `external`,
-`auto-approve` and `dry-run`; `external` is now the `external-review` layer and `interactive` is
-`pipeline.py approve`, which acts on a version after it exists. See
-[the runner](/elife-claim-trees/docs/runner/#approve--record-that-a-person-read-a-version).
+**The review gate.** There isn't one. `--review-mode` is gone; see
+[coming from the old CLI](/elife-claim-trees/docs/#coming-from-the-old-cli) for what replaced
+each of its settings.

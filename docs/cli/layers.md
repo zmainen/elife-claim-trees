@@ -38,9 +38,9 @@ text where a PDF gives a column-order guess — and slices it into the abstract,
 captions and methods that the three readers each get. The fetch is cached under
 `~/.cache/elife-extract/`, so re-running any layer on the same paper is free and offline.
 
-It is a layer of its own because otherwise a reader's only declared input is its prompt: the
-ledger would record which prompt read a paper without recording which paper, and eLife revises
-papers. `runs/<paper>/prepared.json` is the text the corpus was actually built from.
+`runs/<paper>/prepared.json` is the exact text the readers were given — check its slice sizes
+if a paper extracts badly, since a short `results` usually means section detection failed and
+everything downstream read the wrong text.
 
 ## The three readers
 
@@ -60,14 +60,12 @@ and the verbatim sentence it rests on.
 - **`structure-reader`** reads the methods, supplements and section structure — methodological
   capabilities, scope conditions, and what the paper frames as its own conclusions.
 
-They are three layers rather than one because none sees another's output. They are independent
-witnesses, and their agreement is the informative case; collapsing them into a single call
-loses it, which is what a single agent reading the whole paper does — and it fails in
-characteristic ways, inventing numbers where prose summarises and attaching claims to the wrong
-panel.
+None sees another's output, so where two readers surface the same claim that agreement is
+evidence — which is what `reconcile` records as `high` confidence. A single agent reading the
+whole paper loses that, and fails in characteristic ways: inventing numbers where the prose
+summarises, and attaching claims to whichever panel it read last.
 
-Each writes the model that answered it into its own output, which is what the ledger reads to
-record who wrote a claim.
+Each output names the model that produced it, which is what the ledger records as the author.
 
 ## `reconcile` — which candidates survive
 
@@ -98,17 +96,14 @@ under-covers: the `prediction` and `hypothesis` roles, and multi-panel claims co
 single panel. Roughly $2 and three minutes per paper, and it lifts role agreement from ~65% to
 ~96% on the Headley round-trip.
 
-This was a flag, `--review-mode external`, and it is not review. It changes the artifact, and
-it runs before the version a reviewer would read exists. It took the name of the curator's seat
-in the eight-step methodology and kept it after the seat was gone.
+`extract/prompts/external-reviewer.md` is a declared input, so editing it marks every claim
+tree built on it `stale`.
 
-Declared as a layer it earns what the flag could not: edit
-`extract/prompts/external-reviewer.md` and every claim tree built on it goes stale, computed
-rather than remembered. As a flag, you could rewrite that prompt and nothing anywhere could
-detect that the corpus had been built by a different reviewer.
+Running it is optional. `claim-tree` builds on this layer's output where it exists and on the
+reconciled draft where it does not, so a paper that has not been through it is an ordinary
+case rather than a failure — `pipeline.py state` shows which papers have.
 
-`claim-tree` builds on this layer's output where it has run and on the reconciled draft where it
-has not, so a paper without it is the ordinary case rather than a failure.
+*This was `--review-mode external`.*
 
 ## `edge-inference` — which claims depend on which
 
@@ -128,9 +123,10 @@ goes through exactly the same validation an inferred one gets: edges naming an u
 pointing at themselves, are dropped either way. An invented target is worse than a missing edge,
 and that has to hold no matter who produced the answer.
 
-This exists because the spine is the part of a claim tree that matters most and the part most
-easily lost to a provider outage. On one live Gädeke run every other stage succeeded and the
-edges were gone — HTTP 402, a token budget the account could not afford.
+Reach for `--dump-prompt` when the backend is unavailable or you want a specific model to
+answer. Edges are the part of a tree most easily lost to a failed call — every other stage can
+succeed and leave you with claims and no structure — and this is the way to supply them
+without the answer being produced against a different question.
 
 ## `write` — the claim tree
 
@@ -142,8 +138,9 @@ elife-extract write --paper <slug> --format oxa    # one OXA JSON Document inste
 Assigns slugs and UUIDs, attaches the edges `edge-inference` produced, and writes one file per
 claim into `<corpus-dir>/<paper>/` plus the paper's `index.md`.
 
-It reads those edges rather than inferring them again. It used to do the latter — a second paid
-Opus call, per paper, for an answer already sitting on disk.
+It reads the edges from `edge-inference`'s output rather than calling a model again, so it
+costs nothing and needs no credentials — but it does need that layer to have run. Without it
+the claims are written with no edges, and the command says so.
 
 Refuses to overwrite a non-empty paper directory. Move or delete it to re-run.
 
@@ -163,17 +160,17 @@ claim takes one of two paths:
 - **found** — no DOI yet; hints are extracted from the claim text and slug, CrossRef is
   queried, and the highest-scoring match above a confidence threshold is written back.
 
-All {{literature_context_doi_top_level}} of the {{literature_context_claims}}
-literature-context claims in the published corpus carry the cited DOI at top-level `doi:`,
-where the schema puts it, and {{literature_context_doi_in_assertions}} carry it at
-`assertions[0].doi`. Those counts are generated rather than asserted, because they are what a
-second implementation of this check got wrong: `scripts/verify-references.py` read
-`assertions[0].doi`, so its confirm path never fired for any claim and every verdict it
-recorded came from a fuzzy title search instead. One entered the record as a confirmed match
-titled "NEEDLE TINS", for a claim whose own file already carried the right DOI. That script is
-gone; this is the only implementation.
+**Put the cited DOI at top-level `doi:`.** That is where the schema expects it, and where
+this layer looks first; `assertions[0].doi` is read only as a fallback. All
+{{literature_context_doi_top_level}} of the {{literature_context_claims}} literature-context
+claims in the published corpus use the top-level field.
 
-Omitting `--paper` sweeps the corpus but writes no report, because a version belongs to one
+The distinction matters because the two paths do different things. With a DOI present the
+layer *confirms* it against CrossRef — the check that catches a hallucinated citation. Without
+one it *searches* on author and year, and a search can return a confident match to the wrong
+paper.
+
+Omitting `--paper` sweeps the whole corpus but writes no report, since a report belongs to one
 paper.
 
 ## `coverage` and `mark`

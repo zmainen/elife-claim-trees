@@ -61,16 +61,28 @@ page of its own.
 - **[For contributors](/elife-claim-trees/docs/contributing/)** — code structure, adding a
   prompt variant, what the tests pin.
 
-## What is not here
+## Coming from the old CLI
 
-The corpus is {{papers}} papers, {{claims}} claims and {{relations}} typed relations. Nothing
-on these pages will tell you that again, because a number typed into prose is a number that
-goes stale, and every figure this site has had to correct was one somebody wrote down. The
-counts live in `corpus-facts.json`, the pages substitute them, and an unknown token fails the
-build.
+The command surface changed. If you have older notes or scripts:
 
-For the claim graphs themselves see [Papers](/elife-claim-trees/papers/); for the schema and
-what may be said about a claim see
-[the vocabulary](/elife-claim-trees/pipeline/vocabulary/); for the procedure see
-[the methodology](/elife-claim-trees/pipeline/method/); for why the system is shaped this way
-see [the design note](/elife-claim-trees/design/2026-09-11-layers-as-pipeline.html).
+| If you used | Use now |
+|:------------|:--------|
+| `elife-extract extract --doi <doi>` | `pipeline.py run <paper> claim-tree`, or `prepare` then each reader |
+| `elife-extract run` | `pipeline.py run <paper> claim-tree` |
+| `write --draft out/draft-<slug>.json` | `write --paper <slug>` |
+| `write --review-mode external` | the `external-review` layer, which runs in the chain |
+| `write --review-mode interactive` | `pipeline.py approve <paper> <layer> --by NAME`, after the write |
+| `write --review-mode auto-approve` | nothing — there is no gate to bypass |
+| `coverage --doi <doi> --claims-dir <dir>` | `coverage --paper <slug>` |
+| `mark --doi <doi> …` | `mark --paper <slug>` |
+| `scripts/verify-references.py` | `pipeline.py run <paper> reference-check` |
+
+## Elsewhere on this site
+
+| | |
+|:--|:--|
+| [Papers](/elife-claim-trees/papers/) | the claim graphs themselves |
+| [Pipeline](/elife-claim-trees/pipeline/) | the layer graph, and which papers have been through each layer |
+| [Roles and relations](/elife-claim-trees/pipeline/vocabulary/) | what a claim can be, and what can hold between two |
+| [Methodology](/elife-claim-trees/pipeline/method/) | the procedure the corpus follows |
+| [Design note](/elife-claim-trees/design/2026-09-11-layers-as-pipeline.html) | why the system is shaped this way |
