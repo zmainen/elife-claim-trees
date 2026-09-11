@@ -379,3 +379,171 @@ def _apply_questions(paper: str, data: dict, cfg: Config) -> None:
         f = d / f"{slug}.md"
         if f.is_file():
             _write_key(f, "addresses", f"addresses: {qid}", after="role")
+
+
+# ── parts ────────────────────────────────────────────────────────────────
+# The second grain of a claim tree: a claim can be a component of another — one comparison,
+# condition, measure or study of a proposition the whole states once. `write.py` records this
+# at reconciliation for a fresh tree, from the reconciler's `part_of`; this layer is the
+# retrofit for the trees induced before `part-of` existed. It reads the tree, not the paper —
+# the claims and their edges — so it is cheap, and writes `part-of:` into each part's claim
+# file in place. A `feature`, like `questions` and `stance`: it revises a tree rather than
+# making a new kind of thing.
+
+
+def _relations_module():
+    """`scripts/relations.py`, loaded by path — the single source of the edge vocabulary.
+
+    The same load `contract.py` does. The package cannot import a script beside it, and the
+    parts prompt shows each claim's existing edges, so it needs to know which frontmatter keys
+    are relations rather than guessing.
+    """
+    import importlib.util
+
+    p = Path(__file__).resolve().parents[2] / "scripts" / "relations.py"
+    spec = importlib.util.spec_from_file_location("relations", p)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod
+
+
+def _tree_claims(paper: str, cfg: Config) -> list[dict]:
+    """Every claim in the paper's tree — slug, role, panel, sentence, outgoing edges.
+
+    The edges are what lets the prompt see that the graph half-says composition already: a part
+    usually carries `supports` or `tests` into the claim it composes. Read from both places the
+    schema stores a relation — the top-level list keys and `belongings` — like everything that
+    counts the corpus's edges.
+    """
+    edge_keys = _relations_module().EDGE_KEYS
+    d = cfg.corpus_dir / paper
+    out = []
+    for f in sorted(d.glob("*.md")):
+        if f.name == "index.md":
+            continue
+        fm = _read_frontmatter(f)
+        slug = fm.get("slug") or f.stem
+        edges = []
+        for key in sorted(edge_keys):
+            for t in (fm.get(key) or []):
+                if isinstance(t, str):
+                    edges.append((key, t))
+        for item in (fm.get("belongings") or []):
+            if isinstance(item, dict) and item.get("relation") and item.get("target"):
+                edges.append((item["relation"], item["target"]))
+        out.append({"slug": slug, "role": fm.get("role"),
+                    "panel": (fm.get("assertions") or [{}])[0].get("panel")
+                    if fm.get("assertions") else None,
+                    "claim": " ".join(str(fm.get("claim") or "").split()),
+                    "edges": edges})
+    return out
+
+
+def parts_request(paper: str, cfg: Config) -> tuple[str, str]:
+    """The exact (system, user) the parts layer would send.
+
+    Separated from the call, as every model-answered layer is, so an analyst or another model
+    can answer the same question through `--dump-prompt` / `--answer`.
+    """
+    from .prompts import prompt
+
+    lines = ["# The claim tree\n"]
+    for c in _tree_claims(paper, cfg):
+        head = f"- `{c['slug']}` ({c['role'] or 'claim'}"
+        head += f", {c['panel']}" if c["panel"] else ""
+        lines.append(f"{head}): {c['claim']}")
+        if c["edges"]:
+            lines.append("  edges: " + ", ".join(f"{k} → {t}" for k, t in c["edges"]))
+    return prompt("parts", cfg), "\n".join(lines) + "\n"
+
+
+def _validate_parts(raw: dict, paper: str, cfg: Config) -> dict:
+    """Coerce a model answer into `{parts: [{part, whole, why}]}`, dropping what does not hold.
+
+    The same rule the other retrofits apply to their answers: what does not resolve is dropped,
+    not guessed. A part and a whole must both be claims in this tree; a part is not its own
+    whole; a part points at exactly one whole (a second is dropped); and the edges may not form
+    a cycle — following a chain of wholes must terminate. A dropped edge is warned about, so the
+    output is auditable against the tree the layer read.
+    """
+    import logging as _logging
+    log = _logging.getLogger(__name__)
+
+    if not isinstance(raw, dict):
+        raise ValueError("parts answer must be a JSON object with `parts`")
+    slugs = {c["slug"] for c in _tree_claims(paper, cfg)}
+    whole_of: dict[str, str] = {}
+    kept: list[dict] = []
+    for e in (raw.get("parts") or []):
+        if not isinstance(e, dict):
+            continue
+        part, whole = e.get("part"), e.get("whole")
+        why = " ".join(str(e.get("why") or "").split())
+        if part not in slugs or whole not in slugs:
+            log.warning("parts: %r → %r names a claim not in this tree; dropped", part, whole)
+            continue
+        if part == whole:
+            log.warning("parts: %r is its own whole; dropped", part)
+            continue
+        if part in whole_of:
+            log.warning("parts: %r already has whole %r; second whole %r dropped",
+                        part, whole_of[part], whole)
+            continue
+        # Following the new whole's chain of wholes must not lead back to the part.
+        node, cyclic = whole, False
+        while True:
+            if node == part:
+                cyclic = True
+                break
+            if node not in whole_of:
+                break
+            node = whole_of[node]
+        if cyclic:
+            log.warning("parts: %r → %r would close a cycle; dropped", part, whole)
+            continue
+        whole_of[part] = whole
+        kept.append({"part": part, "whole": whole, "why": why})
+    return {"parts": kept}
+
+
+def parts_layer(paper: str, cfg: Config, *,
+                answer: str | None = None) -> tuple[Path, dict]:
+    """Record the paper's parts, and write `part-of:` onto each part's claim file.
+
+    The model (or a supplied answer) returns the `part-of` edges it finds; the runner writes
+    the output JSON, then edits each part's claim file in place — inserting `part-of:` without
+    disturbing the keys already there.
+    """
+    from .agents import parse_json_response, stream_text
+
+    system, user = parts_request(paper, cfg)
+    if answer is not None:
+        p, model = answer_file(answer, cfg)
+        raw = p.read_text(encoding="utf-8")
+    else:
+        model = cfg.model_reconcile
+        raw = stream_text(cfg, model=model, system=system, user=user, label="parts")
+
+    data = _validate_parts(parse_json_response(raw), paper, cfg)
+    payload = {"paper_slug": paper, "model": model, **data}
+    path = _write_json(run_file(paper, "parts.output.json", cfg), payload)
+    _apply_parts(paper, data, cfg)
+    return path, payload
+
+
+def _apply_parts(paper: str, data: dict, cfg: Config) -> None:
+    """Write `part-of: [<whole>]` into each part's claim file, a top-level relation key.
+
+    Placed after `epistemic`, where `write.py` and `stance`'s carry-over put the other
+    top-level relations, so a retrofitted file and an induced one read the same.
+    """
+    import yaml
+
+    d = cfg.corpus_dir / paper
+    for e in data["parts"]:
+        f = d / f"{e['part']}.md"
+        if not f.is_file():
+            continue
+        block = yaml.safe_dump({"part-of": [e["whole"]]}, sort_keys=False,
+                               allow_unicode=True, default_flow_style=False).rstrip("\n")
+        _write_key(f, "part-of", block, after="epistemic")

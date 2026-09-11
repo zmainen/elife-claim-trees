@@ -348,9 +348,20 @@ export function readerData(paperSlug: string) {
     }
     const full = (c.claim ?? '').trim();
     const short = (c.shortClaim ?? c.displayClaim ?? '').trim();
+    // The two grains: the whole this claim is a part of, and the parts that hang off it. A
+    // part is shown folded beneath its whole, and the default list shows wholes alone, so the
+    // page can carry both without opening on the fine grain. Parts sort by slug, the order the
+    // numbering letters them in.
+    const partOf: string | null = (c['part-of'] ?? [])[0] ?? null;
+    const parts: string[] = paper.claims
+      .filter((o: any) => (o['part-of'] ?? []).includes(c.slug))
+      .map((o: any) => o.slug)
+      .sort((a: string, b: string) => a.localeCompare(b));
     return {
       slug: c.slug,
       number: c.number ?? null,
+      partOf,
+      parts,
       kind: kindOf(c.role, c.stance ?? 'asserts'),
       role: c.role,
       stance: c.stance ?? 'asserts',
@@ -358,9 +369,13 @@ export function readerData(paperSlug: string) {
       statusLabel: status === 'na' ? '' : label,
       // The plain wording where the layer has run, the authors' short wording where it has
       // not, and the full claim as a last resort — so a paper without the layer still reads.
-      // `||`, not `??`: `short` is a trimmed string and is therefore '' rather than undefined
-      // when the authors wrote none, so the nullish fallback stopped there and never reached
-      // the full claim. Every one of Gädeke's 40 result rows rendered as an empty line.
+      // `||`, not `??`. `short` is a trimmed string, so a claim without one is '' — which
+      // `??` accepts, because '' is neither null nor undefined. The row then renders empty.
+      // It stayed invisible while every claim had either a plain wording or a short one, and
+      // appeared the moment a tree was rewritten: Gädeke went to 74 claims on claim-tree v2,
+      // 68 of them with no wording in either field, and the site showed 68 blank lines where
+      // its claims had been. A missing wording should cost the reader the full sentence with
+      // its statistics, never the claim itself.
       plain: (plain[c.slug] || short || full).trim(),
       hasPlain: Boolean(plain[c.slug]),
       full,

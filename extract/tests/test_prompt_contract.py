@@ -40,6 +40,7 @@ LAYER_OF = {
     "edge-inference": "edge-inference",
     "coverage-adjudicator": "adjudication",
     "questions": "questions",
+    "parts": "parts",
 }
 
 
@@ -93,6 +94,27 @@ def test_every_relation_has_a_direction():
     assert set(rel.EXAMPLE) <= set(rel.EDGE_KEYS)
     for a, b, _ in rel.CONFUSABLE:
         assert a in rel.EDGE_KEYS and b in rel.EDGE_KEYS
+
+
+def test_part_of_has_a_direction_and_an_example():
+    """Composition is a first-class relation, so it points a direction, shows a corpus edge,
+    and is set against `supports` — the pair the note exists to separate."""
+    rel = contract._relations(REPO)
+    assert "part-of" in rel.EDGE_KEYS and "part-of" not in rel.OPPOSES
+    assert rel.DIRECTION.get("part-of")
+    assert "part-of" in rel.EXAMPLE                     # a real edge, quoted by the contract
+    assert any({a, b} == {"part-of", "supports"} for a, b, _ in rel.CONFUSABLE)
+
+
+def test_parts_layer_reads_the_vocabulary_that_defines_composition():
+    """The parts layer is sent its task and the vocabulary — where `part-of` is defined — and
+    the declaration lists exactly that, so the run hashes what the layer composes its edges
+    from."""
+    reads = prompts.declared_reads("parts")
+    assert reads == ["extract/prompts/parts.md",
+                     f"extract/prompts/{contract.CONTRACT_DIR}/vocabulary.md"]
+    decl = _declaration()
+    assert [r for r in decl["parts"]["reads"] if r.startswith("extract/prompts/")] == reads
 
 
 # ── what is sent is what is declared ─────────────────────────────────────

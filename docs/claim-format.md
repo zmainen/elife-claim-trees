@@ -165,6 +165,7 @@ Belongings are typed directed edges between claim entities. They express logical
 | `requires` | This claim would be invalid if the target claim were wrong — a structural dependency |
 | `contradicts` | This claim is in direct tension with the target claim |
 | `extends` | This claim builds on or refines the target claim |
+| `part-of` | This claim is a component of the target claim — one comparison, condition, measure or study of a proposition the target states whole. Written as a top-level key. The target is weakened but not falsified by this claim alone, and the paper page shows the target with its parts folded beneath it. |
 
 These are not citations. They are statements about the logical structure of a claim graph. When you mark claim A as requiring claim B, you assert that A's validity depends on B's validity. Invalidity propagates: if B fails to reproduce, that failure has downstream consequences for every claim that requires B. The graph makes these dependencies explicit and auditable.
 

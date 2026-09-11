@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 type Claim = {
   slug: string; number: string | null; kind: string; role: string; stance: string;
+  partOf: string | null; parts: string[];
   status: 'matches' | 'partly' | 'differs' | 'blocked' | 'none' | 'na';
   statusLabel: string; plain: string; hasPlain: boolean; full: string;
   panel: string | null; panels: [string, string][]; method: string | null; dataset: string | null;
@@ -280,6 +281,9 @@ export default function Reader({ data, base }: Props) {
     () => Object.fromEntries(data.figures.map((f: any) => [f.id, f])), [data]);
 
   const [view, setView] = useState<'paper' | 'findings' | 'argument'>('paper');
+  // The list shows the coarse grain — wholes — by default; a part is folded under its whole.
+  // This reveals the fine grain in place, without opening the reader on it.
+  const [showParts, setShowParts] = useState(false);
   const [stack, setStack] = useState<string[]>([]);
   const [near, setNear] = useState<Set<string>>(new Set());
   // The decisions on file at build time, and any made since without a reload.
@@ -312,7 +316,9 @@ export default function Reader({ data, base }: Props) {
 
   // ── results, in the order the paper shows them ──────────────────────────────
   const results = useMemo(() => {
-    const rs = data.claims.filter((c: Claim) => RESULT_KINDS.has(c.kind));
+    // Wholes only: a part is a component of another claim and is shown folded beneath it, not
+    // as a result of its own. The default list is therefore the coarse grain of the tree.
+    const rs = data.claims.filter((c: Claim) => RESULT_KINDS.has(c.kind) && !c.partOf);
     const key = (c: Claim): [number, string] =>
       c.panels.length ? [Number(c.panels[0][0]), c.panels[0][1] || 'ZZ'] : [99, 'ZZ'];
     return [...rs].sort((a, b) => {
@@ -767,6 +773,7 @@ export default function Reader({ data, base }: Props) {
       if (!groups.has(k)) groups.set(k, []);
       groups.get(k)!.push(c);
     }
+    const partCount = data.claims.filter((c: Claim) => c.partOf).length;
     return (
       <div className="rd-rest">
         <p className="rd-k rd-k-accent rd-railk">
@@ -777,18 +784,37 @@ export default function Reader({ data, base }: Props) {
             ? 'Underlined sentences and figure panels carry a claim. Click one, or a line below.'
             : 'Figure panels carry a claim. Click one, or a line below.'}
         </p>
+        {partCount > 0 && (
+          // The list shows wholes; a whole's components fold beneath it on request. A part is
+          // one comparison, condition or measure of a claim already listed — the fine grain.
+          <button className="rd-partstoggle" aria-pressed={showParts}
+                  onClick={() => setShowParts(s => !s)}>
+            {showParts ? 'Hide' : 'Show'} the {partCount} part{partCount === 1 ? '' : 's'} folded beneath
+          </button>
+        )}
         {[...groups].map(([k, cs]) => (
           <div className="rd-rg" key={k}>
             <div className="rd-rgk">{k}</div>
             {cs.map(c => (
-              <button
-                key={c.slug}
-                className={`rd-rrow${near.has(c.slug) && view === 'paper' ? ' near' : ''}`}
-                onClick={() => open(c.slug)}
-              >
-                <Dot c={c} />
-                <span className="rd-rt">{trimDot(c.plain)}</span>
-              </button>
+              <div key={c.slug} className="rd-rgroup">
+                <button
+                  className={`rd-rrow${near.has(c.slug) && view === 'paper' ? ' near' : ''}`}
+                  onClick={() => open(c.slug)}
+                >
+                  <Dot c={c} />
+                  <span className="rd-rt">{trimDot(c.plain)}</span>
+                </button>
+                {showParts && c.parts.map(p => C[p]).filter(Boolean).map(p => (
+                  <button
+                    key={p.slug}
+                    className={`rd-rrow rd-rpart${near.has(p.slug) && view === 'paper' ? ' near' : ''}`}
+                    onClick={() => open(p.slug)}
+                  >
+                    <Dot c={p} />
+                    <span className="rd-rt">{trimDot(p.plain)}</span>
+                  </button>
+                ))}
+              </div>
             ))}
           </div>
         ))}
@@ -918,6 +944,26 @@ export default function Reader({ data, base }: Props) {
               These relations were inferred, not written by the authors. Flagging one records that
               a person disputes it; it does not change the graph.
             </p>
+          </div>
+        )}
+
+        {c.parts.length > 0 && (
+          <div className="rd-blk">
+            <p className="rd-k">Its parts</p>
+            <p className="rd-railnote">Components of this claim — one comparison, condition or measure each.</p>
+            <ul className="rd-rel">
+              {c.parts.map(p => C[p]).filter(Boolean).map(p => (
+                <li key={p.slug}>
+                  <div><button onClick={() => open(p.slug)}>{trimDot(p.plain)}<Dot c={p} /></button></div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {c.partOf && C[c.partOf] && (
+          <div className="rd-blk">
+            <p className="rd-k">Part of</p>
+            <div><button className="rd-relback" onClick={() => open(c.partOf!)}>{trimDot(C[c.partOf].plain)}<Dot c={C[c.partOf]} /></button></div>
           </div>
         )}
 
@@ -1156,6 +1202,20 @@ export default function Reader({ data, base }: Props) {
         .rd-rrow:hover { color: var(--card-head); background: var(--claim-wash); }
         .rd-rrow.near { color: var(--card-head); box-shadow: inset 2px 0 0 var(--claim); padding-left: 0.5rem; }
         .rd-rrow .rd-dot { position: relative; top: -1px; }
+        /* The text is placed, not flowed. Dot renders nothing for a claim a re-run cannot
+           settle — a hypothesis, a prediction, a scope, and now every part — so that row has
+           one child, and a single child in a two-track grid lands in the first track: the 8px
+           one meant for the dot. The sentence then wrapped one word per line down a 288px
+           column of empty space. It showed up the moment the parts retrofit put ten dotless
+           claims in Gädeke's lane. */
+        .rd-rrow .rd-rt { grid-column: 2; }
+        /* A part folds beneath its whole: indented, quieter, and joined by a left rule so the
+           two grains read as one claim and its components rather than two peers. */
+        .rd-rgroup { display: contents; }
+        .rd-rpart { padding-left: 1rem; margin-left: 0.4rem; border-left: 1px solid var(--card-border); font-size: 12.5px; color: var(--card-muted); }
+        .rd-rpart:hover { color: var(--card-head); }
+        .rd-partstoggle { font-size: 12px; color: var(--claim-strong); margin: 0 0 0.4rem; text-decoration: underline; text-underline-offset: 2px; }
+        .rd-partstoggle:hover { color: var(--card-head); }
         .rd-gaps { font-size: 12px; color: var(--card-muted); margin-top: 1.2rem; border-top: 1px solid var(--card-border); padding-top: 0.6rem; }
         .rd-gaps a { color: var(--claim-strong); }
 

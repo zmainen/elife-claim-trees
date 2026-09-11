@@ -142,7 +142,7 @@ def test_model_answered_layers_declare_where_to_find_the_model():
     """
     decl = _declaration()
     for lid in ("results-reader", "caption-reader", "structure-reader", "reconcile",
-                "external-review", "edge-inference", "questions"):
+                "external-review", "edge-inference", "questions", "parts"):
         assert decl[lid].get("by_from") == "model", f"{lid} does not declare by_from"
 
 
@@ -336,7 +336,7 @@ def test_every_model_answered_layer_can_be_dumped_and_answered():
     """
     choices = cli.build_parser()._subparsers._group_actions[0].choices
     for name in ("results-reader", "caption-reader", "structure-reader",
-                 "reconcile", "external-review", "edge-inference", "questions"):
+                 "reconcile", "external-review", "edge-inference", "questions", "parts"):
         opts = {o for a in choices[name]._actions for o in a.option_strings}
         assert "--dump-prompt" in opts, f"{name} cannot be asked for its prompt"
         assert "--answer" in opts, f"{name} cannot be given an answer"
@@ -539,6 +539,74 @@ def test_prepared_json_round_trips_spans_introduction_and_discussion():
         layers._write_json(layers.run_file(SLUG, "prepared.json", cfg), asdict(_paper()))
         old = layers.read_prepared(SLUG, cfg)
         assert old.introduction_text == "" and old.discussion_text == "" and old.spans == []
+
+
+# ── parts: the writer resolves it, and the validator refuses the impossible ──
+
+
+def test_writer_resolves_part_of_to_a_slug_and_drops_unresolvable_text():
+    """The reconciler names the whole by sentence; the writer resolves it to the whole's slug
+    once every claim has one, and text that resolves to no claim is dropped, not guessed."""
+    from elife_extract import write as write_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = _cfg(Path(tmp))
+        draft = DraftClaimTable(
+            paper_slug=SLUG, paper_doi=DOI, paper_title="A paper",
+            claims=[
+                {"claim": "The insula tracks the guilt effect.", "panel": "fig4e",
+                 "claim_type": "empirical", "role": "empirical", "confidence": "high",
+                 "sources": ["results"]},
+                {"claim": "The low-minus-high difference was larger in Social.", "panel": "fig4e",
+                 "claim_type": "empirical", "role": "empirical", "confidence": "high",
+                 "sources": ["results"],
+                 "part_of": "the insula tracks the guilt effect"},      # case/period differ
+                {"claim": "An orphan part.", "panel": None,
+                 "claim_type": "empirical", "role": "empirical", "confidence": "high",
+                 "sources": ["results"], "part_of": "a whole that does not exist"},
+            ],
+        )
+        write_mod.write_claim_files(draft, cfg, edges=[])
+        d = cfg.corpus_dir / SLUG
+        whole, part, orphan = write_mod._unique_slugs(draft.claims)
+        part_fm = yaml.safe_load((d / f"{part}.md").read_text().split("---", 2)[1])
+        assert part_fm.get("part-of") == [whole], "resolvable part not linked to the whole's slug"
+        orphan_fm = yaml.safe_load((d / f"{orphan}.md").read_text().split("---", 2)[1])
+        assert not orphan_fm.get("part-of"), "unresolvable part_of should be dropped, not guessed"
+
+
+def _seed_tree(cfg: Config, slugs: list[str]) -> None:
+    d = cfg.corpus_dir / SLUG
+    d.mkdir(parents=True, exist_ok=True)
+    for s in slugs:
+        (d / f"{s}.md").write_text(f"---\nslug: {s}\nrole: empirical\nclaim: {s}\n---\n")
+
+
+def test_parts_validator_rejects_cycle_self_edge_and_two_wholes():
+    """The parts validator drops a self-edge, a second whole for one part, an edge that would
+    close a cycle, and an unknown slug — the four ways a `part-of` answer can be impossible."""
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = _cfg(Path(tmp))
+        _seed_tree(cfg, ["a", "b", "c"])
+        raw = {"parts": [
+            {"part": "a", "whole": "a"},        # self-edge → dropped
+            {"part": "b", "whole": "a"},        # kept: b is part of a
+            {"part": "b", "whole": "c"},        # b already has a whole → dropped
+            {"part": "a", "whole": "b"},        # a→b would close a→b→a → dropped
+            {"part": "c", "whole": "nope"},     # unknown slug → dropped
+        ]}
+        data = layers._validate_parts(raw, SLUG, cfg)
+        assert data["parts"] == [{"part": "b", "whole": "a", "why": ""}]
+
+
+def test_parts_is_answerable_and_its_declared_command_exists():
+    """`parts` can be dumped and answered, and the command its declaration names is a real
+    subcommand — the seam every model-answered layer has, on the newest one."""
+    choices = cli.build_parser()._subparsers._group_actions[0].choices
+    opts = {o for a in choices["parts"]._actions for o in a.option_strings}
+    assert "--dump-prompt" in opts and "--answer" in opts
+    cmd = _declaration()["parts"]["command"]
+    m = re.search(r"elife_extract\.cli\s+([a-z-]+)", cmd)
+    assert m and m.group(1) in choices, "parts' command names a subcommand the CLI does not have"
 
 
 # ── Standalone runner (no pytest required) ────────────────────────────────

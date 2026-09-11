@@ -63,18 +63,26 @@ HAAK = "https://haak.world/schema/claim#"
 # Every relation we emit, with the MIRA parent it genuinely descends from.
 #
 # `parent` is the crux. A relation that really is a kind of support or opposition says so,
-# and a MIRA reader that knows only the core vocabulary still understands it. The other six
-# are neither: `scopes` states where a claim holds, `requires` a prerequisite, `entails` and
-# `derived-from` a deductive step, `interprets` a reading, `enables-method` an affordance.
-# Declaring any of them `subClassOf mira:supports` would assert that a boundary condition is
-# evidence *for* the claim it limits — a reversal of the meaning, not a compression of it.
-# `AbstractRelationDef` is the neutral root and carries no such commitment, so they hang
-# there and the document says what they mean instead of pretending they are support.
+# and a MIRA reader that knows only the core vocabulary still understands it. The rest are
+# neither: `scopes` states where a claim holds, `requires` a prerequisite, `entails` and
+# `derived-from` a deductive step, `interprets` a reading, `enables-method` an affordance,
+# `part-of` a composition. Declaring any of them `subClassOf mira:supports` would assert that
+# a boundary condition is evidence *for* the claim it limits — a reversal of the meaning, not
+# a compression of it. `AbstractRelationDef` is the neutral root and carries no such
+# commitment, so they hang there and the document says what they mean instead of pretending
+# they are support.
+#
+# `tests` is neutral for a sharper reason than the others, and it was `mira:supports` until
+# this was noticed. The others have no MIRA predicate; `tests` has one that fits too well.
+# It is neutral everywhere else in this repository by design — a tree records that evidence
+# was gathered to test a claim and, deliberately, not how the test came out, which is the
+# whole basis of issue #28. Exporting it under `mira:supports` resolved that silence by
+# asserting the optimistic answer: a consumer read "this result supports this claim" on every
+# such edge, including any where the test went badly. The tree declines to say how a test
+# came out; the export must decline too.
 RELATION_DEFS = {
     "supports":         ("mira:supports", "mira:Claim", "mira:Claim",
                          "The source claim provides support for the destination claim."),
-    "tests":            ("mira:supports", "mira:Evidence", "mira:Claim",
-                         "The source evidence was gathered to test the destination claim."),
     "validates":        ("mira:supports", "mira:Evidence", "mira:Claim",
                          "The source evidence validates the destination claim."),
     "confirms":         ("mira:supports", "mira:Evidence", "mira:Claim",
@@ -96,6 +104,10 @@ RELATION_DEFS = {
     "dissociates-with": ("mira:opposes", "mira:Evidence", "mira:Claim",
                          "The source result separates two things the destination claim joins."),
     # Neither supporting nor opposing — rooted at AbstractRelationDef and nothing else.
+    "tests":            (None, "mira:Evidence", "mira:Claim",
+                         "The source evidence was gathered to test the destination claim. "
+                         "Neither supports nor opposes: it records that a test was run, not "
+                         "how it came out."),
     "entails":          (None, "mira:Claim", "mira:Claim",
                          "The source claim logically entails the destination claim: the "
                          "deductive step from a hypothesis to a prediction it commits to."),
@@ -115,6 +127,11 @@ RELATION_DEFS = {
                          "The source result makes the destination method possible."),
     "qualifies":        (None, "mira:Claim", "mira:Claim",
                          "The source narrows the destination claim's applicability."),
+    "part-of":          (None, "mira:Claim", "mira:Claim",
+                         "The source claim is a component of the destination — one comparison, "
+                         "condition, measure or study of a proposition the destination states "
+                         "whole. MIRA has no predicate for composition, so like the deductive "
+                         "relations it hangs at AbstractRelationDef and the gap report names it."),
 }
 
 # Declared as an inverse pair rather than as two unrelated relations, and emitted in one

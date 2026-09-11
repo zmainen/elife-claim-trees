@@ -274,6 +274,9 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
       interprets: fm.interprets || [],
       'enables-method': fm['enables-method'] || [],
       scopes: fm.scopes || [],
+      // The whole this claim is a component of. A part hangs off its whole's number with a
+      // letter (E3.a) and is folded beneath it on the page, so both grains are carried.
+      'part-of': fm['part-of'] || [],
       notes: notes.trim(),
       figure: fm.reproductions?.[0]?.figure || null,
       reproFigureUrl: fm.reproductions?.[0]?.figure
@@ -321,15 +324,23 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
     // propositions it denies. Stance decides membership of every role series below.
     const asserted = c => (c.stance || 'asserts') === 'asserts';
 
+    // A part is not numbered in the series below: it takes its whole's number plus a letter
+    // (E3.a), assigned after every whole has a number, so it consumes no E-number of its own
+    // and the default list can show wholes alone. `part-of` is a top-level list; a part has one
+    // whole.
+    const isPart = c => (c['part-of'] || []).length > 0;
+    const wholeOf = c => (c['part-of'] || [])[0] || null;
+    const numberable = c => asserted(c) && !isPart(c);
+
     // 1. Hypotheses (file-read order, which is sorted alphabetical)
-    const hypotheses = claims.filter(c => c.role === 'hypothesis' && asserted(c));
+    const hypotheses = claims.filter(c => c.role === 'hypothesis' && numberable(c));
     hypotheses.forEach((h, hi) => {
       const hNum = hi + 1;
       assign(h.slug, `H${hNum}`, ['H', hNum]);
 
       // Predictions that derive-from this hypothesis
       const preds = claims.filter(c =>
-        c.role === 'prediction' && (c['derived-from'] || []).includes(h.slug)
+        c.role === 'prediction' && !isPart(c) && (c['derived-from'] || []).includes(h.slug)
       );
       preds.forEach((p, pi) => {
         const pNum = pi + 1;
@@ -337,7 +348,7 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
 
         // Empirical claims that test this prediction
         const tests = claims.filter(c =>
-          (c.tests || []).includes(p.slug)
+          !isPart(c) && (c.tests || []).includes(p.slug)
         );
         tests.forEach((t, ti) => {
           assign(t.slug, `H${hNum}.P${pNum}.${ti + 1}`, ['H', hNum, 'P', pNum, ti + 1]);
@@ -346,7 +357,7 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
 
       // Empirical claims that test the hypothesis directly (no prediction layer)
       const directTests = claims.filter(c =>
-        (c.tests || []).includes(h.slug) && !numberOf[c.slug]
+        !isPart(c) && (c.tests || []).includes(h.slug) && !numberOf[c.slug]
       );
       directTests.forEach((t, ti) => {
         assign(t.slug, `H${hNum}.${ti + 1}`, ['H', hNum, ti + 1]);
@@ -355,28 +366,28 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
 
     // 2. Interpretations
     let iCount = 0;
-    claims.filter(c => c.role === 'interpretation' && asserted(c) && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'interpretation' && numberable(c) && !numberOf[c.slug]).forEach(c => {
       iCount += 1;
       assign(c.slug, `I${iCount}`, ['I', iCount]);
     });
 
     // 2b. Literature-context (distinct role in Meijer paper) — L-series
     let lCount = 0;
-    claims.filter(c => c.role === 'literature-context' && asserted(c) && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'literature-context' && numberable(c) && !numberOf[c.slug]).forEach(c => {
       lCount += 1;
       assign(c.slug, `L${lCount}`, ['L', lCount]);
     });
 
     // 3. Synthesis
     let sCount = 0;
-    claims.filter(c => c.role === 'synthesis' && asserted(c) && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'synthesis' && numberable(c) && !numberOf[c.slug]).forEach(c => {
       sCount += 1;
       assign(c.slug, `S${sCount}`, ['S', sCount]);
     });
 
     // 4. Controls
     let cCount = 0;
-    claims.filter(c => c.role === 'control' && asserted(c) && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'control' && numberable(c) && !numberOf[c.slug]).forEach(c => {
       cCount += 1;
       assign(c.slug, `C${cCount}`, ['C', cCount]);
     });
@@ -387,8 +398,9 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
     const pairIndex = {}; // slug -> pair index
     const seenPair = new Set();
     for (const c of claims) {
+      if (isPart(c)) continue;
       for (const other of (c['dissociates-with'] || [])) {
-        if (!bySlug[other]) continue;
+        if (!bySlug[other] || isPart(bySlug[other])) continue;
         const key = [c.slug, other].sort().join('|');
         if (seenPair.has(key)) continue;
         seenPair.add(key);
@@ -409,14 +421,14 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
 
     // 6. Standalone empirical (role:empirical, no number yet)
     let eCount = 0;
-    claims.filter(c => c.role === 'empirical' && asserted(c) && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'empirical' && numberable(c) && !numberOf[c.slug]).forEach(c => {
       eCount += 1;
       assign(c.slug, `E${eCount}`, ['E', eCount]);
     });
 
     // 7. Methodological
     let mCount = 0;
-    claims.filter(c => c.role === 'methodological' && asserted(c) && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'methodological' && numberable(c) && !numberOf[c.slug]).forEach(c => {
       mCount += 1;
       assign(c.slug, `M${mCount}`, ['M', mCount]);
     });
@@ -425,7 +437,7 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
     // (treated as targeted-by-implication) — only global-* is truly unnumbered.
     let scCount = 0;
     claims.filter(c => {
-      if (c.role !== 'scope' || !asserted(c) || numberOf[c.slug]) return false;
+      if (c.role !== 'scope' || !numberable(c) || numberOf[c.slug]) return false;
       const s = c.scopes || [];
       return !s.includes('*');
     }).forEach(c => {
@@ -435,7 +447,7 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
 
     // 9. Orphan predictions (role:prediction with no derived-from) — P-series
     let pCount = 0;
-    claims.filter(c => c.role === 'prediction' && asserted(c) && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => c.role === 'prediction' && numberable(c) && !numberOf[c.slug]).forEach(c => {
       pCount += 1;
       assign(c.slug, `P${pCount}`, ['P', pCount]);
     });
@@ -443,10 +455,36 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
     // 10. Alternatives the paper does not assert — A-series, last, so they read as what
     // they are: rivals the paper eliminated, not steps in its own argument.
     let aCount = 0;
-    claims.filter(c => !asserted(c) && !numberOf[c.slug]).forEach(c => {
+    claims.filter(c => !asserted(c) && !isPart(c) && !numberOf[c.slug]).forEach(c => {
       aCount += 1;
       assign(c.slug, `A${aCount}`, ['A', aCount]);
     });
+
+    // 11. Parts, last: each hangs off its whole's number with a lowercase letter, in slug
+    // order — E3, then E3.a, E3.b. Done after every whole is numbered, and iterated to a
+    // fixpoint so a part of a part (allowed but unused) still resolves once its whole does.
+    // A part whose whole is itself unnumbered (a global scope, say) stays null, like any
+    // claim the scheme does not reach.
+    const partsByWhole = {};
+    for (const c of claims) {
+      if (!isPart(c)) continue;
+      (partsByWhole[wholeOf(c)] ??= []).push(c);
+    }
+    for (const ps of Object.values(partsByWhole)) ps.sort((a, b) => a.slug.localeCompare(b.slug));
+    let assigned = true;
+    while (assigned) {
+      assigned = false;
+      for (const [w, ps] of Object.entries(partsByWhole)) {
+        const base = numberOf[w];
+        if (!base) continue;
+        ps.forEach((c, i) => {
+          if (numberOf[c.slug]) return;
+          const letter = String.fromCharCode(97 + i);   // a, b, c, …
+          assign(c.slug, `${base}.${letter}`, [...(partsOf[w] || []), letter]);
+          assigned = true;
+        });
+      }
+    }
 
     // Attach to claim objects
     for (const c of claims) {
@@ -534,6 +572,20 @@ if (existsSync(exportsSrc)) {
     n++;
   }
   console.log(`Copied ${n} export files to public/exports/`);
+}
+
+// The CiTO extension vocabulary is served from /exports/ alongside them, but it is not an
+// export: it is hand-written and lives in docs/schema-mapping/. It was placed in
+// public/exports/ by hand, and the slug filter above cannot match a `.ttl` name, so nothing
+// ever copied it — leaving the one file in a directory the freshness gate covers that no
+// generator could keep true. Copied from its source so it cannot drift from what the docs
+// link to.
+const ttl = 'claim-relations.ttl';
+const ttlSrc = join(projectRoot, 'docs', 'schema-mapping', ttl);
+if (existsSync(ttlSrc)) {
+  mkdirSync(exportsDst, { recursive: true });
+  fs.copyFileSync(ttlSrc, join(exportsDst, ttl));
+  console.log(`Copied ${ttl} to public/exports/`);
 }
 
 // ── Index the artifacts the pipeline declares ──────────────────────────────

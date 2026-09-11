@@ -26,6 +26,17 @@ Two candidates are different claims when any of these differs:
 When in doubt, keep them separate and say why in `notes`. A split is easy to repair later; a
 merge hides what was merged.
 
+There is a third outcome between merging and keeping two independent claims: one is a **part
+of** the other. A candidate that states one comparison, one condition, one measure or one
+study of a proposition another candidate states as a whole is a component of it — not the same
+claim, because it says less, and not an independent claim, because dropping it weakens the
+whole rather than leaving it standing. Keep both, and put the whole's exact `claim` sentence in
+the part's `part_of` field. Most restatements of one result across two studies are parts of the
+claim that covers both, so this is where a pair you would otherwise have left apart out of
+caution belongs: the insula-ROI result stated beside the voxel-wise result is a part of the
+claim that the insula tracks the guilt effect, not a second copy of it. Only the whole may be a
+target; a part points at one whole in the same table.
+
 ## Confidence
 
 Confidence is a fact about agreement, and the readers' partition means most claims are
