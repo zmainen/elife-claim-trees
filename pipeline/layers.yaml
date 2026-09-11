@@ -197,6 +197,41 @@ layers:
     views: [document]
     command: "cd extract && python3 -m elife_extract.cli prepare --paper {paper} --doi {doi}"
 
+  # The paper as a document, rather than as four strings.
+  #
+  # `prepare` keeps what the three readers need — abstract, results, captions, methods — and
+  # flattens everything else out: `results_text` is one string with the section headings glued
+  # to the sentences that follow them. That is correct for a reader that is a model and useless
+  # for a reader that is a person, and it is why the site has never shown the paper.
+  #
+  # It is declared beside `prepare` rather than folded into it because folding it in would edit
+  # prepare.py, and every paper's `prepare` cell — and everything downstream of it — would go
+  # stale for a change that affects no claim. It reads the same cached XML, calls no model, and
+  # stamps no date, so it is free to re-run and byte-stable when it is.
+  - id: article
+    group: induction
+    kind: step
+    scope: paper
+    title: Article
+    question: What does the paper itself say, section by section?
+    how: >
+      Parses the cached JATS into the structure a page needs: the section tree with its
+      headings, each paragraph with its inline markup and its cross-references, each figure with
+      its caption and the image eLife serves, each table with its rows. The abstract is split
+      into sentences here; the body's sentences are not, because those come from the marked
+      paper, and splitting them twice by two rules would give the site two sentences to
+      reconcile where the claim assignments are.
+
+      Sub-articles are excluded. eLife's JATS carries the editor assessment, the referee reports
+      and the author response inside the same document, each with a `<body>` of its own, and a
+      search that reaches into them renders the reviews as part of the paper.
+    added: "2026-09-11"
+    needs: [prepare]
+    reads: [scripts/article_json.py]
+    produces: ["site/src/data/article/{paper}.json"]
+    views: [document]
+    command: "python3 scripts/article_json.py {paper}"
+
   - id: results-reader
     group: induction
     kind: candidate
@@ -491,6 +526,46 @@ layers:
     produces: ["site/src/data/paper-summaries.json"]
     views: [document]
 
+  # The wording a reader meets first.
+  #
+  # A claim is recorded in the authors' words, which is right — a paraphrase is not evidence of
+  # anything. But those words lead with the statistics, and a page listing thirty of them has
+  # told a non-specialist nothing. `shortClaim` was meant to be this and is filled for
+  # hypotheses and predictions only; every empirical claim on the site falls back to the full
+  # sentence, statistics first.
+  #
+  # It is a layer rather than a field somebody edits because it is model-written prose that a
+  # reader will take for the paper's own. That is exactly the kind of text that needs a version,
+  # a recorded run, an input hash that goes stale when the claim it restates changes, and a seat
+  # for a person to approve it — none of which a field in a markdown file has.
+  - id: plain-claim
+    kind: step
+    scope: paper
+    title: Plain wording
+    question: What does each claim say, in one sentence a non-specialist can read?
+    how: >
+      One call per paper: every claim of that paper — its role, its stance, its panel and the
+      authors' wording — and back one sentence each, under about 130 characters, carrying no
+      statistics. The terms of art the claim is *about* are kept, because a reader who does not
+      know what the anterior insula is still learns the claim is about a brain region; the jargon
+      that is about the analysis rather than the finding is translated.
+
+      A validator gates the write: every slug answered and no slug invented, one sentence each,
+      and none of the eight shapes a statistic takes. Nothing is written until it passes, so the
+      artifact cannot hold a wording that quietly failed the rule the prompt states.
+
+      `--dump-prompt` and `--answer` are the pair every layer a model answers carries, and the
+      corpus's own wordings came through them: written by a model that is not the one wired in,
+      fed back through the same validator, and recorded as `supplied:` rather than as a call
+      that never happened.
+    added: "2026-09-11"
+    needs: [claim-tree]
+    reads: [scripts/plain_claims.py, extract/prompts/plain-claim.md]
+    produces: ["site/src/data/plain-claims/{paper}.json"]
+    views: [list, table]
+    by_from: model
+    command: "python3 scripts/plain_claims.py {paper}"
+
   - id: verification
     kind: step
     scope: paper
@@ -554,10 +629,17 @@ layers:
       On Gädeke the matcher left 36 spans unaccounted for. Adjudication found that 22 were the
       matcher being wrong and 14 were real.
     needs: [coverage]
-    reads: [extract/prompts/coverage-adjudicator.md]
+    reads: [extract/prompts/coverage-adjudicator.md, scripts/adjudicate.py]
     produces: ["mappings/{paper}.json"]
     views: [table]
     reviews: coverage
+    by_from: by
+    # A judgement has no backend call to declare: `--dump-prompt` writes the question and
+    # `--answer` takes the verdicts back, validated — every span judged and none invented, a
+    # `covered` verdict naming a claim this paper actually holds, and each verdict stamped
+    # with the fingerprint of the sentence it was made about. The command is the second half,
+    # because the first half is somebody answering.
+    command: "python3 scripts/adjudicate.py {paper} --answer runs/{paper}/adjudication.answer.json"
 
   - id: marks
     kind: step

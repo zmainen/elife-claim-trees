@@ -12,7 +12,7 @@ For each span, decide which ONE of these it is:
   see it, usually because the claim states the effect without repeating the numbers. Name the
   claim slug.
 - `gap` — no claim in the tree accounts for this. A real hole in the corpus.
-- `no-assertion` — the span states no result of its own. This covers pure cross-references
+- `not-an-assertion` — the span states no result of its own. This covers pure cross-references
   ("see Appendix 1—table 4"), analysis narration, bare panel labels, graphical-encoding notes
   ("error bars represent SEM", "each coloured dot is one recovered parameter"), and raw table
   rows or column headers, which are data rather than a stated finding.
@@ -32,7 +32,7 @@ to find holes, and a false `covered` hides one where a false `gap` only costs a 
 Captions and tables need a distinction the Results section does not. A caption sentence that
 DESCRIBES what a panel displays is asserting a finding — judge it `covered` or `gap`. A caption
 sentence that only explains the GRAPHICAL ENCODING asserts nothing about the world, and is
-`no-assertion`. A raw table row is `no-assertion` — unless that row is the only place a
+`not-an-assertion`. A raw table row is `not-an-assertion` — unless that row is the only place a
 specific reported result appears, in which case it is a `gap`, and say which result it carries.
 
 ## Output

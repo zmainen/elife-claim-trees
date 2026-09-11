@@ -41,30 +41,29 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Layout title={title} description={description}>
-  <div class="site-frame py-10">
-    <div class="md:grid md:grid-cols-[190px_minmax(0,1fr)] md:gap-10">
+  <div class="site-frame column py-12">
 
-      <aside class="mb-8 md:mb-0">
-        <div class="md:sticky md:top-16">
-          <DocsNav current={slug} />
-        </div>
-      </aside>
+    <DocsNav current={slug} />
 
-      <article class="min-w-0">
-        <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-6">
-          {title}
-        </h1>
-        <div class="method-prose" set:html={html} />
+    <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-6">
+      {title}
+    </h1>
+    <div class="method-prose" set:html={html} />
 
-        <footer class="mt-12 pt-6 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
-          <p class="m-0">
-            This page is <code>docs/cli/{slug}.md</code> in the repository, rendered here.
-            The model these commands operate on is on
-            <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">the pipeline pages</a>.
-          </p>
-        </footer>
-      </article>
+    <footer class="mt-12 pt-6 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+      <p class="m-0 mb-4">
+        This page is <code>docs/cli/{slug}.md</code> in the repository, rendered here.
+      </p>
+      <div class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
+        Not here
+      </div>
+      <ul class="list-none p-0 m-0 flex flex-wrap gap-x-6 gap-y-1">
+        <li><a href={`${base}/pipeline/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">The layer model</a></li>
+        <li><a href={`${base}/method/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">The methodology</a></li>
+        <li><a href={`${base}/pipeline/vocabulary/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">Roles and relations</a></li>
+        <li><a href={`${base}/papers/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">The claim graphs</a></li>
+      </ul>
+    </footer>
 
-    </div>
   </div>
 </Layout>

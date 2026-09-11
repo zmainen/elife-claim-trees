@@ -1,0 +1,883 @@
+// The paper page: the paper first, and the claims reached from it.
+//
+// Three depths of one paper — the article itself, its findings figure by figure, its argument
+// — and one claim card reachable from all three. The card is the old ClaimDrawer's job, done
+// in the reader's vocabulary: what the claim says in plain words, where in the paper it is
+// said, whether our re-run matched, and what it connects to.
+//
+// Design note: docs/design/2026-09-11-the-reader.html. The data is assembled in lib/reader.ts.
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+type Claim = {
+  slug: string; number: string | null; kind: string; role: string; stance: string;
+  status: 'matches' | 'partly' | 'differs' | 'blocked' | 'none' | 'na';
+  statusLabel: string; plain: string; hasPlain: boolean; full: string;
+  panel: string | null; panels: [string, string][]; method: string | null; dataset: string | null;
+  check: { paper?: string; reproduced?: string; date?: string; how?: string } | null;
+  out: { rel: string; label: string; slug: string }[];
+  in: { rel: string; label: string; slug: string }[];
+};
+
+type Props = { data: any; base: string };
+
+/** The claims a reader means by "what this paper found". A hypothesis is not a finding, and a
+ *  paper's rail should not open with six propositions it argues against. */
+const RESULT_KINDS = new Set(['Finding', 'Check', 'Interpretation', 'Conclusion']);
+
+const REL_ORDER = [
+  'Tests', 'Confirms', 'Supports', 'Validates', 'Rules out', 'Refutes', 'Relies on',
+  'Follows from', 'Leads to the prediction', 'Predicts', 'Interprets', 'Contrasts with',
+  'Applies to', 'Makes possible',
+  'Tested by', 'Confirmed by', 'Supported by', 'Validated by', 'Ruled out by', 'Refuted by',
+  'Relied on by', 'Basis for', 'Predicted from', 'Interpreted by', 'Qualified by', 'Made possible by',
+];
+
+const trimDot = (s: string) => s.replace(/\s*[.]\s*$/, '');
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/** "Figure 3D, H" inside a sentence becomes a link to the figure.
+ *  The marked sentences arrive as plain text — the marks were written onto the segmenter's
+ *  prose, not onto the JATS — so the cross-references the article carries are put back here. */
+const linkFigures = (text: string) =>
+  esc(text).replace(/\bFigure\s+(\d+)([A-Z](?:\s*[,–-]\s*[A-Z])*)?/g,
+    (m, n) => `<a class="rd-xref" href="#fig${n}">${m}</a>`);
+
+function Dot({ c }: { c: Claim }) {
+  if (c.status === 'na') return null;
+  return <span className={`rd-dot rd-${c.status}`} title={c.statusLabel} aria-label={c.statusLabel} />;
+}
+
+export default function Reader({ data, base }: Props) {
+  const C: Record<string, Claim> = useMemo(
+    () => Object.fromEntries(data.claims.map((c: Claim) => [c.slug, c])), [data]);
+  const FIG: Record<string, any> = useMemo(
+    () => Object.fromEntries(data.figures.map((f: any) => [f.id, f])), [data]);
+
+  const [view, setView] = useState<'paper' | 'findings' | 'argument'>('paper');
+  const [stack, setStack] = useState<string[]>([]);
+  const [near, setNear] = useState<Set<string>>(new Set());
+  const paperRef = useRef<HTMLDivElement>(null);
+  const railRef = useRef<HTMLElement>(null);
+  const active = stack.length ? stack[stack.length - 1] : null;
+
+  // A card opening into a rail scrolled halfway down the results list starts the reader in
+  // the middle of the card they just asked for.
+  useEffect(() => { if (railRef.current) railRef.current.scrollTop = 0; }, [active]);
+
+  // ── results, in the order the paper shows them ──────────────────────────────
+  const results = useMemo(() => {
+    const rs = data.claims.filter((c: Claim) => RESULT_KINDS.has(c.kind));
+    const key = (c: Claim): [number, string] =>
+      c.panels.length ? [Number(c.panels[0][0]), c.panels[0][1] || 'ZZ'] : [99, 'ZZ'];
+    return [...rs].sort((a, b) => {
+      const [an, al] = key(a), [bn, bl] = key(b);
+      return an - bn || al.localeCompare(bl);
+    });
+  }, [data]);
+
+  // ── the URL is the state a reader can share ─────────────────────────────────
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const v = sp.get('view');
+    if (v === 'findings' || v === 'argument' || v === 'paper') setView(v);
+    // `?view=structure` and `?view=graph` are what the old tabs put in people's bookmarks.
+    if (v === 'structure') setView('argument');
+    const claim = sp.get('claim');
+    if (claim && C[claim]) setStack([claim]);
+  }, [C]);
+
+  const sync = useCallback((v: string, claim: string | null) => {
+    const url = new URL(window.location.href);
+    v === 'paper' ? url.searchParams.delete('view') : url.searchParams.set('view', v);
+    claim ? url.searchParams.set('claim', claim) : url.searchParams.delete('claim');
+    window.history.replaceState({}, '', url.toString());
+  }, []);
+
+  const open = useCallback((slug: string) => {
+    if (!C[slug]) return;
+    setStack(s => (s[s.length - 1] === slug ? s : [...s, slug]));
+  }, [C]);
+  const back = useCallback(() => setStack(s => s.slice(0, -1)), []);
+  const close = useCallback(() => setStack([]), []);
+
+  useEffect(() => { sync(view, active); }, [view, active, sync]);
+
+  // The graph and any other component on the page open a claim the way they always have.
+  useEffect(() => {
+    const h = (e: Event) => open((e as CustomEvent<{ slug: string }>).detail.slug);
+    window.addEventListener('open-claim', h as EventListener);
+    return () => window.removeEventListener('open-claim', h as EventListener);
+  }, [open]);
+
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape' && stack.length) close(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [stack.length, close]);
+
+  // ── which findings are on screen, so the rail can say where you are ─────────
+  useEffect(() => {
+    if (view !== 'paper' || !paperRef.current) return;
+    const io = new IntersectionObserver(entries => {
+      setNear(prev => {
+        const next = new Set(prev);
+        for (const e of entries) {
+          const el = e.target as HTMLElement;
+          const slugs = el.dataset.claims
+            ? el.dataset.claims.split(',')
+            : (FIG[el.dataset.fig ?? '']?.claims ?? []).map((x: any) => x.slug);
+          for (const s of slugs) e.isIntersecting ? next.add(s) : next.delete(s);
+        }
+        return next;
+      });
+    }, { rootMargin: '-8% 0px -45% 0px' });
+    paperRef.current.querySelectorAll('[data-claims], [data-fig]').forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, [view, FIG, data]);
+
+  const goFigure = (id: string) => {
+    setView('paper');
+    requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+  const goText = (slug: string) => {
+    setView('paper');
+    requestAnimationFrame(() => {
+      const el = [...document.querySelectorAll<HTMLElement>('[data-claims]')]
+        .find(e => (e.dataset.claims ?? '').split(',').includes(slug));
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  };
+
+  const src = (s: string) => (s.startsWith('/') ? `${base}${s}` : s);
+
+  // ── the rows that list claims under a figure ────────────────────────────────
+  const FigureClaims = ({ f }: { f: any }) => (
+    <div className="rd-figclaims">
+      <p className="rd-k">What this figure shows</p>
+      {f.claims.map((x: any) => {
+        const c = C[x.slug];
+        return (
+          <button key={x.slug} className={`rd-row${active === x.slug ? ' on' : ''}`} onClick={() => open(x.slug)}>
+            <span className={`rd-panel${x.letters.length ? '' : ' rd-panel-text'}`}>
+              {x.letters.length ? x.letters.join(', ') : 'text'}
+            </span>
+            <span className="rd-rowtext">{trimDot(c.plain)}</span>
+            <Dot c={c} />
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  const Figure = ({ id }: { id: string }) => {
+    const f = FIG[id];
+    if (!f) return null;
+    return (
+      <figure className="rd-fig" id={f.id} data-fig={f.id}>
+        <img src={src(f.src)} alt={`${f.label}. ${f.title}`} loading="lazy" />
+        <figcaption>
+          <span className="rd-figlabel">{f.label}.</span> {f.title}
+          {f.caption && (
+            <details className="rd-cap">
+              <summary>Full caption</summary>
+              <div dangerouslySetInnerHTML={{ __html: f.caption }} />
+            </details>
+          )}
+        </figcaption>
+        {f.claims.length > 0 && <FigureClaims f={f} />}
+      </figure>
+    );
+  };
+
+  const Table = ({ id }: { id: string }) => {
+    const t = data.tables.find((x: any) => x.id === id);
+    if (!t) return null;
+    return (
+      <figure className="rd-tablewrap" id={t.id}>
+        <figcaption><span className="rd-figlabel">{t.label}.</span> {t.title}</figcaption>
+        <div className="rd-tablescroll">
+          <table className="rd-table">
+            <tbody>
+              {t.rows.map((row: any[], i: number) => (
+                <tr key={i}>
+                  {row.map((cell, j) => cell.tag === 'th'
+                    ? <th key={j} colSpan={Number(cell.colspan) || undefined} dangerouslySetInnerHTML={{ __html: cell.html }} />
+                    : <td key={j} colSpan={Number(cell.colspan) || undefined} dangerouslySetInnerHTML={{ __html: cell.html }} />)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </figure>
+    );
+  };
+
+  const Blocks = ({ blocks }: { blocks: any[] }) => (
+    <>
+      {blocks.map((b, i) => {
+        if (b.type === 'fig') return <Figure key={i} id={b.id} />;
+        if (b.type === 'table') return <Table key={i} id={b.id} />;
+        if (b.type === 'formula') return <p key={i} className="rd-formula">{b.text}</p>;
+        if (b.type === 'sec') return <Section key={i} sec={b.sec} />;
+        if (b.sentences) {
+          return (
+            <p key={i}>
+              {b.sentences.map((s: any, j: number) => (
+                <span key={j}>
+                  {s.claims.length ? (
+                    <span
+                      className={`rd-mk${s.claims.includes(active) ? ' on' : ''}`}
+                      data-claims={s.claims.join(',')}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => open(pickClaim(s.claims))}
+                      onKeyDown={e => { if (e.key === 'Enter') open(pickClaim(s.claims)); }}
+                      dangerouslySetInnerHTML={{ __html: linkFigures(s.text) }}
+                    />
+                  ) : (
+                    <span dangerouslySetInnerHTML={{ __html: linkFigures(s.text) }} />
+                  )}{' '}
+                </span>
+              ))}
+            </p>
+          );
+        }
+        return <p key={i} dangerouslySetInnerHTML={{ __html: b.html }} />;
+      })}
+    </>
+  );
+
+  /** One sentence can carry a prediction and the finding that tests it. The finding is what a
+   *  reader clicking that sentence is asking about. */
+  const pickClaim = (slugs: string[]) =>
+    [...slugs].sort((a, b) => Number(RESULT_KINDS.has(C[b]?.kind)) - Number(RESULT_KINDS.has(C[a]?.kind)))[0];
+
+  const Section = ({ sec }: { sec: any }): any => {
+    const H = (['h2', 'h2', 'h3', 'h4', 'h5', 'h5'][sec.depth] ?? 'h5') as any;
+    return (
+      <>
+        {sec.title && <H id={sec.id} className={`rd-h${sec.depth}`}>{sec.title}</H>}
+        <Blocks blocks={sec.blocks} />
+      </>
+    );
+  };
+
+  // ── views ───────────────────────────────────────────────────────────────────
+  const main = data.sections.filter((s: any) => !/methods/.test(s.type));
+  const methods = data.sections.filter((s: any) => /methods/.test(s.type));
+
+  const PaperView = () => (
+    <div className="rd-paper" ref={paperRef}>
+      {data.summary && (
+        <section className="rd-brief">
+          <div className="rd-briefhead">
+            <span className="rd-k rd-k-accent">In brief</span>
+            <span className="rd-briefnote">
+              {data.counts.claims} claims · {data.counts.rerun} re-run from the authors' data ·
+              written by a model, not yet checked by a person
+            </span>
+          </div>
+          <dl>
+            {data.summary.hypotheses && <><dt>They asked</dt><dd>{data.summary.hypotheses}</dd></>}
+            {data.summary.subject && <><dt>Studied</dt><dd>{data.summary.subject}</dd></>}
+            {data.summary.claims && <><dt>They found</dt><dd>{data.summary.claims}</dd></>}
+            {data.summary.inferences && <><dt>It means</dt><dd>{data.summary.inferences}</dd></>}
+          </dl>
+        </section>
+      )}
+
+      {data.abstract.length > 0 && (
+        <>
+          <p className="rd-k">Abstract</p>
+          <p>
+            {data.abstract.map((s: any, i: number) => (
+              <span key={i}>
+                {s.claims.length ? (
+                  <span
+                    className={`rd-mk${s.claims.includes(active) ? ' on' : ''}`}
+                    data-claims={s.claims.join(',')}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => open(pickClaim(s.claims))}
+                    onKeyDown={e => { if (e.key === 'Enter') open(pickClaim(s.claims)); }}
+                  >{s.text}</span>
+                ) : s.text}{' '}
+              </span>
+            ))}
+          </p>
+        </>
+      )}
+
+      {main.map((s: any, i: number) => <Section key={i} sec={s} />)}
+
+      {methods.length > 0 && (
+        <details className="rd-fold">
+          <summary>Materials and methods</summary>
+          {methods.map((s: any, i: number) => <Section key={i} sec={s} />)}
+        </details>
+      )}
+    </div>
+  );
+
+  const FindingsView = () => (
+    <div className="rd-digest">
+      <h1 className="rd-vtitle">What the paper found, figure by figure</h1>
+      <p className="rd-lede">
+        Each line is one result the paper claims, with the panel it comes from and whether we could
+        reproduce it from the authors' deposited data. Click a line for the detail.
+      </p>
+      {data.figures.map((f: any) => (
+        <div className="rd-dg" key={f.id}>
+          <div>
+            <button className="rd-thumb" onClick={() => goFigure(f.id)} aria-label={`Go to ${f.label} in the paper`}>
+              <img src={src(f.src)} alt={f.label} loading="lazy" />
+            </button>
+            <p className="rd-dgk"><b>{f.label}</b>{f.title}</p>
+          </div>
+          <div>
+            {f.claims.length === 0
+              ? <p className="rd-empty">No result is claimed from this figure.</p>
+              : f.claims.map((x: any) => {
+                const c = C[x.slug];
+                return (
+                  <button key={x.slug} className="rd-row rd-row-lg" onClick={() => open(x.slug)}>
+                    <span className={`rd-panel${x.letters.length ? '' : ' rd-panel-text'}`}>
+                      {x.letters.length ? x.letters.join(', ') : 'text'}
+                    </span>
+                    <span className="rd-rowtext">{trimDot(c.plain)}</span>
+                    <span className={`rd-verdict-inline rd-${c.status}`}>{c.statusLabel}</span>
+                  </button>
+                );
+              })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const ArgumentView = () => {
+    const hyps = data.claims.filter((c: Claim) => c.kind === 'Hypothesis');
+    const alts = data.claims.filter((c: Claim) => c.kind === 'Alternative ruled out');
+    const caveats = data.claims.filter((c: Claim) => c.kind === 'Caveat');
+    const conclusions = data.claims.filter((c: Claim) => c.kind === 'Conclusion');
+    const standalone = results.filter((c: Claim) =>
+      c.kind === 'Finding' && !c.in.some(r => r.rel === 'tests' || r.rel === 'entails') &&
+      !c.out.some(r => r.rel === 'tests'));
+
+    return (
+      <div className="rd-arg">
+        <h1 className="rd-vtitle">How the argument fits together</h1>
+        <p className="rd-lede">
+          {hyps.length > 0
+            ? `The paper asks ${hyps.length} question${hyps.length === 1 ? '' : 's'}. Each makes a prediction, and each prediction is tested by one or more results.`
+            : 'This paper tests no stated hypothesis. Its findings stand on their own, and what they rest on is below.'}
+        </p>
+
+        {hyps.map((h: Claim, i: number) => {
+          const preds = h.out.filter(r => r.rel === 'entails').map(r => C[r.slug]).filter(Boolean);
+          const conf = h.in.filter(r => r.rel === 'confirms' || r.rel === 'validates').map(r => C[r.slug]).filter(Boolean);
+          return (
+            <section className="rd-hyp" key={h.slug}>
+              <p className="rd-k rd-k-accent">Question {i + 1} of {hyps.length}</p>
+              <button className="rd-hypq" onClick={() => open(h.slug)}>{trimDot(h.plain)}</button>
+              <ul className="rd-chain">
+                {preds.map(p => {
+                  const tests = p.in.filter(r => r.rel === 'tests').map(r => C[r.slug]).filter(Boolean);
+                  return (
+                    <li key={p.slug}>
+                      <span className="rd-lab">Predicts</span>
+                      <div>
+                        <button onClick={() => open(p.slug)}>{trimDot(p.plain)}</button>
+                        {tests.length > 0 && (
+                          <ul className="rd-tests">
+                            {tests.map(t => (
+                              <li key={t.slug}>
+                                <button onClick={() => open(t.slug)}>{trimDot(t.plain)}</button>
+                                <span className={`rd-verdict-inline rd-${t.status}`}>{t.statusLabel}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+                {conf.length > 0 && (
+                  <li>
+                    <span className="rd-lab">Confirmed by</span>
+                    <div>{conf.map(c => (
+                      <button key={c.slug} onClick={() => open(c.slug)}>{trimDot(c.plain)}</button>
+                    ))}</div>
+                  </li>
+                )}
+              </ul>
+            </section>
+          );
+        })}
+
+        {conclusions.length > 0 && (
+          <>
+            <h2 className="rd-argh">What the paper concludes</h2>
+            {conclusions.map((c: Claim) => (
+              <div className="rd-alt" key={c.slug}>
+                <button className="rd-a1" onClick={() => open(c.slug)}>{trimDot(c.plain)}</button>
+              </div>
+            ))}
+          </>
+        )}
+
+        {alts.length > 0 && (
+          <>
+            <h2 className="rd-argh">Explanations the paper rules out</h2>
+            <p className="rd-sub">
+              A result means little until the obvious rival explanations are eliminated. The authors
+              named {alts.length}.
+            </p>
+            {alts.map((a: Claim) => {
+              const by = a.in.filter(r => r.rel === 'rules-out').map(r => C[r.slug]).filter(Boolean);
+              return (
+                <div className="rd-alt" key={a.slug}>
+                  <button className="rd-a1" onClick={() => open(a.slug)}><s>{trimDot(a.plain)}</s></button>
+                  <div className="rd-a2">
+                    {by.length ? <>Ruled out by {by.map((c, i) => (
+                      <span key={c.slug}>{i > 0 && ' and '}
+                        <button onClick={() => open(c.slug)}>{trimDot(c.plain)}</button>
+                      </span>
+                    ))}</> : 'Named by the paper, not tested directly'}
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {standalone.length > 0 && (
+          <>
+            <h2 className="rd-argh">Findings that stand on their own</h2>
+            <p className="rd-sub">Results no stated prediction called for.</p>
+            {standalone.map((c: Claim) => (
+              <div className="rd-alt" key={c.slug}>
+                <button className="rd-a1" onClick={() => open(c.slug)}>{trimDot(c.plain)}</button>
+              </div>
+            ))}
+          </>
+        )}
+
+        {caveats.length > 0 && (
+          <>
+            <h2 className="rd-argh">What every result assumes</h2>
+            <p className="rd-sub">These qualify all of the findings above.</p>
+            {caveats.map((c: Claim) => (
+              <div className="rd-alt" key={c.slug}>
+                <button className="rd-a1" onClick={() => open(c.slug)}>{trimDot(c.plain)}</button>
+              </div>
+            ))}
+          </>
+        )}
+
+        <p className="rd-more">
+          This is the plain reading of the claim graph. The graph itself, with all fourteen relation
+          types and every claim's record, is under <a href="#record">About this record</a>.
+        </p>
+      </div>
+    );
+  };
+
+  // ── the rail: the list at rest, the card when one is open ───────────────────
+  const RailList = () => {
+    const groups = new Map<string, Claim[]>();
+    for (const c of results) {
+      const k = c.panels.length ? `Figure ${c.panels[0][0]}` : 'In the text';
+      if (!groups.has(k)) groups.set(k, []);
+      groups.get(k)!.push(c);
+    }
+    return (
+      <div className="rd-rest">
+        <p className="rd-k rd-k-accent rd-railk">
+          What this paper shows <span>{results.length} results</span>
+        </p>
+        <p className="rd-railnote">
+          {data.counts.marked > 0
+            ? 'Underlined sentences and figure panels carry a claim. Click one, or a line below.'
+            : 'Figure panels carry a claim. Click one, or a line below.'}
+        </p>
+        {[...groups].map(([k, cs]) => (
+          <div className="rd-rg" key={k}>
+            <div className="rd-rgk">{k}</div>
+            {cs.map(c => (
+              <button
+                key={c.slug}
+                className={`rd-rrow${near.has(c.slug) && view === 'paper' ? ' near' : ''}`}
+                onClick={() => open(c.slug)}
+              >
+                <Dot c={c} />
+                <span className="rd-rt">{trimDot(c.plain)}</span>
+              </button>
+            ))}
+          </div>
+        ))}
+        {data.counts.gaps > 0 && (
+          <p className="rd-gaps">
+            {data.counts.gaps} results in the text carry no claim yet —
+            <a href={`${base}/papers/${data.slug}/coverage/`}> see coverage</a>.
+          </p>
+        )}
+      </div>
+    );
+  };
+
+  const Card = ({ c }: { c: Claim }) => {
+    const fig = c.panels.length ? `fig${c.panels[0][0]}` : null;
+    const letters = fig ? c.panels.filter(p => p[0] === c.panels[0][0]).map(p => p[1]).filter(Boolean) : [];
+    const inText = data.counts.marked > 0 &&
+      typeof document !== 'undefined' &&
+      [...document.querySelectorAll<HTMLElement>('[data-claims]')]
+        .some(e => (e.dataset.claims ?? '').split(',').includes(c.slug));
+
+    const seen = new Set<string>();
+    const groups = new Map<string, Claim[]>();
+    for (const r of [...c.out, ...c.in].sort((a, b) => REL_ORDER.indexOf(a.label) - REL_ORDER.indexOf(b.label))) {
+      const t = C[r.slug];
+      if (!t || seen.has(r.slug)) continue;
+      seen.add(r.slug);
+      if (!groups.has(r.label)) groups.set(r.label, []);
+      groups.get(r.label)!.push(t);
+    }
+
+    const k = c.check ?? {};
+    const lead =
+      c.status === 'matches' ? `We re-ran this from ${k.how ?? "the authors' deposited data"}${k.date ? ` on ${k.date}` : ''} and got the same result.`
+      : c.status === 'partly' ? `We re-ran this from ${k.how ?? "the authors' deposited data"}${k.date ? ` on ${k.date}` : ''}. The direction reproduces; the numbers differ.`
+      : c.status === 'differs' ? 'We re-ran this and got a different result.'
+      : c.status === 'blocked' ? (k.how === 'reading the Methods section'
+          ? 'There is nothing to re-run. It was confirmed by reading the Methods section.'
+          : 'We could not re-run this: the analysis needs software or data we do not have.')
+      : 'We have not tried to re-run this yet.';
+
+    return (
+      <div className="rd-card">
+        <div className="rd-cardnav">
+          <button onClick={back}>← {stack.length > 1 ? 'Back' : 'All results'}</button>
+          <button onClick={close}>Close</button>
+        </div>
+        <p className="rd-kind">
+          {c.kind}
+          {c.status !== 'na' && <span className={`rd-verdict-inline rd-${c.status}`}>{c.statusLabel}</span>}
+        </p>
+        <p className="rd-cshort">{c.plain}</p>
+        {c.hasPlain && c.full && <p className="rd-cwords">{c.full}</p>}
+
+        {(fig || inText) && (
+          <p className="rd-cwhere">
+            <span>Where:</span>
+            {fig && FIG[fig] && (
+              <button onClick={() => goFigure(fig)}>
+                {FIG[fig].label}{letters.length ? ` ${letters.join(', ')}` : ''}
+              </button>
+            )}
+            {inText && <button onClick={() => goText(c.slug)}>In the text</button>}
+          </p>
+        )}
+
+        {c.status !== 'na' && (
+          <div className="rd-blk">
+            <p className="rd-k">Does it hold up?</p>
+            <span className={`rd-verdict rd-${c.status}`}>{c.statusLabel}</span>
+            <p>{lead}</p>
+            {(k.paper || k.reproduced) && (
+              <dl className="rd-cmp">
+                <dt>Paper says</dt><dd>{k.paper ?? '—'}</dd>
+                <dt>Our re-run</dt><dd>{k.reproduced ?? '—'}</dd>
+              </dl>
+            )}
+          </div>
+        )}
+
+        {c.method && (
+          <div className="rd-blk">
+            <p className="rd-k">How it was measured</p>
+            <p>{c.method}</p>
+          </div>
+        )}
+
+        {groups.size > 0 && (
+          <div className="rd-blk">
+            <p className="rd-k">How it connects</p>
+            <ul className="rd-rel">
+              {[...groups].map(([label, cs]) => (
+                <li key={label}>
+                  <span className="rd-rl">{label}</span>
+                  <div>{cs.map(t => (
+                    <button key={t.slug} onClick={() => open(t.slug)}>
+                      {trimDot(t.plain)}<Dot c={t} />
+                    </button>
+                  ))}</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="rd-cfoot">
+          <span>Extracted by a language model, not yet checked by a person</span>
+          <a href={`${base}/papers/${data.slug}/plain-claim/`}>The record ↗</a>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="rd">
+      <nav className="rd-modes" aria-label="How to read this paper">
+        {(['paper', 'findings', 'argument'] as const).map(v => (
+          <button key={v} className="rd-mode" aria-pressed={view === v} onClick={() => setView(v)}>
+            {v === 'paper' ? 'Paper' : v === 'findings' ? 'Findings' : 'Argument'}
+          </button>
+        ))}
+      </nav>
+
+      <div className="rd-grid">
+        <div className="rd-col">
+          {view === 'paper' && <PaperView />}
+          {view === 'findings' && <FindingsView />}
+          {view === 'argument' && <ArgumentView />}
+        </div>
+        <aside ref={railRef} className={`rd-rail${active ? ' open' : ''}`} aria-live="polite">
+          {active ? <Card c={C[active]} /> : <RailList />}
+        </aside>
+      </div>
+
+      <style>{`
+        .rd { --rd-gap: 3.5rem; }
+        /* :where() contributes no specificity, so every component rule below wins the font it
+           sets. Written as .rd button, this reset beat .rd-row and the figure's claim list
+           inherited the paper's serif — the one place the two voices must not merge. */
+        .rd :where(button) { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+        .rd button:focus-visible, .rd [tabindex]:focus-visible, .rd a:focus-visible {
+          outline: 2px solid var(--claim); outline-offset: 2px; border-radius: 2px;
+        }
+        .rd-k {
+          font-size: 11.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+          color: var(--card-muted); margin: 0 0 0.5rem;
+        }
+        .rd-k-accent { color: var(--claim); }
+
+        /* ── the three depths ─────────────────────────────────────────── */
+        .rd-modes { display: flex; gap: 1.75rem; border-bottom: 1px solid var(--card-border); margin-bottom: 0.5rem; }
+        .rd-mode {
+          padding: 0.55rem 0 0.75rem; font-size: 11.5px; font-weight: 600; letter-spacing: 0.11em;
+          text-transform: uppercase; color: var(--card-border-hover);
+          border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.12s, border-color 0.12s;
+        }
+        .rd-mode:hover { color: var(--card-strong); }
+        .rd-mode[aria-pressed='true'] { color: var(--claim); border-bottom-color: var(--claim); }
+
+        .rd-grid { display: grid; grid-template-columns: minmax(0, 1fr) 19.5rem; gap: 0 var(--rd-gap); align-items: start; }
+        .rd-col { min-width: 0; }
+
+        /* ── the paper ────────────────────────────────────────────────── */
+        .rd-paper { font-family: var(--paper-serif); font-size: 17px; line-height: 1.62; color: var(--card-body); max-width: 68ch; }
+        .rd-paper p { margin: 0 0 1.05em; }
+        .rd-paper sup, .rd-paper sub { font-size: 0.72em; line-height: 0; }
+        .rd-paper i { font-style: italic; }
+        .rd-paper .cite, .rd-paper .rd-xref, .rd-paper .xref { color: var(--card-muted); }
+        .rd-paper .xref, .rd-paper .rd-xref { text-decoration: none; border-bottom: 1px solid var(--card-border); }
+        .rd-paper .xref:hover, .rd-paper .rd-xref:hover { color: var(--card-head); border-color: var(--card-border-hover); }
+        .rd-paper .math { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85em; }
+        .rd-formula { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.84em; color: var(--card-muted); overflow-x: auto; }
+
+        .rd-brief, .rd-k, .rd-lede, .rd-railnote { font-family: Inter, system-ui, sans-serif; }
+        .rd-brief {
+          font-size: 14.5px; line-height: 1.55; border-top: 1px solid var(--card-border-hover);
+          border-bottom: 1px solid var(--card-border); padding: 1.35rem 0 0.6rem; margin: 0.75rem 0 2.25rem;
+        }
+        .rd-briefhead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.5rem 1rem; }
+        .rd-briefnote { font-size: 12px; color: var(--card-muted); }
+        .rd-brief dl { margin: 0; display: grid; grid-template-columns: 7em 1fr; gap: 0 1.1rem; }
+        .rd-brief dt { color: var(--card-muted); font-size: 12.5px; font-weight: 500; padding-top: 2px; }
+        .rd-brief dd { margin: 0 0 0.75rem; color: var(--card-body); }
+
+        .rd-h1, .rd-paper h2 { font-size: 22px; font-weight: 600; color: var(--card-head); margin: 2.6rem 0 0.8rem; letter-spacing: -0.01em; }
+        .rd-h2 { font-family: Inter, system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--card-muted); margin: 2rem 0 0.6rem; }
+        .rd-h3 { font-size: 17.5px; font-weight: 600; color: var(--card-head); margin: 1.6rem 0 0.5rem; }
+        .rd-h4, .rd-h5 { font-size: 16.5px; font-weight: 600; font-style: italic; color: var(--card-strong); margin: 1.2rem 0 0.4rem; }
+
+        .rd-fold { margin-top: 2.5rem; border-top: 1px solid var(--card-border); padding-top: 0.5rem; }
+        .rd-fold > summary, .rd-cap > summary {
+          list-style: none; cursor: pointer; font-family: Inter, system-ui, sans-serif;
+          font-size: 13px; color: var(--card-muted); padding: 0.4rem 0;
+        }
+        .rd-fold > summary::-webkit-details-marker, .rd-cap > summary::-webkit-details-marker { display: none; }
+        .rd-fold > summary::before, .rd-cap > summary::before {
+          content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 0.5rem;
+          border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+          transform: rotate(-45deg); transition: transform 0.15s;
+        }
+        .rd-fold[open] > summary::before, .rd-cap[open] > summary::before { transform: rotate(45deg); }
+        .rd-fold > summary:hover, .rd-cap > summary:hover { color: var(--card-head); }
+
+        /* a sentence that carries a claim */
+        .rd-mk {
+          text-decoration: underline; text-decoration-color: var(--claim-line);
+          text-decoration-thickness: 1.5px; text-underline-offset: 4px;
+          cursor: pointer; border-radius: 2px; transition: background 0.12s;
+        }
+        .rd-mk:hover { background: var(--claim-wash); }
+        .rd-mk.on { background: var(--claim-wash-2); text-decoration-color: var(--claim); }
+
+        /* ── figures ──────────────────────────────────────────────────── */
+        .rd-fig { margin: 1.9rem 0 2.1rem; scroll-margin-top: 4.5rem; }
+        .rd-fig img { display: block; width: 100%; height: auto; border: 1px solid var(--card-border); background: #fff; }
+        .rd-fig figcaption, .rd-tablewrap figcaption {
+          font-family: Inter, system-ui, sans-serif; font-size: 13.5px; line-height: 1.5;
+          color: var(--card-muted); margin-top: 0.7rem;
+        }
+        .rd-figlabel { font-weight: 600; color: var(--card-head); }
+        .rd-cap { margin-top: 0.35rem; }
+        .rd-cap p { margin: 0 0 0.5rem; }
+
+        .rd-figclaims { margin-top: 0.9rem; border-top: 1px solid var(--card-border); }
+        .rd-figclaims .rd-k { color: var(--claim); padding-top: 0.7rem; }
+        .rd-row {
+          display: grid; grid-template-columns: 3.2em 1fr auto; gap: 0 0.8rem; align-items: baseline;
+          width: 100%; padding: 0.45rem 0; border-bottom: 1px solid var(--card-border);
+          font-family: Inter, system-ui, sans-serif; font-size: 14px; line-height: 1.4; color: var(--card-body);
+        }
+        .rd-row:last-child { border-bottom: 0; }
+        .rd-row:hover .rd-rowtext, .rd-row.on .rd-rowtext { color: var(--claim-strong); }
+        .rd-row.on { background: var(--claim-wash); }
+        .rd-row-lg { font-size: 14.5px; grid-template-columns: 3.2em 1fr auto; }
+        .rd-panel {
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px;
+          letter-spacing: 0.04em; color: var(--card-muted);
+        }
+        .rd-panel-text { font-family: Inter, system-ui, sans-serif; font-style: italic; font-size: 12px; letter-spacing: 0; }
+
+        /* ── tables ───────────────────────────────────────────────────── */
+        .rd-tablewrap { margin: 1.9rem 0; }
+        .rd-tablescroll { overflow-x: auto; border: 1px solid var(--card-border); margin-top: 0.6rem; }
+        .rd-table { border-collapse: collapse; width: 100%; font-family: Inter, system-ui, sans-serif; font-size: 12.5px; }
+        .rd-table th, .rd-table td { padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--card-border); text-align: left; white-space: nowrap; }
+        .rd-table th { font-weight: 600; color: var(--card-head); background: var(--card-sunk); }
+        .rd-table td { color: var(--card-body); font-variant-numeric: tabular-nums; }
+
+        /* ── the outcome of a re-run, and nothing else ────────────────── */
+        .rd-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ran-none); flex: none; }
+        .rd-dot.rd-matches { background: var(--ran-ok); }
+        .rd-dot.rd-partly { background: var(--ran-part); }
+        .rd-dot.rd-differs { background: var(--ran-differs); }
+        .rd-dot.rd-blocked, .rd-dot.rd-none { background: transparent; border: 1.5px solid var(--ran-none); }
+        .rd-verdict, .rd-verdict-inline { font-family: Inter, system-ui, sans-serif; white-space: nowrap; }
+        .rd-verdict-inline { font-size: 12px; color: var(--card-muted); }
+        .rd-verdict-inline.rd-matches { color: var(--ran-ok); }
+        .rd-verdict-inline.rd-partly { color: var(--ran-part); }
+        .rd-verdict-inline.rd-differs { color: var(--ran-differs); }
+        .rd-verdict { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 2px 8px; border-radius: 3px; margin-bottom: 0.5rem; }
+        .rd-verdict.rd-matches { background: var(--ran-ok-bg); color: var(--ran-ok); }
+        .rd-verdict.rd-partly { background: var(--ran-part-bg); color: var(--ran-part); }
+        .rd-verdict.rd-differs { background: var(--ran-differs-bg); color: var(--ran-differs); }
+        .rd-verdict.rd-blocked, .rd-verdict.rd-none { background: var(--ran-none-bg); color: var(--card-body); }
+
+        /* ── findings ─────────────────────────────────────────────────── */
+        .rd-digest, .rd-arg { padding-top: 2.25rem; max-width: 68ch; font-family: Inter, system-ui, sans-serif; }
+        .rd-vtitle { font-family: var(--paper-serif); font-size: 28px; font-weight: 600; letter-spacing: -0.012em; margin: 0 0 0.4rem; color: var(--card-head); line-height: 1.15; text-wrap: balance; }
+        .rd-lede { color: var(--card-body); font-size: 15px; max-width: 60ch; margin: 0 0 2rem; line-height: 1.55; }
+        .rd-dg { display: grid; grid-template-columns: 9.5rem 1fr; gap: 0 1.6rem; padding: 1.3rem 0; border-top: 1px solid var(--card-border); }
+        .rd-dg:last-of-type { border-bottom: 1px solid var(--card-border); }
+        .rd-thumb { display: block; width: 100%; }
+        .rd-thumb img { width: 100%; height: auto; display: block; border: 1px solid var(--card-border); background: #fff; }
+        .rd-thumb:hover img { border-color: var(--claim); }
+        .rd-dgk { font-size: 11.5px; color: var(--card-muted); margin: 0.5rem 0 0; line-height: 1.4; }
+        .rd-dgk b { display: block; color: var(--card-head); font-size: 12.5px; font-weight: 600; }
+        .rd-empty { font-size: 13.5px; color: var(--card-muted); font-style: italic; margin: 0.4rem 0; }
+
+        /* ── argument ─────────────────────────────────────────────────── */
+        .rd-hyp { border-top: 2px solid var(--card-head); padding: 1.1rem 0 1.3rem; }
+        .rd-hypq { font-family: var(--paper-serif); font-size: 19px; font-weight: 600; line-height: 1.35; color: var(--card-head); margin: 0 0 0.8rem; display: block; text-wrap: pretty; }
+        .rd-hypq:hover { color: var(--claim-strong); }
+        .rd-chain { margin: 0; padding: 0; list-style: none; }
+        .rd-chain > li { display: grid; grid-template-columns: 8em 1fr; gap: 0 0.9rem; padding: 0.55rem 0; border-top: 1px solid var(--card-border); font-size: 14.5px; line-height: 1.45; }
+        .rd-lab { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--card-muted); font-weight: 600; padding-top: 3px; }
+        .rd-chain button { color: var(--card-body); display: block; width: 100%; padding: 0.1rem 0; }
+        .rd-chain button:hover { color: var(--claim-strong); }
+        .rd-tests { margin: 0.35rem 0 0; padding: 0; list-style: none; }
+        .rd-tests li { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.25rem 0; }
+        .rd-tests li::before { content: '↳'; color: var(--card-muted); flex: none; }
+        .rd-tests button { flex: 1; }
+        .rd-argh { font-family: var(--paper-serif); font-size: 21px; font-weight: 600; color: var(--card-head); margin: 2.6rem 0 0.3rem; }
+        .rd-sub { color: var(--card-body); font-size: 14px; margin: 0 0 0.8rem; max-width: 60ch; }
+        .rd-alt { border-top: 1px solid var(--card-border); padding: 0.7rem 0; }
+        .rd-a1 { color: var(--card-body); font-size: 14.5px; line-height: 1.45; display: block; width: 100%; }
+        .rd-a1:hover { color: var(--card-head); }
+        .rd-a1 s { text-decoration-color: var(--card-muted); }
+        .rd-a2 { margin-top: 0.3rem; font-size: 13px; color: var(--card-muted); }
+        .rd-a2 button { color: var(--claim-strong); border-bottom: 1px solid var(--claim-line); }
+        .rd-more { margin-top: 2.5rem; border-top: 1px solid var(--card-border); padding-top: 0.9rem; font-size: 13px; color: var(--card-muted); }
+        .rd-more a { color: var(--claim-strong); }
+
+        /* ── rail ─────────────────────────────────────────────────────── */
+        .rd-rail {
+          position: sticky; top: 3.5rem; max-height: calc(100vh - 4rem); overflow: auto;
+          padding: 2.25rem 0 2.5rem; font-family: Inter, system-ui, sans-serif;
+          scrollbar-width: thin;
+        }
+        .rd-railk { display: flex; justify-content: space-between; align-items: baseline; }
+        .rd-railk span { color: var(--card-muted); font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 12px; }
+        .rd-railnote { color: var(--card-muted); font-size: 12.5px; line-height: 1.45; margin: 0 0 1rem; }
+        .rd-rg { margin-top: 0.9rem; }
+        .rd-rgk { font-size: 11.5px; color: var(--card-muted); font-weight: 500; padding-bottom: 0.25rem; border-bottom: 1px solid var(--card-border); }
+        .rd-rrow { display: grid; grid-template-columns: 8px 1fr; gap: 0 0.6rem; align-items: baseline; width: 100%; padding: 0.4rem 0.35rem 0.4rem 0; border-radius: 3px; color: var(--card-body); font-size: 13px; line-height: 1.4; }
+        .rd-rrow:hover { color: var(--card-head); background: var(--claim-wash); }
+        .rd-rrow.near { color: var(--card-head); box-shadow: inset 2px 0 0 var(--claim); padding-left: 0.5rem; }
+        .rd-rrow .rd-dot { position: relative; top: -1px; }
+        .rd-gaps { font-size: 12px; color: var(--card-muted); margin-top: 1.2rem; border-top: 1px solid var(--card-border); padding-top: 0.6rem; }
+        .rd-gaps a { color: var(--claim-strong); }
+
+        /* ── the claim card ───────────────────────────────────────────── */
+        .rd-card { animation: rd-in 0.16s ease-out; }
+        @keyframes rd-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) { .rd-card { animation: none; } .rd * { transition: none !important; } }
+        .rd-cardnav { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--card-muted); margin-bottom: 0.9rem; }
+        .rd-cardnav button:hover { color: var(--card-head); }
+        .rd-kind { display: flex; align-items: baseline; gap: 0.6rem; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--claim); margin: 0 0 0.6rem; }
+        .rd-kind .rd-verdict-inline { letter-spacing: 0; text-transform: none; font-weight: 500; }
+        .rd-cshort { font-family: var(--paper-serif); font-size: 17.5px; line-height: 1.4; font-weight: 600; color: var(--card-head); margin: 0 0 0.9rem; text-wrap: pretty; }
+        .rd-cwords { font-family: var(--paper-serif); font-size: 13.5px; line-height: 1.5; color: var(--card-body); margin: 0 0 1rem; padding-left: 0.7rem; border-left: 2px solid var(--card-border); }
+        .rd-cwhere { display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; font-size: 13px; color: var(--card-muted); margin: 0 0 1rem; }
+        .rd-cwhere button { color: var(--claim-strong); font-weight: 500; border-bottom: 1px solid var(--claim-line); }
+        .rd-blk { border-top: 1px solid var(--card-border); padding: 0.75rem 0; }
+        .rd-blk p { margin: 0 0 0.35rem; color: var(--card-body); font-size: 13px; line-height: 1.5; }
+        .rd-blk p:last-child { margin-bottom: 0; }
+        .rd-cmp { display: grid; grid-template-columns: 6em 1fr; gap: 0.15rem 0.7rem; font-size: 12.5px; margin: 0.4rem 0 0; }
+        .rd-cmp dt { color: var(--card-muted); }
+        .rd-cmp dd { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--card-head); overflow-wrap: anywhere; }
+        .rd-rel { margin: 0.3rem 0 0; padding: 0; list-style: none; }
+        .rd-rel li { display: grid; grid-template-columns: 7.5em 1fr; gap: 0 0.6rem; align-items: baseline; padding: 0.4rem 0; border-top: 1px solid var(--card-border); font-size: 13px; line-height: 1.4; }
+        .rd-rel li:first-child { border-top: 0; }
+        .rd-rl { font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--card-muted); font-weight: 600; padding-top: 2px; }
+        .rd-rel button { color: var(--card-body); display: block; padding: 0.1rem 0; }
+        .rd-rel button:hover { color: var(--claim-strong); }
+        .rd-rel .rd-dot { margin-left: 0.4rem; }
+        .rd-cfoot { border-top: 1px solid var(--card-border); padding-top: 0.7rem; margin-top: 0.5rem; font-size: 12px; color: var(--card-muted); display: flex; justify-content: space-between; gap: 0.8rem; }
+        .rd-cfoot a { color: var(--card-muted); }
+        .rd-cfoot a:hover { color: var(--card-head); }
+
+        /* ── narrow ───────────────────────────────────────────────────── */
+        @media (max-width: 1000px) {
+          .rd-grid { grid-template-columns: minmax(0, 1fr); }
+          .rd-rail {
+            position: fixed; inset: auto 0 0 0; max-height: 72vh; z-index: 40;
+            background: var(--card-bg); border-top: 1px solid var(--card-border-hover);
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.12); padding: 1rem 1.25rem 2rem;
+            transform: translateY(102%); transition: transform 0.2s ease-out;
+          }
+          .rd-rail.open { transform: none; }
+          .rd-rest { display: none; }
+          .rd-dg { grid-template-columns: minmax(0, 1fr); gap: 0.9rem; }
+          .rd-thumb { max-width: 16rem; }
+        }
+      `}</style>
+    </div>
+  );
+}
