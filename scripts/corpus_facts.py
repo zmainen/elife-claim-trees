@@ -242,6 +242,18 @@ def layers(site):
             except Exception:                                         # noqa: BLE001
                 verified = 0
         st = stances(s)
+        ev_quotes = ev_verified = 0
+        rec = os.path.join(ROOT, "runs", s, "reconciler.output.json")
+        if os.path.isfile(rec):
+            try:
+                with open(rec, encoding="utf-8") as fh:
+                    rdoc = json.load(fh)
+                for claim in rdoc.get("claims", []):
+                    ev = claim.get("evidence_verified") or {}
+                    ev_quotes += len(ev)
+                    ev_verified += sum(1 for v in ev.values() if v)
+            except Exception:                                         # noqa: BLE001
+                pass
         out[s] = {
             "tree": has_tree,
             "verification": os.path.isfile(
@@ -257,6 +269,7 @@ def layers(site):
             "review": s in review_counts,
             "review_n": review_counts.get(s, 0),
             "review_pending": pending_counts.get(s, 0),
+            "evidence_verified": {"quotes": ev_quotes, "verified": ev_verified},
         }
     return out
 

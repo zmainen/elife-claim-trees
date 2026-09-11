@@ -40,6 +40,32 @@ from .schema import AgentExtraction, AgentName, CandidateClaim
 logger = logging.getLogger(__name__)
 
 
+# ── Evidence verification ────────────────────────────────────────────────
+
+_CURLY_QUOTES = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"'})
+_DASHES = str.maketrans({"–": "-", "—": "-", "―": "-"})
+
+
+def evidence_found(quote: str, text: str) -> bool:
+    """True when the normalised quote appears verbatim in the normalised text.
+
+    Normalises both sides: collapse whitespace, lowercase, map curly quotes and
+    the three Unicode dash characters to their ASCII forms, strip a trailing
+    ellipsis or full stop from the quote. A quote longer than 300 characters is
+    matched on its first 300 — long quotes are almost certainly paraphrases.
+    """
+    def normalise(s: str) -> str:
+        s = s.translate(_CURLY_QUOTES).translate(_DASHES)
+        s = " ".join(s.split()).lower()
+        return s
+
+    q = normalise(quote).rstrip(".")
+    if q.endswith("…") or q.endswith("..."):
+        q = q.rstrip(".").rstrip("…").rstrip()
+    q = q[:300]
+    return q in normalise(text)
+
+
 # ── Slice mapping: which slice each agent reads ─────────────────────────
 
 
@@ -361,13 +387,20 @@ def build_reader_request(agent: AgentName, paper: PreparedPaper,
 
 
 def reader_from_raw(agent: AgentName, paper_slug: str, model: str,
-                    raw: str) -> AgentExtraction:
+                    raw: str, paper: PreparedPaper | None = None) -> AgentExtraction:
     """Validate a raw reader answer into an AgentExtraction.
 
     Every route in goes through here: the backend, a supplied file, an agent's reply. The
-    route differs; the checks do not.
+    route differs; the checks do not. When `paper` is given, each claim's `evidence_verified`
+    is set by checking the quote against the agent's slice.
     """
     claims = [CandidateClaim(**c) for c in _as_claim_list(parse_json_response(raw), agent)]
+    if paper is not None:
+        text = slice_for_agent(agent, paper)
+        for c in claims:
+            c.evidence_verified = evidence_found(c.evidence, text)
+        verified = sum(1 for c in claims if c.evidence_verified)
+        logger.info("agent=%s evidence verified %d/%d", agent, verified, len(claims))
     return AgentExtraction(agent=agent, paper_slug=paper_slug, model=model, claims=claims)
 
 
@@ -424,7 +457,7 @@ def run_agent(
 
     assert raw is not None
     try:
-        return reader_from_raw(agent, paper.paper_slug, model, raw)
+        return reader_from_raw(agent, paper.paper_slug, model, raw, paper)
     except Exception as parse_err:
         # Keep the raw reply before re-raising: a reply that failed to parse is the only
         # evidence of what went wrong, and it is gone the moment this returns.
