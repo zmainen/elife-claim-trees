@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Reader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground:#f4f4f2; --surface:#fbfbfa; --surface-2:#ecedea;
+    --ink:#1b1d1c; --ink-2:#4a4e4b; --ink-3:#767b77;
+    --rule:#d9dbd6; --rule-firm:#b9bcb6;
+    --accent:#8a5a12; --accent-soft:#f0e6d4;
+    --claim:#0f6e7a; --claim-soft:#dfeef0;
+    --current:#2f6f46; --current-bg:#e3efe6;
+    --stale:#9a6b0f;  --stale-bg:#f7ecd6;
+    --alarm:#963722;  --alarm-bg:#f6e3de;
+    --move:#3d5a80;   --move-bg:#e0e7ef;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#121413; --surface:#1a1d1b; --surface-2:#232725;
+      --ink:#e9ebe8; --ink-2:#b3b8b3; --ink-3:#838883;
+      --rule:#2e332f; --rule-firm:#454b46;
+      --accent:#d9a35c; --accent-soft:#34291a;
+      --claim:#6cc3cd; --claim-soft:#16292c;
+      --current:#6fbc8c; --current-bg:#1c2c22;
+      --stale:#d8ab52;  --stale-bg:#2e2618;
+      --alarm:#e08b74;  --alarm-bg:#2f1e19;
+      --move:#8fb0d4;   --move-bg:#1b242e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#121413; --surface:#1a1d1b; --surface-2:#232725;
+    --ink:#e9ebe8; --ink-2:#b3b8b3; --ink-3:#838883;
+    --rule:#2e332f; --rule-firm:#454b46;
+    --accent:#d9a35c; --accent-soft:#34291a;
+    --claim:#6cc3cd; --claim-soft:#16292c;
+    --current:#6fbc8c; --current-bg:#1c2c22;
+    --stale:#d8ab52;  --stale-bg:#2e2618;
+    --alarm:#e08b74;  --alarm-bg:#2f1e19;
+    --move:#8fb0d4;   --move-bg:#1b242e;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:"IBM Plex Sans", system-ui, sans-serif; font-size:15.5px; line-height:1.62; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 28px 96px; }
+  header.mast { padding:60px 0 32px; border-bottom:2px solid var(--ink); margin-bottom:44px; }
+  .kicker { font-family:"IBM Plex Mono", monospace; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0 0 16px; }
+  h1 { font-family:"IBM Plex Serif", Georgia, serif; font-weight:600; font-size:clamp(2rem,4.4vw,2.95rem); line-height:1.08; letter-spacing:-.018em; text-wrap:balance; margin:0 0 18px; }
+  .standfirst { font-size:18px; line-height:1.55; color:var(--ink-2); max-width:62ch; margin:0; }
+  .standfirst strong { color:var(--ink); font-weight:600; }
+  .status { display:flex; flex-wrap:wrap; gap:8px 26px; margin-top:24px; font-family:"IBM Plex Mono", monospace; font-size:11.5px; color:var(--ink-3); }
+  .status b { color:var(--ink-2); font-weight:500; letter-spacing:.06em; text-transform:uppercase; margin-right:6px; }
+  .status a { color:var(--accent); }
+  section { margin:0 0 58px; }
+  h2 { font-family:"IBM Plex Serif", Georgia, serif; font-size:25px; font-weight:600; letter-spacing:-.012em; margin:0 0 6px; text-wrap:balance; }
+  h3 { font-size:16px; font-weight:600; margin:28px 0 8px; }
+  .sec-note { color:var(--ink-3); font-size:14.5px; margin:0 0 26px; max-width:64ch; }
+  p { margin:0 0 14px; max-width:70ch; }
+  p:last-child { margin-bottom:0; }
+  code { font-family:"IBM Plex Mono", monospace; font-size:.86em; background:var(--surface-2); padding:.1em .38em; border-radius:2px; }
+  b, strong { color:var(--ink); font-weight:600; }
+  .principle { border-left:3px solid var(--accent); padding:4px 0 4px 22px; margin:0 0 24px; }
+  .principle p { font-size:17px; line-height:1.5; color:var(--ink); max-width:60ch; }
+  .tablewrap { overflow-x:auto; border:1px solid var(--rule); margin:0 0 18px; }
+  table.grid { width:100%; border-collapse:collapse; font-size:14px; background:var(--surface); }
+  table.grid th { font-family:"IBM Plex Mono", monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; font-weight:500; color:var(--ink-3); text-align:left; padding:11px 13px; border-bottom:1px solid var(--rule-firm); white-space:nowrap; }
+  table.grid td { padding:11px 13px; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--ink-2); }
+  table.grid tr:last-child td { border-bottom:0; }
+  table.grid td:first-child { color:var(--ink); }
+  table.grid td.mono { font-family:"IBM Plex Mono", monospace; font-size:12.5px; color:var(--ink); white-space:nowrap; }
+  .verdict { font-size:13px; }
+  .v-keep { color:var(--current); font-weight:600; }
+  .v-move { color:var(--move); font-weight:600; }
+  .v-cut  { color:var(--alarm); font-weight:600; }
+  .v-new  { color:var(--accent); font-weight:600; }
+  .cols2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  @media (max-width:820px){ .cols2 { grid-template-columns:1fr; } }
+  .card { border:1px solid var(--rule); background:var(--surface); padding:16px 18px; }
+  .card h4 { font-family:"IBM Plex Mono", monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); margin:0 0 10px; }
+  .card p { font-size:14px; }
+  ol.steps { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:14px; counter-reset:s; }
+  ol.steps li { counter-increment:s; display:grid; grid-template-columns:30px 1fr; gap:14px; font-size:14.5px; color:var(--ink-2); }
+  ol.steps li::before { content:counter(s); font-family:"IBM Plex Mono", monospace; font-size:12px; color:var(--accent); border:1px solid var(--accent); width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .assume { border:1px solid var(--move); background:var(--move-bg); padding:14px 16px; font-size:14px; color:var(--ink-2); margin:0 0 18px; }
+  .assume .q { font-family:"IBM Plex Mono", monospace; font-size:11px; color:var(--move); letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:5px; }
+  .proto { border:1px solid var(--claim); background:var(--claim-soft); padding:16px 18px; margin:0 0 24px; display:flex; flex-wrap:wrap; gap:8px 24px; align-items:baseline; font-size:14.5px; }
+  .proto b { color:var(--claim); }
+  .proto a { color:var(--ink); }
+  footer.end { border-top:1px solid var(--rule); padding-top:22px; color:var(--ink-3); font-size:13.5px; }
+  /* wireframes */
+  .wire { border:1px solid var(--rule-firm); background:var(--surface); font-family:"IBM Plex Mono", monospace; font-size:11.5px; overflow:hidden; }
+  .wire-chrome { background:var(--surface-2); border-bottom:1px solid var(--rule); padding:7px 12px; color:var(--ink-3); font-size:10px; letter-spacing:.1em; text-transform:uppercase; display:flex; justify-content:space-between; }
+  .wire-body { padding:16px; display:flex; flex-direction:column; gap:9px; }
+  .wire-cols { display:grid; grid-template-columns:1fr 130px; gap:12px; align-items:start; }
+  .blk { border:1px solid var(--rule-firm); background:var(--ground); padding:9px 11px; line-height:1.4; color:var(--ink-2); }
+  .blk .lab { color:var(--ink); display:block; }
+  .blk .sub { color:var(--ink-3); font-size:10.5px; display:block; margin-top:3px; }
+  .blk.ghost { border-style:dashed; color:var(--ink-3); background:transparent; }
+  .blk.tall { padding-block:26px; }
+  .blk.hero { background:var(--surface-2); }
+  .blk.bad { border-color:var(--alarm); background:var(--alarm-bg); color:var(--alarm); }
+  .blk.claim { border-color:var(--claim); background:var(--claim-soft); color:var(--ink-2); }
+  .blk.claim .lab { color:var(--claim); }
+  .u { text-decoration:underline; text-decoration-color:var(--claim); text-underline-offset:3px; }
+  .tabrow { display:flex; gap:4px; border-bottom:2px solid var(--rule-firm); }
+  .tab { padding:7px 11px; border:1px solid var(--rule); border-bottom:0; background:var(--ground); color:var(--ink-3); margin-bottom:-1px; white-space:nowrap; }
+  .tab.on { background:var(--surface-2); color:var(--ink); border-color:var(--rule-firm); box-shadow:inset 0 2px 0 var(--accent); }
+  .tab.bad { color:var(--alarm); border-color:var(--alarm); }
+  .split { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+  @media (max-width:900px){ .split{ grid-template-columns:1fr; } .wire-cols { grid-template-columns:1fr; } }
+  .split > figure { margin:0; min-width:0; }
+  figcaption { font-family:"IBM Plex Mono", monospace; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3); margin:0 0 9px; }
+  .stack { display:flex; flex-direction:column; gap:6px; }
+  .dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--current); margin-right:5px; vertical-align:middle; }
+  .dot.w { background:var(--stale); } .dot.o { background:transparent; border:1px solid var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="mast">
+  <p class="kicker">Design note · 2026-09-11</p>
+  <h1>The reader</h1>
+  <p class="standfirst">The site has no view of the paper. It has views of what we made <em>from</em> the paper, and it asks every reader to start there. <strong>This note proposes that the paper page begin with the paper, and that claims be reached from it</strong> — from the sentence that makes one and the figure panel that shows one — with the structure one click further and the graph two.</p>
+  <div class="status">
+    <span><b>Subject</b> /papers/&lt;paper&gt;</span>
+    <span><b>Follows</b> the-paper-page</span>
+    <span><b>Status</b> proposed · prototype built</span>
+    <span><b>Prototype</b> <a href="2026-09-11-the-reader-prototype.html">Gädeke 2026, clickable</a></span>
+  </div>
+</header>
+
+<div class="proto"><b>Try it first.</b> <a href="2026-09-11-the-reader-prototype.html">The prototype</a> is the real Gädeke article from eLife's JATS, its five figures, and its 33 claims. Underlined sentences and figure panels open a claim; the top-right switch goes to the two deeper views.</div>
+
+<section>
+  <h2>Who is reading</h2>
+  <p class="sec-note">The audience the page was never designed for.</p>
+  <p>The page as it stands was built by the people who built the graph, for themselves. Its vocabulary is the graph's vocabulary: <code>H1.P2.1</code>, <em>dissociates-with</em>, <em>scope qualifiers</em>, <em>eliminations &amp; validating controls</em>. That vocabulary is exact, and it is the reason the corpus is auditable. It is also a second language, and the reader we are now asked to serve — an editor, a reviewer, a scientist from the next field over, someone at eLife deciding whether any of this is worth their time — does not speak it and should not have to.</p>
+  <p>What that reader does know is how to read a paper. They have done it thousands of times. They know where the abstract is, that the figures carry the results, that a sentence with a <em>p</em>-value in it is a claim. The one familiar object in this whole enterprise is the paper, and it is the one thing the site does not show.</p>
+  <div class="principle"><p>The paper is the interface. A claim is reached from the place in the paper where it is made. Structure is what you see when you ask for it, never what you have to get past.</p></div>
+</section>
+
+<section>
+  <h2>What the page asks of a reader today</h2>
+  <p class="sec-note">Top to bottom, what each element demands before it gives anything back.</p>
+  <div class="tablewrap"><table class="grid">
+    <thead><tr><th>Element</th><th>What it asks the reader to already know</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>Hypotheses · Claims · Inferences</td><td>Nothing. Three paragraphs of prose; the best thing on the page.</td><td class="verdict"><span class="v-keep">Keep</span>, relabelled in plain words</td></tr>
+      <tr><td>“Logic of the claims” with seven collapsed sections</td><td>What a role is; why a <em>dissociation</em> is a section; why controls are “eliminations”; that <code>H1.P2.1</code> is an address.</td><td class="verdict"><span class="v-move">Move</span> to the Argument view, and simplify to question → prediction → result</td></tr>
+      <tr><td>Claim text with full statistics</td><td>How to read <code>t(3600)=−3.92, β=−0.14, 95%CI=[−0.20,−0.07]</code> — on every row, before the sentence says what was found.</td><td class="verdict"><span class="v-new">New</span>: a plain wording per claim, with the authors' wording beneath it</td></tr>
+      <tr><td>Graph tab</td><td>Fourteen relation types, a legend, a minimap. The thing the project is named for, and the last thing a first-time reader can use.</td><td class="verdict"><span class="v-keep">Keep</span>, one link from the Argument view</td></tr>
+      <tr><td>Drawer with fourteen edge groups</td><td>The full vocabulary, in the format's own terms.</td><td class="verdict"><span class="v-move">Rewrite</span> as a card in reading order: what, where, does it hold up, how it connects</td></tr>
+      <tr><td>Artifacts · Pipeline tabs</td><td>What a layer is. These are about us, and the previous note put them in the row on purpose.</td><td class="verdict"><span class="v-move">Demote</span> to a quieter row: “About this record”</td></tr>
+      <tr><td>The paper itself</td><td>—</td><td class="verdict"><span class="v-cut">Absent.</span> The one element with no learning curve is the one that is missing.</td></tr>
+    </tbody>
+  </table></div>
+  <p>None of these elements is wrong. Each is the honest surface of something real in the corpus, and the previous note was right to sort them by category. The trouble is altitude: the page opens at the level of the graph and never descends to the level of the paper. A reader who cannot find the paper cannot tell whether the graph is about anything.</p>
+</section>
+
+<section>
+  <h2>Three depths</h2>
+  <p class="sec-note">One page, three ways of standing back from it. Each answers a question the previous one raises.</p>
+  <div class="tablewrap"><table class="grid">
+    <thead><tr><th>Depth</th><th>Answers</th><th>Built from</th></tr></thead>
+    <tbody>
+      <tr><td><b>Paper</b> <span class="verdict v-new">default</span></td><td>What does this paper say, and where does it say it?</td><td>The JATS article (<code>prepare</code> already fetches it), the figures (the IIIF URLs every claim already carries), and the sentence marks the coverage layer writes to <code>marked/</code>.</td></tr>
+      <tr><td><b>Findings</b></td><td>What did they find, figure by figure, and did it hold up?</td><td>Claims with a <code>panel:</code>, ordered by figure and panel; the verification records, restated in one sentence.</td></tr>
+      <tr><td><b>Argument</b></td><td>How does it fit together? What did they rule out? What does every result assume?</td><td>Hypotheses → <em>entails</em> → predictions → <em>tested by</em> → results; alternatives with <em>ruled out by</em>; scope claims. The same graph, read down one path.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The claim card is the same at every depth. Open a claim from an underlined sentence, from a figure panel, from a Findings row, or from a hypothesis chain, and the same card opens in the same rail. There is one drawer, as the previous note asked, and it belongs to the reader rather than to a view.</p>
+</section>
+
+<section>
+  <h2>The paper view</h2>
+  <p class="sec-note">A clean article, with one accent that means “a claim lives here”.</p>
+  <div class="split">
+    <figure>
+      <figcaption>Now — the page opens at the graph's altitude</figcaption>
+      <div class="wire">
+        <div class="wire-chrome"><span>/papers/gädeke</span><span>today</span></div>
+        <div class="wire-body">
+          <div class="blk"><span class="lab">Title · authors · DOI</span></div>
+          <div class="blk"><span class="lab">Hypotheses · Claims · Inferences</span></div>
+          <div class="blk ghost">33 claims · 19/22 layers · 4 observed · 0 approved</div>
+          <div class="tabrow"><span class="tab on">Claims</span><span class="tab">Graph</span><span class="tab">Artifacts</span><span class="tab">Pipeline</span></div>
+          <div class="blk bad"><span class="lab">LOGIC OF THE CLAIMS</span>TESTS — H1: … H2: … H3: …<span class="sub">▸ Hypotheses tested · ▸ Dissociations · ▸ Eliminations &amp; validating controls · ▸ Alternatives ruled out · ▸ Interpretations · ▸ Standalone empirical findings · ▸ Scope qualifiers</span></div>
+          <div class="blk ghost">the paper is not on this page</div>
+        </div>
+      </div>
+    </figure>
+    <figure>
+      <figcaption>Proposed — the paper, with the claims layer beside it</figcaption>
+      <div class="wire">
+        <div class="wire-chrome"><span>/papers/gädeke</span><span>Paper · Findings · Argument</span></div>
+        <div class="wire-body">
+          <div class="wire-cols">
+            <div class="stack">
+              <div class="blk hero"><span class="lab">eLife · 2026</span>Contributions of insula and superior temporal sulcus…<span class="sub">Gädeke, Willems, Ahmed, Weber, Hurlemann, Schultz</span></div>
+              <div class="blk claim"><span class="lab">In brief</span>They asked · They found · It means</div>
+              <div class="blk"><span class="lab">Abstract</span>…<span class="u">happiness decreases following low outcomes for the partner were larger when the participant had made the choice</span>. <span class="u">This guilt effect was associated with BOLD signal increase in the left anterior insula.</span> …</div>
+              <div class="blk"><span class="lab">Results › Behaviour › Choices: manipulation check</span><span class="u">As expected, participants' probability of choosing the risky option increased with…</span></div>
+              <div class="blk tall"><span class="lab">Figure 2</span>Participant choices in Studies 1 and 2.<span class="sub">WHAT THIS FIGURE SHOWS<br>A, D · Participants chose the gamble more often when it was worth more <span class="dot"></span><br>A, D · In one of the two studies, people gambled slightly more choosing only for themselves <span class="dot w"></span><br>B, E · People were no more or less risk-averse when choosing for a partner too <span class="dot o"></span></span></div>
+              <div class="blk ghost">Results continue · Discussion · ▸ Materials and methods</div>
+            </div>
+            <div class="stack">
+              <div class="blk claim"><span class="lab">What this paper shows</span>17 results<span class="sub">Figure 2 · Figure 3 · Figure 4 · Figure 5<br>one line each, plain words, a dot for the re-run</span></div>
+              <div class="blk ghost">becomes the claim card when a sentence, panel or line is clicked</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </figure>
+  </div>
+  <h3>Choices, and why</h3>
+  <p><b>Two typefaces, and the split carries meaning.</b> The paper's own words are set in a serif; everything we add — labels, the rail, the card, the plain wordings — is set in a sans. A reader never has to ask whether a sentence is the authors' or ours. The current site sets everything in Inter, and the generated summary reads as if it were the abstract.</p>
+  <p><b>One accent.</b> A single teal means “a claim is here”: the underline under a sentence, the heading under a figure, the rail's label. Green, amber and red are reserved for the re-run outcome and appear only as a dot or a verdict chip, so colour on the page always answers exactly one question: did it hold up? The previous note's palette rule — green means <em>correct</em>, never <em>our effort</em> — is kept.</p>
+  <p><b>The figure is the unit of findings.</b> Under each figure, a short list: the panel letters, the plain wording of the claim from that panel, the re-run dot. This is where the design does its main work. It is the panel-level claim the README argues for, shown at the panel, in the paper, in the order the authors chose. Figure 1, which sets up the task, says so and lists nothing.</p>
+  <p><b>Statistics stay in the paper.</b> The article text keeps every <em>t</em>, <em>β</em> and confidence interval, because that is the paper. The claims layer never repeats them in a row; the card shows the authors' wording under the plain one, and the comparison of the paper's value against our re-run, in a monospace pair, where a reader who wants the number can find it.</p>
+  <p><b>Methods fold; Introduction and Discussion do not.</b> The reader who came for the argument reads the Introduction and the Discussion; the Methods are there for the one who came to check something, one click down.</p>
+</section>
+
+<section>
+  <h2>The claim card</h2>
+  <p class="sec-note">One card, in the order a reader asks.</p>
+  <div class="cols2">
+    <div class="card"><h4>1 · Kind, then the claim in plain words</h4><p><span style="color:var(--claim);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em">FINDING · RE-RUN MATCHES</span><br><b>The left anterior insula responds more when a partner loses because of the participant's choice.</b></p><p style="border-left:2px solid var(--rule-firm);padding-left:10px;font-family:'IBM Plex Serif',serif">Anterior insula BOLD activity is significantly elevated in the Social condition compared to the Partner condition specifically after negative partner outcomes…</p><p>The kinds are eight plain nouns: Finding, Check, Hypothesis, Prediction, Interpretation, Caveat, From the literature, Alternative ruled out. They map one-to-one onto role × stance, so nothing is lost; only the names change.</p></div>
+    <div class="card"><h4>2 · Where</h4><p>Figure 4 E, F · In the text. Each is a link back into the paper. The card is never a dead end.</p><h4 style="margin-top:16px">3 · Does it hold up?</h4><p>A verdict chip and one sentence: <em>We re-ran this from the authors' deposited data and got the same result.</em> Then <em>Paper says</em> / <em>Our re-run</em> as a pair. For a hypothesis or a prediction the block is absent, because there is nothing to re-run and the current drawer's <em>Not yet assessed</em> banner implied otherwise.</p></div>
+    <div class="card"><h4>4 · How it was measured</h4><p>The <code>method:</code> field, verbatim. One line.</p><h4 style="margin-top:16px">5 · How it connects</h4><p>The relations, translated and de-duplicated. Each linked claim appears once, under the strongest label that applies, and every one is a button to the next card, with a back stack. The full vocabulary survives at the bottom as <em>Full record ↗</em>.</p></div>
+    <div class="card"><h4>The fourteen relations, in plain words</h4><div class="tablewrap" style="margin:0"><table class="grid" style="font-size:12.5px">
+      <tbody>
+        <tr><td class="mono">tests</td><td>Tests / Tested by</td><td class="mono">confirms</td><td>Confirms</td></tr>
+        <tr><td class="mono">supports</td><td>Supports</td><td class="mono">validates</td><td>Validates</td></tr>
+        <tr><td class="mono">rules-out</td><td>Rules out / Ruled out by</td><td class="mono">requires</td><td>Relies on / Relied on by</td></tr>
+        <tr><td class="mono">derived-from</td><td>Follows from / Basis for</td><td class="mono">entails</td><td>Leads to the prediction</td></tr>
+        <tr><td class="mono">interprets</td><td>Interprets</td><td class="mono">dissociates-with</td><td>Contrasts with</td></tr>
+        <tr><td class="mono">scopes</td><td>Applies to / Qualified by</td><td class="mono">refutes</td><td>Refutes</td></tr>
+        <tr><td class="mono">predicts</td><td>Predicts</td><td class="mono">enables-method</td><td>Makes possible</td></tr>
+      </tbody></table></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Findings and Argument</h2>
+  <p class="sec-note">The two deeper views, and what they keep from today's page.</p>
+  <p><b>Findings</b> is the paper view with the prose removed: each figure as a thumbnail, its findings beside it, one plain line each with the panel and the dot. It is the digest a reader wants who has decided not to read the paper, and it is the same rows the paper view shows under each figure, so the two never disagree.</p>
+  <p><b>Argument</b> is today's <em>Logic of the claims</em>, read down one path instead of seven. Each hypothesis becomes a question; under it, what it predicts; under each prediction, the results that tested it, with their dots. Then the alternatives the authors ruled out, struck through, each with the result that ruled it out. Then the caveats every result inherits — for Gädeke, that the partner was an algorithm, and that there were two studies. The seven collapsed sections, the dissociation pairs and the <code>H1.P2.1</code> addresses are gone from the surface; the edges that produced them are what the view is drawn from, and the graph is one link away for the reader who wants all of it.</p>
+  <div class="assume"><span class="q">Kept, and why</span>The <em>Hypotheses · Claims · Inferences</em> summary was the best thing on the old page and stays first, relabelled <em>They asked · They found · It means</em>. The counts line stays, in one sentence in the rail. The generated three paragraphs and the plain claim wordings are the two places a model writes prose the reader sees; both are labelled as such.</div>
+</section>
+
+<section>
+  <h2>What it costs</h2>
+  <p class="sec-note">Three things the corpus does not have yet, and one it has for one paper.</p>
+  <div class="tablewrap"><table class="grid">
+    <thead><tr><th>Need</th><th>State today</th><th>Work</th></tr></thead>
+    <tbody>
+      <tr><td><b>A plain wording per claim</b></td><td><code>shortClaim</code> is filled for hypotheses and predictions and null for every empirical claim, so every row on the site opens with statistics. The prototype's 33 wordings were written by hand.</td><td>A <code>plain-claim</code> layer: one model call per paper, one sentence per claim, no numbers, the authors' terms kept. It is a layer, so it gets a version, a ledger entry and a place for a person to approve it — which this prose, of all the prose on the site, should have.</td></tr>
+      <tr><td><b>The article's section tree</b></td><td><code>prepare</code> fetches the JATS and keeps flattened text: <code>results_text</code> is one string, headings glued to sentences. The prototype re-parsed the XML.</td><td>Keep the fetched XML beside <code>prepared.json</code> (it is cached already), or have <code>prepare</code> write the section tree. Either way the site renders the article from JATS, which is what eLife publishes and what the design is named for.</td></tr>
+      <tr><td><b>Sentence marks for every paper</b></td><td><code>marked/</code> holds one file, Gädeke. The coverage layer that writes it has run for one paper.</td><td>Run coverage for the other nine. The marks are what turns an underline on; without them the paper view is still a clean paper, only the sentences are silent.</td></tr>
+      <tr><td><b>Marks on captions and tables</b></td><td>Of Gädeke's 64 sentence marks, 31 fall in the results text and the rest in captions and the table. The prototype shows the caption marks under the figure via <code>panel:</code>, not as underlines.</td><td>Nothing for now. The figure list is the better surface for a caption mark; a table view can come when a paper needs one.</td></tr>
+    </tbody>
+  </table></div>
+  <p>One thing the prototype leaves out on purpose. Fourteen of Gädeke's marked results carry no claim — the <code>gap</code> marks the coverage adjudicator records. They are the most honest thing in the corpus and the hardest to show without clutter. The proposal is a single quiet line in the rail, <em>14 results in the text have no claim yet</em>, linking to the coverage layer, rather than a second kind of underline in the paper.</p>
+</section>
+
+<section>
+  <h2>Order of work</h2>
+  <ol class="steps">
+    <li><b>Declare the <code>plain-claim</code> layer</b> and run it for the ten papers. Smallest change, largest effect: every existing view gets a readable first line the same day, before any page changes.</li>
+    <li><b>Keep the JATS</b> and add a renderer — sections, paragraphs, inline markup, figure references — as a component. The prototype's <code>build_reader.py</code> is the spec: 74 paragraphs, 5 figures, 41 marks resolved for Gädeke.</li>
+    <li><b>Run coverage for the other nine papers</b> so every article has marks.</li>
+    <li><b>Make the reader the paper page.</b> <code>/papers/&lt;paper&gt;/</code> opens on the Paper view; <code>?view=findings</code> and <code>?view=argument</code> are the two depths; today's structure view becomes the Argument view's source. The claim drawer is rewritten as the card and keeps its <code>open-claim</code> event so nothing that opens it breaks.</li>
+    <li><b>Demote Artifacts and Pipeline</b> to a second, quieter row under the title — <em>About this record</em> — with the graph reachable from the Argument view. They lose nothing but their place beside the paper.</li>
+  </ol>
+  <p style="margin-top:22px">Steps 1–3 are pipeline work and change no page. Step 4 is the design. Step 5 is the smallest and should wait until the reader is in front of someone who is not us.</p>
+</section>
+
+<footer class="end">Prototype: <a href="2026-09-11-the-reader-prototype.html" style="color:inherit">2026-09-11-the-reader-prototype.html</a>, built from <code>runs/gadeke-2026-guilt-insula/</code>, <code>marked/</code>, <code>site/src/data/claims.json</code> and eLife's JATS for 105391. The figures are eLife's, served from their IIIF endpoint.</footer>
+</div>
+</body>
+</html>
