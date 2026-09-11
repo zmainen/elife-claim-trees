@@ -75,6 +75,25 @@ def parse_claim_file(path: Path) -> dict | None:
     return fm
 
 
+# The four stances a paper can take toward a proposition (claim-format.md §2).
+# Absent means `asserts`.
+STANCES = {"asserts", "entertains", "rejects", "attributes"}
+
+
+def stance_of(fm: dict) -> tuple[str, str | None]:
+    """This paper's stance toward this claim, and the source it attributes it to.
+
+    Stance lives on the assertion because a claim is paper-independent: two papers can
+    hold opposite postures toward one proposition. OXA has no assertion object, and a
+    paper's OXA document describes exactly one paper, so it lands on the claim node here.
+    """
+    a = (fm.get("assertions") or [{}])[0]
+    if not isinstance(a, dict):
+        return "asserts", None
+    st = a.get("stance") or "asserts"
+    return (st if st in STANCES else "asserts"), a.get("source")
+
+
 def to_oxa_claim(fm: dict) -> dict:
     """Convert parsed frontmatter to an OXA Claim node."""
     claim_text = fm.get("claim", "").strip()
@@ -129,6 +148,16 @@ def to_oxa_claim(fm: dict) -> dict:
         node["epistemicStrength"] = epistemic
     if relations:
         node["relations"] = relations
+
+    # Without this, the six alternatives Gädeke argues *against* exported as ordinary
+    # Claim nodes — six propositions the paper denies, read by any consumer as six it
+    # makes. The `rules-out` edge pointing at them gives the direction of the argument
+    # and not the paper's posture, so the node has to carry it.
+    stance, source = stance_of(fm)
+    if stance != "asserts":
+        node["stance"] = stance
+        if source:
+            node["stanceSource"] = source
 
     # Metadata — provenance and auxiliary fields
     meta = {}

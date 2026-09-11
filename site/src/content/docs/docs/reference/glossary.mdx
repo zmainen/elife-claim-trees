@@ -7,6 +7,8 @@ This glossary defines terms that appear across the documentation. Where a term h
 
 ## Terms
 
+**Alternative.** A rival explanation a paper raises and does not hold. Authored as an ordinary claim — it takes whatever role it functionally has, usually `hypothesis` — and marked as a rival by the `stance` on its assertion rather than by its role or its slug. It exists so that a `rules-out` edge has something to point at; without it the point of every control claim is unrepresented. See [stance](/elife-claim-trees/docs/methodology/schema/#stance--what-the-paper-does-with-the-proposition).
+
 **Claim.** One declarative proposition about the paper's content, anchored to a specific panel (when panel-grounded) or to the paper's argument structure (when hypothesis-, prediction-, or synthesis-level). The atomic unit of the elife-claim-trees schema. See [the claim schema](/elife-claim-trees/docs/methodology/schema/) and `docs/method.md` § 4.
 
 **Claim-type.** The epistemic character of the proposition itself — what kind of knowledge claim it is. One of `empirical`, `interpretive`, `existence`, `synthesis`, `assessment` (the methodology specification) or extended to include `hypothesis`, `prediction`, `scope`, `methodological` per actual corpus usage. Distinct from role.
@@ -40,6 +42,8 @@ This glossary defines terms that appear across the documentation. Where a term h
 **Review modes.** Four options for the `write` subcommand's `--review-mode` flag: `interactive` (analyst edits in `$EDITOR`), `external` (Opus reviewer pass substitutes for analyst), `auto-approve` (no review), `dry-run` (print only). See [review modes — when to use each](/elife-claim-trees/docs/cli/review-modes/).
 
 **Role.** The rhetorical function a claim serves in the paper's argument. One of 9 values: `hypothesis`, `prediction`, `empirical`, `control`, `scope`, `methodological`, `synthesis`, `interpretation`, `literature-context`. Distinct from claim-type. See [the 9 roles](/elife-claim-trees/docs/reference/roles/).
+
+**Stance.** What a paper does with a proposition: `asserts` (the default, and what an absent stance means), `entertains`, `rejects`, or `attributes`. It lives on the assertion rather than on the claim, because a claim is paper-independent and two papers can hold opposite postures toward the same proposition. There is no `rejected` value: `entertains` plus an incoming `rules-out` is a rejected alternative, and `entertains` without one is an open one. See [the claim schema](/elife-claim-trees/docs/methodology/schema/#stance--what-the-paper-does-with-the-proposition).
 
 **Round-trip.** Validation methodology. Run the pipeline on a paper that has a curated reference; score the CLI's output against the reference. Implemented by the `evaluate` subcommand. See [how we measure quality](/elife-claim-trees/docs/validation/methodology/).
 

@@ -59,8 +59,44 @@ Edges are top-level keys whose value is a list of target claim slugs. The method
 
 | Field | Type | Meaning |
 |:------|:-----|:--------|
-| `assertions` | list of blocks | Each block links the claim to a specific paper-panel-analysis tuple. Required field — every claim has at least one assertion (the paper that asserts it). |
+| `assertions` | list of blocks | Each block links the claim to a specific paper-panel-analysis tuple, and carries that paper's [`stance`](#stance--what-the-paper-does-with-the-proposition) toward it. Required field — every claim has at least one assertion. |
 | `reproductions` | list of blocks | Each block records a verification attempt: which agent ran it, when, what status (`verified`, `unverified`, `failed:mismatch`, etc.), pointers to the script and reproduced figure. Empty by default; populated by per-paper `verify.py` scripts. |
+
+## Stance — what the paper does with the proposition
+
+A paper does not only assert things. It raises candidates and sets them aside, argues that some are false, and reports what others have claimed. `stance` records which.
+
+| Value | Meaning |
+|:------|:--------|
+| `asserts` | The paper claims this is so. The default; absent means `asserts`. |
+| `entertains` | The paper raises it as a candidate and does not assert it. |
+| `rejects` | The paper argues it is false. |
+| `attributes` | Someone else asserts it; this paper reports that. Requires a citation in `source`. |
+
+**It lives on the assertion, not on the claim.** A claim is paper-independent — the same proposition can be asserted by one paper and rejected by another, and both are facts about the papers rather than about the proposition. Put stance on the claim and those two papers cannot share a node; put it on the assertion and the disagreement becomes queryable.
+
+**There is no value for "rejected".** A claim with `entertains` and an incoming `rules-out` **is** a rejected alternative. One with `entertains` and no such edge is an *open* alternative — a rival the paper raised and did not settle, which is common and was previously inexpressible. Stance says what the paper concluded; the relations say why, and which control did the work.
+
+```yaml
+assertions:
+  - paper-slug: gadeke-2026-guilt-insula
+    doi: 10.7554/eLife.105391
+    stance: rejects
+    method: agent extraction of the alternative addressed by the paper's
+      outcome-independent agency analysis
+```
+
+### Alternatives are claims
+
+This is what makes elimination representable. A claim tree can say what a result supports; it can only say what a result *rules out* if the rival has a node to be. An alternative explanation is authored as an ordinary claim — it takes whatever role it functionally has, usually `hypothesis` — and what marks it as a rival is its stance, not its role or its slug.
+
+Without that node, a `rules-out` edge has nowhere to point, and the failure is not silent absence: the edge goes to the nearest thing that does exist. Five eliminative relations in this corpus were found aimed at claims their own paper asserts, one of which had the graph asserting a contradiction between two compatible findings.
+
+`scripts/check_relations.py` enforces three rules over this: a stance must be one of the four values, `attributes` requires a `source`, and an opposing edge may not target a claim the same paper asserts.
+
+<Aside type="caution" title="Present in the schema, not yet in every paper">
+The machinery is corpus-wide and enforced. The migration is not: alternatives have been authored for Gädeke and three other papers, and eliminative edges elsewhere still point at prose that names no claim. The [Layers page](/elife-claim-trees/layers/) reports which papers have been through this layer.
+</Aside>
 
 ## A real claim file
 

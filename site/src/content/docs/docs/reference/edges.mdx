@@ -4,6 +4,9 @@ description: The edge inventory between claims. Each edge's reasoning form, mean
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import facts from '../../../../data/corpus-facts.json';
+
+export const n = (k) => facts.relation_counts[k] ?? 0;
 
 Edges are propositions about logical structure between claim entities — not citations. A claim file declares each edge as a top-level YAML key whose value is a list of target claim slugs. Reciprocal edges (`predicts` / `confirms`) are populated symmetrically at build time.
 
@@ -11,22 +14,24 @@ The methodology defines 17 edge types, of which 14 are used in the published cor
 
 ## The edge inventory
 
-| Edge | Reasoning form | Meaning | Count in 12-paper curated corpus |
+| Edge | Reasoning form | Meaning | Count in the published corpus |
 |:-----|:---------------|:--------|---:|
-| `requires` | dependency | A would be invalid if B were false (mechanistic / hierarchical dependency) | 148 |
-| `supports` | abduction (induction) | A provides evidence for B; multiple supports drive the abductive loop | 126 |
-| `entails` | deduction | A (typically a hypothesis) deductively implies B (typically a prediction) | 65 |
-| `derived-from` | deduction | A is the deductive consequence of B; reciprocal of `entails` | 61 |
-| `tests` | deduction → empirical loop | Empirical claim A tests prediction B (closes the hypothesis-prediction-test loop) | 73 |
-| `refutes` | abduction (negative) | A's evidence is incompatible with B (B is the prediction or hypothesis being refuted) | 8 |
-| `rules-out` | elimination | A's evidence eliminates an alternative explanation B | 15 |
-| `dissociates-with` | dissociation (symmetric) | A and B jointly establish a dissociation between two empirical claims | 65 |
-| `validates` | disconfirmation control | A is a control or sign-flip whose specific result strengthens the warrant for B | 54 |
-| `predicts` | predictive validation | A predicts B (typically model-to-experiment) | 3 |
-| `confirms` | predictive validation | Reciprocal of `predicts`; populated at build | 74 |
-| `interprets` | reframing | A reframes empirical B through theoretical lens (an act of mapping, not a derivation) | 42 |
-| `enables-method` | methodological warrant | A is the methodological capability that warrants B's interpretability | 79 |
-| `scopes` | scope qualification | A is a boundary condition on B (or, if `["*"]`, on every empirical claim in the paper) | 197 |
+| `requires` | dependency | A would be invalid if B were false (mechanistic / hierarchical dependency) | {n('requires')} |
+| `supports` | abduction (induction) | A provides evidence for B; multiple supports drive the abductive loop | {n('supports')} |
+| `entails` | deduction | A (typically a hypothesis) deductively implies B (typically a prediction) | {n('entails')} |
+| `derived-from` | deduction | A is the deductive consequence of B; reciprocal of `entails` | {n('derived-from')} |
+| `tests` | deduction → empirical loop | Empirical claim A tests prediction B (closes the hypothesis-prediction-test loop) | {n('tests')} |
+| `refutes` | abduction (negative) | A's evidence is incompatible with B (B is the prediction or hypothesis being refuted) | {n('refutes')} |
+| `rules-out` | elimination | A's evidence eliminates an alternative explanation B | {n('rules-out')} |
+| `dissociates-with` | dissociation (symmetric) | A and B jointly establish a dissociation between two empirical claims | {n('dissociates-with')} |
+| `validates` | disconfirmation control | A is a control or sign-flip whose specific result strengthens the warrant for B | {n('validates')} |
+| `predicts` | predictive validation | A predicts B (typically model-to-experiment) | {n('predicts')} |
+| `confirms` | predictive validation | Reciprocal of `predicts`; populated at build | {n('confirms')} |
+| `interprets` | reframing | A reframes empirical B through theoretical lens (an act of mapping, not a derivation) | {n('interprets')} |
+| `enables-method` | methodological warrant | A is the methodological capability that warrants B's interpretability | {n('enables-method')} |
+| `scopes` | scope qualification | A is a boundary condition on B (or, if `["*"]`, on every empirical claim in the paper) | {n('scopes')} |
+
+Counts are read from `site/src/data/corpus-facts.json`, which `scripts/corpus_facts.py` generates from the claim files themselves — they were hand-typed here until they had all drifted. The denominator is the {facts.papers} published papers; the two method-example papers are counted separately and are not included, which is why `refutes` and `predicts` show zero while the examples below cite them.
 
 ## Edges by reasoning form
 
@@ -50,7 +55,11 @@ The Headley `ca-spikes-couple-20ms-before-ap` `supports` `beta-bidirectional-den
 
 ### Elimination
 
-`rules-out` carries the eliminative move: A's evidence eliminates an explicit alternative B. The corpus carries 15 `rules-out` edges, scattered across papers; they are diagnostically interesting because they are scrubbed by abstracts (the Section 7 synthesis comparator pipeline shows this).
+`rules-out` carries the eliminative move: A's evidence eliminates an explicit alternative B. The corpus carries {n('rules-out')} of them. They are diagnostically interesting because abstracts scrub them — what a paper ruled out is the first thing lost in summary.
+
+**B has to be a claim.** An alternative nobody asserts still needs a node to be eliminated, which is what [`stance`](/elife-claim-trees/docs/methodology/schema/#stance--what-the-paper-does-with-the-proposition) makes possible: the rival is authored as an ordinary claim whose assertion carries `stance: entertains` or `rejects`. Where that node is missing the edge does not vanish, it misfires — {facts.dangling_rules_out} `rules-out` edges in the published corpus still name prose that resolves to no claim, and five were found pointing at claims their own paper asserts.
+
+A `control` claim is the usual source of one. A control exists to eliminate a rival; if the rival is not in the graph, the point of the control is not either — its `validates` edges name the claim it defends and never the alternative it kills.
 
 ### Dissociation
 

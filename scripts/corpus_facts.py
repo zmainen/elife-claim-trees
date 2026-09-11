@@ -150,6 +150,53 @@ def mira_facts(site):
     return out
 
 
+def dangling_eliminations(site):
+    """`rules-out` edges whose target names no claim in the paper.
+
+    Each is an alternative the paper eliminates that has no node to be eliminated — the
+    gap the stance layer exists to close, counted rather than asserted. scripts/
+    check_relations.py reports the same set individually.
+    """
+    n = 0
+    for s in site:
+        d = os.path.join(CLAIMS, s)
+        if not os.path.isdir(d):
+            continue
+        fms = [frontmatter(os.path.join(d, fn)) or {}
+               for fn in sorted(os.listdir(d))
+               if fn.endswith(".md") and fn != "index.md"]
+        known = {fm.get("slug") for fm in fms if fm.get("slug")}
+        for fm in fms:
+            targets = fm.get("rules-out") or []
+            if isinstance(targets, str):
+                targets = [targets]
+            n += sum(1 for x in targets
+                     if isinstance(x, str) and x.strip() not in known and x.strip() != "*")
+    return n
+
+
+def stances(slug):
+    """Claims in this paper the paper does not assert, counted by stance.
+
+    A paper's tree can only record what a result rules out if the rival has a node to be,
+    and the rival is marked by the stance on its assertion, not by its role or its slug —
+    an alternative is functionally a hypothesis, and what makes it a rival is the posture.
+    """
+    out = {}
+    d = os.path.join(CLAIMS, slug)
+    if not os.path.isdir(d):
+        return out
+    for fn in sorted(os.listdir(d)):
+        if not fn.endswith(".md") or fn == "index.md":
+            continue
+        fm = frontmatter(os.path.join(d, fn)) or {}
+        a = (fm.get("assertions") or [{}])[0]
+        st = a.get("stance") if isinstance(a, dict) else None
+        if st and st != "asserts":
+            out[st] = out.get(st, 0) + 1
+    return out
+
+
 def layers(site):
     """Which analytic layer each paper has, detected from the artifacts on disk.
 
@@ -171,6 +218,7 @@ def layers(site):
                                    if r.get("status") == "PASS")
             except Exception:                                         # noqa: BLE001
                 verified = 0
+        st = stances(s)
         out[s] = {
             "tree": has_tree,
             "verification": os.path.isfile(
@@ -181,6 +229,8 @@ def layers(site):
             "coverage": os.path.isfile(os.path.join(ROOT, "mappings", f"{s}.json")),
             "marked": os.path.isfile(os.path.join(ROOT, "marked", f"{s}.marked.md")),
             "agent_trace": os.path.isfile(os.path.join(ROOT, "mappings", f"{s}.json")),
+            "alternatives": bool(st),
+            "alternatives_n": sum(st.values()),
         }
     return out
 
@@ -245,6 +295,7 @@ def main():
         "mira": mira_facts(site),
         "mira_mapping": mira_mapping(),
         "layers": layers(site),
+        "dangling_rules_out": dangling_eliminations(site),
     }
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
