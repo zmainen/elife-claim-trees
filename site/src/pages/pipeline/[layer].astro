@@ -1,18 +1,27 @@
 ---
 // One layer, in general.
 //
-// The same question asked of every paper: what it is, what it rests on, what it feeds, and
-// where it has and has not been run. A paper's own instance lives on the paper page; this is
-// the corpus altitude of the same cell.
+// The same question asked of every paper: what it is, how it is defined, what it produced,
+// what it rests on, what it feeds, and where it has and has not been run. A paper's own
+// instance lives on the paper page; this is the corpus altitude of the same cell.
+//
+// It used to stop at the declaration. The prompt that defines a reader was a path, its output
+// was a path with `{paper}` still in it, and `views: [list, table]` was two words. A page can
+// name a layer's definition or it can show it, and naming it is what a directory listing
+// does — so the prompt is rendered here in full, and one paper's output is rendered beneath
+// it in the views the layer declares.
 //
 // A layer with more to say than the declaration holds gets a static route of its own —
 // pipeline/mira-export.astro, pipeline/formats-report.astro — which Astro prefers over this
-// dynamic one. Those pages use the same two components, so a bespoke page is depth behind the
+// dynamic one. Those pages use the same components, so a bespoke page is depth behind the
 // general surface rather than an escape from it.
 import Layout from '../../layouts/Layout.astro';
 import LayerHeader from '../../components/LayerHeader.astro';
+import LayerDefinition from '../../components/LayerDefinition.astro';
+import LayerOutput from '../../components/LayerOutput.astro';
 import LayerState from '../../components/LayerState.astro';
-import { layers } from '../../lib/pipeline';
+import { layers, papers, cell, shortOf } from '../../lib/pipeline';
+import { output } from '../../lib/layer-source';
 
 export function getStaticPaths() {
   return layers.map(l => ({ params: { layer: l.id }, props: { layer: l } }));
@@ -20,12 +29,37 @@ export function getStaticPaths() {
 
 const { layer } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// A worked example: the first paper whose run left a file this site can render. Most layers
+// have exactly one — nine of the ten papers predate the ledger — and showing that one is the
+// difference between a page that describes an output format and a page that shows the output.
+const example = layer.scope === 'corpus'
+  ? null
+  : papers.map(p => cell(p, layer.id))
+          .find(c => c && Object.keys(output(c.produces)).length > 0) ?? null;
+const corpusOutput = layer.scope === 'corpus'
+  ? (layer.produces ?? []).filter(p => !p.includes('{paper}'))
+  : [];
 ---
 
 <Layout title={`${layer.title} — pipeline`} description={layer.question}>
   <div class="site-frame column py-12">
     <LayerHeader layer={layer} />
+    <LayerDefinition layer={layer} />
+
+    {example && (
+      <LayerOutput layer={layer} paper={example.paper} produces={example.produces}
+                   heading="What it produces"
+                   note={`One paper, as the worked example — ${shortOf(example.paper)}, v${example.v ?? 1}.`} />
+    )}
+    {corpusOutput.length > 0 && (
+      <LayerOutput layer={layer} paper="corpus" produces={corpusOutput}
+                   heading="What it produces"
+                   note="This layer runs across the corpus, so there is one output rather than one per paper." />
+    )}
+
     <LayerState layer={layer} />
+
     <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm">
       <a href={`${base}/pipeline/`} class="text-gray-500 dark:text-gray-400 no-underline hover:text-gray-700 dark:hover:text-gray-300">← all layers</a>
     </footer>

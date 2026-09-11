@@ -29,6 +29,15 @@ export interface LayerDecl {
   views?: string[];
   command?: string;
   issue?: number;
+  /** The layer this one passes judgement on. Set only on `judgement` layers. */
+  reviews?: string;
+  /** How it works, in prose: what it is given, what it returns, and what it gets wrong.
+   *  The declaration's `question` says why the layer exists; this says how it answers. A
+   *  layer whose prompt or script carries that account already leaves it unset rather than
+   *  restating it — see /docs/layers for the narrative the `doc` link points at. */
+  how?: string;
+  /** A site path to the narrative documentation for this layer, deep-linked to its section. */
+  doc?: string;
   /** Lifecycle of the declaration itself (#31). A layer's declaration is a proposal: it says
    *  a step should exist and what it does, and at some point that is accepted. Absent means
    *  unstated — not accepted. Only `proposed` is rendered, so an undeclared status never
@@ -243,6 +252,20 @@ export function resolve(text: string): string {
 export function approvedCells(): Cell[] {
   return papers.flatMap(p => cells(p).filter(c => c.approved?.applies));
 }
+
+/** What each declared view is, and where it is rendered.
+ *
+ *  `views` was a list of words printed on the page and implemented nowhere, which reads as a
+ *  feature to anyone who has not tried to use one. Every view named here says which component
+ *  draws it; a view with no entry is declared and not built, and the page says so rather than
+ *  printing the word and leaving the reader to find out.
+ */
+export const VIEWS: Record<string, { label: string; where: string }> = {
+  document:   { label: 'document', where: 'rendered above, where the layer writes prose' },
+  graph:      { label: 'graph', where: 'on the paper page, as the claim graph' },
+  comparison: { label: 'comparison', where: 'on the cell page, for the layers that have one' },
+  overlap:    { label: 'overlap', where: 'on the induction page, as reader agreement' },
+};
 
 export const STATE_LABEL: Record<CellState, string> = {
   current: 'current',

@@ -1,0 +1,145 @@
+---
+// A layer's output, in the views the layer declares.
+//
+// `views: [list, table]` was an inert word on the page. The declaration said a version of this
+// layer can be looked at as a list or as a table, and the site rendered the two names as
+// prose and offered neither. A declared capability nothing implements is worse than an
+// undeclared one: it reads as a feature to anyone who has not tried to use it.
+//
+// Both are real here, over the same records, read from the artifact the layer produced. The
+// shape is not configured per layer — the fields are whatever the file has, in the order it
+// has them, so a reader's claims, an adjudication's spans and a verification's results all
+// render without this component knowing what any of them are.
+import type { Records } from '../lib/layer-source';
+
+interface Props {
+  data: Records;
+  views?: string[];
+  /** A ceiling on the list view, which is the long one. The table stays whole. */
+  limit?: number;
+  id?: string;
+}
+const { data, views = ['list', 'table'], limit = 60, id = 'out' } = Astro.props;
+
+// The field carrying the record's own text — what a list view is a list of. Named fields
+// first, because the corpus has names for them; otherwise the widest string field, which is
+// the same judgement made from the data when the name is one this file has not met.
+const NAMED = ['claim', 'text', 'sentence', 'prediction', 'title', 'question', 'from'];
+const width = (f: string) => {
+  const vs = data.records.map(r => r[f]).filter(v => typeof v === 'string') as string[];
+  return vs.length ? vs.reduce((a, b) => a + b.length, 0) / vs.length : 0;
+};
+const primary = NAMED.find(f => data.fields.includes(f) && width(f) > 0)
+  ?? [...data.fields].sort((a, b) => width(b) - width(a)).find(f => width(f) > 20);
+
+// Long strings beside the primary are the quotes: the evidence, the reason, the note. Shown
+// as quotations rather than as chips, because that is what they are.
+const quotes = data.fields.filter(f => f !== primary && width(f) > 60);
+const chips = data.fields.filter(f => f !== primary && !quotes.includes(f));
+
+// A list needs a column of text to be a list of. `edge-inference` produces source, target and
+// a relation type and nothing else, so it declares `table` and gets one; asking for a list
+// there would render ninety-five empty bullets.
+const show = views.filter(v => (v === 'list' && primary) || v === 'table');
+const panes = show.length ? show : ['table'];
+const cut = (v: unknown, n: number) => {
+  const s = v === null || v === undefined ? '' : String(v);
+  return s.length > n ? s.slice(0, n) + '…' : s;
+};
+const listed = data.records.slice(0, limit);
+
+// Column widths follow the field's own content: the record's text and its quotes get room,
+// a role or a confidence gets none it does not need. Without this every column took an equal
+// share and the claim — the one column anyone reads — wrapped to seven lines beside six
+// columns of one word.
+const colWidth = (f: string) =>
+  f === primary ? 'min-w-[16rem]' : quotes.includes(f) ? 'min-w-[13rem]' : 'min-w-[6rem]';
+---
+
+<div data-records id={id}>
+  {panes.length > 1 && (
+    <div class="flex gap-1 mb-4" role="group" aria-label="View">
+      {panes.map((v, i) => (
+        <button type="button" data-view={v} aria-pressed={i === 0}
+                class="px-2.5 py-1 text-xs font-mono rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent text-gray-500 dark:text-gray-400 cursor-pointer aria-pressed:border-amber-500 aria-pressed:text-amber-700 dark:aria-pressed:text-amber-400">{v}</button>
+      ))}
+    </div>
+  )}
+
+  {panes.includes('list') && (
+    <div data-pane="list" hidden={panes[0] !== 'list'}>
+      <ol class="list-none p-0 m-0 space-y-4">
+        {listed.map(r => (
+          <li class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+            {primary && (
+              <p class="text-[15px] text-gray-800 dark:text-gray-200 m-0 leading-snug">{String(r[primary] ?? '')}</p>
+            )}
+            <p class="font-mono text-[11px] text-gray-500 dark:text-gray-400 m-0 mt-1">
+              {chips.map(f => r[f] === null || r[f] === undefined || r[f] === ''
+                ? null
+                : <span class="mr-3"><span class="text-gray-400 dark:text-gray-600">{`${f} `}</span>{cut(r[f], 60)}</span>)}
+            </p>
+            {quotes.map(f => r[f] ? (
+              <p class="text-xs text-gray-600 dark:text-gray-400 m-0 mt-1.5 italic leading-snug">
+                <span class="not-italic font-mono text-[10px] text-gray-400 dark:text-gray-600 mr-1.5">{f}</span>
+                {`“${cut(r[f], 320)}”`}
+              </p>
+            ) : null)}
+          </li>
+        ))}
+      </ol>
+      {data.records.length > listed.length && (
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-4 m-0">
+          {listed.length} of {data.records.length} shown. The table has all of them, and so does
+          the file.
+        </p>
+      )}
+    </div>
+  )}
+
+  {panes.includes('table') && (
+    <div data-pane="table" hidden={panes[0] !== 'table'} class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="text-left text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-200 dark:border-gray-700">
+            <th class="py-2 px-3 font-medium tabular-nums">#</th>
+            {data.fields.map(f => <th class={`py-2 px-3 font-medium whitespace-nowrap ${colWidth(f)}`}>{f}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {data.records.map((r, i) => (
+            <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0 align-top">
+              <td class="py-2 px-3 font-mono text-xs text-gray-400 dark:text-gray-600 tabular-nums">{i + 1}</td>
+              {data.fields.map(f => (
+                <td class={`py-2 px-3 text-xs text-gray-700 dark:text-gray-300 max-w-[26rem] ${colWidth(f)}`}>
+                  {r[f] === null || r[f] === undefined
+                    ? <span class="text-gray-300 dark:text-gray-700">—</span>
+                    : typeof r[f] === 'object'
+                      ? <code class="text-[11px]">{cut(JSON.stringify(r[f]), 120)}</code>
+                      : cut(r[f], 200)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
+
+<script>
+  // One listener for every record block on the page. The panes are rendered server-side and
+  // toggled with `hidden`, so the views work with no JavaScript beyond this switch — and the
+  // table is in the HTML whether or not anyone presses the button.
+  for (const block of document.querySelectorAll<HTMLElement>('[data-records]')) {
+    block.addEventListener('click', e => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-view]');
+      if (!btn) return;
+      const want = btn.dataset.view;
+      for (const b of block.querySelectorAll<HTMLButtonElement>('button[data-view]'))
+        b.setAttribute('aria-pressed', String(b.dataset.view === want));
+      for (const p of block.querySelectorAll<HTMLElement>('[data-pane]'))
+        p.hidden = p.dataset.pane !== want;
+    });
+  }
+</script>
