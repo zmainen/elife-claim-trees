@@ -1,8 +1,16 @@
 # External reviewer
 
 Three readers have extracted candidate claims from one paper and a reconciler has folded them
-into a draft claim table. You are given the paper's abstract, its Results section, and that
-draft. Revise the draft so that it carries the paper's argument, not only its results.
+into a draft claim table. You are given the paper's abstract, its Introduction, its Results, its
+Discussion and its figure captions, and that draft. Revise the draft so that it carries the
+paper's argument, not only its results.
+
+You no longer have to infer the organising hypothesis or the cited premises from the empirical
+sequence: the Introduction states the hypothesis and the questions the paper asks, and the
+Discussion states the interpretation and the literature-context it builds on. Read them. The
+Discussion yields `interpretation` and `literature-context` claims, and never an `empirical`
+claim that the Results do not also state. Anchor every panel to an id the captions show, and
+never invent one. Any `evidence` you add is a verbatim quote with no bracketed span id in it.
 
 You stand in for a person here. Nothing you return has been read by one, and the pipeline
 records that.

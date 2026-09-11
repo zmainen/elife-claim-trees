@@ -15,7 +15,14 @@ from __future__ import annotations
 import json
 import logging
 
-from .agents import evidence_found, load_prompt, parse_json_response, slice_for_agent, stream_text
+from .agents import (
+    _spans_by_uid,
+    load_prompt,
+    parse_json_response,
+    raw_slice_for_agent,
+    stream_text,
+    verify_evidence,
+)
 from .config import Config
 from .prepare import PreparedPaper
 from .schema import AgentExtraction, DraftClaimTable, ReconciledClaim
@@ -70,6 +77,7 @@ def _format_agent_input(extraction: AgentExtraction) -> str:
         lines.append(f"- claim_type: {c.claim_type}")
         lines.append(f"- role: {c.role}")
         lines.append(f"- evidence: {c.evidence}")
+        lines.append(f"- span: {c.span}")
         lines.append(f"- agent_confidence: {c.confidence}")
         if c.notes:
             lines.append(f"- notes: {c.notes}")
@@ -160,21 +168,29 @@ def draft_from_raw(
 
     draft = DraftClaimTable(**parsed)
     if paper is not None:
-        # Build per-agent slice cache once, not once per claim.
+        # Build the span table and per-agent raw slice once, not once per claim. Each reader's
+        # quote is checked against the span it cited first, then against the reader's raw slice.
+        spans = _spans_by_uid(paper)
         _slices: dict[str, str] = {}
         verified = total = 0
         for claim in draft.claims:
             ev: dict[str, bool] = {}
+            against: dict[str, str] = {}
             for agent, quote in claim.evidence_by_agent.items():
                 if agent not in _slices:
                     try:
-                        _slices[agent] = slice_for_agent(agent, paper)
+                        _slices[agent] = raw_slice_for_agent(agent, paper)
                     except ValueError:
                         _slices[agent] = ""
-                ev[agent] = evidence_found(quote, _slices[agent])
+                ok, src = verify_evidence(quote, claim.span_by_agent.get(agent),
+                                          spans, _slices[agent])
+                ev[agent] = ok
+                if src:
+                    against[agent] = src
                 total += 1
-                verified += ev[agent]
+                verified += ok
             claim.evidence_verified = ev
+            claim.evidence_verified_against = against
         logger.info("reconciler: evidence verified %d/%d quotes", verified, total)
     return draft
 

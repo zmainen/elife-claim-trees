@@ -12,8 +12,10 @@ A JSON array of candidate claims and nothing else — no prose before or after, 
 | `role` | `hypothesis` / `prediction` / `empirical` / `control` / `scope` / `methodological` / `synthesis` / `interpretation` / `literature-context` | The work it does in the argument; see the vocabulary. |
 | `evidence` | `string` | A verbatim quote from the text you were given, at most two sentences, that grounds the claim. It is checked against the source. |
 | `confidence` | `high` / `tentative` | high or tentative; see the vocabulary. |
+| `span` (optional) | `string` or `null` | The id of the span the evidence quote comes from, exactly as it is bracketed before the sentence in your slice (results-026). null when the sentence shows no id. |
 | `notes` (optional) | `string` or `null` | Hedges, alternative readings, or what made this tentative. null when there is nothing to say. |
 | `evidence_verified` (optional) | `boolean` or `null` | Filled by the runner. Leave null. |
+| `evidence_verified_against` (optional) | `span` / `slice` or `null` | Filled by the runner: whether the quote matched the cited span or only the wider slice. Leave null. |
 
 ```json
 [

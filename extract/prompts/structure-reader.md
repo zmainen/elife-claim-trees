@@ -6,6 +6,9 @@ prose, no captions. Two other readers are given those, none of you sees the othe
 a reconciler compares the three afterwards. Agreement between independent readings is the
 signal, so read your slice on its own terms.
 
+Your slice carries no panel inventory and no bracketed span ids, so leave `span` null, name a
+`panel` only where the methods name one, and keep every `evidence` quote verbatim.
+
 ## What this slice carries
 
 The methods say what was actually done and what it rests on. Nothing else in the paper
