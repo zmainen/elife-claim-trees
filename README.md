@@ -46,8 +46,9 @@ Claims relate to each other via directed belongings: `supports`, `requires`, `co
 
 ## Status
 
-Working prototype. The published corpus is **10 eLife papers, 254 claims, 919 typed
-relations**; two further claim trees are versions of one bioRxiv preprint, kept as method
+Working prototype. The published corpus is **10 eLife papers, 254 claims (wholes; parts are
+counted separately), 919 typed relations**; two further claim trees are versions of one
+bioRxiv preprint, kept as method
 examples and never folded into the corpus totals. Public site at
 https://zmainen.github.io/elife-claim-trees/ (eLife papers only).
 

@@ -115,6 +115,11 @@ RELATION_DEFS = {
                          "The source result makes the destination method possible."),
     "qualifies":        (None, "mira:Claim", "mira:Claim",
                          "The source narrows the destination claim's applicability."),
+    "part-of":          (None, "mira:Claim", "mira:Claim",
+                         "The source claim is a component of the destination — one comparison, "
+                         "condition, measure or study of a proposition the destination states "
+                         "whole. MIRA has no predicate for composition, so like the deductive "
+                         "relations it hangs at AbstractRelationDef and the gap report names it."),
 }
 
 # Declared as an inverse pair rather than as two unrelated relations, and emitted in one

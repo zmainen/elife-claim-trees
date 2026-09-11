@@ -42,7 +42,7 @@ What this document is not: a specification of how the schema should evolve at sc
 
 The published corpus is **{{papers}} papers** from eLife, spanning the journal's neuroscience subfield mix. Two further papers — the two bioRxiv versions of one preprint — are carried as method examples rather than corpus members: they are the only pair here that shows how a claim tree changes between a preprint and its revision, and they are counted separately everywhere ({{method_example_claims}} claims across {{method_example_papers}} versions), never folded into a corpus total.
 
-Total: **{{claims}} claims** across {{papers}} papers, carrying **{{relations}} typed relations** — {{relation_types_used}} of the {{relation_types_defined}} relation types the vocabulary defines, and all {{roles_used}} roles.
+Total: **{{claims}} claims** and **{{parts}} parts** across {{papers}} papers, carrying **{{relations}} typed relations** — {{relation_types_used}} of the {{relation_types_defined}} relation types the vocabulary defines, and all {{roles_used}} roles. A claim tree has two grains: the count leads with the wholes a reader of the argument follows, and reports the parts — components of those wholes, one comparison or measure each — separately.
 
 **Distribution by `role`:**
 
@@ -386,7 +386,7 @@ The methodology described above is the disciplined process the prototype would a
 
 ### Authoring discipline not strictly enforced
 
-The procedure above — three independent extractions and a mandatory review gate — describes a workflow the prototype did not strictly enforce. In practice, authoring was prompt-guided LLM extraction with intermittent rather than systematic human review. The {{claims}} claim files should be read as a draft annotation layer, not as adjudicated output. A scaled-out version — the version this document is the methodology for — would enforce the three-extraction reconciliation and the review gate as actual procedural checkpoints. The corpus is the prototype's draft; the methodology is the discipline the draft should be brought up to.
+The procedure above — three independent extractions and a mandatory review gate — describes a workflow the prototype did not strictly enforce. In practice, authoring was prompt-guided LLM extraction with intermittent rather than systematic human review. The {{claims}} claim files (and {{parts}} parts) should be read as a draft annotation layer, not as adjudicated output. A scaled-out version — the version this document is the methodology for — would enforce the three-extraction reconciliation and the review gate as actual procedural checkpoints. The corpus is the prototype's draft; the methodology is the discipline the draft should be brought up to.
 
 ### Verification coverage is shallow
 
