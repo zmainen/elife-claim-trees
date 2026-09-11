@@ -109,6 +109,19 @@ const doiOf = (paper: string) =>
 export const titleOf = (paper: string) =>
   (corpus as any).papers.find((p: any) => p.slug === paper)?.title ?? paper;
 
+/** The name a reader recognises the paper by: the first author's surname.
+ *
+ * Taken from the author list rather than the slug. Slugs are ASCII by necessity, so deriving
+ * the label from one silently drops diacritics — Gädeke and Kämmer both lost theirs, on the
+ * pages that name them most often. Falls back to the slug where no author list exists. */
+export const shortOf = (paper: string) => {
+  const first = (corpus as any).papers.find((p: any) => p.slug === paper)?.authors?.[0];
+  const surname = typeof first === 'string'
+    ? first.replace(/\s+et al\.?.*$/i, '').trim().split(/\s+/).filter(w => !/^[A-Z]{1,3}$/.test(w)).pop()
+    : null;
+  return surname || paper.split('-')[0].replace(/^./, c => c.toUpperCase());
+};
+
 const fill = (s: string, paper: string) =>
   s.replace(/\{paper\}/g, paper).replace(/\{doi\}/g, doiOf(paper));
 

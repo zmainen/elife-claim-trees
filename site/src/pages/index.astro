@@ -12,7 +12,8 @@ import Layout from '../layouts/Layout.astro';
 import corpus from '../data/claims.json';
 import facts from '../data/corpus-facts.json';
 import {
-  papers as pipelinePapers, cells, fill_of, approvedCells, inState, layers, byId,
+  papers as pipelinePapers, cells, fill_of, approvedCells, inState, byId, shortOf,
+  paperLayers, corpusLayers,
 } from '../lib/pipeline';
 
 const { papers } = corpus as any;
@@ -28,8 +29,6 @@ const fills = pipelinePapers
   .sort((a, b) => b.done - a.done);
 const best = fills[0];
 const reproduced = (f.reproduction_status?.verified ?? 0);
-
-const shortOf = (slug: string) => slug.split('-')[0].replace(/^./, (c: string) => c.toUpperCase());
 ---
 
 <Layout title="eLife Claim Trees" description="Panel-level claim graphs for ten eLife neuroscience papers, and the pipeline that produced them.">
@@ -137,7 +136,9 @@ const shortOf = (slug: string) => slug.split('-')[0].replace(/^./, (c: string) =
         produces a version, and records the content hash of everything it read — so whether a
         result is still current is asked of the files rather than of anyone's memory. The
         {' '}<a href={url('/pipeline')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">pipeline</a>
-        {' '}is {layers.length} of them; a paper's page carries its own instance of each.
+        {' '}asks {paperLayers.length} of them of each paper, and {corpusLayers.length} once of the
+        whole corpus — the schema and vocabulary decisions every paper inherits. A paper's page
+        carries its own instance of the {paperLayers.length}.
       </p>
       <div class="grid sm:grid-cols-3 gap-4">
         {['claim-tree', 'coverage', 'mira-export'].map(id => {

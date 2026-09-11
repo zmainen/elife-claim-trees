@@ -6,7 +6,7 @@
 import Layout from '../../layouts/Layout.astro';
 import {
   layers, groups, papers, columns, cells, titleOf, fill_of, inState, byId,
-  corpusLayers, paperLayers, STATE_LABEL, allHistory, resolve, approvedCells,
+  corpusLayers, paperLayers, STATE_LABEL, allHistory, resolve, approvedCells, shortOf,
 } from '../../lib/pipeline';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -21,9 +21,6 @@ const recent = allHistory().filter(h => !h.backfilled).slice(0, 6);
 // returning reader sees what is new rather than a page that has quietly changed.
 const found = layers.filter(l => l.found)
   .sort((a, b) => (a.added ?? '').localeCompare(b.added ?? ''));
-
-const shortOf = (slug: string) =>
-  slug.split('-')[0].replace(/^./, c => c.toUpperCase());
 
 // One tone per state, as classes rather than inline styles so both themes are declared.
 const TONE: Record<string, string> = {
@@ -106,10 +103,16 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
         <thead>
           <tr>
             <th class="text-left py-2 pr-3 text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 font-medium">Paper</th>
+            {/* Rotated rather than truncated. Seventeen columns do not leave room for a
+                horizontal label, and clipping them to eight characters made the axis of the
+                matrix unreadable — `structure-reader` and `adjudication` arrived as STRUCTUR
+                and ADJUDICA, with nothing to say they had been cut. */}
             {paperLayers.map(l => (
-              <th class="py-2 px-1 text-[9.5px] font-mono uppercase tracking-wide text-gray-400 dark:text-gray-500 font-medium">
-                <a href={url(`/pipeline/${l.id}`)} class="no-underline text-gray-400 dark:text-gray-500 hover:text-amber-700 dark:hover:text-amber-400">
-                  {l.id.slice(0, 8)}
+              <th class="py-2 px-1 align-bottom font-medium">
+                <a href={url(`/pipeline/${l.id}`)}
+                   title={l.question}
+                   class="block h-28 mx-auto w-fit whitespace-nowrap no-underline text-[9.5px] font-mono uppercase tracking-wide text-gray-400 dark:text-gray-500 hover:text-amber-700 dark:hover:text-amber-400 [writing-mode:vertical-rl] rotate-180">
+                  {l.id}
                 </a>
               </th>
             ))}
