@@ -485,7 +485,7 @@
         "command": "cd extract && python3 -m elife_extract.cli prepare --paper {paper} --doi {doi}",
         "doc": "/docs/layers/#prepare--the-paper-the-readers-read",
         "group": "induction",
-        "how": "Fetches the paper and cuts it into the slices the three readers each get. For an eLife DOI that is JATS XML from the CDN, which gives labelled sections, typed figures and caption text; for anything else it is pdfplumber with regex section detection. Which path was taken is recorded in the output, because it constrains what the readers can possibly extract. The fetch is cached, so every later layer on the same paper runs offline and free.\nCheck the slice sizes when a paper extracts badly. A short `results` almost always means section detection failed, and then all three readers read the wrong text and every claim below them is wrong for the same single reason.\n",
+        "how": "Fetches the paper and cuts it into the slices the three readers each get: the abstract, the Introduction, the Results, the Discussion, the figure and table captions, the methods and the appendices. It also builds a panel inventory \u2014 one line per figure and table, its panel ids and the head of its caption \u2014 and numbers the whole paper into the spans coverage segments, so a reader can cite the id in front of a sentence. For an eLife DOI that is JATS XML from the CDN, which gives labelled sections, typed figures and caption text; for anything else it is pdfplumber with regex section detection. Which path was taken is recorded in the output, because it constrains what the readers can possibly extract. The fetch is cached, so every later layer on the same paper runs offline and free.\nCheck the slice sizes when a paper extracts badly. A short `results` almost always means section detection failed, and then all three readers read the wrong text and every claim below them is wrong for the same single reason.\n",
         "id": "prepare",
         "kind": "step",
         "produces": [
@@ -529,7 +529,7 @@
         "command": "cd extract && python3 -m elife_extract.cli results-reader --paper {paper}",
         "doc": "/docs/layers/#the-three-readers",
         "group": "induction",
-        "how": "Given the abstract and the results prose \u2014 and nothing else: no captions, no methods, no figures \u2014 it returns candidate claims, each with a role, a claim type, the panel where the prose names one, and the verbatim sentence it rests on.\nThe partition is what makes it worth running separately. It is the only reader positioned to see the paper's argument as an argument, so it is the one asked for hypotheses, predictions and synthesis rather than for numbers. It is also the reader most prone to flattening exactly that: where a paper derives a prediction from a hypothesis and then tests it, the easy output is one empirical claim, and the longest section of the prompt below exists to stop that.\n",
+        "how": "Given the abstract, the Introduction, the Results and the Discussion \u2014 preceded by a panel inventory, each sentence numbered by its span id, and nothing else: no captions, no methods, no figures \u2014 it returns candidate claims, each with a role, a claim type, the panel the inventory names, the span its evidence was quoted from, and the verbatim sentence it rests on.\nThe partition is what makes it worth running separately. It is the only reader positioned to see the paper's argument as an argument, so it is the one asked for hypotheses, predictions and synthesis rather than for numbers \u2014 and the Introduction and Discussion are where the organising hypothesis and the literature-context premises are actually stated. It is also the reader most prone to flattening exactly that: where a paper derives a prediction from a hypothesis and then tests it, the easy output is one empirical claim, and the longest section of the prompt below exists to stop that.\n",
         "id": "results-reader",
         "kind": "candidate",
         "needs": [
@@ -6190,6 +6190,27 @@
           ],
           "ran": "2026-09-11T19:39:56Z",
           "v": 1
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli prepare --paper gadeke-2026-guilt-insula --doi 10.7554/eLife.105391",
+          "in": [
+            {
+              "path": "extract/elife_extract/prepare.py",
+              "sha": "353d4044df04"
+            }
+          ],
+          "kind": "step",
+          "layer": "prepare",
+          "note": "prepare reads the whole paper: introduction, discussion, a panel inventory and numbered spans (#56 item 3)",
+          "out": [
+            {
+              "path": "runs/gadeke-2026-guilt-insula/prepared.json",
+              "sha": "2f668cadbef7"
+            }
+          ],
+          "ran": "2026-09-11T19:57:20Z",
+          "v": 2
         }
       ],
       "headley-2026-inhibitory-rhythms": [
@@ -12615,21 +12636,27 @@
           "v": 1
         },
         "adjudication": {
+          "blocked_by": [
+            "coverage"
+          ],
           "by": "supplied:runs/artiushin-2026-spider-atlas/adjudication.answer.json",
           "lost": [],
           "moved": [],
           "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
           "ran": "2026-09-11T16:38:39Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "article": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "first run: the article as a document",
           "ran": "2026-09-11T16:03:16Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "caption-reader": {
@@ -12653,12 +12680,15 @@
           "v": 1
         },
         "coverage": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:26Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "dg-export": {
@@ -12698,12 +12728,16 @@
           "v": 3
         },
         "marks": {
+          "blocked_by": [
+            "adjudication",
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "marks from the adjudicated verdicts",
           "ran": "2026-09-11T16:38:50Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "mira-export": {
@@ -12747,10 +12781,12 @@
         "prepare": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "extract/elife_extract/prepare.py"
+          ],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:26Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "questions": {
@@ -12803,21 +12839,27 @@
           "v": 1
         },
         "adjudication": {
+          "blocked_by": [
+            "coverage"
+          ],
           "by": "supplied:runs/bouyeure-2026-fear-rsa/adjudication.answer.json",
           "lost": [],
           "moved": [],
           "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
           "ran": "2026-09-11T16:38:39Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "article": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "first run: the article as a document",
           "ran": "2026-09-11T16:03:16Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "caption-reader": {
@@ -12841,12 +12883,15 @@
           "v": 1
         },
         "coverage": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:26Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "dg-export": {
@@ -12886,12 +12931,16 @@
           "v": 3
         },
         "marks": {
+          "blocked_by": [
+            "adjudication",
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "marks from the adjudicated verdicts",
           "ran": "2026-09-11T16:38:50Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "mira-export": {
@@ -12935,10 +12984,12 @@
         "prepare": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "extract/elife_extract/prepare.py"
+          ],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:26Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "questions": {
@@ -12996,21 +13047,27 @@
           "v": 1
         },
         "adjudication": {
+          "blocked_by": [
+            "coverage"
+          ],
           "by": "supplied:runs/ejdrup-2026-dopamine/adjudication.answer.json",
           "lost": [],
           "moved": [],
           "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
           "ran": "2026-09-11T16:38:40Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "article": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "first run: the article as a document",
           "ran": "2026-09-11T16:03:16Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "caption-reader": {
@@ -13034,12 +13091,15 @@
           "v": 1
         },
         "coverage": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:26Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "dg-export": {
@@ -13079,12 +13139,16 @@
           "v": 3
         },
         "marks": {
+          "blocked_by": [
+            "adjudication",
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "marks from the adjudicated verdicts",
           "ran": "2026-09-11T16:40:38Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "mira-export": {
@@ -13128,10 +13192,12 @@
         "prepare": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "extract/elife_extract/prepare.py"
+          ],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:26Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "questions": {
@@ -13205,16 +13271,20 @@
         "article": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "runs/gadeke-2026-guilt-insula/prepared.json"
+          ],
           "note": "first run: the article as a document",
           "ran": "2026-09-11T16:03:16Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "caption-reader": {
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "runs/gadeke-2026-guilt-insula/prepared.json",
+            "extract/prompts/caption-reader.md",
             "extract/prompts/contract/vocabulary.md",
             "extract/prompts/contract/schema-candidate.md"
           ],
@@ -13283,6 +13353,7 @@
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "extract/prompts/external-reviewer.md",
             "extract/prompts/contract/vocabulary.md",
             "extract/prompts/contract/schema-draft.md"
           ],
@@ -13317,7 +13388,8 @@
             "claims/gadeke-2026-guilt-insula/hypothesis-insula-tracks-interpersonal-guilt.md",
             "claims/gadeke-2026-guilt-insula/hypothesis-responsibility-weights-partner-rpes.md",
             "claims/gadeke-2026-guilt-insula/hypothesis-sts-mentalizes-partner-state-under-responsibility.md",
-            "claims/gadeke-2026-guilt-insula/index.md"
+            "claims/gadeke-2026-guilt-insula/index.md",
+            "runs/gadeke-2026-guilt-insula/prepared.json"
           ],
           "note": "re-run under the ledger",
           "ran": "2026-09-11T16:34:58Z",
@@ -13387,18 +13459,20 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "the paper the readers read, recorded",
-          "ran": "2026-09-11T11:00:39Z",
+          "note": "prepare reads the whole paper: introduction, discussion, a panel inventory and numbered spans (#56 item 3)",
+          "ran": "2026-09-11T19:57:20Z",
           "state": "current",
-          "v": 1
+          "v": 2
         },
         "questions": {
           "by": "claude-opus-4-8 (subagent, via --answer)",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "runs/gadeke-2026-guilt-insula/prepared.json"
+          ],
           "note": "questions retrofitted from the abstract and the existing hypothesis and alt- claims; answered through --dump-prompt/--answer",
           "ran": "2026-09-11T19:39:56Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "reconcile": {
@@ -13427,6 +13501,7 @@
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "runs/gadeke-2026-guilt-insula/prepared.json",
             "extract/prompts/results-reader.md",
             "extract/prompts/contract/vocabulary.md",
             "extract/prompts/contract/schema-candidate.md"
@@ -13448,6 +13523,8 @@
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "runs/gadeke-2026-guilt-insula/prepared.json",
+            "extract/prompts/structure-reader.md",
             "extract/prompts/contract/vocabulary.md",
             "extract/prompts/contract/schema-candidate.md"
           ],
@@ -13481,21 +13558,27 @@
           "v": 1
         },
         "adjudication": {
+          "blocked_by": [
+            "coverage"
+          ],
           "by": "supplied:runs/headley-2026-inhibitory-rhythms/adjudication.answer.json",
           "lost": [],
           "moved": [],
           "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
           "ran": "2026-09-11T16:38:40Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "article": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "first run: the article as a document",
           "ran": "2026-09-11T16:03:17Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "caption-reader": {
@@ -13519,12 +13602,15 @@
           "v": 1
         },
         "coverage": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:27Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "dg-export": {
@@ -13564,12 +13650,16 @@
           "v": 3
         },
         "marks": {
+          "blocked_by": [
+            "adjudication",
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "marks from the adjudicated verdicts",
           "ran": "2026-09-11T16:38:51Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "mira-export": {
@@ -13613,10 +13703,12 @@
         "prepare": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "extract/elife_extract/prepare.py"
+          ],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:27Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "questions": {
@@ -13674,21 +13766,27 @@
           "v": 1
         },
         "adjudication": {
+          "blocked_by": [
+            "coverage"
+          ],
           "by": "supplied:runs/kammer-2026-foveal-feedback/adjudication.answer.json",
           "lost": [],
           "moved": [],
           "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
           "ran": "2026-09-11T16:38:40Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "article": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "first run: the article as a document",
           "ran": "2026-09-11T16:03:17Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "caption-reader": {
@@ -13712,12 +13810,15 @@
           "v": 1
         },
         "coverage": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:27Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "dg-export": {
@@ -13757,12 +13858,16 @@
           "v": 3
         },
         "marks": {
+          "blocked_by": [
+            "adjudication",
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "marks from the adjudicated verdicts",
           "ran": "2026-09-11T16:38:51Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "mira-export": {
@@ -13806,10 +13911,12 @@
         "prepare": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "extract/elife_extract/prepare.py"
+          ],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:27Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "questions": {
@@ -13862,21 +13969,27 @@
           "v": 1
         },
         "adjudication": {
+          "blocked_by": [
+            "coverage"
+          ],
           "by": "supplied:runs/kolb-2026-igabasnfr2/adjudication.answer.json",
           "lost": [],
           "moved": [],
           "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
           "ran": "2026-09-11T16:38:40Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "article": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "first run: the article as a document",
           "ran": "2026-09-11T16:03:17Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "caption-reader": {
@@ -13900,12 +14013,15 @@
           "v": 1
         },
         "coverage": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:18Z",
-          "state": "current",
+          "state": "blocked",
           "v": 2
         },
         "dg-export": {
@@ -13945,12 +14061,16 @@
           "v": 3
         },
         "marks": {
+          "blocked_by": [
+            "adjudication",
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "marks from the adjudicated verdicts",
           "ran": "2026-09-11T16:38:51Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "mira-export": {
@@ -13988,10 +14108,12 @@
         "prepare": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "extract/elife_extract/prepare.py"
+          ],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:18Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "questions": {
@@ -14054,21 +14176,27 @@
           "v": 1
         },
         "adjudication": {
+          "blocked_by": [
+            "coverage"
+          ],
           "by": "supplied:runs/rozak-2026-neurovascular-dl/adjudication.answer.json",
           "lost": [],
           "moved": [],
           "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
           "ran": "2026-09-11T16:38:40Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "article": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "first run: the article as a document",
           "ran": "2026-09-11T16:03:17Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "caption-reader": {
@@ -14092,12 +14220,15 @@
           "v": 1
         },
         "coverage": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:28Z",
-          "state": "current",
+          "state": "blocked",
           "v": 2
         },
         "dg-export": {
@@ -14137,12 +14268,16 @@
           "v": 3
         },
         "marks": {
+          "blocked_by": [
+            "adjudication",
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "marks from the adjudicated verdicts",
           "ran": "2026-09-11T16:40:38Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "mira-export": {
@@ -14180,10 +14315,12 @@
         "prepare": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "extract/elife_extract/prepare.py"
+          ],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:27Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "questions": {
@@ -14241,21 +14378,27 @@
           "v": 1
         },
         "adjudication": {
+          "blocked_by": [
+            "coverage"
+          ],
           "by": "supplied:runs/scheller-2026-self-prioritization/adjudication.answer.json",
           "lost": [],
           "moved": [],
           "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
           "ran": "2026-09-11T16:38:40Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "article": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "first run: the article as a document",
           "ran": "2026-09-11T16:03:17Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "caption-reader": {
@@ -14279,12 +14422,15 @@
           "v": 1
         },
         "coverage": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:28Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "dg-export": {
@@ -14324,12 +14470,16 @@
           "v": 3
         },
         "marks": {
+          "blocked_by": [
+            "adjudication",
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "marks from the adjudicated verdicts",
           "ran": "2026-09-11T16:40:38Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "mira-export": {
@@ -14373,10 +14523,12 @@
         "prepare": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "extract/elife_extract/prepare.py"
+          ],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:28Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "questions": {
@@ -14434,21 +14586,27 @@
           "v": 1
         },
         "adjudication": {
+          "blocked_by": [
+            "coverage"
+          ],
           "by": "supplied:runs/wengert-2026-kcnc1/adjudication.answer.json",
           "lost": [],
           "moved": [],
           "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
           "ran": "2026-09-11T16:38:41Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "article": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "first run: the article as a document",
           "ran": "2026-09-11T16:03:17Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "caption-reader": {
@@ -14472,12 +14630,15 @@
           "v": 1
         },
         "coverage": {
+          "blocked_by": [
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:28Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "dg-export": {
@@ -14517,12 +14678,16 @@
           "v": 3
         },
         "marks": {
+          "blocked_by": [
+            "adjudication",
+            "prepare"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "marks from the adjudicated verdicts",
           "ran": "2026-09-11T16:38:52Z",
-          "state": "current",
+          "state": "blocked",
           "v": 1
         },
         "mira-export": {
@@ -14560,10 +14725,12 @@
         "prepare": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "extract/elife_extract/prepare.py"
+          ],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:28Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "questions": {

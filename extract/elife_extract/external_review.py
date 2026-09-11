@@ -36,12 +36,17 @@ def load_reviewer_prompt(cfg: Config) -> str:
     return prompt("external-reviewer", cfg)
 
 
-def _format_paper_context(paper: PreparedPaper, max_results_chars: int = 60000) -> str:
+def _format_paper_context(paper: PreparedPaper, max_results_chars: int = 120000) -> str:
     """Format the paper context for the reviewer's user message.
 
-    Truncate the results section if it's exceptionally long (eLife papers
-    are typically 30-100KB; the reviewer can handle plenty but we don't
-    need to send the whole 200KB if a paper happens to be huge).
+    The reviewer now gets the abstract, the Introduction, the Results, the Discussion and the
+    figure captions — the organising hypothesis and the literature-context premises it was
+    previously asked to *infer* are stated in the Introduction and the Discussion. Methods stay
+    out: the reviewer's job is the argument, not the procedure.
+
+    The results section is truncated only if it is exceptionally long. The ceiling is set above
+    a typical eLife paper — Gädeke's whole reviewer context is about 67k characters — so a normal
+    paper is never cut, and only a pathologically large results section is bounded.
     """
     results = paper.results_text
     truncated_note = ""
@@ -59,9 +64,21 @@ def _format_paper_context(paper: PreparedPaper, max_results_chars: int = 60000) 
         "",
         paper.abstract,
         "",
+        f"## Introduction",
+        "",
+        paper.introduction_text,
+        "",
         f"## Results section",
         "",
         results + truncated_note,
+        "",
+        f"## Discussion",
+        "",
+        paper.discussion_text,
+        "",
+        f"## Figure captions",
+        "",
+        paper.captions_text,
     ]
     return "\n".join(parts)
 

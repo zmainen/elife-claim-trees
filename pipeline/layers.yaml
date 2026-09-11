@@ -183,11 +183,15 @@ layers:
     question: What text did the readers actually read?
     doc: /docs/layers/#prepare--the-paper-the-readers-read
     how: >
-      Fetches the paper and cuts it into the slices the three readers each get. For an eLife DOI
-      that is JATS XML from the CDN, which gives labelled sections, typed figures and caption text;
-      for anything else it is pdfplumber with regex section detection. Which path was taken is
-      recorded in the output, because it constrains what the readers can possibly extract. The fetch
-      is cached, so every later layer on the same paper runs offline and free.
+      Fetches the paper and cuts it into the slices the three readers each get: the abstract, the
+      Introduction, the Results, the Discussion, the figure and table captions, the methods and the
+      appendices. It also builds a panel inventory — one line per figure and table, its panel ids
+      and the head of its caption — and numbers the whole paper into the spans coverage segments,
+      so a reader can cite the id in front of a sentence. For an eLife DOI that is JATS XML from the
+      CDN, which gives labelled sections, typed figures and caption text; for anything else it is
+      pdfplumber with regex section detection. Which path was taken is recorded in the output,
+      because it constrains what the readers can possibly extract. The fetch is cached, so every
+      later layer on the same paper runs offline and free.
 
       Check the slice sizes when a paper extracts badly. A short `results` almost always means
       section detection failed, and then all three readers read the wrong text and every claim below
@@ -240,15 +244,18 @@ layers:
     question: What does the Results section assert?
     doc: /docs/layers/#the-three-readers
     how: >
-      Given the abstract and the results prose — and nothing else: no captions, no methods, no
-      figures — it returns candidate claims, each with a role, a claim type, the panel where the
-      prose names one, and the verbatim sentence it rests on.
+      Given the abstract, the Introduction, the Results and the Discussion — preceded by a panel
+      inventory, each sentence numbered by its span id, and nothing else: no captions, no methods,
+      no figures — it returns candidate claims, each with a role, a claim type, the panel the
+      inventory names, the span its evidence was quoted from, and the verbatim sentence it rests on.
 
       The partition is what makes it worth running separately. It is the only reader positioned to
       see the paper's argument as an argument, so it is the one asked for hypotheses, predictions
-      and synthesis rather than for numbers. It is also the reader most prone to flattening exactly
-      that: where a paper derives a prediction from a hypothesis and then tests it, the easy output
-      is one empirical claim, and the longest section of the prompt below exists to stop that.
+      and synthesis rather than for numbers — and the Introduction and Discussion are where the
+      organising hypothesis and the literature-context premises are actually stated. It is also the
+      reader most prone to flattening exactly that: where a paper derives a prediction from a
+      hypothesis and then tests it, the easy output is one empirical claim, and the longest section
+      of the prompt below exists to stop that.
     needs: [prepare]
     # A prompt is a task file and the contract: the vocabulary of roles, types, relations and
     # confidence, and the output schema, both generated from the code that defines them
