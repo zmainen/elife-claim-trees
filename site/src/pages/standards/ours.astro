@@ -19,6 +19,18 @@ const unused = ['refutes', 'predicts', 'replicates'].filter(r => !counts[r]);
 // Computed here, not inline: a generic like Record<string, number> inside JSX parses as a tag.
 const reproRecords = (Object.values(f.reproduction_status) as number[]).reduce((a, b) => a + b, 0);
 
+// Claim-type and role are different fields and the page had conflated them. claim-format.md
+// §1 defines claim-type — the epistemic character of the proposition — and does not list role
+// in its field table at all, though every claim file carries one. Both are shown, and the gap
+// in the spec is named rather than papered over.
+const CLAIM_TYPES: [string, string][] = [
+  ['empirical', 'A directly observed result from data.'],
+  ['interpretive', 'An inference drawn from one or more empirical claims.'],
+  ['existence', 'An assertion that a phenomenon or entity exists.'],
+  ['synthesis', 'A claim integrating results across papers or datasets.'],
+  ['assessment', 'A methodological or quality claim.'],
+];
+
 const ROLES: [string, string][] = [
   ['hypothesis', 'A proposition the paper sets out to test.'],
   ['prediction', 'What the hypothesis entails, if it holds.'],
@@ -50,37 +62,92 @@ const ROLES: [string, string][] = [
       </p>
     </header>
 
-    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">What a claim carries</h2>
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">A claim, and what a paper does with it</h2>
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
-      A UUID that survives renaming, one declarative sentence, a role, an anchor to the panel
-      that produced it, typed relations to other claims, and — separately — what each paper
-      asserting it does with it.
+      The format's central move is that these are two things. A claim is a proposition and is
+      paper-independent; an <strong>assertion</strong> is one paper instantiating it, in a
+      particular panel, with a particular analysis, taking a particular stance. The same
+      proposition can be asserted by two papers that disagree about it.
     </p>
-    <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg mb-10">
-      <table class="w-full text-sm border-collapse">
-        <thead>
-          <tr class="text-left text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-200 dark:border-gray-700">
-            <th class="py-2.5 px-4 font-medium">Field</th><th class="py-2.5 px-4 font-medium">Carries</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div class="grid md:grid-cols-2 gap-5 mb-4">
+      <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <p class="text-[10px] font-mono uppercase tracking-wider text-gray-500 dark:text-gray-400 m-0 px-4 py-2.5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+          The claim — paper-independent
+        </p>
+        <dl class="m-0 p-4 space-y-2.5 text-sm">
           {[
-            ['uuid', 'Durable identity. A slug is derived from the text and changes when the text does; the UUID does not, so exports and marks key on it.'],
-            ['claim', 'One declarative sentence stating what was shown.'],
-            ['role', 'What the claim does in the paper’s argument. Nine values, below.'],
-            ['panel', 'The figure panel or analysis block that produced it.'],
-            ['epistemic', 'The analyst’s assessment of support strength. Currently carries two vocabularies at once.'],
-            ['assertions', 'One block per paper asserting the claim, carrying that paper’s stance toward it: asserts, entertains, rejects, attributes.'],
-            ['reproductions', 'One block per attempt to re-run it: which script, against which data, what came out beside the published value.'],
-            ['relations', 'Typed edges to other claims, as frontmatter keys.'],
+            ['uuid', 'Canonical identity, generated once and never changed. It survives renaming and migration; the slug does not.'],
+            ['slug', 'The human-readable filename, 3–5 words. The working identity, and replaceable — the UUID absorbs the identity.'],
+            ['doi', 'Aspirational: the state in which claims are citable units. Empty for now, and never fabricated.'],
+            ['claim', 'One declarative sentence, active voice, quantitative where the result is. If it needs two sentences it is probably two claims.'],
+            ['claim-type', 'The epistemic character of the proposition. Five values, below.'],
+            ['role', 'What the claim does in this paper’s argument. Nine values, below.'],
+            ['epistemic', 'How strongly the claim is supported across its assertions.'],
+            ['concepts', 'Controlled domain terms, for retrieval.'],
+            ['belongings', 'Typed edges to other claims.'],
           ].map(([k, v]) => (
-            <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0">
-              <td class="py-2.5 px-4 font-mono text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap align-top">{k}</td>
-              <td class="py-2.5 px-4 text-gray-600 dark:text-gray-400 leading-snug">{v}</td>
-            </tr>
+            <div>
+              <dt class="font-mono text-xs text-gray-900 dark:text-gray-100 inline">{k}</dt>
+              <dd class="inline text-gray-600 dark:text-gray-400 m-0"> — {v}</dd>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </dl>
+      </div>
+      <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <p class="text-[10px] font-mono uppercase tracking-wider text-gray-500 dark:text-gray-400 m-0 px-4 py-2.5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+          An assertion — one paper, one instantiation
+        </p>
+        <dl class="m-0 p-4 space-y-2.5 text-sm">
+          {[
+            ['paper-slug', 'Which paper asserts it.'],
+            ['panel', 'The figure panel, table or analysis block instantiating the claim here.'],
+            ['analysis', 'The notebook or script that produces the result from data.'],
+            ['dataset', 'The deposit used, with its DOI.'],
+            ['method', 'The computational or experimental method.'],
+            ['confidence', 'The paper’s own confidence, as distinct from ours.'],
+            ['stance', 'What this paper does with the proposition: asserts, entertains, rejects, attributes.'],
+          ].map(([k, v]) => (
+            <div>
+              <dt class="font-mono text-xs text-gray-900 dark:text-gray-100 inline">{k}</dt>
+              <dd class="inline text-gray-600 dark:text-gray-400 m-0"> — {v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-10 max-w-2xl leading-relaxed">
+      <strong>The panel is a property of the assertion, not of the claim.</strong> That is the
+      structural shift the format rests on: <code>fig2a</code> tells you how one paper chose to
+      present a proposition, and the same proposition could be asserted in another paper's
+      supplementary table, or with no figure at all.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Reproductions</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+      A third situation, beside the claim and the assertion: an agent re-enacting an assertion
+      to see whether it holds. Each record says who ran it, when, against what, and what came
+      out — and where it disagrees, the discrepancy is described precisely enough for the next
+      person to diagnose it. &ldquo;Numbers differ&rdquo; is not sufficient.
+    </p>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-10 max-w-2xl leading-relaxed">
+      A reproduction record is a fact about a run, not a verdict on the claim. What the site
+      shows for each one, and why it is never phrased as
+      {' '}<em>verified</em>, is on any
+      {' '}<a href={url('/papers')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">paper page</a>.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Five claim-types</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+      The nature of the proposition, independent of any paper. Distinct from role, which is what
+      the proposition does in one paper's argument.
+    </p>
+    <div class="grid sm:grid-cols-2 gap-x-8 gap-y-2.5 mb-10">
+      {CLAIM_TYPES.map(([r, d]) => (
+        <div class="text-sm">
+          <span class="font-mono text-xs text-amber-700 dark:text-amber-400">{r}</span>
+          <span class="block text-gray-600 dark:text-gray-400 leading-snug">{d}</span>
+        </div>
+      ))}
     </div>
 
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Nine roles</h2>
@@ -101,8 +168,11 @@ const ROLES: [string, string][] = [
       Relations <span class="font-mono text-sm text-gray-400 dark:text-gray-500">{f.relation_types_used} of {f.relation_types_defined} in use</span>
     </h2>
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
-      Counted from the corpus, not declared here. A relation type defined and never used is
-      shown as such — the vocabulary should be reconciled against what the corpus does.
+      Called <strong>belongings</strong> in the specification: typed directed edges between
+      claim entities, and statements about logical structure rather than citations. When a
+      claim <code>requires</code> another, it asserts that its validity depends on the other's —
+      so invalidity propagates, and the graph makes that auditable. Counted from the corpus,
+      not declared here.
     </p>
     <div class="flex flex-wrap gap-x-5 gap-y-1.5 mb-4">
       {used.map(([r, n]) => (
@@ -120,6 +190,17 @@ const ROLES: [string, string][] = [
            class="text-amber-700 dark:text-amber-400 no-underline hover:underline ml-1">#20</a>
       </p>
     )}
+
+    <div class="border-l-2 border-amber-400 dark:border-amber-600 pl-4 mb-10 max-w-2xl">
+      <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+        <strong>The specification is behind the corpus here.</strong>
+        <code>docs/claim-format.md</code> §4 names four belongings — <code>supports</code>,
+        <code>requires</code>, <code>contradicts</code>, <code>extends</code> — and the corpus
+        uses {f.relation_types_used}. The others were added as the work needed them and the
+        document was not brought along. The counts above are the corpus; the specification is
+        the thing to fix.
+      </p>
+    </div>
 
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What it carries that no target does</h2>
     <div class="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed mb-10 max-w-2xl">
