@@ -295,7 +295,14 @@ export function readerData(paperSlug: string) {
       statusLabel: status === 'na' ? '' : label,
       // The plain wording where the layer has run, the authors' short wording where it has
       // not, and the full claim as a last resort — so a paper without the layer still reads.
-      plain: (plain[c.slug] ?? short ?? full).trim(),
+      // `||`, not `??`. `short` is a trimmed string, so a claim without one is '' — which
+      // `??` accepts, because '' is neither null nor undefined. The row then renders empty.
+      // It stayed invisible while every claim had either a plain wording or a short one, and
+      // appeared the moment a tree was rewritten: Gädeke went to 74 claims on claim-tree v2,
+      // 68 of them with no wording in either field, and the site showed 68 blank lines where
+      // its claims had been. A missing wording should cost the reader the full sentence with
+      // its statistics, never the claim itself.
+      plain: (plain[c.slug] || short || full).trim(),
       hasPlain: Boolean(plain[c.slug]),
       full,
       panel: c.panel ?? null,
