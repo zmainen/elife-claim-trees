@@ -4,15 +4,17 @@
 // The matrix is the query with both paper and layer unbound. Every cell links to the layer
 // in general; the state it shows is computed from the ledger, never declared here.
 import Layout from '../../layouts/Layout.astro';
+import PipelineExplorer from '../../components/PipelineExplorer';
+import { corpusExplorer } from '../../lib/explorer';
 import {
-  layers, groups, papers, columns, cells, titleOf, fill_of, inState, byId,
+  layers, groups, papers, cells, titleOf, fill_of, inState, byId,
   corpusLayers, paperLayers, STATE_LABEL, allHistory, resolve, approvedCells, shortOf,
 } from '../../lib/pipeline';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (p: string) => `${base}${p}/`;
 
-const cols = columns();
+const explorer = corpusExplorer(base);
 const stale = inState('stale', 'blocked');
 const absent = inState('absent');
 const open = corpusLayers.filter(l => l.open);
@@ -59,43 +61,32 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
     </header>
 
     <!-- ── the graph ─────────────────────────────────────────────── -->
-    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">The graph</h2>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
-      Left to right by dependency. Dashed borders are corpus-scope layers — schema and vocabulary
-      decisions that apply to every paper, and when they change make every dependent cell stale.
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">The layers</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl">
+      Ordered left to right by dependency. <strong class="font-medium text-gray-600 dark:text-gray-300">Columns</strong>
+      lists them by depth, which is the quickest way to see the whole set;
+      <strong class="font-medium text-gray-600 dark:text-gray-300">graph</strong> draws the
+      dependencies themselves, so hovering a layer lights everything a change to it would
+      disturb — staleness travels along exactly those edges. Dashed borders are corpus-scope:
+      schema and vocabulary decisions that belong to no single paper and, when they change,
+      unsettle every cell beneath them. Clicking a layer opens it here rather than moving you
+      to another page.
     </p>
 
-    <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg mb-10">
-      <div class="flex gap-4 p-5 min-w-max">
-        {cols.map((col, i) => (
-          <div class="flex flex-col gap-2.5 min-w-[168px]">
-            <div class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 pb-1.5 border-b border-gray-200 dark:border-gray-700">
-              depth {i}
-            </div>
-            {col.map(l => (
-              <a href={url(`/pipeline/${l.id}`)}
-                 class={`block p-2.5 no-underline rounded transition-colors border
-                   ${l.scope === 'corpus'
-                     ? 'border-dashed border-amber-500 dark:border-amber-500/70'
-                     : 'border-gray-200 dark:border-gray-700'}
-                   hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-gray-900/40`}>
-                <span class="block font-mono text-[11.5px] text-gray-900 dark:text-gray-100">{l.id}</span>
-                <span class="block text-[10.5px] text-gray-500 dark:text-gray-400">
-                  {l.kind}{l.group ? ` · ${l.group}` : ''}{l.open ? ' · open' : ''}
-                  {l.requires_human ? ' · human' : ''}
-                </span>
-              </a>
-            ))}
-          </div>
-        ))}
-      </div>
+    <!-- The graph is wide by nature — eight ranks of dependency — so it is allowed out of
+         the prose column, where fitting it whole meant shrinking the labels past reading. -->
+    <div class="lg:-mx-12 xl:-mx-28 2xl:-mx-44">
+      <PipelineExplorer client:load data={explorer} base={base} height={470} />
     </div>
+
+    <div class="h-12"></div>
 
     <!-- ── the matrix ────────────────────────────────────────────── -->
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Which papers have which layer</h2>
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
       A jagged edge is the normal condition, not a defect. A blank means the layer has not been run
-      for that paper — not that it was run and found nothing.
+      for that paper — not that it was run and found nothing. A column heading or a cell opens that
+      layer in the panel above, without losing your place in the grid.
     </p>
 
     <div class="overflow-x-auto mb-4">
@@ -109,7 +100,7 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
                 and ADJUDICA, with nothing to say they had been cut. */}
             {paperLayers.map(l => (
               <th class="py-2 px-1 align-bottom font-medium">
-                <a href={url(`/pipeline/${l.id}`)}
+                <a href={`#layer=${l.id}`}
                    title={l.question}
                    class="block h-28 mx-auto w-fit whitespace-nowrap no-underline text-[9.5px] font-mono uppercase tracking-wide text-gray-400 dark:text-gray-500 hover:text-amber-700 dark:hover:text-amber-400 [writing-mode:vertical-rl] rotate-180">
                   {l.id}
@@ -131,7 +122,7 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
                 </td>
                 {cells(p).map(c => (
                   <td class="py-1.5 px-1 text-center">
-                    <a href={url(`/pipeline/${c.layer.id}`)}
+                    <a href={`#layer=${c.layer.id}`}
                        title={`${c.layer.title} — ${STATE_LABEL[c.state]}${c.v ? ` (v${c.v})` : ''}`}
                        class={`inline-block w-3.5 h-3.5 rounded-sm ${TONE[c.state] ?? TONE.absent}`}></a>
                   </td>

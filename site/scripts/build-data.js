@@ -535,3 +535,28 @@ if (existsSync(exportsSrc)) {
   }
   console.log(`Copied ${n} export files to public/exports/`);
 }
+
+// ── Record which produced artifacts are actually downloadable ──────────────
+// `produces` in layers.yaml is a repo path, and only some of those families are copied into
+// public/ — exports and the verification figures are, claims/ coverage/ mappings/ marked/
+// runs/ are not. The drawer offers a download for a file the site really serves and a source
+// link for one it does not, and that distinction has to be measured rather than assumed: a
+// download that 404s is worse than an honest "in the repository" link.
+//
+// Walks public/ once and writes the set of paths it found. A file that stops being copied
+// stops being offered, with no second list to keep in step.
+const artifactRoots = ['exports', 'verification', 'figures', 'design'];
+const publishedPaths = [];
+const walk = (abs, rel) => {
+  if (!existsSync(abs)) return;
+  for (const e of readdirSync(abs, { withFileTypes: true })) {
+    const r = `${rel}/${e.name}`;
+    if (e.isDirectory()) walk(join(abs, e.name), r);
+    else publishedPaths.push(r);
+  }
+};
+for (const root of artifactRoots) walk(join(__dirname, '../public', root), root);
+publishedPaths.sort();
+const artifactsOut = join(__dirname, '../src/data/published-artifacts.json');
+writeFileSync(artifactsOut, JSON.stringify(publishedPaths, null, 0) + '\n');
+console.log(`Written ${artifactsOut}: ${publishedPaths.length} published artifact paths`);

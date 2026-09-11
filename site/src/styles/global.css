@@ -282,3 +282,79 @@ html.dark .drawer-verification.hue-violet { --bn-bg: rgba(139,92,246,0.10); --bn
 html.dark .drawer-verification.hue-purple { --bn-bg: rgba(168,85,247,0.10); --bn-border: rgba(168,85,247,0.34); --bn-fg: #e9d5ff; }
 html.dark .drawer-verification.hue-red { --bn-bg: rgba(239,68,68,0.10); --bn-border: rgba(239,68,68,0.34); --bn-fg: #fca5a5; }
 html.dark .drawer-verification.hue-amber { --bn-bg: rgba(245,158,11,0.10); --bn-border: rgba(245,158,11,0.34); --bn-fg: #fbbf24; }
+
+/* ── The layer map ─────────────────────────────────────────────────────────────
+   React Flow renders into its own subtree and the node bodies are styled here rather
+   than inline, for the reason the two blocks above record: a colour computed in JS is
+   one no `dark:` variant can reach, and this map has a node for every state. */
+:root {
+  --map-bg: #fcfcfd;
+  --map-grid: #e8eaed;
+  --map-node-bg: #ffffff;
+  --map-node-border: #d7dbe0;
+  --map-node-fg: #111827;
+  --map-node-muted: #6b7280;
+  --map-edge: #b6bcc4;
+  --map-edge-lit: #b45309;
+  --map-ring: #b45309;
+  --map-corpus-border: #d97706;
+  --map-corpus-bg: #fffbeb;
+  --map-group-induction: rgba(56, 189, 248, 0.09);
+  --map-group-interchange: rgba(168, 85, 247, 0.09);
+}
+html.dark {
+  --map-bg: #111418;
+  --map-grid: #22272d;
+  --map-node-bg: #171b21;
+  --map-node-border: #2f363f;
+  --map-node-fg: #f1f5f9;
+  --map-node-muted: #98a2b0;
+  --map-edge: #3d454f;
+  --map-edge-lit: #f59e0b;
+  --map-ring: #f59e0b;
+  --map-corpus-border: #b45309;
+  --map-corpus-bg: rgba(217, 119, 6, 0.10);
+  --map-group-induction: rgba(56, 189, 248, 0.10);
+  --map-group-interchange: rgba(168, 85, 247, 0.12);
+}
+
+/* One swatch per cell state, shared by the map nodes, the matrix and the legend so the
+   three cannot drift into three palettes for one vocabulary. */
+:root {
+  --st-current: #059669;
+  --st-stale: #f59e0b;
+  --st-blocked: #fb923c;
+  --st-absent: #e5e7eb;
+  --st-na: #d1d5db;
+  --st-open: #3b82f6;
+  --st-unrecorded: #9ca3af;
+}
+html.dark {
+  --st-current: #34d399;
+  --st-stale: #fbbf24;
+  --st-blocked: #fdba74;
+  --st-absent: #2a3038;
+  --st-na: #374151;
+  --st-open: #60a5fa;
+  --st-unrecorded: #6b7280;
+}
+
+.map-shell { background: var(--map-bg); }
+.map-node {
+  background: var(--map-node-bg);
+  border: 1.5px solid var(--map-node-border);
+  color: var(--map-node-fg);
+}
+.map-node[data-scope='corpus'] {
+  border-style: dashed;
+  border-color: var(--map-corpus-border);
+  background: var(--map-corpus-bg);
+}
+.map-node[data-group='induction'] { box-shadow: inset 0 0 0 999px var(--map-group-induction); }
+.map-node[data-group='interchange'] { box-shadow: inset 0 0 0 999px var(--map-group-interchange); }
+.map-node[data-lit='on'] { border-color: var(--map-ring); }
+.map-node[data-selected='on'] {
+  border-color: var(--map-ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--map-ring) 28%, transparent);
+}
+.map-node-muted { color: var(--map-node-muted); }

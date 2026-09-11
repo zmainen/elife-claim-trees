@@ -9,6 +9,8 @@ import ClaimDrawer from '../../components/ClaimDrawer.tsx';
 import ReviewTab from '../../components/ReviewTab.tsx';
 import corpus from '../../data/claims.json';
 import { cells, fill_of, groups as layerGroups, STATE_LABEL } from '../../lib/pipeline';
+import PipelineExplorer from '../../components/PipelineExplorer';
+import { paperExplorer } from '../../lib/explorer';
 import paperSummaries from '../../data/paper-summaries.json';
 
 // Eager-glob all abstract mappings; resolve current paper at runtime.
@@ -179,8 +181,11 @@ const tabs = [
       )}
     </div>
 
-    <!-- Which layers this paper has been through. The same set for every paper, so a missing
-         one is a stated fact rather than an oversight, and each links to the cell. -->
+    <!-- Which layers this paper has been through, drawn as the graph they form.
+         This was a flat row of chips, which said which layers had run but not that
+         `marks` waits on `adjudication` which waits on `coverage` — so a gap looked like
+         seventeen independent absences rather than one unrun layer holding up a branch.
+         Clicking a layer opens it here, with whatever it produced for this paper attached. -->
     <section class="mb-8">
       <div class="flex items-baseline justify-between gap-3 mb-2">
         <h2 class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 m-0">
@@ -191,21 +196,7 @@ const tabs = [
           <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">all papers</a>
         </span>
       </div>
-      <div class="flex flex-wrap gap-1.5">
-        {cells(paperData.slug).map(c => (
-          <a href={`${base}/papers/${paperData.slug}/${c.layer.id}/`}
-             title={`${c.layer.question} — ${STATE_LABEL[c.state]}${c.v ? ` (v${c.v})` : ''}`}
-             class={`no-underline font-mono text-[11px] px-2 py-1 rounded border transition-colors ${
-               c.state === 'current'
-                 ? 'border-emerald-500/60 text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20'
-                 : c.state === 'stale'
-                 ? 'border-amber-500/70 text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20'
-                 : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600'
-             } hover:border-gray-400 dark:hover:border-gray-500`}>
-            {c.layer.id}{c.v ? ` v${c.v}` : ''}
-          </a>
-        ))}
-      </div>
+      <PipelineExplorer client:load data={paperExplorer(paperData.slug, base)} base={base} height={360} />
     </section>
 
     <PaperTabs tabs={tabs} defaultTab="structure" />
