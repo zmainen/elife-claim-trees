@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `artiushin-2026-spider-atlas` · **Generated:** 2026-09-10
+**Paper:** `artiushin-2026-spider-atlas` · **Generated:** 2026-09-11
 
 17 claims, 67 typed relations between them.
 
@@ -19,7 +19,7 @@
 |---|---:|---|
 | `scopes` | 15 | a scope constraint governs another claim's validity |
 | `enables-method` | 14 | a result makes a downstream method possible |
-| `derived-from` | 2 | prediction derived from its hypothesis (inverse of entails) |
+| `derived-from` | 2 | a prediction derived from its hypothesis (inverse of entails) |
 | `interprets` | 2 | one claim interprets another |
 | `requires` | 2 | a claim depends on another holding |
 

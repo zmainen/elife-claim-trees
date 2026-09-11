@@ -20,11 +20,14 @@ const url = (path: string) => `${base}${path}/`;
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <script is:inline>
-    // Sync with Starlight's theme preference (stored as 'starlight-theme')
+    // One theme selector: the `dark` class, which is what global.css and every `dark:`
+    // utility key on. There were two — Starlight stamped `data-theme` and this stamped both,
+    // so the site agreed with the docs by writing the preference twice. Starlight is gone and
+    // so is the duplicate. The old key is still read once, so a visitor who set a preference
+    // under it keeps it.
     (function() {
-      var stored = localStorage.getItem('starlight-theme');
+      var stored = localStorage.getItem('theme') || localStorage.getItem('starlight-theme');
       var theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      document.documentElement.dataset.theme = theme;
       if (theme === 'dark') document.documentElement.classList.add('dark');
     })();
   </script>
@@ -50,7 +53,7 @@ const url = (path: string) => `${base}${path}/`;
   .badge-pending    { background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; }
 
   /* Dark mode overrides for non-Tailwind elements */
-  :root[data-theme='dark'] .badge-pending {
+  html.dark .badge-pending {
     background: #1f2937; color: #9ca3af; border-color: #374151;
   }
 </style>
@@ -97,9 +100,7 @@ const url = (path: string) => `${base}${path}/`;
   <script is:inline>
     document.getElementById('theme-toggle')?.addEventListener('click', function() {
       var isDark = document.documentElement.classList.toggle('dark');
-      var theme = isDark ? 'dark' : 'light';
-      document.documentElement.dataset.theme = theme;
-      localStorage.setItem('starlight-theme', theme);
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
     });
   </script>
 </body>
