@@ -70,11 +70,35 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <header class="mb-8">
       <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 m-0 mb-2">Layer v6</p>
       <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">Review</h1>
-      <p class="text-gray-600 dark:text-gray-400 m-0 max-w-2xl leading-relaxed">
+      <p class="text-gray-600 dark:text-gray-400 m-0 max-w-2xl leading-relaxed text-lg">
         Claims and relations an automated check found but cannot settle. Each carries its
         evidence, an agent&rsquo;s proposed reading, and the decision it is waiting for.
       </p>
     </header>
+
+    <div class="max-w-3xl space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-10">
+      <p>
+        Every claim, relation and verdict in this corpus was produced by a language model and
+        checked by nobody. That has been stated on this site since the
+        <a href={`${base}/agents/`} class="text-amber-700 dark:text-amber-400 hover:underline">Agents</a>
+        page went up. This is the first layer that does something about it: a queue of the
+        judgements a script cannot make, with everything needed to make them.
+      </p>
+      <p>
+        The first queue is one relation. <code>dissociates-with</code> is the corpus&rsquo;s
+        most-used oppositional relation &mdash; {edgeN} declared edges, more than every other
+        opposing relation combined &mdash; and every MIRA export tells eLife it means
+        opposition. Reading the pairs suggests most of them are not oppositions at all. But
+        that reading is an agent&rsquo;s, and unverified, which is the whole reason this page
+        exists rather than a commit quietly relabelling {edgeN} edges.
+      </p>
+      <p>
+        Items are grouped by proposed reading rather than by paper, because reviewing means
+        comparing like with like: a group of near-identical catalogue entries can be settled in
+        one pass, while the handful carrying real argumentative weight want reading one at a
+        time. Both claims appear in full, so the judgement can be made from this page.
+      </p>
+    </div>
 
     <!-- Evidence -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">

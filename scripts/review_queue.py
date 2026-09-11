@@ -49,11 +49,22 @@ NULL_RESULT = re.compile(
     r"\bdo(es)? not (differ|correlate|change)|not significantly|"
     r"\bnegligible\b|\bnull\b|\bunaffected\b|\bintact\b|\bunchanged\b", re.I)
 
+# Definitions are self-contained on purpose. An earlier draft illustrated each type with a
+# result from a specific paper -- "PV interneurons impaired while excitatory neurons are not" --
+# which is unreadable to anyone who has not read that paper, and the reviewer needs the
+# definition before the examples, not instead of them. The concrete cases are the queue itself,
+# each carrying both claims in full.
 TYPES = {
-    "parallel": "Two independent findings about different objects; neither bears on the other.",
-    "selective": "The same measure in two places: present here, absent there.",
-    "property": "One object, two attributes that did not move together.",
-    "tension": "The two findings constrain a shared explanation.",
+    "parallel": ("Two findings about different objects, neither bearing on the other. The "
+                 "relation asserts a connection the claims do not have."),
+    "selective": ("The same measure applied in two places, present in one and absent in the "
+                  "other. This is the technical sense of a dissociation, and how specificity "
+                  "is established."),
+    "property": ("One object, two attributes that did not move together: a gain on one "
+                 "dimension without the corresponding change on another."),
+    "tension": ("Both findings are asserted, and together they constrain a shared "
+                "explanation — if one account of them were right, the other result should "
+                "have come out differently."),
 }
 ACTIONS = {
     "parallel": "remove the relation",
