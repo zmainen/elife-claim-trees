@@ -64,7 +64,7 @@ export default function LayerColumns({ data, selected, onSelect }: Props) {
     data.layers.filter(l => l.depth === d));
 
   return (
-    <div className="map-shell overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+    <div className="map-shell map-scroll overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
       <div className="flex gap-4 p-5 min-w-max">
         {cols.map((col, i) => (
           <div key={i} className="flex flex-col gap-2.5 w-[168px]">
