@@ -1,5 +1,5 @@
 ---
-import { STATUS_LABEL } from '../lib/status';
+import { outcomeOf, OUTCOME_SHORT, OUTCOME_LABEL, BLOCKED_REASON } from '../lib/status';
 
 type Claim = {
   slug: string;
@@ -45,27 +45,27 @@ const roleStyle: Record<string, string> = {
   scope:          'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700',
 };
 
-// Status dot color — role-aware palette
-function statusDot(status: string, role: string | null): { color: string; label: string } {
-  if (status === 'verified') return { color: '#22c55e', label: STATUS_LABEL[status] ?? status };
-  if (status?.startsWith('verified:')) return { color: '#86efac', label: STATUS_LABEL[status] ?? status };
-  if (status === 'failed' || status?.startsWith('unverified:code-error') || status?.startsWith('unverified:compute-infeasible')) {
-    return { color: '#f59e0b', label: STATUS_LABEL[status] ?? status };
-  }
-  // Role-based colors for claims that don't get code verification
-  if (status === 'unknown' || !status) {
-    if (role === 'hypothesis' || role === 'prediction') return { color: '#60a5fa', label: role };
-    if (role === 'literature-context') return { color: '#a78bfa', label: 'cited claim' };
-    if (role === 'synthesis' || role === 'interpretation') return { color: '#60a5fa', label: role };
-  }
-  return { color: '#9ca3af', label: STATUS_LABEL[status] ?? status ?? 'unknown' };
+// The dot is the paper's argument, not our run. It colours by role, which is what the claim
+// does in the paper — so with the reproduction chip off, the card carries no verdict of ours.
+function roleDot(role: string | null): { color: string; label: string } {
+  if (role === 'hypothesis' || role === 'prediction') return { color: '#60a5fa', label: role };
+  if (role === 'literature-context') return { color: '#a78bfa', label: 'cited claim' };
+  if (role === 'synthesis' || role === 'interpretation') return { color: '#60a5fa', label: role ?? '' };
+  if (role === 'scope' || role === 'methodological') return { color: '#94a3b8', label: role };
+  return { color: '#64748b', label: role ?? 'claim' };
 }
 
-const dot = statusDot(claim.status, claim.role);
+const dot = roleDot(claim.role);
+// What we did, if we did anything. `not-attempted` and `none` render nothing: an absence of
+// effort on our part is not a property of the claim and should not appear on its card.
+const outcome = outcomeOf(claim.status);
+const showRepro = outcome !== 'none' && outcome !== 'not-attempted';
+const reproTitle = outcome === 'blocked'
+  ? `We could not re-run this: ${BLOCKED_REASON[claim.status] ?? 'see the paper\u2019s verification record'}`
+  : `Our re-run of the authors\u2019 deposited code — ${OUTCOME_LABEL[outcome]}`;
 const claimText = (claim.displayClaim?.trim()) || claim.claim;
 const hasCode = !!claim.script;
 const hasFigure = !!claim.figureUrl;
-const isVerified = claim.status.startsWith('verified');
 
 // Recursive children (requires) for supporting-claims disclosure
 const children = (claim.requires ?? [])
@@ -78,7 +78,7 @@ const children = (claim.requires ?? [])
   data-claim-slug={claim.slug}
   id={`claim-card-${claim.slug}`}
 >
-  <div class={`claim-mini-card ${isVerified ? 'claim-mini-verified' : ''}`} data-claim-slug={claim.slug} tabindex="0" role="button" aria-label={`Open details for ${claim.slug}`}>
+  <div class="claim-mini-card" data-claim-slug={claim.slug} tabindex="0" role="button" aria-label={`Open details for ${claim.slug}`}>
     {/* Top row: number + role chip + panel ref + status dot + code/figure glyphs */}
     <div class="claim-mini-top">
       {claim.number && (
@@ -105,11 +105,12 @@ const children = (claim.requires ?? [])
         title={dot.label}
         aria-label={`Status: ${dot.label}`}
       />
-      {isVerified && (
-        <span class="mini-verified-badge" title="Verified" aria-label="Verified">✓ verified</span>
+      {showRepro && (
+        <span class={`mini-repro-chip mini-repro-${outcome}`} title={reproTitle}
+              aria-label={reproTitle}>{OUTCOME_SHORT[outcome]}</span>
       )}
-      {!isVerified && hasCode && (
-        <span class="mini-code-badge" title="Has verification code" aria-label="Has verification code">{ } code</span>
+      {!showRepro && hasCode && (
+        <span class="mini-code-badge" title="Deposited code is available to re-run" aria-label="Deposited code is available">{ } code</span>
       )}
     </div>
 
@@ -153,9 +154,6 @@ const children = (claim.requires ?? [])
     background: var(--card-bg);
     transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
     outline: none;
-  }
-  .claim-mini-verified {
-    border-left: 3px solid #22c55e;
   }
   .claim-mini-card:hover,
   .claim-mini-card:focus-visible {
@@ -219,17 +217,29 @@ const children = (claim.requires ?? [])
     display: inline-block;
     flex-shrink: 0;
   }
-  .mini-verified-badge {
+  /* A reproduction result is something we attached, so it reads as attached: a chip on the
+     card's edge in the tooling palette, never green. Green and red are the truth signal and
+     this is provenance. `differs` is the exception — a re-run that disagrees with the paper is
+     a finding, and worth a warm colour. */
+  .mini-repro-chip {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 9.5px;
-    font-weight: 600;
-    color: var(--ok-fg);
-    background: var(--ok-bg);
-    border: 1px solid var(--ok-border);
     padding: 0px 5px;
     border-radius: 3px;
     letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: var(--repro-fg);
+    background: var(--repro-bg);
+    border: 1px solid var(--repro-border);
   }
+  .mini-repro-match   { --repro-fg: #334155; --repro-bg: #f1f5f9; --repro-border: #cbd5e1; }
+  .mini-repro-partial { --repro-fg: #475569; --repro-bg: #f8fafc; --repro-border: #e2e8f0; }
+  .mini-repro-blocked { --repro-fg: #64748b; --repro-bg: transparent; --repro-border: #e2e8f0; }
+  .mini-repro-differs { --repro-fg: #92400e; --repro-bg: #fef3c7; --repro-border: #fcd34d; }
+  :root[data-theme='dark'] .mini-repro-match   { --repro-fg: #cbd5e1; --repro-bg: #1e293b; --repro-border: #334155; }
+  :root[data-theme='dark'] .mini-repro-partial { --repro-fg: #94a3b8; --repro-bg: #1e293b99; --repro-border: #334155; }
+  :root[data-theme='dark'] .mini-repro-blocked { --repro-fg: #94a3b8; --repro-bg: transparent; --repro-border: #334155; }
+  :root[data-theme='dark'] .mini-repro-differs { --repro-fg: #fcd34d; --repro-bg: #451a03; --repro-border: #92400e; }
   .mini-code-badge {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 9.5px;

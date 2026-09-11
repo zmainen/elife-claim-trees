@@ -1,5 +1,5 @@
 ---
-import { STATUS_TAILWIND, EPISTEMIC_TAILWIND, STATUS_LABEL } from '../lib/status';
+import { EPISTEMIC_TAILWIND, outcomeOf, OUTCOME_SHORT, OUTCOME_TAILWIND } from '../lib/status';
 
 type Claim = {
   slug: string;
@@ -62,9 +62,11 @@ const cardBg = isSecondaryRoot
           {claimText}
         </p>
         <div class="flex items-center gap-2 flex-wrap mt-2">
-          <span class={`text-xs px-1.5 py-0.5 rounded ${STATUS_TAILWIND[claim.status] ?? 'bg-gray-50 text-gray-500'}`}>
-            {STATUS_LABEL[claim.status] ?? claim.status}
-          </span>
+          {outcomeOf(claim.status) !== 'none' && outcomeOf(claim.status) !== 'not-attempted' && (
+            <span class={`text-xs px-1.5 py-0.5 rounded ${OUTCOME_TAILWIND[outcomeOf(claim.status)]}`}>
+              {OUTCOME_SHORT[outcomeOf(claim.status)]}
+            </span>
+          )}
           <span class={`text-xs px-1.5 py-0.5 rounded ${EPISTEMIC_TAILWIND[claim.epistemic] ?? 'bg-gray-50 text-gray-500'}`}>
             {claim.epistemic}
           </span>

@@ -51,19 +51,29 @@ type Props = {
   baseUrl: string;
 };
 
+// What we did, in the first person — the same vocabulary as lib/status.ts. A drawer that
+// said "Verified" in green was the site's most direct claim that a proposition is true, on
+// the strength of having re-run a script.
 const STATUS_LABEL: Record<string, string> = {
-  verified: 'Verified',
-  failed: 'Failed',
-  'unverified:no-data': 'No data',
-  'unverified:no-code': 'No code',
-  unverified: 'Unverified',
-  'unverified:code-error': 'Code error',
-  'unverified:compute-infeasible': 'Compute-infeasible',
-  unknown: 'Unknown',
+  'verified': 're-ran: numbers match',
+  'verified:partial': 're-ran: partly matches',
+  'verified:with-nuance': 're-ran: matches, with nuance',
+  'verified:direction-and-trend': 're-ran: direction and trend match',
+  'verified:interpretive': 'checked by reading, not by running',
+  'failed': 're-ran: differs',
+  'failed:mismatch': 're-ran: differs',
+  'unverified:no-data': 'couldn\u2019t re-run — no data deposited',
+  'unverified:no-code': 'couldn\u2019t re-run — no code deposited',
+  'unverified:code-error': 'couldn\u2019t re-run — the deposited code errored',
+  'unverified:compute-infeasible': 'couldn\u2019t re-run — needs specialist compute',
+  'unverified:partial': 'not re-run yet',
+  'unverified': 'not re-run yet',
+  'unknown': 'not re-run yet',
 };
 
 function statusDotColor(status: string): string {
-  if (status === 'verified') return '#22c55e';
+  // Slate, not green. The dot says we re-ran something; green would say the claim is true.
+  if (status === 'verified') return '#475569';
   if (
     status === 'failed' ||
     status === 'unverified:code-error' ||
@@ -160,79 +170,79 @@ function verificationBanner(status: string, role?: string | null, stance?: strin
 
   // --- Code-executed verification statuses ---
   if (status === 'verified') return {
-    bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', hue: 'green', icon: '✓',
+    bg: '#f8fafc', border: '#cbd5e1', text: '#334155', hue: 'slate', icon: '=',
     label: (role === 'scope' || role === 'methodological')
-      ? 'Confirmed by inspection'
-      : 'Verified by code',
+      ? 'we checked this by reading'
+      : 're-ran: numbers match',
     detail: (role === 'scope' || role === 'methodological')
-      ? 'Confirmed by reading the deposited code, methods text, or data records.'
-      : 'A verification script ran against the deposited data and reproduced this result.',
+      ? 'Someone read the deposited code, methods text or data records and found this to hold. Not a judgement of whether the claim is correct.'
+      : 'We ran a script against the authors\u2019 deposited data and the number that came out matched the number in the paper. That is a fact about the re-run, not about whether the claim is true.',
   };
   if (status === 'verified:partial') return {
-    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', hue: 'green', icon: '~',
-    label: 'Partially verified',
-    detail: 'A subset of this claim was verified against deposited data; the remainder is documented in notes.',
+    bg: '#f8fafc', border: '#cbd5e1', text: '#334155', hue: 'slate', icon: '~',
+    label: 're-ran: partly matches',
+    detail: 'Part of this claim came back matching against the deposited data. What we could not re-run is in the notes.',
   };
   if (status === 'verified:with-nuance') return {
     bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '~',
-    label: 'Verified with nuance',
-    detail: 'Direction or trend matches; magnitude or significance differs from the paper. Discrepancy documented.',
+    label: 're-ran: matches, with a discrepancy',
+    detail: 'Direction or trend came back matching; magnitude or significance differs from the paper. The discrepancy is documented below.',
   };
   if (status === 'verified:interpretive') return {
-    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', hue: 'green', icon: '✓',
-    label: 'Verified by reasoning',
-    detail: 'This interpretive claim was confirmed by examining the evidence structure, not by running code.',
+    bg: '#f8fafc', border: '#cbd5e1', text: '#334155', hue: 'slate', icon: '=',
+    label: 'checked by reading, not by running',
+    detail: 'An interpretive claim with no code to run. Someone examined the evidence structure behind it — which is weaker evidence than a re-run, and is recorded separately for that reason.',
   };
   if (status === 'verified:direction-and-trend') return {
-    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', hue: 'green', icon: '~',
-    label: 'Direction confirmed',
-    detail: 'The direction and trend match the paper; exact values differ.',
+    bg: '#f8fafc', border: '#cbd5e1', text: '#334155', hue: 'slate', icon: '~',
+    label: 're-ran: direction and trend match',
+    detail: 'The direction and trend came back matching the paper; exact values differ.',
   };
 
   // --- Failure ---
   if (status === 'failed' || status === 'failed:mismatch') return {
-    bg: '#fef2f2', border: '#fecaca', text: '#991b1b', hue: 'red', icon: '✗',
-    label: 'Result mismatch',
-    detail: 'The verification script ran on the deposited data and produced a different result than the paper reports.',
+    bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '≠',
+    label: 're-ran: differs',
+    detail: 'We ran the authors\u2019 deposited code on their deposited data and got a different number than the paper reports. That is a disagreement worth looking at, not a verdict: it can be our error as easily as theirs.',
   };
 
   // --- Unverified with reason ---
   if (status === 'unverified:code-error') return {
     bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '!',
-    label: 'Code error',
-    detail: 'A verification script exists but encountered an error during execution.',
+    label: 'couldn\u2019t re-run — the code errored',
+    detail: 'A script exists and we tried to run it, but it failed. Nothing follows about the claim.',
   };
   if (status === 'unverified:compute-infeasible') return {
     bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '⏱',
-    label: 'Compute-infeasible',
-    detail: 'Verification requires specialist hardware or long compute times beyond our current infrastructure.',
+    label: 'couldn\u2019t re-run — needs specialist compute',
+    detail: 'Re-running this needs hardware or compute time we do not have. Not attempted, rather than attempted and failed.',
   };
   if (status === 'unverified:no-data') return {
     bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
-    label: 'No data deposited',
-    detail: 'The data needed to verify this claim is not publicly available.',
+    label: 'couldn\u2019t re-run — no data deposited',
+    detail: 'The data this claim rests on is not publicly available, so there is nothing to re-run it against.',
   };
   if (status === 'unverified:no-code') return {
     bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
-    label: 'No verification code',
-    detail: 'No verification script has been written for this claim yet.',
+    label: 'not re-run yet — no script written',
+    detail: 'Nobody has written a script to re-run this one. A gap in our effort, not in the paper.',
   };
   if (status === 'unverified' || status === 'unverified:partial' || status.startsWith('partial')) return {
     bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '○',
-    label: 'Unverified',
-    detail: 'This empirical claim has not yet been verified against deposited data.',
+    label: 'not re-run yet',
+    detail: 'Nobody has attempted to re-run this claim against the deposited data. It says nothing about whether the claim holds.',
   };
   if (status === 'N/A') return {
     bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
-    label: 'Not applicable',
-    detail: 'This claim is not the kind that can be verified by running code.',
+    label: 'nothing to re-run',
+    detail: 'This is not the kind of claim a script can check \u2014 a scope condition, or an interpretation.',
   };
 
   // --- Fallback ---
   return {
     bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '?',
     label: status,
-    detail: 'Status not recognized — see notes for details.',
+    detail: 'We do not recognise this status \u2014 see the notes.',
   };
 }
 
