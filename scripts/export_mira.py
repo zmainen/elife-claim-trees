@@ -185,6 +185,20 @@ def load_paper(paper_slug):
     return claims
 
 
+def load_index_questions(paper_slug):
+    """The research questions the paper states, from `index.md`'s frontmatter.
+
+    A question is not a claim, so it lives on the paper. A paper whose tree predates the field
+    has none here, and the export falls back to deriving one per hypothesis.
+    """
+    idx = os.path.join(CLAIMS_DIR, paper_slug, "index.md")
+    if not os.path.isfile(idx):
+        return []
+    fm = load_frontmatter(idx) or {}
+    return [q for q in (fm.get("questions") or [])
+            if isinstance(q, dict) and q.get("id") and q.get("text")]
+
+
 # ── Conversion ────────────────────────────────────────────────────────────────
 
 def text_item(content, fmt="text/plain"):
@@ -349,42 +363,80 @@ def build_node(claim, by_slug, extended):
     return node, dropped, extra_nodes
 
 
-def synthesize_questions(claims, by_slug, extended):
-    """MIRA requires each Claim to address a Question. Claim trees have none.
+def synthesize_questions(claims, by_slug, extended, paper_slug=None, stated=None):
+    """MIRA requires each Claim to address a Question.
 
-    A question is derived mechanically from each hypothesis so the export is
-    schema-valid, and flagged so nobody mistakes it for something the authors
-    wrote. Override by adding `question:` to the hypothesis's frontmatter.
+    Where the paper states its questions — `questions:` in `index.md`, with each hypothesis and
+    each rejected alternative carrying `addresses: q<N>` — those are real `mira:Question` nodes
+    and the link is the one the paper drew, carried without the `haak:autoDerived` flag. Only a
+    hypothesis that names no question falls back to the old mechanical derivation, flagged so
+    nobody mistakes it for something the authors wrote. A paper that states no questions and
+    carries no `addresses` takes the derivation path unchanged, so its export is byte-stable.
     """
+    stated = stated or []
+    if stated:
+        questions, links = [], {}
+        addressed = set()
+        for c in claims:
+            ref = c.get("addresses")
+            if ref:
+                links[c["slug"]] = f"haak:question/{paper_slug}/{ref}"
+                addressed.add(ref)
+        for q in stated:
+            questions.append({
+                "@id": f"haak:question/{paper_slug}/{q['id']}",
+                "@type": "mira:Question",
+                "description": text_item(q["text"]),
+                "_derived": False,
+            })
+        # A hypothesis the paper left unaddressed still needs a Question node for the export to
+        # be schema-valid; derive one for it, as before.
+        for c in claims:
+            if (c.get("role") or c.get("claim-type")) != "hypothesis" or c.get("addresses"):
+                continue
+            q = _derived_question(c, extended)
+            if q:
+                questions.append(q)
+                links[c["slug"]] = q["@id"]
+        return questions, links
+
     questions, links = [], {}
     for c in claims:
         if (c.get("role") or c.get("claim-type")) != "hypothesis":
             continue
-        qid = f"urn:uuid:{c['uuid']}#question"
-        text = c.get("question")
-        derived = text is None
-        if derived:
-            first = (c.get("claim") or "").strip().split(". ")[0].rstrip(".")
-            text = f"Is it the case that {first[0].lower() + first[1:]}?" if first else None
-        if not text:
+        q = _derived_question(c, extended)
+        if not q:
             continue
-        q = {
-            "@id": qid,
-            "@type": "mira:Question",
-            "description": text_item(text),
-        }
-        # Flag the derivation only in the extended file — in the strict file the
-        # `haak:` prefix is undeclared, so these keys would be undefined terms.
-        # The gap report lists every derived question for review either way.
-        if derived and extended:
-            q["haak:autoDerived"] = True
-            q["haak:reviewNote"] = ("Derived mechanically from the hypothesis text; "
-                                    "MIRA requires a Question node and the claim tree "
-                                    "has none. Needs human review before publication.")
-        q["_derived"] = derived
         questions.append(q)
-        links[c["slug"]] = qid
+        links[c["slug"]] = q["@id"]
     return questions, links
+
+
+def _derived_question(c, extended):
+    """A Question mechanically derived from a hypothesis, flagged as such. See above."""
+    qid = f"urn:uuid:{c['uuid']}#question"
+    text = c.get("question")
+    derived = text is None
+    if derived:
+        first = (c.get("claim") or "").strip().split(". ")[0].rstrip(".")
+        text = f"Is it the case that {first[0].lower() + first[1:]}?" if first else None
+    if not text:
+        return None
+    q = {
+        "@id": qid,
+        "@type": "mira:Question",
+        "description": text_item(text),
+    }
+    # Flag the derivation only in the extended file — in the strict file the
+    # `haak:` prefix is undeclared, so these keys would be undefined terms.
+    # The gap report lists every derived question for review either way.
+    if derived and extended:
+        q["haak:autoDerived"] = True
+        q["haak:reviewNote"] = ("Derived mechanically from the hypothesis text; "
+                                "MIRA requires a Question node and the claim tree "
+                                "has none. Needs human review before publication.")
+    q["_derived"] = derived
+    return q
 
 
 def _rel_ids(key):
@@ -480,7 +532,9 @@ def export(paper_slug, extended):
         for key, target in dropped:
             all_dropped.append((c["slug"], key, target))
 
-    questions, qlinks = synthesize_questions(claims, by_slug, extended)
+    questions, qlinks = synthesize_questions(
+        claims, by_slug, extended, paper_slug=paper_slug,
+        stated=load_index_questions(paper_slug))
     for node in nodes:
         for slug, qid in qlinks.items():
             if node.get("title") == slug:
@@ -631,6 +685,19 @@ def gap_report(paper_slug, claims, dropped, questions, minted=(), wildcards=()):
              f"strict export.** MIRA has no node type for the fact that a claim was "
              f"independently checked, by what code, against what data, with what result. "
              f"They are carried in the extended file as `haak:VerificationRecord`.\n")
+
+    # Stated questions, when the `questions` layer has run, are prepended. A paper with none
+    # renders exactly the derived-questions block it always did, so its gap report is
+    # byte-stable.
+    real = [q for q in questions if not q.get("_derived")]
+    if real:
+        L.append("## Questions stated by the paper\n")
+        L.append(f"**{len(real)} question(s) are stated on the paper** (in `index.md`) and "
+                 f"answered by the hypotheses and rejected alternatives that `addresses` them. "
+                 f"These are emitted as real `mira:Question` nodes, not derived.\n")
+        for q in real:
+            L.append(f"- {q['description']['content']}")
+        L.append("")
 
     L.append("## Questions synthesized\n")
     auto = [q for q in questions if q.get("_derived")]

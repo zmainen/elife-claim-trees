@@ -300,6 +300,7 @@ extract/
 │   ├── external-reviewer.md
 │   ├── edge-inference.md
 │   ├── coverage-adjudicator.md
+│   ├── questions.md             # the research questions a paper's hypotheses answer
 │   └── contract/                # GENERATED — `elife-extract contract --write`
 │       ├── vocabulary.md        # roles, claim types, relations, confidence, corpus examples
 │       ├── schema-candidate.md  # what a reader returns, from schema.py

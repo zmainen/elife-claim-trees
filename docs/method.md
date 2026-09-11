@@ -211,6 +211,8 @@ One markdown file per claim, stored at `claims/<paper-slug>/<claim-slug>.md`. Th
 
 `claim-type` and `role` are orthogonal axes: `claim-type` is the epistemic character of the proposition (is it observed, inferred, asserted to exist, synthesised, or methodological?); `role` is the rhetorical function the claim serves in this paper's argument. A `claim-type: empirical` claim can carry `role: empirical`, `role: control`, or `role: scope` depending on whether it is the primary observation, a check that rules out an alternative, or a boundary condition.
 
+A `role: hypothesis` claim, and a rejected alternative (an `alt-` claim asserted with `stance: rejects`), also carry a top-level **`addresses`** field naming the research question they answer, as a `q<N>` id. A question is not a claim — it is a declarative-sentence axis a question does not lie on — so questions themselves are not claim nodes; they are listed in the asserting paper's `index.md` frontmatter under `questions:` (`[{id: q1, text: "…"}]`), and `addresses` links a hypothesis or an alternative to the one it answers. The hypothesis is the paper's committed answer; the alternatives it rules out are the other answers to the same question. Every other role omits `addresses`.
+
 ### 4.2 Roles — the role inventory
 
 Role is the rhetorical function the claim plays in the paper's argument. The synthesis pipeline reads this field directly to organise reconstruction.

@@ -99,6 +99,12 @@ def render_vocabulary(root: Path | None = None) -> str:
         w(f"| `{name}` | {meaning} |")
     w("")
 
+    # Questions
+    w("## Questions")
+    w("")
+    w(vocabulary.QUESTIONS)
+    w("")
+
     # Roles
     w("## Roles")
     w("")

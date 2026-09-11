@@ -238,3 +238,175 @@ def read_edges(paper: str, cfg: Config) -> list[dict]:
         return []
     data = json.loads(p.read_text(encoding="utf-8"))
     return data if isinstance(data, list) else data.get("edges", [])
+
+
+# ── questions ────────────────────────────────────────────────────────────
+# A retrofit for papers that already have trees: read the paper's questions off the abstract
+# (and the Introduction, once prepare carries it) and the hypotheses and rejected alternatives
+# it already holds, and record them on the paper. `write.py` does the same at extraction time
+# for a fresh tree; this layer is how the nine papers extracted before questions existed catch
+# up without a re-run — a `feature`, like `stance`, that revises an artifact rather than
+# producing a new kind of thing.
+
+
+def _read_frontmatter(path: Path) -> dict:
+    """One claim file's YAML frontmatter, tolerating the empty-list-at-column-0 quirk."""
+    import yaml
+    m = re.match(r"^---\n(.*?)\n---", path.read_text(encoding="utf-8"), re.S)
+    if not m:
+        return {}
+    body = re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2", m.group(1), flags=re.M)
+    try:
+        return yaml.safe_load(body) or {}
+    except yaml.YAMLError:
+        return {}
+
+
+def _hypotheses_and_alternatives(paper: str, cfg: Config) -> list[tuple[str, str]]:
+    """(slug, sentence) for the claims a question answers: hypotheses and rejected alternatives.
+
+    A question's answers are the paper's committed bet (`role: hypothesis`) and the rivals it
+    turned down (the `alt-` files, `stance: rejects`). Those are the claims the layer shows the
+    model and the only ones it may attach `addresses` to.
+    """
+    d = cfg.corpus_dir / paper
+    out = []
+    for f in sorted(d.glob("*.md")):
+        if f.name == "index.md":
+            continue
+        fm = _read_frontmatter(f)
+        slug = fm.get("slug") or f.stem
+        if fm.get("role") == "hypothesis" or f.name.startswith("alt-"):
+            out.append((slug, " ".join(str(fm.get("claim") or "").split())))
+    return out
+
+
+def questions_request(paper: str, cfg: Config) -> tuple[str, str]:
+    """The exact (system, user) the questions layer would send.
+
+    Separated from the call, as every model-answered layer is, so an analyst or another model
+    can answer the same question through `--dump-prompt` / `--answer`.
+    """
+    from .prompts import prompt
+
+    prepared = read_prepared(paper, cfg)
+    lines = [f"# Abstract\n\n{prepared.abstract}\n"]
+    # prepared.json carries no Introduction today; the prompt says it is used when available.
+    intro = getattr(prepared, "introduction_text", None)
+    if intro:
+        lines.append(f"# Introduction\n\n{intro}\n")
+    lines.append("# Hypotheses and rejected alternatives\n")
+    for slug, sentence in _hypotheses_and_alternatives(paper, cfg):
+        lines.append(f"- `{slug}`: {sentence}")
+    return prompt("questions", cfg), "\n".join(lines) + "\n"
+
+
+def _validate_questions(raw: dict, paper: str, cfg: Config) -> dict:
+    """Coerce a model answer into `{questions, addresses}`, dropping what does not resolve.
+
+    A question needs an id and text; an `addresses` entry needs a slug this paper actually
+    holds and a target that is one of the returned question ids. An invented slug or a dangling
+    target is dropped rather than written — the same rule the other layers apply to their
+    answers.
+    """
+    if not isinstance(raw, dict):
+        raise ValueError("questions answer must be a JSON object with `questions` and `addresses`")
+    questions = [{"id": q["id"], "text": " ".join(str(q["text"]).split())}
+                 for q in (raw.get("questions") or [])
+                 if isinstance(q, dict) and q.get("id") and q.get("text")]
+    ids = {q["id"] for q in questions}
+    have = {slug for slug, _ in _hypotheses_and_alternatives(paper, cfg)}
+    addresses = {slug: qid for slug, qid in (raw.get("addresses") or {}).items()
+                 if slug in have and qid in ids}
+    return {"questions": questions, "addresses": addresses}
+
+
+def questions_layer(paper: str, cfg: Config, *,
+                    answer: str | None = None) -> tuple[Path, dict]:
+    """Record the paper's questions, and write them onto the paper and its claims.
+
+    The model (or a supplied answer) returns the questions and which claim answers which; the
+    runner writes the output JSON, then edits `index.md` and the named claim files in place —
+    inserting `questions:` and `addresses:` without disturbing the keys already there.
+    """
+    from .agents import parse_json_response, stream_text
+
+    system, user = questions_request(paper, cfg)
+    if answer is not None:
+        raw, model = Path(answer).read_text(encoding="utf-8"), f"supplied:{answer}"
+    else:
+        model = cfg.model_reconcile
+        raw = stream_text(cfg, model=model, system=system, user=user, label="questions")
+
+    data = _validate_questions(parse_json_response(raw), paper, cfg)
+    payload = {"paper_slug": paper, "model": model, **data}
+    path = _write_json(run_file(paper, "questions.output.json", cfg), payload)
+    _apply_questions(paper, data, cfg)
+    return path, payload
+
+
+# ── writing questions and addresses back into the tree, in place ─────────
+# The claim files are hand-edited and machine-written both, so a re-dump of the frontmatter
+# would reorder and reflow keys nobody touched. These edit the frontmatter as text: they drop
+# the key if it is already there and write the new value, and leave every other line untouched.
+# The pattern is verify_refs.py's DOI write-back, minus the full re-serialisation.
+
+
+def _split_frontmatter(text: str) -> tuple[str, list[str], str] | None:
+    """(opening `---\\n`, frontmatter lines, rest) or None if there is no frontmatter."""
+    m = re.match(r"(?s)^(---\n)(.*?)(\n---\n.*)$", text)
+    if not m:
+        return None
+    return m.group(1), m.group(2).split("\n"), m.group(3)
+
+
+def _drop_key(lines: list[str], key: str) -> list[str]:
+    """Remove a top-level `key:` and any block that hangs under it (indented or list lines)."""
+    out, i = [], 0
+    while i < len(lines):
+        if re.match(rf"^{re.escape(key)}\s*:", lines[i]):
+            i += 1
+            while i < len(lines) and lines[i][:1] in (" ", "\t", "-"):
+                i += 1
+            continue
+        out.append(lines[i])
+        i += 1
+    return out
+
+
+def _write_key(path: Path, key: str, block: str, *, after: str | None = None) -> None:
+    """Set a top-level frontmatter key to `block`, in place, without reordering other keys.
+
+    `block` is the whole rendered value including the `key:` line. Inserted after the `after:`
+    key when given and present, else appended to the end of the frontmatter.
+    """
+    parts = _split_frontmatter(path.read_text(encoding="utf-8"))
+    if parts is None:
+        return
+    opening, lines, rest = parts
+    lines = _drop_key(lines, key)
+    new = block.split("\n")
+    at = len(lines)
+    if after:
+        for i, l in enumerate(lines):
+            if re.match(rf"^{re.escape(after)}\s*:", l):
+                at = i + 1
+                break
+    lines[at:at] = new
+    path.write_text(opening + "\n".join(lines) + rest, encoding="utf-8")
+
+
+def _apply_questions(paper: str, data: dict, cfg: Config) -> None:
+    """Write `questions:` into index.md and `addresses:` into each named claim file."""
+    import yaml
+
+    d = cfg.corpus_dir / paper
+    if data["questions"]:
+        block = yaml.safe_dump({"questions": data["questions"]}, sort_keys=False,
+                               allow_unicode=True, default_flow_style=False,
+                               width=100).rstrip("\n")
+        _write_key(d / "index.md", "questions", block)
+    for slug, qid in data["addresses"].items():
+        f = d / f"{slug}.md"
+        if f.is_file():
+            _write_key(f, "addresses", f"addresses: {qid}", after="role")
