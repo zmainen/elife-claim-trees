@@ -14,14 +14,15 @@ written prose that a reader will take for the paper's own. It therefore needs wh
 model output here has: a version, a recorded run, an input hash that goes stale when the claim
 it restates changes, and a place for a person to approve it.
 
-    python3 scripts/plain_claims.py gadeke-2026-guilt-insula                  # call the model
-    python3 scripts/plain_claims.py gadeke-2026-guilt-insula --dump-prompt    # print, run nothing
-    python3 scripts/plain_claims.py gadeke-2026-guilt-insula --from-json a.json --by NAME
+    python3 scripts/plain_claims.py gadeke-2026-guilt-insula                       # call the model
+    python3 scripts/plain_claims.py gadeke-2026-guilt-insula --dump-prompt /tmp/q.txt
+    python3 scripts/plain_claims.py gadeke-2026-guilt-insula --answer /tmp/a.json
 
-`--dump-prompt` and `--from-json` are the same pair `edge-inference` carries, for the same
-reason: the question this layer asks is worth asking of a model that is not the one wired in,
-and an answer that arrives by another route should still go through this validator rather than
-be pasted into the artifact.
+`--dump-prompt` / `--answer` is the pair every layer a model answers carries, and it works
+here the way it works there: the exact request is written out, whatever answers it answers the
+question this layer would have asked rather than a paraphrase written from memory, and the
+answer comes back through the same validation a backend reply would get. A supplied answer
+records `model: supplied:<path>` rather than naming a model that never ran.
 """
 
 from __future__ import annotations
@@ -174,24 +175,36 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paper")
-    ap.add_argument("--dump-prompt", action="store_true",
-                    help="print the exact request and exit, running nothing")
-    ap.add_argument("--from-json", metavar="FILE",
-                    help="an answer produced elsewhere; validated the same way")
-    ap.add_argument("--by", default="", help="who or what answered, for the record")
+    ap.add_argument("--dump-prompt", metavar="PATH",
+                    help="write the exact prompt this layer would send to PATH and exit, so "
+                         "whatever answers it answers this question rather than a paraphrase")
+    ap.add_argument("--answer", metavar="PATH",
+                    help="an answer produced elsewhere; validated exactly as a backend reply is")
     args = ap.parse_args()
 
     claims = load_claims(args.paper)
     system, user = build_prompt(args.paper, claims)
 
     if args.dump_prompt:
-        print(f"=== system: {PROMPT.relative_to(ROOT)} ===\n{system}\n=== user ===\n{user}")
+        out = Path(args.dump_prompt).expanduser()
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
+        print(f"  plain-claim: prompt written to {out}  "
+              f"({len(system)}c system + {len(user)}c user)")
+        print("  answer it, then: --answer <file>")
         return 0
 
-    if args.from_json:
-        raw = Path(args.from_json).read_text(encoding="utf-8")
-        answer = parse(raw)
-        model = args.by or "answered out of band"
+    if args.answer:
+        src = Path(args.answer).expanduser().resolve()
+        answer = parse(src.read_text(encoding="utf-8"))
+        # Repo-relative where the answer was kept in the repo, which is where an answer worth
+        # auditing belongs. An absolute path outside it is recorded as given and says,
+        # correctly, that the artifact cannot be traced past this machine.
+        try:
+            where = src.relative_to(ROOT)
+        except ValueError:
+            where = src
+        model = f"supplied:{where}"
     else:
         raw, model = ask_model(system, user)
         answer = parse(raw)

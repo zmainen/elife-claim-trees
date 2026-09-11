@@ -549,8 +549,10 @@ layers:
       and none of the eight shapes a statistic takes. Nothing is written until it passes, so the
       artifact cannot hold a wording that quietly failed the rule the prompt states.
 
-      `--dump-prompt` and `--from-json` are the pair `edge-inference` carries, for the same
-      reason. The corpus's own wordings were produced through them.
+      `--dump-prompt` and `--answer` are the pair every layer a model answers carries, and the
+      corpus's own wordings came through them: written by a model that is not the one wired in,
+      fed back through the same validator, and recorded as `supplied:` rather than as a call
+      that never happened.
     added: "2026-09-11"
     needs: [claim-tree]
     reads: [scripts/plain_claims.py, extract/prompts/plain-claim.md]
