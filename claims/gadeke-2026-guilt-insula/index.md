@@ -17,6 +17,19 @@ openneuro: https://openneuro.org/datasets/ds005588
 added: 2026-03-30
 badge: gold
 claim-count: 26
+questions:
+- id: q1
+  text: Does the anterior insula encode interpersonal guilt — the responsibility-contingent affect that
+    arises specifically when a participant's own choice causes a negative outcome for their partner, as
+    distinct from empathy for partner loss or regret over one's own loss?
+- id: q2
+  text: Is momentary happiness during social decisions under risk governed by a responsibility-weighted
+    rule in which partner reward prediction errors caused by the participant's own choice carry an independent,
+    non-zero weight — so that the larger happiness drop after low partner outcomes when the participant
+    chose reflects interpersonal guilt rather than another cause?
+- id: q3
+  text: Does the superior temporal sulcus represent the partner's affective state — tracking partner reward
+    prediction errors — specifically when the participant is responsible for the partner's outcome?
 ---
 
 ## Abstract

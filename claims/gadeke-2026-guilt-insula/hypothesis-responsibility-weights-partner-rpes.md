@@ -17,6 +17,7 @@ displayClaim: >
 shortClaim: "Happiness weights partner reward prediction errors by the subject's responsibility."
 claim-type: hypothesis
 role: hypothesis
+addresses: q2
 concepts:
   - computational happiness model
   - reward prediction error

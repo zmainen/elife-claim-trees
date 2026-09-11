@@ -173,7 +173,7 @@
     "our_violations": 0,
     "pinned_schema_commit": "483f0b21480c0f4ced9c1519fc0f6df2b8617cfe",
     "relations": 920,
-    "synthesised_questions": 33,
+    "synthesised_questions": 24,
     "upstream_violations": 165,
     "verification_records": 197
   },
@@ -693,6 +693,31 @@
         "views": [
           "graph",
           "list"
+        ]
+      },
+      {
+        "added": "2026-09-11",
+        "by_from": "model",
+        "command": "cd extract && python3 -m elife_extract.cli questions --paper {paper}",
+        "how": "Given the abstract (and the Introduction where the prepared paper carries it) and the paper's existing hypothesis and `alt-` claims \u2014 slug and sentence \u2014 it returns the questions the paper states and which claim answers which. A hypothesis is the answer the paper commits to; the alternatives it rules out are the other answers to the same question. It then writes `questions:` onto the paper's `index.md` and `addresses:` onto the named claim files, editing their frontmatter in place.\n`--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through the same validation \u2014 an invented slug or a question no claim addresses is dropped rather than written \u2014 so a model that has no backend here can still answer it.\n",
+        "id": "questions",
+        "kind": "feature",
+        "needs": [
+          "claim-tree",
+          "prepare"
+        ],
+        "produces": [
+          "runs/{paper}/questions.output.json"
+        ],
+        "question": "What did this paper set out to answer, and which claim answers each question?",
+        "reads": [
+          "extract/prompts/questions.md",
+          "extract/prompts/contract/vocabulary.md"
+        ],
+        "scope": "paper",
+        "title": "Research questions",
+        "views": [
+          "table"
         ]
       },
       {
@@ -12008,12 +12033,15 @@
           ]
         },
         "formats-report": {
+          "blocked_by": [
+            "mira-export"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:09Z",
-          "state": "current",
+          "state": "blocked",
           "v": 3
         },
         "marks": {
@@ -12028,10 +12056,12 @@
         "mira-export": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:09Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -12069,6 +12099,9 @@
           "ran": "2026-09-11T16:29:26Z",
           "state": "current",
           "v": 1
+        },
+        "questions": {
+          "state": "absent"
         },
         "reconcile": {
           "state": "absent",
@@ -12188,12 +12221,15 @@
           ]
         },
         "formats-report": {
+          "blocked_by": [
+            "mira-export"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:10Z",
-          "state": "current",
+          "state": "blocked",
           "v": 3
         },
         "marks": {
@@ -12208,10 +12244,12 @@
         "mira-export": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:09Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -12249,6 +12287,9 @@
           "ran": "2026-09-11T16:29:26Z",
           "state": "current",
           "v": 1
+        },
+        "questions": {
+          "state": "absent"
         },
         "reconcile": {
           "state": "absent",
@@ -12373,12 +12414,15 @@
           ]
         },
         "formats-report": {
+          "blocked_by": [
+            "mira-export"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:10Z",
-          "state": "current",
+          "state": "blocked",
           "v": 3
         },
         "marks": {
@@ -12393,10 +12437,12 @@
         "mira-export": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:10Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -12434,6 +12480,9 @@
           "ran": "2026-09-11T16:29:26Z",
           "state": "current",
           "v": 1
+        },
+        "questions": {
+          "state": "absent"
         },
         "reconcile": {
           "state": "absent",
@@ -12535,10 +12584,21 @@
         "coverage": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-insula-tracks-interpersonal-guilt.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-responsibility-weights-partner-rpes.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-sts-mentalizes-partner-state-under-responsibility.md",
+            "claims/gadeke-2026-guilt-insula/index.md"
+          ],
           "note": "First persisted coverage run; spans now an artifact rather than stdout.",
           "ran": "2026-09-11T09:01:59Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "dg-export": {
@@ -12567,28 +12627,61 @@
         "formats-report": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/gadeke-2026-guilt-insula.mira.jsonld",
+            "exports/gadeke-2026-guilt-insula.mira-extended.jsonld",
+            "exports/gadeke-2026-guilt-insula.gap-report.md"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:10Z",
-          "state": "current",
+          "state": "stale",
           "v": 3
         },
         "marks": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-insula-tracks-interpersonal-guilt.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-responsibility-weights-partner-rpes.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-sts-mentalizes-partner-state-under-responsibility.md",
+            "claims/gadeke-2026-guilt-insula/index.md"
+          ],
           "note": "re-run under the ledger",
           "ran": "2026-09-11T16:34:58Z",
-          "state": "current",
+          "state": "stale",
           "v": 2
         },
         "mira-export": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-insula-tracks-interpersonal-guilt.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-responsibility-weights-partner-rpes.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-sts-mentalizes-partner-state-under-responsibility.md",
+            "claims/gadeke-2026-guilt-insula/index.md",
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+            "scripts/export_mira.py"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:10Z",
-          "state": "current",
+          "state": "stale",
           "v": 3
         },
         "oxa-export": {
@@ -12602,10 +12695,21 @@
         "plain-claim": {
           "by": "supplied:runs/gadeke-2026-guilt-insula/plain-claim.answer.json",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-insula-tracks-interpersonal-guilt.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-responsibility-weights-partner-rpes.md",
+            "claims/gadeke-2026-guilt-insula/hypothesis-sts-mentalizes-partner-state-under-responsibility.md",
+            "claims/gadeke-2026-guilt-insula/index.md"
+          ],
           "note": "first run: one plain sentence per claim, answered by Claude Opus 5 through --dump-prompt and fed back through --answer",
           "ran": "2026-09-11T16:20:42Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "prediction-outcome": {
@@ -12620,6 +12724,9 @@
           "ran": "2026-09-11T11:00:39Z",
           "state": "current",
           "v": 1
+        },
+        "questions": {
+          "state": "unrecorded"
         },
         "reconcile": {
           "backfilled": true,
@@ -12759,12 +12866,15 @@
           ]
         },
         "formats-report": {
+          "blocked_by": [
+            "mira-export"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:10Z",
-          "state": "current",
+          "state": "blocked",
           "v": 3
         },
         "marks": {
@@ -12779,10 +12889,12 @@
         "mira-export": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:10Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -12820,6 +12932,9 @@
           "ran": "2026-09-11T16:29:27Z",
           "state": "current",
           "v": 1
+        },
+        "questions": {
+          "state": "absent"
         },
         "reconcile": {
           "state": "absent",
@@ -12944,12 +13059,15 @@
           ]
         },
         "formats-report": {
+          "blocked_by": [
+            "mira-export"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:11Z",
-          "state": "current",
+          "state": "blocked",
           "v": 3
         },
         "marks": {
@@ -12964,10 +13082,12 @@
         "mira-export": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:11Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -13005,6 +13125,9 @@
           "ran": "2026-09-11T16:29:27Z",
           "state": "current",
           "v": 1
+        },
+        "questions": {
+          "state": "absent"
         },
         "reconcile": {
           "state": "absent",
@@ -13124,12 +13247,15 @@
           ]
         },
         "formats-report": {
+          "blocked_by": [
+            "mira-export"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:11Z",
-          "state": "current",
+          "state": "blocked",
           "v": 3
         },
         "marks": {
@@ -13144,10 +13270,12 @@
         "mira-export": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:11Z",
-          "state": "current",
+          "state": "stale",
           "v": 3
         },
         "oxa-export": {
@@ -13179,6 +13307,9 @@
           "ran": "2026-09-11T16:29:18Z",
           "state": "current",
           "v": 1
+        },
+        "questions": {
+          "state": "absent"
         },
         "reconcile": {
           "state": "absent",
@@ -13308,12 +13439,15 @@
           ]
         },
         "formats-report": {
+          "blocked_by": [
+            "mira-export"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:11Z",
-          "state": "current",
+          "state": "blocked",
           "v": 3
         },
         "marks": {
@@ -13328,10 +13462,12 @@
         "mira-export": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:11Z",
-          "state": "current",
+          "state": "stale",
           "v": 3
         },
         "oxa-export": {
@@ -13363,6 +13499,9 @@
           "ran": "2026-09-11T16:29:27Z",
           "state": "current",
           "v": 1
+        },
+        "questions": {
+          "state": "absent"
         },
         "reconcile": {
           "state": "absent",
@@ -13487,12 +13626,15 @@
           ]
         },
         "formats-report": {
+          "blocked_by": [
+            "mira-export"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:11Z",
-          "state": "current",
+          "state": "blocked",
           "v": 3
         },
         "marks": {
@@ -13507,10 +13649,12 @@
         "mira-export": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:11Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -13548,6 +13692,9 @@
           "ran": "2026-09-11T16:29:28Z",
           "state": "current",
           "v": 1
+        },
+        "questions": {
+          "state": "absent"
         },
         "reconcile": {
           "state": "absent",
@@ -13672,12 +13819,15 @@
           ]
         },
         "formats-report": {
+          "blocked_by": [
+            "mira-export"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:11Z",
-          "state": "current",
+          "state": "blocked",
           "v": 3
         },
         "marks": {
@@ -13692,10 +13842,12 @@
         "mira-export": {
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:11Z",
-          "state": "current",
+          "state": "stale",
           "v": 3
         },
         "oxa-export": {
@@ -13727,6 +13879,9 @@
           "ran": "2026-09-11T16:29:28Z",
           "state": "current",
           "v": 1
+        },
+        "questions": {
+          "state": "absent"
         },
         "reconcile": {
           "state": "absent",

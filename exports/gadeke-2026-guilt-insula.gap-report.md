@@ -38,19 +38,18 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 **34 verification records across 19 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `haak:VerificationRecord`.
 
+## Questions stated by the paper
+
+**3 question(s) are stated on the paper** (in `index.md`) and answered by the hypotheses and rejected alternatives that `addresses` them. These are emitted as real `mira:Question` nodes, not derived.
+
+- Does the anterior insula encode interpersonal guilt — the responsibility-contingent affect that arises specifically when a participant's own choice causes a negative outcome for their partner, as distinct from empathy for partner loss or regret over one's own loss?
+- Is momentary happiness during social decisions under risk governed by a responsibility-weighted rule in which partner reward prediction errors caused by the participant's own choice carry an independent, non-zero weight — so that the larger happiness drop after low partner outcomes when the participant chose reflects interpersonal guilt rather than another cause?
+- Does the superior temporal sulcus represent the partner's affective state — tracking partner reward prediction errors — specifically when the participant is responsible for the partner's outcome?
+
 ## Questions synthesized
 
-MIRA requires every Claim to address a `mira:Question`; a claim tree has no such node. **9 questions were derived mechanically from hypothesis text and need human review.**
+MIRA requires every Claim to address a `mira:Question`; a claim tree has no such node. **0 questions were derived mechanically from hypothesis text and need human review.**
 
-- Is it the case that the happiness cost observed in the Social condition is general agency aversion — the unpleasantness of being the decision-maker as such — and is not contingent on responsibility for a negative outcome befalling the partner?
-- Is it the case that the happiness decrease following negative partner outcomes under participant choice is driven by the participant's own lottery outcome rather than by the partner's, and so reflects self-directed disappointment rather than interpersonal guilt?
-- Is it the case that the imaging pipeline and condition contrasts do not recover established effects, so differences reported between Social and Partner conditions cannot be attributed to the experimental manipulation?
-- Is it the case that the model-based fMRI approach does not recover known neural signals, so parametric modulators derived from the computational model — including the partner reward prediction error regressors — cannot be trusted?
-- Is it the case that participants did not engage with the lottery task in a value-sensitive way — choices were inattentive or random — so the behavioural measures carry no information about preference or affect?
-- Is it the case that the happiness and choice differences between Social and Partner conditions reflect a social-context-driven shift in risk attitude — participants become more or less risk averse when choosing on another person's behalf — rather than responsibility-contingent interpersonal guilt?
-- Is it the case that anterior insula is the neural substrate of interpersonal guilt: when a participant bears responsibility for a choice that yields a negative outcome for another person, anterior insula activity tracks the resulting responsibility-contingent affect?
-- Is it the case that momentary happiness in social decision contexts is governed by a computational rule in which partner reward prediction errors that arise from the participant's own choices (social_pRPEs) carry an independent, non-zero weight, distinct from the weight on partner RPEs that arise without participant agency?
-- Is it the case that superior temporal sulcus (STS) — a core mentalizing-network region — represents the partner's affective experience specifically when the participant is responsible for the partner's outcome?
 
 Override any of these by adding a `question:` field to the hypothesis's frontmatter and re-running the export.
 

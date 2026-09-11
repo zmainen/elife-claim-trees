@@ -8,6 +8,7 @@ claim: >
   reflects self-directed disappointment rather than interpersonal guilt.
 claim-type: interpretive
 role: hypothesis
+addresses: q2
 concepts:
   - own outcome
   - disappointment
