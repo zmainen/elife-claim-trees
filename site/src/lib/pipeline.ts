@@ -219,6 +219,21 @@ export function depth(layerId: string, seen = new Set<string>()): number {
   return needs.length ? 1 + Math.max(...needs.map(n => depth(n, new Set(seen)))) : 0;
 }
 
+/** Everything that would have to run again if this layer's answer changed: the dependents of
+ *  its dependents, to the end of the graph. Breadth-first over the reversed edges, which is
+ *  the question the drawn arrows could only answer by tracing — `claim-format` reaches twenty
+ *  of the twenty-eight layers, and nothing in the declaration says so out loud. */
+export function downstream(layerId: string): string[] {
+  const out = new Set<string>();
+  const queue = [layerId];
+  while (queue.length) {
+    for (const d of dependents(queue.shift()!)) {
+      if (!out.has(d.id)) { out.add(d.id); queue.push(d.id); }
+    }
+  }
+  return [...out];
+}
+
 /** The graph as columns, for drawing. */
 export function columns(scope?: 'paper' | 'corpus'): LayerDecl[][] {
   const ls = scope ? layers.filter(l => l.scope === scope) : layers;

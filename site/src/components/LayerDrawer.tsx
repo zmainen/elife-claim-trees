@@ -191,6 +191,15 @@ export default function LayerDrawer({ data, layer, onSelect, base }: Props) {
             {l.feeds.length === 0
               ? <p className="text-[12.5px] text-gray-500 dark:text-gray-400 m-0">Nothing — this is a leaf.</p>
               : <div className="flex flex-wrap gap-1.5">{l.feeds.map(chip)}</div>}
+            {/* The direct dependents are what the declaration says; the number below is what
+                it costs. They differ by a lot — `claim-format` names two and reaches twenty —
+                and the reach is the figure a reader wants before editing anything. */}
+            {l.downstream.length > l.feeds.length && (
+              <p className="text-[12.5px] text-gray-500 dark:text-gray-400 m-0 mt-2">
+                {l.downstream.length} layers in all fall out of date if this changes, counting
+                what rests on those.
+              </p>
+            )}
           </section>
 
           {isCorpus ? (

@@ -12,7 +12,7 @@
 // pre-joined for one page.
 
 import {
-  layers, byId, groups, papers, cells, cell, dependents, depth, resolve, shortOf, titleOf,
+  layers, byId, groups, papers, cells, cell, dependents, downstream, depth, resolve, shortOf, titleOf,
   paperLayers, STATE_LABEL, type CellState, type LayerDecl,
 } from './pipeline';
 import { artifacts, isDirectory, type Artifact } from './artifacts';
@@ -64,6 +64,8 @@ export interface LayerView {
   found: string | null;
   needs: string[];
   feeds: string[];
+  /** Transitive dependents: what falls out of date when this layer's answer changes. */
+  downstream: string[];
   /** Longest path from a root. The column view is this; the graph view uses it as rank. */
   depth: number;
   href: string;
@@ -127,6 +129,7 @@ const layerView = (l: LayerDecl, base: string, only: string | null): LayerView =
     found: l.found ? resolve(l.found) : null,
     needs: l.needs ?? [],
     feeds: dependents(l.id).map(d => d.id),
+    downstream: downstream(l.id),
     depth: depth(l.id),
     href: `${base}/pipeline/${l.id}/`,
     fill: l.scope === 'corpus' ? null : { done, total: views.length },

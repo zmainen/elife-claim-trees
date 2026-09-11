@@ -416,6 +416,16 @@ html.dark .map-scroll {
 }
 .map-node-muted { color: var(--map-node-muted); }
 
+/* The bands. Marking is opacity and a border, not a colour: the chips already carry state
+   colour in the fill bar and the corpus-scope border, and a second colour system laid over
+   that one is how the old map came to need a legend for its legend. */
+.band-chips { grid-template-columns: repeat(auto-fill, minmax(152px, 1fr)); }
+.chip { transition: opacity 0.12s ease, border-color 0.12s ease; }
+.chip[data-dim='on'] { opacity: 0.32; }
+.chip[data-mark='self'] { border-color: var(--map-ring); }
+.chip[data-mark='needs'] { border-color: var(--map-ring); }
+.chip[data-mark='downstream'] { border-color: color-mix(in srgb, var(--map-ring) 45%, transparent); }
+
 /* ── The page frame ───────────────────────────────────────────────────────────
    There was no shared container, so every page invented one: the nav sat at 7xl and
    the bodies underneath it at 3xl, 4xl, 5xl, 6xl and 7xl depending on which page you

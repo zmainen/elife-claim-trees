@@ -61,18 +61,15 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
     </header>
 
     <!-- ── the graph ─────────────────────────────────────────────── -->
-    {/* The one section that takes the whole frame: the layer map is 1680px of columns however
-        wide its container is, and every rem it gets is one less the reader has to scroll.
-        `full` works on a direct child of the column, which is why it is on the section. */}
-    <section class="full mb-12">
+    <section class="mb-12">
       <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">The layers</h2>
       <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl">
-        Every layer rests on the ones to its left, and a change travels the other way: revise the
+        Every layer rests on the bands above it, and a change travels the other way: revise the
         claim format and every tree beneath it is out of date. Dashed borders mark the decisions
         that belong to no single paper — what a relation asserts, what counts as a claim — which
         is why altering one unsettles the whole corpus at once.
       </p>
-      <PipelineExplorer client:load data={explorer} base={base} height={470} />
+      <PipelineExplorer client:load data={explorer} base={base} />
     </section>
 
     <!-- ── the matrix, and what it can be trusted to mean ─────────────
