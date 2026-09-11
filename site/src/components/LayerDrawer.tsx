@@ -74,7 +74,18 @@ function CellBlock({ c, showPaper }: { c: CellView; showPaper: boolean }) {
           {showPaper ? c.stateLabel : ''}{c.v ? ` · v${c.v}` : ''}{c.ran ? ` · ${c.ran}` : ''}
         </span>
       </div>
+      {c.by && (
+        <p className="text-[11.5px] text-gray-500 dark:text-gray-400 m-0 leading-snug">
+          answered by <code className="text-[11px]">{c.by}</code>
+        </p>
+      )}
       {c.note && <p className="text-[11.5px] text-gray-500 dark:text-gray-400 m-0 mb-1 leading-snug">{c.note}</p>}
+      {c.backfilled && (
+        <p className="text-[11.5px] text-gray-500 dark:text-gray-400 m-0 mb-1 leading-snug">
+          The version and the date are real; the inputs were never hashed, so nothing can say
+          whether this is still current.
+        </p>
+      )}
       {has && (
         <ul className="list-none p-0 m-0 mt-1">
           {c.artifacts.map(a => <ArtifactRow key={a.path} a={a} />)}

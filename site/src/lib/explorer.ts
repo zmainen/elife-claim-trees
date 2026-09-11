@@ -34,6 +34,10 @@ export interface CellView {
   v: number | null;
   ran: string | null;
   note: string | null;
+  /** Who answered: the model, for a layer a model answers. */
+  by: string | null;
+  /** The entry is a backfill — real version, real date, inputs never hashed. */
+  backfilled: boolean;
   href: string;
   dataHref: string;
   artifacts: Artifact[];
@@ -89,6 +93,8 @@ const cellView = (paper: string, layer: LayerDecl, base: string): CellView | nul
     v: c.v ?? null,
     ran: c.ran?.slice(0, 10) ?? null,
     note: c.note ?? null,
+    by: c.by ?? null,
+    backfilled: Boolean(c.backfilled),
     href: c.href,
     dataHref: c.dataHref,
     artifacts: artifacts(produced.filter(p => !isDirectory(p)), base, { paper, layer: layer.id }),
