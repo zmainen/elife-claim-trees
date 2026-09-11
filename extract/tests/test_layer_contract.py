@@ -272,6 +272,70 @@ def test_the_retired_subcommands_are_gone():
             assert False, f"{gone} still parses"
 
 
+# ── any layer a model answers can be answered by something else ──────────
+
+
+def test_every_model_answered_layer_can_be_dumped_and_answered():
+    """The seam `edge-inference` has always had, on all six.
+
+    A layer whose only route in is the configured backend is a layer that stops when the
+    provider does — which is how one Gädeke run lost its edges while every other stage
+    succeeded. `--dump-prompt` asks for the question; `--answer` supplies the reply, through
+    the same validation a backend reply gets.
+    """
+    choices = cli.build_parser()._subparsers._group_actions[0].choices
+    for name in ("results-reader", "caption-reader", "structure-reader",
+                 "reconcile", "external-review", "edge-inference"):
+        opts = {o for a in choices[name]._actions for o in a.option_strings}
+        assert "--dump-prompt" in opts, f"{name} cannot be asked for its prompt"
+        assert "--answer" in opts, f"{name} cannot be given an answer"
+
+
+def test_a_supplied_reader_answer_is_validated_and_attributed():
+    """A supplied answer goes through the same parse, and records where it came from."""
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = _cfg(Path(tmp))
+        _seed_prepared(cfg.root, cfg)
+        ans = Path(tmp) / "a.json"
+        ans.write_text(json.dumps([{
+            "claim": "The insula responds to guilt.", "panel": "fig1a",
+            "claim_type": "empirical", "role": "empirical",
+            "evidence": "Insula activity increased.", "confidence": "high"}]))
+
+        path, ex = layers.reader_layer("results", SLUG, cfg, answer=str(ans))
+        assert len(ex.claims) == 1
+        # The ledger reads `model` out of this file; it must say an answer was supplied
+        # rather than name a model that never ran.
+        assert json.loads(path.read_text())["model"].startswith("supplied:")
+
+
+def test_a_supplied_answer_that_is_not_valid_is_refused():
+    """Validation is not skipped because the answer came from outside the backend."""
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = _cfg(Path(tmp))
+        _seed_prepared(cfg.root, cfg)
+        ans = Path(tmp) / "bad.json"
+        ans.write_text(json.dumps([{"claim": "too short"}]))   # missing required fields
+        try:
+            layers.reader_layer("results", SLUG, cfg, answer=str(ans))
+        except Exception:
+            pass
+        else:
+            assert False, "an invalid supplied answer was accepted"
+
+
+def test_the_dumped_prompt_is_the_one_the_layer_would_send():
+    """Dumping must not build a different question from the one the backend gets."""
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = _cfg(Path(tmp))
+        _seed_prepared(cfg.root, cfg)
+        from elife_extract.agents import build_reader_request, slice_for_agent, load_prompt
+        system, user = layers.reader_request("results", SLUG, cfg)
+        paper = layers.read_prepared(SLUG, cfg)
+        assert system == load_prompt("results", cfg)
+        assert user == slice_for_agent("results", paper)
+
+
 # ── Standalone runner (no pytest required) ────────────────────────────────
 
 if __name__ == "__main__":
