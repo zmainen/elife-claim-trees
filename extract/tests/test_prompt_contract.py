@@ -40,6 +40,7 @@ LAYER_OF = {
     "edge-inference": "edge-inference",
     "coverage-adjudicator": "adjudication",
     "questions": "questions",
+    "parts": "parts",
 }
 
 

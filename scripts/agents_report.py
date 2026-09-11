@@ -71,6 +71,10 @@ ROLES = [
      "reads": "the abstract and the paper's hypothesis and alt- claims",
      "returns": "the research questions the paper states, and which claim answers each",
      "agent_key": None},
+    {"id": "parts", "stage": "relate",
+     "reads": "the tree's claims, with their roles, panels and edges",
+     "returns": "the `part-of` edges — which claims are components of other claims",
+     "agent_key": None},
 ]
 
 
@@ -88,7 +92,8 @@ def prompt_text(role_id):
 LAYER_OF = {"results-reader": "results-reader", "caption-reader": "caption-reader",
             "structure-reader": "structure-reader", "reconciler": "reconcile",
             "external-reviewer": "external-review", "edge-inference": "edge-inference",
-            "coverage-adjudicator": "adjudication", "questions": "questions"}
+            "coverage-adjudicator": "adjudication", "questions": "questions",
+            "parts": "parts"}
 
 
 def declared_reads():
