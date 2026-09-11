@@ -32,7 +32,17 @@ from collections import Counter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROMPTS = os.path.join(ROOT, "extract", "prompts")
+# The extraction record is read from runs/, which is tracked, rather than extract/out/, which
+# extract/.gitignore excludes. Both hold the same thing — runs/<paper>/<role>-reader.output.json
+# is byte-for-byte the block that extract/out/agents-<paper>.json keys by role, and
+# reconciler.output.json is the draft. Reading the ignored copy made this page unreproducible:
+# the data existed on one machine, in a directory git was told to forget, and regenerating
+# anywhere else silently emptied the page it feeds. extract/out/ is still read as a fallback so
+# a fresh extraction run works before its outputs are filed into runs/.
+RUNS_DIR = os.path.join(ROOT, "runs")
 OUT_DIR = os.path.join(ROOT, "extract", "out")
+READER_FILE = {"results": "results-reader", "caption": "caption-reader",
+               "structure": "structure-reader"}
 OUT = os.path.join(ROOT, "site", "src", "data", "agents.json")
 
 # The pipeline in order. `stage` groups them: three readers work in parallel on different
@@ -73,19 +83,29 @@ def prompt_text(role_id):
         return fh.read()
 
 
+def _load(*candidates):
+    """First of these paths that exists, parsed. None if none do."""
+    for p in candidates:
+        if os.path.isfile(p):
+            with open(p, encoding="utf-8") as fh:
+                return json.load(fh)
+    return None
+
+
 def paper_trace(slug):
-    draft_p = os.path.join(OUT_DIR, f"draft-{slug}.json")
-    agents_p = os.path.join(OUT_DIR, f"agents-{slug}.json")
-    if not os.path.isfile(draft_p):
+    draft = _load(os.path.join(RUNS_DIR, slug, "reconciler.output.json"),
+                  os.path.join(OUT_DIR, f"draft-{slug}.json"))
+    if draft is None:
         return None
-    with open(draft_p, encoding="utf-8") as fh:
-        draft = json.load(fh)
 
     models = {}
-    if os.path.isfile(agents_p):
-        with open(agents_p, encoding="utf-8") as fh:
-            for key, block in json.load(fh).items():
-                models[key] = block.get("model")
+    for key, fname in READER_FILE.items():
+        block = _load(os.path.join(RUNS_DIR, slug, f"{fname}.output.json"))
+        if block:
+            models[key] = block.get("model")
+    if not models:
+        agents = _load(os.path.join(OUT_DIR, f"agents-{slug}.json")) or {}
+        models = {k: b.get("model") for k, b in agents.items() if isinstance(b, dict)}
 
     claims = []
     for c in draft.get("claims", []):
@@ -127,9 +147,13 @@ def main():
                       "prompt_lines": len(text.splitlines()) if text else 0,
                       "prompt_path": f"extract/prompts/{r['id']}.md" if text else None})
 
-    slugs = sorted({f[len("draft-"):-len(".json")]
-                    for f in os.listdir(OUT_DIR) if f.startswith("draft-")}) \
-        if os.path.isdir(OUT_DIR) else []
+    slugs = sorted(
+        {d for d in os.listdir(RUNS_DIR)
+         if os.path.isfile(os.path.join(RUNS_DIR, d, "reconciler.output.json"))}
+        if os.path.isdir(RUNS_DIR) else set()
+        | ({f[len("draft-"):-len(".json")]
+            for f in os.listdir(OUT_DIR) if f.startswith("draft-")}
+           if os.path.isdir(OUT_DIR) else set()))
     papers = {s: paper_trace(s) for s in slugs}
     papers = {k: v for k, v in papers.items() if v}
 
