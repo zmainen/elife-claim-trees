@@ -63,6 +63,8 @@ class CandidateClaim(BaseModel):
     notes: str | None = Field(None, description=(
         "Hedges, alternative readings, or what made this tentative. null when there is nothing "
         "to say."))
+    evidence_verified: bool | None = Field(None, description=(
+        "Filled by the runner. Leave null."))
 
 
 class AgentExtraction(BaseModel):
@@ -95,6 +97,8 @@ class ReconciledClaim(BaseModel):
         "claim the review pass added."))
     evidence_by_agent: dict[AgentName, str] = Field(default_factory=dict, description=(
         "For each reader in sources, the verbatim quote it gave."))
+    evidence_verified: dict[str, bool] = Field(default_factory=dict, description=(
+        "Filled by the runner. Leave null."))
     notes: str | None = Field(None, description=(
         "What the readers disagreed about, or why a single-source claim deserves a second "
         "look. A review pass prefixes its notes with [reviewer]."))

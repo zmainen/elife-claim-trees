@@ -14,6 +14,7 @@ A JSON array of candidate claims and nothing else — no prose before or after, 
 | `evidence` | `string` | A verbatim quote from the text you were given, at most two sentences, that grounds the claim. It is checked against the source. |
 | `confidence` | `high` / `tentative` | high or tentative; see the vocabulary. |
 | `notes` (optional) | `string` or `null` | Hedges, alternative readings, or what made this tentative. null when there is nothing to say. |
+| `evidence_verified` (optional) | `boolean` or `null` | Filled by the runner. Leave null. |
 
 ```json
 [

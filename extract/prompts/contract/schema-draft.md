@@ -28,6 +28,7 @@ Each element of `claims`:
 | `confidence` | `high` / `contested` / `single-source` | A fact about agreement: single-source for one reader, high for several who agree, contested for several who disagree. |
 | `sources` | list of `results` / `caption` / `structure` / `reviewer` | The readers that surfaced this claim: results, caption, structure; reviewer for a claim the review pass added. |
 | `evidence_by_agent` (optional) | object | For each reader in sources, the verbatim quote it gave. |
+| `evidence_verified` (optional) | object | Filled by the runner. Leave null. |
 | `notes` (optional) | `string` or `null` | What the readers disagreed about, or why a single-source claim deserves a second look. A review pass prefixes its notes with [reviewer]. |
 
 ```json

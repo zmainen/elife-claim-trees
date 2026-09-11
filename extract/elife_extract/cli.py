@@ -108,9 +108,15 @@ def _reader(agent: str):
         if _dump(args, lambda: reader_request(agent, args.paper, cfg), f"{agent}-reader"):
             return 0
         path, extraction = reader_layer(agent, args.paper, cfg, answer=args.answer)
+        verified = sum(1 for c in extraction.claims if c.evidence_verified)
+        total = len(extraction.claims)
+        ev_str = (f"  evidence verified {verified}/{total} quotes"
+                  if any(c.evidence_verified is not None for c in extraction.claims) else "")
         print(f"=== {agent}-reader — {args.paper} ===")
         print(f"  model    = {extraction.model}")
-        print(f"  proposed = {len(extraction.claims)} candidate claim(s)")
+        print(f"  proposed = {total} candidate claim(s)")
+        if ev_str:
+            print(ev_str)
         print(f"  written: {path}")
         return 0
     return run
@@ -127,12 +133,16 @@ def cmd_reconcile(args: argparse.Namespace) -> int:
     by_conf: dict[str, int] = {}
     for c in draft.claims:
         by_conf[c.confidence] = by_conf.get(c.confidence, 0) + 1
+    ev_total = sum(len(c.evidence_verified) for c in draft.claims)
+    ev_ok = sum(sum(v for v in c.evidence_verified.values()) for c in draft.claims)
     print(f"=== reconcile — {args.paper} ===")
     print(f"  model  = {draft.model}")
     print(f"  claims = {len(draft.claims)}  (per-agent: {dict(draft.per_agent_counts)})")
     for k in ("high", "contested", "single-source"):
         if k in by_conf:
             print(f"    {k:14s} {by_conf[k]:3d}")
+    if ev_total:
+        print(f"  evidence verified {ev_ok}/{ev_total} quotes")
     print(f"  written: {path}")
     return 0
 
@@ -180,13 +190,13 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
     supplied = args.answer or args.edges_json
     if supplied:
         from .edges import edges_from_raw
-        from .layers import _write_json
+        from .layers import _write_json, answer_file
         draft, _ = best_draft(args.paper, cfg)
-        edges = edges_from_raw(Path(supplied).read_text(encoding="utf-8"),
-                               _unique_slugs(draft.claims),
-                               source=f"supplied:{supplied}")
+        p, label = answer_file(supplied, cfg)
+        edges = edges_from_raw(p.read_text(encoding="utf-8"), _unique_slugs(draft.claims),
+                               source=label)
         path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), {
-            "paper_slug": args.paper, "model": f"supplied:{supplied}", "edges": edges,
+            "paper_slug": args.paper, "model": label, "edges": edges,
         })
     else:
         path, edges = edge_inference_layer(args.paper, cfg)

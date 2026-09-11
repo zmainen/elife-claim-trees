@@ -336,6 +336,80 @@ def test_the_dumped_prompt_is_the_one_the_layer_would_send():
         assert user == slice_for_agent("results", paper)
 
 
+# ── Evidence verification ─────────────────────────────────────────────────
+
+
+def test_evidence_found_normalises_curly_quotes_and_en_dash():
+    """Curly quotes and an en dash in the quote match ASCII text."""
+    from elife_extract.agents import evidence_found
+    quote = "“firing rate decreased from 5.5–0.2 Hz”"
+    text  = 'The "firing rate decreased from 5.5-0.2 Hz" after stimulation.'
+    assert evidence_found(quote, text)
+    assert not evidence_found("completely made up sentence", text)
+
+
+def test_reader_from_raw_sets_evidence_verified_when_paper_given():
+    """One verbatim and one invented quote yield [True, False]; None when no paper."""
+    from elife_extract.agents import reader_from_raw
+
+    text_slice = "Insula activity increased during guilt induction."
+    raw = json.dumps([
+        {"claim": "The insula responds to guilt.", "panel": "fig1a",
+         "claim_type": "empirical", "role": "empirical",
+         "evidence": "Insula activity increased during guilt induction.",
+         "confidence": "high", "notes": None},
+        {"claim": "Amygdala showed no change.", "panel": None,
+         "claim_type": "empirical", "role": "empirical",
+         "evidence": "Amygdala activity was completely unchanged in all conditions.",
+         "confidence": "tentative", "notes": None},
+    ])
+    paper = _paper()  # results_text is "r" * 400 — won't contain either quote
+
+    # With paper supplied: first quote is not in the stub text, second also not
+    ex_with = reader_from_raw("results", SLUG, "m", raw, paper)
+    assert [c.evidence_verified for c in ex_with.claims] == [False, False]
+
+    # With a paper whose results_text contains the first quote verbatim
+    import dataclasses
+    rich_paper = dataclasses.replace(paper, results_text=text_slice * 3)
+    ex_rich = reader_from_raw("results", SLUG, "m", raw, rich_paper)
+    assert ex_rich.claims[0].evidence_verified is True
+    assert ex_rich.claims[1].evidence_verified is False
+
+    # Without paper: both None
+    ex_none = reader_from_raw("results", SLUG, "m", raw)
+    assert all(c.evidence_verified is None for c in ex_none.claims)
+
+
+def test_reconciled_claim_evidence_verified_has_one_entry_per_reader():
+    """draft_from_raw populates evidence_verified from evidence_by_agent."""
+    from elife_extract.reconcile import draft_from_raw
+
+    cfg = _cfg(Path(tempfile.mkdtemp()))
+    r, c, st = _extraction("results"), _extraction("caption"), _extraction("structure")
+    raw = json.dumps({
+        "paper_slug": SLUG, "paper_doi": DOI,
+        "claims": [{
+            "claim": "Insula responds to guilt.", "panel": "fig1a",
+            "claim_type": "empirical", "role": "empirical",
+            "confidence": "high", "sources": ["results", "caption"],
+            "evidence_by_agent": {
+                "results": "Insula activity increased during guilt induction.",
+                "caption": "completely fabricated caption evidence xyz",
+            },
+        }],
+    })
+    import dataclasses
+    paper = dataclasses.replace(_paper(),
+                                results_text="Insula activity increased during guilt induction." * 5,
+                                captions_text="c" * 400)
+    draft = draft_from_raw(raw, r, c, st, cfg, DOI, paper=paper)
+    ev = draft.claims[0].evidence_verified
+    assert set(ev.keys()) == {"results", "caption"}
+    assert ev["results"] is True
+    assert ev["caption"] is False
+
+
 # ── Standalone runner (no pytest required) ────────────────────────────────
 
 if __name__ == "__main__":
