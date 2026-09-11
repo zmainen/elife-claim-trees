@@ -17,6 +17,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import dagre from '@dagrejs/dagre';
 import { nodeColor, outcomeOf, OUTCOME_LABEL, OUTCOME_COLOR } from '../lib/status';
+import { useFitOnReveal } from './useFitOnReveal';
 
 interface Claim {
   slug: string;
@@ -29,7 +30,30 @@ interface Claim {
   requires: string[];
   supports: string[];
   notes: string;
+  [rel: string]: any;
 }
+
+// The corpus defines fourteen relation types and this component drew two of them. On Gädeke
+// that was 9 edges out of 89, so the graph arrived as a field of unconnected dots and fitView
+// shrank it to 20%. With all fourteen the same 33 claims are a single connected component.
+//
+// Four families rather than fourteen colours: a reader can hold four. The reasoning form of
+// each edge is in docs/reference/edges.
+const REL_FAMILY: Record<string, 'dependency' | 'support' | 'test' | 'framing'> = {
+  'requires': 'dependency', 'derived-from': 'dependency', 'enables-method': 'dependency',
+  'supports': 'support', 'validates': 'support', 'confirms': 'support',
+  'entails': 'support', 'predicts': 'support',
+  'tests': 'test', 'refutes': 'test', 'rules-out': 'test', 'dissociates-with': 'test',
+  'interprets': 'framing', 'scopes': 'framing',
+};
+const RELATIONS = Object.keys(REL_FAMILY);
+
+const FAMILY: Record<string, { stroke: string; dash?: string; label: string }> = {
+  dependency: { stroke: 'var(--dag-edge)', label: 'depends on' },
+  support:    { stroke: 'var(--dag-edge-support)', dash: '5 3', label: 'supports · validates' },
+  test:       { stroke: 'var(--dag-edge-test)', dash: '2 3', label: 'tests · rules out' },
+  framing:    { stroke: 'var(--dag-edge-framing)', dash: '1 4', label: 'interprets · scopes' },
+};
 
 interface Props {
   claims: Claim[];
@@ -54,10 +78,10 @@ function ClaimNode({ data }: { data: any }) {
       <div
         title={data.claim}
         style={{
-          width: 160,
+          width: NODE_WIDTH,
           border: `1.5px ${isAssessment ? 'dashed' : 'solid'} ${color}`,
           borderRadius: 6,
-          background: '#ffffff',
+          background: 'var(--dag-node-bg)',
           display: 'flex',
           alignItems: 'center',
           gap: 6,
@@ -81,7 +105,7 @@ function ClaimNode({ data }: { data: any }) {
           style={{
             fontSize: 11,
             fontWeight: 500,
-            color: '#111827',
+            color: 'var(--dag-node-fg)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -99,43 +123,45 @@ function ClaimNode({ data }: { data: any }) {
 
 const nodeTypes: NodeTypes = { claimNode: ClaimNode as any };
 
-const NODE_WIDTH = 180;
-const NODE_HEIGHT = 60;
+const NODE_WIDTH = 150;
+const NODE_HEIGHT = 50;
 
 function layoutGraph(claims: Claim[]): { nodes: Node[]; edges: Edge[] } {
   const g = new dagre.graphlib.Graph();
   g.setDefaultEdgeLabel(() => ({}));
-  g.setGraph({ rankdir: 'BT', ranksep: 80, nodesep: 40, edgesep: 20, marginx: 20, marginy: 20 });
+  g.setGraph({ rankdir: 'BT', ranksep: 58, nodesep: 16, edgesep: 10, marginx: 14, marginy: 14 });
 
-  for (const c of claims) {
-    g.setNode(c.slug, { width: NODE_WIDTH, height: NODE_HEIGHT });
-  }
+  const present = new Set(claims.map(c => c.slug));
+  for (const c of claims) g.setNode(c.slug, { width: NODE_WIDTH, height: NODE_HEIGHT });
 
   const edges: Edge[] = [];
+  const seen = new Set<string>();
 
   for (const c of claims) {
-    for (const req of c.requires) {
-      if (claims.find(x => x.slug === req)) {
-        g.setEdge(req, c.slug);
+    for (const rel of RELATIONS) {
+      const targets: string[] = Array.isArray(c[rel]) ? c[rel] : [];
+      for (const t of targets) {
+        // `scopes: ["*"]` means every empirical claim in the paper. Drawing it would add a
+        // fan from one node to thirty and say less than the sentence does.
+        if (t === '*' || !present.has(t)) continue;
+        const id = `${rel}-${c.slug}-${t}`;
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const family = REL_FAMILY[rel];
+        const fam = FAMILY[family];
+        // Framing relations are drawn but do not rank the layout. `scopes` alone is 29 of
+        // Gädeke's 89 edges and ties one boundary-condition claim to most of the paper; letting
+        // it constrain the ranking splayed a single row across 2700px and fitView answered with
+        // 30% zoom. The argument's spine is dependency, support and test.
+        if (family !== 'framing') g.setEdge(t, c.slug);
         edges.push({
-          id: `req-${req}-${c.slug}`,
-          source: req,
+          id,
+          source: t,
           target: c.slug,
           type: 'smoothstep',
-          style: { stroke: '#d1d5db', strokeWidth: 1.5 },
-          markerEnd: { type: 'arrowclosed' as any, width: 12, height: 12, color: '#d1d5db' },
-        });
-      }
-    }
-    for (const sup of c.supports) {
-      if (claims.find(x => x.slug === sup)) {
-        edges.push({
-          id: `sup-${c.slug}-${sup}`,
-          source: c.slug,
-          target: sup,
-          type: 'smoothstep',
-          style: { stroke: '#86efac', strokeWidth: 1.5, strokeDasharray: '5 3' },
-          markerEnd: { type: 'arrowclosed' as any, width: 12, height: 12, color: '#86efac' },
+          data: { rel },
+          style: { stroke: fam.stroke, strokeWidth: 1.4, strokeDasharray: fam.dash },
+          markerEnd: { type: 'arrowclosed' as any, width: 11, height: 11, color: fam.stroke },
         });
       }
     }
@@ -160,11 +186,10 @@ function DAGInner({ claims, paperSlug }: Props) {
   const { nodes: initialNodes, edges: initialEdges } = useMemo(() => layoutGraph(claims), [claims]);
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
-  const [selected, setSelected] = useState<Claim | null>(null);
   // Off by default: a reader arriving at a claim tree should see the paper's argument, not a
   // scorecard of what we managed to re-run.
   const [showRepro, setShowRepro] = useState(false);
-  const { fitView } = useReactFlow();
+  const shell = useFitOnReveal<HTMLDivElement>(0.15);
 
   // Repainting the whole graph when the layer is switched, rather than reading the flag from
   // a context in each node — the node count here is small and this keeps the node dumb.
@@ -182,28 +207,39 @@ function DAGInner({ claims, paperSlug }: Props) {
   const onNodeClick = useCallback((_: any, node: Node) => {
     const claim = claimBySlug[node.id];
     if (!claim) return;
-    setSelected(claim);
+    // The same event the claim cards and summary bullets dispatch. The graph used to carry
+    // its own sidebar, which made three panels on one page saying the same thing in three
+    // different shapes.
+    window.dispatchEvent(new CustomEvent('open-claim', { detail: { slug: claim.slug } }));
 
+    // Follow the edges the reader can see, not just `requires`. Adjacency is built once
+    // from the same relation set the layout used.
     const ancestors = new Set<string>();
     const descendants = new Set<string>();
-
-    function walkUp(slug: string) {
-      const c = claimBySlug[slug];
-      if (!c) return;
-      for (const r of c.requires) {
-        if (!ancestors.has(r)) { ancestors.add(r); walkUp(r); }
-      }
-    }
-    function walkDown(slug: string) {
-      for (const c of claims) {
-        if (c.requires.includes(slug) && !descendants.has(c.slug)) {
-          descendants.add(c.slug);
-          walkDown(c.slug);
+    const up: Record<string, string[]> = {};
+    const down: Record<string, string[]> = {};
+    for (const c of claims) {
+      for (const rel of RELATIONS) {
+        const targets: string[] = Array.isArray(c[rel]) ? c[rel] : [];
+        for (const t of targets) {
+          if (t === '*' || !claimBySlug[t]) continue;
+          (up[c.slug] ||= []).push(t);
+          (down[t] ||= []).push(c.slug);
         }
       }
     }
-    walkUp(node.id);
-    walkDown(node.id);
+    const walk = (from: string, adj: Record<string, string[]>, into: Set<string>) => {
+      const stack = [from];
+      while (stack.length) {
+        for (const n of adj[stack.pop()!] ?? []) {
+          if (into.has(n)) continue;
+          into.add(n);
+          stack.push(n);
+        }
+      }
+    };
+    walk(node.id, up, ancestors);
+    walk(node.id, down, descendants);
 
     const active = new Set([node.id, ...ancestors, ...descendants]);
 
@@ -222,7 +258,6 @@ function DAGInner({ claims, paperSlug }: Props) {
   }, [claimBySlug, claims]);
 
   const onPaneClick = useCallback(() => {
-    setSelected(null);
     setNodes(nds => nds.map(n => ({ ...n, data: { ...n.data, dimmed: false } })));
     setEdges(eds => eds.map(e => ({ ...e, style: { ...e.style, opacity: 1 } })));
   }, []);
@@ -230,9 +265,8 @@ function DAGInner({ claims, paperSlug }: Props) {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   return (
-    <div className="flex h-full">
-      {/* DAG canvas */}
-      <div className="flex-1 h-full">
+    <div ref={shell} className="dag-shell h-full w-full">
+      <div className="h-full w-full">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -248,23 +282,23 @@ function DAGInner({ claims, paperSlug }: Props) {
           maxZoom={3}
           proOptions={{ hideAttribution: true }}
         >
-          <Background color="#f3f4f6" gap={20} />
+          <Background color="var(--dag-grid)" gap={20} />
           <Controls />
           <MiniMap
             nodeColor={(n) => nodeColor((n.data as any)?.status ?? 'unknown', (n.data as any)?.role, showRepro)}
-            style={{ background: '#f9fafb' }}
+            style={{ background: 'var(--dag-minimap)' }}
           />
           <Panel position="top-left">
-            <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs shadow-sm space-y-1.5">
+            <div className="dag-panel rounded-lg p-3 text-xs shadow-sm space-y-1.5">
               {/* The reproduction layer is a switch, and off by default. With it off the graph
                   shows what the paper argues and nothing about what we ran — which is the test
                   that the separation is real rather than described. */}
-              <label className="flex items-center gap-1.5 cursor-pointer select-none pb-1.5 mb-1 border-b border-gray-100">
+              <label className="flex items-center gap-1.5 cursor-pointer select-none pb-1.5 mb-1 border-b border-gray-200 dark:border-gray-700">
                 <input type="checkbox" checked={showRepro}
                        onChange={(e) => setShowRepro(e.target.checked)} className="accent-slate-600" />
-                <span className="font-semibold text-gray-700">Colour by our re-runs</span>
+                <span className="font-semibold">Colour by our re-runs</span>
               </label>
-              <div className="font-semibold text-gray-700 mb-1">
+              <div className="font-semibold mb-1">
                 {showRepro ? 'What we re-ran' : "The paper's argument"}
               </div>
               {(showRepro
@@ -284,103 +318,37 @@ function DAGInner({ claims, paperSlug }: Props) {
               ).map(([color, label]) => (
                 <div key={label} className="flex items-center gap-1.5">
                   <span style={{ width: 10, height: 10, borderRadius: 2, background: color, display: 'inline-block' }} />
-                  <span className="text-gray-600">{label}</span>
+                  <span>{label}</span>
                 </div>
               ))}
-              <div className="border-t border-gray-100 pt-1.5 mt-1 space-y-1">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-1.5 mt-1 space-y-1">
                 <div className="flex items-center gap-1.5">
-                  <span style={{ width: 22, height: 8, border: '1.5px solid #6b7280', display: 'inline-block', borderRadius: 1 }} />
-                  <span className="text-gray-600">Result claim</span>
+                  <span style={{ width: 22, height: 8, border: '1.5px solid currentColor', display: 'inline-block', borderRadius: 1 }} />
+                  <span>Result claim</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span style={{ width: 22, height: 8, border: '1.5px dashed #6b7280', display: 'inline-block', borderRadius: 1 }} />
-                  <span className="text-gray-600">Assessment claim</span>
+                  <span style={{ width: 22, height: 8, border: '1.5px dashed currentColor', display: 'inline-block', borderRadius: 1 }} />
+                  <span>Assessment claim</span>
                 </div>
+              </div>
+              {/* The edges carry as much of the argument as the nodes do, and had no key. */}
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-1.5 mt-1 space-y-1">
+                {(Object.keys(FAMILY) as Array<keyof typeof FAMILY>).map(k => (
+                  <div key={k} className="flex items-center gap-1.5">
+                    <svg width="22" height="8" style={{ display: 'inline-block', flexShrink: 0 }}>
+                      <line x1="0" y1="4" x2="22" y2="4"
+                            stroke={FAMILY[k].stroke} strokeWidth="1.6"
+                            strokeDasharray={FAMILY[k].dash} />
+                    </svg>
+                    <span>{FAMILY[k].label}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </Panel>
         </ReactFlow>
       </div>
 
-      {/* Sidebar */}
-      {selected && (
-        <div className="w-80 border-l border-gray-200 bg-white overflow-y-auto flex-shrink-0">
-          <div className="p-4 space-y-4">
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="font-semibold text-sm text-gray-900 leading-snug">{selected.slug}</h3>
-              <button
-                onClick={onPaneClick}
-                className="text-gray-400 hover:text-gray-600 text-xs flex-shrink-0"
-              >✕</button>
-            </div>
-
-            <p className="text-sm text-gray-700 leading-relaxed">{selected.claim}</p>
-
-            <div className="flex flex-wrap gap-1.5">
-              <span
-                className="inline-block px-2 py-0.5 rounded text-xs font-medium"
-                style={{ background: nodeColor(selected.status, selected.role, showRepro) + '22', color: '#111', border: `1px solid ${nodeColor(selected.status, selected.role, showRepro)}` }}
-              >{selected.status === 'unknown' ? selected.role : selected.status}</span>
-              <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
-                {selected.epistemic}
-              </span>
-              {selected.isAssessment && (
-                <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
-                  assessment
-                </span>
-              )}
-            </div>
-
-            {selected.panel && (
-              <div className="text-xs text-gray-500">Panel: {selected.panel}</div>
-            )}
-
-            {selected.requires.length > 0 && (
-              <div>
-                <div className="text-xs font-semibold text-gray-500 mb-1">Requires</div>
-                <div className="flex flex-col gap-1">
-                  {selected.requires.map(r => (
-                    <a
-                      key={r}
-                      href={`${base}/papers/${paperSlug}/${r}/`}
-                      className="text-xs text-blue-600 hover:underline break-words"
-                    >{r}</a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {selected.supports.length > 0 && (
-              <div>
-                <div className="text-xs font-semibold text-gray-500 mb-1">Supports</div>
-                <div className="flex flex-col gap-1">
-                  {selected.supports.map(s => (
-                    <a
-                      key={s}
-                      href={`${base}/papers/${paperSlug}/${s}/`}
-                      className="text-xs text-green-700 hover:underline break-words"
-                    >{s}</a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {selected.notes && (
-              <div>
-                <div className="text-xs font-semibold text-gray-500 mb-1">Notes</div>
-                <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-wrap">{selected.notes}</p>
-              </div>
-            )}
-
-            <a
-              href={`${base}/papers/${paperSlug}/${selected.slug}/`}
-              className="block text-xs text-center py-1.5 px-3 border border-gray-200 rounded hover:bg-gray-50 text-gray-600 no-underline"
-            >
-              View full claim →
-            </a>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

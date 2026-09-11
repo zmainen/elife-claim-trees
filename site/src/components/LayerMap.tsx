@@ -5,6 +5,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import dagre from '@dagrejs/dagre';
+import { useFitOnReveal } from './useFitOnReveal';
 import type { ExplorerData, LayerView } from '../lib/explorer';
 
 // The pipeline, drawn as the graph it is.
@@ -78,6 +79,8 @@ function reach(id: string, adj: Map<string, string[]>): Set<string> {
 
 function Flow({ data, selected, lit, onSelect, onHover }: Props) {
   const focus = lit ?? selected;
+  // On a paper page this map lives in a tab panel, which is display:none until chosen.
+  const shell = useFitOnReveal<HTMLDivElement>(0.06);
 
   const { nodes, edges } = useMemo(() => {
     const ls = data.layers;
@@ -158,6 +161,7 @@ function Flow({ data, selected, lit, onSelect, onHover }: Props) {
     [onSelect, selected]);
 
   return (
+    <div ref={shell} className="h-full w-full">
     <ReactFlow
       nodes={nodes}
       edges={edges}
@@ -187,6 +191,7 @@ function Flow({ data, selected, lit, onSelect, onHover }: Props) {
       <Background gap={18} size={1} color="var(--map-grid)" />
       <Controls showInteractive={false} position="bottom-right" />
     </ReactFlow>
+    </div>
   );
 }
 

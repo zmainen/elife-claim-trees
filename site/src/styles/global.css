@@ -390,3 +390,46 @@ html.dark {
    whole frame (a table, the layer map) opt out with `full`. */
 .site-frame.column > * { max-width: 56rem; }
 .site-frame.column > .full { max-width: none; }
+
+/* ── The claim graph ──────────────────────────────────────────────────────────
+   ClaimDAG was written before the site had a dark theme and styled its nodes inline:
+   a white card, near-black label text, a pale grid. On the dark page that is the bug
+   the blocks above were written to end, so its surfaces become tokens too. */
+:root {
+  --dag-bg: #fcfcfd;
+  --dag-grid: #eceef1;
+  --dag-node-bg: #ffffff;
+  --dag-node-fg: #111827;
+  --dag-edge: #d1d5db;
+  --dag-edge-support: #34a853;
+  --dag-panel-bg: #ffffff;
+  --dag-panel-border: #e5e7eb;
+  --dag-panel-fg: #374151;
+  --dag-minimap: #f9fafb;
+}
+html.dark {
+  --dag-bg: #111418;
+  --dag-grid: #21262c;
+  --dag-node-bg: #181c22;
+  --dag-node-fg: #e8edf3;
+  --dag-edge: #3a424c;
+  --dag-edge-support: #4ade80;
+  --dag-panel-bg: #171b21;
+  --dag-panel-border: #2f363f;
+  --dag-panel-fg: #cbd5e1;
+  --dag-minimap: #15191e;
+}
+.dag-shell { background: var(--dag-bg); }
+.dag-panel {
+  background: var(--dag-panel-bg);
+  border: 1px solid var(--dag-panel-border);
+  color: var(--dag-panel-fg);
+}
+:root {
+  --dag-edge-test: #b45309;
+  --dag-edge-framing: #7c3aed;
+}
+html.dark {
+  --dag-edge-test: #fbbf24;
+  --dag-edge-framing: #a78bfa;
+}

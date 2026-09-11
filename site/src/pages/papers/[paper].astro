@@ -10,6 +10,8 @@ import ReviewTab from '../../components/ReviewTab.tsx';
 import corpus from '../../data/claims.json';
 import { cells, fill_of, groups as layerGroups, STATE_LABEL } from '../../lib/pipeline';
 import PipelineExplorer from '../../components/PipelineExplorer';
+import PaperArtifacts from '../../components/PaperArtifacts.astro';
+import ClaimDAG from '../../components/ClaimDAG.tsx';
 import { paperExplorer } from '../../lib/explorer';
 import paperSummaries from '../../data/paper-summaries.json';
 
@@ -103,8 +105,15 @@ const synthesisVersion = synthesisData?.synthesisV3 ? 'v3' : (synthesisData?.syn
 // Tabs configuration. Show only tabs with content.
 // Note: the `structure` id is preserved (not renamed to `claims`) to avoid
 // breaking existing ?view=structure bookmarks. The label is "Claims".
+// Four views of this paper, in the order it is asked about: what does it claim, how do the
+// claims hold each other up, what can I take away, how was it made. See
+// docs/design/2026-09-11-the-paper-page.html. The three that follow are views of *layers*
+// rather than of the paper and are due to move to them — steps 4-6 of that note.
 const tabs = [
   { id: 'structure', label: 'Claims' },
+  { id: 'graph', label: 'Graph' },
+  { id: 'artifacts', label: 'Artifacts' },
+  { id: 'pipeline', label: 'Pipeline' },
   ...(abstractMapping ? [{ id: 'abstract', label: 'Abstract \u2194 claims' }] : []),
   ...(synthesisBlock ? [{ id: 'argument', label: 'Argument from graph' }] : []),
   { id: 'review', label: 'Review' },
@@ -181,24 +190,6 @@ const tabs = [
       )}
     </div>
 
-    <!-- Which layers this paper has been through, drawn as the graph they form.
-         This was a flat row of chips, which said which layers had run but not that
-         `marks` waits on `adjudication` which waits on `coverage` — so a gap looked like
-         seventeen independent absences rather than one unrun layer holding up a branch.
-         Clicking a layer opens it here, with whatever it produced for this paper attached. -->
-    <section class="mb-8">
-      <div class="flex items-baseline justify-between gap-3 mb-2">
-        <h2 class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 m-0">
-          Layers
-        </h2>
-        <span class="text-xs font-mono text-gray-400 dark:text-gray-500 tabular-nums">
-          {fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} ·
-          <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">all papers</a>
-        </span>
-      </div>
-      <PipelineExplorer client:load data={paperExplorer(paperData.slug, base)} base={base} height={360} />
-    </section>
-
     <PaperTabs tabs={tabs} defaultTab="structure" />
 
     <!-- Tab: Claims (id remains `structure` for URL back-compat) -->
@@ -249,6 +240,39 @@ const tabs = [
           ))}
         </ul>
       </details>
+    </div>
+
+    <!-- Tab: Graph — the claim tree as the graph it is. The component existed and was
+         imported nowhere; clicking a node opens the same drawer the Claims view uses. -->
+    <div class="paper-tab-panel" data-tab-id="graph" data-tab-active="false">
+      <p class="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mb-3">
+        Claims, and what rests on what. Solid edges are <code class="text-[12.5px]">requires</code>,
+        dashed are <code class="text-[12.5px]">supports</code>. Clicking a claim lights its
+        ancestry and everything downstream, and opens it.
+      </p>
+      <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden" style="height: 700px">
+        <ClaimDAG client:load claims={paperData.claims} paperSlug={paperSlug} />
+      </div>
+    </div>
+
+    <!-- Tab: Artifacts -->
+    <div class="paper-tab-panel" data-tab-id="artifacts" data-tab-active="false">
+      <PaperArtifacts paper={paperData.slug} />
+    </div>
+
+    <!-- Tab: Pipeline — provenance, which is a question about us and comes after the paper. -->
+    <div class="paper-tab-panel" data-tab-id="pipeline" data-tab-active="false">
+      <div class="flex items-baseline justify-between gap-3 mb-2">
+        <p class="text-sm text-gray-600 dark:text-gray-400 max-w-2xl m-0">
+          The layers this paper has been through, drawn as the graph they form — so an unrun
+          layer holding up a branch reads as one gap rather than several.
+        </p>
+        <span class="text-xs font-mono text-gray-400 dark:text-gray-500 tabular-nums whitespace-nowrap">
+          {fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} ·
+          <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">all papers</a>
+        </span>
+      </div>
+      <PipelineExplorer client:load data={paperExplorer(paperData.slug, base)} base={base} height={520} />
     </div>
 
     <!-- Tab: Abstract -->
