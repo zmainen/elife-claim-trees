@@ -168,22 +168,18 @@ reclassifies roles and types, adds missing claims, removes spurious ones, revise
 adjudicates single-source candidates. Nothing reaches disk until the table is approved. It is
 the intellectual gate — the claim graph should be right before it is made permanent.
 
-As it runs today the gate does not exist, and the shape of its absence has changed. It used to
-be a flag with three settings, which bundled two unrelated things: `external` sent the draft to
-another model, and `interactive` opened an editor before anything was written. Only the second
-was review, and it reviewed the wrong object — what a curator edited was a draft table, while
-the version that reached the corpus was whatever the write step then made of it, which nobody
-saw.
+As it runs today the gate does not exist. Two things stand in its place, and neither of them is
+a person reading the corpus.
 
-Both are now what they are. The model's pass is the `external-review` layer, declared like any
-other, versioned and hashed. A person's approval is an operation on a version that already
-exists: `scripts/pipeline.py approve <paper> <layer> --by NAME` records who read which version
-of what, and because the record names the version, re-running the layer does not carry the
-approval forward — it was granted to text that no longer exists. Nothing forces an approval and
-none has been granted, so the corpus is still unreviewed; the difference is that this is now a
-readable fact about the data rather than a consequence of which flag was passed. The step is
-documented in full because it is what the method requires, and its absence is the single
-largest gap between the method and the artefact. Step 5 is where the schema's role labels (`hypothesis`, `prediction`, `empirical`, `control`, `scope`, `methodological`, `synthesis`, `interpretation`, `literature-context`) are first assigned definitively, because role-assignment requires the analyst's judgment about what kind of work each claim is doing in the paper's argument.
+A model's pass over the draft is the `external-review` layer, declared like any other and
+versioned and hashed with the rest. A person's approval is a separate operation, performed on a
+version that already exists: `scripts/pipeline.py approve <paper> <layer> --by NAME` records who
+read which version of what. Because the record names the version, re-running the layer does not
+carry the approval forward — it was granted to text that no longer exists.
+
+Nothing forces an approval and none has been granted. The corpus is unreviewed, and the
+approval ledger says so for every cell in it. The step is documented in full because it is what
+the method requires, and its absence is the largest gap between the method and the artefact. Step 5 is where the schema's role labels (`hypothesis`, `prediction`, `empirical`, `control`, `scope`, `methodological`, `synthesis`, `interpretation`, `literature-context`) are first assigned definitively, because role-assignment requires the analyst's judgment about what kind of work each claim is doing in the paper's argument.
 
 ### Step 6: Dependency mapping
 

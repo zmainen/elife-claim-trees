@@ -77,25 +77,16 @@ const layer = byId['relation-vocab'];
 
     <div class="max-w-3xl space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-10">
       <p>
-        Every claim, relation and verdict in this corpus was produced by a language model and
-        checked by nobody. That has been stated on this site since the
-        <a href={`${base}/agents/`} class="text-amber-700 dark:text-amber-400 hover:underline">Agents</a>
-        page went up. This is the first layer that does something about it: a queue of the
-        judgements a script cannot make, with everything needed to make them.
+        <code>dissociates-with</code> carries {edgeN} edges &mdash; more than every other
+        opposing relation in the corpus combined &mdash; and every MIRA export tells eLife it
+        means opposition. Read the pairs below and most of them are not oppositions: they are
+        two findings catalogued side by side.
       </p>
       <p>
-        The first queue is one relation. <code>dissociates-with</code> is the corpus&rsquo;s
-        most-used oppositional relation &mdash; {edgeN} declared edges, more than every other
-        opposing relation combined &mdash; and every MIRA export tells eLife it means
-        opposition. Reading the pairs suggests most of them are not oppositions at all. But
-        that reading is an agent&rsquo;s, and unverified, which is the whole reason this page
-        exists rather than a commit quietly relabelling {edgeN} edges.
-      </p>
-      <p>
-        Items are grouped by proposed reading rather than by paper, because reviewing means
-        comparing like with like: a group of near-identical catalogue entries can be settled in
-        one pass, while the handful carrying real argumentative weight want reading one at a
-        time. Both claims appear in full, so the judgement can be made from this page.
+        That reading is an agent&rsquo;s and nobody has checked it, which is why {edgeN} edges
+        are listed here for a decision rather than relabelled. Near-identical pairs are grouped
+        so they can be settled together; the few carrying argumentative weight are worth
+        reading one at a time.
       </p>
     </div>
 
@@ -271,9 +262,8 @@ const layer = byId['relation-vocab'];
         the items are alike, and one at a time where they are not.
       </p>
       <p>
-        This page is static and cannot take the decision. It renders
-        <code>review/{topic.topic}.json</code>, which is where decisions live &mdash; the same
-        file, so the queue and this page cannot disagree.
+        A decision is recorded in <code>review/{topic.topic}.json</code> &mdash; the same file
+        the queue above is rendered from, so the two cannot drift apart.
       </p>
       <pre class="bg-gray-900 dark:bg-black text-gray-100 rounded-lg p-4 text-xs overflow-x-auto"><code>{`# set "decision" on an item: ${ORDER.join(' | ')}
 python3 scripts/apply_review.py ${topic.topic} --paper gadeke-2026-guilt-insula
