@@ -393,6 +393,36 @@ def write_oxa_document(draft: DraftClaimTable, cfg: Config) -> Path:
 # ── Top-level write ──────────────────────────────────────────────────────
 
 
+def _part_of_edges(claims: list[ReconciledClaim], slugs: list[str]) -> list[dict]:
+    """`part-of` edges, resolving each part's `part_of` sentence to the whole's slug.
+
+    The reconciler names the whole by its exact `claim` sentence, because at reconciliation
+    time no claim has a slug yet. Here every claim does, so the sentence is resolved to one —
+    matched on collapsed whitespace and case, the same normalisation `number_questions` uses,
+    so a trailing period or spacing difference does not lose an edge. Text that resolves to no
+    claim in this table, or to the part itself, is logged and dropped: a `part-of` edge aimed
+    at a guessed whole is worse than a missing one, and the note is explicit that unresolvable
+    text is never guessed. `part-of` is a top-level relation, so `edges_for_slug` writes it as
+    `part-of: [<slug>]` like the others.
+    """
+    norm = lambda s: " ".join(str(s or "").lower().split()).rstrip(".")
+    by_sentence: dict[str, str] = {}
+    for c, slug in zip(claims, slugs):
+        by_sentence.setdefault(norm(c.claim), slug)
+    edges = []
+    for c, slug in zip(claims, slugs):
+        whole = getattr(c, "part_of", None)
+        if not whole:
+            continue
+        target = by_sentence.get(norm(whole))
+        if not target or target == slug:
+            logger.warning("part-of: %s names a whole that resolves to %s; dropped",
+                           slug, "itself" if target == slug else "no claim in this table")
+            continue
+        edges.append({"source": slug, "target": target, "relation": "part-of"})
+    return edges
+
+
 def resolve_edges(draft: DraftClaimTable, slugs: list[str], cfg: Config) -> list[dict]:
     """The edges to write, when the caller has not already got them.
 
@@ -502,6 +532,10 @@ def write_claim_files(draft: DraftClaimTable, cfg: Config,
     # An edge names two slugs and both must be assigned before any file is written.
     if edges is None:
         edges = resolve_edges(draft, slugs, cfg)
+
+    # The reconciler's third outcome: a claim that is a component of another carries the
+    # whole's sentence in `part_of`. Resolve those to `part-of` edges now that slugs exist.
+    edges = list(edges) + _part_of_edges(draft.claims, slugs)
 
     # The paper's questions, and the q-id each claim addresses (None for most claims).
     questions, addresses = number_questions(draft.claims)
