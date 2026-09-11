@@ -6,6 +6,20 @@ import starlight from '@astrojs/starlight';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
+// Running a layer needs a server, and the published site is static. Rather than ship an
+// adapter for one endpoint, the route is injected only under `astro dev` — so the capability
+// exists where it can work and is simply absent where it cannot, which is what the pages
+// assume when they show copy-and-run text instead of a button.
+const devRun = {
+  name: 'pipeline-dev-run',
+  hooks: {
+    'astro:config:setup': ({ command, injectRoute }) => {
+      if (command !== 'dev') return;
+      injectRoute({ pattern: '/dev-run.json', entrypoint: './src/dev/run-endpoint.ts' });
+    },
+  },
+};
+
 export default defineConfig({
   site: 'https://zmainen.github.io',
   base: '/elife-claim-trees',
@@ -95,6 +109,7 @@ export default defineConfig({
       // (Starlight content lives at src/content/docs/; the URL prefix is set by
       // the integration's default behavior + base in astro config.)
     }),
+    devRun,
   ],
 
   vite: {
