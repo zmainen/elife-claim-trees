@@ -1,0 +1,68 @@
+---
+// A mockup, not a decision: the bands view beside the two it would replace, on the real
+// corpus, so the comparison is between three renderings of the same twenty-eight layers
+// rather than between a screenshot and a memory. Delete this route with whichever loses.
+import Layout from '../../layouts/Layout.astro';
+import LayerBands from '../../components/LayerBands.astro';
+import PipelineExplorer from '../../components/PipelineExplorer';
+import { corpusExplorer } from '../../lib/explorer';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const data = corpusExplorer(base);
+---
+
+<Layout title="Layer view — mockup" description="A proposed replacement for the pan-and-zoom layer map: depth as bands down the page.">
+  <div class="site-frame column py-12">
+
+    <header class="mb-10 max-w-2xl">
+      <p class="font-mono text-[10px] uppercase tracking-wider text-amber-700 dark:text-amber-400 m-0 mb-2">Mockup</p>
+      <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">The layers, as bands</h1>
+      <p class="text-gray-600 dark:text-gray-400 m-0 leading-relaxed">
+        Both views on <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">the pipeline page</a>
+        spend the screen's scarce axis on the pipeline's long one. Columns put nine depths
+        across the width and overflow to 1680px, so two thirds of the map is off-screen.
+        The graph fits by zooming out, which buys the shape at the cost of being able to read
+        any node in it, and then needs pan and zoom to give that back.
+      </p>
+      <p class="text-gray-600 dark:text-gray-400 mt-3 m-0 leading-relaxed">
+        Depth is an order, and the page has an unbounded axis for orders: down. Turning the
+        graph a quarter turn makes the long axis scroll-the-page, which is free, and spends
+        the width on the layers within a depth — which have no order among themselves and can
+        wrap. Nothing is off-screen, nothing needs fitting, and a phone and a desktop differ
+        only in how many chips sit on a line.
+      </p>
+    </header>
+
+    <section class="mb-14">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Proposed</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+        No zoom, no pan, no sideways scroll, no canvas. The arrows are gone because a DAG laid
+        out by depth carries direction in its layout — every edge points from a lower band to a
+        higher one — so drawing them adds crossings and no information. What the arrows were
+        for is a click instead: pick a layer and it marks what feeds it, and everything that
+        falls out of date when it changes.
+      </p>
+      <LayerBands data={data} />
+    </section>
+
+    <section class="full mb-14">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">What it would replace</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+        The same twenty-eight layers, as the page renders them today. Scroll the columns
+        sideways to see depth 5 onward, or switch to the graph and try to read a node.
+      </p>
+      <PipelineExplorer client:load data={data} base={base} height={470} />
+    </section>
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+      <p class="m-0">
+        If the bands win, <code>LayerMap.tsx</code>, <code>LayerColumns.tsx</code>,
+        <code>PipelineExplorer.tsx</code> and <code>useFitOnReveal.ts</code> go with the
+        decision, and this page ships no JavaScript framework at all — the bands are an Astro
+        component and forty lines of script. <code>reactflow</code> stays in the project for
+        <code>ClaimDAG</code>, the claim graph on the paper pages, but stops being loaded here.
+      </p>
+    </footer>
+
+  </div>
+</Layout>
