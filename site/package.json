@@ -8,10 +8,10 @@
   "scripts": {
     "dev": "node scripts/build-data.js && astro dev",
     "dev:all": "CORPUS=all node scripts/build-data.js && astro dev",
-    "build": "node scripts/build-data.js && astro build",
-    "build:elife": "CORPUS=elife node scripts/build-data.js && astro build",
-    "build:all": "CORPUS=all node scripts/build-data.js && astro build",
-    "build:share": "CORPUS=all node scripts/build-data.js && astro build --site http://localhost:8000 --base /",
+    "build": "node scripts/build-data.js && node scripts/check-frames.js && astro build",
+    "build:elife": "CORPUS=elife node scripts/build-data.js && node scripts/check-frames.js && astro build",
+    "build:all": "CORPUS=all node scripts/build-data.js && node scripts/check-frames.js && astro build",
+    "build:share": "CORPUS=all node scripts/build-data.js && node scripts/check-frames.js && astro build --site http://localhost:8000 --base /",
     "preview": "astro preview",
     "astro": "astro"
   },

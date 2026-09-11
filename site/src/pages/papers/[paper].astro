@@ -4,7 +4,6 @@ import ClaimCardMini from '../../components/ClaimCardMini.astro';
 import ClaimStructure from '../../components/ClaimStructure.astro';
 import PaperTabs from '../../components/PaperTabs.astro';
 import ClaimDrawer from '../../components/ClaimDrawer.tsx';
-import ReviewTab from '../../components/ReviewTab.tsx';
 import corpus from '../../data/claims.json';
 import { cells, fill_of, groups as layerGroups, STATE_LABEL } from '../../lib/pipeline';
 import PipelineExplorer from '../../components/PipelineExplorer';
@@ -101,15 +100,11 @@ const alphaClaims = [...paperData.claims].sort((a, b) => a.slug.localeCompare(b.
 // layer a place at the top of the page that the other twenty had to earn inside the pipeline
 // view — a privilege with nothing behind it but having arrived first. They now render on
 // their own cells, where they have a version, a ledger entry and an approval they lack.
-//
-// Review is not a layer and not this paper: it is a live call to a persona service. It stays
-// until it has somewhere of its own to be.
 const tabs = [
   { id: 'structure', label: 'Claims' },
   { id: 'graph', label: 'Graph' },
   { id: 'artifacts', label: 'Artifacts' },
   { id: 'pipeline', label: 'Pipeline' },
-  { id: 'review', label: 'Review' },
 ];
 ---
 
@@ -266,16 +261,6 @@ const tabs = [
         </span>
       </div>
       <PipelineExplorer client:load data={paperExplorer(paperData.slug, base)} base={base} height={520} />
-    </div>
-
-    <!-- Tab: Review -->
-    <div class="paper-tab-panel" data-tab-id="review" data-tab-active="false">
-      <ReviewTab
-        client:load
-        claims={paperData.claims}
-        paperTitle={paperData.title}
-        abstract={paperData.claims.filter((c: any) => c.role === 'hypothesis').map((c: any) => c.claim).join(' ') || paperData.title}
-      />
     </div>
 
   </div>
