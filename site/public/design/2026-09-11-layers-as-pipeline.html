@@ -168,7 +168,7 @@
   <h1>The site is a pipeline with a jagged edge, not a corpus with some gaps.</h1>
   <p class="standfirst">A layer is not one of five fixed stages. It is <strong>a node in a versioned processing graph</strong> — a step, a revision, a feature, an open question, a candidate output — that runs against a paper and produces a new version of it. Layers stay visible as work proceeds rather than collapsing into a current state. The site's job is to show that graph, in general and applied to every paper, and to say honestly which cells are current, stale, absent, or impossible.</p>
   <div class="status">
-    <span><b>Status</b> accepted; implemented through step 6</span>
+    <span><b>Status</b> accepted and implemented, except §<i>A layer is a proposal</i>, which is proposed</span>
     <span><b>Plan</b> <a href="https://github.com/zmainen/elife-claim-trees/issues/23">#23</a> — this note is its design</span>
     <span><b>Frames</b> <a href="https://github.com/zmainen/elife-claim-trees/issues/18">#18</a> · <a href="https://github.com/zmainen/elife-claim-trees/issues/19">#19</a> · <a href="https://github.com/zmainen/elife-claim-trees/issues/20">#20</a></span>
     <span><b>Declared in</b> <code>pipeline/layers.yaml</code></span>
@@ -257,6 +257,60 @@
     </table>
   </div>
   <p style="margin-top:20px"><b>#19 is the case that proves the model.</b> "Is <code>dissociates-with</code> an opposition?" has a general half — the definition, the decision, the declaration in the exporter — and a per-paper half: which of this paper's relations are affected, and what changed when the answer landed. It is a layer with 65 instances across 10 papers, it sits upstream of every export, and when it resolves, every export downstream of it is stale. Exactly like a processing step. That is why it belongs in the same structure as one, and why a new paper arriving later gets the same question asked of it automatically.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────── -->
+<section>
+  <h2>A layer is a proposal <span class="chip c-q" style="vertical-align:middle">proposed · not built</span></h2>
+  <p class="sec-note">Everything above describes layers that exist. This describes how one comes to exist, and how an existing one is corrected — which turn out to be the same act.</p>
+
+  <div class="principle">
+    <p><b>A declaration is a proposal.</b> It says a step should exist and what it does. It goes up as a page — the question, the mechanics, a worked example, what it would change, what it feeds — and it is discussed, improved, and at some point accepted. Adding a step to the pipeline and correcting an existing one are one operation: a new version of a declaration.</p>
+  </div>
+
+  <p>This generalises something the repository already does by hand. Every schema change so far — stance, the relation vocabulary, the epistemic question — has been an issue, then an argument, then an edit. That is a proposal being accepted, without a place to stand or a record of who accepted it.</p>
+
+  <h3 style="font-family:'IBM Plex Serif',Georgia,serif;font-size:17px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink);margin:28px 0 8px">What judges a declaration</h3>
+  <p>Three things, and the third is what makes the pipeline worth building.</p>
+  <div class="tablewrap" style="margin-bottom:20px">
+    <table class="grid">
+      <thead><tr><th>Evidence</th><th>Asks</th></tr></thead>
+      <tbody>
+        <tr><td>the logic</td><td class="wrap">Is the question worth asking, and is it the right question?</td></tr>
+        <tr><td>the code</td><td class="wrap">Does the mechanism answer the question it claims to?</td></tr>
+        <tr><td>the outputs</td><td class="wrap">What did the runs actually produce, across the papers they ran on?</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><b>The third is why an output approval matters beyond itself.</b> Reading Gädeke's claim tree v3 and approving it is evidence about the <em>claim-tree declaration</em>, not only about Gädeke. A declaration accepted on argument alone is a guess; one accepted with approved outputs behind it has been tried. So the two kinds of approval are not parallel — the per-paper ones accumulate into the corpus-level one.</p>
+
+  <h3 style="font-family:'IBM Plex Serif',Georgia,serif;font-size:17px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink);margin:28px 0 8px">Two subjects, one operation</h3>
+  <p>Approval applies to a version. What differs is whose version.</p>
+  <div class="tablewrap" style="margin-bottom:20px">
+    <table class="grid">
+      <thead><tr><th>Subject</th><th>Scope</th><th>Asks</th><th>Recorded in</th></tr></thead>
+      <tbody>
+        <tr><td>declaration</td><td class="mono">corpus</td><td class="wrap">Should this step exist, and is this what it should do?</td><td class="mono">runs/approvals.jsonl</td></tr>
+        <tr><td>output</td><td class="mono">paper</td><td class="wrap">Is what this run produced right?</td><td class="mono">runs/&lt;paper&gt;/approvals.jsonl</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Keeping these apart is not pedantry. They were conflated once already, under one word <code>review</code>, and the result was two things in the repository with the same name doing different jobs.</p>
+
+  <h3 style="font-family:'IBM Plex Serif',Georgia,serif;font-size:17px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink);margin:28px 0 8px">The comments are the issue</h3>
+  <p>A proposal needs somewhere for people to argue with it, and a static site cannot hold a comment thread. It does not need to: <b>the layer's GitHub issue is the thread.</b> <code>relation-vocab</code> already declares <code>issue: 19</code> and its page links it. The field simply stops being something only question layers carry, and the page shows the discussion's state rather than only its address.</p>
+
+  <h3 style="font-family:'IBM Plex Serif',Georgia,serif;font-size:17px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink);margin:28px 0 8px">The consequence with teeth</h3>
+  <p><b>If accepting a declaration revision changes what a layer does, every run of that layer is stale.</b> That follows from the propagation rule already built — but only if the declaration is itself a hashed input to every run, and today it is not: <code>reads</code> hashes scripts and prompts, not <code>pipeline/layers.yaml</code>.</p>
+  <p>Closing that makes revising a definition turn the matrix amber for every paper the layer touches, which is exactly what should happen and currently does not. It is a small change and the sharpest test of whether the model is real.</p>
+
+  <h3 style="font-family:'IBM Plex Serif',Georgia,serif;font-size:17px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink);margin:28px 0 8px">Lifecycle</h3>
+  <p><code>proposed</code> → <code>accepted</code> → <code>superseded</code>. The <code>open: true</code> flag on the question layers is a crude form of it, and <code>replication</code> — declared, with no runner and no runs — is simply a proposed layer that nobody has accepted or tried. Saying so is better than an empty column with no explanation.</p>
+
+  <div class="assume" style="margin-top:24px">
+    <span class="q">This note is an instance of what it describes</span>
+    The proposal to make layers into proposals is itself a proposal: a declaration, put up as a page, open to argument, and not yet accepted. Under the model it describes it would carry <code>status: proposed</code> and an issue for its comments — which is what it has. That it can describe itself without strain is the best evidence available that the model holds.
+  </div>
 </section>
 
 <!-- ─────────────────────────────────────────────────── -->
