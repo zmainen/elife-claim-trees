@@ -121,7 +121,10 @@ export function panelRefs(panel?: string | null): [string, string][] {
 
 const norm = (s: string) => s.replace(/\s+/g, '').replace(/[’‘]/g, "'").toLowerCase();
 
-type Mark = { text: string; claims: string[]; gap: boolean };
+/** A sentence the reader should treat as carrying something: the claims it states, whether it
+ *  was judged a gap, and — for a drafted claim awaiting a decision — the span's uid. `uid` is
+ *  carried through the matcher so that a draft and a mark can be located by the same code. */
+type Mark = { text: string; claims: string[]; gap: boolean; uid?: string };
 
 /** The results section of `marked/<paper>.marked.md`, as sentences carrying claim slugs.
  *
@@ -171,7 +174,7 @@ function marksOf(paper: string, uuidToSlug: Record<string, string>): Mark[] {
  *  Positions are found in whitespace-stripped text and mapped back through an index, so what
  *  the page underlines is the paragraph's own characters and nothing between two marks is lost.
  */
-type Ranged = { start: number; end: number; claims: string[]; gap: boolean };
+type Ranged = { start: number; end: number; claims: string[]; gap: boolean; uid?: string };
 
 function normIndex(text: string): { norm: string; map: number[] } {
   let out = '';
@@ -208,7 +211,7 @@ function placeMarks(paragraphs: { text: string }[], marks: Mark[], titles: strin
     }
     if (idx < 0) continue;          // a caption or table mark: it belongs to no paragraph
     cursor = idx + ns.length;
-    if (!m.claims.length && !m.gap) continue;   // nothing to show for an unmarked sentence
+    if (!m.claims.length && !m.gap && !m.uid) continue;  // nothing to show for an unmarked sentence
 
     // Which paragraph holds it. A mark never spans two, because a paragraph break is a
     // sentence break in both texts.
@@ -222,23 +225,94 @@ function placeMarks(paragraphs: { text: string }[], marks: Mark[], titles: strin
       end: map[local + ns.length - 1] + 1,
       claims: m.claims,
       gap: m.gap,
+      uid: m.uid,
     });
   }
   return out;
 }
 
+type Piece = { text: string; claims: string[]; gap: boolean; draft: string | null };
+
 /** One paragraph as alternating plain and marked pieces, covering all of its text. */
-function pieces(text: string, ranges: Ranged[]): { text: string; claims: string[]; gap: boolean }[] {
-  const out: { text: string; claims: string[]; gap: boolean }[] = [];
+function pieces(text: string, ranges: Ranged[]): Piece[] {
+  const out: Piece[] = [];
+  const plain = (t: string): Piece => ({ text: t, claims: [], gap: false, draft: null });
   let at = 0;
   for (const r of ranges.sort((a, b) => a.start - b.start)) {
     if (r.start < at) continue;
-    if (r.start > at) out.push({ text: text.slice(at, r.start), claims: [], gap: false });
-    out.push({ text: text.slice(r.start, r.end), claims: r.claims, gap: r.gap });
+    if (r.start > at) out.push(plain(text.slice(at, r.start)));
+    out.push({ text: text.slice(r.start, r.end), claims: r.claims, gap: r.gap, draft: r.uid ?? null });
     at = r.end;
   }
-  if (at < text.length) out.push({ text: text.slice(at), claims: [], gap: false });
+  if (at < text.length) out.push(plain(text.slice(at)));
   return out;
+}
+
+// ── the drafts awaiting a person ─────────────────────────────────────────────
+
+/** The five roles `gap-claim` may assign, in its own words (extract/prompts/gap-claim.md).
+ *  A reviewer may disagree with the role the drafter chose, and choosing between five names
+ *  is only a real choice if what they mean travels with them to the card. The tree's other
+ *  roles — hypothesis, prediction, synthesis — are not here because they describe a paper's
+ *  argument and are assigned when the tree is built, not when a missing result is written down. */
+export const DRAFT_ROLES: [string, string][] = [
+  ['empirical', 'A result the paper measured.'],
+  ['control', 'A result whose purpose is to eliminate an alternative explanation or to show a method works. Most validation, manipulation checks and negative controls are this.'],
+  ['interpretation', 'A claim about what a result means, beyond what was measured.'],
+  ['scope', 'A condition or limitation every other claim inherits.'],
+  ['literature-context', 'A claim this paper attributes to other work rather than showing.'],
+];
+
+/** The decision standing for each of this paper's drafts.
+ *  The file is append-only, so a reviewer who changed their mind wrote a second record for the
+ *  same uid: the last one is the decision and the earlier ones are the history. Edge flags
+ *  share the file and are not decisions about a draft, so they are skipped. */
+function decisionsOf(paper: string): Record<string, any> {
+  const path = join(process.cwd(), '..', 'review', 'gap-claim-decisions.jsonl');
+  if (!existsSync(path)) return {};
+  const out: Record<string, any> = {};
+  for (const line of readFileSync(path, 'utf8').split('\n')) {
+    if (!line.trim()) continue;
+    let rec: any;
+    try { rec = JSON.parse(line); } catch { continue; }   // a half-written line is not a decision
+    if (rec?.type === 'edge' || rec?.paper !== paper || !rec?.uid) continue;
+    out[rec.uid] = rec;
+  }
+  return out;
+}
+
+/** The claims `gap-claim` drafted for this paper, each with the decision standing on it.
+ *
+ *  A draft carries two reasons and they answer different questions: `why` is the drafter's
+ *  argument for adding this claim, and the gap verdict's own `why` is the reason the span was
+ *  judged to need one at all. A reviewer needs both — the second is what they are being asked
+ *  to agree with, and the first is only the proposal.
+ *
+ *  Most papers have no drafts: `gap-claim` has been run on two of the ten. */
+function draftsOf(paper: string) {
+  const at = (...p: string[]) => join(process.cwd(), '..', ...p);
+  const run = at('runs', paper, 'gap-claim.output.json');
+  if (!existsSync(run)) return [];
+  const cands: any[] = JSON.parse(readFileSync(run, 'utf8')).candidates ?? [];
+
+  const whyGap: Record<string, string> = {};
+  const mapping = at('mappings', `${paper}.json`);
+  if (existsSync(mapping)) {
+    for (const s of JSON.parse(readFileSync(mapping, 'utf8')).spans ?? []) whyGap[s.uid] = s.why ?? '';
+  }
+  const decided = decisionsOf(paper);
+
+  return cands.map(c => ({
+    uid: c.uid,
+    span: (c.span ?? '').trim(),
+    slug: c.slug,
+    claim: (c.claim ?? '').trim(),
+    role: c.role ?? 'empirical',
+    panel: c.panel ?? '',
+    why: c.why ?? '',
+    whyGap: whyGap[c.uid] ?? '',
+    decision: decided[c.uid] ?? null,
+  }));
 }
 
 // ── assembly ─────────────────────────────────────────────────────────────────
@@ -284,7 +358,10 @@ export function readerData(paperSlug: string) {
       statusLabel: status === 'na' ? '' : label,
       // The plain wording where the layer has run, the authors' short wording where it has
       // not, and the full claim as a last resort — so a paper without the layer still reads.
-      plain: (plain[c.slug] ?? short ?? full).trim(),
+      // `||`, not `??`: `short` is a trimmed string and is therefore '' rather than undefined
+      // when the authors wrote none, so the nullish fallback stopped there and never reached
+      // the full claim. Every one of Gädeke's 40 result rows rendered as an empty line.
+      plain: (plain[c.slug] || short || full).trim(),
       hasPlain: Boolean(plain[c.slug]),
       full,
       panel: c.panel ?? null,
@@ -333,6 +410,33 @@ export function readerData(paperSlug: string) {
   (article?.sections ?? []).forEach((s: any) => collectParas(s, s.type === 'results'));
 
   const placed = marks.length ? placeMarks(resultsParas, marks, titles) : [];
+
+  // ---- the drafts, on the sentences the gap verdicts named
+  //
+  // A draft's span is a sentence of the Results, so it is located by the matcher that locates
+  // the marks — in uid order, because that matcher walks forward through the text and never
+  // looks back. A draft written against a table row or a figure caption is in no Results
+  // paragraph and places nowhere; the rail lists it instead of losing it.
+  const drafts = draftsOf(paperSlug);
+  const draftPlaced = drafts.length && resultsParas.length
+    ? placeMarks(resultsParas, [...drafts]
+        .sort((a, b) => a.uid.localeCompare(b.uid))
+        .map(d => ({ text: d.span, claims: [], gap: true, uid: d.uid })), titles)
+    : [];
+
+  // A drafted span is usually already carrying a `gap` mark on exactly the same characters,
+  // and `pieces` drops a range that overlaps the one before it. So the draft is folded onto
+  // the range that is already there rather than pushed beside it: pushed beside it, one of the
+  // two would be silently dropped, and which one depends on the order they were found in.
+  const inText = new Set<string>();
+  draftPlaced.forEach((rs, i) => {
+    for (const r of rs) {
+      const same = (placed[i] ??= []).find(x => x.start === r.start && x.end === r.end);
+      if (same) same.uid = r.uid; else placed[i].push(r);
+      inText.add(r.uid!);
+    }
+  });
+
   const byPara = new Map<any, Ranged[]>();
   resultsParas.forEach((p, i) => { if (placed[i]?.length) byPara.set(p, placed[i]); });
 
@@ -368,6 +472,7 @@ export function readerData(paperSlug: string) {
   const marked = placed.reduce((n, rs) => n + rs.filter(r => r.claims.length).length, 0);
   const gaps = placed.reduce((n, rs) => n + rs.filter(r => r.gap).length, 0);
   const rerun = claims.filter((c: any) => c.status === 'matches' || c.status === 'partly').length;
+  const undecided = drafts.filter(d => !d.decision).length;
 
   return {
     slug: paperSlug,
@@ -386,7 +491,9 @@ export function readerData(paperSlug: string) {
     figures,
     tables: article?.tables ?? [],
     claims,
-    counts: { claims: claims.length, rerun, marked, gaps },
+    drafts: drafts.map(d => ({ ...d, inText: inText.has(d.uid) })),
+    draftRoles: DRAFT_ROLES,
+    counts: { claims: claims.length, rerun, marked, gaps, drafts: drafts.length, undecided },
     downloads,
     hasArticle: Boolean(article),
     hasPlain: Object.keys(plain).length > 0,

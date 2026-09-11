@@ -104,8 +104,25 @@ def load_decisions(path: Path) -> list[dict]:
     if not text:
         return []
     if text.lstrip().startswith("["):
-        return json.loads(text)
-    return [json.loads(l) for l in text.splitlines() if l.strip()]
+        records = json.loads(text)
+    else:
+        records = [json.loads(l) for l in text.splitlines() if l.strip()]
+
+    # The review surface appends and never rewrites, so a reviewer who changed their mind is a
+    # second record for the same span, and the last one is what they decided. Taken as written,
+    # a span accepted and then rejected would be both written and reported as turned down.
+    # The earlier records stay in the file: what somebody thought before they thought again is
+    # part of the evidence about the drafting layer, which is what this file is for.
+    #
+    # An `edge` record is not a decision about a draft at all — it is a person saying one of the
+    # graph's relations is wrong — and it shares this file only because it is the same kind of
+    # thing: a note somebody made while reviewing. Nothing here acts on it.
+    latest: dict[tuple[str, str], dict] = {}
+    for r in records:
+        if r.get("type") == "edge":
+            continue
+        latest[(r["paper"], r["uid"])] = r
+    return list(latest.values())
 
 
 def candidates(paper: str) -> dict[str, dict]:
