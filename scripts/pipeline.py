@@ -307,6 +307,21 @@ def state(decl: dict | None = None, slugs: list[str] | None = None) -> dict:
                 # current"; saying `unrecorded` is the honest answer and is what the state
                 # means. The artifact may be perfectly good.
                 st = ABSENT if not produced else "unrecorded"
+
+                # What the entry *does* carry is kept. Declining to assert inputs a backfill
+                # never observed is the point of #30; discarding the version, the date and the
+                # model alongside them was not. Thirteen of Gaedeke's fifteen `unrecorded`
+                # cells have an entry naming all three, and the site rendered every one of
+                # them as a bare "no run recorded" directly above the artifact it names —
+                # which reads as nothing having happened, in a corpus where something did.
+                #
+                # `by` is written as the literal "unrecorded" when the backfill could not tell
+                # who answered, so it is dropped here rather than rendered as an author.
+                if run:
+                    by = run.get("by")
+                    cells[lid] = {"state": st, "v": run["v"], "ran": run.get("ran"),
+                                  "note": run.get("note"), "backfilled": True,
+                                  "by": None if by == "unrecorded" else by}
             else:
                 moved = [i["path"] for i in run.get("in", []) if digest(i["path"]) != i["sha"]]
                 lost = [o["path"] for o in run.get("out", []) if not digest(o["path"])]

@@ -166,7 +166,12 @@ const tabs = [
          somebody else's work. -->
     <div class="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
       <span class="tabular-nums">{paperData.claimCount} claims</span>
-      <span class="tabular-nums">{fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} layers</span>
+      <span class="tabular-nums" title="A layer counts as filled when it produced something. Whether the run that produced it was observed is the second number.">
+        {fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} layers have output
+      </span>
+      <span class="tabular-nums" title="Runs the ledger watched, and can therefore still check against their inputs.">
+        {fill_of(paperData.slug).observed} with an observed run
+      </span>
       {reran > 0 && <span class="tabular-nums">{reran} re-run from deposited code</span>}
       <span class="tabular-nums">0 approved by a person</span>
       {(paperData as any).verificationLevel && (paperData as any).verificationLevel !== 'unknown' && (
@@ -251,10 +256,14 @@ const tabs = [
     <div class="paper-tab-panel" data-tab-id="pipeline" data-tab-active="false">
       <div class="flex items-baseline justify-between gap-3 mb-2">
         <p class="text-sm text-gray-600 dark:text-gray-400 max-w-2xl m-0">
-          The layers this paper has been through, and what each rests on.
+          The layers this paper has been through, and what each rests on. A cell is filled when
+          the layer produced something; <em>run not observed</em> means the output is there and
+          the run that made it was reconstructed rather than watched, so its inputs were never
+          hashed and nothing can say whether it is still current.
         </p>
         <span class="text-xs font-mono text-gray-400 dark:text-gray-500 tabular-nums whitespace-nowrap">
-          {fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} ·
+          {fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} with output ·
+          {fill_of(paperData.slug).observed} observed ·
           <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">all papers</a>
         </span>
       </div>

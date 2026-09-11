@@ -64,6 +64,9 @@ export interface Cell {
   blockedBy?: string[];
   /** Upstream layers with no ledger entry. Not a fault in this cell; a gap in its account. */
   unrecordedUpstream?: string[];
+  /** The entry is a backfill: it records that the artifact exists, not that a run was
+   *  watched. Its version, date and author are real; its inputs were never hashed. */
+  backfilled?: boolean;
   /** Artifact paths for this cell, resolved for this paper. */
   produces: string[];
   /** The command that would fill it, with {paper} and {doi} substituted. */
@@ -151,6 +154,7 @@ export function cell(paper: string, layerId: string): Cell | null {
     lost: raw.lost?.length ? raw.lost : undefined,
     blockedBy: raw.blocked_by,
     unrecordedUpstream: raw.unrecorded_upstream,
+    backfilled: raw.backfilled,
     versions: history(paper, layerId),
     approved: raw.approved,
     produces: (layer.produces ?? []).map(p => fill(p, paper)),
@@ -185,11 +189,16 @@ export function inState(...states: CellState[]): Cell[] {
  *
  *  `absent` is the only state that is genuinely empty. What is checkable is counted
  *  separately, on /pipeline, where the distinction is the subject rather than a side effect. */
-export function fill_of(paper: string): { done: number; total: number } {
+export function fill_of(paper: string): { done: number; total: number; observed: number } {
   const cs = cells(paper);
   return {
     done: cs.filter(c => c.state !== 'absent').length,
     total: cs.length,
+    // The other half of the sentence. `done` counts answers and `observed` counts the runs
+    // that can still be checked, and a page that prints the first without the second reads as
+    // a contradiction beside cells that say no run was observed — which is what Gaedeke's
+    // "18/21 layers" did, over fifteen of them.
+    observed: cs.filter(c => c.state === 'current' || c.state === 'stale' || c.state === 'blocked').length,
   };
 }
 
@@ -286,7 +295,12 @@ export const STATE_LABEL: Record<CellState, string> = {
   // `unrecorded` named the ledger's gap rather than the reader's question, and the word does
   // not say which of the two it means — the file is missing, or the account of it is. It is
   // the second: the artifact is there and may be perfectly good.
-  unrecorded: 'no run recorded',
+  //
+  // "no run recorded" then overstated the gap in the other direction. Most of these cells have
+  // a ledger entry naming a version, a date and the model that answered; what the entry does
+  // not have is the inputs, because the run was reconstructed rather than watched. The label
+  // says which of those two things is missing.
+  unrecorded: 'run not observed',
 };
 
 /** What each state means, in one line. The label is a word on a chip; a reader meeting it for
