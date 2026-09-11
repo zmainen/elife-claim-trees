@@ -23,6 +23,11 @@ from pathlib import Path
 DG_NS = "https://discoursegraphs.org/ontology#"
 CITO_NS = "http://purl.org/spar/cito/"
 CLAIMREL_NS = "http://elife-claim-trees.org/relations/"
+# Discourse Graphs has no term for the posture a paper takes toward a proposition, any
+# more than MIRA does. Emitting one under `dg:` would assert a term the ontology does not
+# define — the same mistake as reading our exporter's limits back as MIRA's. It goes in
+# our own namespace, matching `haak:stance` in the MIRA export.
+HAAK_NS = "http://elife-claim-trees.org/schema/"
 
 # Role → DG node type mapping
 ROLE_TO_DG_TYPE = {
@@ -120,6 +125,12 @@ def oxa_to_jsonld(oxa_path: Path) -> dict:
             node[f"{DG_NS}epistemicStrength"] = claim["epistemicStrength"]
         if claim.get("metadata", {}).get("doi"):
             node["http://purl.org/ontology/bibo/doi"] = claim["metadata"]["doi"]
+        # A rejected alternative exported as a bare dg:Claim reads as one the paper
+        # makes. The opposing edge gives the argument's direction, not the posture.
+        if claim.get("stance"):
+            node[f"{HAAK_NS}stance"] = claim["stance"]
+        if claim.get("stanceSource"):
+            node[f"{HAAK_NS}stanceSource"] = claim["stanceSource"]
 
         nodes.append(node)
 
@@ -163,6 +174,7 @@ def oxa_to_jsonld(oxa_path: Path) -> dict:
             "dg": DG_NS,
             "cito": CITO_NS,
             "claimrel": CLAIMREL_NS,
+            "haak": HAAK_NS,
             "bibo": "http://purl.org/ontology/bibo/",
         },
         "@graph": [source_node] + nodes + edges,

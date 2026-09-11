@@ -39,6 +39,7 @@ const shortOf = (slug: string) => {
 
 const slugs = Object.keys(L);
 const count = (k: string) => slugs.filter(s => L[s][k]).length;
+const altTotal = slugs.reduce((n, s) => n + (L[s].alternatives_n ?? 0), 0);
 
 const LAYERS = [
   {
@@ -68,6 +69,13 @@ const LAYERS = [
     question: 'What does the paper assert that no claim represents?',
     detail: `The paper cut into spans, each either accounted for by a claim, adjudicated as asserting no result, or recorded as a gap. This is the layer that measures the claim tree against the paper rather than against itself, and it is the one that produces findings rather than presentation.`,
     covers: `${count('coverage')} of ${slugs.length} papers`,
+  },
+  {
+    v: 'v5', date: '2026-09-10', key: 'alternatives',
+    title: 'Alternatives and stance',
+    question: 'What does this paper rule out, and what does it merely entertain?',
+    detail: `A tree could say what a result supports but not what it eliminates, because a rival nobody asserts had nowhere to be. Alternatives are now claims like any other, and \`stance\` on the assertion records the paper's posture toward each — asserts, entertains, rejects, attributes. A rejected alternative is an \`entertains\` with an incoming \`rules-out\`; an \`entertains\` without one is an open rival, which is common and was previously inexpressible. ${altTotal} propositions across the corpus are now recorded as ones their paper does not assert.`,
+    covers: `${count('alternatives')} of ${slugs.length} papers`,
   },
 ];
 
@@ -133,6 +141,7 @@ const has = (s: string, k: string) => L[s][k];
             <th class="py-2 px-3 font-semibold text-center">v2 verification</th>
             <th class="py-2 px-3 font-semibold text-center">v3 formats</th>
             <th class="py-2 px-3 font-semibold text-center">v4 coverage</th>
+            <th class="py-2 px-3 font-semibold text-center">v5 alternatives</th>
           </tr>
         </thead>
         <tbody>
@@ -155,6 +164,11 @@ const has = (s: string, k: string) => L[s][k];
               </td>
               <td class="py-2 px-3 text-center">{has(s, 'formats') ? <span class="text-emerald-600 dark:text-emerald-400">&#10003;</span> : <span class="text-gray-300 dark:text-gray-700">&mdash;</span>}</td>
               <td class="py-2 px-3 text-center">{has(s, 'coverage') ? <span class="text-emerald-600 dark:text-emerald-400">&#10003;</span> : <span class="text-gray-300 dark:text-gray-700">&mdash;</span>}</td>
+              <td class="py-2 px-3 text-center">
+                {has(s, 'alternatives')
+                  ? <span class="text-emerald-600 dark:text-emerald-400 font-mono text-xs">{L[s].alternatives_n}</span>
+                  : <span class="text-gray-300 dark:text-gray-700">&mdash;</span>}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -200,6 +214,20 @@ const has = (s: string, k: string) => L[s][k];
           schema has no node for, and {facts.mira.verification_records} verification records
           for which no interchange format has a node type at all.
           <a href={`${base}/formats/mira/`} class="text-amber-700 dark:text-amber-400 hover:underline ml-1">MIRA reference</a>
+        </p>
+      </section>
+
+      <section class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+        <p class="font-mono text-xs text-amber-700 dark:text-amber-400 m-0 mb-1">v5 &middot; alternatives &middot; 2026-09-10</p>
+        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0">
+          A missing node does not only lose information; it misdirects the edges that would
+          have pointed at it. Five eliminative relations were found aiming at claims their own
+          paper asserts, which in Gädeke had the graph asserting a contradiction between two
+          compatible findings. The schema and its checker are corpus-wide; the migration is
+          not. {altTotal} propositions across {count('alternatives')} papers are recorded as
+          ones their paper does not assert, {L['gadeke-2026-guilt-insula']?.alternatives_n ?? 0} of
+          them Gädeke's, and {facts.dangling_rules_out} eliminative edges still point at prose
+          that names no claim.
         </p>
       </section>
 
