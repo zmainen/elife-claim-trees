@@ -331,6 +331,24 @@ def cmd_synthesis(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_abstract_map(args: argparse.Namespace) -> int:
+    """Layer `abstract-map` — which claims the abstract carries, and which it drops."""
+    from .layers import abstract_map_layer, abstract_map_request
+
+    cfg = _cfg(args)
+    if _dump(args, lambda: abstract_map_request(args.paper, cfg), "abstract-map"):
+        return 0
+    path, payload = abstract_map_layer(args.paper, cfg, answer=args.answer)
+    carried = sum(1 for s in payload["sentences"] if s["type"] == "claim")
+    print(f"=== abstract-map — {args.paper} ===")
+    print(f"  model     = {payload['model']}")
+    print(f"  sentences = {len(payload['sentences'])} ({carried} carry claims), "
+          f"{len(payload['orphanClaims'])} orphan claim(s), "
+          f"{len(payload['orphanSentences'])} orphan sentence(s)")
+    print(f"  written: {path}")
+    return 0
+
+
 def cmd_verify_refs(args: argparse.Namespace) -> int:
     """Layer `reference-check` — do the cited references resolve, and to what?"""
     import json
@@ -931,6 +949,24 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common_args(p_syn)
     _add_model_args(p_syn)
     p_syn.set_defaults(func=cmd_synthesis)
+
+    # ── abstract-map ─────────────────────────────────────────────────────────
+    p_am = sub.add_parser(
+        "abstract-map", help="Layer `abstract-map` — which claims the abstract carries and drops.",
+        description=(
+            "Map the abstract to the claim graph in both directions. Given the abstract cut into "
+            "numbered sentences and the claim list, return each sentence's type, the claims it "
+            "carries and the mapping kind; it derives the claims the abstract drops and the "
+            "sentences no claim accounts for, and writes site/src/data/abstract-mapping/<paper>.json. "
+            "`--dump-prompt` writes the exact request, `--answer` feeds a reply back through the "
+            "same validation."
+        ),
+    )
+    p_am.add_argument("--paper", required=True, help="Paper slug.")
+    _add_answerable_args(p_am, "the sentence numbers and slugs are validated against the tree.")
+    _add_common_args(p_am)
+    _add_model_args(p_am)
+    p_am.set_defaults(func=cmd_abstract_map)
 
     # ── write (claim-tree) ───────────────────────────────────────────────
     p_write = sub.add_parser(

@@ -41,6 +41,9 @@ ROLES: dict[str, tuple[str, list[str]]] = {
     # prose, not claims.
     "summaries": ("summaries.md", [_VOCAB]),
     "synthesis": ("synthesis.md", [_VOCAB]),
+    # Abstract-map returns a mapping keyed by slug and sentence number, not a judgement about
+    # roles, so it gets its task alone.
+    "abstract-map": ("abstract-map.md", []),
 }
 
 

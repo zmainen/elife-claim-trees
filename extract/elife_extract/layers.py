@@ -715,3 +715,101 @@ def synthesis_layer(paper: str, cfg: Config, *,
     payload = {"paperSlug": paper, "version": 3, **data, "model": model}
     path = _write_json(site_data_file(cfg, "synthesis-v3", f"{paper}.json"), payload)
     return path, payload
+
+
+# ── abstract-map ─────────────────────────────────────────────────────────
+# The abstract cut into sentences, each mapped to the claims it carries, and every claim the
+# abstract drops. The runner owns the sentence split, so the model annotates numbered sentences
+# and the text is re-attached by number; and it derives `orphanClaims` and `orphanSentences`
+# from the per-sentence mapping, so the two directions cannot disagree.
+
+
+def _abstract_sentences(paper: str, cfg: Config) -> tuple[str, list[str]]:
+    """The abstract as one whitespace-normalised string and the same string split into sentences."""
+    from .segment import split_sentences
+
+    text = " ".join(read_prepared(paper, cfg).abstract.split())
+    return text, split_sentences(text)
+
+
+def abstract_map_request(paper: str, cfg: Config) -> tuple[str, str]:
+    from .prompts import prompt
+
+    _text, sentences = _abstract_sentences(paper, cfg)
+    lines = ["# Abstract, by sentence\n"]
+    for i, s in enumerate(sentences, 1):
+        lines.append(f"[{i}] {s}")
+    lines.append("\n# Claims\n")
+    for c in _tree_claims(paper, cfg):
+        lines.append(f"- `{c['slug']}` ({c['role'] or 'claim'}): {c['claim']}")
+    return prompt("abstract-map", cfg), "\n".join(lines) + "\n"
+
+
+def _validate_abstract_map(raw: dict, paper: str, cfg: Config) -> dict:
+    """Coerce a model answer into the mapping, both directions enforced from one source.
+
+    The runner's own split is authoritative: each returned sentence is matched to its number and
+    its text re-attached, an unknown `type` becomes `background`, a `claim` sentence resolving to
+    no known slug becomes `unmappable`, and `kind` is confined to the three the site labels.
+    `orphanClaims` is every claim no sentence carried and `orphanSentences` every unmappable
+    sentence — derived here rather than trusted, so assigning a claim and calling it an orphan
+    cannot both happen.
+    """
+    if not isinstance(raw, dict):
+        raise ValueError("abstract-map answer must be a JSON object with `sentences`")
+    _text, sentences = _abstract_sentences(paper, cfg)
+    text_of = {i + 1: s for i, s in enumerate(sentences)}
+    known = _known_slugs(paper, cfg)
+
+    annotated: dict[int, dict] = {}
+    for e in (raw.get("sentences") or []):
+        if not isinstance(e, dict):
+            continue
+        try:
+            n = int(e.get("n"))
+        except (TypeError, ValueError):
+            continue
+        if n in text_of:
+            annotated[n] = e
+
+    out_sentences = []
+    for n in sorted(text_of):
+        e = annotated.get(n, {})
+        typ = e.get("type") if e.get("type") in ("claim", "background", "unmappable") else "background"
+        claims = [s for s in (e.get("claims") or []) if s in known] if typ == "claim" else []
+        if typ == "claim" and not claims:
+            typ = "unmappable"                          # named claims, none in this tree
+        item = {"n": n, "text": text_of[n], "type": typ, "claims": claims}
+        if typ == "claim":
+            item["kind"] = e.get("kind") if e.get("kind") in ("direct", "combined", "synthesis") else "direct"
+        note = " ".join(str(e.get("note") or "").split())
+        if note:
+            item["note"] = note
+        out_sentences.append(item)
+
+    used = {s for it in out_sentences for s in it["claims"]}
+    return {
+        "abstract": _text,
+        "sentences": out_sentences,
+        "orphanClaims": [c["slug"] for c in _tree_claims(paper, cfg) if c["slug"] not in used],
+        "orphanSentences": [it["n"] for it in out_sentences if it["type"] == "unmappable"],
+    }
+
+
+def abstract_map_layer(paper: str, cfg: Config, *,
+                       answer: str | None = None) -> tuple[Path, dict]:
+    """Write the abstract-to-claims mapping to site/src/data/abstract-mapping/<paper>.json."""
+    from .agents import parse_json_response, stream_text
+
+    system, user = abstract_map_request(paper, cfg)
+    if answer is not None:
+        p, model = answer_file(answer, cfg)
+        raw = p.read_text(encoding="utf-8")
+    else:
+        model = cfg.model_reconcile
+        raw = stream_text(cfg, model=model, system=system, user=user, label="abstract-map")
+
+    data = _validate_abstract_map(parse_json_response(raw), paper, cfg)
+    payload = {"paperSlug": paper, **data, "model": model}
+    path = _write_json(site_data_file(cfg, "abstract-mapping", f"{paper}.json"), payload)
+    return path, payload

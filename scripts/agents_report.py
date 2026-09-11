@@ -83,6 +83,10 @@ ROLES = [
      "reads": "the claim graph alone — no abstract, no prose",
      "returns": "the argument restated from the graph, traced back to the claims and edges",
      "agent_key": None},
+    {"id": "abstract-map", "stage": "measure",
+     "reads": "the abstract cut into sentences and the claim list",
+     "returns": "which claims each abstract sentence carries, and which claims it drops",
+     "agent_key": None},
 ]
 
 
@@ -101,7 +105,8 @@ LAYER_OF = {"results-reader": "results-reader", "caption-reader": "caption-reade
             "structure-reader": "structure-reader", "reconciler": "reconcile",
             "external-reviewer": "external-review", "edge-inference": "edge-inference",
             "coverage-adjudicator": "adjudication", "questions": "questions",
-            "parts": "parts", "summaries": "summaries", "synthesis": "synthesis"}
+            "parts": "parts", "summaries": "summaries", "synthesis": "synthesis",
+            "abstract-map": "abstract-map"}
 
 
 def declared_reads():

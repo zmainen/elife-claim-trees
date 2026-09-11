@@ -553,9 +553,17 @@ layers:
 
       An abstract is the paper's own summary of itself, so the difference between the two lists is
       the difference between what a paper found and what it advertises.
-    needs: [claim-tree]
+
+      `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through
+      the same validation — an unknown slug or a sentence number the abstract does not have is
+      dropped, and the two directions are derived from one per-sentence mapping so they cannot
+      disagree — so a model with no backend here can still answer it.
+    needs: [claim-tree, prepare]
+    reads: [extract/prompts/abstract-map.md]
     produces: ["site/src/data/abstract-mapping/{paper}.json"]
     views: [document, comparison]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli abstract-map --paper {paper}"
 
   # ── measures ───────────────────────────────────────────────────────────────
 
