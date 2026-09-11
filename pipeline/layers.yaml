@@ -397,14 +397,20 @@ layers:
       no structure, and it says so.
 
       It refuses to overwrite a non-empty paper directory. The claim files are edited afterwards by
-      hand and by later layers, and a silent overwrite would discard work no ledger records.
+      hand and by later layers, and a silent overwrite would discard work no ledger records. A run
+      of this layer is by definition a new version, so the command passes `--replace`: it moves the
+      current tree to runs/<paper>/claim-tree.v<N>/ — keeping every version's bytes addressable —
+      then writes the new one and carries forward the `alt-` claims, `rules-out` edges and
+      reproduction records the induction chain does not itself produce.
     added: "2026-03"
     found: >
       Across {{papers}} papers the corpus holds {{claims}} claims and {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.
     needs: [reconcile, external-review, edge-inference, claim-format]
     produces: ["claims/{paper}/*.md"]
     views: [graph, list, table]
-    command: "cd extract && python3 -m elife_extract.cli write --paper {paper}"
+    # `--replace`: a run of the layer is a new version, so it archives the current tree and
+    # carries the other layers' content forward rather than refusing a non-empty directory.
+    command: "cd extract && python3 -m elife_extract.cli write --paper {paper} --replace"
 
   - id: stance
     kind: feature

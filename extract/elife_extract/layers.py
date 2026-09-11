@@ -25,6 +25,7 @@ from pathlib import Path
 from .config import Config
 from .prepare import FigureCaption, PreparedPaper, TableCaption, prepare
 from .schema import AgentExtraction, DraftClaimTable
+from .write import _read_frontmatter, _write_key
 
 
 # ── where a layer's files live ───────────────────────────────────────────
@@ -274,19 +275,6 @@ def read_edges(paper: str, cfg: Config) -> list[dict]:
 # producing a new kind of thing.
 
 
-def _read_frontmatter(path: Path) -> dict:
-    """One claim file's YAML frontmatter, tolerating the empty-list-at-column-0 quirk."""
-    import yaml
-    m = re.match(r"^---\n(.*?)\n---", path.read_text(encoding="utf-8"), re.S)
-    if not m:
-        return {}
-    body = re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2", m.group(1), flags=re.M)
-    try:
-        return yaml.safe_load(body) or {}
-    except yaml.YAMLError:
-        return {}
-
-
 def _hypotheses_and_alternatives(paper: str, cfg: Config) -> list[tuple[str, str]]:
     """(slug, sentence) for the claims a question answers: hypotheses and rejected alternatives.
 
@@ -372,54 +360,9 @@ def questions_layer(paper: str, cfg: Config, *,
 
 
 # ── writing questions and addresses back into the tree, in place ─────────
-# The claim files are hand-edited and machine-written both, so a re-dump of the frontmatter
-# would reorder and reflow keys nobody touched. These edit the frontmatter as text: they drop
-# the key if it is already there and write the new value, and leave every other line untouched.
-# The pattern is verify_refs.py's DOI write-back, minus the full re-serialisation.
-
-
-def _split_frontmatter(text: str) -> tuple[str, list[str], str] | None:
-    """(opening `---\\n`, frontmatter lines, rest) or None if there is no frontmatter."""
-    m = re.match(r"(?s)^(---\n)(.*?)(\n---\n.*)$", text)
-    if not m:
-        return None
-    return m.group(1), m.group(2).split("\n"), m.group(3)
-
-
-def _drop_key(lines: list[str], key: str) -> list[str]:
-    """Remove a top-level `key:` and any block that hangs under it (indented or list lines)."""
-    out, i = [], 0
-    while i < len(lines):
-        if re.match(rf"^{re.escape(key)}\s*:", lines[i]):
-            i += 1
-            while i < len(lines) and lines[i][:1] in (" ", "\t", "-"):
-                i += 1
-            continue
-        out.append(lines[i])
-        i += 1
-    return out
-
-
-def _write_key(path: Path, key: str, block: str, *, after: str | None = None) -> None:
-    """Set a top-level frontmatter key to `block`, in place, without reordering other keys.
-
-    `block` is the whole rendered value including the `key:` line. Inserted after the `after:`
-    key when given and present, else appended to the end of the frontmatter.
-    """
-    parts = _split_frontmatter(path.read_text(encoding="utf-8"))
-    if parts is None:
-        return
-    opening, lines, rest = parts
-    lines = _drop_key(lines, key)
-    new = block.split("\n")
-    at = len(lines)
-    if after:
-        for i, l in enumerate(lines):
-            if re.match(rf"^{re.escape(after)}\s*:", l):
-                at = i + 1
-                break
-    lines[at:at] = new
-    path.write_text(opening + "\n".join(lines) + rest, encoding="utf-8")
+# The frontmatter text-editors (`_write_key` and friends) live in write.py, which both this
+# layer and the claim-tree carry-over write keys back through — one copy, since layers already
+# imports write.
 
 
 def _apply_questions(paper: str, data: dict, cfg: Config) -> None:
