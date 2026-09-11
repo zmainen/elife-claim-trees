@@ -85,7 +85,18 @@ class DraftClaimTable(BaseModel):
     paper_slug: str
     paper_doi: str
     paper_title: str | None = None
-    extraction_path: Literal["pdf", "github-readme", "elife-api", "web-fetch"] = "pdf"
+    # How the paper was read. The vocabulary is prepare.py's, because prepare is what
+    # decides: JATS XML for an eLife DOI, PDF only when forced or for a paper off the CDN.
+    #
+    # This used to read Literal["pdf", "github-readme", "elife-api", "web-fetch"] = "pdf" —
+    # a set that omitted `jats` entirely and defaulted to the one value that was usually
+    # wrong. The draft therefore could not record a JATS intake even when that is what
+    # happened, and said "pdf" whether or not anything had checked.
+    #
+    # None means the draft does not know, which is a different and honest answer. The
+    # reconcile layer fills it in from prepared.json, so a draft built through the pipeline
+    # always carries the real value; a draft built some other way says so.
+    extraction_path: Literal["jats", "pdf"] | None = None
     extraction_path_note: str | None = None
     per_agent_counts: dict[AgentName, int] = Field(default_factory=dict)
     # Which model produced this draft, at the top level so the pipeline's `by_from: model`

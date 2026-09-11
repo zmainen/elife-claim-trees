@@ -72,7 +72,6 @@ A JSON object matching the DraftClaimTable schema:
   "paper_slug": "<slug>",
   "paper_doi": "<doi>",
   "paper_title": "<title>",
-  "extraction_path": "pdf",
   "per_agent_counts": {"results": 28, "caption": 26, "structure": 9},
   "claims": [
     {

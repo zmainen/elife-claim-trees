@@ -117,7 +117,11 @@ def external_review(
     parsed.setdefault("paper_doi", draft.paper_doi)
     parsed.setdefault("paper_title", draft.paper_title)
     parsed.setdefault("paper_slug", draft.paper_slug)
-    parsed.setdefault("extraction_path", draft.extraction_path)
+    # Assigned, not setdefault: how the paper was read is the draft's to state, and a
+    # reviewer that invented a value would overwrite it. The prompt no longer shows one,
+    # but the guarantee should not depend on the prompt.
+    parsed["extraction_path"] = draft.extraction_path
+    parsed["extraction_path_note"] = draft.extraction_path_note
     parsed.setdefault("per_agent_counts", dict(draft.per_agent_counts))
     parsed.setdefault("config_snapshot", dict(draft.config_snapshot))
 
