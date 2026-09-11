@@ -67,7 +67,11 @@ GAP = "gap"
 MARK_RE = re.compile(
     r"⟦>([a-z0-9_-]+)?(?:\.[0-9a-z]{4,6})?"        # sign, optional author, optional id
     r"((?: [a-z][a-z0-9-]*(?:=[^\s:]+)?)*)"          # words
-    r": ?@\{(.*?)\}\s*([\s\S]*?)⟧",                # anchor, then body
+    # The anchor is everything up to a `}` that is not part of a doubled one. `.*?` stopped
+    # at the first brace of the pair `_quote_for` writes, so any span containing a literal `}`
+    # — every sentence carrying inline maths, which JATS renders as \begin{document}… — read
+    # back truncated at that brace and matched no span. Scheller lost 22 of 57 marks to it.
+    r": ?@\{((?:[^}]|\}\})*)\}\s*([\s\S]*?)⟧",     # anchor, then body
     re.DOTALL)
 
 _SECTION_ORDER = ("abstract", "results", "captions", "tables")
