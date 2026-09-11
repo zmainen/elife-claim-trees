@@ -1,0 +1,625 @@
+{
+  "layer": "prediction-outcome",
+  "rule_version": 2,
+  "papers": 12,
+  "predictions": 46,
+  "buckets": {
+    "recorded": 8,
+    "unrecorded": 27,
+    "untested": 5,
+    "abstain:conjunction": 1,
+    "abstain:convention": 5
+  },
+  "bucket_notes": {
+    "recorded": "The graph says how the test came out. A `confirms` edge points at the prediction from the result that settled it.",
+    "unrecorded": "A result is wired to the prediction with `tests`, which is neutral, and nothing records the outcome. The paper asserts the result, so a reader would infer the prediction was met -- but that inference is the reader's, not the graph's.",
+    "untested": "Nothing points at this prediction at all. It was derived from a hypothesis and then left unconnected to any result.",
+    "abstain:conjunction": "The prediction states more commitments than it has edges -- \"should show (i)... (ii)... (iii)...\" with fewer results wired than parts. One verdict cannot be right about all of them, so the rule declines rather than picking the majority.",
+    "abstain:convention": "`confirms` without `tests`. Two conventions for wiring outcomes are in use across this corpus, and this prediction follows the one that omits the neutral edge. Which is correct is the question this layer asks, so the rule must not assume an answer."
+  },
+  "conventions": {
+    "bouyeure-2026-fear-rsa": {
+      "tests only": 5
+    },
+    "gadeke-2026-guilt-insula": {
+      "tests only": 4
+    },
+    "headley-2026-inhibitory-rhythms": {
+      "tests only": 6
+    },
+    "kammer-2026-foveal-feedback": {
+      "tests only": 4
+    },
+    "kolb-2026-igabasnfr2": {
+      "tests only": 2
+    },
+    "meijer-2025-serotonin-additive-r1": {
+      "neither": 3,
+      "confirms only": 3
+    },
+    "meijer-2025-serotonin-orthogonal": {
+      "neither": 2,
+      "confirms only": 2
+    },
+    "rozak-2026-neurovascular-dl": {
+      "tests only": 2
+    },
+    "scheller-2026-self-prioritization": {
+      "tests only": 4
+    },
+    "wengert-2026-kcnc1": {
+      "tests+confirms": 9
+    }
+  },
+  "items": [
+    {
+      "paper": "bouyeure-2026-fear-rsa",
+      "prediction": "prediction-context-specificity-increases-during-reversal",
+      "bucket": "unrecorded",
+      "claim": "If PFC context-specific coding is the substrate for context-dependent fear renewal, then context representations should become more distinct (greater within-context vs between-context pattern similarity) in PFC during reversal compared to acquisition, when context becomes newly relevant for predicting threat (the same cue can be safe in one context and dangerous in another).",
+      "tests": [
+        "context-specificity-increases-reversal"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "bouyeure-2026-fear-rsa",
+      "prediction": "prediction-cs-minus-plus-generalizes-reversal",
+      "bucket": "unrecorded",
+      "claim": "If the same generalization mechanism that operates during acquisition is recruited whenever threat is acquired, then during reversal the newly dangerous cue (CS-+, previously safe) should acquire generalized neural representations in fear-network regions, mirroring the pattern seen for CS++ during acquisition.",
+      "tests": [
+        "generalized-pattern-cs-minus-plus-reversal"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "bouyeure-2026-fear-rsa",
+      "prediction": "prediction-cue-generalization-fear-network-acquisition",
+      "bucket": "unrecorded",
+      "claim": "If fear learning recruits a generalization mechanism that encodes threatening cues with shared representations, then during initial acquisition CS+ items should show greater between-item neural pattern similarity than CS- items in canonical fear-network regions (dACC, SFG, caudate, insula), with the generalization signal detectable as a positive CS+ > CS- contrast on the cue-generalization RSA measure.",
+      "tests": [
+        "cue-generalization-increases-acquisition"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "bouyeure-2026-fear-rsa",
+      "prediction": "prediction-item-stability-changing-cues-reversal",
+      "bucket": "unrecorded",
+      "claim": "If reversal learning recruits an item-specific updating strategy in addition to generalization, then changing-valence cues (CS+- and CS-+) should show elevated within-item neural pattern stability — distinguishing each item from its category-mates — in higher-order cortex (precuneus, IFG, prefrontal cortex), regions outside the canonical fear network.",
+      "tests": [
+        "item-stability-precuneus-pfc-reversal"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "bouyeure-2026-fear-rsa",
+      "prediction": "prediction-pfc-context-specificity-tracks-renewal",
+      "bucket": "unrecorded",
+      "claim": "If PFC context-specific coding is the substrate for context-dependent fear renewal, then between-subject variability in PFC context specificity (during reversal) should covary with between-subject variability in subsequent reinstatement of acquisition-phase fear memory traces at test, with subjects who encode contexts more distinctly showing stronger reinstatement.",
+      "tests": [
+        "pfc-context-specificity-predicts-renewal"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "gadeke-2026-guilt-insula",
+      "prediction": "prediction-behavioral-guilt-effect",
+      "bucket": "unrecorded",
+      "claim": "If interpersonal guilt is a real affective phenomenon contingent on responsibility, then in a within-subject lottery paradigm where the same partner outcomes occur under Social and Partner conditions, momentary happiness should drop more after negative partner outcomes in Social trials (participant chose) than in Partner trials (partner chose). This is operationalised as a positive interaction term between partnerWon (low partner outcome) and subjDecided (Social condition) in a mixed-effects regression of happiness on outcomes and responsibility.",
+      "tests": [
+        "guilt-reduces-happiness-after-partner-loss"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "gadeke-2026-guilt-insula",
+      "prediction": "prediction-insula-tracks-guilt",
+      "bucket": "unrecorded",
+      "claim": "If anterior insula encodes interpersonal guilt, then in the trial-level GLM, anterior insula BOLD should be elevated in the Social vs Partner contrast specifically after negative partner outcomes — i.e., the (condition × partner-outcome) interaction should yield a significant positive cluster in the anterior insula, detectable with small-volume FWE correction (SVC) over an a priori anterior-insula ROI derived from prior literature. The signal should not be present for the same contrast after positive partner outcomes (specificity).",
+      "tests": [
+        "insula-tracks-guilt-effect"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "gadeke-2026-guilt-insula",
+      "prediction": "prediction-responsibility-model-wins-comparison",
+      "bucket": "unrecorded",
+      "claim": "If happiness incorporates partner reward prediction errors with a responsibility-weighted rule, then a computational model of happiness that includes a social_pRPE regressor (partner RPE × subject-decided indicator) should fit participant happiness ratings better than nested alternatives that omit the responsibility interaction. Formally: the Responsibility model (and Responsibility Redux model) should achieve lower cross-validated error than baseline (own-reward-only) and additive social-utility models in both Study 1 and Study 2; and the fitted social_pRPE weight should be significantly greater than zero.",
+      "tests": [
+        "responsibility-modulates-guilt-computational"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "gadeke-2026-guilt-insula",
+      "prediction": "prediction-sts-tracks-partner-rpe-under-responsibility",
+      "bucket": "unrecorded",
+      "claim": "If superior temporal sulcus represents the partner's affective experience selectively under responsibility, then in a model-based GLM with trial-by-trial partner RPE regressors split by who-chose, the parametric modulator for partner RPE in Social trials (subject-decided) should yield a significant cluster in left STS, while the parametric modulator for partner RPE in Partner trials (partner-decided) should not. This conditional engagement, rather than a main effect of partner RPE, is the diagnostic prediction.",
+      "tests": [
+        "sts-tracks-partner-reward-prediction-errors"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "headley-2026-inhibitory-rhythms",
+      "prediction": "prediction-beta-optimal-distal",
+      "bucket": "unrecorded",
+      "claim": "If the optimal frequency of rhythmic inhibition at a compartment is set by matching the rhythm period to the local spike timescale, then distal inhibition — where apical Ca²⁺ and NMDA spikes lead the soma by ~20 ms and ~25 ms respectively — should be maximally effective at beta frequencies (~20 Hz), whose period (~50 ms) matches the dendritic-spike lead time.",
+      "tests": [
+        "beta-optimal-distal-dendritic-entrainment"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "headley-2026-inhibitory-rhythms",
+      "prediction": "prediction-distal-dendritic-spike-mechanism",
+      "bucket": "unrecorded",
+      "claim": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then doubling distal dendritic inhibition should reduce somatic firing primarily by suppressing apical Ca²⁺ and NMDA dendritic spikes, with little change in the somatic AP voltage threshold.",
+      "tests": [
+        "distal-inhib-drops-firing-02hz"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "headley-2026-inhibitory-rhythms",
+      "prediction": "prediction-gamma-optimal-perisomatic",
+      "bucket": "unrecorded",
+      "claim": "If the optimal frequency of rhythmic inhibition at a compartment is set by matching the rhythm period to the local spike timescale, then perisomatic inhibition — where Na+ spikes lead the soma by 2–3 ms — should be maximally effective at gamma frequencies (40–80 Hz), whose periods are commensurate with the 2–3 ms timescale.",
+      "tests": [
+        "gamma-optimal-perisomatic-ap-modulation"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "headley-2026-inhibitory-rhythms",
+      "prediction": "prediction-orthogonal-input-gating",
+      "bucket": "unrecorded",
+      "claim": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then beta-frequency distal inhibition should gate clustered apical inputs phase-dependently (via dendritic spike control), gamma-frequency perisomatic inhibition should gate clustered proximal/basal inputs phase-dependently (via threshold modulation), and the two gating regimes should be largely independent of each other.",
+      "tests": [
+        "beta-gates-distal-apical-inputs",
+        "gamma-gates-proximal-basal-inputs"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "headley-2026-inhibitory-rhythms",
+      "prediction": "prediction-perisomatic-input-output-shaping",
+      "bucket": "unrecorded",
+      "claim": "If perisomatic inhibition principally regulates somatic action potential generation, then it should reshape the somatic input-output curve through both subtractive (threshold shift) and divisive (gain reduction) effects, rather than producing a pure translation of the operating point.",
+      "tests": [
+        "perisomatic-inhib-subtractive-divisive"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "headley-2026-inhibitory-rhythms",
+      "prediction": "prediction-perisomatic-threshold-mechanism",
+      "bucket": "unrecorded",
+      "claim": "If perisomatic and distal dendritic inhibition serve dissociated computational roles, then doubling perisomatic inhibition should reduce somatic firing primarily by raising the action potential voltage threshold, while leaving apical Ca²⁺ and NMDA dendritic spike rates largely intact.",
+      "tests": [
+        "gamma-perisomatic-no-dendritic-spike-change",
+        "perisomatic-inhib-drops-firing-07hz"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "kammer-2026-foveal-feedback",
+      "prediction": "prediction-cross-decoding-generalizes",
+      "bucket": "unrecorded",
+      "claim": "If foveal feedback shares a representational format with bottom-up sensory drive, a classifier trained on foveal V1 responses in the experimental (feedback) condition should generalize above chance to foveal V1 responses in the control (direct stimulation) condition for the same images.",
+      "tests": [
+        "cross-decoding-experimental-to-control"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "kammer-2026-foveal-feedback",
+      "prediction": "prediction-lo-inverse-pattern",
+      "bucket": "unrecorded",
+      "claim": "If feedback content is selected by the representational level of the receiving cortex, then lateral occipital cortex (LO) — a high-level object-selective region — should show the inverse profile to foveal V1 under feedback: cross-shape decoding should drop while cross-category decoding should remain preserved.",
+      "tests": [
+        "lo-shows-reversed-specificity"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "kammer-2026-foveal-feedback",
+      "prediction": "prediction-u-shape-eccentricity",
+      "bucket": "unrecorded",
+      "claim": "If foveal V1 decoding is genuine top-down feedback rather than passive spillover from large peripheral receptive fields, the eccentricity profile of decoding accuracy in early visual cortex should dip parafoveally and rise again at the fovea (a U-shaped curve), rather than decay monotonically from the peripheral target representation toward the fovea.",
+      "tests": [
+        "u-shaped-eccentricity-rejects-spillover"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "kammer-2026-foveal-feedback",
+      "prediction": "prediction-v1-category-drops-shape-preserved",
+      "bucket": "unrecorded",
+      "claim": "If foveal feedback carries shape but not semantic category information, then in foveal V1, cross-category decoding should drop significantly under feedback (relative to direct stimulation or to a within-category baseline), while cross-shape decoding should remain comparatively preserved.",
+      "tests": [
+        "v1-category-decoding-drops-in-feedback",
+        "v2-v3-generalize-shape-not-category"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "kolb-2026-igabasnfr2",
+      "prediction": "prediction-improved-sensor-enables-new-measurements",
+      "bucket": "unrecorded",
+      "claim": "If iGABASnFR2's improvements (4-fold ΔF/F, 7-fold on-cell affinity, faster rise kinetics, 2P-compatible spectra) cross qualitative capability thresholds, then side-by-side comparison with iGABASnFR1 in three demanding preparations should show: (i) iGABASnFR2 detects single-bouton hippocampal GABA release where iGABASnFR1 yields no signal; (ii) iGABASnFR2 resolves direction-selective starburst GABA release on single trials where iGABASnFR1 cannot resolve direction even after trial-averaging; (iii) iGABASnFR2 detects whisker-evoked volume-transmitted GABA in vivo at cortical layers reachable by 2P imaging.",
+      "tests": [
+        "igabasnfr2-invivo-barrel-cortex",
+        "igabasnfr2-retina-direction-selectivity",
+        "igabasnfr2-single-bouton-hippocampus"
+      ],
+      "confirms": [],
+      "conjuncts": [
+        "i",
+        "ii",
+        "iii"
+      ]
+    },
+    {
+      "paper": "kolb-2026-igabasnfr2",
+      "prediction": "prediction-screen-yields-multiple-improved-variants",
+      "bucket": "unrecorded",
+      "claim": "If the v1 performance ceiling is set by suboptimal residues at identifiable structural sites, then near-saturation mutagenesis at those sites should yield (i) multiple variants exceeding iGABASnFR1 in ΔF/F sensitivity, (ii) at least one variant simultaneously improved on sensitivity and expression / responsive-pixel count, and (iii) potentially variants with qualitatively new behaviour (e.g. inverted response). The screen should not be dominated by single-site marginal improvements.",
+      "tests": [
+        "igabasnfr2-13fold-expression-increase",
+        "igabasnfr2-fourfold-sensitivity-gain",
+        "igabasnfr2n-negative-going-variant",
+        "mutagenesis-3947-variants-screened"
+      ],
+      "confirms": [],
+      "conjuncts": [
+        "i",
+        "ii",
+        "iii"
+      ]
+    },
+    {
+      "paper": "meijer-2025-serotonin-additive-r1",
+      "prediction": "prediction-5ht-accelerates-prior-update",
+      "bucket": "untested",
+      "claim": "If phasic 5-HT release functions as a surprise / belief-updating signal, then stimulation during the period after a prior-probability block switch should accelerate the rate at which the mouse updates its choice bias toward the new dominant side.",
+      "tests": [],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-additive-r1",
+      "prediction": "prediction-5ht-axis-orthogonal-to-choice",
+      "bucket": "abstain:convention",
+      "claim": "If brain-wide 5-HT modulation is structurally separable from the choice computation (under additive modulation), then in a low-dimensional projection of the population response (here, the first three principal components), the vector that separates 5-HT-stimulated from unstimulated trials should be near-orthogonal to the vector that separates left-choice from right-choice trials, with orthogonality measured as 1 - |dot product| of unit-normalized direction vectors.",
+      "tests": [],
+      "confirms": [
+        "5ht-axis-orthogonal-to-choice-axis"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-additive-r1",
+      "prediction": "prediction-5ht-shifts-psychometric",
+      "bucket": "untested",
+      "claim": "If phasic 5-HT release alters how the animal weighs sensory evidence against prior expectation, or alters motivation, attention, or visual sensitivity, then 5-HT stimulation should produce detectable changes in psychometric slope, lapse rate, bias, reaction time, or any of the predictor weights of a probabilistic choice model fitting visual evidence, prior, and past choice with separate stimulated/unstimulated coefficients.",
+      "tests": [],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-additive-r1",
+      "prediction": "prediction-multiplicative-gain-yields-significant-interaction",
+      "bucket": "untested",
+      "claim": "If serotonergic modulation acted via multiplicative gain modulation — that is, scaling the choice-related component of neural activity rather than shifting it additively — then a per-neuron GLM with choice, stimulation, and choice × stimulation predictors should yield a significantly non-zero interaction coefficient, because under multiplicative scaling the size of the stimulation effect on a neuron depends on the magnitude of its choice-related drive.",
+      "tests": [],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-additive-r1",
+      "prediction": "prediction-near-zero-choice-stim-interaction",
+      "bucket": "abstain:convention",
+      "claim": "If serotonergic modulation combines additively with choice-related activity, then a generalized linear model fitted to per-neuron trial-by-trial spike counts with separate predictors for choice (left/right), 5-HT stimulation (on/off), and their interaction (choice × stimulation) should yield a near-zero interaction coefficient when averaged across animals and tested against zero with a one-sample t-test.",
+      "tests": [],
+      "confirms": [
+        "near-zero-choice-by-stim-interaction"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-additive-r1",
+      "prediction": "prediction-orthogonality-grows-toward-choice",
+      "bucket": "abstain:convention",
+      "claim": "If 5-HT modulation occupies a subspace orthogonal to the choice readout dimensions, then the orthogonality measure between the 5-HT effect axis and the choice axis should increase over the pre-choice timecourse — as the choice axis emerges and stabilizes approaching the choice moment, the 5-HT axis should remain in the orthogonal complement rather than aligning with it.",
+      "tests": [],
+      "confirms": [
+        "5ht-axis-orthogonal-to-choice-axis"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-orthogonal",
+      "prediction": "prediction-5ht-accelerates-prior-update",
+      "bucket": "untested",
+      "claim": "If 5-HT signals surprise and supports cognitive flexibility, then optogenetic 5-HT stimulation across blocks of trials should accelerate the rate at which the animal updates its choice bias after a prior-probability block switch — for example, after the prior switches from 80% left to 80% right, 5-HT-stimulated mice should reach the new rightward bias in fewer trials than unstimulated mice.",
+      "tests": [],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-orthogonal",
+      "prediction": "prediction-5ht-axis-orthogonal-to-choice",
+      "bucket": "abstain:convention",
+      "claim": "If brain-wide 5-HT modulation is structurally separable from the choice computation, then in a low-dimensional projection of the population response (here, the first three principal components), the vector that separates 5-HT-stimulated from unstimulated trials should be near-orthogonal to the vector that separates left-choice from right-choice trials, with orthogonality measured as 1 - |dot product| of unit-normalized direction vectors.",
+      "tests": [],
+      "confirms": [
+        "5ht-axis-orthogonal-to-choice-axis"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-orthogonal",
+      "prediction": "prediction-5ht-shifts-psychometric",
+      "bucket": "untested",
+      "claim": "If 5-HT functions as a surprise / belief-updating signal that scales prior dependence or motivation, then optogenetic 5-HT stimulation during the steering-wheel task should produce measurable shifts in at least one of: psychometric slope (visual acuity), bias (prior influence), lapse rate (motivation), percent-correct, reaction time, or in the weight assigned to the visual-evidence / prior / past-choice predictors of a probabilistic choice model.",
+      "tests": [],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-orthogonal",
+      "prediction": "prediction-orthogonality-grows-toward-choice",
+      "bucket": "abstain:convention",
+      "claim": "If the 5-HT modulation specifically avoids the choice readout dimension as that dimension becomes informative, then the orthogonality between the 5-HT axis and the choice axis should not be constant — it should grow over the trial timecourse, becoming maximal in the hundreds of milliseconds leading up to the choice moment, when the choice axis has separated maximally and the readout demand is greatest.",
+      "tests": [],
+      "confirms": [
+        "5ht-axis-orthogonal-to-choice-axis"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "rozak-2026-neurovascular-dl",
+      "prediction": "prediction-pipeline-outperforms-baselines",
+      "bucket": "unrecorded",
+      "claim": "If the DL segmentation + registration + radius-estimation stack genuinely improves on conventional baselines, then (a) the UNet/UNETR ensemble should significantly outperform ilastik on volumetric segmentation metrics (HD95, Dice, precision), (b) cross-time-point registration combined with mask union should recover substantially more vessel segments per FOV than any single time-point segmentation, and (c) the boundary-detection radius estimator should recover known simulated radii with high R² and remain stable to physiologically realistic noise levels.",
+      "tests": [
+        "novas3d-outperforms-ilastik",
+        "radius-estimation-r2-0p68",
+        "registration-doubles-vessel-count",
+        "unetr-outperforms-ilastik-hd95"
+      ],
+      "confirms": [],
+      "conjuncts": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "paper": "rozak-2026-neurovascular-dl",
+      "prediction": "prediction-pipeline-reveals-network-coordination",
+      "bucket": "unrecorded",
+      "claim": "If the pipeline can resolve network-level neurovascular coupling and if optogenetic activation drives coordinated vascular responses, then in Thy1-ChR2-YFP mice under 458 nm photostimulation we should observe (a) a spatial gradient of dilations vs constrictions relative to labelled neurons, (b) a network-wide rise in assortativity (high-degree vessels coupling with high-degree vessels), (c) a measurable change in capillary network efficiency, and (d) absence of these patterns under 552 nm control illumination and in wild-type mice — none of which would be visible from point-caliber measurements alone.",
+      "tests": [
+        "artery-dilates-venule-unchanged-at-low-power",
+        "baseline-intra-vessel-radius-varies-24pct",
+        "blue-light-dilations-exceed-green-control",
+        "capillary-efficiency-increases-4pct",
+        "constrictions-deeper-than-dilations",
+        "dilations-nearer-neurons-than-constrictions",
+        "network-assortativity-increases-stimulation",
+        "vessel-radius-heterogeneity-stimulation",
+        "wt-controls-no-blue-green-difference"
+      ],
+      "confirms": [],
+      "conjuncts": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ]
+    },
+    {
+      "paper": "scheller-2026-self-prioritization",
+      "prediction": "prediction-additive-effects-other-associated",
+      "bucket": "unrecorded",
+      "claim": "If social and perceptual salience operate via independent mechanisms, then for stimuli that are simultaneously socially salient (other-associated) and perceptually salient (high local contrast) the observed processing rate change should equal — within statistical uncertainty — the sum of the social-only and perceptual-only effects estimated from the marginal conditions, with the interaction term not reliably distinguishable from zero. The prediction is most cleanly testable in Experiment 2's factorial design, where social association (self / other / neutral) is crossed with perceptual salience (high-contrast / low-contrast). For self-associated stimuli the prediction is held in reserve — any deviation from additivity in the self condition would localise the exception rather than refute the general independence claim.",
+      "tests": [
+        "self-social-additive-perceptual"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "scheller-2026-self-prioritization",
+      "prediction": "prediction-capacity-model-outperforms-weights-only",
+      "bucket": "unrecorded",
+      "claim": "If self-association mobilises additional encoding capacity rather than merely redistributing fixed attentional weights, a hierarchical TVA model in which the C parameter is allowed to take a separate value in each experimental condition should fit the participant-level data substantially better than a single-C model in which capacity is held fixed across conditions and only the relative weights vary. Operationally, on a leave-one-out cross-validation comparison the indiv-C model should win on Δloo and on the model-stacking weight, with the magnitude large enough to be taken seriously after accounting for the standard error of the difference.",
+      "tests": [
+        "tva-capacity-model-wins"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "scheller-2026-self-prioritization",
+      "prediction": "prediction-self-advantage-attenuated-social-decision",
+      "bucket": "unrecorded",
+      "claim": "If the automatic perceptual self-prioritisation and the deliberate social-identity decoding stages compete for the same finite attentional resource, then requiring an explicit social decision (whose shape flickered first?) should attenuate, eliminate, or even reverse the self-advantage observed in the perceptual decision condition. The reversal direction is non-trivial — naive accounts of self-prioritisation predict that explicit attention to identity should amplify, not diminish, the self-advantage. The prediction here is the opposite: when participants must allocate resources to the social-decoding stage, the upstream perceptual self-prioritisation cannot proceed unimpeded, and the net measured advantage shrinks toward zero or flips toward an other-associated advantage.",
+      "tests": [
+        "other-association-advantage-social-condition",
+        "self-prioritization-absent-social-decision"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "scheller-2026-self-prioritization",
+      "prediction": "prediction-self-advantage-perceptual-decision",
+      "bucket": "unrecorded",
+      "claim": "If self-association alters early attentional selection automatically, then in a temporal order judgement task that requires only a perceptual report (which shape flickered first?) the self-associated stimulus should show a faster TVA processing rate than the other-associated stimulus, even though the social identity of either shape is irrelevant to the response. The advantage should manifest as a positive shift in (v_self − v_other) relative to the neutral baseline condition and should be present despite participants having no task incentive to attend to social identity.",
+      "tests": [
+        "self-prioritization-perceptual-decision-automatic"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "wengert-2026-kcnc1",
+      "prediction": "prediction-cognitive-deficits",
+      "bucket": "recorded",
+      "claim": "If PV-IN dysfunction in Kcnc1-A421V/+ mice impairs the inhibitory circuits underlying cortical learning and plasticity, then mutant mice should show measurable cognitive deficits in tasks that depend on PV-IN-supported processes — specifically spatial learning (Barnes maze, with deficits most evident during the acquisition phase) and spatial working memory (Y-maze spontaneous alternation). The deficit should be specific (not attributable to locomotor or exploratory confounds) and should recapitulate the moderate-to-severe developmental delay seen in human KCNC1 DEE patients. Long-term memory retention (Barnes maze probe trial) may or may not be intact, depending on whether the deficit is in learning rate or memory storage.",
+      "tests": [
+        "a421v-spatial-learning-working-memory-impaired"
+      ],
+      "confirms": [
+        "a421v-spatial-learning-working-memory-impaired"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "wengert-2026-kcnc1",
+      "prediction": "prediction-excitatory-neurons-spared",
+      "bucket": "recorded",
+      "claim": "If the A421V variant exerts its cellular effect specifically through Kv3.1 — which is not expressed at functionally relevant levels in cortical excitatory neurons — then excitatory neurons in Kcnc1-A421V/+ mice should be functionally spared: voltage-gated K+ current density, intrinsic excitability (firing-frequency vs current-injection relationship), AP waveform parameters, and synaptic transmission should not differ significantly from WT. The null result must hold at both juvenile and adult stages to exclude both cell-autonomous and secondary network effects on excitatory cells. This is the negative-control half of the cell-type specificity test.",
+      "tests": [
+        "excitatory-neurons-unaffected-adult",
+        "excitatory-neurons-unaffected-juvenile"
+      ],
+      "confirms": [
+        "excitatory-neurons-unaffected-adult",
+        "excitatory-neurons-unaffected-juvenile"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "wengert-2026-kcnc1",
+      "prediction": "prediction-impairment-grades-with-kv31-dependence",
+      "bucket": "recorded",
+      "claim": "If the impairment is specifically Kv3.1-mediated, then within the population of fast-spiking PV-INs the magnitude of phenotype should grade with the relative expression of Kv3.1 versus the partially redundant Kv3.2 subunit. Specifically, superficial neocortical PV-INs (layer II–IV; predominantly Kv3.1) should show the largest deficit; deep neocortical PV-INs (layer V; greater Kv3.2 expression) should show milder deficits confined to the highest current injections; and reticular thalamic nucleus (RTN) PV-INs (predominantly Kv3.1 and Kv3.3, no Kv3.2 compensation) should also show impairment but with a phenotype shaped by their distinctive rebound firing physiology. This graded prediction is a stronger discriminator of mechanism than a single-population test, because alternative mechanisms (generic PV vulnerability, generic neocortical defect) cannot easily produce a Kv3.1:Kv3.2- ratio-aligned gradient.",
+      "tests": [
+        "layer-v-pv-ins-subtle-impairment",
+        "rtn-neurons-impaired-excitability"
+      ],
+      "confirms": [
+        "layer-v-pv-ins-subtle-impairment",
+        "rtn-neurons-impaired-excitability"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "wengert-2026-kcnc1",
+      "prediction": "prediction-kv31-surface-expression-reduced",
+      "bucket": "recorded",
+      "claim": "If the A421V variant impairs Kv3.1 surface trafficking — rather than channel gating per se — then heterozygous Kcnc1-A421V/+ PV-INs should show a measurable reduction in the membrane-localized fraction of Kv3.1 protein, accompanied by relative enrichment of cytosolic Kv3.1 (likely in the endoplasmic reticulum). Quantitatively, the membrane:cytosol fluorescence intensity ratio measured by immunohistochemistry should be significantly lower in mutant PV-INs. As a corollary, the voltage-dependence of activation and the activation kinetics of the residual K+ current should not differ between WT and mutant, because the channels that do reach the surface are predominantly WT homotetramers (or contain functional channels with normal gating).",
+      "tests": [
+        "a421v-kv31-membrane-trafficking-impaired"
+      ],
+      "confirms": [
+        "a421v-kv31-membrane-trafficking-impaired"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "wengert-2026-kcnc1",
+      "prediction": "prediction-network-hyperexcitability-in-vivo",
+      "bucket": "recorded",
+      "claim": "If PV-IN dysfunction reduces effective perisomatic inhibition in vivo, then awake Kcnc1-A421V/+ mice should show measurable signatures of cortical hyperexcitability by two-photon calcium imaging: (i) paroxysmal hypersynchronous neuropil discharges not present in WT, reflecting brief network-wide bursts of activity, and (ii) elevated calcium transient frequency in PV-negative (excitatory) cells during low-arousal states, reflecting tonic disinhibition. These signatures should be state-dependent — present during quiet rest, when tonic inhibition normally dominates — and may be masked or compensated during active arousal states (e.g. running) when other modulatory inputs dominate cortical state.",
+      "tests": [
+        "in-vivo-hypersynchronous-discharges-mutant-only",
+        "in-vivo-pv-minus-transient-frequency-increased"
+      ],
+      "confirms": [
+        "in-vivo-hypersynchronous-discharges-mutant-only",
+        "in-vivo-pv-minus-transient-frequency-increased"
+      ],
+      "conjuncts": [
+        "i",
+        "ii"
+      ]
+    },
+    {
+      "paper": "wengert-2026-kcnc1",
+      "prediction": "prediction-progressive-synaptic-failure",
+      "bucket": "recorded",
+      "claim": "If PV-IN spike output is impaired from juvenile stages but the synaptic terminal release machinery requires further developmental maturation (or accumulates pathological adaptations) to manifest a measurable phenotype, then PV-IN→excitatory unitary inhibitory synaptic transmission should be normal at juvenile stages (P16–21) and altered at young adult stages (P32–42). The adult alteration should carry a presynaptic signature consistent with altered release dynamics — for example, increased uIPSC amplitude with reduced paired-pulse ratio (enhanced initial release probability with faster depression). The temporal dissociation is a refinement of the disease-mechanism hypothesis: it specifies that the inhibitory failure is developmentally emergent, not congenital, at the synaptic level.",
+      "tests": [
+        "pv-in-inhibitory-synapse-altered-adult",
+        "pv-in-inhibitory-synapse-intact-juvenile"
+      ],
+      "confirms": [
+        "inhibitory-dysfunction-progresses-to-adulthood",
+        "pv-in-inhibitory-synapse-altered-adult"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "wengert-2026-kcnc1",
+      "prediction": "prediction-pv-in-firing-impaired",
+      "bucket": "recorded",
+      "claim": "If Kv3.1 LOF selectively impairs the cell type that depends on it, then PV-INs in Kcnc1-A421V/+ mice should show reduced maximal sustained firing frequency, slower AP downstroke (reflecting impaired repolarization), and prolonged AP half-duration (APD50) under whole-cell current-clamp recording. Passive membrane properties (resting Vm, input resistance) and AP threshold should be preserved, because Kv3 channels operate at suprathreshold voltages and are not the dominant determinants of the resting state. The phenotype should be present at juvenile stages (P16–21), before any secondary network adaptations have occurred, as a cell-autonomous consequence of reduced Kv3.1 current.",
+      "tests": [
+        "pv-in-ap-waveform-altered-downstroke-apd50",
+        "pv-ins-impaired-maximal-firing"
+      ],
+      "confirms": [
+        "pv-in-ap-waveform-altered-downstroke-apd50",
+        "pv-ins-impaired-maximal-firing"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "wengert-2026-kcnc1",
+      "prediction": "prediction-pv-in-k-current-reduced",
+      "bucket": "recorded",
+      "claim": "If KCNC1-A421V is a Kv3.1 loss-of-function variant, heterozygous PV-INs in the Kcnc1-A421V/+ knock-in mouse should show a quantitatively measurable reduction in voltage-gated potassium current density relative to WT littermates, measured by whole-cell or nucleated macropatch recording in the voltage range where Kv3 channels carry the dominant outward current (positive to ~0 mV). The reduction should be larger than the 50% expected from simple haploinsufficiency, because Kv3 channels function as obligate tetramers and a dominant-negative mutant subunit incorporated into heteromeric tetramers can disable more than half of channel surface delivery.",
+      "tests": [
+        "pv-ins-reduced-k-current-density"
+      ],
+      "confirms": [
+        "pv-ins-reduced-k-current-density"
+      ],
+      "conjuncts": []
+    },
+    {
+      "paper": "wengert-2026-kcnc1",
+      "prediction": "prediction-seizures-and-sudep",
+      "bucket": "abstain:conjunction",
+      "claim": "If the inhibitory failure produced by Kv3.1 LOF is sufficient to drive the encephalopathy phenotype, then Kcnc1-A421V/+ mice should exhibit (i) spontaneous convulsive seizures captured on continuous video-EEG, (ii) seizure-induced sudden death (SUDEP) at high penetrance, and (iii) premature mortality with all mutants dying before reaching natural lifespan endpoints. The seizure types should match the spectrum reported in human KCNC1 DEE (myoclonic events, generalized tonic-clonic), and the SUDEP events should be preceded by tonic-clonic seizures with hindlimb extension — the canonical mouse SUDEP signature.",
+      "tests": [
+        "spontaneous-seizures-and-sudep-kcnc1"
+      ],
+      "confirms": [
+        "a421v-mice-die-before-122d",
+        "spontaneous-seizures-and-sudep-kcnc1"
+      ],
+      "conjuncts": [
+        "i",
+        "ii",
+        "iii"
+      ]
+    }
+  ]
+}

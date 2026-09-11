@@ -1,0 +1,291 @@
+---
+// Prediction outcomes — a proposed layer.
+//
+// The declaration is a proposal (#31): it says this step should exist and what it does, and
+// nothing about it has been accepted. So this page is not a decision queue. It exposes a rule,
+// what that rule does to the whole corpus, and where it refuses to decide — because the thing
+// being reviewed is the machinery, not forty-six individual judgements. A reviewer who had to
+// settle every item before anything could move would be a bottleneck by construction, which is
+// the mistake the relation-vocab queue already made.
+//
+// Reads review/prediction-outcome.json from the repository root rather than a copy under
+// src/data: the manifest is the layer's output, and a second copy is a second answer waiting
+// to drift from the first.
+import Layout from '../../layouts/Layout.astro';
+import LayerHeader from '../../components/LayerHeader.astro';
+import LayerState from '../../components/LayerState.astro';
+import { byId } from '../../lib/pipeline';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+const layer = byId['prediction-outcome'];
+const m = JSON.parse(readFileSync(
+  join(process.cwd(), '..', 'review', 'prediction-outcome.json'), 'utf8'));
+
+const items = m.items as any[];
+const B = m.buckets as Record<string, number>;
+const NOTES = m.bucket_notes as Record<string, string>;
+const ORDER = ['recorded', 'unrecorded', 'untested', 'abstain:conjunction', 'abstain:convention'];
+const total = m.predictions as number;
+const abstained = ORDER.filter(b => b.startsWith('abstain')).reduce((n, b) => n + (B[b] ?? 0), 0);
+
+const inBucket = (b: string) => items.filter(i => i.bucket === b);
+const abstentions = items.filter(i => i.bucket.startsWith('abstain'));
+const short = (s: string, n = 230) => (s.length > n ? s.slice(0, n).trimEnd() + '…' : s);
+
+// The confident middle, sampled. One per paper so the sample spans the corpus rather than
+// showing four variations of the same paper's house style.
+const seen = new Set<string>();
+const unrecordedSample = inBucket('unrecorded').filter(i => {
+  if (seen.has(i.paper)) return false;
+  seen.add(i.paper);
+  return true;
+});
+
+const conventions = Object.entries(m.conventions as Record<string, Record<string, number>>)
+  .filter(([, v]) => Object.keys(v).length > 0);
+const CONV_ORDER = ['tests only', 'tests+confirms', 'confirms only', 'neither'];
+
+const pct = (n: number) => Math.round((n / total) * 100);
+const BAR: Record<string, string> = {
+  recorded: 'bg-emerald-500 dark:bg-emerald-600',
+  unrecorded: 'bg-amber-500 dark:bg-amber-600',
+  untested: 'bg-gray-400 dark:bg-gray-600',
+  'abstain:conjunction': 'bg-blue-400 dark:bg-blue-600',
+  'abstain:convention': 'bg-blue-400 dark:bg-blue-600',
+};
+---
+
+<Layout title="Prediction outcomes — pipeline"
+        description="A proposed layer: did the paper's predictions come out, and does the tree say so?">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+    <LayerHeader layer={layer} />
+
+    <!-- What is being asked of a reader. First, because it changes how everything below is read. -->
+    <section class="mb-10 border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 rounded-lg p-5">
+      <h2 class="text-[10px] font-mono uppercase tracking-wider text-amber-800 dark:text-amber-400 m-0 mb-2">
+        This layer is proposed, and what is proposed is the rule
+      </h2>
+      <p class="text-[15px] text-gray-800 dark:text-gray-200 m-0 mb-3 leading-relaxed">
+        Nothing on this page has been accepted, and no claim in the corpus has been changed by
+        it. What is offered for review is a <strong>rule</strong> and its behaviour across all
+        {total} predictions in the corpus — not {total} decisions to be taken one at a time.
+      </p>
+      <p class="text-[15px] text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+        So the useful way to read it is: does the rule sort these correctly, does it refuse the
+        cases it should refuse, and would applying it leave the corpus in a better state than it
+        is now? The {abstained} abstentions are listed in full below, because a rule that
+        declines what it cannot settle is what makes reviewing a sample sufficient — attention
+        goes to the margin instead of the confident middle.
+      </p>
+    </section>
+
+    <!-- The question, assuming nothing. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">The question</h2>
+    <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-8 max-w-2xl">
+      <p>
+        A prediction is a commitment made in advance: <em>if this hypothesis holds, then this
+        particular measurement should come out this particular way</em>. It is the part of a
+        paper's argument that can fail, which is what makes it worth recording separately from
+        the result that tests it.
+      </p>
+      <p>
+        In this corpus a result is joined to the prediction it bears on by a relation called
+        <code>tests</code>. <code>tests</code> is <strong>neutral by design</strong> — it
+        records that a test happened, not which way it came out. That neutrality is correct: the
+        two facts are genuinely different, and collapsing them would make every test look like a
+        success.
+      </p>
+      <p>
+        The problem is that nothing else records the outcome either. There is a positive
+        relation, <code>confirms</code>, used {items.filter(i => i.confirms.length).length} times
+        on predictions here. There is <strong>no negative counterpart</strong>. The two
+        oppositional relations do not fill the gap: <code>contradicts</code> and
+        <code>rules-out</code> both assert the target <em>is false</em>, and a refuted prediction
+        is not a false statement — it was a correct derivation from its hypothesis, and the
+        failure damages the hypothesis one edge upstream, not the prediction.
+      </p>
+      <p class="text-gray-900 dark:text-gray-100">
+        So the corpus can record that a prediction succeeded and cannot record that one failed.
+        Every tree published from it will look like a paper whose predictions all worked out.
+      </p>
+    </div>
+
+    <!-- The rule, inspectable as a rule. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">The rule</h2>
+    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 max-w-2xl">
+      It classifies each prediction by the <strong>shape of the graph around it</strong> — which
+      edges point at it, and whether the prediction's own words enumerate more commitments than
+      it has edges. It does <em>not</em> judge whether a result actually matches the prediction
+      it is wired to. That is a reading, it needs a person or an agent, and a rule that guessed
+      at it would launder a judgement as a measurement.
+    </p>
+    <div class="overflow-x-auto mb-10">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-gray-300 dark:border-gray-600">
+            <th class="text-left py-2 pr-3 font-mono text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400">Bucket</th>
+            <th class="text-right py-2 px-3 font-mono text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400 w-16">n</th>
+            <th class="text-left py-2 pl-3 font-mono text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400">What it means</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ORDER.map(b => (
+            <tr class="border-b border-gray-100 dark:border-gray-800 align-top">
+              <td class="py-2.5 pr-3"><code class="text-[12.5px] whitespace-nowrap">{b}</code></td>
+              <td class="py-2.5 px-3 text-right font-mono tabular-nums text-gray-900 dark:text-gray-100">{B[b] ?? 0}</td>
+              <td class="py-2.5 pl-3 text-gray-700 dark:text-gray-300 leading-snug">{NOTES[b]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Corpus-wide behaviour. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What it does to the whole corpus</h2>
+    <div class="mb-3 flex h-7 w-full overflow-hidden rounded border border-gray-200 dark:border-gray-700">
+      {ORDER.filter(b => (B[b] ?? 0) > 0).map(b => (
+        <div class={`${BAR[b]} flex items-center justify-center`} style={`width:${pct(B[b])}%`}
+             title={`${b}: ${B[b]}`}>
+          <span class="text-[10px] font-mono text-white/90">{B[b]}</span>
+        </div>
+      ))}
+    </div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-10 max-w-2xl">
+      {B['unrecorded']} of {total} predictions — {pct(B['unrecorded'])}% — are tested by a result
+      the paper asserts and carry no outcome at all. A reader of the graph can see that each was
+      tested and cannot see that any of them was met.
+    </p>
+
+    <!-- The finding that the model handles and a per-item queue could not. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Three conventions, splitting by paper</h2>
+    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 max-w-2xl">
+      This is not a gap in the format. The format can express an outcome, one paper does it for
+      every one of its predictions, another uses <code>confirms</code> <em>instead of</em>
+      <code>tests</code>, and seven never record one. Nobody reconciled them, and no check
+      notices. It is per-paper variation in how a corpus-level convention was applied — so
+      approving one paper's tree is evidence about a convention another paper's tree silently
+      violates.
+    </p>
+    <div class="overflow-x-auto mb-10">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-gray-300 dark:border-gray-600">
+            <th class="text-left py-2 pr-3 font-mono text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400">Paper</th>
+            {CONV_ORDER.map(c => (
+              <th class="text-right py-2 px-3 font-mono text-[11px] tracking-wider text-gray-500 dark:text-gray-400 whitespace-nowrap">{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {conventions.map(([paper, counts]) => (
+            <tr class="border-b border-gray-100 dark:border-gray-800">
+              <td class="py-2 pr-3 font-mono text-[12px] text-gray-700 dark:text-gray-300">{paper}</td>
+              {CONV_ORDER.map(c => (
+                <td class="py-2 px-3 text-right font-mono tabular-nums text-gray-900 dark:text-gray-100">
+                  {counts[c] ?? <span class="text-gray-300 dark:text-gray-700">·</span>}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Where the rule refuses. This is where a reviewer's attention belongs. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Where the rule declines ({abstained})</h2>
+    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 max-w-2xl">
+      Listed in full, because they are the whole argument for trusting the rest. A rule that
+      produced a verdict for all {total} would be guessing on these.
+    </p>
+    <div class="space-y-3 mb-10">
+      {abstentions.map(i => (
+        <div class="border border-blue-200 dark:border-blue-900 rounded-lg p-4 bg-blue-50/40 dark:bg-blue-950/20">
+          <div class="flex flex-wrap items-baseline gap-2 mb-1.5">
+            <code class="text-[12px] text-gray-900 dark:text-gray-100">{i.prediction}</code>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-blue-700 dark:text-blue-400">{i.bucket}</span>
+            <span class="text-[11px] text-gray-500 dark:text-gray-400 ml-auto font-mono">{i.paper}</span>
+          </div>
+          <p class="text-[13.5px] text-gray-700 dark:text-gray-300 m-0 mb-2 leading-snug">{short(i.claim)}</p>
+          <p class="text-[11.5px] font-mono text-gray-500 dark:text-gray-400 m-0">
+            tests: {i.tests.length ? i.tests.join(', ') : '—'}
+            <span class="mx-2">·</span>
+            confirms: {i.confirms.length ? i.confirms.join(', ') : '—'}
+            {i.conjuncts.length > 0 && <span><span class="mx-2">·</span>states {i.conjuncts.length} commitments ({i.conjuncts.join(' ')})</span>}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <!-- The confident middle, sampled so it can be spot-checked. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">The confident middle, sampled</h2>
+    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 max-w-2xl">
+      One <code>unrecorded</code> case per paper, so the sample spans the corpus rather than
+      showing several variations of one paper's house style. If the rule is wrong about these it
+      is wrong about {B['unrecorded']} claims.
+    </p>
+    <div class="space-y-3 mb-10">
+      {unrecordedSample.map(i => (
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div class="flex flex-wrap items-baseline gap-2 mb-1.5">
+            <code class="text-[12px] text-gray-900 dark:text-gray-100">{i.prediction}</code>
+            <span class="text-[11px] text-gray-500 dark:text-gray-400 ml-auto font-mono">{i.paper}</span>
+          </div>
+          <p class="text-[13.5px] text-gray-700 dark:text-gray-300 m-0 mb-2 leading-snug">{short(i.claim)}</p>
+          <p class="text-[11.5px] font-mono text-gray-500 dark:text-gray-400 m-0">
+            tested by {i.tests.join(', ')} <span class="mx-2">·</span> outcome not recorded
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Why acceptance attaches to a version. Demonstrated, not asserted. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">The rule has a version, and that is the point</h2>
+    <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-4 max-w-2xl">
+      <p>
+        The manifest records <code>rule_version: {m.rule_version}</code>, because an approval is
+        granted to a rule at a version and not to a rule in general. The first version of this
+        one was wrong in a way worth showing.
+      </p>
+      <p>
+        v1 detected an enumerated conjunction — a prediction that commits to several things at
+        once — by looking for roman numerals, and found four. v2 also matches
+        <code>(a)(b)(c)</code> and finds six. The two it had been missing include the largest
+        conjunction in the corpus: a four-part prediction wired to nine testing results. Under
+        v1 that prediction was silently classified as though it made a single commitment.
+      </p>
+      <p>
+        Nothing about v1 looked broken. It ran, it produced a plausible number, and the only way
+        to catch it was to look at what it did across the corpus and notice that a prediction
+        with nine testers had not been flagged. That is the argument for reviewing behaviour in
+        aggregate rather than approving items one by one: the items all looked fine.
+      </p>
+    </div>
+
+    <!-- What is still undecided. Honest about what this layer cannot settle by itself. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What accepting this would not settle</h2>
+    <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-10 max-w-2xl">
+      <p>
+        This layer can say which predictions have no recorded outcome. It cannot supply the
+        outcomes, and it cannot record a failure, because the vocabulary has nowhere to put one.
+        That decision belongs to the relation vocabulary and is genuinely open: adding a
+        <code>refutes</code> relation under <code>mira:opposes</code> would assert that a
+        refuted prediction is <em>false</em>, which is not what happened to it, and the relation
+        checker already rejects edges that oppose a claim their own paper asserts.
+      </p>
+      <p>
+        There is a separate defect this layer makes visible without being able to fix. In the
+        MIRA export, <code>tests</code> is declared a subclass of <code>mira:supports</code>. So
+        every <code>tests</code> edge reaches eLife as a <strong>supporting</strong> relation:
+        the tree declines to say how a test came out, and the export answers anyway.
+      </p>
+    </div>
+
+    <LayerState layer={layer} />
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm">
+      <a href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/pipeline/`}
+         class="text-gray-500 dark:text-gray-400 no-underline hover:text-gray-700 dark:hover:text-gray-300">← all layers</a>
+    </footer>
+  </div>
+</Layout>
