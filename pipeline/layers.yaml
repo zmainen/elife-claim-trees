@@ -60,9 +60,18 @@
 version: 1
 
 groups:
+  source:
+    title: Source
+    question: What text did the readers read, and what does the paper itself say?
   induction:
     title: Induction
     question: What did the readers find, and what survived reconciliation?
+  tree:
+    title: Tree
+    question: What does the paper assert, and how do its claims depend on each other?
+  measures:
+    title: Measures
+    question: What can be measured over the tree - its coverage, its wording, whether its code re-runs?
   interchange:
     title: Interchange
     question: What survives when a claim tree leaves this format?
@@ -176,7 +185,7 @@ layers:
   # and the paper itself — which eLife revises — would not be hashed by anything. The fetch
   # is cached, so running this per reader costs one file read.
   - id: prepare
-    group: induction
+    group: source
     kind: step
     scope: paper
     title: Prepared paper
@@ -213,7 +222,7 @@ layers:
   # stale for a change that affects no claim. It reads the same cached XML, calls no model, and
   # stamps no date, so it is free to re-run and byte-stable when it is.
   - id: article
-    group: induction
+    group: source
     kind: step
     scope: paper
     title: Article
@@ -264,7 +273,7 @@ layers:
     # that read the old one going stale.
     reads: [extract/prompts/results-reader.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-candidate.md]
     produces: ["runs/{paper}/results-reader.output.json"]
-    views: [list, table]
+    views: [list, table, comparison]
     by_from: model
     command: "cd extract && python3 -m elife_extract.cli results-reader --paper {paper}"
 
@@ -286,7 +295,7 @@ layers:
     needs: [prepare]
     reads: [extract/prompts/caption-reader.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-candidate.md]
     produces: ["runs/{paper}/caption-reader.output.json"]
-    views: [list, table]
+    views: [list, table, comparison]
     by_from: model
     command: "cd extract && python3 -m elife_extract.cli caption-reader --paper {paper}"
 
@@ -306,7 +315,7 @@ layers:
     needs: [prepare]
     reads: [extract/prompts/structure-reader.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-candidate.md]
     produces: ["runs/{paper}/structure-reader.output.json"]
-    views: [list, table]
+    views: [list, table, comparison]
     by_from: model
     command: "cd extract && python3 -m elife_extract.cli structure-reader --paper {paper}"
 
@@ -330,7 +339,7 @@ layers:
     needs: [results-reader, caption-reader, structure-reader]
     reads: [extract/prompts/reconciler.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-draft.md]
     produces: ["runs/{paper}/reconciler.output.json"]
-    views: [table, overlap]
+    views: [table, overlap, comparison]
     by_from: model
     command: "cd extract && python3 -m elife_extract.cli reconcile --paper {paper}"
 
@@ -384,13 +393,14 @@ layers:
     needs: [reconcile, relation-vocab]
     reads: [extract/prompts/edge-inference.md]
     produces: ["runs/{paper}/edge-inference.output.json"]
-    views: [graph, table]
+    views: [graph, table, comparison]
     by_from: model
     command: "cd extract && python3 -m elife_extract.cli edge-inference --paper {paper}"
 
   # ── the tree, and what revises it ──────────────────────────────────────────
 
   - id: claim-tree
+    group: tree
     kind: step
     scope: paper
     title: Claim tree
@@ -414,12 +424,13 @@ layers:
       Across {{papers}} papers the corpus holds {{claims}} claims and {{parts}} parts, carrying {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.
     needs: [reconcile, external-review, edge-inference, claim-format]
     produces: ["claims/{paper}/*.md"]
-    views: [graph, list, table]
+    views: [graph, list, table, comparison]
     # `--replace`: a run of the layer is a new version, so it archives the current tree and
     # carries the other layers' content forward rather than refusing a non-empty directory.
     command: "cd extract && python3 -m elife_extract.cli write --paper {paper} --replace"
 
   - id: stance
+    group: tree
     kind: feature
     scope: paper
     title: Alternatives and stance
@@ -446,6 +457,7 @@ layers:
   # layer is the retrofit for the papers whose trees predate the field. A `feature` for the
   # reason `stance` is: it revises artifacts that already exist rather than making a new kind.
   - id: questions
+    group: tree
     kind: feature
     scope: paper
     title: Research questions
@@ -477,6 +489,7 @@ layers:
   # retrofit for trees induced before `part-of` existed. A `feature`, like `questions` and
   # `stance`: it revises a tree rather than making a new kind of thing.
   - id: parts
+    group: tree
     kind: feature
     scope: paper
     title: Parts
@@ -517,6 +530,7 @@ layers:
   # report is what it `produces`. Declaring the claim files too would make this cell read
   # `unrecorded` for every paper before it had ever run, because the files are already there.
   - id: reference-check
+    group: tree
     kind: feature
     scope: paper
     title: Reference check
@@ -541,6 +555,7 @@ layers:
     command: "cd extract && python3 -m elife_extract.cli verify-refs --paper {paper}"
 
   - id: abstract-map
+    group: tree
     kind: step
     scope: paper
     title: Abstract ↔ claims
@@ -567,6 +582,7 @@ layers:
   # output nothing declares is exactly the gap this pipeline exists to close, and it was open
   # here. It reports `unrecorded` until a run is logged: the files predate the ledger.
   - id: synthesis
+    group: measures
     kind: step
     scope: paper
     title: Argument from graph
@@ -593,6 +609,7 @@ layers:
   # summaries are actually stored. The consequence is real and worth seeing: editing any
   # paper's summary changes the artifact every paper's cell reads, so they go stale together.
   - id: summaries
+    group: measures
     kind: step
     scope: paper
     title: Paper summary
@@ -614,6 +631,7 @@ layers:
   # a recorded run, an input hash that goes stale when the claim it restates changes, and a seat
   # for a person to approve it — none of which a field in a markdown file has.
   - id: plain-claim
+    group: measures
     kind: step
     scope: paper
     title: Plain wording
@@ -642,6 +660,7 @@ layers:
     command: "python3 scripts/plain_claims.py {paper}"
 
   - id: verification
+    group: measures
     kind: step
     scope: paper
     title: Verification
@@ -671,6 +690,7 @@ layers:
   # The only layer that reads the paper again after induction, which is why it is the one
   # that can find what everything else missed.
   - id: coverage
+    group: measures
     kind: step
     scope: paper
     title: Coverage
@@ -693,6 +713,7 @@ layers:
     command: "cd extract && python3 -m elife_extract.cli coverage --paper {paper} --json ../coverage/{paper}.json"
 
   - id: adjudication
+    group: measures
     kind: judgement
     scope: paper
     title: Coverage adjudication
@@ -720,6 +741,7 @@ layers:
     command: "python3 scripts/adjudicate.py {paper} --answer runs/{paper}/adjudication.answer.json"
 
   - id: marks
+    group: measures
     kind: step
     scope: paper
     title: Marked paper
@@ -743,6 +765,7 @@ layers:
   # `replicates` relation is defined in the schema and used zero times. Declared so that the
   # gap is a column rather than an omission.
   - id: gap-claim
+    group: measures
     kind: candidate
     question: What claim would close each gap?
     needs: [adjudication, claim-tree, claim-format]
@@ -776,6 +799,7 @@ layers:
       turn a report into a loop.
 
   - id: replication
+    group: measures
     kind: step
     scope: paper
     title: Replication

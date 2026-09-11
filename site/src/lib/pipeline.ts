@@ -285,8 +285,8 @@ export function approvedCells(): Cell[] {
 export const VIEWS: Record<string, { label: string; where: string }> = {
   document:   { label: 'document', where: 'rendered above, where the layer writes prose' },
   graph:      { label: 'graph', where: 'on the paper page, as the claim graph' },
-  comparison: { label: 'comparison', where: 'on the cell page, for the layers that have one' },
-  overlap:    { label: 'overlap', where: 'on the induction page, as reader agreement' },
+  comparison: { label: 'comparison', where: 'on the cell page, two versions aligned by the matcher, wherever the ledger holds more than one' },
+  overlap:    { label: 'overlap', where: 'on the cell page, as the claims × readers agreement matrix' },
 };
 
 export const STATE_LABEL: Record<CellState, string> = {

@@ -1,0 +1,106 @@
+---
+// The agreement matrix: claims × readers, read from the reconciler's output.
+//
+// This is the artifact the whole three-reader design exists to produce — which reader
+// surfaced each claim, the evidence each quoted, and the confidence that follows from how many
+// agreed. It was rendered once, by hand, for Gädeke on the induction page; it is `reconcile`'s
+// `overlap` view now, generic to any paper and drawn from the same reconciler.output.json the
+// table view reads, so it lights up wherever that file exists.
+//
+// The matrix is the point the note about the pipeline keeps returning to: agreement between
+// three partitions is evidence, and a claim only one reader saw is a different kind of thing
+// from one all three did. The columns make that visible; the confidence chip names it.
+import type { Records } from '../lib/layer-source';
+
+interface Props { data: Records; id?: string }
+const { data, id = 'overlap' } = Astro.props;
+
+const rows = data.records;
+
+// The readers, in the order the partition runs them, then any others the file names. Taken
+// from the data rather than hard-coded, so a fourth reader would appear without a change here.
+const KNOWN = ['results', 'caption', 'structure'];
+const seen = new Set<string>();
+for (const r of rows) {
+  const ev = (r.evidence_by_agent ?? {}) as Record<string, unknown>;
+  for (const k of Object.keys(ev)) seen.add(k);
+  for (const s of (Array.isArray(r.sources) ? r.sources : []) as string[]) seen.add(s);
+}
+const readers = [...KNOWN.filter(k => seen.has(k)), ...[...seen].filter(k => !KNOWN.includes(k)).sort()];
+const LABEL: Record<string, string> = {
+  results: 'results-reader', caption: 'caption-reader', structure: 'structure-reader',
+};
+
+const hasVerified = rows.some(r => r.evidence_verified !== undefined && r.evidence_verified !== null);
+
+const CONF: Record<string, string> = {
+  high: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
+  contested: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+  'single-source': 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+};
+
+const primary = ['claim', 'text', 'sentence'].find(f => data.fields.includes(f)) ?? 'claim';
+const cut = (v: unknown, n: number) => {
+  const s = v == null ? '' : String(v);
+  return s.length > n ? s.slice(0, n) + '…' : s;
+};
+const surfaced = (r: Record<string, unknown>, reader: string) => {
+  const ev = (r.evidence_by_agent ?? {}) as Record<string, unknown>;
+  const inSources = Array.isArray(r.sources) && (r.sources as string[]).includes(reader);
+  return { on: inSources || reader in ev, quote: ev[reader] as string | undefined };
+};
+---
+
+<div id={id} class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+  <table class="w-full text-sm border-collapse">
+    <thead>
+      <tr class="text-left text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-200 dark:border-gray-700">
+        <th class="py-2 px-3 font-medium min-w-[18rem]">claim</th>
+        <th class="py-2 px-3 font-medium whitespace-nowrap">confidence</th>
+        {readers.map(rd => (
+          <th class="py-2 px-3 font-medium whitespace-nowrap min-w-[12rem]">{LABEL[rd] ?? rd}</th>
+        ))}
+        {hasVerified && <th class="py-2 px-3 font-medium whitespace-nowrap">evidence verified</th>}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map(r => {
+        const conf = String(r.confidence ?? '');
+        return (
+          <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0 align-top">
+            <td class="py-2 px-3 text-[13px] text-gray-800 dark:text-gray-200 leading-snug">
+              {String(r[primary] ?? '')}
+              {r.role && <span class="block font-mono text-[10px] text-gray-400 dark:text-gray-600 mt-0.5">{String(r.role)}{r.panel ? ` · ${r.panel}` : ''}</span>}
+            </td>
+            <td class="py-2 px-3">
+              <span class={`font-mono text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap ${CONF[conf] ?? 'text-gray-400 dark:text-gray-600'}`}>{conf || '—'}</span>
+            </td>
+            {readers.map(rd => {
+              const { on, quote } = surfaced(r, rd);
+              return (
+                <td class="py-2 px-3 text-xs align-top">
+                  {on ? (
+                    quote ? (
+                      <span class="text-gray-600 dark:text-gray-400 italic leading-snug" title={String(quote)}>“{cut(quote, 140)}”</span>
+                    ) : (
+                      <span class="font-mono text-emerald-600 dark:text-emerald-400" title="surfaced this claim">surfaced</span>
+                    )
+                  ) : (
+                    <span class="text-gray-300 dark:text-gray-700">—</span>
+                  )}
+                </td>
+              );
+            })}
+            {hasVerified && (
+              <td class="py-2 px-3 text-xs whitespace-nowrap">
+                {r.evidence_verified === true ? <span class="font-mono text-emerald-600 dark:text-emerald-400">verified</span>
+                  : r.evidence_verified === false ? <span class="font-mono text-amber-700 dark:text-amber-400">not found</span>
+                  : <span class="text-gray-300 dark:text-gray-700">—</span>}
+              </td>
+            )}
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
