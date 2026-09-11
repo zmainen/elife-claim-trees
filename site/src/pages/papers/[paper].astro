@@ -57,6 +57,12 @@ const stage = stageLabel[(paperData as any).stage] || '';
         {paperData.github && (
           <a href={paperData.github} target="_blank" rel="noopener">Code and data</a>
         )}
+        {data.downloads.mira && (
+          <a class="take" href={`${base}${data.downloads.mira}`} download
+             title="Every claim of this paper as MIRA JSON-LD — the schema eLife reads">
+            Claims as MIRA JSON-LD ↓
+          </a>
+        )}
       </p>
     </header>
 
@@ -85,7 +91,21 @@ const stage = stageLabel[(paperData as any).stage] || '';
 
       <details class="rec">
         <summary>Files <span>what this paper produced, and what each format drops</span></summary>
-        <div class="rec-body"><PaperArtifacts paper={paperData.slug} /></div>
+        <div class="rec-body">
+          <p class="takeaway">
+            The claim tree in three interchange formats. MIRA is the one eLife reads and carries
+            about half of what a claim tree holds; the extended file adds what MIRA has no
+            vocabulary for, and the gap report says exactly what the strict file dropped.
+          </p>
+          <p class="takeaway-links">
+            {data.downloads.mira && <a href={`${base}${data.downloads.mira}`} download>MIRA JSON-LD</a>}
+            {data.downloads.miraExtended && <a href={`${base}${data.downloads.miraExtended}`} download>MIRA, extended</a>}
+            {data.downloads.gapReport && <a href={`${base}${data.downloads.gapReport}`} download>What MIRA dropped</a>}
+            {data.downloads.oxa && <a href={`${base}${data.downloads.oxa}`} download>OXA</a>}
+            {data.downloads.dg && <a href={`${base}${data.downloads.dg}`} download>Discourse Graphs</a>}
+          </p>
+          <PaperArtifacts paper={paperData.slug} />
+        </div>
       </details>
 
       <details class="rec">
@@ -128,6 +148,16 @@ const stage = stageLabel[(paperData as any).stage] || '';
   .links { display: flex; flex-wrap: wrap; gap: 0.35rem 1.15rem; font-size: 12.5px; margin: 0 0 1.5rem; }
   .links a { color: var(--card-muted); text-decoration: none; border-bottom: 1px solid var(--card-border); }
   .links a:hover { color: var(--card-head); }
+  .links a.take { color: var(--claim-strong); border-bottom-color: var(--claim-line); }
+  .links a.take:hover { border-bottom-color: var(--claim); }
+
+  .takeaway { font-size: 13px; color: var(--card-muted); max-width: 64ch; margin: 0 0 0.6rem; line-height: 1.55; }
+  .takeaway-links { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; margin: 0 0 1.4rem; }
+  .takeaway-links a {
+    font-size: 12.5px; color: var(--claim-strong); text-decoration: none;
+    border: 1px solid var(--card-border); border-radius: 4px; padding: 0.2rem 0.6rem;
+  }
+  .takeaway-links a:hover { border-color: var(--claim); background: var(--claim-wash); }
 
   .record { margin-top: 4.5rem; border-top: 1px solid var(--card-border-hover); padding-top: 1.5rem; }
   .record h2 {

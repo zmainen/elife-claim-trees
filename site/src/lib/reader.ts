@@ -154,43 +154,91 @@ function marksOf(paper: string, uuidToSlug: Record<string, string>): Mark[] {
   return out;
 }
 
-/** Walk the marked sentences through one paragraph, in order.
+/** Place the marked sentences into the article's paragraphs.
  *
  *  The two texts are the same prose reached by different routes — one through the segmenter,
- *  one through the JATS — so they differ in whitespace and in the section heading the
- *  segmenter glues onto the first sentence of a section. Matching on whitespace-stripped text,
- *  and stripping a known heading from the front, recovers the rest. A sentence that still does
- *  not match is skipped rather than guessed at: a mark on the wrong sentence is worse than a
- *  sentence with no mark. */
-function splitParagraph(text: string, marks: Mark[], cursor: { i: number }, titles: string[]): Mark[] | null {
-  const target = norm(text);
-  const recs: Mark[] = [];
-  let at = 0;
-  while (cursor.i < marks.length) {
-    const m = marks[cursor.i];
+ *  one through the JATS — so they differ in whitespace, in the section heading the segmenter
+ *  glues onto a section's first sentence, and in what each includes: the segmenter's `results`
+ *  section carries the figure captions embedded in the results text, which the JATS keeps as
+ *  figures instead. So some marks belong to no paragraph at all, and that is normal.
+ *
+ *  Matching is therefore done once against the whole Results text rather than paragraph by
+ *  paragraph. The first attempt walked marks and paragraphs together and stopped a paragraph
+ *  at the first mark it could not place — which meant one caption mark early in Wengert's
+ *  results blocked the 124 after it, and the page underlined five sentences out of 125.
+ *  A mark that matches nowhere is dropped here and the next one is still tried.
+ *
+ *  Positions are found in whitespace-stripped text and mapped back through an index, so what
+ *  the page underlines is the paragraph's own characters and nothing between two marks is lost.
+ */
+type Ranged = { start: number; end: number; claims: string[]; gap: boolean };
+
+function normIndex(text: string): { norm: string; map: number[] } {
+  let out = '';
+  const map: number[] = [];
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (/\s/.test(ch)) continue;
+    out += (ch === '\u2019' || ch === '\u2018' ? "'" : ch).toLowerCase();
+    map.push(i);
+  }
+  return { norm: out, map };
+}
+
+/** Marks placed into each paragraph, as character ranges into that paragraph's own text. */
+function placeMarks(paragraphs: { text: string }[], marks: Mark[], titles: string[]): Ranged[][] {
+  const indexed = paragraphs.map(p => normIndex(p.text));
+  const starts: number[] = [];
+  let concat = '';
+  for (const p of indexed) { starts.push(concat.length); concat += p.norm; }
+
+  const out: Ranged[][] = paragraphs.map(() => []);
+  let cursor = 0;
+  for (const m of marks) {
     let ns = norm(m.text);
-    let display = m.text;
-    let idx = target.indexOf(ns, at);
+    let idx = concat.indexOf(ns, cursor);
     if (idx < 0) {
+      // The segmenter glues a subsection heading onto the first sentence under it.
       const title = titles.find(t => t && ns.startsWith(t) && ns.length > t.length + 20);
       if (title) {
         const stripped = ns.slice(title.length);
-        const j = target.indexOf(stripped, at);
-        if (j >= 0) {
-          // Drop the same number of visible characters from the display text.
-          let seen = 0, k = 0;
-          while (k < display.length && seen < title.length) { if (!/\s/.test(display[k])) seen++; k++; }
-          display = display.slice(k).trim();
-          ns = stripped; idx = j;
-        }
+        const j = concat.indexOf(stripped, cursor);
+        if (j >= 0) { ns = stripped; idx = j; }
       }
     }
-    if (idx < 0) break;
-    recs.push({ text: display, claims: m.claims, gap: m.gap });
-    at = idx + ns.length;
-    cursor.i++;
+    if (idx < 0) continue;          // a caption or table mark: it belongs to no paragraph
+    cursor = idx + ns.length;
+    if (!m.claims.length && !m.gap) continue;   // nothing to show for an unmarked sentence
+
+    // Which paragraph holds it. A mark never spans two, because a paragraph break is a
+    // sentence break in both texts.
+    let pi = starts.length - 1;
+    while (pi > 0 && starts[pi] > idx) pi--;
+    const local = idx - starts[pi];
+    const map = indexed[pi].map;
+    if (local + ns.length > map.length) continue;
+    out[pi].push({
+      start: map[local],
+      end: map[local + ns.length - 1] + 1,
+      claims: m.claims,
+      gap: m.gap,
+    });
   }
-  return recs.length ? recs : null;
+  return out;
+}
+
+/** One paragraph as alternating plain and marked pieces, covering all of its text. */
+function pieces(text: string, ranges: Ranged[]): { text: string; claims: string[]; gap: boolean }[] {
+  const out: { text: string; claims: string[]; gap: boolean }[] = [];
+  let at = 0;
+  for (const r of ranges.sort((a, b) => a.start - b.start)) {
+    if (r.start < at) continue;
+    if (r.start > at) out.push({ text: text.slice(at, r.start), claims: [], gap: false });
+    out.push({ text: text.slice(r.start, r.end), claims: r.claims, gap: r.gap });
+    at = r.end;
+  }
+  if (at < text.length) out.push({ text: text.slice(at), claims: [], gap: false });
+  return out;
 }
 
 // ── assembly ─────────────────────────────────────────────────────────────────
@@ -267,7 +315,6 @@ export function readerData(paperSlug: string) {
 
   // ---- the article, with the marked sentences folded into the Results paragraphs
   const marks = marksOf(paperSlug, uuidToSlug);
-  const cursor = { i: 0 };
   const titles: string[] = [];
   const collectTitles = (secs: any[]) => secs.forEach(s => {
     titles.push(norm(s.title ?? ''));
@@ -275,16 +322,29 @@ export function readerData(paperSlug: string) {
   });
   collectTitles(article?.sections ?? []);
 
-  const withMarks = (sec: any, inResults: boolean): any => ({
+  // The Results paragraphs, in document order — the text the marks were written against.
+  const resultsParas: any[] = [];
+  const collectParas = (sec: any, inResults: boolean) => {
+    for (const b of sec.blocks) {
+      if (b.type === 'sec') collectParas(b.sec, inResults || b.sec.type === 'results');
+      else if (b.type === 'p' && inResults) resultsParas.push(b);
+    }
+  };
+  (article?.sections ?? []).forEach((s: any) => collectParas(s, s.type === 'results'));
+
+  const placed = marks.length ? placeMarks(resultsParas, marks, titles) : [];
+  const byPara = new Map<any, Ranged[]>();
+  resultsParas.forEach((p, i) => { if (placed[i]?.length) byPara.set(p, placed[i]); });
+
+  const withMarks = (sec: any): any => ({
     ...sec,
     blocks: sec.blocks.map((b: any) => {
-      if (b.type === 'sec') return { ...b, sec: withMarks(b.sec, inResults || b.sec.type === 'results') };
-      if (b.type !== 'p' || !inResults || !marks.length) return b;
-      const sentences = splitParagraph(b.text, marks, cursor, titles);
-      return sentences ? { ...b, sentences } : b;
+      if (b.type === 'sec') return { ...b, sec: withMarks(b.sec) };
+      const ranges = byPara.get(b);
+      return ranges ? { ...b, sentences: pieces(b.text, ranges) } : b;
     }),
   });
-  const sections = (article?.sections ?? []).map((s: any) => withMarks(s, s.type === 'results'));
+  const sections = (article?.sections ?? []).map((s: any) => withMarks(s));
 
   // ---- the abstract, with the claims each sentence carries
   const abstract = (amap?.sentences ?? article?.abstract ?? []).map((s: any) => ({
@@ -292,8 +352,21 @@ export function readerData(paperSlug: string) {
     claims: (s.type === 'claim' ? (s.claims ?? []) : []).filter((x: string) => byClaimSlug[x]),
   }));
 
-  const marked = marks.length;
-  const gaps = marks.filter(m => m.gap).length;
+  // What this paper can be taken away as. MIRA is the one eLife reads, so it is the one the
+  // page offers at the top; the rest stay in the record section with their gap report.
+  const exportsOf = (name: string) =>
+    existsSync(join(process.cwd(), '..', 'exports', `${paperSlug}.${name}`))
+      ? `/exports/${paperSlug}.${name}` : null;
+  const downloads = {
+    mira: exportsOf('mira.jsonld'),
+    miraExtended: exportsOf('mira-extended.jsonld'),
+    gapReport: exportsOf('gap-report.md'),
+    oxa: exportsOf('oxa.json'),
+    dg: exportsOf('dg.jsonld'),
+  };
+
+  const marked = placed.reduce((n, rs) => n + rs.filter(r => r.claims.length).length, 0);
+  const gaps = placed.reduce((n, rs) => n + rs.filter(r => r.gap).length, 0);
   const rerun = claims.filter((c: any) => c.status === 'matches' || c.status === 'partly').length;
 
   return {
@@ -314,6 +387,7 @@ export function readerData(paperSlug: string) {
     tables: article?.tables ?? [],
     claims,
     counts: { claims: claims.length, rerun, marked, gaps },
+    downloads,
     hasArticle: Boolean(article),
     hasPlain: Object.keys(plain).length > 0,
   };

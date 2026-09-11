@@ -629,10 +629,17 @@ layers:
       On Gädeke the matcher left 36 spans unaccounted for. Adjudication found that 22 were the
       matcher being wrong and 14 were real.
     needs: [coverage]
-    reads: [extract/prompts/coverage-adjudicator.md]
+    reads: [extract/prompts/coverage-adjudicator.md, scripts/adjudicate.py]
     produces: ["mappings/{paper}.json"]
     views: [table]
     reviews: coverage
+    by_from: by
+    # A judgement has no backend call to declare: `--dump-prompt` writes the question and
+    # `--answer` takes the verdicts back, validated — every span judged and none invented, a
+    # `covered` verdict naming a claim this paper actually holds, and each verdict stamped
+    # with the fingerprint of the sentence it was made about. The command is the second half,
+    # because the first half is somebody answering.
+    command: "python3 scripts/adjudicate.py {paper} --answer runs/{paper}/adjudication.answer.json"
 
   - id: marks
     kind: step
