@@ -94,6 +94,31 @@ layers:
     issue: 20
     open: true
 
+  # Declared `proposed`: the question is open, the rule that answers it mechanically exists
+  # and runs, and nothing has been accepted. That is a different state from `relation-vocab`'s
+  # `open: true`, which says a decision is outstanding but carries no machinery to evaluate —
+  # here the rule's behaviour across the whole corpus is the thing to be reviewed.
+  - id: prediction-outcome
+    kind: question
+    scope: corpus
+    status: proposed
+    title: Prediction outcomes
+    question: Did the paper's predictions come out, and does the tree say so?
+    needs: [claim-format, relation-vocab]
+    reads: [scripts/prediction_outcome.py]
+    produces: [review/prediction-outcome.json]
+    views: [table]
+    issue: 28
+    open: true
+    added: "2026-09-11"
+    found: >
+      `tests` is neutral by design, so a tree can record that a prediction was tested and never
+      whether it was met. Of {{prediction_outcome_total}} predictions, {{prediction_outcome_unrecorded}} carry a `tests` edge
+      and no outcome at all. Three wiring conventions are in use and they split by paper, not by
+      case. And the vocabulary is asymmetric: `confirms` exists, nothing means "the result came
+      out against this", so a failed prediction cannot be written down.
+    command: "python3 scripts/prediction_outcome.py --write"
+
   # ── induction ──────────────────────────────────────────────────────────────
   # Fans in: three readers given different slices, reconciled to one draft. The three are
   # `candidate` rather than `step` because keeping them apart is the point — agreement

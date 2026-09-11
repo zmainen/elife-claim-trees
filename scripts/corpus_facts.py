@@ -309,6 +309,40 @@ def pipeline_state():
         return None
 
 
+def prediction_outcomes():
+    """The prediction-outcome layer's own numbers, read from the manifest it produces.
+
+    Read rather than recomputed: the manifest is the layer's output, and a second
+    implementation here would be a second answer to one question -- which is the failure the
+    pipeline exists to close. If the manifest is absent the layer has not been run, and the
+    facts say so rather than inventing zeroes that would read as findings.
+    """
+    path = os.path.join(ROOT, "review", "prediction-outcome.json")
+    if not os.path.isfile(path):
+        return {}
+    with open(path, encoding="utf-8") as fh:
+        d = json.load(fh)
+    b = d.get("buckets", {})
+    conv = d.get("conventions", {})
+    kinds = set()
+    for counts in conv.values():
+        kinds.update(counts)
+    return {
+        "rule_version": d.get("rule_version"),
+        # Flat scalars as well as the nested buckets: the site's {{token}} resolver flattens
+        # one level only, so a count buried inside `buckets` cannot be cited in a declaration's
+        # `found` text. These are the ones the prose needs.
+        "total": d.get("predictions", 0),
+        "recorded": b.get("recorded", 0),
+        "unrecorded": b.get("unrecorded", 0),
+        "untested": b.get("untested", 0),
+        "buckets": b,
+        "conventions": conv,
+        "convention_kinds": len(kinds),
+        "abstained": sum(v for k, v in b.items() if k.startswith("abstain")),
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--print", dest="show", action="store_true")
@@ -358,6 +392,7 @@ def main():
         # `layers` above detects presence from artifacts on disk and stays as the simpler
         # answer; this says *current / stale / absent / blocked*, which presence cannot.
         "pipeline": pipeline_state(),
+        "prediction_outcome": prediction_outcomes(),
     }
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)

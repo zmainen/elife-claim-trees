@@ -35,6 +35,10 @@ const code = (s: string) => s.replace(/`([^`]+)`/g, '<code class="text-[13px]">$
   <div class="flex flex-wrap items-baseline gap-3 mb-2">
     <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0">{layer.title}</h1>
     <span class="font-mono text-xs text-gray-500 dark:text-gray-400">{layer.kind} · {layer.scope}</span>
+    {layer.status === 'proposed' && (
+      <span class="text-xs font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border border-dashed border-amber-500 text-amber-700 dark:text-amber-400"
+            title="This layer's declaration is a proposal. It runs, but nothing about it has been accepted.">provisional</span>
+    )}
     {layer.open && <span class="text-xs font-mono uppercase tracking-wider text-blue-700 dark:text-blue-400">undecided</span>}
     {layer.requires_human && <span class="text-xs font-mono uppercase tracking-wider text-amber-700 dark:text-amber-400">needs a person</span>}
   </div>

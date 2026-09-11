@@ -16,7 +16,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import dagre from '@dagrejs/dagre';
-import { nodeColor } from '../lib/status';
+import { nodeColor, outcomeOf, OUTCOME_LABEL, OUTCOME_COLOR } from '../lib/status';
 
 interface Claim {
   slug: string;
@@ -43,7 +43,9 @@ function shortLabel(slug: string): string {
 
 // Custom node renderer
 function ClaimNode({ data }: { data: any }) {
-  const color = nodeColor(data.status, data.role);
+  // `repro` is the layer switch, handed down from the graph. Off — the default — the node
+  // is coloured by what the claim does in the paper, and the tree carries no verdict of ours.
+  const color = nodeColor(data.status, data.role, Boolean((data as any).repro));
   const isAssessment = data.isAssessment;
 
   return (
@@ -159,7 +161,16 @@ function DAGInner({ claims, paperSlug }: Props) {
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
   const [selected, setSelected] = useState<Claim | null>(null);
+  // Off by default: a reader arriving at a claim tree should see the paper's argument, not a
+  // scorecard of what we managed to re-run.
+  const [showRepro, setShowRepro] = useState(false);
   const { fitView } = useReactFlow();
+
+  // Repainting the whole graph when the layer is switched, rather than reading the flag from
+  // a context in each node — the node count here is small and this keeps the node dumb.
+  React.useEffect(() => {
+    setNodes(nds => nds.map(n => ({ ...n, data: { ...n.data, repro: showRepro } })));
+  }, [showRepro, setNodes]);
 
   // Build adjacency for highlighting
   const claimBySlug = useMemo(() => {
@@ -240,21 +251,37 @@ function DAGInner({ claims, paperSlug }: Props) {
           <Background color="#f3f4f6" gap={20} />
           <Controls />
           <MiniMap
-            nodeColor={(n) => nodeColor((n.data as any)?.status ?? 'unknown', (n.data as any)?.role)}
+            nodeColor={(n) => nodeColor((n.data as any)?.status ?? 'unknown', (n.data as any)?.role, showRepro)}
             style={{ background: '#f9fafb' }}
           />
           <Panel position="top-left">
             <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs shadow-sm space-y-1.5">
-              <div className="font-semibold text-gray-700 mb-1">Status</div>
-              {[
-                ['#22c55e', 'Verified by code'],
-                ['#86efac', 'Partially verified'],
-                ['#ef4444', 'Failed / mismatch'],
-                ['#60a5fa', 'Hypothesis / prediction / synthesis'],
-                ['#a78bfa', 'Cited claim (literature)'],
-                ['#9ca3af', 'Unverified'],
-                ['#f97316', 'Code error / compute'],
-              ].map(([color, label]) => (
+              {/* The reproduction layer is a switch, and off by default. With it off the graph
+                  shows what the paper argues and nothing about what we ran — which is the test
+                  that the separation is real rather than described. */}
+              <label className="flex items-center gap-1.5 cursor-pointer select-none pb-1.5 mb-1 border-b border-gray-100">
+                <input type="checkbox" checked={showRepro}
+                       onChange={(e) => setShowRepro(e.target.checked)} className="accent-slate-600" />
+                <span className="font-semibold text-gray-700">Colour by our re-runs</span>
+              </label>
+              <div className="font-semibold text-gray-700 mb-1">
+                {showRepro ? 'What we re-ran' : "The paper's argument"}
+              </div>
+              {(showRepro
+                ? ([
+                    [OUTCOME_COLOR.match, OUTCOME_LABEL.match],
+                    [OUTCOME_COLOR.partial, OUTCOME_LABEL.partial],
+                    [OUTCOME_COLOR.differs, OUTCOME_LABEL.differs],
+                    [OUTCOME_COLOR.blocked, OUTCOME_LABEL.blocked],
+                    [OUTCOME_COLOR['not-attempted'], OUTCOME_LABEL['not-attempted']],
+                  ] as [string, string][])
+                : ([
+                    ['#60a5fa', 'Hypothesis / prediction / synthesis'],
+                    ['#a78bfa', 'Cited claim (literature)'],
+                    ['#64748b', 'Empirical result / control'],
+                    ['#94a3b8', 'Scope / methodological'],
+                  ] as [string, string][])
+              ).map(([color, label]) => (
                 <div key={label} className="flex items-center gap-1.5">
                   <span style={{ width: 10, height: 10, borderRadius: 2, background: color, display: 'inline-block' }} />
                   <span className="text-gray-600">{label}</span>
@@ -292,7 +319,7 @@ function DAGInner({ claims, paperSlug }: Props) {
             <div className="flex flex-wrap gap-1.5">
               <span
                 className="inline-block px-2 py-0.5 rounded text-xs font-medium"
-                style={{ background: nodeColor(selected.status, selected.role) + '22', color: '#111', border: `1px solid ${nodeColor(selected.status, selected.role)}` }}
+                style={{ background: nodeColor(selected.status, selected.role, showRepro) + '22', color: '#111', border: `1px solid ${nodeColor(selected.status, selected.role, showRepro)}` }}
               >{selected.status === 'unknown' ? selected.role : selected.status}</span>
               <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
                 {selected.epistemic}

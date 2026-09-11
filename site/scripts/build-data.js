@@ -19,75 +19,79 @@ const outFile = join(outDir, 'claims.json');
 mkdirSync(outDir, { recursive: true });
 
 // --- Verification level taxonomy ---
-// L1: metadata check (PDB record, deposit exists)
-// L2: CSV comparison (read deposited intermediates, compare to paper)
-// L3: re-execute scripts (run author code on deposited data)
-// L4: independent re-analysis (new code on deposited data)
-// L5: full pipeline (raw data → preprocessing → analysis → result)
+// How far we got re-running a paper. Every rung is a fact about our effort against the
+// authors' *deposited* material — none of it is replication, which would mean an independent
+// study finding the same thing, and which this corpus has never attempted.
+//
+// L1: we checked the deposit exists (a PDB record, a repository)
+// L2: we read the deposited intermediates and compared them to the paper
+// L3: we ran the authors' own scripts on their own data
+// L4: we wrote our own analysis and ran it on their deposited data
+// L5: we ran the whole pipeline from raw data — never reached
 const VERIFICATION_LEVELS = {
   'artiushin-2026-spider-atlas': {
     level: 'unverified',
-    label: 'Not attempted',
+    label: 'We have not attempted it',
     detail: 'Atlas paper — data on Brain Image Library, verification is image inspection. Not attempted in this prototype.',
   },
   'bouyeure-2026-fear-rsa': {
     level: 'L4',
-    label: 'Independent re-analysis',
+    label: 'We re-analysed their deposited data',
     detail: 'Downloaded NeuroVault NIfTI maps, independently counted significant voxels and found MNI peaks. Full MVPA pipeline not re-run.',
   },
   'ejdrup-2026-dopamine': {
     level: 'L3',
-    label: 'Re-executed scripts',
+    label: 'We ran their deposited scripts',
     detail: 'Ran deposited figure-generation scripts with matplotlib patch. Vmax parameter sweep timed out (600s) — 3 simulation claims unverified.',
   },
   'gadeke-2026-guilt-insula': {
     level: 'L4',
-    label: 'Independent re-analysis',
+    label: 'We re-analysed their deposited data',
     detail: 'Downloaded OpenNeuro CSVs, fit logistic regression independently, confirmed MNI peak coordinates. Full fMRI preprocessing not re-run.',
   },
   'headley-2026-inhibitory-rhythms': {
     level: 'L2',
-    label: 'CSV comparison',
+    label: 'We compared their deposited CSVs',
     detail: 'Read deposited CSVs from GitHub, confirmed firing-rate values and STA timings. NEURON simulation not re-run (6 hrs + 1.88 GB Dryad).',
   },
   'kammer-2026-foveal-feedback': {
     level: 'unverified',
-    label: 'Compute-infeasible',
+    label: 'We could not re-run it — specialist compute',
     detail: 'Per-subject fMRI MVPA pipeline requires specialist compute. Data on OpenNeuro but pipeline not re-run.',
   },
   'kolb-2026-igabasnfr2': {
     level: 'L1',
-    label: 'Metadata check',
+    label: 'We checked the deposit exists',
     detail: 'Parsed PDB 9D57 record from RCSB, confirmed structure metadata. Wet-lab experiments not computationally reproducible.',
   },
   'meijer-2025-serotonin-additive-r1': {
     level: 'L2',
-    label: 'CSV comparison',
+    label: 'We compared their deposited CSVs',
     detail: 'Read deposited CSVs from GitHub repo, confirmed GLM interaction, modulation counts, and receptor expression results. 14/14 PASS. Full GLM refit requires iblatlas.',
   },
   'meijer-2025-serotonin-orthogonal': {
     level: 'L2',
-    label: 'CSV comparison',
+    label: 'We compared their deposited CSVs',
     detail: 'Read deposited CSVs from GitHub repo, confirmed neuron counts, modulation fractions, and orthogonality measures. 9/12 PASS, 2 FAIL (ripple suppression direction, region count), 1 WARN (latency correlation).',
   },
   'rozak-2026-neurovascular-dl': {
     level: 'unverified',
-    label: 'Training data proprietary',
+    label: 'We could not re-run it — training data is proprietary',
     detail: 'Deep learning pipeline trained on proprietary microscopy data. Pre-trained model available but training set not redistributable.',
   },
   'sautory-2026-serotonin-novelty': {
     level: 'L2',
-    label: 'CSV comparison + repo audit',
+    label: 'We compared their CSVs and audited the repo',
     detail: 'All statistical values verified against deposited CSVs. Analysis scripts and data paths confirmed on disk. Full R analysis pipeline not re-run.',
   },
   'scheller-2026-self-prioritization': {
     level: 'L2',
-    label: 'CSV comparison',
+    label: 'We compared their deposited CSVs',
     detail: 'Downloaded Stan posterior CSVs from OSF (live, not from-notes). Computed TVA statistics from posterior samples. 8/8 PASS. Full Stan model not re-run (12 hrs).',
   },
   'wengert-2026-kcnc1': {
     level: 'L4',
-    label: 'Independent re-analysis',
+    label: 'We re-analysed their deposited data',
     detail: 'Downloaded G-Node Excel data, computed independent statistical tests. Direction confirmed for all claims; one magnitude mismatch (maximal firing).',
   },
 };
