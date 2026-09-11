@@ -112,23 +112,23 @@ const tabs = [
     <!-- Header -->
     <div class="mb-8">
       <div class="flex items-start gap-4 mb-1">
-        <h1 class="text-xl font-semibold text-gray-900 leading-snug flex-1 m-0">{paperData.title}</h1>
+        <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100 leading-snug flex-1 m-0">{paperData.title}</h1>
         {allVerified && (
           <span class="flex-shrink-0 all-verified-badge">✓ All claims verified</span>
         )}
       </div>
-      <div class="text-sm text-gray-600 mb-4">
+      <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
         {paperData.authors.join(', ')} · {(paperData as any).journal}
         {stage && <span class="italic"> · {stage}</span>}
       </div>
       <div class="flex flex-wrap gap-3 text-xs">
         {paperData.doi && (
-          <a href={`https://doi.org/${paperData.doi}`} target="_blank" class="text-blue-600 hover:underline">
+          <a href={`https://doi.org/${paperData.doi}`} target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">
             DOI: {paperData.doi} ↗
           </a>
         )}
         {paperData.github && (
-          <a href={paperData.github} target="_blank" class="text-gray-600 hover:underline">
+          <a href={paperData.github} target="_blank" class="text-gray-600 dark:text-gray-400 hover:underline">
             GitHub ↗
           </a>
         )}
@@ -136,23 +136,14 @@ const tabs = [
 
       <!-- Verification level -->
       {(paperData as any).verificationLevel && (
-        <div class="mt-4 px-3 py-2 rounded-md border text-xs" style={`
-          background: ${(paperData as any).verificationLevel === 'unverified' ? '#f9fafb' :
-                        (paperData as any).verificationLevel === 'L1' ? '#eff6ff' :
-                        (paperData as any).verificationLevel === 'L2' ? '#f0fdf4' :
-                        (paperData as any).verificationLevel === 'L3' ? '#f0fdf4' :
-                        (paperData as any).verificationLevel === 'L4' ? '#ecfdf5' : '#f9fafb'};
-          border-color: ${(paperData as any).verificationLevel === 'unverified' ? '#e5e7eb' :
-                          (paperData as any).verificationLevel === 'L1' ? '#bfdbfe' :
-                          (paperData as any).verificationLevel === 'L2' ? '#bbf7d0' :
-                          (paperData as any).verificationLevel === 'L3' ? '#bbf7d0' :
-                          (paperData as any).verificationLevel === 'L4' ? '#86efac' : '#e5e7eb'};
-        `}>
+        <div class={`mt-4 px-3 py-2 rounded-md border text-xs verif-badge verif-${
+          ['L1','L2','L3','L4'].includes((paperData as any).verificationLevel)
+            ? (paperData as any).verificationLevel : 'none'}`}>
           <span class="font-semibold">{(paperData as any).verificationLevel}</span>
           <span class="mx-1">·</span>
           <span class="font-medium">{(paperData as any).verificationLabel}</span>
           <span class="mx-1">—</span>
-          <span class="text-gray-600">{(paperData as any).verificationDetail}</span>
+          <span class="verif-detail">{(paperData as any).verificationDetail}</span>
         </div>
       )}
     </div>
@@ -180,9 +171,9 @@ const tabs = [
 
     <!-- Claim count + verified count -->
     <div class="mb-6 flex items-center gap-3">
-      <span class="text-sm text-gray-500">{paperData.claimCount} claims</span>
+      <span class="text-sm text-gray-500 dark:text-gray-400">{paperData.claimCount} claims</span>
       {verifiedCount > 0 && !allVerified && (
-        <span class="text-sm text-green-700 font-medium">{verifiedCount} verified</span>
+        <span class="text-sm text-green-700 dark:text-green-400 font-medium">{verifiedCount} verified</span>
       )}
     </div>
 
@@ -199,11 +190,11 @@ const tabs = [
         />
       ) : (
         <section class="mb-6">
-          <h2 class="text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">
+          <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide mb-4">
             {conclusionsHeading}
           </h2>
           {defaultRoots.length === 0 ? (
-            <p class="text-xs text-gray-500 italic leading-relaxed max-w-3xl">
+            <p class="text-xs text-gray-500 dark:text-gray-400 italic leading-relaxed max-w-3xl">
               (no root claims identified — graph may be cyclic or all claims have downstream dependencies)
             </p>
           ) : (
@@ -229,7 +220,7 @@ const tabs = [
             <li>
               <a
                 href={url(`/papers/${paperSlug}/${c.slug}`)}
-                class="text-blue-600 hover:underline font-mono"
+                class="text-blue-600 dark:text-blue-400 hover:underline font-mono"
               >{c.slug}</a>
               {c.panel && <span class="text-gray-400 ml-2">{c.panel}</span>}
             </li>
@@ -281,7 +272,7 @@ const tabs = [
   .paper-summary {
     font-size: 17px;
     line-height: 1.55;
-    color: #374151;
+    color: var(--card-body);
     margin: 0 0 1.5rem 0;
     max-width: 56rem;
     font-weight: 400;
@@ -299,16 +290,16 @@ const tabs = [
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #6b7280;
+    color: var(--card-muted);
     vertical-align: baseline;
   }
 
   .all-verified-badge {
     font-size: 0.72rem;
     font-weight: 600;
-    color: #166534;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
+    color: var(--ok-fg);
+    background: var(--ok-bg);
+    border: 1px solid var(--ok-border);
     padding: 3px 10px;
     border-radius: 4px;
     letter-spacing: 0.02em;
@@ -322,7 +313,7 @@ const tabs = [
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #6b7280;
+    color: var(--card-muted);
     padding: 0.25rem 0;
   }
   .alpha-index-details > summary::-webkit-details-marker {

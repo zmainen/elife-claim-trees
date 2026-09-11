@@ -196,3 +196,89 @@ html.dark {
   .method-prose table td[align='center'] {
     text-align: center;
   }
+
+/* ── Claim cards and structure ─────────────────────────────────────────────────
+   These were hard-coded light-mode literals inside scoped <style> blocks, which a
+   `dark:` variant sweep cannot reach — a white card on a #0f0f0f page. Tokens now,
+   defined for both themes here. */
+:root {
+  --card-bg: #ffffff;
+  --card-bg-hover: #fafafa;
+  --card-sunk: #f9fafb;
+  --card-border: #e5e7eb;
+  --card-border-hover: #9ca3af;
+  --card-head: #111827;
+  --card-strong: #334155;
+  --card-muted: #6b7280;
+  --card-faint: #94a3b8;
+  --ok-fg: #166534;
+  --ok-bg: #f0fdf4;
+  --ok-border: #bbf7d0;
+}
+html.dark {
+  --card-bg: #15191e;
+  --card-bg-hover: #1b2027;
+  --card-sunk: #1a1e23;
+  --card-border: #2c333b;
+  --card-border-hover: #4a545f;
+  --card-head: #f1f5f9;
+  --card-strong: #cbd5e1;
+  --card-muted: #9aa4b2;
+  --card-faint: #7d8794;
+  --ok-fg: #6ee7a8;
+  --ok-bg: rgba(34, 197, 94, 0.12);
+  --ok-border: rgba(34, 197, 94, 0.35);
+}
+:root {
+  --card-body: #374151;
+  --pair-bg: #f0f9ff;
+  --pair-border: #e0f2fe;
+  --pair-accent: #0369a1;
+}
+html.dark {
+  --card-body: #cbd5e1;
+  --pair-bg: rgba(56, 189, 248, 0.07);
+  --pair-border: rgba(56, 189, 248, 0.22);
+  --pair-accent: #7dd3fc;
+}
+
+/* ── Verification level badge ──────────────────────────────────────────────────
+   Its colours were computed inline from the verification level, so no `dark:` class
+   could reach them: a white-to-pale-green bar with light text on the dark page. The
+   level now selects a class and the palette is defined for both themes. */
+.verif-badge { background: var(--verif-bg); border-color: var(--verif-border); color: var(--verif-fg); }
+.verif-detail { color: var(--verif-muted); }
+:root {
+  --verif-bg: #f9fafb; --verif-border: #e5e7eb; --verif-fg: #111827; --verif-muted: #4b5563;
+}
+:root .verif-L1 { --verif-bg: #eff6ff; --verif-border: #bfdbfe; }
+:root .verif-L2,
+:root .verif-L3 { --verif-bg: #f0fdf4; --verif-border: #bbf7d0; }
+:root .verif-L4 { --verif-bg: #ecfdf5; --verif-border: #86efac; }
+html.dark {
+  --verif-bg: #1a1e23; --verif-border: #2c333b; --verif-fg: #e2e8f0; --verif-muted: #9aa4b2;
+}
+html.dark .verif-L1 { --verif-bg: rgba(59,130,246,0.10); --verif-border: rgba(59,130,246,0.32); }
+html.dark .verif-L2,
+html.dark .verif-L3 { --verif-bg: rgba(34,197,94,0.10); --verif-border: rgba(34,197,94,0.30); }
+html.dark .verif-L4 { --verif-bg: rgba(16,185,129,0.12); --verif-border: rgba(16,185,129,0.38); }
+
+/* ── Claim drawer status banner ────────────────────────────────────────────────
+   Its colours were inline styles produced by a function in the component, so no
+   stylesheet could theme them: a cream banner on the dark drawer. The hue is now a
+   class; light keeps the original tints, dark uses translucent overlays of the same
+   hue so the semantic colour survives on either ground. */
+.drawer-verification { background: var(--bn-bg); border-color: var(--bn-border); color: var(--bn-fg); }
+.drawer-verification .drawer-verify-icon { background: var(--bn-border); color: var(--bn-fg); }
+.drawer-verification.hue-blue { --bn-bg: #eff6ff; --bn-border: #bfdbfe; --bn-fg: #1e40af; }
+.drawer-verification.hue-green { --bn-bg: #f0fdf4; --bn-border: #bbf7d0; --bn-fg: #166534; }
+.drawer-verification.hue-violet { --bn-bg: #f5f3ff; --bn-border: #ddd6fe; --bn-fg: #5b21b6; }
+.drawer-verification.hue-purple { --bn-bg: #faf5ff; --bn-border: #e9d5ff; --bn-fg: #6b21a8; }
+.drawer-verification.hue-red { --bn-bg: #fef2f2; --bn-border: #fecaca; --bn-fg: #991b1b; }
+.drawer-verification.hue-amber { --bn-bg: #fffbeb; --bn-border: #fcd34d; --bn-fg: #92400e; }
+html.dark .drawer-verification.hue-blue { --bn-bg: rgba(59,130,246,0.10); --bn-border: rgba(59,130,246,0.34); --bn-fg: #93c5fd; }
+html.dark .drawer-verification.hue-green { --bn-bg: rgba(34,197,94,0.10); --bn-border: rgba(34,197,94,0.34); --bn-fg: #6ee7a8; }
+html.dark .drawer-verification.hue-violet { --bn-bg: rgba(139,92,246,0.10); --bn-border: rgba(139,92,246,0.34); --bn-fg: #c4b5fd; }
+html.dark .drawer-verification.hue-purple { --bn-bg: rgba(168,85,247,0.10); --bn-border: rgba(168,85,247,0.34); --bn-fg: #e9d5ff; }
+html.dark .drawer-verification.hue-red { --bn-bg: rgba(239,68,68,0.10); --bn-border: rgba(239,68,68,0.34); --bn-fg: #fca5a5; }
+html.dark .drawer-verification.hue-amber { --bn-bg: rgba(245,158,11,0.10); --bn-border: rgba(245,158,11,0.34); --bn-fg: #fbbf24; }

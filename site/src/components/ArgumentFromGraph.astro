@@ -75,57 +75,57 @@ const kindLabel: Record<string, string> = {
 
 {hasAny && (
   <section class="mb-12">
-    <h2 class="text-base font-semibold text-gray-900 uppercase tracking-wide mb-3 flex items-baseline gap-2">
+    <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide mb-3 flex items-baseline gap-2">
       <span>Argument from the graph</span>
       {version && (
         <span class="text-[10px] font-medium normal-case tracking-normal text-gray-400 font-mono">{version}</span>
       )}
     </h2>
-    <p class="text-sm text-gray-500 italic mb-8 leading-relaxed max-w-3xl">
+    <p class="text-sm text-gray-500 dark:text-gray-400 italic mb-8 leading-relaxed max-w-3xl">
       An LLM was given only this paper's enriched claim graph — claims, panel references, roles, and the relations between them — with no access to the abstract, paper prose, or any external context. It was asked to reconstruct the argument. Below: the reconstructed argument, then a comparison to the published abstract above. The two prompts that produced these texts are at the bottom, available for inspection.
     </p>
 
     {synthesis && (
       <div class="mb-8">
-        <h3 class="text-base font-semibold text-gray-900 mb-3">Reconstructed argument</h3>
-        <p class="text-base leading-relaxed text-gray-900 max-w-3xl whitespace-pre-wrap">{synthesis}</p>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">Reconstructed argument</h3>
+        <p class="text-base leading-relaxed text-gray-900 dark:text-gray-100 max-w-3xl whitespace-pre-wrap">{synthesis}</p>
       </div>
     )}
 
     {(comparison || diagnosticDivergence || inferentialStructureNote) && (
       <div class="mb-8">
-        <h3 class="text-base font-semibold text-gray-900 mb-3">Compared to the published abstract</h3>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">Compared to the published abstract</h3>
 
         {comparison && (
-          <p class="text-base leading-relaxed text-gray-900 max-w-3xl whitespace-pre-wrap mb-5">{comparison}</p>
+          <p class="text-base leading-relaxed text-gray-900 dark:text-gray-100 max-w-3xl whitespace-pre-wrap mb-5">{comparison}</p>
         )}
 
         {diagnosticDivergence && (
           <div class="max-w-3xl mb-4 border-l-4 border-amber-400 bg-amber-50/60 pl-4 pr-4 py-3 rounded-r-md">
             <div class="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-1">Diagnostic divergence</div>
-            <p class="text-sm leading-relaxed text-gray-800 whitespace-pre-wrap">{diagnosticDivergence}</p>
+            <p class="text-sm leading-relaxed text-gray-800 dark:text-gray-200 whitespace-pre-wrap">{diagnosticDivergence}</p>
           </div>
         )}
 
         {inferentialStructureNote && (
           <div class="max-w-3xl mb-4 border-l-4 border-gray-300 bg-gray-50/70 pl-4 pr-4 py-3 rounded-r-md">
-            <div class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">On inferential structure recovered</div>
-            <p class="text-sm leading-relaxed text-gray-800 whitespace-pre-wrap">{inferentialStructureNote}</p>
+            <div class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">On inferential structure recovered</div>
+            <p class="text-sm leading-relaxed text-gray-800 dark:text-gray-200 whitespace-pre-wrap">{inferentialStructureNote}</p>
           </div>
         )}
       </div>
     )}
 
     {traceback.length > 0 && (
-      <details class="mb-6 rounded-lg border border-gray-200 bg-gray-50/40">
-        <summary class="cursor-pointer select-none px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100/60 rounded-t-lg">
+      <details class="mb-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/40">
+        <summary class="cursor-pointer select-none px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100/60 rounded-t-lg">
           ▸ Show traceback ({traceback.length} synthesis sentence{traceback.length === 1 ? '' : 's'})
         </summary>
         <div class="px-4 pb-4 pt-2">
           <ol class="space-y-3 list-decimal list-inside text-sm">
             {traceback.map(t => (
               <li class="leading-snug">
-                <div class="text-gray-800 inline">{t.sentence}</div>
+                <div class="text-gray-800 dark:text-gray-200 inline">{t.sentence}</div>
                 {(t.claims?.length ?? 0) > 0 && (
                   <div class="mt-1 ml-4 flex flex-wrap gap-x-3 gap-y-1 text-xs">
                     {t.claims!.map(slug => {
@@ -138,9 +138,9 @@ const kindLabel: Record<string, string> = {
                           class="traceback-claim inline-flex items-baseline gap-1"
                           data-target-claim={slug}
                         >
-                          <span class="font-mono text-gray-600 font-medium">{label}</span>
+                          <span class="font-mono text-gray-600 dark:text-gray-400 font-medium">{label}</span>
                           {preview && (
-                            <span class="text-gray-500"> · <span class="text-gray-700">{preview}</span></span>
+                            <span class="text-gray-500 dark:text-gray-400"> · <span class="text-gray-700 dark:text-gray-300">{preview}</span></span>
                           )}
                         </a>
                       );
@@ -148,7 +148,7 @@ const kindLabel: Record<string, string> = {
                   </div>
                 )}
                 {t.move && (
-                  <div class="mt-0.5 ml-4 text-xs text-gray-500 italic">{t.move}</div>
+                  <div class="mt-0.5 ml-4 text-xs text-gray-500 dark:text-gray-400 italic">{t.move}</div>
                 )}
               </li>
             ))}
@@ -158,14 +158,14 @@ const kindLabel: Record<string, string> = {
     )}
 
     {comparisonTable.length > 0 && (
-      <details class="mb-6 rounded-lg border border-gray-200 bg-gray-50/40">
-        <summary class="cursor-pointer select-none px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100/60 rounded-t-lg">
+      <details class="mb-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/40">
+        <summary class="cursor-pointer select-none px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100/60 rounded-t-lg">
           ▸ Show structured comparison table ({comparisonTable.length} rows)
         </summary>
         <div class="overflow-x-auto px-4 pb-4 pt-2">
           <table class="w-full text-xs text-left border-collapse">
             <thead>
-              <tr class="border-b border-gray-300 text-gray-500 uppercase tracking-wider">
+              <tr class="border-b border-gray-300 text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 <th class="py-2 pr-3 font-medium">Kind</th>
                 <th class="py-2 pr-3 font-medium">Abstract sentence</th>
                 <th class="py-2 pr-3 font-medium">Synthesis sentence</th>
@@ -175,7 +175,7 @@ const kindLabel: Record<string, string> = {
             </thead>
             <tbody>
               {comparisonTable.map(row => (
-                <tr class="border-b border-gray-200 align-top">
+                <tr class="border-b border-gray-200 dark:border-gray-700 align-top">
                   <td class="py-2 pr-3 whitespace-nowrap">
                     <span class={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${
                       row.kind === 'aligned' ? 'bg-green-100 text-green-800' :
@@ -185,10 +185,10 @@ const kindLabel: Record<string, string> = {
                       'bg-gray-100 text-gray-700'
                     }`}>{kindLabel[row.kind] ?? row.kind}</span>
                   </td>
-                  <td class="py-2 pr-3 text-gray-800 leading-snug">{row.abstractSentence ?? ''}</td>
-                  <td class="py-2 pr-3 text-gray-800 leading-snug">{row.synthesisSentence ?? ''}</td>
-                  <td class="py-2 pr-3 text-gray-600 italic whitespace-nowrap">{row.category ?? ''}</td>
-                  <td class="py-2 text-gray-600 leading-snug">{row.note ?? ''}</td>
+                  <td class="py-2 pr-3 text-gray-800 dark:text-gray-200 leading-snug">{row.abstractSentence ?? ''}</td>
+                  <td class="py-2 pr-3 text-gray-800 dark:text-gray-200 leading-snug">{row.synthesisSentence ?? ''}</td>
+                  <td class="py-2 pr-3 text-gray-600 dark:text-gray-400 italic whitespace-nowrap">{row.category ?? ''}</td>
+                  <td class="py-2 text-gray-600 dark:text-gray-400 leading-snug">{row.note ?? ''}</td>
                 </tr>
               ))}
             </tbody>
@@ -200,19 +200,19 @@ const kindLabel: Record<string, string> = {
     {(synthesizerPrompt || comparatorPrompt) && (
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {synthesizerPrompt && (
-          <details class="rounded-lg border border-gray-200 bg-gray-50/40">
-            <summary class="cursor-pointer select-none px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100/60 rounded-t-lg">
+          <details class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/40">
+            <summary class="cursor-pointer select-none px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100/60 rounded-t-lg">
               ▸ Show synthesizer prompt
             </summary>
-            <pre class="m-0 px-4 pb-4 pt-2 text-xs text-gray-800 font-mono whitespace-pre-wrap break-words" style="max-height: 600px; overflow-y: auto;">{synthesizerPrompt}</pre>
+            <pre class="m-0 px-4 pb-4 pt-2 text-xs text-gray-800 dark:text-gray-200 font-mono whitespace-pre-wrap break-words" style="max-height: 600px; overflow-y: auto;">{synthesizerPrompt}</pre>
           </details>
         )}
         {comparatorPrompt && (
-          <details class="rounded-lg border border-gray-200 bg-gray-50/40">
-            <summary class="cursor-pointer select-none px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100/60 rounded-t-lg">
+          <details class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/40">
+            <summary class="cursor-pointer select-none px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100/60 rounded-t-lg">
               ▸ Show comparator prompt
             </summary>
-            <pre class="m-0 px-4 pb-4 pt-2 text-xs text-gray-800 font-mono whitespace-pre-wrap break-words" style="max-height: 600px; overflow-y: auto;">{comparatorPrompt}</pre>
+            <pre class="m-0 px-4 pb-4 pt-2 text-xs text-gray-800 dark:text-gray-200 font-mono whitespace-pre-wrap break-words" style="max-height: 600px; overflow-y: auto;">{comparatorPrompt}</pre>
           </details>
         )}
       </div>

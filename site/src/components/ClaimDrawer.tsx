@@ -70,18 +70,18 @@ function statusDotColor(status: string): string {
     status === 'unverified:compute-infeasible'
   )
     return '#f59e0b';
-  return '#9ca3af';
+  return 'var(--card-faint)';
 }
 
 const roleChipStyle: Record<string, string> = {
-  hypothesis: 'bg-violet-50 text-violet-700 border-violet-200',
-  prediction: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-  empirical: 'bg-sky-50 text-sky-700 border-sky-200',
-  control: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  interpretation: 'bg-amber-50 text-amber-700 border-amber-200',
-  synthesis: 'bg-rose-50 text-rose-700 border-rose-200',
-  methodological: 'bg-teal-50 text-teal-700 border-teal-200',
-  scope: 'bg-slate-50 text-slate-600 border-slate-200',
+  hypothesis: 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900',
+  prediction: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-900',
+  empirical: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-900',
+  control: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900',
+  interpretation: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900',
+  synthesis: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900',
+  methodological: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-900',
+  scope: 'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700',
 };
 
 const EDGES: { key: keyof Claim; label: string; desc: string }[] = [
@@ -107,17 +107,17 @@ function verificationBanner(status: string, role?: string | null, stance?: strin
   // come first: the role-based banners below all say the paper *states* the claim, which on
   // a ruled-out alternative is the exact inversion of its meaning.
   if (stance === 'rejects') return {
-    bg: '#fffbeb', border: '#fcd34d', text: '#92400e', icon: '\u2298',
+    bg: '#fffbeb', border: '#fcd34d', text: '#92400e', hue: 'amber', icon: '\u2298',
     label: 'Ruled out by this paper',
     detail: 'The paper does not assert this. It is an alternative explanation the paper argues against — recorded so the evidence that eliminated it has something to point at. Follow the incoming rules-out relation to see which result did the work.',
   };
   if (stance === 'entertains') return {
-    bg: '#fffbeb', border: '#fcd34d', text: '#92400e', icon: '?',
+    bg: '#fffbeb', border: '#fcd34d', text: '#92400e', hue: 'amber', icon: '?',
     label: 'Raised, not asserted',
     detail: 'The paper raises this as a candidate and does not commit to it. No result in this tree settles it either way.',
   };
   if (stance === 'attributes') return {
-    bg: '#f5f3ff', border: '#ddd6fe', text: '#5b21b6', icon: '\u201C',
+    bg: '#f5f3ff', border: '#ddd6fe', text: '#5b21b6', hue: 'violet', icon: '\u201C',
     label: 'Attributed to others',
     detail: 'This paper reports that someone else asserts this. It is not a claim of this paper.',
   };
@@ -126,33 +126,33 @@ function verificationBanner(status: string, role?: string | null, stance?: strin
   // assessed by their argumentative role, not by running code.
   if (status === 'unknown' || !status) {
     if (role === 'hypothesis') return {
-      bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', icon: 'H',
+      bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', hue: 'blue', icon: 'H',
       label: 'Manuscript hypothesis',
       detail: 'This is an organizing hypothesis stated by the paper. It is assessed by whether its predictions are supported, not by running code.',
     };
     if (role === 'prediction') return {
-      bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', icon: 'P',
+      bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', hue: 'blue', icon: 'P',
       label: 'Derived prediction',
       detail: 'This prediction is deductively derived from a hypothesis. It is tested by the empirical claims linked via "tests" edges.',
     };
     if (role === 'literature-context') return {
-      bg: '#faf5ff', border: '#e9d5ff', text: '#6b21a8', icon: '↗',
+      bg: '#faf5ff', border: '#e9d5ff', text: '#6b21a8', hue: 'purple', icon: '↗',
       label: 'Cited claim',
       detail: 'This claim is inherited from prior literature. Its status depends on the cited paper\'s own evidence, not on this paper\'s data.',
     };
     if (role === 'synthesis' || role === 'interpretation') return {
-      bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', icon: 'S',
+      bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', hue: 'blue', icon: 'S',
       label: 'Interpretive claim',
       detail: 'This synthesis or interpretation integrates multiple empirical findings. Its warrant comes from the claims it draws on, not from a single verification.',
     };
     if (role === 'scope') return {
-      bg: '#f9fafb', border: '#e5e7eb', text: '#6b7280', icon: '◻',
+      bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '◻',
       label: 'Scope declaration',
       detail: 'This claim declares a boundary condition on the paper\'s findings. It is confirmed by reading the methods, not by running code.',
     };
     // Default for unknown empirical/control/methodological
     return {
-      bg: '#f9fafb', border: '#e5e7eb', text: '#6b7280', icon: '?',
+      bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '?',
       label: 'Not yet assessed',
       detail: 'This claim has not been through the verification process.',
     };
@@ -160,7 +160,7 @@ function verificationBanner(status: string, role?: string | null, stance?: strin
 
   // --- Code-executed verification statuses ---
   if (status === 'verified') return {
-    bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', icon: '✓',
+    bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', hue: 'green', icon: '✓',
     label: (role === 'scope' || role === 'methodological')
       ? 'Confirmed by inspection'
       : 'Verified by code',
@@ -169,68 +169,68 @@ function verificationBanner(status: string, role?: string | null, stance?: strin
       : 'A verification script ran against the deposited data and reproduced this result.',
   };
   if (status === 'verified:partial') return {
-    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', icon: '~',
+    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', hue: 'green', icon: '~',
     label: 'Partially verified',
     detail: 'A subset of this claim was verified against deposited data; the remainder is documented in notes.',
   };
   if (status === 'verified:with-nuance') return {
-    bg: '#fffbeb', border: '#fde68a', text: '#92400e', icon: '~',
+    bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '~',
     label: 'Verified with nuance',
     detail: 'Direction or trend matches; magnitude or significance differs from the paper. Discrepancy documented.',
   };
   if (status === 'verified:interpretive') return {
-    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', icon: '✓',
+    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', hue: 'green', icon: '✓',
     label: 'Verified by reasoning',
     detail: 'This interpretive claim was confirmed by examining the evidence structure, not by running code.',
   };
   if (status === 'verified:direction-and-trend') return {
-    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', icon: '~',
+    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', hue: 'green', icon: '~',
     label: 'Direction confirmed',
     detail: 'The direction and trend match the paper; exact values differ.',
   };
 
   // --- Failure ---
   if (status === 'failed' || status === 'failed:mismatch') return {
-    bg: '#fef2f2', border: '#fecaca', text: '#991b1b', icon: '✗',
+    bg: '#fef2f2', border: '#fecaca', text: '#991b1b', hue: 'red', icon: '✗',
     label: 'Result mismatch',
     detail: 'The verification script ran on the deposited data and produced a different result than the paper reports.',
   };
 
   // --- Unverified with reason ---
   if (status === 'unverified:code-error') return {
-    bg: '#fffbeb', border: '#fde68a', text: '#92400e', icon: '!',
+    bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '!',
     label: 'Code error',
     detail: 'A verification script exists but encountered an error during execution.',
   };
   if (status === 'unverified:compute-infeasible') return {
-    bg: '#f9fafb', border: '#e5e7eb', text: '#4b5563', icon: '⏱',
+    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '⏱',
     label: 'Compute-infeasible',
     detail: 'Verification requires specialist hardware or long compute times beyond our current infrastructure.',
   };
   if (status === 'unverified:no-data') return {
-    bg: '#f9fafb', border: '#e5e7eb', text: '#6b7280', icon: '—',
+    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
     label: 'No data deposited',
     detail: 'The data needed to verify this claim is not publicly available.',
   };
   if (status === 'unverified:no-code') return {
-    bg: '#f9fafb', border: '#e5e7eb', text: '#6b7280', icon: '—',
+    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
     label: 'No verification code',
     detail: 'No verification script has been written for this claim yet.',
   };
   if (status === 'unverified' || status === 'unverified:partial' || status.startsWith('partial')) return {
-    bg: '#f9fafb', border: '#e5e7eb', text: '#6b7280', icon: '○',
+    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '○',
     label: 'Unverified',
     detail: 'This empirical claim has not yet been verified against deposited data.',
   };
   if (status === 'N/A') return {
-    bg: '#f9fafb', border: '#e5e7eb', text: '#6b7280', icon: '—',
+    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
     label: 'Not applicable',
     detail: 'This claim is not the kind that can be verified by running code.',
   };
 
   // --- Fallback ---
   return {
-    bg: '#f9fafb', border: '#e5e7eb', text: '#6b7280', icon: '?',
+    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '?',
     label: status,
     detail: 'Status not recognized — see notes for details.',
   };
@@ -389,9 +389,9 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           <p className="drawer-claim-main">{claimText}</p>
 
           {/* VERIFICATION BANNER — the headline */}
-          <div className="drawer-verification" style={{ background: banner.bg, borderColor: banner.border, color: banner.text }}>
+          <div className={`drawer-verification hue-${(banner as any).hue ?? 'amber'}`}>
             <div className="drawer-verify-header">
-              <span className="drawer-verify-icon" style={{ background: banner.border, color: banner.text }}>{banner.icon}</span>
+              <span className="drawer-verify-icon">{banner.icon}</span>
               <span className="drawer-verify-label">{banner.label}</span>
             </div>
             <p className="drawer-verify-detail">{banner.detail}</p>
@@ -617,7 +617,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           width: 40vw;
           min-width: 420px;
           max-width: 640px;
-          background: #fff;
+          background: var(--card-bg);
           box-shadow: -8px 0 24px rgba(17, 24, 39, 0.08);
           z-index: 90;
           display: flex;
@@ -644,7 +644,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           align-items: center;
           justify-content: space-between;
           padding: 0.9rem 1.1rem;
-          border-bottom: 1px solid #e5e7eb;
+          border-bottom: 1px solid var(--card-border);
           flex-shrink: 0;
         }
         .drawer-header-left {
@@ -656,8 +656,8 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
         }
         .drawer-back, .drawer-close {
           background: transparent;
-          border: 1px solid #e5e7eb;
-          color: #6b7280;
+          border: 1px solid var(--card-border);
+          color: var(--card-muted);
           width: 28px;
           height: 28px;
           border-radius: 4px;
@@ -669,14 +669,14 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           justify-content: center;
         }
         .drawer-back:hover, .drawer-close:hover {
-          border-color: #9ca3af;
-          color: #111827;
+          border-color: var(--card-faint);
+          color: var(--card-head);
         }
         .drawer-number {
           font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
           font-size: 13px;
           font-weight: 600;
-          color: #374151;
+          color: var(--card-body);
           letter-spacing: 0.02em;
         }
         .drawer-stance-chip {
@@ -701,7 +701,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           text-transform: uppercase;
         }
         .drawer-panel {
-          color: #94a3b8;
+          color: var(--card-faint);
           text-transform: uppercase;
           letter-spacing: 0.08em;
           font-size: 10px;
@@ -716,7 +716,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
         .drawer-claim-main {
           font-size: 1.05rem;
           line-height: 1.55;
-          color: #111827;
+          color: var(--card-head);
           margin: 0 0 0.9rem;
           font-weight: 500;
         }
@@ -827,8 +827,8 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           border-left-color: #ef4444;
         }
         .discrepancy-data {
-          background: #f9fafb;
-          border-left-color: #9ca3af;
+          background: var(--card-sunk);
+          border-left-color: var(--card-faint);
         }
         .discrepancy-method {
           background: #fffbeb;
@@ -844,12 +844,12 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           letter-spacing: 0.04em;
         }
         .discrepancy-mismatch .drawer-discrepancy-type { color: #991b1b; }
-        .discrepancy-data .drawer-discrepancy-type { color: #6b7280; }
+        .discrepancy-data .drawer-discrepancy-type { color: var(--card-muted); }
         .discrepancy-method .drawer-discrepancy-type { color: #92400e; }
         .drawer-discrepancy-text {
           font-size: 0.78rem;
           line-height: 1.55;
-          color: #374151;
+          color: var(--card-body);
           margin: 0;
         }
 
@@ -877,17 +877,17 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           font-weight: 600;
           letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: #6b7280;
+          color: var(--card-muted);
         }
         .drawer-figure-col img, .drawer-figure-single img {
           max-width: 100%;
-          border: 1px solid #e5e7eb;
+          border: 1px solid var(--card-border);
           border-radius: 4px;
           display: block;
         }
         .drawer-figure-panel-ref {
           font-size: 0.68rem;
-          color: #9ca3af;
+          color: var(--card-faint);
           text-transform: uppercase;
           letter-spacing: 0.06em;
         }
@@ -901,22 +901,22 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
         .drawer-original {
           margin: 0 0 1rem;
           padding: 0.55rem 0.7rem;
-          background: #f9fafb;
-          border-left: 3px solid #d1d5db;
+          background: var(--card-sunk);
+          border-left: 3px solid var(--card-border-hover);
           border-radius: 3px;
         }
         .drawer-original-label {
           font-size: 9.5px;
           font-weight: 600;
           letter-spacing: 0.08em;
-          color: #9ca3af;
+          color: var(--card-faint);
           text-transform: uppercase;
           font-variant: small-caps;
           margin-bottom: 0.25rem;
         }
         .drawer-original-text {
           font-size: 0.85rem;
-          color: #4b5563;
+          color: var(--card-muted);
           line-height: 1.5;
           margin: 0;
         }
@@ -924,7 +924,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
         /* ── Code section (expandable) ── */
         .drawer-code-section {
           margin: 0 0 1rem;
-          border: 1px solid #e5e7eb;
+          border: 1px solid var(--card-border);
           border-radius: 6px;
           overflow: hidden;
         }
@@ -934,7 +934,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           gap: 0.4rem;
           width: 100%;
           padding: 0.6rem 0.75rem;
-          background: #f9fafb;
+          background: var(--card-sunk);
           border: none;
           cursor: pointer;
           font: inherit;
@@ -942,29 +942,29 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           transition: background 0.1s ease;
         }
         .drawer-code-toggle:hover {
-          background: #f3f4f6;
+          background: var(--card-border);
         }
         .drawer-code-toggle-icon {
           font-size: 10px;
-          color: #6b7280;
+          color: var(--card-muted);
           width: 12px;
           flex-shrink: 0;
         }
         .drawer-code-toggle-label {
           font-size: 0.78rem;
           font-weight: 600;
-          color: #374151;
+          color: var(--card-body);
         }
         .drawer-code-toggle-path {
           font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
           font-size: 0.68rem;
-          color: #9ca3af;
+          color: var(--card-faint);
           margin-left: auto;
           flex-shrink: 0;
         }
         .drawer-code-body {
           padding: 0.7rem 0.75rem;
-          border-top: 1px solid #e5e7eb;
+          border-top: 1px solid var(--card-border);
         }
         .drawer-code-row {
           display: flex;
@@ -979,22 +979,22 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           font-weight: 600;
           letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: #9ca3af;
+          color: var(--card-faint);
           flex-shrink: 0;
         }
         .drawer-code-val {
-          color: #374151;
+          color: var(--card-body);
           word-break: break-all;
         }
         .drawer-code-notes {
           margin-top: 0.5rem;
           font-size: 0.75rem;
-          color: #4b5563;
+          color: var(--card-muted);
           line-height: 1.55;
           white-space: pre-wrap;
           padding: 0.5rem 0.6rem;
-          background: #fff;
-          border: 1px solid #f3f4f6;
+          background: var(--card-bg);
+          border: 1px solid var(--card-border);
           border-radius: 3px;
         }
         .drawer-code-log {
@@ -1005,7 +1005,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
         }
         .drawer-code-log-header {
           background: #1e293b;
-          color: #94a3b8;
+          color: var(--card-faint);
           font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
           font-size: 10px;
           font-weight: 600;
@@ -1014,7 +1014,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
         }
         .drawer-code-log-pre {
           background: #0f172a;
-          color: #e2e8f0;
+          color: var(--card-strong);
           font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
           font-size: 10.5px;
           line-height: 1.55;
@@ -1033,12 +1033,12 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           gap: 0.5rem;
           margin-bottom: 1.2rem;
           padding-bottom: 1rem;
-          border-bottom: 1px solid #f3f4f6;
+          border-bottom: 1px solid var(--card-border);
         }
         .drawer-meta-item {
           font-size: 11px;
-          color: #4b5563;
-          background: #f9fafb;
+          color: var(--card-muted);
+          background: var(--card-sunk);
           padding: 2px 8px;
           border-radius: 3px;
           display: inline-flex;
@@ -1064,13 +1064,13 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           font-size: 10.5px;
           font-weight: 600;
           letter-spacing: 0.08em;
-          color: #374151;
+          color: var(--card-body);
           text-transform: uppercase;
           font-variant: small-caps;
         }
         .drawer-edge-desc {
           font-size: 0.72rem;
-          color: #9ca3af;
+          color: var(--card-faint);
           font-style: italic;
           margin: 0.1rem 0 0.4rem;
         }
@@ -1081,8 +1081,8 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
         }
         .drawer-target-card {
           text-align: left;
-          background: #fff;
-          border: 1px solid #e5e7eb;
+          background: var(--card-bg);
+          border: 1px solid var(--card-border);
           border-radius: 4px;
           padding: 0.5rem 0.65rem;
           cursor: pointer;
@@ -1094,7 +1094,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           width: 100%;
         }
         .drawer-target-card:hover:not(:disabled) {
-          border-color: #9ca3af;
+          border-color: var(--card-faint);
           background: #fafafa;
         }
         .drawer-target-card:disabled {
@@ -1109,22 +1109,22 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
         .drawer-target-number {
           font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
           font-size: 11.5px;
-          color: #4b5563;
+          color: var(--card-muted);
           font-weight: 500;
         }
         .drawer-target-slug {
           font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
           font-size: 10.5px;
-          color: #9ca3af;
+          color: var(--card-faint);
         }
         .drawer-target-text {
           font-size: 0.85rem;
-          color: #111827;
+          color: var(--card-head);
           line-height: 1.4;
         }
         .drawer-target-missing {
           font-size: 0.7rem;
-          color: #9ca3af;
+          color: var(--card-faint);
           font-style: italic;
         }
 

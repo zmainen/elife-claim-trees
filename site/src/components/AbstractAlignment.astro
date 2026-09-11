@@ -76,17 +76,17 @@ const cardId = (slug: string) => `claim-card-${slug}`;
 ---
 
 <section class="mb-12">
-  <h2 class="text-base font-semibold text-gray-900 uppercase tracking-wide mb-3">
+  <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide mb-3">
     Abstract mapped to claims
   </h2>
-  <p class="text-sm text-gray-500 italic mb-6 leading-relaxed max-w-3xl">
+  <p class="text-sm text-gray-500 dark:text-gray-400 italic mb-6 leading-relaxed max-w-3xl">
     The paper's abstract is shown with each sentence linked to the claim(s) it represents in the dependency graph. Hover or click a sentence to highlight the corresponding claim cards. Below: what the graph contains that the abstract leaves out, and vice versa.
   </p>
 
   <!-- Abstract -->
-  <div class="mb-8 p-5 md:p-6 rounded-lg border border-gray-200 bg-gray-50/40">
-    <div class="text-xs text-gray-500 uppercase tracking-wider mb-3 font-medium">Abstract</div>
-    <p class="text-base leading-relaxed text-gray-900 abstract-prose">
+  <div class="mb-8 p-5 md:p-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/40">
+    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 font-medium">Abstract</div>
+    <p class="text-base leading-relaxed text-gray-900 dark:text-gray-100 abstract-prose">
       {segments.map(seg => seg.kind === 'glue'
         ? <span>{seg.text}</span>
         : (
@@ -105,14 +105,14 @@ const cardId = (slug: string) => `claim-card-${slug}`;
   </div>
 
   <!-- Sentence-to-claim legend -->
-  <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-xs text-gray-600">
+  <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-xs text-gray-600 dark:text-gray-400">
     {mapping.sentences.map(s => (
       <div class="flex items-start gap-2">
         <span class="font-mono text-gray-400 flex-shrink-0">[{s.n}]</span>
         <div class="flex-1 min-w-0">
           {s.type === 'claim' && s.claims.length > 0 ? (
             <>
-              <span class="text-gray-500">{kindLabel[s.kind ?? 'direct'] ?? s.kind} →</span>{' '}
+              <span class="text-gray-500 dark:text-gray-400">{kindLabel[s.kind ?? 'direct'] ?? s.kind} →</span>{' '}
               {s.claims.map((slug, i) => {
                 const c = claimsBySlug[slug];
                 const preview = c ? (c.displayClaim?.trim() || c.claim || '').slice(0, 80) : '';
@@ -122,12 +122,12 @@ const cardId = (slug: string) => `claim-card-${slug}`;
                     {i > 0 && <span class="text-gray-400">, </span>}
                     <a
                       href={`#${cardId(slug)}`}
-                      class="font-mono text-blue-600 hover:underline sentence-claim-link"
+                      class="font-mono text-blue-600 dark:text-blue-400 hover:underline sentence-claim-link"
                       data-target-claim={slug}
                       title={c ? (c.displayClaim?.trim() || c.claim || slug) : slug}
                     >{label}</a>
                     {c && preview && (
-                      <span class="text-gray-500"> · <span class="text-gray-600">{preview}</span></span>
+                      <span class="text-gray-500 dark:text-gray-400"> · <span class="text-gray-600 dark:text-gray-400">{preview}</span></span>
                     )}
                   </>
                 );
@@ -153,14 +153,14 @@ const cardId = (slug: string) => `claim-card-${slug}`;
         {orphanClaims.map(c => (
           <li class="text-sm">
             {c.number && (
-              <span class="font-mono text-xs text-gray-600 mr-2">{c.number}</span>
+              <span class="font-mono text-xs text-gray-600 dark:text-gray-400 mr-2">{c.number}</span>
             )}
             <a
               href={url(`/papers/${paperSlug}/${c.slug}`)}
-              class="font-mono text-xs text-blue-600 hover:underline"
+              class="font-mono text-xs text-blue-600 dark:text-blue-400 hover:underline"
             >{c.slug}</a>
-            {c.panel && <span class="text-xs text-gray-500 ml-2">{c.panel}</span>}
-            <div class="text-gray-700 leading-snug mt-0.5">
+            {c.panel && <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">{c.panel}</span>}
+            <div class="text-gray-700 dark:text-gray-300 leading-snug mt-0.5">
               {c.displayClaim?.trim() || c.claim}
             </div>
           </li>
@@ -177,7 +177,7 @@ const cardId = (slug: string) => `claim-card-${slug}`;
       </div>
       <ul class="space-y-2">
         {orphanSentences.map(s => (
-          <li class="text-sm text-gray-700">
+          <li class="text-sm text-gray-700 dark:text-gray-300">
             <span class="font-mono text-xs text-gray-400 mr-2">[{s.n}]</span>
             {s.text}
           </li>

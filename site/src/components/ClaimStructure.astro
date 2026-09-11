@@ -173,7 +173,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
 
 <section class="mb-6 claims-section-root">
   <div class="claims-section-toolbar">
-    <h2 class="text-base font-semibold text-gray-900 uppercase tracking-wide m-0">
+    <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide m-0">
       Logic of the Claims
     </h2>
     <button type="button" class="toggle-all-btn" data-state="collapsed" aria-label="Expand or collapse all sections">Expand all</button>
@@ -239,7 +239,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   {hypotheses.length > 0 && (
     <details class="claim-section mb-3">
       <summary class="claim-section-summary cursor-pointer select-none">
-        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="Each hypothesis entails predictions; each prediction is tested by empirical observations that support or refute it. Where a hypothesis entails an empirical claim directly, the prediction layer is implicit.">
+        <h3 class="inline text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide" data-tooltip="Each hypothesis entails predictions; each prediction is tested by empirical observations that support or refute it. Where a hypothesis entails an empirical claim directly, the prediction layer is implicit.">
           <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Hypotheses tested
         </h3>
       </summary>
@@ -258,8 +258,8 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
               />
 
               {predictions.length > 0 && (
-                <div class="ml-4 pl-4 border-l-2 border-indigo-100">
-                  <div class="text-[10px] font-semibold text-indigo-600 uppercase tracking-wider mb-2 mt-1">Predictions entailed</div>
+                <div class="ml-4 pl-4 border-l-2 border-indigo-100 dark:border-indigo-900">
+                  <div class="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2 mt-1">Predictions entailed</div>
                   {predictions.map(p => {
                     const tests = testsOf(p.slug);
                     return (
@@ -271,8 +271,8 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
                           showChildren={false}
                         />
                         {tests.length > 0 && (
-                          <details class="ml-2 pl-3 border-l-2 border-sky-100 mb-3" open={tests.length <= 3}>
-                            <summary class="cursor-pointer select-none text-[10px] font-semibold text-sky-600 uppercase tracking-wider py-1">
+                          <details class="ml-2 pl-3 border-l-2 border-sky-100 dark:border-sky-900 mb-3" open={tests.length <= 3}>
+                            <summary class="cursor-pointer select-none text-[10px] font-semibold text-sky-600 dark:text-sky-400 uppercase tracking-wider py-1">
                               Tested by
                             </summary>
                             <div class="mt-2">
@@ -294,8 +294,8 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
               )}
 
               {directlyTested.length > 0 && (
-                <div class="ml-4 pl-4 border-l-2 border-sky-100">
-                  <div class="text-[10px] font-semibold text-sky-600 uppercase tracking-wider mb-2 mt-1">Tested by</div>
+                <div class="ml-4 pl-4 border-l-2 border-sky-100 dark:border-sky-900">
+                  <div class="text-[10px] font-semibold text-sky-600 dark:text-sky-400 uppercase tracking-wider mb-2 mt-1">Tested by</div>
                   {directlyTested.map(t => (
                     <ClaimCardMini
                       claim={t}
@@ -317,7 +317,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   {scopeStar.length > 0 && (
     <details class="claim-section mb-3">
       <summary class="claim-section-summary cursor-pointer select-none">
-        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="All claims above are bounded by the following scope qualifiers.">
+        <h3 class="inline text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide" data-tooltip="All claims above are bounded by the following scope qualifiers.">
           <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Scope
         </h3>
       </summary>
@@ -336,7 +336,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   {dissocPairs.length > 0 && (
     <details class="claim-section mb-3">
       <summary class="claim-section-summary cursor-pointer select-none">
-        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="Pairs of claims that jointly establish a contrast — the contrast itself is part of the argument.">
+        <h3 class="inline text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide" data-tooltip="Pairs of claims that jointly establish a contrast — the contrast itself is part of the argument.">
           <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Dissociations
         </h3>
       </summary>
@@ -356,7 +356,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   {controls.length > 0 && (
     <details class="claim-section mb-3">
       <summary class="claim-section-summary cursor-pointer select-none">
-        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="Claims that ruled out alternatives or validated other claims via disconfirming controls.">
+        <h3 class="inline text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide" data-tooltip="Claims that ruled out alternatives or validated other claims via disconfirming controls.">
           <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Eliminations &amp; validating controls
         </h3>
       </summary>
@@ -370,11 +370,11 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   {alternatives.length > 0 && (
     <details class="claim-section mb-3">
       <summary class="claim-section-summary cursor-pointer select-none">
-        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="Competing explanations the paper argues against. The paper does not assert these — they are recorded so the evidence that eliminated each one has something to point at.">
+        <h3 class="inline text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide" data-tooltip="Competing explanations the paper argues against. The paper does not assert these — they are recorded so the evidence that eliminated each one has something to point at.">
           <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Alternatives ruled out
         </h3>
       </summary>
-      <p class="text-xs text-gray-500 mb-2 ml-1">
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-2 ml-1">
         The paper does not assert these. Each is a competing explanation it argues against,
         recorded so the result that eliminated it has a target.
       </p>
@@ -382,7 +382,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
         <div class="mb-2">
           <ClaimCardMini claim={c} paperSlug={paperSlug} allClaims={claimsBySlug} showChildren={false} />
           {eliminatorOf(c.slug).length > 0 && (
-            <p class="text-xs text-gray-500 ml-4 mt-1">
+            <p class="text-xs text-gray-500 dark:text-gray-400 ml-4 mt-1">
               ruled out by {eliminatorOf(c.slug).map(e => e.number ?? e.slug).join(', ')}
             </p>
           )}
@@ -395,7 +395,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   {interpretations.length > 0 && (
     <details class="claim-section mb-3">
       <summary class="claim-section-summary cursor-pointer select-none">
-        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="Claims that reframe empirical findings through a theoretical lens. These are interpretive moves, not direct measurements.">
+        <h3 class="inline text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide" data-tooltip="Claims that reframe empirical findings through a theoretical lens. These are interpretive moves, not direct measurements.">
           <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Interpretations
         </h3>
       </summary>
@@ -409,7 +409,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   {synthesis.length > 0 && (
     <details class="claim-section mb-3">
       <summary class="claim-section-summary cursor-pointer select-none">
-        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="Claims that combine multiple empirical findings into a single conclusion.">
+        <h3 class="inline text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide" data-tooltip="Claims that combine multiple empirical findings into a single conclusion.">
           <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Synthesis claims
         </h3>
       </summary>
@@ -423,7 +423,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   {standaloneEmpirical.length > 0 && (
     <details class="claim-section mb-3">
       <summary class="claim-section-summary cursor-pointer select-none">
-        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="Empirical claims that are not parts of an explicit hypothesis-test loop or dissociation.">
+        <h3 class="inline text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide" data-tooltip="Empirical claims that are not parts of an explicit hypothesis-test loop or dissociation.">
           <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Standalone empirical findings
         </h3>
       </summary>
@@ -437,7 +437,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   {methodological.length > 0 && (
     <details class="claim-section mb-3">
       <summary class="claim-section-summary cursor-pointer select-none">
-        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="These methodological capabilities enable interpretation of downstream claims.">
+        <h3 class="inline text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide" data-tooltip="These methodological capabilities enable interpretation of downstream claims.">
           <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Methodological warrants
         </h3>
       </summary>
@@ -451,7 +451,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   {scopeTargeted.length > 0 && (
     <details class="claim-section mb-3">
       <summary class="claim-section-summary cursor-pointer select-none">
-        <h3 class="inline text-sm font-semibold text-gray-900 uppercase tracking-wide" data-tooltip="These claims qualify or constrain specific other claims rather than the paper as a whole.">
+        <h3 class="inline text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide" data-tooltip="These claims qualify or constrain specific other claims rather than the paper as a whole.">
           <span class="claim-section-chevron mr-1 text-gray-400">▸</span>Scope qualifiers
         </h3>
       </summary>
@@ -482,7 +482,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
     line-height: 1.4;
     text-transform: none;
     letter-spacing: normal;
-    color: #333;
+    color: var(--card-strong);
     background: #FFFCE8;
     border: 1px solid #E6E0B3;
     border-radius: 4px;
@@ -527,13 +527,13 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
     gap: 0.75rem;
     align-items: center;
     padding: 0.6rem 0.8rem;
-    border: 1px solid #e0f2fe;
+    border: 1px solid var(--pair-border);
     border-radius: 6px;
-    background: rgba(240, 249, 255, 0.5);
+    background: var(--pair-bg);
   }
   .dissoc-marker {
     font-size: 1.25rem;
-    color: #0284c7;
+    color: var(--pair-accent);
     user-select: none;
   }
   @media (max-width: 640px) {
@@ -558,21 +558,21 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
     margin: 0;
     font: inherit;
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--card-border-hover);
     cursor: pointer;
     border-radius: 4px;
     transition: color 0.12s ease, border-color 0.12s ease, background 0.12s ease;
   }
   .toggle-all-btn:hover {
-    color: #4b5563;
-    border-color: #e5e7eb;
-    background: #f9fafb;
+    color: var(--card-body);
+    border-color: var(--card-border);
+    background: var(--card-sunk);
   }
 
   /* ---------- Summary box (now a <details>) ---------- */
   .summary-details {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
+    background: var(--card-sunk);
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     padding: 0.6rem 1rem;
   }
@@ -592,7 +592,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   }
   .summary-heading {
     font-size: 0.78rem;
-    color: #6b7280;
+    color: var(--card-muted);
     line-height: 1.5;
     font-variant: small-caps;
     letter-spacing: 0.05em;
@@ -610,15 +610,15 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
     font-weight: 700;
     font-size: 0.78rem;
     letter-spacing: 0.06em;
-    color: #334155;
+    color: var(--card-strong);
     margin-right: 0.4rem;
   }
   .summary-line-inline {
     font-size: 0.88rem;
-    color: #374151;
+    color: var(--card-body);
   }
   .summary-inline-sep {
-    color: #9ca3af;
+    color: var(--card-border-hover);
   }
   .summary-bullet-inline {
     display: inline;
@@ -627,7 +627,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
     padding: 0;
     margin: 0;
     font: inherit;
-    color: #374151;
+    color: var(--card-body);
     font-size: 0.88rem;
     line-height: 1.45;
     cursor: pointer;
@@ -637,8 +637,8 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
   }
   .summary-bullet-inline:hover,
   .summary-bullet-inline:focus-visible {
-    color: #111827;
-    border-bottom-color: #9ca3af;
+    color: var(--card-head);
+    border-bottom-color: var(--card-border-hover);
     outline: none;
   }
   .summary-meta-footer {
@@ -646,7 +646,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
     padding-top: 0.45rem;
     border-top: 1px solid #f1f5f9;
     font-size: 0.72rem;
-    color: #9ca3af;
+    color: var(--card-border-hover);
     line-height: 1.5;
   }
   .summary-list {
@@ -667,7 +667,7 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
     padding: 0.22rem 0.35rem 0.22rem 0.9rem;
     margin: 0;
     font: inherit;
-    color: #374151;
+    color: var(--card-body);
     font-size: 0.88rem;
     line-height: 1.45;
     cursor: pointer;
@@ -679,18 +679,18 @@ const showSummary = metaParts.length > 0 || summaryLines.length > 0;
     position: absolute;
     left: 0.2rem;
     top: 0.22rem;
-    color: #9ca3af;
+    color: var(--card-border-hover);
   }
   .summary-bullet:hover,
   .summary-bullet:focus-visible {
     background: #f3f4f6;
-    color: #111827;
+    color: var(--card-head);
     outline: none;
   }
   .summary-bullet-number {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--card-muted);
     font-weight: 500;
     margin-right: 0.15rem;
   }

@@ -35,14 +35,14 @@ const { claim, paperSlug, allClaims, depth = 0, showChildren = true } = Astro.pr
 
 // Role chip palette — desaturated ~15% compared to ClaimStructure (e.g. 400/500 weights)
 const roleStyle: Record<string, string> = {
-  hypothesis:     'bg-violet-50 text-violet-700 border-violet-200',
-  prediction:     'bg-indigo-50 text-indigo-700 border-indigo-200',
-  empirical:      'bg-sky-50 text-sky-700 border-sky-200',
-  control:        'bg-emerald-50 text-emerald-700 border-emerald-200',
-  interpretation: 'bg-amber-50 text-amber-700 border-amber-200',
-  synthesis:      'bg-rose-50 text-rose-700 border-rose-200',
-  methodological: 'bg-teal-50 text-teal-700 border-teal-200',
-  scope:          'bg-slate-50 text-slate-600 border-slate-200',
+  hypothesis:     'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900',
+  prediction:     'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-900',
+  empirical:      'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-900',
+  control:        'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900',
+  interpretation: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900',
+  synthesis:      'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900',
+  methodological: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-900',
+  scope:          'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700',
 };
 
 // Status dot color — role-aware palette
@@ -149,8 +149,8 @@ const children = (claim.requires ?? [])
     cursor: pointer;
     padding: 0.85rem 1rem;
     border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    background: #fff;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
     transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
     outline: none;
   }
@@ -159,8 +159,8 @@ const children = (claim.requires ?? [])
   }
   .claim-mini-card:hover,
   .claim-mini-card:focus-visible {
-    border-color: #9ca3af;
-    background: #fafafa;
+    border-color: var(--card-border-hover);
+    background: var(--card-bg-hover);
   }
   .claim-mini-top {
     display: flex;
@@ -173,7 +173,7 @@ const children = (claim.requires ?? [])
   .mini-number {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 13px;
-    color: #888;
+    color: var(--card-muted);
     font-weight: 400;
     letter-spacing: 0.02em;
   }
@@ -206,7 +206,7 @@ const children = (claim.requires ?? [])
     background: rgba(245, 158, 11, 0.12);
   }
   .mini-panel {
-    color: #94a3b8;
+    color: var(--card-faint);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-size: 10px;
@@ -223,9 +223,9 @@ const children = (claim.requires ?? [])
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 9.5px;
     font-weight: 600;
-    color: #166534;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
+    color: var(--ok-fg);
+    background: var(--ok-bg);
+    border: 1px solid var(--ok-border);
     padding: 0px 5px;
     border-radius: 3px;
     letter-spacing: 0.02em;
@@ -233,22 +233,22 @@ const children = (claim.requires ?? [])
   .mini-code-badge {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 9.5px;
-    color: #6b7280;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
+    color: var(--card-muted);
+    background: var(--card-sunk);
+    border: 1px solid var(--card-border);
     padding: 0px 5px;
     border-radius: 3px;
     letter-spacing: -0.02em;
   }
   .mini-figure-glyph {
     font-size: 11px;
-    color: #94a3b8;
+    color: var(--card-faint);
     line-height: 1;
   }
   .claim-mini-body {
     font-size: 1rem; /* ~16px; spec said ~18pt but that's large for body density */
     line-height: 1.55;
-    color: #111827;
+    color: var(--card-head);
     margin: 0;
     font-weight: 400;
   }
@@ -263,14 +263,14 @@ const children = (claim.requires ?? [])
     list-style: none;
     cursor: pointer;
     user-select: none;
-    color: #6b7280;
+    color: var(--card-muted);
     font-size: 0.72rem;
     padding: 0.2rem 0.25rem;
     border-radius: 3px;
   }
   .mini-disclosure > summary:hover {
     color: #374151;
-    background: #f9fafb;
+    background: var(--card-sunk);
   }
   .mini-disclosure > summary::-webkit-details-marker { display: none; }
   .mini-disclosure .mini-chev {
@@ -284,7 +284,7 @@ const children = (claim.requires ?? [])
   .mini-children-wrap {
     margin-top: 0.4rem;
     padding-left: 1rem;
-    border-left: 2px solid #e5e7eb;
+    border-left: 2px solid var(--card-border);
   }
 
   :global(.claim-card-highlight) {
