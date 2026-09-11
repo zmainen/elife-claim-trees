@@ -2,18 +2,17 @@
 import Layout from '../../layouts/Layout.astro';
 import ClaimCardMini from '../../components/ClaimCardMini.astro';
 import ClaimStructure from '../../components/ClaimStructure.astro';
-import AbstractAlignment from '../../components/AbstractAlignment.astro';
-import ArgumentFromGraph from '../../components/ArgumentFromGraph.astro';
 import PaperTabs from '../../components/PaperTabs.astro';
 import ClaimDrawer from '../../components/ClaimDrawer.tsx';
-import ReviewTab from '../../components/ReviewTab.tsx';
 import corpus from '../../data/claims.json';
 import { cells, fill_of, groups as layerGroups, STATE_LABEL } from '../../lib/pipeline';
+import PipelineExplorer from '../../components/PipelineExplorer';
+import PaperArtifacts from '../../components/PaperArtifacts.astro';
+import ClaimDAG from '../../components/ClaimDAG.tsx';
+import { paperExplorer } from '../../lib/explorer';
 import paperSummaries from '../../data/paper-summaries.json';
 
 // Eager-glob all abstract mappings; resolve current paper at runtime.
-const abstractMappings = import.meta.glob('../../data/abstract-mapping/*.json', { eager: true }) as Record<string, { default: any }>;
-const synthesisFiles = import.meta.glob('../../data/synthesis/*.json', { eager: true }) as Record<string, { default: any }>;
 
 export function getStaticPaths() {
   return corpus.papers.map(p => ({ params: { paper: p.slug } }));
@@ -55,7 +54,6 @@ if (hypothesisClaims.length >= 2) {
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (path: string) => `${base}${path}/`;
 
-// Simple: are ALL claims verified?
 // Counted, not graded. `reran` is how many of this paper's claims we re-ran and the numbers
 // matched; it is a fact about our effort, and there is no honest one-word summary of a
 // paper's reproduction state, so the paper-level badge is gone.
@@ -90,28 +88,28 @@ const conclusionsHeading = defaultRoots.length === 1 ? 'Conclusion' : 'Conclusio
 const alphaClaims = [...paperData.claims].sort((a, b) => a.slug.localeCompare(b.slug));
 
 // Resolve abstract-to-claims mapping for this paper, if one exists.
-const mappingKey = Object.keys(abstractMappings).find(k => k.endsWith(`/${paperSlug}.json`));
-const abstractMapping = mappingKey ? abstractMappings[mappingKey].default : null;
-
-// Resolve synthesis for this paper. Prefer v3 if present; fall back to v2.
-const synthesisKey = Object.keys(synthesisFiles).find(k => k.endsWith(`/${paperSlug}.json`));
-const synthesisData = synthesisKey ? synthesisFiles[synthesisKey].default : null;
-const synthesisBlock = synthesisData?.synthesisV3 ?? synthesisData?.synthesisV2 ?? null;
-const synthesisVersion = synthesisData?.synthesisV3 ? 'v3' : (synthesisData?.synthesisV2 ? 'v2' : null);
 
 // Tabs configuration. Show only tabs with content.
 // Note: the `structure` id is preserved (not renamed to `claims`) to avoid
 // breaking existing ?view=structure bookmarks. The label is "Claims".
+// Four views of this paper, in the order it is asked about: what does it claim, how do the
+// claims hold each other up, what can I take away, how was it made. See
+// docs/design/2026-09-11-the-paper-page.html.
+//
+// `abstract-map` and `synthesis` used to be tabs here. Both are layers, and a tab gave one
+// layer a place at the top of the page that the other twenty had to earn inside the pipeline
+// view — a privilege with nothing behind it but having arrived first. They now render on
+// their own cells, where they have a version, a ledger entry and an approval they lack.
 const tabs = [
   { id: 'structure', label: 'Claims' },
-  ...(abstractMapping ? [{ id: 'abstract', label: 'Abstract \u2194 claims' }] : []),
-  ...(synthesisBlock ? [{ id: 'argument', label: 'Argument from graph' }] : []),
-  { id: 'review', label: 'Review' },
+  { id: 'graph', label: 'Graph' },
+  { id: 'artifacts', label: 'Artifacts' },
+  { id: 'pipeline', label: 'Pipeline' },
 ];
 ---
 
 <Layout title={paperData.title}>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+  <div class="site-frame py-10">
     <!-- Header -->
     <div class="mb-8">
       <div class="flex items-start gap-4 mb-1">
@@ -135,18 +133,6 @@ const tabs = [
         )}
       </div>
 
-      <!-- Verification level -->
-      {(paperData as any).verificationLevel && (
-        <div class={`mt-4 px-3 py-2 rounded-md border text-xs verif-badge verif-${
-          ['L1','L2','L3','L4'].includes((paperData as any).verificationLevel)
-            ? (paperData as any).verificationLevel : 'none'}`}>
-          <span class="font-semibold">{(paperData as any).verificationLevel}</span>
-          <span class="mx-1">·</span>
-          <span class="font-medium">{(paperData as any).verificationLabel}</span>
-          <span class="mx-1">—</span>
-          <span class="verif-detail">{(paperData as any).verificationDetail}</span>
-        </div>
-      )}
     </div>
 
     <!-- Paper summary: three labeled paragraphs (hypotheses/subject, claims, inferences).
@@ -170,44 +156,27 @@ const tabs = [
       <p class="paper-summary paper-summary-fallback">{paperSummaryFallback}</p>
     )}
 
-    <!-- Claim count, and how many of them we re-ran -->
-    <div class="mb-6 flex items-center gap-3">
-      <span class="text-sm text-gray-500 dark:text-gray-400">{paperData.claimCount} claims</span>
-      {reran > 0 && (
-        <span class="text-sm text-slate-600 dark:text-slate-400">
-          {reran} re-run from deposited code
+    <!-- Where this paper has got to.
+         This was a green banner reading `L4 · We re-analysed their deposited data`, typed per
+         paper into a literal in build-data.js — the one figure on the site nobody generated,
+         in the one colour the site had just agreed means "correct" when what it reports is
+         our own effort. The counts below are computed; the rung stays because "we ran their
+         script" and "we wrote our own analysis" is a real distinction the layer state does
+         not carry, but it is a qualifier now rather than the loudest thing on a page about
+         somebody else's work. -->
+    <div class="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
+      <span class="tabular-nums">{paperData.claimCount} claims</span>
+      <span class="tabular-nums">{fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} layers</span>
+      {reran > 0 && <span class="tabular-nums">{reran} re-run from deposited code</span>}
+      <span class="tabular-nums">0 approved by a person</span>
+      {(paperData as any).verificationLevel && (paperData as any).verificationLevel !== 'unknown' && (
+        <span class="text-gray-400 dark:text-gray-500" title={(paperData as any).verificationDetail}>
+          {(paperData as any).verificationLevel === 'unverified'
+            ? 're-run not attempted'
+            : `${(paperData as any).verificationLevel} — ${String((paperData as any).verificationLabel).toLowerCase()}`}
         </span>
       )}
     </div>
-
-    <!-- Which layers this paper has been through. The same set for every paper, so a missing
-         one is a stated fact rather than an oversight, and each links to the cell. -->
-    <section class="mb-8">
-      <div class="flex items-baseline justify-between gap-3 mb-2">
-        <h2 class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 m-0">
-          Layers
-        </h2>
-        <span class="text-xs font-mono text-gray-400 dark:text-gray-500 tabular-nums">
-          {fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} ·
-          <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">all papers</a>
-        </span>
-      </div>
-      <div class="flex flex-wrap gap-1.5">
-        {cells(paperData.slug).map(c => (
-          <a href={`${base}/papers/${paperData.slug}/${c.layer.id}/`}
-             title={`${c.layer.question} — ${STATE_LABEL[c.state]}${c.v ? ` (v${c.v})` : ''}`}
-             class={`no-underline font-mono text-[11px] px-2 py-1 rounded border transition-colors ${
-               c.state === 'current'
-                 ? 'border-emerald-500/60 text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20'
-                 : c.state === 'stale'
-                 ? 'border-amber-500/70 text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20'
-                 : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600'
-             } hover:border-gray-400 dark:hover:border-gray-500`}>
-            {c.layer.id}{c.v ? ` v${c.v}` : ''}
-          </a>
-        ))}
-      </div>
-    </section>
 
     <PaperTabs tabs={tabs} defaultTab="structure" />
 
@@ -261,33 +230,37 @@ const tabs = [
       </details>
     </div>
 
-    <!-- Tab: Abstract -->
-    {abstractMapping && (
-      <div class="paper-tab-panel" data-tab-id="abstract" data-tab-active="false">
-        <AbstractAlignment
-          mapping={abstractMapping}
-          paperSlug={paperSlug}
-          baseUrl={base}
-          claimsBySlug={claimsBySlug}
-        />
+    <!-- Tab: Graph — the claim tree as the graph it is. The component existed and was
+         imported nowhere; clicking a node opens the same drawer the Claims view uses. -->
+    <div class="paper-tab-panel" data-tab-id="graph" data-tab-active="false">
+      <p class="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mb-3">
+        Claims, and what rests on what. Solid edges are <code class="text-[12.5px]">requires</code>,
+        dashed are <code class="text-[12.5px]">supports</code>. Clicking a claim lights its
+        ancestry and everything downstream, and opens it.
+      </p>
+      <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden" style="height: 700px">
+        <ClaimDAG client:load claims={paperData.claims} paperSlug={paperSlug} />
       </div>
-    )}
+    </div>
 
-    <!-- Tab: Argument from graph -->
-    {synthesisBlock && (
-      <div class="paper-tab-panel" data-tab-id="argument" data-tab-active="false">
-        <ArgumentFromGraph synthesis={synthesisBlock} version={synthesisVersion} claimsBySlug={claimsBySlug} />
+    <!-- Tab: Artifacts -->
+    <div class="paper-tab-panel" data-tab-id="artifacts" data-tab-active="false">
+      <PaperArtifacts paper={paperData.slug} />
+    </div>
+
+    <!-- Tab: Pipeline — provenance, which is a question about us and comes after the paper. -->
+    <div class="paper-tab-panel" data-tab-id="pipeline" data-tab-active="false">
+      <div class="flex items-baseline justify-between gap-3 mb-2">
+        <p class="text-sm text-gray-600 dark:text-gray-400 max-w-2xl m-0">
+          The layers this paper has been through, drawn as the graph they form — so an unrun
+          layer holding up a branch reads as one gap rather than several.
+        </p>
+        <span class="text-xs font-mono text-gray-400 dark:text-gray-500 tabular-nums whitespace-nowrap">
+          {fill_of(paperData.slug).done}/{fill_of(paperData.slug).total} ·
+          <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">all papers</a>
+        </span>
       </div>
-    )}
-
-    <!-- Tab: Review -->
-    <div class="paper-tab-panel" data-tab-id="review" data-tab-active="false">
-      <ReviewTab
-        client:load
-        claims={paperData.claims}
-        paperTitle={paperData.title}
-        abstract={paperData.claims.filter((c: any) => c.role === 'hypothesis').map((c: any) => c.claim).join(' ') || paperData.title}
-      />
+      <PipelineExplorer client:load data={paperExplorer(paperData.slug, base)} base={base} height={520} />
     </div>
 
   </div>

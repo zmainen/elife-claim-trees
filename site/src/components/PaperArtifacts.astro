@@ -1,0 +1,98 @@
+---
+// What this paper produced, as files you can open.
+//
+// The exports have been published at /exports/ for weeks with nothing on the site linking
+// them: getting a paper's MIRA encoding meant knowing the URL. Every layer already declares
+// what it `produces`, and the cell resolver already substitutes the paper — so this view is
+// a join that was always available and never made.
+//
+// A file is offered as a download only where the site actually serves it. The families that
+// are not copied into public/ — claims/, coverage/, mappings/, marked/, runs/ — link to the
+// repository and say so, because a download that 404s is worse than an honest link elsewhere.
+import { cells, groups as layerGroups, STATE_LABEL } from '../lib/pipeline';
+import { artifacts, isDirectory } from '../lib/artifacts';
+
+interface Props { paper: string }
+const { paper } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const rows = cells(paper)
+  .map(c => ({
+    cell: c,
+    files: artifacts((c.produces ?? []).filter(p => !isDirectory(p)), base),
+    dirs: (c.produces ?? []).filter(isDirectory),
+  }))
+  .filter(r => r.files.length > 0 || r.dirs.length > 0);
+
+const downloadable = rows.flatMap(r => r.files).filter(f => f.downloadable).length;
+const inRepo = rows.flatMap(r => r.files).filter(f => !f.downloadable).length;
+
+const KIND_LABEL: Record<string, string> = {
+  jsonld: 'JSON-LD', json: 'JSON', markdown: 'Markdown', image: 'image', code: 'source', other: 'file',
+};
+---
+
+<section>
+  <p class="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mb-1">
+    Every file the pipeline produced for this paper, from the <code class="text-[12.5px]">produces</code>
+    each layer declares. {downloadable} are served here; {inRepo} live only in the repository and
+    are linked there.
+  </p>
+  <p class="text-xs text-gray-500 dark:text-gray-500 mb-6">
+    Each cell is also addressable as JSON at <code class="text-[11.5px]">/data/{paper}/&lt;layer&gt;.json</code>.
+  </p>
+
+  {rows.length === 0 ? (
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      No layer has produced a file for this paper yet.
+    </p>
+  ) : (
+    <div class="space-y-5">
+      {rows.map(({ cell: c, files, dirs }) => (
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
+            <a href={`${base}/pipeline/${c.layer.id}/`}
+               class="font-mono text-[13px] text-gray-900 dark:text-gray-100 no-underline hover:text-amber-700 dark:hover:text-amber-400">
+              {c.layer.id}
+            </a>
+            <span class="text-[11px] font-mono text-gray-400 dark:text-gray-500">
+              {STATE_LABEL[c.state]}{c.v ? ` · v${c.v}` : ''}{c.ran ? ` · ${c.ran.slice(0, 10)}` : ''}
+            </span>
+            {c.layer.group && layerGroups[c.layer.group] && (
+              <span class="text-[11px] text-gray-400 dark:text-gray-500">{layerGroups[c.layer.group].title}</span>
+            )}
+          </div>
+          <p class="text-[12.5px] italic text-gray-500 dark:text-gray-400 m-0 mb-3 leading-snug">{c.layer.question}</p>
+
+          <ul class="list-none p-0 m-0 space-y-2">
+            {files.map(a => (
+              <li>
+                <a href={a.href}
+                   download={a.downloadable ? '' : undefined}
+                   target={a.downloadable ? undefined : '_blank'}
+                   rel={a.downloadable ? undefined : 'noopener'}
+                   class="block font-mono text-[12px] text-amber-700 dark:text-amber-400 no-underline hover:underline leading-snug"
+                   style="overflow-wrap:anywhere">
+                  {a.name}
+                </a>
+                <span class="block text-[11px] text-gray-500 dark:text-gray-400 leading-snug">
+                  {KIND_LABEL[a.kind]}{a.note ? ` — ${a.note}` : ''}{a.downloadable ? '' : ' · in the repository'}
+                </span>
+              </li>
+            ))}
+            {dirs.map(d => (
+              <li class="text-[11.5px] text-gray-500 dark:text-gray-400">
+                <code class="text-[11px]">{d}</code> — a directory of files, not a single download
+              </li>
+            ))}
+          </ul>
+
+          <a href={c.dataHref}
+             class="inline-block mt-3 text-[11px] font-mono text-gray-400 dark:text-gray-500 no-underline hover:text-amber-700 dark:hover:text-amber-400">
+            cell as JSON ↗
+          </a>
+        </div>
+      ))}
+    </div>
+  )}
+</section>

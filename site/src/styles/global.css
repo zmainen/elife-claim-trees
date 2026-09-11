@@ -282,3 +282,154 @@ html.dark .drawer-verification.hue-violet { --bn-bg: rgba(139,92,246,0.10); --bn
 html.dark .drawer-verification.hue-purple { --bn-bg: rgba(168,85,247,0.10); --bn-border: rgba(168,85,247,0.34); --bn-fg: #e9d5ff; }
 html.dark .drawer-verification.hue-red { --bn-bg: rgba(239,68,68,0.10); --bn-border: rgba(239,68,68,0.34); --bn-fg: #fca5a5; }
 html.dark .drawer-verification.hue-amber { --bn-bg: rgba(245,158,11,0.10); --bn-border: rgba(245,158,11,0.34); --bn-fg: #fbbf24; }
+
+/* ── The layer map ─────────────────────────────────────────────────────────────
+   React Flow renders into its own subtree and the node bodies are styled here rather
+   than inline, for the reason the two blocks above record: a colour computed in JS is
+   one no `dark:` variant can reach, and this map has a node for every state. */
+:root {
+  --map-bg: #fcfcfd;
+  --map-grid: #e8eaed;
+  --map-node-bg: #ffffff;
+  --map-node-border: #d7dbe0;
+  --map-node-fg: #111827;
+  --map-node-muted: #6b7280;
+  --map-edge: #b6bcc4;
+  --map-edge-lit: #b45309;
+  --map-ring: #b45309;
+  --map-corpus-border: #d97706;
+  --map-corpus-bg: #fffbeb;
+  --map-group-induction: rgba(56, 189, 248, 0.09);
+  --map-group-interchange: rgba(168, 85, 247, 0.09);
+}
+html.dark {
+  --map-bg: #111418;
+  --map-grid: #22272d;
+  --map-node-bg: #171b21;
+  --map-node-border: #2f363f;
+  --map-node-fg: #f1f5f9;
+  --map-node-muted: #98a2b0;
+  --map-edge: #3d454f;
+  --map-edge-lit: #f59e0b;
+  --map-ring: #f59e0b;
+  --map-corpus-border: #b45309;
+  --map-corpus-bg: rgba(217, 119, 6, 0.10);
+  --map-group-induction: rgba(56, 189, 248, 0.10);
+  --map-group-interchange: rgba(168, 85, 247, 0.12);
+}
+
+/* One swatch per cell state, shared by the map nodes, the matrix and the legend so the
+   three cannot drift into three palettes for one vocabulary. */
+:root {
+  --st-current: #059669;
+  --st-stale: #f59e0b;
+  --st-blocked: #fb923c;
+  --st-absent: #e5e7eb;
+  --st-na: #d1d5db;
+  --st-open: #3b82f6;
+  --st-unrecorded: #9ca3af;
+}
+html.dark {
+  --st-current: #34d399;
+  --st-stale: #fbbf24;
+  --st-blocked: #fdba74;
+  --st-absent: #2a3038;
+  --st-na: #374151;
+  --st-open: #60a5fa;
+  --st-unrecorded: #6b7280;
+}
+
+.map-shell { background: var(--map-bg); }
+.map-node {
+  background: var(--map-node-bg);
+  border: 1.5px solid var(--map-node-border);
+  color: var(--map-node-fg);
+}
+.map-node[data-scope='corpus'] {
+  border-style: dashed;
+  border-color: var(--map-corpus-border);
+  background: var(--map-corpus-bg);
+}
+.map-node[data-group='induction'] { box-shadow: inset 0 0 0 999px var(--map-group-induction); }
+.map-node[data-group='interchange'] { box-shadow: inset 0 0 0 999px var(--map-group-interchange); }
+.map-node[data-lit='on'] { border-color: var(--map-ring); }
+.map-node[data-selected='on'] {
+  border-color: var(--map-ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--map-ring) 28%, transparent);
+}
+.map-node-muted { color: var(--map-node-muted); }
+
+/* ── The page frame ───────────────────────────────────────────────────────────
+   There was no shared container, so every page invented one: the nav sat at 7xl and
+   the bodies underneath it at 3xl, 4xl, 5xl, 6xl and 7xl depending on which page you
+   were on. Nothing lined up with the nav, and moving between two pages shifted the
+   left margin by up to 200px.
+
+   One frame, declared once. It is 6xl because the widest things the site has — the
+   paper x layer matrix and the layer map — need that much, and a frame that cannot
+   hold its own content is what starts the drift again.
+
+   `.reading` is the measure for prose *inside* the frame. The two are different jobs:
+   the frame is where the page sits, the measure is how long a line of text may get. */
+.site-frame {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .site-frame { padding-inline: 1.5rem; }
+}
+.reading { max-width: 56rem; }
+
+/* Most pages are a single column of prose. They used to be a narrower container centred on
+   its own axis, which is why the heading on a text page and the heading on the matrix page
+   started at different x. The frame now positions every page identically and `column` holds
+   the blocks inside it to a reading measure, aligned to the frame's left gutter — so the
+   logo, the h1 and the paragraph all begin on the same line. Wide children that need the
+   whole frame (a table, the layer map) opt out with `full`. */
+.site-frame.column > * { max-width: 56rem; }
+.site-frame.column > .full { max-width: none; }
+
+/* ── The claim graph ──────────────────────────────────────────────────────────
+   ClaimDAG was written before the site had a dark theme and styled its nodes inline:
+   a white card, near-black label text, a pale grid. On the dark page that is the bug
+   the blocks above were written to end, so its surfaces become tokens too. */
+:root {
+  --dag-bg: #fcfcfd;
+  --dag-grid: #eceef1;
+  --dag-node-bg: #ffffff;
+  --dag-node-fg: #111827;
+  --dag-edge: #d1d5db;
+  --dag-edge-support: #34a853;
+  --dag-panel-bg: #ffffff;
+  --dag-panel-border: #e5e7eb;
+  --dag-panel-fg: #374151;
+  --dag-minimap: #f9fafb;
+}
+html.dark {
+  --dag-bg: #111418;
+  --dag-grid: #21262c;
+  --dag-node-bg: #181c22;
+  --dag-node-fg: #e8edf3;
+  --dag-edge: #3a424c;
+  --dag-edge-support: #4ade80;
+  --dag-panel-bg: #171b21;
+  --dag-panel-border: #2f363f;
+  --dag-panel-fg: #cbd5e1;
+  --dag-minimap: #15191e;
+}
+.dag-shell { background: var(--dag-bg); }
+.dag-panel {
+  background: var(--dag-panel-bg);
+  border: 1px solid var(--dag-panel-border);
+  color: var(--dag-panel-fg);
+}
+:root {
+  --dag-edge-test: #b45309;
+  --dag-edge-framing: #7c3aed;
+}
+html.dark {
+  --dag-edge-test: #fbbf24;
+  --dag-edge-framing: #a78bfa;
+}

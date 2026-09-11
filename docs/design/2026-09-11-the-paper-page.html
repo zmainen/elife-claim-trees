@@ -1,0 +1,505 @@
+<title>The Paper Page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground:#f4f4f2; --surface:#fbfbfa; --surface-2:#ecedea;
+    --ink:#1b1d1c; --ink-2:#4a4e4b; --ink-3:#767b77;
+    --rule:#d9dbd6; --rule-firm:#b9bcb6;
+    --accent:#8a5a12; --accent-soft:#f0e6d4;
+    --current:#2f6f46; --current-bg:#e3efe6;
+    --stale:#9a6b0f;  --stale-bg:#f7ecd6;
+    --absent:#9aa09b; --absent-bg:#eceeeb;
+    --alarm:#963722;  --alarm-bg:#f6e3de;
+    --move:#3d5a80;   --move-bg:#e0e7ef;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#121413; --surface:#1a1d1b; --surface-2:#232725;
+      --ink:#e9ebe8; --ink-2:#b3b8b3; --ink-3:#838883;
+      --rule:#2e332f; --rule-firm:#454b46;
+      --accent:#d9a35c; --accent-soft:#34291a;
+      --current:#6fbc8c; --current-bg:#1c2c22;
+      --stale:#d8ab52;  --stale-bg:#2e2618;
+      --absent:#5f655f; --absent-bg:#1f2321;
+      --alarm:#e08b74;  --alarm-bg:#2f1e19;
+      --move:#8fb0d4;   --move-bg:#1b242e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#121413; --surface:#1a1d1b; --surface-2:#232725;
+    --ink:#e9ebe8; --ink-2:#b3b8b3; --ink-3:#838883;
+    --rule:#2e332f; --rule-firm:#454b46;
+    --accent:#d9a35c; --accent-soft:#34291a;
+    --current:#6fbc8c; --current-bg:#1c2c22;
+    --stale:#d8ab52;  --stale-bg:#2e2618;
+    --absent:#5f655f; --absent-bg:#1f2321;
+    --alarm:#e08b74;  --alarm-bg:#2f1e19;
+    --move:#8fb0d4;   --move-bg:#1b242e;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    font-size: 15.5px; line-height: 1.62; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px 96px; }
+
+  header.mast { padding: 60px 0 32px; border-bottom: 2px solid var(--ink); margin-bottom: 44px; }
+  .kicker { font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.14em;
+            text-transform:uppercase; color:var(--accent); margin:0 0 16px; }
+  h1 { font-family:"IBM Plex Serif",Georgia,serif; font-weight:600;
+       font-size:clamp(2rem,4.4vw,2.95rem); line-height:1.08; letter-spacing:-.018em;
+       text-wrap:balance; margin:0 0 18px; }
+  .standfirst { font-size:18px; line-height:1.55; color:var(--ink-2); max-width:62ch; margin:0; }
+  .standfirst strong { color:var(--ink); font-weight:600; }
+
+  .status { display:flex; flex-wrap:wrap; gap:8px 26px; margin-top:24px;
+            font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); }
+  .status b { color:var(--ink-2); font-weight:500; letter-spacing:.06em; text-transform:uppercase;
+              margin-right:6px; font-family:"IBM Plex Mono",monospace; }
+
+  section { margin: 0 0 58px; }
+  h2 { font-family:"IBM Plex Serif",Georgia,serif; font-size:25px; font-weight:600;
+       letter-spacing:-.012em; margin:0 0 6px; text-wrap:balance; }
+  .sec-note { color:var(--ink-3); font-size:14.5px; margin:0 0 26px; max-width:64ch; }
+  p { margin:0 0 14px; max-width:70ch; }
+  p:last-child { margin-bottom:0; }
+  code { font-family:"IBM Plex Mono",monospace; font-size:.86em;
+         background:var(--surface-2); padding:.1em .38em; border-radius:2px; }
+  b, strong { color:var(--ink); font-weight:600; }
+
+  .principle { border-left:3px solid var(--accent); padding:4px 0 4px 22px; margin:0 0 24px; }
+  .principle p { font-size:17px; line-height:1.5; color:var(--ink); max-width:60ch; }
+
+  /* ── state chips ─────────────────────────────────────── */
+  .chip { display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10px;
+          letter-spacing:.06em; text-transform:uppercase; padding:2px 7px; border-radius:2px;
+          white-space:nowrap; }
+  .c-current{background:var(--current-bg);color:var(--current);}
+  .c-stale  {background:var(--stale-bg);color:var(--stale);}
+  .c-absent {background:var(--absent-bg);color:var(--absent);}
+  .c-na     {background:var(--surface-2);color:var(--ink-3);}
+  .c-q      {background:var(--move-bg);color:var(--move);}
+
+  /* ── pipeline diagram ────────────────────────────────── */
+  .pipe { display:grid; grid-template-columns:repeat(5,1fr); gap:0 14px;
+          border:1px solid var(--rule); background:var(--surface); padding:18px 16px; overflow-x:auto; }
+  .pipe-col { display:flex; flex-direction:column; gap:10px; min-width:150px; }
+  .pipe-head { font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.1em;
+               text-transform:uppercase; color:var(--ink-3); padding-bottom:7px;
+               border-bottom:1px solid var(--rule); margin-bottom:2px; }
+  .node { border:1px solid var(--rule-firm); background:var(--ground); padding:8px 10px;
+          font-size:12.5px; line-height:1.35; position:relative; }
+  .node .n-name { font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink); display:block; }
+  .node .n-kind { font-size:10.5px; color:var(--ink-3); }
+  .node.corpus { border-style:dashed; border-color:var(--accent); }
+  .node.out { background:var(--surface-2); border-color:var(--ink-3); }
+  .node.leaf { border-left:3px solid var(--rule-firm); }
+  .legend { display:flex; flex-wrap:wrap; gap:16px; margin-top:14px; font-size:12.5px; color:var(--ink-3); }
+  .legend span { display:flex; align-items:center; gap:7px; }
+  .swatch { width:22px; height:12px; border:1px solid var(--rule-firm); background:var(--ground); }
+  .swatch.corpus { border-style:dashed; border-color:var(--accent); }
+  .swatch.out { background:var(--surface-2); border-color:var(--ink-3); }
+
+  /* ── tables ──────────────────────────────────────────── */
+  .tablewrap { overflow-x:auto; border:1px solid var(--rule); }
+  table.grid { width:100%; border-collapse:collapse; font-size:14px; background:var(--surface); }
+  table.grid th { font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.1em;
+                  text-transform:uppercase; font-weight:500; color:var(--ink-3); text-align:left;
+                  padding:11px 13px; border-bottom:1px solid var(--rule-firm); white-space:nowrap; }
+  table.grid td { padding:11px 13px; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--ink-2); }
+  table.grid tr:last-child td { border-bottom:0; }
+  table.grid td.mono, table.grid td:first-child {
+    font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink); white-space:nowrap; }
+  table.grid td.wrap { white-space:normal; font-family:inherit; font-size:14px; color:var(--ink-2); }
+
+  /* ── matrix ──────────────────────────────────────────── */
+  table.matrix { width:100%; border-collapse:collapse; font-size:12.5px; background:var(--surface); }
+  table.matrix th { font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.07em;
+                    text-transform:uppercase; font-weight:500; color:var(--ink-3);
+                    padding:7px 4px; border-bottom:1px solid var(--rule-firm); text-align:center; }
+  table.matrix th:first-child { text-align:left; padding-left:13px; }
+  table.matrix td { padding:6px 4px; text-align:center; border-bottom:1px solid var(--rule); }
+  table.matrix td:first-child { text-align:left; padding-left:13px;
+    font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink); white-space:nowrap; }
+  .m { display:inline-block; width:15px; height:15px; border-radius:2px; line-height:15px;
+       font-size:10px; font-family:"IBM Plex Mono",monospace; }
+  .m-c { background:var(--current); }
+  .m-s { background:var(--stale); }
+  .m-a { background:var(--absent-bg); border:1px solid var(--rule-firm); }
+  .m-n { background:var(--surface-2); border:1px solid var(--rule-firm); color:var(--ink-3); }
+
+  /* ── ledger sample ───────────────────────────────────── */
+  pre.code { font-family:"IBM Plex Mono",monospace; font-size:12px; line-height:1.6;
+             background:var(--surface); border:1px solid var(--rule); padding:15px 16px;
+             overflow-x:auto; margin:0; color:var(--ink-2); }
+  pre.code .k { color:var(--accent); }
+  pre.code .s { color:var(--current); }
+
+  .cols2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  @media (max-width:820px){ .cols2 { grid-template-columns:1fr; } .pipe { grid-template-columns:repeat(5,minmax(150px,1fr)); } }
+
+  .card { border:1px solid var(--rule); background:var(--surface); padding:16px 18px; }
+  .card h3 { font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.12em;
+             text-transform:uppercase; color:var(--ink-3); margin:0 0 10px; }
+  .card p { font-size:14px; }
+
+  ol.steps { counter-reset:s; list-style:none; padding:0; margin:0;
+             display:flex; flex-direction:column; gap:14px; }
+  ol.steps li { counter-increment:s; display:grid; grid-template-columns:30px 1fr; gap:14px;
+                font-size:14.5px; color:var(--ink-2); }
+  ol.steps li::before { content:counter(s); font-family:"IBM Plex Mono",monospace; font-size:12px;
+    color:var(--accent); border:1px solid var(--accent); width:24px; height:24px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; }
+
+  .assume { border:1px solid var(--move); background:var(--move-bg); padding:14px 16px; font-size:14px; color:var(--ink-2); }
+  .assume .q { font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--move);
+               letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:5px; }
+  footer.end { border-top:1px solid var(--rule); padding-top:22px; color:var(--ink-3); font-size:13.5px; }
+
+  /* ── wireframes ──────────────────────────────────────── */
+  .wire { border:1px solid var(--rule-firm); background:var(--surface); padding:0;
+          font-family:"IBM Plex Mono",monospace; font-size:11.5px; overflow:hidden; }
+  .wire-chrome { background:var(--surface-2); border-bottom:1px solid var(--rule);
+                 padding:7px 12px; color:var(--ink-3); font-size:10px; letter-spacing:.1em;
+                 text-transform:uppercase; display:flex; justify-content:space-between; }
+  .wire-body { padding:16px; display:flex; flex-direction:column; gap:9px; }
+  .blk { border:1px solid var(--rule-firm); background:var(--ground); padding:9px 11px;
+         line-height:1.4; color:var(--ink-2); }
+  .blk .lab { color:var(--ink); display:block; }
+  .blk .sub { color:var(--ink-3); font-size:10.5px; display:block; margin-top:3px; }
+  .blk.ghost { border-style:dashed; color:var(--ink-3); background:transparent; }
+  .blk.tall { padding-block:26px; }
+  .blk.hero { background:var(--surface-2); }
+  .blk.bad { border-color:var(--alarm); background:var(--alarm-bg); color:var(--alarm); }
+  .blk.good { border-color:var(--current); background:var(--current-bg); color:var(--current); }
+  .tabrow { display:flex; gap:4px; border-bottom:2px solid var(--rule-firm); }
+  .tab { padding:7px 11px; border:1px solid var(--rule); border-bottom:0; background:var(--ground);
+         color:var(--ink-3); margin-bottom:-1px; white-space:nowrap; }
+  .tab.on { background:var(--surface-2); color:var(--ink); border-color:var(--rule-firm);
+            box-shadow:inset 0 2px 0 var(--accent); }
+  .tab.bad { color:var(--alarm); border-color:var(--alarm); }
+  .split { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+  @media (max-width:900px){ .split{ grid-template-columns:1fr; } }
+  .split > figure { margin:0; min-width:0; }
+  figcaption { font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.09em;
+               text-transform:uppercase; color:var(--ink-3); margin:0 0 9px; }
+  .drawer-demo { position:relative; }
+  .drawer-demo .drawer { position:absolute; top:30px; right:0; bottom:0; width:42%;
+        border-left:2px solid var(--accent); background:var(--accent-soft); padding:10px;
+        color:var(--ink-2); font-size:10.5px; line-height:1.45; }
+  .drawer-demo .drawer.second { right:30%; opacity:.9; border-left-color:var(--alarm);
+        background:var(--alarm-bg); color:var(--alarm); }
+  .verdict { font-family:"IBM Plex Sans",sans-serif; font-size:13px; white-space:normal; }
+  .v-keep { color:var(--current); font-weight:600; }
+  .v-move { color:var(--move); font-weight:600; }
+  .v-cut  { color:var(--alarm); font-weight:600; }
+  .v-new  { color:var(--accent); font-weight:600; }
+  ol.steps { max-width:70ch; padding-left:20px; }
+  ol.steps li { margin-bottom:10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <p class="kicker">Design note · 2026-09-11</p>
+  <h1>The paper page</h1>
+  <p class="standfirst">The page has four tabs and they are four different kinds of thing.
+  One is the paper's content, two are the output of layers, and one is a call to an external
+  service. <strong>The tab bar is a category error</strong>, and every other complaint about
+  the page follows from it.</p>
+  <div class="status">
+    <span><b>Subject</b> /papers/&lt;paper&gt;</span>
+    <span><b>Follows</b> layers-as-pipeline</span>
+    <span><b>Status</b> implemented</span>
+  </div>
+</header>
+
+<section>
+  <h2>What the page is for</h2>
+  <p class="sec-note">Before deciding what belongs on it, what is it asked?</p>
+  <p>A reader arriving at a paper page wants, in this order, four things. <strong>What does this
+  paper claim?</strong> <strong>How do those claims hold each other up?</strong>
+  <strong>What can I take away and use?</strong> And only then, <strong>how was this made, and
+  how far has it got?</strong></p>
+  <p>That order is not arbitrary. The first is the paper; the last is us. A reader who cannot
+  get the first is not helped by the fourth, and a page that leads with provenance is a page
+  about its own machinery. Everything on the page should be one of those four, and should
+  appear roughly in that order.</p>
+  <div class="principle">
+    <p>A view is a way of looking at <em>this paper</em>. If a tab is a way of looking at
+    something else — at a layer, at the corpus, at a service — it is not a view, and it does
+    not belong in the same row as the ones that are.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Every element, and what it is</h2>
+  <p class="sec-note">Top to bottom, as the page stands today.</p>
+  <div class="tablewrap">
+  <table class="grid">
+    <thead><tr><th>Element</th><th>What it actually is</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>Title · authors · DOI · GitHub</td>
+          <td class="wrap">Identity. The one part that is unambiguously the paper.</td>
+          <td class="wrap verdict"><span class="v-keep">Keep</span> unchanged.</td></tr>
+      <tr><td>L4 verification banner</td>
+          <td class="wrap">A statement about <em>our</em> re-run, in a green box, at the top of
+          someone else's paper. It is one layer's result wearing the page's headline.</td>
+          <td class="wrap verdict"><span class="v-move">Demote</span> to a line in the header
+          rather than a banner above the science.</td></tr>
+      <tr><td>Hypotheses · Claims · Inferences</td>
+          <td class="wrap">The generated three-paragraph summary. The best thing on the page:
+          it is the paper, restated, in a form you can read in twenty seconds.</td>
+          <td class="wrap verdict"><span class="v-keep">Keep</span>, and let it stay first.</td></tr>
+      <tr><td>“33 claims · 12 re-run”</td>
+          <td class="wrap">Counts.</td>
+          <td class="wrap verdict"><span class="v-keep">Keep</span>, merged into the header line.</td></tr>
+      <tr><td>Layers map</td>
+          <td class="wrap">Provenance — how the page was made. Costs 360&nbsp;px above the
+          content it describes.</td>
+          <td class="wrap verdict"><span class="v-move">Move</span> into a view of its own.</td></tr>
+      <tr><td>Tab · <b>Claims</b></td>
+          <td class="wrap">The claim tree. The content.</td>
+          <td class="wrap verdict"><span class="v-keep">Keep</span> as the default view.</td></tr>
+      <tr><td>Tab · <b>Abstract ↔ claims</b></td>
+          <td class="wrap">The rendered output of the <code>abstract-map</code> layer — which is
+          already declared, already in the map above, and already has a cell on this paper.</td>
+          <td class="wrap verdict"><span class="v-cut">Remove</span> from the tabs. It is a
+          layer; it belongs in the layer.</td></tr>
+      <tr><td>Tab · <b>Argument from graph</b></td>
+          <td class="wrap">A narrative synthesised from the graph and compared to the abstract.
+          Reads <code>synthesis-v3/{paper}.json</code> — which <strong>no layer
+          declares</strong>.</td>
+          <td class="wrap verdict"><span class="v-cut">Remove</span> from the tabs, and
+          <span class="v-new">declare</span> the layer that produces it.</td></tr>
+      <tr><td>Tab · <b>Review</b></td>
+          <td class="wrap">Persona reviews fetched live from
+          <code>console.haak.world</code>. Not a layer, not this paper, and a dependency that
+          can be down while the page is up.</td>
+          <td class="wrap verdict"><span class="v-cut">Remove</span> from the paper page.</td></tr>
+      <tr><td><code>ClaimDrawer</code></td>
+          <td class="wrap">Claim detail, in a right-hand panel.</td>
+          <td class="wrap verdict"><span class="v-keep">Keep</span> — this is the drawer.</td></tr>
+      <tr><td><code>LayerDrawer</code></td>
+          <td class="wrap">Layer detail, in a right-hand panel. The second one.</td>
+          <td class="wrap verdict"><span class="v-move">Contain</span> — see below.</td></tr>
+      <tr><td><code>ClaimDAG.tsx</code></td>
+          <td class="wrap">394 lines that draw the claim graph, with node colouring, dimming
+          and a minimap. <strong>Imported nowhere.</strong> The graph this corpus is named for
+          is not on the site.</td>
+          <td class="wrap verdict"><span class="v-new">Revive</span> as a view.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>The category error</h2>
+  <p>Set the four tabs beside each other and ask what each is a view <em>of</em>.</p>
+  <div class="tablewrap">
+  <table class="grid">
+    <thead><tr><th>Tab</th><th>A view of…</th><th>Category</th></tr></thead>
+    <tbody>
+      <tr><td>Claims</td><td class="wrap">this paper's claims</td><td class="wrap">the paper</td></tr>
+      <tr><td>Abstract ↔ claims</td><td class="wrap">the <code>abstract-map</code> layer's output</td><td class="wrap">a layer</td></tr>
+      <tr><td>Argument from graph</td><td class="wrap">an undeclared synthesis output</td><td class="wrap">a layer, unaccounted</td></tr>
+      <tr><td>Review</td><td class="wrap">a request to a review service</td><td class="wrap">an external service</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Four tabs, three categories, and the row offers no clue which is which. That is why the
+  set “makes no sense” on sight: the reader is asked to choose between things that are not
+  alternatives to one another. Choosing <em>Claims</em> instead of <em>Review</em> is not like
+  choosing between two ways of reading a paper; it is like choosing between a chapter and a
+  printing press.</p>
+  <p>The duplication follows from the same error. <code>abstract-map</code> now appears twice
+  on one page — once as a node in the layer map, once as a tab — because the page never decided
+  whether a layer's output is a view of the paper or a thing the pipeline owns. It is the
+  second. The pipeline already has a surface for it, and that surface is the one this note's
+  predecessor built.</p>
+</section>
+
+<section>
+  <h2>Two drawers, one edge</h2>
+  <p class="sec-note">Why the map and the content are fighting.</p>
+  <p>The layer map sits above the tabs, so its drawer and the claim drawer are reachable at the
+  same moment and slide from the same edge. Opening a layer covers the claims you were about to
+  read; opening a claim covers the layer you were checking. Neither knows about the other, so
+  both can be open, and the page has two panels stacked over its own content.</p>
+  <p>The map also takes 360&nbsp;px of the page's most valuable space to say something the
+  reader has not yet asked. The content it displaces is the answer to question one.</p>
+  <div class="split">
+    <figure>
+      <figcaption>Now — both reachable, both over the content</figcaption>
+      <div class="wire drawer-demo">
+        <div class="wire-chrome"><span>/papers/gädeke</span><span>today</span></div>
+        <div class="wire-body">
+          <div class="blk hero"><span class="lab">Title · authors · DOI</span></div>
+          <div class="blk good">L4 · we re-analysed their deposited data</div>
+          <div class="blk"><span class="lab">Hypotheses · Claims · Inferences</span></div>
+          <div class="blk tall"><span class="lab">Layers map</span>
+            <span class="sub">360 px, above the content</span></div>
+          <div class="tabrow">
+            <span class="tab on">Claims</span><span class="tab bad">Abstract ↔</span>
+            <span class="tab bad">Argument</span><span class="tab bad">Review</span>
+          </div>
+          <div class="blk tall ghost">claims…</div>
+        </div>
+        <div class="drawer second">LayerDrawer</div>
+        <div class="drawer">ClaimDrawer</div>
+      </div>
+    </figure>
+    <figure>
+      <figcaption>Proposed — one drawer, owned by the active view</figcaption>
+      <div class="wire drawer-demo">
+        <div class="wire-chrome"><span>/papers/gädeke</span><span>proposed</span></div>
+        <div class="wire-body">
+          <div class="blk hero"><span class="lab">Title · authors · DOI</span>
+            <span class="sub">33 claims · 12 re-run · 16/17 layers</span></div>
+          <div class="blk"><span class="lab">Hypotheses · Claims · Inferences</span></div>
+          <div class="tabrow">
+            <span class="tab on">Claims</span><span class="tab">Graph</span>
+            <span class="tab">Artifacts</span><span class="tab">Pipeline</span>
+          </div>
+          <div class="blk tall ghost">claims…<span class="sub">the panel owns the height</span></div>
+        </div>
+        <div class="drawer">one drawer<br>claim · or layer,<br>whichever view is open</div>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2>Four views, one category</h2>
+  <p>Every tab becomes a way of looking at this paper, and they run in the order the reader
+  asks for them.</p>
+  <div class="tablewrap">
+  <table class="grid">
+    <thead><tr><th>View</th><th>Answers</th><th>Built from</th></tr></thead>
+    <tbody>
+      <tr><td>Claims <span class="chip c-current">default</span></td>
+          <td class="wrap">What does this paper claim?</td>
+          <td class="wrap">Today's <code>ClaimStructure</code>, unchanged.</td></tr>
+      <tr><td>Graph</td>
+          <td class="wrap">How do the claims hold each other up?</td>
+          <td class="wrap"><code>ClaimDAG.tsx</code>, which already exists and is imported
+          nowhere. 14 relation types with real edges — Gädeke alone carries 29 <code>scopes</code>,
+          13 <code>validates</code>, 6 <code>rules-out</code>.</td></tr>
+      <tr><td>Artifacts</td>
+          <td class="wrap">What can I take away?</td>
+          <td class="wrap">Every file this paper produced, from the cells' <code>produces</code>:
+          MIRA, the extended encoding, OXA, Discourse Graphs, the gap report, coverage, the
+          marked paper. The resolver already exists.</td></tr>
+      <tr><td>Pipeline</td>
+          <td class="wrap">How was this made, how far has it got?</td>
+          <td class="wrap">The layer map, moved down from above the tabs. It gets the full
+          panel height, and its drawer stops competing.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Note what this buys beyond tidiness. <em>Artifacts</em> is the view the corpus has never
+  had: the exports have been published at <code>/exports/</code> for weeks with nothing on the
+  site linking them. <em>Graph</em> is the view the project is named for. Both were one
+  decision away, and the decision was blocked by a tab bar with no room in it for a fourth
+  thing of a different kind.</p>
+</section>
+
+<section>
+  <h2>What moves into the pipeline</h2>
+  <p class="sec-note">Three tabs leave. They do not disappear; two become what they always were.</p>
+  <div class="tablewrap">
+  <table class="grid">
+    <thead><tr><th>Leaves as</th><th>Arrives as</th><th>Work</th></tr></thead>
+    <tbody>
+      <tr><td>Abstract ↔ claims</td>
+          <td class="wrap"><code>abstract-map</code> — <strong>already a declared layer</strong>,
+          already in the map, already has a cell. Its view moves to
+          <code>/papers/&lt;paper&gt;/abstract-map</code> and into the layer drawer.</td>
+          <td class="wrap">Move a component. No schema change.</td></tr>
+      <tr><td>Argument from graph</td>
+          <td class="wrap">A new <code>synthesis</code> layer, <code>needs: [claim-tree,
+          abstract-map]</code>, <code>produces: site/src/data/synthesis-v3/{paper}.json</code>.</td>
+          <td class="wrap">Declare it. The artifact exists for 12 papers and no layer accounts
+          for it — the pipeline's own accounting is short by one.</td></tr>
+      <tr><td>Review</td>
+          <td class="wrap">Not a layer. <code>layers.yaml</code> already says so in as many
+          words: review is an operation on a version, not a step. The persona service is a
+          different product and should be reached from somewhere that is not a paper page.</td>
+          <td class="wrap">Remove the tab. Decide separately where the service lives.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="principle">
+    <p>The test for whether something is a tab: <strong>could it be a layer?</strong> If yes,
+    it is a layer, and the pipeline already knows how to show it — with a version, a ledger
+    entry, a staleness state and an approval it has not got. A tab has none of those, which is
+    exactly why <code>synthesis</code> has been drifting unversioned in a tab for months.</p>
+  </div>
+</section>
+
+<section>
+  <h2>The header, demoted</h2>
+  <p>One smaller thing, because it is on the way. The green <code>L4 · We re-analysed their
+  deposited data</code> banner is the most prominent element on a page about someone else's
+  work, and what it reports is our own effort. The vocabulary was fixed; the prominence was
+  not. It becomes a line among the counts.</p>
+  <div class="split">
+    <figure>
+      <figcaption>Now</figcaption>
+      <div class="wire"><div class="wire-body">
+        <div class="blk hero"><span class="lab">Contributions of insula and superior temporal sulcus…</span>
+          <span class="sub">Gädeke, Willems, Ahmed, Weber, Hurlemann, Schultz · eLife</span></div>
+        <div class="blk good">L4 · We re-analysed their deposited data — downloaded OpenNeuro CSVs, fit
+          logistic regression independently…</div>
+        <div class="blk ghost">33 claims · 12 re-run from deposited code</div>
+      </div></div>
+    </figure>
+    <figure>
+      <figcaption>Proposed</figcaption>
+      <div class="wire"><div class="wire-body">
+        <div class="blk hero"><span class="lab">Contributions of insula and superior temporal sulcus…</span>
+          <span class="sub">Gädeke, Willems, Ahmed, Weber, Hurlemann, Schultz · eLife</span></div>
+        <div class="blk"><span class="sub">33 claims · 12 of 19 re-runnable reproduced ·
+          16/17 layers · approved by nobody</span></div>
+        <div class="blk ghost">Hypotheses · Claims · Inferences — the paper, in three paragraphs</div>
+      </div></div>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2>Order of work</h2>
+  <ol class="steps">
+    <li><strong>Move the layer map into a Pipeline tab.</strong> Smallest change, biggest
+    relief: it ends the two-drawer collision and gives the content back its space. Nothing is
+    removed.</li>
+    <li><strong>Add the Artifacts view.</strong> Pure gain — the resolver and the published
+    files already exist, and nothing on the site links them today.</li>
+    <li><strong>Add the Graph view</strong> from the component already written. Check it in
+    dark mode first: it hard-codes <code>#ffffff</code>, which is the bug the palette tokens
+    were introduced to end.</li>
+    <li><strong>Declare the <code>synthesis</code> layer</strong> and move
+    <em>Argument from graph</em> to it.</li>
+    <li><strong>Move <em>Abstract ↔ claims</em></strong> to <code>abstract-map</code>.</li>
+    <li><strong>Decide where the persona service lives</strong>, and remove the Review tab.</li>
+  </ol>
+  <p>Steps 1–3 are additive and safe to do before a demo. Steps 4–6 remove things and are worth
+  taking slowly, because each one is a claim about what the pipeline is for.</p>
+
+  <div class="principle">
+    <p><b>All six are done.</b> Step 4 turned out to be the one that paid: declaring
+    <code>synthesis</code> revealed that seven of the ten published papers had a synthesis
+    nobody could reach, because the tab read a three-file directory and the v3 run had written
+    twelve to another. An output no layer declares is not merely unversioned — it is
+    unfindable, and nobody notices, which is the argument for the pipeline in one example.</p>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
