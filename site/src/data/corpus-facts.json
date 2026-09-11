@@ -69,8 +69,8 @@
       "alternatives_n": 6,
       "coverage": true,
       "evidence_verified": {
-        "quotes": 0,
-        "verified": 0
+        "quotes": 76,
+        "verified": 52
       },
       "formats": true,
       "marked": true,
@@ -8604,6 +8604,44 @@
         },
         {
           "answer": {
+            "path": "runs/gadeke-2026-guilt-insula/structure-reader.answer.v4.json",
+            "sha": "0a81993c2fa7"
+          },
+          "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
+          "cmd": "cd extract && python3 -m elife_extract.cli structure-reader --paper gadeke-2026-guilt-insula --answer runs/gadeke-2026-guilt-insula/structure-reader.answer.v4.json",
+          "in": [
+            {
+              "path": "runs/gadeke-2026-guilt-insula/prepared.json",
+              "sha": "2f668cadbef7"
+            },
+            {
+              "path": "extract/prompts/structure-reader.md",
+              "sha": "4efe4b9b8668"
+            },
+            {
+              "path": "extract/prompts/contract/vocabulary.md",
+              "sha": "f7b20823d3c6"
+            },
+            {
+              "path": "extract/prompts/contract/schema-candidate.md",
+              "sha": "e9bc3280b959"
+            }
+          ],
+          "in_sets": [],
+          "kind": "candidate",
+          "layer": "structure-reader",
+          "note": "structure reader under the not-a-claim examples (#75 follow-up)",
+          "out": [
+            {
+              "path": "runs/gadeke-2026-guilt-insula/structure-reader.output.json",
+              "sha": "a3598cf1f674"
+            }
+          ],
+          "ran": "2026-09-11T23:10:11Z",
+          "v": 4
+        },
+        {
+          "answer": {
             "path": "runs/gadeke-2026-guilt-insula/plain-claim.answer.v2.json",
             "sha": "8d24a3bcd4e5"
           },
@@ -8936,6 +8974,52 @@
           ],
           "ran": "2026-09-11T23:15:28Z",
           "v": 2
+        },
+        {
+          "answer": {
+            "path": "runs/gadeke-2026-guilt-insula/reconcile.answer.v4.json",
+            "sha": "ef9b19b6a9a3"
+          },
+          "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
+          "cmd": "cd extract && python3 -m elife_extract.cli reconcile --paper gadeke-2026-guilt-insula --answer runs/gadeke-2026-guilt-insula/reconcile.answer.v4.json",
+          "in": [
+            {
+              "path": "runs/gadeke-2026-guilt-insula/results-reader.output.json",
+              "sha": "c70b7431c8d0"
+            },
+            {
+              "path": "runs/gadeke-2026-guilt-insula/caption-reader.output.json",
+              "sha": "60ff467447b8"
+            },
+            {
+              "path": "runs/gadeke-2026-guilt-insula/structure-reader.output.json",
+              "sha": "a3598cf1f674"
+            },
+            {
+              "path": "extract/prompts/reconciler.md",
+              "sha": "45be195c5402"
+            },
+            {
+              "path": "extract/prompts/contract/vocabulary.md",
+              "sha": "f7b20823d3c6"
+            },
+            {
+              "path": "extract/prompts/contract/schema-draft.md",
+              "sha": "a73eee255dd7"
+            }
+          ],
+          "in_sets": [],
+          "kind": "step",
+          "layer": "reconcile",
+          "note": "reconcile under the same/part/different test; guilt and connectivity duplicates merged, risk and STS set part_of (#75 follow-up)",
+          "out": [
+            {
+              "path": "runs/gadeke-2026-guilt-insula/reconciler.output.json",
+              "sha": "c89c52f02417"
+            }
+          ],
+          "ran": "2026-09-11T23:16:06Z",
+          "v": 4
         }
       ],
       "headley-2026-inhibitory-rhythms": [
@@ -17508,17 +17592,14 @@
         },
         "claim-tree": {
           "appeared": [],
-          "blocked_by": [
-            "reconcile",
-            "external-review",
-            "edge-inference"
-          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "runs/gadeke-2026-guilt-insula/reconciler.output.json"
+          ],
           "note": "claim-tree v2 from the recorded Opus chain (#56): 68 claims, 75 edges; v1 archived to runs/gadeke-2026-guilt-insula/claim-tree.v1; alt- claims, rules-out edges and reproduction records carried from v1",
           "ran": "2026-09-11T19:59:02Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 2
         },
         "coverage": {
@@ -17544,15 +17625,14 @@
         },
         "edge-inference": {
           "appeared": [],
-          "blocked_by": [
-            "reconcile"
-          ],
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "runs/gadeke-2026-guilt-insula/reconciler.output.json"
+          ],
           "note": "first run under the prompt contract (#56 item 4); Opus 5 subagents for every layer; answered through --dump-prompt/--answer, not the configured backend",
           "ran": "2026-09-11T19:15:06Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 3
         },
         "epistemic-vocab": {
@@ -17564,6 +17644,7 @@
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "runs/gadeke-2026-guilt-insula/reconciler.output.json",
             "extract/prompts/external-reviewer.md",
             "extract/prompts/contract/vocabulary.md",
             "extract/prompts/contract/schema-draft.md"
@@ -17728,17 +17809,17 @@
         },
         "reconcile": {
           "appeared": [],
-          "by": "claude-opus-5 (subagent, via --answer)",
-          "lost": [],
-          "moved": [
-            "extract/prompts/reconciler.md",
-            "extract/prompts/contract/vocabulary.md",
-            "extract/prompts/contract/schema-draft.md"
+          "blocked_by": [
+            "results-reader",
+            "caption-reader"
           ],
-          "note": "first run under the prompt contract (#56 item 4); Opus 5 subagents for every layer; answered through --dump-prompt/--answer, not the configured backend",
-          "ran": "2026-09-11T19:14:57Z",
-          "state": "stale",
-          "v": 3
+          "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
+          "lost": [],
+          "moved": [],
+          "note": "reconcile under the same/part/different test; guilt and connectivity duplicates merged, risk and STS set part_of (#75 follow-up)",
+          "ran": "2026-09-11T23:16:06Z",
+          "state": "blocked",
+          "v": 4
         },
         "reference-check": {
           "state": "absent"
@@ -17775,18 +17856,13 @@
         },
         "structure-reader": {
           "appeared": [],
-          "by": "claude-opus-5 (subagent, via --answer)",
+          "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
           "lost": [],
-          "moved": [
-            "runs/gadeke-2026-guilt-insula/prepared.json",
-            "extract/prompts/structure-reader.md",
-            "extract/prompts/contract/vocabulary.md",
-            "extract/prompts/contract/schema-candidate.md"
-          ],
-          "note": "first run under the prompt contract (#56 item 4); Opus 5 subagents for every layer; answered through --dump-prompt/--answer, not the configured backend",
-          "ran": "2026-09-11T19:14:48Z",
-          "state": "stale",
-          "v": 3
+          "moved": [],
+          "note": "structure reader under the not-a-claim examples (#75 follow-up)",
+          "ran": "2026-09-11T23:10:11Z",
+          "state": "current",
+          "v": 4
         },
         "summaries": {
           "state": "unrecorded"
