@@ -30,6 +30,26 @@ from .schema import AgentExtraction, DraftClaimTable
 # ── where a layer's files live ───────────────────────────────────────────
 
 
+def answer_file(answer: str, cfg: Config) -> tuple[Path, str]:
+    """A supplied answer: the file to read, and how the output should name it.
+
+    A relative path resolves against the corpus root, not the working directory — the
+    runner keeps the raw reply at `runs/<paper>/<layer>.answer.v<N>.json` and hands that
+    path to a command that has already `cd extract`. The label is root-relative where it
+    can be, so `model: supplied:runs/...` in the output means the same thing on any
+    checkout; an absolute path outside the root is kept as it is.
+    """
+    p = Path(answer).expanduser()
+    if not p.is_absolute():
+        p = cfg.root / p
+    p = p.resolve()
+    try:
+        label = str(p.relative_to(cfg.root))
+    except ValueError:
+        label = str(p)
+    return p, f"supplied:{label}"
+
+
 def run_dir(paper: str, cfg: Config) -> Path:
     d = cfg.root / "runs" / paper
     d.mkdir(parents=True, exist_ok=True)
@@ -113,8 +133,8 @@ def reader_layer(agent: str, paper: str, cfg: Config, *,
     from .agents import model_for, reader_from_raw, run_agent
 
     if answer is not None:
-        extraction = reader_from_raw(agent, paper, f"supplied:{answer}",
-                                     Path(answer).read_text(encoding="utf-8"))
+        p, label = answer_file(answer, cfg)
+        extraction = reader_from_raw(agent, paper, label, p.read_text(encoding="utf-8"))
     else:
         extraction = run_agent(agent, read_prepared(paper, cfg), cfg)
     path = _write_json(run_file(paper, READER_OUTPUT[agent], cfg),
@@ -154,10 +174,11 @@ def reconcile_layer(paper: str, cfg: Config, *,
     prepared = read_prepared(paper, cfg)
     if answer is not None:
         r, c, st = _three_readers(paper, cfg)
-        draft = draft_from_raw(Path(answer).read_text(encoding="utf-8"), r, c, st, cfg,
+        p, label = answer_file(answer, cfg)
+        draft = draft_from_raw(p.read_text(encoding="utf-8"), r, c, st, cfg,
                                prepared.doi, prepared.title,
                                prepared.extraction_path, prepared.extraction_path_note)
-        draft.model = f"supplied:{answer}"
+        draft.model = label
         path = _write_json(run_file(paper, "reconciler.output.json", cfg),
                            json.loads(draft.model_dump_json()))
         return path, draft
@@ -194,8 +215,9 @@ def external_review_layer(paper: str, cfg: Config, *,
     draft = DraftClaimTable(**_require(
         run_file(paper, "reconciler.output.json", cfg), "external-review", "reconcile"))
     if answer is not None:
-        revised = review_from_raw(Path(answer).read_text(encoding="utf-8"), draft)
-        revised.model = f"supplied:{answer}"
+        p, label = answer_file(answer, cfg)
+        revised = review_from_raw(p.read_text(encoding="utf-8"), draft)
+        revised.model = label
     else:
         revised = external_review(read_prepared(paper, cfg), draft, cfg)
         revised.model = cfg.model_reconcile
