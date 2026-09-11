@@ -8,6 +8,7 @@ claim: >
   error regressors — cannot be trusted.
 claim-type: interpretive
 role: hypothesis
+addresses: q3
 concepts:
   - model-based fMRI
   - manipulation check

@@ -39,6 +39,7 @@ LAYER_OF = {
     "external-reviewer": "external-review",
     "edge-inference": "edge-inference",
     "coverage-adjudicator": "adjudication",
+    "questions": "questions",
 }
 
 
@@ -98,17 +99,18 @@ def test_every_relation_has_a_direction():
 
 
 def test_declaration_reads_what_the_prompt_composes():
-    """A prompt file sent but not declared is an input the ledger never hashes."""
+    """A prompt file sent but not declared is an input the ledger never hashes.
+
+    A layer may also read scripts (`adjudication` reads `scripts/adjudicate.py`), so the
+    comparison is over the prompt files only — the entries under `extract/prompts/` — kept
+    exact and in order against what the runner composes.
+    """
     decl = _declaration()
     for role, layer in LAYER_OF.items():
-        # layers.yaml may also declare non-prompt reads (e.g. scripts/adjudicate.py); the
-        # test only verifies that the prompt files the runner composes are all declared.
-        declared_prompt_reads = [
-            r for r in (decl[layer].get("reads") or [])
-            if r.startswith("extract/prompts/")
-        ]
-        assert declared_prompt_reads == prompts.declared_reads(role), \
-            f"{layer}: reads {declared_prompt_reads} but the runner sends {prompts.declared_reads(role)}"
+        prompt_reads = [r for r in (decl[layer].get("reads") or [])
+                        if r.startswith("extract/prompts/")]
+        assert prompt_reads == prompts.declared_reads(role), \
+            f"{layer}: prompt reads {prompt_reads} but the runner sends {prompts.declared_reads(role)}"
 
 
 def test_prompt_is_task_then_contract():
@@ -136,6 +138,40 @@ def test_variant_overrides_the_task_and_inherits_the_contract():
 
 
 # ── confidence follows the source count ──────────────────────────────────
+
+
+def test_writer_numbers_a_shared_question_once():
+    """Two claims that answer the same question — modulo case and whitespace — collapse to one
+    `q1` on the paper, and both claims carry `addresses: q1`. A question is not a claim."""
+    from elife_extract import write
+    from elife_extract.schema import DraftClaimTable
+
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = Config.from_args(cli.build_parser().parse_args(
+            ["write", "--paper", "p", "--root", tmp]))
+        draft = DraftClaimTable(
+            paper_slug="p", paper_doi="10.0/x", paper_title="P",
+            claims=[
+                {"claim": "The insula encodes interpersonal guilt.", "panel": None,
+                 "claim_type": "hypothesis", "role": "hypothesis",
+                 "addresses": "Does the insula encode interpersonal guilt?",
+                 "confidence": "high", "sources": ["results"]},
+                {"claim": "Agency aversion explains the effect instead.", "panel": None,
+                 "claim_type": "interpretive", "role": "hypothesis",
+                 "addresses": "does the  INSULA encode   interpersonal guilt?",
+                 "confidence": "high", "sources": ["results"]},
+            ],
+        )
+        write.write_claim_files(draft, cfg, edges=[])
+
+        d = cfg.corpus_dir / "p"
+        idx = yaml.safe_load((d / "index.md").read_text().split("---", 2)[1])
+        assert idx["questions"] == [
+            {"id": "q1", "text": "Does the insula encode interpersonal guilt?"}], \
+            "the two claims' shared question should be one q1, first spelling kept"
+        for slug in write._unique_slugs(draft.claims):
+            fm = yaml.safe_load((d / f"{slug}.md").read_text().split("---", 2)[1])
+            assert fm["addresses"] == "q1", f"{slug} should address q1"
 
 
 def test_confidence_is_a_fact_about_agreement():

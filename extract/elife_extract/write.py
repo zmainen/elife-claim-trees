@@ -67,6 +67,32 @@ def derive_claim_slug(claim_text: str, panel: str | None = None) -> str:
     return slug
 
 
+def number_questions(claims: list[ReconciledClaim]) -> tuple[list[dict], list[str | None]]:
+    """The paper's questions, numbered, and the q-id each claim addresses.
+
+    A question is not a claim, so it lives on the paper: the distinct `addresses` texts a
+    hypothesis or a rejected alternative carried, numbered q1, q2, … in order of first
+    appearance. Whitespace and case are normalised for de-duplication only — two claims that
+    answer the same question in slightly different words collapse to one — and the first
+    spelling seen is the one kept. Returns the question list for `index.md` and, per claim in
+    order, the q-id it addresses or None.
+    """
+    seen: dict[str, str] = {}
+    order: list[tuple[str, str]] = []
+    per_claim: list[str | None] = []
+    for c in claims:
+        text = (getattr(c, "addresses", None) or "").strip()
+        if not text:
+            per_claim.append(None)
+            continue
+        key = " ".join(text.lower().split())
+        if key not in seen:
+            seen[key] = f"q{len(order) + 1}"
+            order.append((seen[key], text))
+        per_claim.append(seen[key])
+    return [{"id": qid, "text": text} for qid, text in order], per_claim
+
+
 def _unique_slugs(claims: list[ReconciledClaim]) -> list[str]:
     """Generate per-claim slugs; disambiguate with counter on collision."""
     raw = [derive_claim_slug(c.claim, c.panel) for c in claims]
@@ -98,6 +124,7 @@ def _claim_frontmatter(
     paper_slug: str,
     paper_doi: str,
     edges: list[dict] | None = None,
+    addresses: str | None = None,
 ) -> dict:
     """Build the YAML frontmatter dict for one claim."""
     today = date.today().isoformat()
@@ -110,6 +137,9 @@ def _claim_frontmatter(
         "claim": claim.claim,
         "claim-type": claim.claim_type,
         "role": claim.role,
+        # The question this hypothesis or alternative answers, numbered q<N> on the paper.
+        # Only these two roles carry it; every other claim gets no key.
+        **({"addresses": addresses} if addresses else {}),
         "concepts": [],  # § 4.1 — analyst fills in at review or in a later pass
         "priority": today,
         # Roles that are not empirical carry their role as the epistemic
@@ -202,6 +232,7 @@ def _format_claim_file(fm: dict, body: str) -> str:
 def _format_paper_index(
     draft: DraftClaimTable,
     claim_slugs: list[str],
+    questions: list[dict] | None = None,
 ) -> str:
     """Render <paper_slug>/index.md with title, DOI, authors, summary."""
     fm = {
@@ -212,6 +243,9 @@ def _format_paper_index(
         "added": date.today().isoformat(),
         "claim-count": len(draft.claims),
         "extraction-path": draft.extraction_path,
+        # The paper's research questions live here, not in the claim graph: a question is not
+        # a claim. Each hypothesis and rejected alternative names one via `addresses`.
+        **({"questions": questions} if questions else {}),
     }
     fm_yaml = yaml.safe_dump(
         fm, sort_keys=False, allow_unicode=True, default_flow_style=False
@@ -350,10 +384,13 @@ def write_claim_files(draft: DraftClaimTable, cfg: Config,
     if edges is None:
         edges = resolve_edges(draft, slugs, cfg)
 
+    # The paper's questions, and the q-id each claim addresses (None for most claims).
+    questions, addresses = number_questions(draft.claims)
+
     # Per-claim files
-    for claim, slug in zip(draft.claims, slugs):
+    for claim, slug, addr in zip(draft.claims, slugs, addresses):
         fm = _claim_frontmatter(
-            claim, slug, draft.paper_slug, draft.paper_doi, edges
+            claim, slug, draft.paper_slug, draft.paper_doi, edges, addresses=addr
         )
         body = _claim_body(claim)
         text = _format_claim_file(fm, body)
@@ -363,7 +400,7 @@ def write_claim_files(draft: DraftClaimTable, cfg: Config,
 
     # Paper index.md
     index_path = paper_dir / "index.md"
-    index_path.write_text(_format_paper_index(draft, slugs))
+    index_path.write_text(_format_paper_index(draft, slugs, questions))
     written.append(index_path)
 
     return written

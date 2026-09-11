@@ -16,6 +16,7 @@ displayClaim: >
 shortClaim: "The anterior insula encodes responsibility-contingent interpersonal guilt."
 claim-type: hypothesis
 role: hypothesis
+addresses: q1
 concepts:
   - anterior insula
   - interpersonal guilt

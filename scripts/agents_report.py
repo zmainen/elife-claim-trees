@@ -67,6 +67,10 @@ ROLES = [
      "reads": "unmatched spans of the paper and the claim tree",
      "returns": "a covered / gap / no-assertion verdict for each span",
      "agent_key": None},
+    {"id": "questions", "stage": "relate",
+     "reads": "the abstract and the paper's hypothesis and alt- claims",
+     "returns": "the research questions the paper states, and which claim answers each",
+     "agent_key": None},
 ]
 
 
@@ -84,7 +88,7 @@ def prompt_text(role_id):
 LAYER_OF = {"results-reader": "results-reader", "caption-reader": "caption-reader",
             "structure-reader": "structure-reader", "reconciler": "reconcile",
             "external-reviewer": "external-review", "edge-inference": "edge-inference",
-            "coverage-adjudicator": "adjudication"}
+            "coverage-adjudicator": "adjudication", "questions": "questions"}
 
 
 def declared_reads():

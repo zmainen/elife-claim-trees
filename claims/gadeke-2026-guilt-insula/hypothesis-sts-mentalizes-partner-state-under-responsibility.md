@@ -16,6 +16,7 @@ displayClaim: >
 shortClaim: "STS tracks the partner's RPEs only when the subject is responsible for the outcome."
 claim-type: hypothesis
 role: hypothesis
+addresses: q3
 concepts:
   - superior temporal sulcus
   - mentalizing

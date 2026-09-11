@@ -9,7 +9,15 @@ own terms and do not try to guess what the others will find.
 ## What this slice carries
 
 The Results prose is the only place the paper states its argument *as an argument*. That is
-what you are for. Find:
+what you are for.
+
+Find the paper's **questions** first — what it set out to answer — from the abstract and the
+opening of Results. Then return the hypotheses as the answers the paper commits to: each one
+carries `addresses`, the question it answers, as the paper states it or in one sentence. A
+question the paper states but commits to no answer for is not a hypothesis, so do not return
+one; and never invent a hollow hypothesis to stand in for a question.
+
+Find:
 
 - **The hypotheses.** The proposition the paper bets on, usually introduced in the abstract or
   the opening of Results. One to three per paper. Write it as a claim about the world, not as

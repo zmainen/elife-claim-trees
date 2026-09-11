@@ -15,6 +15,25 @@ the claim file, so an example is a real claim or generation fails.
 
 from __future__ import annotations
 
+# ── Questions ────────────────────────────────────────────────────────────
+# A question is not a claim — a claim is a declarative sentence — so it lives on the paper, not
+# in the claim graph. It is what the paper set out to answer, and the paper states it, in the
+# abstract or in the Introduction. Each hypothesis and each rejected alternative addresses one:
+# the hypothesis is the answer the paper commits to, the alternatives are the answers it turns
+# down. A question is never a hypothesis with a question mark: do not manufacture one by
+# hollowing a hypothesis into "X involves neural mechanisms" — return the question the paper
+# actually asked, or none.
+
+QUESTIONS = (
+    "A **question** is what the paper set out to answer. It is not a claim — a claim is a "
+    "declarative sentence — so it is recorded on the paper rather than as a node in the graph. "
+    "The paper states it, in the abstract or in the opening of the Introduction. Each "
+    "`hypothesis` and each rejected alternative addresses one: the hypothesis is the answer the "
+    "paper commits to, and the alternatives it rules out are the other answers to the same "
+    "question. Never turn a question into a hollow hypothesis such as \"X involves neural "
+    "mechanisms\" — return the question the paper actually asked, or return none."
+)
+
 # ── Roles ────────────────────────────────────────────────────────────────
 # The rhetorical function a claim serves in the paper's argument. Nine values; the corpus uses
 # all nine. `example` is (paper, slug). `signals` are phrases in the prose that mark the role.
@@ -22,10 +41,13 @@ from __future__ import annotations
 ROLES = [
     {
         "role": "hypothesis",
-        "definition": "The proposition the paper bets on: the organising question, stated as a "
-                      "claim about the world. It carries no empirical content of its own; it is "
-                      "what the predictions are deduced from and what the results are gathered "
-                      "for. Most papers have one to three.",
+        "definition": "An answer the paper commits to, to a question it states: the proposition "
+                      "it bets on, phrased as a claim about the world rather than as the "
+                      "question. It carries no empirical content of its own; it is what the "
+                      "predictions are deduced from and what the results are gathered for, and "
+                      "the alternatives the paper rules out are the other answers to the same "
+                      "question. Each hypothesis carries `addresses`, the question it answers. "
+                      "Most papers have one to three.",
         "typical_claim_type": "hypothesis",
         "signals": ["we hypothesize", "we propose that", "we asked whether", "we sought to test",
                     "the central question is whether"],
