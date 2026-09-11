@@ -1,0 +1,33 @@
+---
+// One layer, in general.
+//
+// The same question asked of every paper: what it is, what it rests on, what it feeds, and
+// where it has and has not been run. A paper's own instance lives on the paper page; this is
+// the corpus altitude of the same cell.
+//
+// A layer with more to say than the declaration holds gets a static route of its own —
+// pipeline/mira-export.astro, pipeline/formats-report.astro — which Astro prefers over this
+// dynamic one. Those pages use the same two components, so a bespoke page is depth behind the
+// general surface rather than an escape from it.
+import Layout from '../../layouts/Layout.astro';
+import LayerHeader from '../../components/LayerHeader.astro';
+import LayerState from '../../components/LayerState.astro';
+import { layers } from '../../lib/pipeline';
+
+export function getStaticPaths() {
+  return layers.map(l => ({ params: { layer: l.id }, props: { layer: l } }));
+}
+
+const { layer } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title={`${layer.title} — pipeline`} description={layer.question}>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+    <LayerHeader layer={layer} />
+    <LayerState layer={layer} />
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm">
+      <a href={`${base}/pipeline/`} class="text-gray-500 dark:text-gray-400 no-underline hover:text-gray-700 dark:hover:text-gray-300">← all layers</a>
+    </footer>
+  </div>
+</Layout>

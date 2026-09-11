@@ -492,6 +492,23 @@ const out = { papers, totalClaims, statusCounts: allStatuses };
 writeFileSync(outFile, JSON.stringify(out, null, 2));
 console.log(`Written ${outFile}: ${papers.length} papers, ${totalClaims} claims`);
 
+// ── Publish the design notes ──────────────────────────────────────────────
+// The pipeline's design note documents the structure the site has. It is self-contained HTML
+// with its own styles, so it is served as an asset rather than re-rendered through the layout
+// — one file, linked from /pipeline, with no second copy to drift.
+const designSrc = join(projectRoot, 'docs', 'design');
+const designDst = join(__dirname, '../public/design');
+if (existsSync(designSrc)) {
+  mkdirSync(designDst, { recursive: true });
+  let d = 0;
+  for (const f of readdirSync(designSrc)) {
+    if (!f.endsWith('.html')) continue;
+    fs.copyFileSync(join(designSrc, f), join(designDst, f));
+    d++;
+  }
+  console.log(`Copied ${d} design note(s) to public/design/`);
+}
+
 // ── Publish the MIRA exports ──────────────────────────────────────────────
 // The download links on the standards page point at /exports/, which is served from
 // site/public/exports/. Copying here rather than by hand means a regenerated export cannot

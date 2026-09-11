@@ -1,123 +1,174 @@
 ---
+// The introduction.
+//
+// For a reader arriving cold, including eLife: what this is, why claims rather than papers,
+// and — the part an introduction usually skips — what the prototype does not show. The last
+// is the most useful thing on the page, because every number here is generated and several of
+// them are zero.
+//
+// Every figure comes from corpus-facts.json or the pipeline state. Nothing is typed: the
+// stale numbers this site has shipped were all ones somebody typed into a page.
 import Layout from '../layouts/Layout.astro';
 import corpus from '../data/claims.json';
+import facts from '../data/corpus-facts.json';
+import {
+  papers as pipelinePapers, cells, fill_of, approvedCells, inState, layers, byId,
+} from '../lib/pipeline';
 
-const { papers, totalClaims } = corpus;
+const { papers } = corpus as any;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (path: string) => `${base}${path}/`;
+const f = facts as any;
 
-const allClaims = papers.flatMap(p => p.claims);
-const verifiedCount = allClaims.filter(c => c.status.startsWith('verified')).length;
+const totalCells = pipelinePapers.reduce((n, p) => n + cells(p).length, 0);
+const approved = approvedCells().length;
+const absent = inState('absent').length;
+const fills = pipelinePapers
+  .map(p => ({ slug: p, ...fill_of(p) }))
+  .sort((a, b) => b.done - a.done);
+const best = fills[0];
+const reproduced = (f.reproduction_status?.verified ?? 0);
+
+const shortOf = (slug: string) => slug.split('-')[0].replace(/^./, (c: string) => c.toUpperCase());
 ---
 
-<Layout title="eLife Claim Trees">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16">
+<Layout title="eLife Claim Trees" description="Panel-level claim graphs for ten eLife neuroscience papers, and the pipeline that produced them.">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-16">
 
-    <!-- Hero -->
-    <div class="mb-16">
-      <h1 class="text-4xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight mb-3">eLife Claim Trees</h1>
-      <p class="text-xl text-gray-500 dark:text-gray-400 mb-6">Panel-level claim graphs for reproducibility</p>
+    <!-- ── what this is ──────────────────────────────────────────── -->
+    <header class="mb-14">
+      <h1 class="text-4xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">
+        eLife Claim Trees
+      </h1>
+      <p class="text-xl text-gray-500 dark:text-gray-400 m-0 mb-7">
+        What a paper claims, where each claim came from, and whether anyone checked
+      </p>
       <div class="max-w-2xl space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
-        <p>
-          Science is organized around stories. A paper is a narrative artifact designed to convince a human reader.
-          AI is a different reader — it needs structure it can reason over, verify, and connect to other structure.
-          This project extracts the claim structure of {papers.length} eLife neuroscience papers, links each claim to data and code,
-          and records what happened when we ran the analyses.
+        <p class="m-0">
+          A paper is written to convince a person reading it once. Its claims are embedded in
+          prose, bundled into figures that carry several results at a time, and severed from the
+          code and data that produced them. This project takes {papers.length} eLife neuroscience
+          papers apart into their individual claims — {f.claims} of them, with {f.relations} typed
+          relations saying how each depends on the others — and links every claim to the panel,
+          the data and the analysis behind it.
         </p>
-        <p>
-          Each paper becomes a directed acyclic graph: claims as nodes, dependencies as edges.
-          Invalidity propagates downstream. Independent claims stand alone.
+        <p class="m-0">
+          The unit is the panel: one analysis producing one result. Figures are too coarse, since
+          a single panel usually carries several findings its caption runs together. A p-value is
+          too fine to mean anything alone. The panel is the level at which reproducibility
+          actually operates.
         </p>
       </div>
-      <div class="mt-6 flex gap-3 flex-wrap">
-        <a href={url('/papers')} class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-700 dark:hover:bg-gray-300 no-underline">
-          Browse papers →
-        </a>
-        <a href={url('/methodology')} class="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 no-underline">
-          Read methodology
-        </a>
-        <a href="https://github.com/zmainen/elife-claim-trees" class="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 no-underline" target="_blank">
-          GitHub ↗
-        </a>
+      <div class="mt-7 flex gap-3 flex-wrap">
+        <a href={url('/papers')} class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-700 dark:hover:bg-gray-300 no-underline">Browse the papers →</a>
+        <a href={url('/pipeline')} class="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 no-underline">How it is made</a>
+        <a href="https://github.com/zmainen/elife-claim-trees" target="_blank" class="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 no-underline">GitHub ↗</a>
       </div>
-    </div>
+    </header>
 
-    <!-- Corpus stats -->
-    <div class="mb-16">
-      <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-5">Corpus</h2>
-      <div class="grid grid-cols-3 gap-4 mb-8">
-        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-          <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{papers.length}</div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">papers</div>
+    <!-- ── what is here ──────────────────────────────────────────── -->
+    <section class="mb-14">
+      <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-5">What is here</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {[
+          [papers.length, 'papers'],
+          [f.claims, 'claims'],
+          [f.relations, 'typed relations'],
+          [reproduced, 'claims reproduced from deposited code'],
+        ].map(([n, label]) => (
+          <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
+            <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{n}</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-snug">{label}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ── what it does not show ─────────────────────────────────── -->
+    <section class="mb-14">
+      <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-5">
+        What this does not show
+      </h2>
+      <div class="space-y-5 max-w-2xl">
+        <div class="border-l-2 border-amber-500 dark:border-amber-600 pl-4">
+          <p class="text-gray-900 dark:text-gray-100 font-medium m-0 mb-1">
+            No person has checked any of it.
+          </p>
+          <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+            Every claim was found by a language model, reconciled by another, and related to its
+            neighbours by a third. Approval is recorded per version, against the output a person
+            actually read — and it stands at
+            {' '}<a href={url('/pipeline')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline font-medium">{approved} of {totalCells}</a>.
+            Read this as a draft annotation layer, not as adjudicated output.
+          </p>
         </div>
-        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5">
-          <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{totalClaims}</div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">claims</div>
+        <div class="border-l-2 border-gray-300 dark:border-gray-600 pl-4">
+          <p class="text-gray-900 dark:text-gray-100 font-medium m-0 mb-1">
+            The corpus has a jagged edge, and it is meant to be visible.
+          </p>
+          <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+            Every paper goes through the same {cells(pipelinePapers[0]).length} layers, and no two
+            have been through the same ones. {shortOf(best.slug)} is furthest at {best.done} of
+            {' '}{best.total}; {absent} cells across the corpus have never been run. The
+            {' '}<a href={url('/pipeline')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">pipeline page</a>
+            {' '}says which, and each empty one says what would fill it.
+          </p>
         </div>
-        <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-5">
-          <div class="text-3xl font-semibold text-green-700 dark:text-green-400">{verifiedCount}</div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">verified by code</div>
+        <div class="border-l-2 border-gray-300 dark:border-gray-600 pl-4">
+          <p class="text-gray-900 dark:text-gray-100 font-medium m-0 mb-1">
+            Reproduced is not replicated.
+          </p>
+          <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+            Where a claim is marked reproduced, the authors' own deposited code was re-run against
+            their own data. Whether an independent study found the same thing is a different
+            question, and this corpus has never asked it —
+            {' '}<a href={url('/pipeline/replication')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">replication</a>
+            {' '}is declared and empty for every paper.
+          </p>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Resources -->
-    <div class="mb-16">
-      <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-5">Resources</h2>
-      <div class="space-y-3">
-        <a href={url('/docs')} class="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm transition-all no-underline group">
-          <div class="flex-shrink-0 w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center text-amber-700 dark:text-amber-400 font-semibold text-xs">DOC</div>
-          <div>
-            <div class="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">Documentation</div>
-            <div class="text-xs text-gray-500 dark:text-gray-400">Methodology, architecture, CLI usage, validation results, API reference</div>
-          </div>
-        </a>
-        <a href="/elife-claim-trees/presentation-overview.pdf" class="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm transition-all no-underline group" target="_blank">
-          <div class="flex-shrink-0 w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 font-semibold text-xs">PDF</div>
-          <div>
-            <div class="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">Presentation — Overview</div>
-            <div class="text-xs text-gray-500 dark:text-gray-400">Claim-level science: the vision, the pipeline, and where eLife fits (27 slides)</div>
-          </div>
-        </a>
-        <a href="/elife-claim-trees/presentation-detailed.pdf" class="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm transition-all no-underline group" target="_blank">
-          <div class="flex-shrink-0 w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 font-semibold text-xs">PDF</div>
-          <div>
-            <div class="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">Presentation — Detailed</div>
-            <div class="text-xs text-gray-500 dark:text-gray-400">Full technical detail: ten-step methodology, per-paper validation, cost projections (52 slides)</div>
-          </div>
-        </a>
-      </div>
-    </div>
-
-    <!-- Papers grid -->
-    <div>
-      <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-5">Papers</h2>
-      <div class="grid sm:grid-cols-2 gap-4">
-        {papers.map(p => {
-          const v = p.claims.filter((c: any) => c.status.startsWith('verified')).length;
-          const allV = v === p.claimCount && p.claimCount > 0;
-          return (
-            <a href={url(`/papers/${p.slug}`)} class="block border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-gray-400 hover:shadow-sm transition-all no-underline group">
-              <div class="flex items-start justify-between gap-2 mb-2">
-                <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 leading-snug group-hover:text-blue-700 transition-colors">{p.title}</h3>
-                {allV && (
-                  <span class="flex-shrink-0 text-[10px] font-semibold text-green-800 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded whitespace-nowrap">✓</span>
-                )}
-              </div>
-              <div class="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                {p.authors.join(', ')} · {(p as any).journal}
-                {(p as any).stage && (p as any).stage !== 'published' && (
-                  <span class="italic"> · {{preprint:'preprint',revision:'under review',draft:'draft'}[(p as any).stage]}</span>
-                )}
-              </div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">
-                {p.claimCount} claims
-              </div>
+    <!-- ── how it is made ────────────────────────────────────────── -->
+    <section class="mb-14">
+      <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-5">How it is made</h2>
+      <p class="text-gray-700 dark:text-gray-300 leading-relaxed max-w-2xl mb-5">
+        A <strong>layer</strong> is a question asked of a paper. It reads declared inputs,
+        produces a version, and records the content hash of everything it read — so whether a
+        result is still current is asked of the files rather than of anyone's memory. The
+        {' '}<a href={url('/pipeline')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">pipeline</a>
+        {' '}is {layers.length} of them; a paper's page carries its own instance of each.
+      </p>
+      <div class="grid sm:grid-cols-3 gap-4">
+        {['claim-tree', 'coverage', 'mira-export'].map(id => {
+          const l = byId[id];
+          return l ? (
+            <a href={url(`/pipeline/${id}`)} class="block border border-gray-200 dark:border-gray-700 rounded-lg p-4 no-underline hover:border-gray-400 dark:hover:border-gray-500">
+              <span class="block font-mono text-xs text-amber-700 dark:text-amber-400 mb-1">{l.id}</span>
+              <span class="block text-sm text-gray-700 dark:text-gray-300 leading-snug">{l.question}</span>
             </a>
-          );
+          ) : null;
         })}
       </div>
-    </div>
+    </section>
+
+    <!-- ── the papers ────────────────────────────────────────────── -->
+    <section>
+      <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-5">The papers</h2>
+      <div class="space-y-2">
+        {fills.map(fl => {
+          const p = papers.find((x: any) => x.slug === fl.slug);
+          return p ? (
+            <a href={url(`/papers/${p.slug}`)} class="flex items-baseline justify-between gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg no-underline hover:border-gray-400 dark:hover:border-gray-500 group">
+              <span class="text-sm text-gray-800 dark:text-gray-200 group-hover:text-amber-700 dark:group-hover:text-amber-400 leading-snug">{p.title}</span>
+              <span class="font-mono text-xs text-gray-400 dark:text-gray-500 tabular-nums whitespace-nowrap">
+                {p.claimCount} claims · {fl.done}/{fl.total} layers
+              </span>
+            </a>
+          ) : null;
+        })}
+      </div>
+    </section>
 
   </div>
 </Layout>

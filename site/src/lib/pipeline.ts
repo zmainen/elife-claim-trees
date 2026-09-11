@@ -30,8 +30,9 @@ export interface LayerDecl {
   command?: string;
   issue?: number;
   open?: boolean;
-  reviews?: string;
   requires_human?: boolean;
+  added?: string;
+  found?: string;
 }
 
 export interface Cell {
@@ -55,6 +56,9 @@ export interface Cell {
   command?: string;
   /** Every recorded run of this layer for this paper, newest first. */
   versions: Version[];
+  /** Approval is an operation on a version, not a layer. `applies` is false when the layer
+   *  has run again since — the approval was granted to output that no longer exists. */
+  approved?: { v: number; by?: string; when?: string; note?: string; applies: boolean };
   /** Addresses. */
   href: string;
   dataHref: string;
@@ -121,6 +125,7 @@ export function cell(paper: string, layerId: string): Cell | null {
     blockedBy: raw.blocked_by,
     unrecordedUpstream: raw.unrecorded_upstream,
     versions: history(paper, layerId),
+    approved: raw.approved,
     produces: (layer.produces ?? []).map(p => fill(p, paper)),
     command: layer.command ? fill(layer.command, paper) : undefined,
     href: `${base}/papers/${paper}/${layerId}/`,
@@ -150,6 +155,75 @@ export function fill_of(paper: string): { done: number; total: number } {
     done: cs.filter(c => c.state === 'current' || c.state === 'n/a').length,
     total: cs.length,
   };
+}
+
+/** Layers that need this one. The graph runs both ways: a layer page wants to say what it
+ *  feeds as well as what it rests on, since that is what a change here would disturb. */
+export function dependents(layerId: string): LayerDecl[] {
+  return layers.filter(l => (l.needs ?? []).includes(layerId));
+}
+
+/** Longest path from a root, which is the column a node belongs in when the graph is drawn.
+ *  Longest rather than shortest: a node must sit to the right of everything it needs, and
+ *  the shortest path would place it left of a longer dependency. */
+export function depth(layerId: string, seen = new Set<string>()): number {
+  const l = byId[layerId];
+  if (!l || seen.has(layerId)) return 0;
+  seen.add(layerId);
+  const needs = l.needs ?? [];
+  return needs.length ? 1 + Math.max(...needs.map(n => depth(n, new Set(seen)))) : 0;
+}
+
+/** The graph as columns, for drawing. */
+export function columns(scope?: 'paper' | 'corpus'): LayerDecl[][] {
+  const ls = scope ? layers.filter(l => l.scope === scope) : layers;
+  const out: LayerDecl[][] = [];
+  for (const l of ls) {
+    const d = depth(l.id);
+    (out[d] ??= []).push(l);
+  }
+  return out.map(c => c ?? []);
+}
+
+/** Every recorded run across the corpus, newest first — the site-wide changelog. */
+export function allHistory(): (Version & { paper: string; layer: string })[] {
+  return papers
+    .flatMap(p => (LEDGER[p] ?? []).map(e => ({ ...e, paper: p })))
+    .sort((a, b) => (b.ran ?? '').localeCompare(a.ran ?? ''));
+}
+
+/** Fill {{token}} from corpus-facts, flattening one level so `mira.carried` is `mira_carried`.
+ *
+ *  An unknown token throws rather than rendering as {{...}}: a build that fails is a problem
+ *  someone fixes, and a page that quietly shows its own placeholder is one nobody notices.
+ *  Same convention, and same reasoning, as docs/method.md. */
+const FLAT: Record<string, unknown> = (() => {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(facts as Record<string, unknown>)) {
+    out[k] = v;
+    if (v && typeof v === 'object' && !Array.isArray(v)) {
+      for (const [k2, v2] of Object.entries(v as Record<string, unknown>)) {
+        if (typeof v2 !== 'object') out[`${k}_${k2}`] = v2;
+      }
+    }
+  }
+  return out;
+})();
+
+export function resolve(text: string): string {
+  return text.replace(/\{\{(\w+)\}\}/g, (_m, key) => {
+    if (!(key in FLAT)) {
+      throw new Error(
+        `pipeline/layers.yaml uses {{${key}}}, which corpus-facts.json does not define. ` +
+        `Add it to scripts/corpus_facts.py or fix the token.`);
+    }
+    return String(FLAT[key]);
+  });
+}
+
+/** Cells a person has approved, and whose approval still applies to what is there now. */
+export function approvedCells(): Cell[] {
+  return papers.flatMap(p => cells(p).filter(c => c.approved?.applies));
 }
 
 export const STATE_LABEL: Record<CellState, string> = {

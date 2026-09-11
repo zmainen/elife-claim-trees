@@ -20,6 +20,11 @@
 #   produces    paths this writes. `{paper}` is substituted per paper.
 #   views       how a version of this layer can be looked at
 #   command     what runs it. `{paper}` and `{doi}` substituted. Absent means no runner exists.
+#   added       when this layer entered the corpus. A layer is a revision as much as a step.
+#   found       what it found, corpus-wide. `{{token}}` is filled from corpus-facts.json at
+#               build, and an unknown token fails the build — the same convention docs/method.md
+#               uses, and for the same reason: every stale number this site shipped was one
+#               somebody typed into a page.
 #
 # KINDS
 #   step        mechanical, re-runnable from declared inputs
@@ -27,6 +32,14 @@
 #   judgement   a decision by a person or an agent, stored because recomputing destroys it
 #   feature     a capability that revises existing artifacts; runs once, then it is the schema
 #   question    a decision about meaning, then a propagation of it
+#
+# APPROVAL IS NOT A KIND
+#   Review is not a layer. It is an operation on a *version*: a person reads what a layer
+#   produced and approves that version, and the approval names the version it was given to.
+#   When the layer runs again the approval does not follow — it was granted to text that no
+#   longer exists. Approvals live in runs/<paper>/approvals.jsonl, apply to any layer, and are
+#   empty for every cell in this corpus, which is what "no human has checked this" is when it
+#   is a fact about the data rather than a sentence in a preface.
 
 version: 1
 
@@ -136,32 +149,22 @@ layers:
     scope: paper
     title: Claim tree
     question: What does this paper assert, and how do its assertions depend on each other?
+    added: "2026-03"
+    found: >
+      Across {{papers}} papers the corpus holds {{claims}} claims and {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.
     needs: [reconcile, edge-inference, claim-format]
     produces: ["claims/{paper}/*.md"]
     views: [graph, list, table]
     command: "cd extract && python3 -m elife_extract.cli write --draft out/draft-{paper}.json --corpus-dir ../claims"
-
-  # The methodology's Step 5 gate. It is declared here and absent everywhere, which is the
-  # honest rendering of "no human checks this corpus": not a disclaimer in prose but an empty
-  # column in the matrix. A review targets the version it read — when claim-tree produces a
-  # new version, the review of the old one is stale, and the site says so rather than
-  # carrying a tick earned against different text.
-  - id: review
-    kind: judgement
-    scope: paper
-    title: Human review
-    question: Has a person read this tree and approved it?
-    needs: [claim-tree]
-    produces: ["reviews/{paper}.json"]
-    views: [table, comparison]
-    reviews: claim-tree
-    requires_human: true
 
   - id: stance
     kind: feature
     scope: paper
     title: Alternatives and stance
     question: What does this paper rule out, and what does it merely entertain?
+    added: "2026-09-10"
+    found: >
+      A missing node does not only lose information, it misdirects the edges that would have pointed at it. Five eliminative relations were found aiming at claims their own paper asserts. {{dangling_rules_out}} eliminative edges still name prose that resolves to no claim.
     needs: [claim-tree, claim-format]
     produces: ["claims/{paper}/alt-*.md"]
     views: [graph, list]
@@ -182,6 +185,9 @@ layers:
     scope: paper
     title: Verification
     question: Did anyone check, and what did they find?
+    added: "2026-09-06"
+    found: >
+      {{eligible_with_record}} of {{eligible_claims}} claims that a re-run could settle carry a reproduction record, and their outcomes are not uniform. Observing the runs from outside also showed that most records were reached by reading a deposit rather than by running the paper's own script.
     needs: [claim-tree]
     reads: ["verification/{paper}/verify.py"]
     produces: ["verification/{paper}/provenance.json"]
@@ -195,6 +201,9 @@ layers:
     scope: paper
     title: Coverage
     question: What does the paper assert that no claim represents?
+    added: "2026-09-10"
+    found: >
+      Gädeke first. The paper cut into spans and each adjudicated against the claim tree, which is how a tree is measured against its paper rather than against another tree. The mechanical match left 36 spans unaccounted for; 22 were the matcher being wrong and 14 were real.
     needs: [claim-tree]
     produces: ["coverage/{paper}.json"]
     views: [document, table]
@@ -220,6 +229,19 @@ layers:
     views: [document]
     command: "cd extract && python3 -m elife_extract.cli mark --doi {doi} --paper-slug {paper} --claims-dir ../claims/{paper} --mapping ../mappings/{paper}.json -o ../marked/{paper}.marked.md"
 
+  # Distinct from verification, which re-runs the authors' own deposited code against their
+  # own data. Replication asks whether an independent study found the same thing — a different
+  # question, with a different kind of evidence, and one this corpus has never asked. The
+  # `replicates` relation is defined in the schema and used zero times. Declared so that the
+  # gap is a column rather than an omission.
+  - id: replication
+    kind: step
+    scope: paper
+    title: Replication
+    question: Has an independent study found the same thing?
+    needs: [claim-tree]
+    views: [table, comparison]
+
   # ── interchange ────────────────────────────────────────────────────────────
   # Fans out: one tree into three encodings that never rejoin.
 
@@ -229,6 +251,9 @@ layers:
     scope: paper
     title: MIRA export
     question: What does the schema eLife reads carry, and what does it drop?
+    added: "2026-09-09"
+    found: >
+      {{mira_carried}} of {{mira_relations}} relations reach the export, with {{mira_our_violations}} validation violations attributable to the encoding. The gaps that remain are specific: {{mira_lost}} paper-level scope relations the schema has no node for, and {{mira_verification_records}} verification records for which no interchange format has a node type at all.
     needs: [claim-tree, stance, relation-vocab]
     reads: [scripts/export_mira.py]
     produces:

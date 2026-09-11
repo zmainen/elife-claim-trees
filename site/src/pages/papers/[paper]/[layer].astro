@@ -1,0 +1,277 @@
+---
+// One paper, one layer — a cell.
+//
+// This route also answers the old /papers/<paper>/<claim> URLs. Two dynamic routes cannot
+// share a path segment, and a claim was never a page of its own: it opens as a drawer on the
+// paper. So the segment is dispatched — a layer id renders the cell, a claim slug redirects
+// to the drawer — rather than moving every claim URL to make room.
+import Layout from '../../../layouts/Layout.astro';
+import LayerState from '../../../components/LayerState.astro';
+import { getCollection, render } from 'astro:content';
+import { paperLayers, byId, cell, STATE_LABEL } from '../../../lib/pipeline';
+import corpus from '../../../data/claims.json';
+import { readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+export async function getStaticPaths() {
+  const formats = await getCollection('formats');
+  const paths: any[] = [];
+  for (const paper of (corpus as any).papers) {
+    for (const l of paperLayers) {
+      paths.push({
+        params: { paper: paper.slug, layer: l.id },
+        props: {
+          kind: 'layer', layerId: l.id, paper,
+          report: formats.find(f => f.id === paper.slug),
+        },
+      });
+    }
+    for (const claim of paper.claims) {
+      // A claim slug colliding with a layer id would shadow the layer. None does today, and
+      // the guard says so rather than leaving it to chance.
+      if (paperLayers.some(l => l.id === claim.slug)) continue;
+      paths.push({
+        params: { paper: paper.slug, layer: claim.slug },
+        props: { kind: 'claim', claimSlug: claim.slug, paper },
+      });
+    }
+  }
+  return paths;
+}
+
+const { kind, layerId, claimSlug, paper, report } = Astro.props as any;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const url = (p: string) => `${base}${p}/`;
+
+if (kind === 'claim') {
+  return Astro.redirect(`${base}/papers/${paper.slug}/?claim=${claimSlug}`, 301);
+}
+
+const layer = byId[layerId];
+const c = cell(paper.slug, layerId)!;
+const rendered = report ? await render(report) : null;
+const showReport = layerId === 'formats-report' && rendered && c.state !== 'absent';
+const Content = rendered?.Content;
+
+// The layer's own output, read from the artifact it produced. A reader's claims and the
+// quote each was found in are the provenance this whole corpus rests on, and they were only
+// ever visible for one paper on one narrated page. They belong on the cell.
+function readRun(paths: string[]) {
+  for (const rel of paths) {
+    if (!rel.endsWith('.output.json')) continue;
+    const abs = join(process.cwd(), '..', rel);
+    if (!existsSync(abs)) continue;
+    try {
+      const d = JSON.parse(readFileSync(abs, 'utf-8'));
+      if (Array.isArray(d?.claims)) return { path: rel, model: d.model, agent: d.agent, claims: d.claims };
+    } catch { /* a malformed run record is not worth failing the page over */ }
+  }
+  return null;
+}
+const run = readRun(c.produces);
+
+const TONE: Record<string, string> = {
+  current: 'text-emerald-700 dark:text-emerald-400 border-emerald-500 dark:border-emerald-600',
+  stale: 'text-amber-700 dark:text-amber-400 border-amber-500',
+  blocked: 'text-orange-700 dark:text-orange-400 border-orange-400',
+  absent: 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700',
+  'n/a': 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700',
+  open: 'text-blue-700 dark:text-blue-400 border-blue-400',
+  unrecorded: 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700',
+};
+---
+
+<Layout title={`${layer.title} — ${paper.slug}`} description={`${layer.question} — for ${paper.title}`}>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+
+    <nav class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+      <a href={url('/papers')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">Papers</a>
+      <span class="mx-2">/</span>
+      <a href={url(`/papers/${paper.slug}`)} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">{paper.slug}</a>
+      <span class="mx-2">/</span><span class="font-mono">{layer.id}</span>
+    </nav>
+
+    <header class="mb-8">
+      <div class="flex flex-wrap items-baseline gap-3 mb-2">
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0">{layer.title}</h1>
+        <span class={`font-mono text-xs px-2 py-0.5 rounded border ${TONE[c.state]}`}>
+          {STATE_LABEL[c.state]}{c.v ? ` · v${c.v}` : ''}
+        </span>
+      </div>
+      <p class="text-gray-700 dark:text-gray-300 italic m-0 mb-2 leading-snug">{layer.question}</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 m-0">
+        for <a href={url(`/papers/${paper.slug}`)} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">{paper.title}</a>
+        <span class="mx-1">·</span>
+        <a href={url(`/pipeline/${layer.id}`)} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">this layer across all papers</a>
+        <span class="mx-1">·</span>
+        <a href={c.dataHref} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">json</a>
+      </p>
+    </header>
+
+    <div class={`border rounded-lg p-4 mb-8 ${c.approved?.applies
+        ? 'border-emerald-400 dark:border-emerald-700' : 'border-gray-200 dark:border-gray-700'}`}>
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 m-0 mb-1.5">
+        {c.approved?.applies ? 'Approved' : 'Not approved'}
+      </h2>
+      {c.approved?.applies ? (
+        <p class="text-sm text-gray-700 dark:text-gray-300 m-0">
+          v{c.approved.v} read and approved by {c.approved.by} on {c.approved.when?.slice(0, 10)}.
+          {c.approved.note ? ` ${c.approved.note}` : ''}
+        </p>
+      ) : c.approved ? (
+        <p class="text-sm text-gray-700 dark:text-gray-300 m-0">
+          v{c.approved.v} was approved by {c.approved.by}, and this layer has run since. An
+          approval names the version it was given to; it does not follow the layer forward.
+        </p>
+      ) : (
+        <p class="text-sm text-gray-700 dark:text-gray-300 m-0">
+          Nobody has read this output and approved it. Approval is an operation on a version,
+          not a step of its own — it is recorded against the version it was granted to, so
+          running this layer again does not carry it forward.
+        </p>
+      )}
+    </div>
+
+    {c.state === 'stale' && c.moved && (
+      <div class="border border-amber-400 dark:border-amber-700 rounded-lg p-4 mb-8">
+        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 m-0 mb-2">Out of date</h2>
+        <p class="text-sm text-gray-700 dark:text-gray-300 m-0 mb-2">These inputs changed after this ran:</p>
+        <ul class="list-none p-0 m-0 font-mono text-xs text-gray-600 dark:text-gray-400 space-y-0.5">
+          {c.moved.map((p: string) => <li>{p}</li>)}
+        </ul>
+      </div>
+    )}
+
+    {c.state === 'absent' && (
+      <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-8">
+        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 m-0 mb-2">Not run for this paper</h2>
+        {layer.requires_human ? (
+          <p class="text-sm text-gray-700 dark:text-gray-300 m-0">
+            This layer needs a person. It cannot be filled by running anything.
+          </p>
+        ) : c.command ? (
+          <>
+            <p class="text-sm text-gray-700 dark:text-gray-300 m-0 mb-2">What would fill it:</p>
+            <pre class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded p-3 text-xs text-gray-700 dark:text-gray-300 overflow-x-auto m-0"><code>python3 scripts/pipeline.py run {paper.slug} {layer.id}</code></pre>
+          </>
+        ) : (
+          <p class="text-sm text-gray-700 dark:text-gray-300 m-0">No runner is declared for this layer.</p>
+        )}
+      </div>
+    )}
+
+    {showReport && Content && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">What this layer produced</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">
+          <code>exports/{paper.slug}.formats.md</code>, rendered rather than restated — so a figure
+          here cannot disagree with the export it describes.
+        </p>
+        <article class="formats-report"><Content /></article>
+      </section>
+    )}
+
+    {run && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">
+          What it produced <span class="font-mono text-sm text-gray-400 dark:text-gray-500">{run.claims.length} claims</span>
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">
+          Read from <code>{run.path}</code>{run.model ? <> · answered by <code>{run.model}</code></> : null}.
+          Each claim as this agent wrote it, with the passage it was found in.
+        </p>
+        <ol class="list-none p-0 m-0 space-y-4">
+          {run.claims.map((cl: any, i: number) => (
+            <li class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+              <p class="text-[15px] text-gray-800 dark:text-gray-200 m-0 leading-snug">{cl.claim}</p>
+              <p class="font-mono text-[11px] text-gray-500 dark:text-gray-400 m-0 mt-1">
+                {[cl.role, cl.claim_type, cl.panel, cl.confidence].filter(Boolean).join(' · ')}
+              </p>
+              {cl.evidence && (
+                <p class="text-xs text-gray-600 dark:text-gray-400 m-0 mt-1.5 italic leading-snug">
+                  “{String(cl.evidence).slice(0, 320)}{String(cl.evidence).length > 320 ? '…' : ''}”
+                </p>
+              )}
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    {c.produces.length > 0 && (
+      <section class="mb-10">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Artifacts</h2>
+        <ul class="list-none p-0 m-0 space-y-1.5">
+          {c.produces.map((p: string) => (
+            <li class="text-sm">
+              {p.startsWith('exports/')
+                ? <a href={`${base}/${p}`} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{p}</a>
+                : <span class="font-mono text-xs text-gray-600 dark:text-gray-400">{p}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {c.versions.length > 0 && (
+      <section class="mb-10">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">Versions</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          From the run ledger. There is no changelog beside it to keep in step.
+        </p>
+        <ol class="list-none p-0 m-0 space-y-3">
+          {c.versions.map((v: any) => (
+            <li class="border-l-2 border-gray-200 dark:border-gray-700 pl-3">
+              <p class="font-mono text-xs text-gray-500 dark:text-gray-400 m-0">
+                v{v.v} · {v.ran?.slice(0, 10)} · {v.by}
+                {v.backfilled && <span class="ml-2 text-gray-400 dark:text-gray-600">backfilled from the artifact</span>}
+              </p>
+              {v.note && <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-snug">{v.note}</p>}
+              {v.cmd && <p class="font-mono text-[11px] text-gray-500 dark:text-gray-400 m-0 mt-1 break-all">{v.cmd}</p>}
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    <details class="mb-10">
+      <summary class="text-sm text-gray-600 dark:text-gray-400 cursor-pointer">This layer across the corpus</summary>
+      <div class="mt-4"><LayerState layer={layer} /></div>
+    </details>
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm">
+      <a href={url(`/papers/${paper.slug}`)} class="text-gray-500 dark:text-gray-400 no-underline hover:text-gray-700 dark:hover:text-gray-300">← {paper.slug}</a>
+    </footer>
+
+  </div>
+</Layout>
+
+<style is:global>
+  /* The formats report arrives as generated Markdown; these are the same rules the retired
+     /formats/<paper> page used, kept with the view rather than with the route. */
+  .formats-report h1 { font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem; }
+  .formats-report h2 { font-size: 1rem; font-weight: 600; margin: 2.5rem 0 .75rem;
+    padding-top: 1.25rem; border-top: 1px solid var(--fr-rule); }
+  .formats-report p, .formats-report li { font-size: .9375rem; line-height: 1.7; color: var(--fr-body); }
+  .formats-report p { margin: 0 0 1rem; }
+  .formats-report ul { margin: 0 0 1rem; padding-left: 1.25rem; list-style: disc; }
+  .formats-report strong { color: var(--fr-strong); font-weight: 600; }
+  .formats-report code { font-size: .8125rem; background: var(--fr-code-bg); padding: .1em .35em; border-radius: 3px; }
+  .formats-report hr { margin: 2rem 0 1rem; border: 0; border-top: 1px solid var(--fr-rule); }
+  .formats-report hr + p { font-size: .8125rem; color: var(--fr-muted); }
+  .formats-report table { display: block; overflow-x: auto; width: 100%; border-collapse: collapse;
+    font-size: .8125rem; margin: 0 0 1.5rem; }
+  .formats-report th, .formats-report td { padding: .4rem .75rem; text-align: left;
+    border-bottom: 1px solid var(--fr-rule); white-space: nowrap; }
+  .formats-report th { color: var(--fr-muted); font-weight: 500; }
+  .formats-report td { color: var(--fr-body); }
+  .formats-report td:nth-child(2) { text-align: right; font-variant-numeric: tabular-nums; }
+  .formats-report {
+    --fr-strong: #111827; --fr-body: #374151; --fr-muted: #6b7280;
+    --fr-rule: #e5e7eb; --fr-code-bg: #f3f4f6;
+  }
+  :root[data-theme='dark'] .formats-report {
+    --fr-strong: #f3f4f6; --fr-body: #d1d5db; --fr-muted: #9ca3af;
+    --fr-rule: #374151; --fr-code-bg: #1f2937;
+  }
+</style>

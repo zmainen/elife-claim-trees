@@ -1,0 +1,267 @@
+---
+// The pipeline, at corpus altitude.
+//
+// The matrix is the query with both paper and layer unbound. Every cell links to the layer
+// in general; the state it shows is computed from the ledger, never declared here.
+import Layout from '../../layouts/Layout.astro';
+import {
+  layers, groups, papers, columns, cells, titleOf, fill_of, inState, byId,
+  corpusLayers, paperLayers, STATE_LABEL, allHistory, resolve, approvedCells,
+} from '../../lib/pipeline';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const url = (p: string) => `${base}${p}/`;
+
+const cols = columns();
+const stale = inState('stale', 'blocked');
+const absent = inState('absent');
+const open = corpusLayers.filter(l => l.open);
+const recent = allHistory().filter(h => !h.backfilled).slice(0, 6);
+// Findings belong to the layer that produced them and carry the date it was added, so a
+// returning reader sees what is new rather than a page that has quietly changed.
+const found = layers.filter(l => l.found)
+  .sort((a, b) => (a.added ?? '').localeCompare(b.added ?? ''));
+
+const shortOf = (slug: string) =>
+  slug.split('-')[0].replace(/^./, c => c.toUpperCase());
+
+// One tone per state, as classes rather than inline styles so both themes are declared.
+const TONE: Record<string, string> = {
+  current: 'bg-emerald-600 dark:bg-emerald-500',
+  stale:   'bg-amber-500 dark:bg-amber-400',
+  blocked: 'bg-orange-300 dark:bg-orange-700',
+  absent:  'bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700',
+  'n/a':   'bg-gray-200 dark:bg-gray-700',
+  open:    'bg-blue-200 dark:bg-blue-900',
+  unrecorded: 'bg-gray-300 dark:bg-gray-600',
+};
+const approved = approvedCells();
+const totalCells = papers.reduce((n, p) => n + cells(p).length, 0);
+const counts: Record<string, number> = {};
+for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.state] ?? 0) + 1;
+---
+
+<Layout title="Pipeline" description="The processing graph: what each layer asks, what it produces, and which papers have been through it.">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+
+    <header class="mb-10 max-w-3xl">
+      <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">Pipeline</h1>
+      <p class="text-gray-600 dark:text-gray-400 m-0 leading-relaxed">
+        A layer is a question asked of a paper. It reads declared inputs, produces a version, and
+        every run is recorded with the content hash of what it read — so whether a result is still
+        current is asked of the files rather than of anyone's memory. This page is that graph across
+        all {papers.length} papers; each layer's own page asks it of one.
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 m-0">
+        How the whole thing works is in <a href={url('/pipeline/method')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">the methodology</a>,
+        why it is shaped this way in <a href={`${base}/design/2026-09-11-layers-as-pipeline.html`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">the design note</a>,
+        and each layer explains itself on its own page.
+        Generated from <code>pipeline/layers.yaml</code> and <code>runs/&lt;paper&gt;/ledger.jsonl</code>.
+        Every cell is fetchable at <code>/data/&lt;paper&gt;/&lt;layer&gt;.json</code>.
+      </p>
+    </header>
+
+    <!-- ── the graph ─────────────────────────────────────────────── -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">The graph</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+      Left to right by dependency. Dashed borders are corpus-scope layers — schema and vocabulary
+      decisions that apply to every paper, and when they change make every dependent cell stale.
+    </p>
+
+    <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg mb-10">
+      <div class="flex gap-4 p-5 min-w-max">
+        {cols.map((col, i) => (
+          <div class="flex flex-col gap-2.5 min-w-[168px]">
+            <div class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 pb-1.5 border-b border-gray-200 dark:border-gray-700">
+              depth {i}
+            </div>
+            {col.map(l => (
+              <a href={url(`/pipeline/${l.id}`)}
+                 class={`block p-2.5 no-underline rounded transition-colors border
+                   ${l.scope === 'corpus'
+                     ? 'border-dashed border-amber-500 dark:border-amber-500/70'
+                     : 'border-gray-200 dark:border-gray-700'}
+                   hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-gray-900/40`}>
+                <span class="block font-mono text-[11.5px] text-gray-900 dark:text-gray-100">{l.id}</span>
+                <span class="block text-[10.5px] text-gray-500 dark:text-gray-400">
+                  {l.kind}{l.group ? ` · ${l.group}` : ''}{l.open ? ' · open' : ''}
+                  {l.requires_human ? ' · human' : ''}
+                </span>
+              </a>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- ── the matrix ────────────────────────────────────────────── -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Which papers have which layer</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+      A jagged edge is the normal condition, not a defect. A blank means the layer has not been run
+      for that paper — not that it was run and found nothing.
+    </p>
+
+    <div class="overflow-x-auto mb-4">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr>
+            <th class="text-left py-2 pr-3 text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 font-medium">Paper</th>
+            {paperLayers.map(l => (
+              <th class="py-2 px-1 text-[9.5px] font-mono uppercase tracking-wide text-gray-400 dark:text-gray-500 font-medium">
+                <a href={url(`/pipeline/${l.id}`)} class="no-underline text-gray-400 dark:text-gray-500 hover:text-amber-700 dark:hover:text-amber-400">
+                  {l.id.slice(0, 8)}
+                </a>
+              </th>
+            ))}
+            <th class="py-2 pl-2 text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 font-medium text-right">Fill</th>
+          </tr>
+        </thead>
+        <tbody>
+          {papers.map(p => {
+            const f = fill_of(p);
+            return (
+              <tr class="border-t border-gray-100 dark:border-gray-800">
+                <td class="py-1.5 pr-3 whitespace-nowrap">
+                  <a href={url(`/papers/${p}`)} class="text-sm text-gray-800 dark:text-gray-200 no-underline hover:text-amber-700 dark:hover:text-amber-400">
+                    {shortOf(p)}
+                  </a>
+                </td>
+                {cells(p).map(c => (
+                  <td class="py-1.5 px-1 text-center">
+                    <a href={url(`/pipeline/${c.layer.id}`)}
+                       title={`${c.layer.title} — ${STATE_LABEL[c.state]}${c.v ? ` (v${c.v})` : ''}`}
+                       class={`inline-block w-3.5 h-3.5 rounded-sm ${TONE[c.state] ?? TONE.absent}`}></a>
+                  </td>
+                ))}
+                <td class="py-1.5 pl-2 text-right font-mono text-xs text-gray-500 dark:text-gray-400 tabular-nums">
+                  {f.done}/{f.total}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-500 dark:text-gray-400 mb-12">
+      {Object.entries(counts).sort().map(([s, n]) => (
+        <span class="flex items-center gap-2">
+          <i class={`inline-block w-3 h-3 rounded-sm ${TONE[s] ?? TONE.absent}`}></i>
+          {STATE_LABEL[s as keyof typeof STATE_LABEL] ?? s} {n}
+        </span>
+      ))}
+    </div>
+
+    <!-- ── approval, which is not a state ────────────────────────── -->
+    <section class="mb-12 border-l-2 border-amber-400 dark:border-amber-600 pl-4">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 m-0 mb-1">
+        Approved by a person: <span class="font-mono">{approved.length} of {totalCells}</span>
+      </h2>
+      <p class="text-sm text-gray-700 dark:text-gray-300 m-0 max-w-3xl leading-relaxed">
+        Approval is an operation on a version, not a layer of its own: a person reads what a
+        layer produced and approves <em>that output</em>. The approval names the version it was
+        granted to, so running the layer again does not carry it forward. Every cell above can
+        be current — its inputs unchanged since it ran — and unread by anyone. That is the
+        state of this corpus, and it is a count rather than a caveat.
+      </p>
+    </section>
+
+    <!-- ── the two standing queries ──────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-6 mb-12">
+      <section>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+          Out of date <span class="font-mono text-sm text-gray-400 dark:text-gray-500">{stale.length}</span>
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+          A cell whose declared inputs have changed since it ran, or which sits behind one.
+        </p>
+        {stale.length === 0 ? (
+          <p class="text-sm text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg p-4 m-0">
+            Nothing. Every recorded run still matches the files it read.
+          </p>
+        ) : (
+          <ul class="list-none p-0 m-0 space-y-1.5">
+            {stale.map(c => (
+              <li class="text-sm">
+                <span class="font-mono text-xs text-amber-700 dark:text-amber-400">{c.paper} · {c.layer.id}</span>
+                {c.moved && <span class="block text-xs text-gray-500 dark:text-gray-400 font-mono">← {c.moved[0]}</span>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+          Undecided <span class="font-mono text-sm text-gray-400 dark:text-gray-500">{open.length}</span>
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+          Question layers with no answer yet. Everything downstream of one is provisional.
+        </p>
+        <ul class="list-none p-0 m-0 space-y-2">
+          {open.map(l => (
+            <li>
+              <a href={url(`/pipeline/${l.id}`)} class="text-sm text-amber-700 dark:text-amber-400 no-underline hover:underline font-medium">{l.title}</a>
+              <span class="block text-sm text-gray-600 dark:text-gray-400 leading-snug">{l.question}</span>
+              {l.issue && (
+                <a href={`https://github.com/zmainen/elife-claim-trees/issues/${l.issue}`}
+                   class="text-xs font-mono text-gray-500 dark:text-gray-400 no-underline hover:underline" target="_blank">#{l.issue}</a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+
+    <!-- ── what each layer found ─────────────────────────────────── -->
+    <section class="mb-12">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">What each layer found</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+        A finding belongs to the layer that produced it and carries the date that layer was added.
+        Every figure is filled from <code>corpus-facts.json</code> at build; an unknown one fails
+        the build rather than rendering as a placeholder nobody notices.
+      </p>
+      <div class="space-y-5">
+        {found.map(l => (
+          <section class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+            <p class="font-mono text-xs text-amber-700 dark:text-amber-400 m-0 mb-1">
+              <a href={url(`/pipeline/${l.id}`)} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">{l.id}</a>
+              {l.added ? ` · ${l.added}` : ''}
+            </p>
+            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0 max-w-3xl"
+               set:html={resolve(l.found!).replace(/`([^`]+)`/g, '<code class="text-xs">$1</code>')}></p>
+          </section>
+        ))}
+      </div>
+    </section>
+
+    <!-- ── what has run lately ───────────────────────────────────── -->
+    {recent.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">Recently run</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          From the ledger, excluding entries backfilled from artifacts that predate it.
+        </p>
+        <ul class="list-none p-0 m-0 space-y-2.5">
+          {recent.map(h => (
+            <li class="text-sm border-l-2 border-gray-200 dark:border-gray-700 pl-3">
+              <span class="font-mono text-xs text-gray-500 dark:text-gray-400">
+                {h.ran?.slice(0, 10)} · {(h as any).paper} ·
+                <a href={url(`/pipeline/${(h as any).layer}`)} class="text-amber-700 dark:text-amber-400 no-underline hover:underline"> {(h as any).layer}</a>
+                {' '}v{h.v}
+              </span>
+              {h.note && <span class="block text-gray-700 dark:text-gray-300 leading-snug">{h.note}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+      {layers.length} layers · {Object.keys(groups).length} groups ·
+      {' '}{absent.length} cells not yet run ·
+      <a href={`${base}/data/index.json`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline"> the whole matrix as JSON</a>
+    </footer>
+
+  </div>
+</Layout>

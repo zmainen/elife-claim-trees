@@ -1,0 +1,159 @@
+---
+// Agents.
+//
+// The corpus is produced by language models and checked by no human. Saying that in a sentence
+// and showing nothing asks to be taken on trust. This page shows the record: which role read
+// which part of the paper, under which prompt, using which model, what each proposed, and the
+// sentence it based each claim on.
+//
+// Data comes from scripts/agents_report.py, which reads the committed prompts and the saved
+// run output. Only Gädeke has a saved trace; the page says so rather than implying the rest.
+import Layout from '../../layouts/Layout.astro';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+const agents = JSON.parse(readFileSync(
+  join(process.cwd(), 'src/data/agents.json'), 'utf8'));
+const facts = JSON.parse(readFileSync(
+  join(process.cwd(), 'src/data/corpus-facts.json'), 'utf8'));
+
+const roles = agents.roles as any[];
+const traced = agents.papers_with_trace as string[];
+const g = agents.papers['gadeke-2026-guilt-insula'];
+
+const STAGES: Record<string, string> = {
+  read: 'Read the paper',
+  reconcile: 'Reconcile and review',
+  relate: 'Infer relations',
+  cover: 'Adjudicate coverage',
+};
+const stageOrder = ['read', 'reconcile', 'relate', 'cover'];
+
+// Claims ordered so the ones more than one reader found come first — that is the part a
+// reader should see, and there are only a few.
+const claims = [...g.claims].sort(
+  (a: any, b: any) => b.sources.length - a.sources.length);
+const agreed = claims.filter((c: any) => c.sources.length > 1);
+
+const model = g.config.model_results ?? Object.values(g.models)[0];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const AGENT_LABEL: Record<string, string> = {
+  results: 'results-reader', caption: 'caption-reader', structure: 'structure-reader',
+};
+---
+
+<Layout title="Induction">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+
+    <nav class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+      <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">Pipeline</a>
+      <span class="mx-2">/</span><span class="font-mono">induction</span>
+      <span class="mx-2 text-gray-300 dark:text-gray-700">·</span>
+      <span class="text-xs">a group of five layers</span>
+    </nav>
+
+    <header class="mb-10">
+      <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">Agents</h1>
+      <p class="text-gray-600 dark:text-gray-400 m-0 max-w-2xl leading-relaxed">
+        Every claim in this corpus was proposed by a language model and reviewed by another
+        one. No human has checked any of them. This page shows which role did what, under
+        which prompt, and what it produced for the worked example.
+      </p>
+    </header>
+
+    <div class="rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/60 dark:bg-amber-950/20 p-5 mb-12">
+      <p class="text-sm text-gray-800 dark:text-gray-200 m-0 leading-relaxed">
+        <strong>There is no human in this pipeline.</strong> The role below called
+        <code>external-reviewer</code> is a second model pass, not a person. A human review
+        step could be inserted and is not, so every claim, relation and verdict on this site
+        should be read as a model's output that has been recorded rather than as a finding
+        that has been checked.
+      </p>
+    </div>
+
+    <!-- Roles -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">The seven roles</h2>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-2xl leading-relaxed">
+      Three readers work in parallel on deliberately different slices of the paper, so that
+      agreement between them carries information. The rest run in sequence over their output.
+      Every prompt is a committed file and is reproduced in full below.
+    </p>
+
+    {stageOrder.map(stage => (
+      <div class="mb-8">
+        <h3 class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3">{STAGES[stage]}</h3>
+        <div class="space-y-3">
+          {roles.filter((r: any) => r.stage === stage).map((r: any) => (
+            <details class="group border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <summary class="cursor-pointer list-none px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40">
+                <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <code class="text-sm font-semibold text-gray-900 dark:text-gray-100">{r.id}</code>
+                  {r.agent_key && g.per_agent_counts[r.agent_key] !== undefined && (
+                    <span class="text-xs font-mono text-amber-700 dark:text-amber-400">
+                      {g.per_agent_counts[r.agent_key]} claims proposed
+                    </span>
+                  )}
+                  <span class="text-xs font-mono text-gray-400 dark:text-gray-500 ml-auto">
+                    prompt · {r.prompt_lines} lines
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 m-0 mt-1">
+                  Reads {r.reads}. Returns {r.returns}.
+                </p>
+              </summary>
+              <div class="border-t border-gray-200 dark:border-gray-700">
+                <p class="px-4 py-2 text-xs font-mono text-gray-500 dark:text-gray-400 m-0 bg-gray-50 dark:bg-gray-800/40">
+                  {r.prompt_path}
+                </p>
+                <pre class="m-0 p-4 text-xs overflow-x-auto bg-white dark:bg-[#0f0f0f] text-gray-800 dark:text-gray-200 whitespace-pre-wrap">{r.prompt}</pre>
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    ))}
+
+    <!-- The run -->
+    <section class="mt-12 mb-10 border border-gray-200 dark:border-gray-700 rounded-lg p-5">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 m-0 mb-2">What they produced, per paper</h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400 m-0 mb-3 leading-relaxed">
+        A run belongs to the paper it read. Each reader's output — the claims it found and the
+        quote it found them in — is on that paper's cell for this layer, with the prompt hash and
+        the model that answered.
+      </p>
+      <p class="text-sm m-0">
+        {traced.length === 0
+          ? <span class="text-gray-500 dark:text-gray-400">No paper has a recorded trace yet.</span>
+          : traced.map((s: string) => (
+              <a href={`${base}/papers/${s}/reconcile/`} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline mr-3">{s}</a>
+            ))}
+      </p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 m-0 mt-3">
+        {traced.length} of {Object.keys(agents.papers).length >= 0 ? 10 : 0} papers. The other nine
+        were extracted before runs were recorded, so their reader-level history does not exist and
+        would have to be regenerated.
+      </p>
+    </section>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What this record does not cover</h2>
+    <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
+      <p>
+        <strong>{traced.length} of {facts.papers} papers has a saved agent trace.</strong> The
+        rest were extracted before runs were being saved, so their agent-level history no
+        longer exists and would have to be regenerated. Rather than show nine empty templates,
+        this page covers the worked example and states the gap.
+      </p>
+      <p>
+        The draft above holds {g.drafted} claims. The published tree for this paper holds a
+        different number: the reconciler and reviewer merge, split and drop claims, and the
+        relation layer is a separate pass. The draft is the readers' output, not the corpus.
+      </p>
+    </div>
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm flex flex-wrap gap-x-6 gap-y-2">
+      <a href={`${base}/extract/`} class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 no-underline">Extract — the pipeline run end to end</a>
+      <a href={`${base}/methodology/`} class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 no-underline">Methodology</a>
+      <a href={`${base}/layers/`} class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 no-underline">Layers</a>
+    </footer>
+  </div>
+</Layout>

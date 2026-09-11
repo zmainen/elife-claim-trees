@@ -478,7 +478,9 @@
         ]
       },
       {
+        "added": "2026-03",
         "command": "cd extract && python3 -m elife_extract.cli write --draft out/draft-{paper}.json --corpus-dir ../claims",
+        "found": "Across {{papers}} papers the corpus holds {{claims}} claims and {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.\n",
         "id": "claim-tree",
         "kind": "step",
         "needs": [
@@ -499,25 +501,8 @@
         ]
       },
       {
-        "id": "review",
-        "kind": "judgement",
-        "needs": [
-          "claim-tree"
-        ],
-        "produces": [
-          "reviews/{paper}.json"
-        ],
-        "question": "Has a person read this tree and approved it?",
-        "requires_human": true,
-        "reviews": "claim-tree",
-        "scope": "paper",
-        "title": "Human review",
-        "views": [
-          "table",
-          "comparison"
-        ]
-      },
-      {
+        "added": "2026-09-10",
+        "found": "A missing node does not only lose information, it misdirects the edges that would have pointed at it. Five eliminative relations were found aiming at claims their own paper asserts. {{dangling_rules_out}} eliminative edges still name prose that resolves to no claim.\n",
         "id": "stance",
         "kind": "feature",
         "needs": [
@@ -553,7 +538,9 @@
         ]
       },
       {
+        "added": "2026-09-06",
         "command": "python3 verification/audit_run.py {paper}",
+        "found": "{{eligible_with_record}} of {{eligible_claims}} claims that a re-run could settle carry a reproduction record, and their outcomes are not uniform. Observing the runs from outside also showed that most records were reached by reading a deposit rather than by running the paper's own script.\n",
         "id": "verification",
         "kind": "step",
         "needs": [
@@ -575,7 +562,9 @@
         ]
       },
       {
+        "added": "2026-09-10",
         "command": "cd extract && python3 -m elife_extract.cli coverage --doi {doi} --paper-slug {paper} --claims-dir ../claims/{paper} --json ../coverage/{paper}.json",
+        "found": "G\u00e4deke first. The paper cut into spans and each adjudicated against the claim tree, which is how a tree is measured against its paper rather than against another tree. The mechanical match left 36 spans unaccounted for; 22 were the matcher being wrong and 14 were real.\n",
         "id": "coverage",
         "kind": "step",
         "needs": [
@@ -628,7 +617,23 @@
         ]
       },
       {
+        "id": "replication",
+        "kind": "step",
+        "needs": [
+          "claim-tree"
+        ],
+        "question": "Has an independent study found the same thing?",
+        "scope": "paper",
+        "title": "Replication",
+        "views": [
+          "table",
+          "comparison"
+        ]
+      },
+      {
+        "added": "2026-09-09",
         "command": "python3 scripts/export_mira.py {paper}",
+        "found": "{{mira_carried}} of {{mira_relations}} relations reach the export, with {{mira_our_violations}} validation violations attributable to the encoding. The gaps that remain are specific: {{mira_lost}} paper-level scope relations the schema has no node for, and {{mira_verification_records}} verification records for which no interchange format has a node type at all.\n",
         "group": "interchange",
         "id": "mira-export",
         "kind": "step",
@@ -8794,10 +8799,10 @@
           "scope": "corpus",
           "state": "open"
         },
-        "results-reader": {
+        "replication": {
           "state": "absent"
         },
-        "review": {
+        "results-reader": {
           "state": "absent"
         },
         "stance": {
@@ -8919,10 +8924,10 @@
           "scope": "corpus",
           "state": "open"
         },
-        "results-reader": {
+        "replication": {
           "state": "absent"
         },
-        "review": {
+        "results-reader": {
           "state": "absent"
         },
         "stance": {
@@ -9050,10 +9055,10 @@
           "scope": "corpus",
           "state": "open"
         },
-        "results-reader": {
+        "replication": {
           "state": "absent"
         },
-        "review": {
+        "results-reader": {
           "state": "absent"
         },
         "stance": {
@@ -9193,6 +9198,9 @@
           "scope": "corpus",
           "state": "open"
         },
+        "replication": {
+          "state": "absent"
+        },
         "results-reader": {
           "by": "deepseek/deepseek-chat",
           "lost": [],
@@ -9201,9 +9209,6 @@
           "ran": "2026-09-10",
           "state": "current",
           "v": 1
-        },
-        "review": {
-          "state": "absent"
         },
         "stance": {
           "by": "unrecorded",
@@ -9342,10 +9347,10 @@
           "scope": "corpus",
           "state": "open"
         },
-        "results-reader": {
+        "replication": {
           "state": "absent"
         },
-        "review": {
+        "results-reader": {
           "state": "absent"
         },
         "stance": {
@@ -9473,10 +9478,10 @@
           "scope": "corpus",
           "state": "open"
         },
-        "results-reader": {
+        "replication": {
           "state": "absent"
         },
-        "review": {
+        "results-reader": {
           "state": "absent"
         },
         "stance": {
@@ -9595,10 +9600,10 @@
           "scope": "corpus",
           "state": "open"
         },
-        "results-reader": {
+        "replication": {
           "state": "absent"
         },
-        "review": {
+        "results-reader": {
           "state": "absent"
         },
         "stance": {
@@ -9729,10 +9734,10 @@
           "scope": "corpus",
           "state": "open"
         },
-        "results-reader": {
+        "replication": {
           "state": "absent"
         },
-        "review": {
+        "results-reader": {
           "state": "absent"
         },
         "stance": {
@@ -9860,10 +9865,10 @@
           "scope": "corpus",
           "state": "open"
         },
-        "results-reader": {
+        "replication": {
           "state": "absent"
         },
-        "review": {
+        "results-reader": {
           "state": "absent"
         },
         "stance": {
@@ -9985,10 +9990,10 @@
           "scope": "corpus",
           "state": "open"
         },
-        "results-reader": {
+        "replication": {
           "state": "absent"
         },
-        "review": {
+        "results-reader": {
           "state": "absent"
         },
         "stance": {
