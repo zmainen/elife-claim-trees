@@ -78,6 +78,33 @@ def prompt_text(role_id):
         return fh.read()
 
 
+# A role is sent its task file and the contract files its layer declares. The declaration is
+# the source here rather than a second copy of the map in extract/elife_extract/prompts.py:
+# a test holds the two equal, and this script stays standard-library-plus-PyYAML.
+LAYER_OF = {"results-reader": "results-reader", "caption-reader": "caption-reader",
+            "structure-reader": "structure-reader", "reconciler": "reconcile",
+            "external-reviewer": "external-review", "edge-inference": "edge-inference",
+            "coverage-adjudicator": "adjudication"}
+
+
+def declared_reads():
+    import yaml
+    with open(os.path.join(ROOT, "pipeline", "layers.yaml"), encoding="utf-8") as fh:
+        decl = yaml.safe_load(fh)
+    return {l["id"]: l.get("reads") or [] for l in decl["layers"]}
+
+
+def contract_files():
+    d = os.path.join(PROMPTS, "contract")
+    out = []
+    for name in sorted(os.listdir(d)) if os.path.isdir(d) else []:
+        with open(os.path.join(d, name), encoding="utf-8") as fh:
+            text = fh.read()
+        out.append({"path": f"extract/prompts/contract/{name}", "text": text,
+                    "lines": len(text.splitlines())})
+    return out
+
+
 # The reconcile layer's output is the draft; each reader's output names the model that
 # answered it. Both are what `pipeline.py run` records the hashes of.
 READERS = {"results": "results-reader", "caption": "caption-reader",
@@ -131,12 +158,15 @@ def main():
     ap.add_argument("--print", dest="show", action="store_true")
     a = ap.parse_args()
 
+    reads = declared_reads()
     roles = []
     for r in ROLES:
         text = prompt_text(r["id"])
         roles.append({**r, "prompt": text,
                       "prompt_lines": len(text.splitlines()) if text else 0,
-                      "prompt_path": f"extract/prompts/{r['id']}.md" if text else None})
+                      "prompt_path": f"extract/prompts/{r['id']}.md" if text else None,
+                      "contract_paths": [p for p in reads.get(LAYER_OF.get(r["id"], ""), [])
+                                         if "/contract/" in p]})
 
     slugs = sorted(d for d in os.listdir(RUNS)
                    if os.path.isfile(os.path.join(RUNS, d, "reconciler.output.json"))) \
@@ -144,7 +174,8 @@ def main():
     papers = {s: paper_trace(s) for s in slugs}
     papers = {k: v for k, v in papers.items() if v}
 
-    data = {"roles": roles, "papers": papers, "papers_with_trace": sorted(papers)}
+    data = {"roles": roles, "contract": contract_files(), "papers": papers,
+            "papers_with_trace": sorted(papers)}
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as fh:

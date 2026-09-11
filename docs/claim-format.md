@@ -25,6 +25,12 @@ The claim graph connects claim entities through typed directed relations. When c
 | **existence** | An assertion that a phenomenon or entity exists (e.g. "a DAT-independent clearance mechanism operates in the OFC") |
 | **synthesis** | A claim integrating results across multiple papers or datasets |
 | **assessment** | A methodological or quality claim (e.g. "signal-to-noise was stable across sessions as verified by waveform shape") |
+| **hypothesis** | A proposition bet on and not yet evidenced by this paper's results; the type of a `role: hypothesis` claim |
+| **prediction** | A deduced expectation, to be tested by an empirical claim; the type of a `role: prediction` claim |
+
+The last two were used by the corpus before they were listed here: 77 claim files carry them,
+and `docs/method.md` § 4.2 names them as the typical type of those roles. The pipeline's schema
+accepts these seven and nothing else.
 
 Type is a property of the claim entity — it describes the nature of the proposition, not the figure that instantiates it in any given paper.
 

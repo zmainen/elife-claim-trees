@@ -440,6 +440,33 @@ def cmd_mark(args: argparse.Namespace) -> int:
     return 1
 
 
+# ── the prompt contract ──────────────────────────────────────────────────
+
+
+def cmd_contract(args: argparse.Namespace) -> int:
+    """Render the prompt contract from its sources, or check that the committed one is current.
+
+    Not a layer: it produces inputs to layers. The rendered files are declared in
+    pipeline/layers.yaml as what the readers, the reconciler and the reviewer read, so
+    regenerating them after a vocabulary change is what makes every run that read the old
+    definitions stale.
+    """
+    from .contract import CONTRACT_DIR, check, write
+
+    cfg = _cfg(args)
+    if args.write:
+        for p in write(cfg.prompts_dir, cfg.root):
+            print(f"  wrote {p.relative_to(cfg.root)}")
+    stale = check(cfg.prompts_dir, cfg.root)
+    if stale:
+        print(f"error: extract/prompts/{CONTRACT_DIR}/ is not what its sources generate: "
+              f"{', '.join(stale)}\n  run: cd extract && python3 -m elife_extract.cli contract --write",
+              file=sys.stderr)
+        return 1
+    print(f"  extract/prompts/{CONTRACT_DIR}/ is current")
+    return 0
+
+
 # ── the one subcommand that is not a layer ───────────────────────────────
 
 
@@ -771,6 +798,21 @@ def build_parser() -> argparse.ArgumentParser:
     p_mark.add_argument("-o", "--out", help="Output path (default: <root>/marked/<paper>.marked.md).")
     _add_common_args(p_mark)
     p_mark.set_defaults(func=cmd_mark)
+
+    # ── contract (not a layer) ───────────────────────────────────────────
+    p_con = sub.add_parser(
+        "contract", help="Render the prompt contract, or check that the committed one is current.",
+        description=(
+            "The part of every prompt that is generated: the vocabulary of roles, claim types, "
+            "relations and confidence, rendered from vocabulary.py and scripts/relations.py "
+            "with examples quoted from the corpus, and the output schema rendered from "
+            "schema.py. --write regenerates extract/prompts/contract/; without it the command "
+            "only checks, and exits non-zero when the committed files are stale."
+        ),
+    )
+    p_con.add_argument("--write", action="store_true", help="Regenerate the contract files.")
+    _add_common_args(p_con)
+    p_con.set_defaults(func=cmd_contract)
 
     # ── evaluate (not a layer) ───────────────────────────────────────────
     p_eval = sub.add_parser(

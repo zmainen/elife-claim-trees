@@ -70,6 +70,109 @@ EDGE_KEYS = SUPPORTS | OPPOSES | set(GAPS)
 
 DESCRIPTIONS = {**_SUPPORTS, **_OPPOSES, **GAPS}
 
+# Which way an edge points, as a sentence about its two ends. A relation name says that two
+# claims are related and not which is which, and the prompt that asks a model for edges gave it
+# only the name — so `tests` came back from prediction to result as often as from result to
+# prediction. The direction lives here, beside the definition, so the prompt contract and the
+# checker read one rule.
+DIRECTION = {
+    "supports": "from the evidence to the claim it is evidence for",
+    "tests": "from the empirical result to the prediction it tests",
+    "validates": "from the control to the claim whose warrant it strengthens",
+    "confirms": "from the result to the prediction or hypothesis it confirms; the reciprocal of predicts",
+    "predicts": "from the model or hypothesis to the observation it predicts",
+    "extends": "from the later or broader result to the claim it extends",
+    "replicates": "from the independent finding to the claim it reproduces",
+    "contradicts": "from either claim to the other; they cannot both hold",
+    "opposes": "from the claim that stands against to the one it stands against",
+    "refutes": "from the evidence to the prediction, hypothesis or alternative it is incompatible with",
+    "rules-out": "from the control or evidence to the alternative explanation it eliminates — a claim "
+                 "the paper entertains or rejects, never one it asserts",
+    "dissociates-with": "symmetric: between the two empirical claims that together establish the contrast",
+    "entails": "from the hypothesis to the prediction it deductively implies",
+    "derived-from": "from the prediction back to its hypothesis; written mechanically as the reciprocal of entails",
+    "interprets": "from the interpretation to the empirical claim it reframes",
+    "enables-method": "from the methodological claim to the result whose interpretability it warrants",
+    "scopes": "from the scope claim to the claims it bounds, or to `*` for every empirical claim in the paper",
+    "requires": "from the dependent claim to its prerequisite: the source would be invalid if the target were false",
+    "qualifies": "from the qualifying result to the claim whose applicability it narrows",
+}
+
+# One edge from the corpus per relation, as (paper, source slug, target slug). The prompt
+# contract quotes both claims, so an example that names a slug the corpus no longer has fails
+# generation rather than quietly describing an edge that does not exist. Relations with no use
+# in the corpus have no example, and the contract says so.
+EXAMPLE = {
+    "supports": ("headley-2026-inhibitory-rhythms", "distal-inhib-drops-firing-02hz",
+                 "hypothesis-distinct-compartmental-roles"),
+    "requires": ("headley-2026-inhibitory-rhythms", "distal-inhib-drops-firing-02hz",
+                 "l5-model-single-cell-scope"),
+    "entails": ("headley-2026-inhibitory-rhythms", "hypothesis-distinct-compartmental-roles",
+                "prediction-distal-dendritic-spike-mechanism"),
+    "derived-from": ("headley-2026-inhibitory-rhythms", "prediction-distal-dendritic-spike-mechanism",
+                     "hypothesis-distinct-compartmental-roles"),
+    "tests": ("headley-2026-inhibitory-rhythms", "distal-inhib-drops-firing-02hz",
+              "prediction-distal-dendritic-spike-mechanism"),
+    "refutes": ("meijer-2025-serotonin-additive-r1", "5ht-stim-leaves-decision-behavior-intact",
+                "prediction-5ht-shifts-psychometric"),
+    "rules-out": ("gadeke-2026-guilt-insula", "agency-reduces-happiness",
+                  "alt-agency-aversion-not-guilt"),
+    "dissociates-with": ("headley-2026-inhibitory-rhythms", "distal-inhib-drops-firing-02hz",
+                         "perisomatic-inhib-drops-firing-07hz"),
+    "validates": ("gadeke-2026-guilt-insula", "guilt-effect-independent-of-own-outcome",
+                  "guilt-reduces-happiness-after-partner-loss"),
+    "predicts": ("meijer-2025-serotonin-orthogonal", "hypothesis-state-switch-by-5ht",
+                 "5ht-stim-dilates-pupil"),
+    "confirms": ("gadeke-2026-guilt-insula", "guilt-reduces-happiness-after-partner-loss",
+                 "hypothesis-insula-tracks-interpersonal-guilt"),
+    "interprets": ("headley-2026-inhibitory-rhythms", "pv-gamma-sst-beta-correspondence",
+                   "beta-optimal-distal-dendritic-entrainment"),
+    "enables-method": ("kammer-2026-foveal-feedback", "preregistered-design-validates-mvpa",
+                       "foveal-v1-decodes-peripheral-saccade-target"),
+    "scopes": ("headley-2026-inhibitory-rhythms", "l5-model-single-cell-scope", "*"),
+    "extends": ("gadeke-2026-guilt-insula", "guilt-signature-no-individual-difference",
+                "insula-guilt-replicates-yu-koban-signature"),
+    "qualifies": ("gadeke-2026-guilt-insula", "risk-premiums-null-social-solo",
+                  "solo-vs-social-choice-difference"),
+}
+
+# The pairs a reader most often confuses, each with what separates them. The contract renders
+# these after the definitions, because a definition read alone is easy to agree with and hard
+# to apply at the boundary.
+CONFUSABLE = [
+    ("requires", "supports",
+     "`requires` is a dependency: if the target were false the source would be invalid. "
+     "`supports` is evidence: the source makes the target more credible and would survive its "
+     "falsity. One empirical claim commonly carries both — it *requires* the scope claim that "
+     "bounds the model it was computed in, and *supports* the hypothesis it was run to test."),
+    ("entails", "tests",
+     "Both connect a hypothesis's arc, in opposite directions and from different roles. "
+     "`entails` runs *down* from the hypothesis to a prediction and is deductive: the prediction "
+     "follows if the hypothesis holds. `tests` runs *up* from an empirical result to the "
+     "prediction it checks. A result never `entails` anything; a hypothesis never `tests`."),
+    ("rules-out", "refutes",
+     "`rules-out` eliminates an alternative explanation — a claim the paper raises in order to "
+     "reject, which has a node of its own with stance `entertains` or `rejects`. `refutes` is "
+     "aimed at one of the paper's own predictions or hypotheses that the evidence came out "
+     "against; a paper refuting its own prediction is the hypothetico-deductive loop closing. "
+     "Never aim `rules-out` at a claim the same paper asserts."),
+    ("dissociates-with", "contradicts",
+     "`dissociates-with` joins two results that are both true and *differ*: the contrast between "
+     "them is the finding, and neither undermines the other. `contradicts` says two claims cannot "
+     "both hold. Two conditions producing different effects is a dissociation, not a "
+     "contradiction."),
+    ("scopes", "requires",
+     "A scope claim bounds what a result can mean and is written from the scope claim *to* the "
+     "results it bounds (or to `*`). `requires` is written from the result *to* what it depends "
+     "on. The same pair of claims can carry both, in opposite directions: the result requires "
+     "the scope; the scope scopes the result."),
+    ("validates", "supports",
+     "`validates` is a control's edge: a check whose specific outcome (a null where a confound "
+     "would have produced an effect, a sign-flip, a manipulation check) strengthens the warrant "
+     "for a target. `supports` is ordinary evidence for a proposition. A control `validates`; a "
+     "main result `supports`."),
+]
+
 # A finer cut of OPPOSES, for the one check that needs it: which relations may not be aimed at
 # a claim the same paper asserts.
 #

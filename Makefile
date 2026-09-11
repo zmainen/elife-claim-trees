@@ -24,7 +24,7 @@ SITE   := site
 
 .DEFAULT_GOAL := help
 
-.PHONY: help data mira-exports validate build preview check report fresh deps
+.PHONY: help data mira-exports validate build preview check contract report fresh deps
 
 help:  ## Show this help
 	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -80,6 +80,10 @@ validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 # the pull request did not cause, so they run for their numbers and do not block.
 check:  ## Gates that are clean on main. A failure here is this change's fault.
 	$(PYTHON) scripts/check_relations.py
+	cd extract && $(PYTHON) -m elife_extract.cli contract
+
+contract:  ## Regenerate the prompt contract from vocabulary.py, relations.py and schema.py
+	cd extract && $(PYTHON) -m elife_extract.cli contract --write
 
 # Both run, and the target still exits non-zero.
 #

@@ -73,13 +73,9 @@ def slice_for_agent(agent: AgentName, paper: PreparedPaper) -> str:
 
 
 def load_prompt(agent: AgentName, cfg: Config) -> str:
-    """Load the system prompt for an agent from disk."""
-    path = cfg.prompt_path(f"{agent}-reader")
-    if not path.is_file():
-        raise FileNotFoundError(
-            f"Prompt file not found for agent {agent!r} (variant {cfg.prompt_variant!r}): {path}"
-        )
-    return path.read_text()
+    """The reader's system prompt: its task, then the contract. See prompts.py."""
+    from .prompts import prompt
+    return prompt(f"{agent}-reader", cfg)
 
 
 # ── JSON parsing with code-fence tolerance ──────────────────────────────
