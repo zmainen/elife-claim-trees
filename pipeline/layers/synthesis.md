@@ -48,7 +48,7 @@ Two diagnostic patterns recur across the {{papers}} papers:
 
 2. **`validates` edges (controls) are absorbed.** The Meijer R1 abstract names the 7,478-neuron / 13-region scope but does not mention that wild-type controls rule out the light artefact, that narrow-spike interneurons rule out an FSI-driven mechanism, or that layer-stratified analysis rules out a layer-specific cortical mechanism. The synthesis surfaces all three; the abstract presents the empirical findings as if the controls had not needed to be run.
 
-These findings are robust to LLM stylistic variation — they describe structural properties of the abstract relative to the graph (which edges are absent as rhetorical moves), not surface features. The magnitude of the gap is less robust (Section 9).
+These findings are robust to LLM stylistic variation — they describe structural properties of the abstract relative to the graph (which edges are absent as rhetorical moves), not surface features. The magnitude of the gap is less robust — see the limits in the methodology.
 
 ## Iteration history
 

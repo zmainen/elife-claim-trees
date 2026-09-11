@@ -447,7 +447,6 @@
         "group": "induction",
         "how": "Fetches the paper and cuts it into the slices the three readers each get. For an eLife DOI that is JATS XML from the CDN, which gives labelled sections, typed figures and caption text; for anything else it is pdfplumber with regex section detection. Which path was taken is recorded in the output, because it constrains what the readers can possibly extract. The fetch is cached, so every later layer on the same paper runs offline and free.\nCheck the slice sizes when a paper extracts badly. A short `results` almost always means section detection failed, and then all three readers read the wrong text and every claim below them is wrong for the same single reason.\n",
         "id": "prepare",
-        "implements": 1,
         "kind": "step",
         "produces": [
           "runs/{paper}/prepared.json"
@@ -469,7 +468,6 @@
         "group": "induction",
         "how": "Given the abstract and the results prose \u2014 and nothing else: no captions, no methods, no figures \u2014 it returns candidate claims, each with a role, a claim type, the panel where the prose names one, and the verbatim sentence it rests on.\nThe partition is what makes it worth running separately. It is the only reader positioned to see the paper's argument as an argument, so it is the one asked for hypotheses, predictions and synthesis rather than for numbers. It is also the reader most prone to flattening exactly that: where a paper derives a prediction from a hypothesis and then tests it, the easy output is one empirical claim, and the longest section of the prompt below exists to stop that.\n",
         "id": "results-reader",
-        "implements": 3,
         "kind": "candidate",
         "needs": [
           "prepare"
@@ -495,7 +493,6 @@
         "group": "induction",
         "how": "Given the figure and table captions, panel by panel, it returns the quantitative claims anchored to the panel that shows them. It does not see the results prose, so it cannot lift a number out of a sentence that summarises one, and it does not see the methods, so it cannot invent how a measurement was made.\nPanel assignment is where the three readers most often disagree, and it is the standing failure the evaluation harness measures.\n",
         "id": "caption-reader",
-        "implements": 3,
         "kind": "candidate",
         "needs": [
           "prepare"
@@ -521,7 +518,6 @@
         "group": "induction",
         "how": "Given the methods, the supplements and the section structure, it returns what the paper frames as its own conclusions, together with the methodological capabilities and the scope conditions the other two readers have no text for. Scope claims \u2014 what a study does and does not cover \u2014 appear almost nowhere else in a paper, so a pipeline without this reader does not under-report them, it loses them.\n",
         "id": "structure-reader",
-        "implements": 3,
         "kind": "candidate",
         "needs": [
           "prepare"
@@ -547,7 +543,6 @@
         "group": "induction",
         "how": "Reads the three readers' outputs from disk and aligns them into one draft table. Each surviving claim carries which readers proposed it and the evidence each quoted, and a confidence that is a fact about agreement rather than about the world: `high` where more than one reader surfaced it, `contested` where they surfaced it differently, `single-source` where one did.\nThis is the whole reason the readers run separately rather than as one pass over the paper. Agreement between three partitions is evidence; one agent reading everything produces a longer list and no way to tell which of it is load-bearing.\n",
         "id": "reconcile",
-        "implements": 4,
         "kind": "step",
         "needs": [
           "results-reader",
@@ -576,7 +571,6 @@
         "group": "induction",
         "how": "One Opus pass over the reconciled draft with the paper beside it, recovering what prose-level extraction systematically under-covers: the `prediction` and `hypothesis` roles, and multi- panel claims collapsed onto a single panel. Roughly two dollars and three minutes a paper, and it moved role agreement on the Headley round-trip from about 65% to about 96%.\nIt is not review in this file's sense \u2014 it is a second model, not a person, and it changes the artifact rather than approving a version of one. Running it is optional: `claim-tree` builds on this output where it exists and on the reconciled draft where it does not.\n",
         "id": "external-review",
-        "implements": 5,
         "kind": "step",
         "needs": [
           "reconcile"
@@ -602,7 +596,6 @@
         "group": "induction",
         "how": "Given the draft's claims, numbered, it returns typed relations between them \u2014 the deductive spine, `entails` from a hypothesis to its predictions and `tests` back from the empirical result. Edges naming an unknown slug, or pointing at themselves, are dropped: an invented target is worse than a missing edge.\n`--dump-prompt` writes the exact request and exits, so that an analyst or a different model answers the question this layer would have asked rather than a paraphrase written from memory, and `--edges-json` feeds that answer back through the same validation. Edges are the part of a tree most easily lost to one failed call \u2014 every other stage can succeed and leave a paper with claims and no structure at all.\n",
         "id": "edge-inference",
-        "implements": 6,
         "kind": "step",
         "needs": [
           "reconcile",
@@ -629,7 +622,6 @@
         "found": "Across {{papers}} papers the corpus holds {{claims}} claims and {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.\n",
         "how": "Assigns each surviving claim a slug and a UUID, attaches the edges `edge-inference` produced, and writes one markdown file per claim into `claims/<paper>/` with the paper's `index.md` beside them. It calls no model and needs no credentials \u2014 the reasoning already happened upstream \u2014 but it does need those edges. Run it without them and the claims are written with no structure, and it says so.\nIt refuses to overwrite a non-empty paper directory. The claim files are edited afterwards by hand and by later layers, and a silent overwrite would discard work no ledger records.\n",
         "id": "claim-tree",
-        "implements": 7,
         "kind": "step",
         "needs": [
           "reconcile",
@@ -733,7 +725,6 @@
       },
       {
         "id": "summaries",
-        "implements": 6,
         "kind": "step",
         "needs": [
           "claim-tree"
@@ -754,7 +745,6 @@
         "found": "{{eligible_with_record}} of {{eligible_claims}} claims that a re-run could settle carry a reproduction record, and their outcomes are not uniform. Observing the runs from outside also showed that most records were reached by reading a deposit rather than by running the paper's own script.\n",
         "how": "Runs the paper's own deposited script under observation and records what it actually did \u2014 every path it opened, every value it computed \u2014 rather than what its output said it did. Nothing is taken from the script's own account of itself, because that is precisely what failed: the first script audited had a claim recorded `verified` while the function named in its record raised a shape-mismatch error, and a reproduction record naming a file the code never opened.\nThis is not replication. It re-runs the authors' code on the authors' data, so it can catch a record that does not match its own run and it cannot tell you whether the finding is true.\n",
         "id": "verification",
-        "implements": 8,
         "kind": "step",
         "needs": [
           "claim-tree"
@@ -781,7 +771,6 @@
         "found": "G\u00e4deke first. The paper cut into spans and each adjudicated against the claim tree, which is how a tree is measured against its paper rather than against another tree. The mechanical match left 36 spans unaccounted for; 22 were the matcher being wrong and 14 were real.\n",
         "how": "Takes its denominator from the paper rather than from the claim set. It builds the paper's own inventories \u2014 every panel, every table, every reported statistic \u2014 cuts the whole text into one-sentence spans, and asks of each span whether any claim accounts for it. Comparing two claim sets cannot see what this sees: two trees can agree perfectly over a third of a paper.\nIt calls no model, so it is free and fast enough to run corpus-wide. What it cannot do is tell a real gap from a string match that failed, which is what `adjudication` is for.\n",
         "id": "coverage",
-        "implements": 9,
         "kind": "step",
         "needs": [
           "claim-tree",
@@ -802,7 +791,6 @@
         "doc": "/docs/layers/#coverage-and-mark",
         "how": "Reads the spans the mechanical match could not resolve and returns a verdict for each: the span is covered by a claim after all, it states a result no claim carries, or it asserts nothing at all. The verdicts are stored rather than recomputed \u2014 a verdict is a judgement about meaning, and re-running it would quietly produce a different one.\nOn G\u00e4deke the matcher left 36 spans unaccounted for. Adjudication found that 22 were the matcher being wrong and 14 were real.\n",
         "id": "adjudication",
-        "implements": 9,
         "kind": "judgement",
         "needs": [
           "coverage"
@@ -826,7 +814,6 @@
         "doc": "/docs/layers/#coverage-and-mark",
         "how": "Writes the adjudicated verdicts into the document itself, as marks carrying each claim's UUID, so a gap is something a reader sees in the paper rather than a number in a report. A span that states no result says so; a span carrying a result no claim states is marked as a gap.\nThe marks are read straight back after writing and checked against the assignments they were written from. A marked document that cannot reproduce them is not a record of anything.\n",
         "id": "marks",
-        "implements": 9,
         "kind": "step",
         "needs": [
           "adjudication",
@@ -865,7 +852,6 @@
         "group": "interchange",
         "how": "Writes two files and a gap report. `<paper>.mira.jsonld` is strict MIRA core, safe to hand to any MIRA reader; `<paper>.mira-extended.jsonld` is the same graph plus a `haak:` namespace carrying the structure MIRA has no vocabulary for; the gap report says what the strict file dropped, and why.\nThe split is the design rather than a compromise in it. MIRA can express roughly half of what a claim tree holds, and a single converted file either loses the other half quietly or emits something a strict reader rejects.\n",
         "id": "mira-export",
-        "implements": 10,
         "kind": "step",
         "needs": [
           "claim-tree",
@@ -893,7 +879,6 @@
         "group": "interchange",
         "how": "Reads the claim files and writes the paper as one OXA Article JSON with a Claim node per claim. OXA is document-shaped rather than graph-shaped, so it keeps the text and the sectioning of a paper well and carries relations as properties of the nodes they leave.\nIt is also the input to the Discourse Graphs export, so anything lost here is lost there too, one conversion further along.\n",
         "id": "oxa-export",
-        "implements": 10,
         "kind": "step",
         "needs": [
           "claim-tree",
@@ -917,7 +902,6 @@
         "group": "interchange",
         "how": "Maps the OXA nodes onto the Discourse Graphs Q/C/E/S ontology: hypothesis, prediction, synthesis and interpretation become `dg:Claim`; empirical and control become `dg:Evidence`; literature-context becomes `dg:Source`. A relation becomes `dg:supports` or `dg:opposedBy` where one of those fits, and carries its CiTO IRI as a typed annotation where neither does.\nFour node types for nine roles: the mapping is lossy by construction, and `formats-report` is where the amount is measured rather than asserted.\n",
         "id": "dg-export",
-        "implements": 10,
         "kind": "step",
         "needs": [
           "oxa-export"
@@ -941,7 +925,6 @@
         "group": "interchange",
         "how": "Measures each conversion from the generated files rather than from the mapping tables. A mapping table says what a converter intends; the export says what it did, and those two came apart once already \u2014 the Discourse Graphs exporter looked for claims one level above where they sit and wrote a file with a single node, in valid JSON-LD that nothing would have flagged.\nThe markdown report is the artifact and the site renders it, so a figure on the page cannot disagree with the export it describes.\n",
         "id": "formats-report",
-        "implements": 10,
         "kind": "step",
         "needs": [
           "mira-export",

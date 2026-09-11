@@ -77,7 +77,7 @@ The R1 revision of the Meijer paper carries 41 claims against 24 in the v1 prepr
 > - The claims are **found** by three model calls reading the paper independently, and
 >   **reconciled** by a fourth.
 > - The relations between claims — the deductive spine — are **inferred** by a model call.
-> - Step 5 below is written as an analyst's review gate. There is no such gate. What stood in
+> - The method requires an analyst's review gate. There is no such gate. What stood in
 >   for one was a flag — `--review-mode external`, which is **another model** revising the
 >   draft, or `--review-mode auto-approve`, which wrote the files unread — and both are gone.
 >   The model's revision is now a declared layer, `external-review`, so changing the prompt
@@ -102,187 +102,30 @@ The R1 revision of the Meijer paper carries 41 claims against 24 in the v1 prepr
 
 Claim induction is the translation of a paper from argument format into claim-graph format. It demands reading comprehension, domain judgment, and decisions about what constitutes a claim — and in this version a model makes all of them.
 
-The steps below are the narrative: how a paper is read, why the readers are partitioned as they are, what each one catches and misses, and where the review gate belongs. They are not the inventory. The pipeline declares every question it asks in `pipeline/layers.yaml`, and the [Layers](#layers) section is generated from that file — so a layer added after this narrative was written appears there without anyone remembering to come back here. Where the two describe the same work, the declaration is the one that runs.
+Induction is not one act but a sequence of them, and each is a declared layer with its own
+question, its own inputs and its own record of having run. What each does, and how, is
+documented beside its declaration in `pipeline/layers/` and gathered in the
+[Layers](#layers) section. What follows here is what holds across all of them.
 
-### Step 1: Prepare
-
-Locate and confirm: the paper (DOI, full text), the code repository (GitHub or Zenodo), and the data deposit. Record URLs and confirm accessibility. If code or data are absent, note it — their absence is itself a finding that affects what verification can later be attempted. Map the figure structure: how many main figures, how many supplementary figures, roughly how many panels per figure. This step takes 15–30 minutes.
-
-**Full-text access.** Always attempt to download the paper PDF first via the publisher CDN (for eLife, `cdn.elifesciences.org/articles/{article-id}/elife-{article-id}-v1.pdf`). If successful, extract with `pdftotext`. Do not rely on the eLife HTML for results sections — the HTML is consistently truncated after roughly the first two figures. If PDF download fails, fall back in this order: (1) the GitHub README, which often contains a results summary and a figure-to-script mapping; (2) the eLife API abstract endpoint (`api.elifesciences.org/articles/{id}`); (3) a focused web fetch of the article page targeting key quantitative values. Record which path was used; the path constrains what the agents in Step 3 will be able to extract.
-
-**For observational papers** (atlases, anatomical surveys), note explicitly that primary claims are observational — their evidence is the image data itself, not a statistical test. Verification for such claims means atlas inspection rather than analysis re-execution. Note the data volume and access path (BIL, IDR, Zenodo) and whether an interactive viewer is available without full download. The atlas paper in this corpus (artiushin-2026-spider-atlas) is the only one for which verification is image inspection rather than execution; its 17 claims carry mostly `unverified:no-data` because the underlying volumes are large and not consulted in this prototype.
-
-### Step 2: Abstract scan
+### Reading the abstract first
 
 Read the abstract and identify two to four top-level claims — the paper's main bets. For each, write a candidate slug (3–5 words, lowercase, hyphenated, verb-phrase form). These will be the synthesis or interpretation nodes at the top of the dependency graph. They typically have no single figure of their own — they are the synthesis of the figures below them. The Headley paper, for example, surfaces `pv-gamma-sst-beta-correspondence` as a single synthesis node interpreting the simulation results in light of prior interneuron-rhythm associations; this node's panel is "fig10 (synthesis / discussion)" rather than a single quantitative panel.
 
-### Step 3: Three independent extractions
+### Why three readers
 
-Three agents read the paper independently, each with different instructions, before any claim list is assembled. No agent sees another's output before submitting.
-
-**Agent A — Results reader.** Reads the abstract and results prose only; does not read figure captions or methods. Extracts claims from the argument as written. Captures interpretive and synthesis claims — the paper's conclusions and the reasoning that connects figures into an argument. Gets direction and framing right because it reads what the paper concludes, not what it computes.
-
-**Agent B — Caption reader.** Reads figure captions only, panel by panel. Writes one candidate claim per panel, strictly grounded in caption language. Does not interpret beyond what the caption states. Gets quantitative values right and panel assignments exact. Does not infer from mechanism.
-
-**Agent C — Structure reader.** Reads methods, supplements, and code. Identifies what is actually computed, what assumptions underlie each result, and which panels are purely methodological. Flags conditional claims, missing controls, and existence claims masquerading as causal ones. Does not report mechanisms as results.
-
-The three agents are deliberately partitioned along the axes along which extractions most often disagree: framing versus literal numerics versus computational structure. A claim that all three surface independently is high-confidence; a claim that only one surfaces is single-source and may be either real-but-buried or an artefact of the reading strategy. The reconciliation step (Step 4) records both cases distinctly.
-
-### Step 4: Reconciliation
-
-Compare the three extraction lists. For each candidate claim:
-
-- If all three agree: high confidence. Include.
-- If two agree, one differs: flag the discrepancy. Note which agent and why.
-- If agents find different claims: add all candidates, flagged as single-source.
-
-The reconciled list carries a confidence column (high / contested / single-source). This is what goes to the review gate in Step 5.
-
-### Common errors in claim extraction
-
-Instruct all extraction agents to avoid the following ten failure modes. These are preserved from the original methodology because they continue to describe the actual mistakes the prototype's extraction agents make.
-
-1. **Inferring results from mechanism.** Code and methods describe how something was computed. They do not describe what was found. Never report a mechanism as a result. If the paper's text is unavailable, stop and flag it — do not fall back to code analysis and present the output as paper-grounded.
-
-2. **Reversing direction.** Saturation, inhibition, and feedback effects frequently reverse naive intuitions. A higher concentration of X at a site does not always mean faster processing — saturation slows it. Always read the paper's stated direction; never infer it from the mechanism alone.
-
-3. **Quantitative hallucination.** Do not add specific numbers (percentages, milliseconds, effect sizes) that do not appear verbatim in the paper's text or captions. If the paper says "large fraction," write "large fraction." If you cannot find the number in the text, do not invent it.
-
-4. **Wrong panel assignment.** Do not assume a claim belongs to a panel without verifying. Schematics, cartoons, and parameter-sweep diagrams (often panels A or D) set up a hypothesis — they do not assert a result. A result is in the panel that shows the data or simulation output.
-
-5. **Overstating strength.** "Necessary and sufficient," "proves," "demonstrates definitively" — these are almost never the paper's language. Use the paper's own epistemic framing. If the paper says "consistent with," do not write "shows."
-
-6. **Discussion contamination.** The discussion introduces speculative interpretations and broader implications that the figures do not directly support. Claims must be grounded in results sections and captions, not discussion. Synthesis and interpretation claims are the proper place for paper-level inferential moves; mark them as such with `role: synthesis` or `role: interpretation` rather than mixing them into empirical claims.
-
-7. **Simulation vs experiment conflation.** Clearly distinguish model predictions from experimental measurements. A simulation result is a model prediction, conditional on the model's assumptions and parameterisation. An experimental result is a measurement. They have different epistemic statuses.
-
-8. **Missing negative results.** "X does not explain Y" and "varying parameter P produces no regional difference" are real claims. Do not skip panels that show null or negative results — these often carry `rules-out` edges that are load-bearing in the paper's argument and that downstream pipelines (the synthesis comparator) treat as diagnostic.
-
-9. **Methodological panels as claims.** Panels that show model architecture, parameter schematics, or technique illustrations do not assert claims about the world. They register as `role: methodological` (or `role: scope` if they bound the interpretation of empirical claims) rather than as empirical claims.
-
-10. **Single-source overconfidence.** If only one reading strategy surfaces a claim, it may be real but buried — or it may be an artefact of the reading strategy. Flag it as single-source rather than presenting it with the same confidence as a claim found by all three agents.
-
-### Step 5: Review (the gate)
-
-**This step is specified but not implemented as written.** As specified: present the draft
-claim table for review before any files are written; the reviewer corrects claim sentences,
-reclassifies roles and types, adds missing claims, removes spurious ones, revises slugs, and
-adjudicates single-source candidates. Nothing reaches disk until the table is approved. It is
-the intellectual gate — the claim graph should be right before it is made permanent.
-
-As it runs today the gate does not exist. Two things stand in its place, and neither of them is
-a person reading the corpus.
-
-A model's pass over the draft is the `external-review` layer, declared like any other and
-versioned and hashed with the rest. A person's approval is a separate operation, performed on a
-version that already exists: `scripts/pipeline.py approve <paper> <layer> --by NAME` records who
-read which version of what. Because the record names the version, re-running the layer does not
-carry the approval forward — it was granted to text that no longer exists.
-
-Nothing forces an approval and none has been granted. The corpus is unreviewed, and the
-approval ledger says so for every cell in it. The step is documented in full because it is what
-the method requires, and its absence is the largest gap between the method and the artefact. Step 5 is where the schema's role labels (`hypothesis`, `prediction`, `empirical`, `control`, `scope`, `methodological`, `synthesis`, `interpretation`, `literature-context`) are first assigned definitively, because role-assignment requires the analyst's judgment about what kind of work each claim is doing in the paper's argument.
-
-### Step 6: Dependency mapping
-
-Once the claim list is approved, map the full dependency graph. For each claim, identify which other claims it structurally requires — not cites, but requires: if X were false, this claim would be undermined. This often reveals implicit claims that have no figure of their own — calibration results, baseline assumptions, model parameterisations — that need to be added as stubs. Edge types are assigned at this step, drawn from the inventory in Section 4 (`requires`, `supports`, `entails`, `derived-from`, `tests`, `refutes`, `rules-out`, `dissociates-with`, `validates`, `predicts`/`confirms`, `interprets`, `enables-method`, `scopes`).
-
-The right edge type is consequential. `requires` and `supports` are not interchangeable; `entails` carries the deductive direction from hypothesis to prediction whereas `tests` carries the empirical-to-prediction direction; `dissociates-with` is symmetric while `validates` is directed. The synthesis pipeline (Section 7) reads these edges as cues for the rhetorical move it should articulate, so the choice of edge governs the reconstruction.
-
-### Step 7: Write claim files
-
-Generate a UUID4 for each claim (`python3 -c "import uuid; print(uuid.uuid4())"`). Write one `.md` file per claim into `claims/<paper-slug>/<claim-slug>.md` following the schema in Section 4. Write the paper's `index.md` with title, DOI, authors, abstract, GitHub URL, and data deposit URL. Commit to the repository.
-
-### Step 8: Verify
-
-For each claim where data and code are available, run the analysis and compare the output to the published numerics. Update the `status` field in the corresponding `reproductions:` block. The verification procedure is described in detail in Section 5.
-
-### Step 9: Coverage — what does no claim account for?
-
-The steps above produce a claim tree and check the claims in it. They do not ask the opposite
-question, and until recently nothing did: what does the paper assert that no claim
-represents? That gap is not hypothetical. Figure 2's panels C and F in Gädeke — a failed
-replication of a risk-aversion effect — sat unrepresented in the tree, and nothing in the
-pipeline registered their absence, because every check ran over the claims rather than over
-the paper.
-
-`elife-extract coverage --paper <paper-slug>` takes its denominator
-from the paper instead. It builds the paper's own inventories — every figure panel, every
-table, every reported statistic — and then cuts the entire text into **spans** (one sentence
-each) and asks, of every span, whether any claim accounts for it. No sampling, and no model
-calls, so it is free and fast enough to run over the whole corpus. `--fail-on-orphans` makes
-it a gate.
-
-A *span* is the unit of measurement here, and the word is deliberate: not "unit", which
-collides with units of measurement in a paper made of statistics. Each span carries the
-statistics and panel references detected in it, and is either accounted for by a claim or
-not — and "not" is then a fact about the paper rather than about a pattern.
-
-**The mechanical pass cannot finish the job, and should not pretend to.** "Accounted for"
-means a claim restates the same statistic or names the same panel. That is a proxy for the
-question that matters and it is wrong in both directions: the paper reports `t(1180) = 3.52,
-p = 0.0004` and a claim states exactly that effect without repeating the numbers, which
-scores as a miss; meanwhile a sentence whose only content is "see Appendix 1—table 4" scores
-as an unmet obligation though it asserts nothing at all.
-
-So the residue is **adjudicated**, not matched harder. Every span the mechanical pass could
-not resolve gets one of three verdicts:
-
-| verdict | meaning |
-|---|---|
-| `covered` | a claim does account for it; the matcher could not see it |
-| `gap` | nothing in the tree accounts for it — a real hole |
-| `not-an-assertion` | the span states no result: a cross-reference, analysis narration, a bare panel label, a graphical-encoding note ("error bars are SEM"), or a raw table row |
-
-Verdicts live in `mappings/<paper-slug>.json` — stored, not recomputed, so they can be
-audited and disagreed with — and `coverage --mapping` folds them back in. The point of
-keeping the three apart is that lumping the third into the orphan list buries the real gaps
-in bookkeeping.
-
-**Gädeke, fully resolved against the curated tree:** 245 spans segmented; 78 carrying a
-statistic or naming a panel; 64 accounted for (82%); 15 adjudicated as asserting no result;
-**14 real gaps** (10 in Results, 1 in captions, 3 in tables). Nothing left unexamined.
-
-Two findings came out of that exercise which matter beyond this paper.
-
-The gaps are not scattered — they **cluster on the paper's own hedges**. Results the paper
-reports and then walks back (the Study 1 risk-aversion effect that fails to replicate in
-Study 2 — Figure 2C/2F — and two IFG clusters that do not survive correction), boundary
-conditions showing where an effect stops (a null interaction; no responsibility effect after
-*positive* partner outcomes), and follow-up analyses narrowing whole-brain contrasts to
-particular regions. The tree keeps what the paper commits to and loses the qualifications
-that bound it, which makes its central claim read broader than the data support.
-
-And **the appendix tables carry analyses the prose never states.** Three of the four table
-gaps exist only there: the decision-phase condition effects in ventral striatum and mPFC, the
-entire Social-vs-Partner comparison at that phase, and the outcome-phase risky-vs-safe
-contrast that defines the paper's own regions of interest. One of them qualifies the prose's
-"irrespective of Social or Solo condition" framing rather than merely supplementing it.
-Reading captions and tables is therefore not thoroughness — it is a different *source* of
-claims, and a tree built from prose alone will miss all of it.
-
-### Step 10: Export
-
-A claim tree is stored as Markdown files with YAML frontmatter, which is a good format for
-authoring and review and no format at all for exchange. `python3 scripts/export_mira.py --all`
-converts every paper to MIRA JSON-LD — strict and extended — with a per-paper gap report
-saying what the strict file could not carry. What each standard can and cannot represent is
-documented in [`schema-mapping/`](schema-mapping/README.md).
-
-The export is byte-stable across runs, deliberately: these files are published as artifacts
-anyone can regenerate and diff, and that check is meaningless if a re-run reshuffles them.
+The three agents are deliberately partitioned along the axes along which extractions most often disagree: framing versus literal numerics versus computational structure. A claim that all three surface independently is high-confidence; a claim that only one surfaces is single-source and may be either real-but-buried or an artefact of the reading strategy. The `reconcile` layer records both cases distinctly.
 
 ### Where short-form fields fit
 
 Three fields are populated during authoring but are not the primary claim sentence:
 
-- **`displayClaim`** (one to two sentences) is the form rendered when the claim is presented in body text or in a card view. It softens the formal `claim` sentence into something readable in a paragraph; it preserves the proposition's content but allows shorter constructions, parenthetical units, and contractions where the formal `claim` field cannot. Authored at Step 7; can be revised without changing the underlying claim.
+- **`displayClaim`** (one to two sentences) is the form rendered when the claim is presented in body text or in a card view. It softens the formal `claim` sentence into something readable in a paragraph; it preserves the proposition's content but allows shorter constructions, parenthetical units, and contractions where the formal `claim` field cannot. Authored with the claim files; can be revised without changing the underlying claim.
 
-- **`shortClaim`** (single short clause, ≤90 characters typical) is the headline form: what fits in a tooltip, a hover preview, or a graph-node label. Required for synthesis, interpretation, and literature-context nodes that must be readable at a glance in the synthesis layer; optional but recommended for hypotheses, predictions, and high-traffic empirical claims. Authored at Step 7.
+- **`shortClaim`** (single short clause, ≤90 characters typical) is the headline form: what fits in a tooltip, a hover preview, or a graph-node label. Required for synthesis, interpretation, and literature-context nodes that must be readable at a glance in the synthesis layer; optional but recommended for hypotheses, predictions, and high-traffic empirical claims. Authored with the claim files.
 
 - **`number`** and **`numberParts`** are not authored manually. They are computed by the build pipeline from the claim's `role` and its position in the dependency graph (hypotheses get `H#`, predictions hang off the hypothesis they `derived-from` as `H#.P#`, empirical claims testing those predictions hang off as `H#.P#.E#`, scope claims become `Sc#`, methodological become `M#`, controls become `C#`, literature-context becomes `L#`, synthesis becomes `S#`, interpretation becomes `I#`, and standalone empirical not under any hypothesis loop become `E#`). The numbering is regenerated on every build; do not paste numbers into source files.
 
-`role` is assigned at Step 5 and is the most consequential single field in the schema after `claim`, because it governs how the synthesis pipeline (Section 7) groups the claim and how the claim is numbered in the build.
+`role` is assigned at the review gate and is the most consequential single field in the schema after `claim`, because it governs how the `synthesis` layer groups the claim and how the claim is numbered in the build.
 
 [↑ Contents](#contents)
 
@@ -324,7 +167,7 @@ Role is the rhetorical function the claim plays in the paper's argument. The syn
 | `methodological` | A procedural or analytical capability that warrants a downstream interpretation (manifold-from-pooled-super-session, particular sorting pipeline). Carries `enables-method:`. | `assessment` |
 | `synthesis` | A claim integrating across multiple empirical claims into a higher-order proposition (the dissociation, the receptor-reconciliation). Top of the within-paper graph. | `synthesis` / `interpretive` |
 | `interpretation` | A reframing of an empirical result through theoretical lens, marked separately from synthesis. Carries `interprets:` edges. | `interpretive` |
-| `literature-context` | A cited prior claim treated as a first-class node. Section 8. | `interpretive` |
+| `literature-context` | A cited prior claim treated as a first-class node. Section 5. | `interpretive` |
 
 ### 4.3 Edges — the edge inventory
 
@@ -357,7 +200,7 @@ The edge inventory operationalises six argumentative moves:
 
 3. **Abduction.** `supports` and `refutes` from empirical claims back to hypotheses close the abductive loop. The Meijer R1 `near-zero-choice-by-stim-interaction` `supports: hypothesis-additive-modulation` and `refutes: prediction-multiplicative-gain-yields-significant-interaction` — abduction to additivity by elimination of the alternative.
 
-4. **Elimination.** `rules-out` carries the eliminative move: A's evidence eliminates an explicit alternative B. The Meijer R1 paper's `rules-out-multiplicative-gain-control` synthesis claim explicitly aggregates this move at the discussion level. The corpus carries 15 `rules-out` edges, scattered across papers, and Section 7 below shows they are diagnostically interesting because they are scrubbed by abstracts.
+4. **Elimination.** `rules-out` carries the eliminative move: A's evidence eliminates an explicit alternative B. The Meijer R1 paper's `rules-out-multiplicative-gain-control` synthesis claim explicitly aggregates this move at the discussion level. The corpus carries 15 `rules-out` edges, scattered across papers, and the `synthesis` layer shows they are diagnostically interesting because they are scrubbed by abstracts.
 
 5. **Dissociation.** `dissociates-with` is a symmetric edge between two empirical claims that together establish a contrast. The Headley `distal-inhib-drops-firing-02hz` `dissociates-with` `perisomatic-inhib-drops-firing-07hz` — neither claim alone establishes the compartmental dissociation; the contrast does. The corpus carries 65 such pairings, often joined to the shared hypothesis they jointly support.
 
@@ -392,7 +235,7 @@ reproductions:
       reproduction's evidentiary basis is recorded.
 ```
 
-**`status`** vocabulary (per `reproductions[].status`) — see Section 5 for criteria.
+**`status`** vocabulary (per `reproductions[].status`) — see the `verification` layer for criteria.
 
 | Status | Meaning |
 |:-------|:--------|
@@ -427,7 +270,7 @@ A single example per role, drawn from the corpus:
 
 - **`interpretation`.** `pv-gamma-sst-beta-correspondence` (Headley): "Layer 5 inhibitory streams are functionally matched to interneuron type." Carries `interprets:` edges to the four empirical claims that ground the mapping.
 
-- **`literature-context`.** `interprets-pv-gamma-sst-beta-associations` (Headley): the inherited PV/gamma–SST/beta correspondence from prior literature. Section 8 develops this role.
+- **`literature-context`.** `interprets-pv-gamma-sst-beta-associations` (Headley): the inherited PV/gamma–SST/beta correspondence from prior literature. Section 5 develops this role.
 
 [↑ Contents](#contents)
 
@@ -482,7 +325,7 @@ The methodology described above is the disciplined process the prototype would a
 
 ### Authoring discipline not strictly enforced
 
-The procedure above — three independent extractions and a mandatory review gate — describes a workflow the prototype did not strictly enforce. In practice, authoring was prompt-guided LLM extraction with intermittent rather than systematic human review. The {{claims}} claim files should be read as a draft annotation layer, not as adjudicated output. A scaled-out version — the version this document is the methodology for — would enforce the three-extraction reconciliation and the Step 5 review gate as actual procedural checkpoints. The corpus is the prototype's draft; the methodology is the discipline the draft should be brought up to.
+The procedure above — three independent extractions and a mandatory review gate — describes a workflow the prototype did not strictly enforce. In practice, authoring was prompt-guided LLM extraction with intermittent rather than systematic human review. The {{claims}} claim files should be read as a draft annotation layer, not as adjudicated output. A scaled-out version — the version this document is the methodology for — would enforce the three-extraction reconciliation and the review gate as actual procedural checkpoints. The corpus is the prototype's draft; the methodology is the discipline the draft should be brought up to.
 
 ### Verification coverage is shallow
 
@@ -506,10 +349,10 @@ These two cases are the prototype's evidentiary weight. They are what the verifi
 
 ### Reverse-engineered, not forward-constructed
 
-The corpus was reverse-engineered from finished papers. Forward construction — claim graphs assembled by authors at submission, against a schema they author into rather than retrofit — would look different. The richest contrast is what literature-context becomes at scale (Section 8.3); a smaller contrast is that authors would correct quantitative-hallucination errors in real time rather than on review, and would surface negative results their own discussion glosses past.
+The corpus was reverse-engineered from finished papers. Forward construction — claim graphs assembled by authors at submission, against a schema they author into rather than retrofit — would look different. The richest contrast is what literature-context becomes at scale (Section 5.3); a smaller contrast is that authors would correct quantitative-hallucination errors in real time rather than on review, and would surface negative results their own discussion glosses past.
 
 ### Synthesis-pipeline magnitude is not robust
 
-The comparator finding that abstracts scrub `rules-out` and `refutes` edges and absorb `validates` controls (Section 7.4) is a structural property of the comparison and is robust to LLM stylistic variation. The magnitude — how much abstract prose is devoted to each move type, how much the synthesis expands beyond what the abstract carries — is sensitive to the agent's stylistic recovery: an LLM that pads the synthesis with connectives the schema does not encode will inflate the apparent gap. The diagnostic findings (which edges are scrubbed) are robust; the magnitude is not. Specific volume comparisons should be treated as illustrative rather than as measurements.
+The comparator finding that abstracts scrub `rules-out` and `refutes` edges and absorb `validates` controls — a finding of the `synthesis` layer — is a structural property of the comparison and is robust to LLM stylistic variation. The magnitude — how much abstract prose is devoted to each move type, how much the synthesis expands beyond what the abstract carries — is sensitive to the agent's stylistic recovery: an LLM that pads the synthesis with connectives the schema does not encode will inflate the apparent gap. The diagnostic findings (which edges are scrubbed) are robust; the magnitude is not. Specific volume comparisons should be treated as illustrative rather than as measurements.
 
 [↑ Contents](#contents)

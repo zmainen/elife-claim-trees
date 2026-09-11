@@ -47,10 +47,6 @@ export interface LayerDecl {
   requires_human?: boolean;
   added?: string;
   found?: string;
-  /** The narrative step in docs/method.md this layer runs. Declared on the layer so the
-   *  prose cannot claim a layer that does not exist, and a new layer forces the question of
-   *  where in the method it belongs. Absent means no step describes it. */
-  implements?: number;
 }
 
 export interface Cell {

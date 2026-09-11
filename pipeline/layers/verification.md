@@ -1,3 +1,5 @@
+For each claim where data and code are available, run the analysis and compare the output to the published numerics, and record the result in the claim's `reproductions:` block.
+
 Verification is the re-enactment of a paper's analysis against its deposited code and data, with the reproduced numerics compared against those reported in the paper. The unit of verification is the claim, not the figure; a single figure may host several claims, and a single verification script typically targets several claims at once.
 
 ## The `verify.py` pattern
@@ -8,7 +10,7 @@ Verification scripts are authored at `verification/<paper-slug>/verify.py`. Each
 
 2. **Construct environment.** Conda or pip; apply patches where deposited code has been broken by upstream API drift. The Ejdrup script applies a `matplotlib` patch (`w_xaxis` → `xaxis`) automatically before executing the deposited figure-generation scripts; absent the patch, the deposited code errors at the rendering step.
 
-3. **Execute targeted analyses.** Either re-run the deposited notebook end-to-end, or load pre-computed intermediates (CSV, NPY, NIfTI) and run the figure-generation step only. Most scripts implement both modes and switch on a `--full` flag (Section 5.2).
+3. **Execute targeted analyses.** Either re-run the deposited notebook end-to-end, or load pre-computed intermediates (CSV, NPY, NIfTI) and run the figure-generation step only. Most scripts implement both modes and switch on a `--full` flag (see FAST vs FULL mode below).
 
 4. **Compare to paper-reported numerics.** Reproduce point estimates, statistics, p-values, panel coordinates, or in the imaging case, voxel counts and peak coordinates. Tolerance for "match" is per-claim and recorded inline.
 

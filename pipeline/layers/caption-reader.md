@@ -1,0 +1,1 @@
+Reads figure captions only, panel by panel. Writes one candidate claim per panel, strictly grounded in caption language. Does not interpret beyond what the caption states. Gets quantitative values right and panel assignments exact. Does not infer from mechanism.
