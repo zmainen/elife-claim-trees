@@ -1,19 +1,172 @@
 ---
-// Backwards-compat redirect: /method → /methodology.
-// The page was renamed when the methodology surface gained tabbed sections.
+import Layout from '../layouts/Layout.astro';
+import MethodTabs from '../components/MethodTabs.astro';
+import { readDoc, renderMd } from '../lib/markdown';
+import { columns, groups as layerGroups, byId } from '../lib/pipeline';
+
+// Reading the document and filling its {{token}}s is shared with /docs, which renders
+// docs/cli/*.md the same way. It lived here, so the convention and its build-failing guard
+// applied to this page alone.
+const methodMd = readDoc('docs/method.md');
+
+// Split the markdown by top-level "## " headings. The leading region (before the
+// first ## ) is the document intro / overview prose; everything after a `## N. Title`
+// heading is one tab section. We treat the leading intro as part of "Overview".
+type Section = { id: string; label: string; title: string; body: string };
+
+function splitSections(md: string): Section[] {
+  const lines = md.split('\n');
+  const sections: Section[] = [];
+  let currentTitle: string | null = null;
+  let currentLines: string[] = [];
+  let leadLines: string[] = [];
+  let inLead = true;
+
+  for (const line of lines) {
+    const m = line.match(/^## (.+)$/);
+    if (m) {
+      if (inLead) {
+        inLead = false;
+      } else if (currentTitle !== null) {
+        sections.push(makeSection(currentTitle, currentLines.join('\n')));
+      }
+      currentTitle = m[1].trim();
+      currentLines = [];
+    } else {
+      if (inLead) leadLines.push(line);
+      else currentLines.push(line);
+    }
+  }
+  if (currentTitle !== null) {
+    sections.push(makeSection(currentTitle, currentLines.join('\n')));
+  }
+
+  // Strip the leading H1 ("# Method") and horizontal rule from the lead block.
+  const leadMd = leadLines
+    .filter(l => !/^#\s/.test(l) && l.trim() !== '---')
+    .join('\n')
+    .trim();
+
+  // Prepend lead prose to the Overview section (first section).
+  if (leadMd && sections.length > 0 && sections[0].id === 'overview') {
+    sections[0].body = `${leadMd}\n\n${sections[0].body}`;
+  }
+
+  return sections;
+}
+
+// Map a heading like "1. Overview" or "8. Literature-context as cross-paper primitive"
+// to a short, lowercase tab id and a compact label.
+const labelOverrides: Record<string, { id: string; label: string }> = {
+  '1': { id: 'overview', label: 'Overview' },
+  '2': { id: 'corpus', label: 'Corpus' },
+  '3': { id: 'authoring', label: 'Authoring' },
+  '4': { id: 'schema', label: 'Schema' },
+  '5': { id: 'verification', label: 'Verification' },
+  '6': { id: 'summaries', label: 'Summaries' },
+  '7': { id: 'synthesis', label: 'Synthesis' },
+  '8': { id: 'literature', label: 'Literature-context' },
+  '9': { id: 'limits', label: 'Limits' },
+};
+
+function makeSection(title: string, body: string): Section {
+  const numMatch = title.match(/^(\d+)\.\s*(.+)$/);
+  if (numMatch) {
+    const n = numMatch[1];
+    const t = numMatch[2].trim();
+    const o = labelOverrides[n];
+    if (o) return { id: o.id, label: o.label, title: t, body };
+    return { id: t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), label: t, title: t, body };
+  }
+  const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return { id, label: title, title, body };
+}
+
+const sections = splitSections(methodMd);
+const renderedSections = await Promise.all(
+  sections.map(async s => ({ ...s, html: await renderMd(s.body) }))
+);
+
+// The prose above is a narrative of induction and is worth writing by hand: the access
+// strategies, why the three readers are partitioned as they are, the failure modes each one
+// catches. None of that is in the declaration.
+//
+// The *inventory* of layers is a different thing, and writing it by hand is what went wrong:
+// the document described a ten-step process while the pipeline declared twenty-five layers,
+// and fourteen of them — `stance`, `mira-export`, `prediction-outcome` among them — were
+// named nowhere in it. A second description of one machine drifts from the first the moment
+// somebody declares a layer and does not think to come here.
+//
+// So this section is generated from pipeline/layers.yaml, in dependency order. A layer
+// declared tomorrow appears in the methodology tomorrow, and a layer that never existed
+// cannot appear at all.
+const layerCols = columns();
+const tabs = [...renderedSections.map(s => ({ id: s.id, label: s.label })),
+              { id: 'layers', label: 'Layers' }];
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const target = `${base}/methodology/`;
 ---
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content={`0; url=${target}`} />
-  <link rel="canonical" href={target} />
-  <title>Redirecting to Methodology — eLife Claim Trees</title>
-</head>
-<body>
-  <p>Redirecting to <a href={target}>Methodology</a>…</p>
-  <script define:vars={{ target }}>window.location.replace(target);</script>
-</body>
-</html>
+
+<Layout title="Methodology">
+  <div class="site-frame column py-10">
+    <header class="mb-8">
+      <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 m-0 mb-2">Methodology</h1>
+      <p class="text-sm text-gray-600 dark:text-gray-400 m-0">
+        Documented procedure for claim graph authoring, verification, and synthesis.
+      </p>
+    </header>
+
+    <MethodTabs tabs={tabs} defaultTab="overview" />
+
+    <div class="method-content">
+      {renderedSections.map((s, i) => (
+        <article
+          class="method-tab-panel method-prose"
+          data-tab-id={s.id}
+          data-tab-active={i === 0 ? 'true' : 'false'}
+        >
+          <h2 class="section-title">{s.title}</h2>
+          <div set:html={s.html} />
+        </article>
+      ))}
+
+      <article class="method-tab-panel method-prose" data-tab-id="layers" data-tab-active="false">
+        <h2 class="section-title">The layers, as declared</h2>
+        <p>
+          Every question the pipeline asks of a paper, in dependency order, from
+          <a href="https://github.com/zmainen/elife-claim-trees/blob/main/pipeline/layers.yaml"
+             target="_blank" rel="noopener"><code>layers.yaml</code></a>.
+        </p>
+        {layerCols.map((col, depth) => (
+          <section class="not-prose mb-7">
+            <h3 class="text-[11px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3 mt-0">
+              Depth {depth}
+            </h3>
+            <div class="space-y-3">
+              {col.map(l => (
+                <div class="border-l-2 border-gray-200 dark:border-gray-700 pl-3">
+                  <a href={`${base}/pipeline/${l.id}/`}
+                     class="font-mono text-[13px] text-amber-700 dark:text-amber-400 no-underline hover:underline">{l.id}</a>
+                  <span class="text-xs text-gray-400 dark:text-gray-500 ml-2">
+                    {l.kind}{l.scope === 'corpus' ? ' · every paper' : ''}
+                    {l.group && layerGroups[l.group] ? ` · ${layerGroups[l.group].title.toLowerCase()}` : ''}
+                  </span>
+                  <span class="block text-sm text-gray-700 dark:text-gray-300 leading-snug"
+                        set:html={l.question.replace(/`([^`]+)`/g, '<code>$1</code>')}></span>
+                  {l.needs && l.needs.length > 0 && (
+                    <span class="block text-xs text-gray-500 dark:text-gray-400 font-mono mt-0.5">
+                      rests on {l.needs.filter(n => byId[n]).join(', ')}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </article>
+    </div>
+
+    <footer class="mt-12 pt-6 border-t border-gray-100 dark:border-gray-800 text-sm">
+      <a href={`${base}/papers/`} class="text-gray-500 dark:text-gray-400 hover:text-gray-700 no-underline">&larr; Papers</a>
+    </footer>
+  </div>
+</Layout>

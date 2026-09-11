@@ -136,8 +136,13 @@ export const artifacts = (paths: string[] | undefined, base: string, where?: Whe
   (paths ?? []).map(p => artifact(p, base, where));
 
 /** A directory of claim files is a tree, not a download. Declared paths that name one are
- *  reported as a location so the drawer can say so rather than offering a broken file. */
-export const isDirectory = (path: string) => !/\.[a-z0-9]+$/i.test(path);
+ *  reported as a location so the drawer can say so rather than offering a broken file.
+ *
+ *  A glob is a third thing, and not this one: `claims/{paper}/*.md` used to pass the extension
+ *  test and be offered as a link to a GitHub blob with a literal asterisk in it, a 404 on the
+ *  one layer — the claim tree — whose output matters most. It is resolved as a `set` instead,
+ *  counted and sent to the views that render those files as pages. */
+export const isDirectory = (path: string) => !path.includes('*') && !/\.[a-z0-9]+$/i.test(path);
 
 export const SIZE = (n?: number) =>
   n === undefined ? '' : n < 1024 ? `${n} B`

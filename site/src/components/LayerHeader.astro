@@ -24,6 +24,14 @@ const KIND_NOTE: Record<string, string> = {
   question: 'A decision about meaning, and then the propagation of it through everything downstream.',
 };
 const code = (s: string) => s.replace(/`([^`]+)`/g, '<code class="text-[13px]">$1</code>');
+// `how` is a paragraph or three of prose in the declaration, written as a YAML folded scalar.
+// Folding turns each wrapped line into a space and each blank line into a single newline, so a
+// newline in the parsed value is exactly a paragraph break — which is why this splits on `\n`
+// and not on a blank line. Backticks become code, the same convention as everywhere else.
+// Nothing heavier is wanted: a markdown pipeline over a three-paragraph field is a dependency
+// bought to avoid writing one `split`.
+const paras = (s: string) =>
+  s.trim().split(/\n+/).map(p => `<p class="mb-3 last:mb-0">${code(p.trim())}</p>`).join('');
 ---
 
 <nav class="text-sm text-gray-500 dark:text-gray-400 mb-6">
@@ -57,6 +65,21 @@ const code = (s: string) => s.replace(/`([^`]+)`/g, '<code class="text-[13px]">$
     </p>
   )}
 </header>
+
+{(layer.how || layer.doc) && (
+  <section class="mb-9 max-w-2xl">
+    <h2 class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 m-0 mb-2">How it works</h2>
+    {layer.how && (
+      <div class="text-[15px] text-gray-700 dark:text-gray-300 leading-relaxed"
+           set:html={paras(resolve(layer.how))}></div>
+    )}
+    {layer.doc && (
+      <p class="text-sm m-0 mt-3">
+        <a href={`${base}${layer.doc}`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">How to run it, in the reference</a>
+      </p>
+    )}
+  </section>
+)}
 
 {layer.found && (
   <section class="mb-10 border-l-2 border-emerald-500 dark:border-emerald-600 pl-4">

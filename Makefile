@@ -123,8 +123,8 @@ fresh: data  ## Fail if regenerating changed anything that was committed
 	  git status --porcelain -- $(GENERATED); \
 	  echo ""; \
 	  echo "Run 'make data' and commit the result."; \
-	  echo "If corpus-facts.json flipped a cell to \\`stale\\` with export paths under"; \
-	  echo "\\`moved\\`, the cause is exports/ — run 'make mira-exports' first."; \
+	  echo 'If corpus-facts.json flipped a cell to `stale` with export paths under'; \
+	  echo '`moved`, the cause is exports/ — run "make mira-exports" first.'; \
 	  exit 1; \
 	fi
 	@echo "Generated data matches the corpus."

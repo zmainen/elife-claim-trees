@@ -4,18 +4,64 @@
 // The same block on every layer page, bespoke or generic: which papers have been through this
 // layer, at what version, and — for those that have not — the command that would fill the
 // cell, taken from the declaration so the page and the runner cannot diverge.
-import { papers, cell, titleOf, STATE_LABEL, type LayerDecl } from '../lib/pipeline';
+//
+// Every path it names is now an address. `reads` and `produces` were printed as monospace
+// strings joined by a middle dot, and `produces` still carried `{paper}` unsubstituted, so the
+// page named a layer's prompt and its output and offered no way to open either. A row's paper
+// links to that paper's cell, which is where this layer's own output for it is rendered.
+import { papers, cell, titleOf, STATE_LABEL, VIEWS, type LayerDecl } from '../lib/pipeline';
+import { artifact, isDirectory } from '../lib/artifacts';
+import { source, records, document, output } from '../lib/layer-source';
 
 interface Props { layer: LayerDecl }
 const { layer } = Astro.props;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const url = (p: string) => `${base}${p}/`;
 const rows = layer.scope === 'corpus'
   ? []
-  : papers.map(p => ({ paper: p, c: cell(p, layer.id)! })).filter(r => r.c);
+  : papers.map(p => ({ paper: p, c: cell(p, layer.id)! })).filter(r => r.c)
+      .map(r => ({
+        ...r,
+        // The artifact itself, where the run left one. A cell can be `current` with its file
+        // long gone, and a link that 404s is worse than none — so presence is read from disk.
+        art: r.c.produces.map(p => (records(p) || document(p)) ? artifact(p, base) : null)
+                          .find(Boolean) ?? null,
+      }));
 const counts: Record<string, number> = {};
 for (const r of rows) counts[r.c.state] = (counts[r.c.state] ?? 0) + 1;
+
+const reads = (layer.reads ?? []).map(r => source(r));
+
+// What the declared views actually resolve to, checked against a real artifact rather than
+// assumed from the declaration. `claim-tree` declares `list` and `table` and writes a directory
+// of markdown files; `replication` declares `table` and has never run. Saying "rendered above"
+// in either case would be the same kind of claim the inert `views` list was already making.
+const candidates = layer.scope === 'corpus'
+  ? [(layer.produces ?? []).filter(p => !p.includes('{paper}'))]
+  : rows.map(r => r.c.produces);
+const probes = candidates.map(ps => output(ps)).filter(o => o.path);
+const tabular = probes.find(o => (o.records?.records.length ?? 0) > 0);
+const prose = probes.find(o => o.document || (o.sections?.length ?? 0) > 0);
+
+// Why a view is not rendered matters more than that it is not: a layer that has never run and
+// a layer whose output is not the shape the view needs are different problems.
+const unrendered = (layer.produces ?? []).length === 0
+  ? 'declared, and this layer produces nothing yet'
+  : (layer.produces ?? []).every(isDirectory)
+    ? 'declared, and this layer writes a tree of claim files rather than one artifact'
+    : probes.length === 0
+      ? 'declared, and no run of this layer has left an artifact to render'
+      : 'declared, and this artifact is not the shape this view needs';
+
+const VIEW_NOTE = (v: string) => {
+  if (v === 'list' || v === 'table') {
+    return tabular
+      ? `rendered above, over the ${tabular.records!.records.length} ${tabular.records!.key ?? 'records'} in the artifact`
+      : unrendered;
+  }
+  if (v === 'document') return prose ? 'rendered above, from the artifact itself' : unrendered;
+  return VIEWS[v]?.where ?? 'declared, and nothing renders it yet';
+};
 
 const TONE: Record<string, string> = {
   current: 'text-emerald-700 dark:text-emerald-400',
@@ -33,6 +79,8 @@ const TONE: Record<string, string> = {
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Across the corpus</h2>
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
       {Object.entries(counts).map(([s, n]) => `${n} ${STATE_LABEL[s as keyof typeof STATE_LABEL]}`).join(' · ')}
+      <span class="mx-1.5">·</span>
+      <span>a paper links to its own cell, where this layer's output for it is rendered</span>
     </p>
     <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
       <table class="w-full text-sm border-collapse">
@@ -42,14 +90,15 @@ const TONE: Record<string, string> = {
             <th class="py-2.5 px-3 font-medium">State</th>
             <th class="py-2.5 px-3 font-medium">Version</th>
             <th class="py-2.5 px-3 font-medium">Last run</th>
-            <th class="py-2.5 px-4 font-medium">Data</th>
+            <th class="py-2.5 px-4 font-medium">Output</th>
+            <th class="py-2.5 px-4 font-medium">Cell</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ paper, c }) => (
+          {rows.map(({ paper, c, art }) => (
             <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0">
               <td class="py-2.5 px-4">
-                <a href={url(`/papers/${paper}`)} class="text-gray-800 dark:text-gray-200 no-underline hover:text-amber-700 dark:hover:text-amber-400">
+                <a href={c.href} class="text-gray-800 dark:text-gray-200 no-underline hover:text-amber-700 dark:hover:text-amber-400">
                   {titleOf(paper).slice(0, 52)}{titleOf(paper).length > 52 ? '…' : ''}
                 </a>
                 {c.note && <span class="block text-xs text-gray-500 dark:text-gray-400 leading-snug">{c.note}</span>}
@@ -57,6 +106,13 @@ const TONE: Record<string, string> = {
               <td class={`py-2.5 px-3 font-mono text-xs whitespace-nowrap ${TONE[c.state]}`}>{STATE_LABEL[c.state]}</td>
               <td class="py-2.5 px-3 font-mono text-xs text-gray-500 dark:text-gray-400 tabular-nums">{c.v ? `v${c.v}` : '—'}</td>
               <td class="py-2.5 px-3 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">{c.ran?.slice(0, 10) ?? '—'}</td>
+              <td class="py-2.5 px-4 font-mono text-xs whitespace-nowrap">
+                {art
+                  ? <a href={art.href} target={art.downloadable ? undefined : '_blank'}
+                       rel={art.downloadable ? undefined : 'noopener'}
+                       class="text-amber-700 dark:text-amber-400 no-underline hover:underline">{art.name}</a>
+                  : <span class="text-gray-300 dark:text-gray-700">—</span>}
+              </td>
               <td class="py-2.5 px-4">
                 <a href={c.dataHref} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">json</a>
               </td>
@@ -70,23 +126,55 @@ const TONE: Record<string, string> = {
 
 <section class="mb-10">
   <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Inputs and outputs</h2>
-  <dl class="text-sm space-y-3 m-0">
-    {(layer.reads ?? []).length > 0 && (
+  <dl class="text-sm space-y-4 m-0">
+    {reads.length > 0 && (
       <div>
-        <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Reads, besides its dependencies</dt>
-        <dd class="m-0 font-mono text-xs text-gray-700 dark:text-gray-300">{(layer.reads ?? []).join(' · ')}</dd>
+        <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5">Reads, besides its dependencies</dt>
+        <dd class="m-0">
+          <ul class="list-none p-0 m-0 space-y-1">
+            {reads.map(f => (
+              <li>
+                <a href={f.href} target="_blank" rel="noopener"
+                   class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{f.path}</a>
+                {f.exists
+                  ? <span class="text-xs text-gray-400 dark:text-gray-600"> · {f.lines} lines</span>
+                  : <span class="text-xs text-amber-700 dark:text-amber-400"> · declared, and not in the repository — it hashes to nothing, so it cannot make a run stale</span>}
+              </li>
+            ))}
+          </ul>
+        </dd>
       </div>
     )}
     {(layer.produces ?? []).length > 0 && (
       <div>
-        <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Produces</dt>
-        <dd class="m-0 font-mono text-xs text-gray-700 dark:text-gray-300">{(layer.produces ?? []).join(' · ')}</dd>
+        <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5">Produces</dt>
+        <dd class="m-0">
+          <ul class="list-none p-0 m-0 space-y-1">
+            {(layer.produces ?? []).map(p => (
+              <li class="font-mono text-xs text-gray-700 dark:text-gray-300">{p}</li>
+            ))}
+          </ul>
+          {(layer.produces ?? []).some(p => p.includes('{paper}')) && layer.scope === 'paper' && (
+            <p class="text-xs text-gray-500 dark:text-gray-400 m-0 mt-1.5">
+              One per paper — the table above links each one that exists.
+            </p>
+          )}
+        </dd>
       </div>
     )}
     {(layer.views ?? []).length > 0 && (
       <div>
-        <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Views</dt>
-        <dd class="m-0 text-gray-700 dark:text-gray-300">{(layer.views ?? []).join(', ')}</dd>
+        <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5">Views</dt>
+        <dd class="m-0">
+          <ul class="list-none p-0 m-0 space-y-1">
+            {(layer.views ?? []).map(v => (
+              <li class="text-xs">
+                <span class="font-mono text-gray-700 dark:text-gray-300">{v}</span>
+                <span class="text-gray-500 dark:text-gray-400">{` — ${VIEW_NOTE(v)}`}</span>
+              </li>
+            ))}
+          </ul>
+        </dd>
       </div>
     )}
   </dl>
@@ -100,6 +188,9 @@ const TONE: Record<string, string> = {
       diverge. <code>pipeline.py run</code> also runs the unmet dependencies first.
     </p>
     <pre class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs text-gray-700 dark:text-gray-300 overflow-x-auto m-0"><code>python3 scripts/pipeline.py run &lt;paper&gt; {layer.id}</code></pre>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 m-0">
+      Underneath, that runs <code class="break-all">{layer.command}</code>.
+    </p>
   </section>
 )}
 

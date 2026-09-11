@@ -10,7 +10,7 @@ The document covers the scientific methodology: schema, claim authoring, verific
 
 1. [Overview](#1-overview)
 2. [Corpus](#2-corpus)
-3. [Claim induction — the ten-step process](#3-claim-induction--the-ten-step-process)
+3. [Claim induction](#3-claim-induction)
 4. [Schema](#4-schema)
 5. [Verification procedure](#5-verification-procedure)
 6. [Paper summaries](#6-paper-summaries)
@@ -67,7 +67,7 @@ The R1 revision of the Meijer paper carries 41 claims against 24 in the v1 prepr
 
 ---
 
-## 3. Claim induction — the ten-step process
+## 3. Claim induction
 
 > ## No human checks this corpus
 >
@@ -100,7 +100,9 @@ The R1 revision of the Meijer paper carries 41 claims against 24 in the v1 prepr
 > for a person to disposition. **It is not implemented, and it has not been run.** Adding it
 > would be a change to the method, and would be recorded here as one.
 
-Claim induction is the translation of a paper from argument format into claim-graph format. It demands reading comprehension, domain judgment, and decisions about what constitutes a claim — and in this version a model makes all of them. The procedure has ten steps with a review gate at step 5, which no person currently passes through. Steps 1–8 build and check the claim tree; steps 9–10 measure what it missed and export it.
+Claim induction is the translation of a paper from argument format into claim-graph format. It demands reading comprehension, domain judgment, and decisions about what constitutes a claim — and in this version a model makes all of them.
+
+The steps below are the narrative: how a paper is read, why the readers are partitioned as they are, what each one catches and misses, and where the review gate belongs. They are not the inventory. The pipeline declares every question it asks in `pipeline/layers.yaml`, and the [Layers](#layers) section is generated from that file — so a layer added after this narrative was written appears there without anyone remembering to come back here. Where the two describe the same work, the declaration is the one that runs.
 
 ### Step 1: Prepare
 
@@ -197,7 +199,7 @@ For each claim where data and code are available, run the analysis and compare t
 
 ### Step 9: Coverage — what does no claim account for?
 
-Steps 1–8 produce a claim tree and check the claims in it. They do not ask the opposite
+The steps above produce a claim tree and check the claims in it. They do not ask the opposite
 question, and until recently nothing did: what does the paper assert that no claim
 represents? That gap is not hypothetical. Figure 2's panels C and F in Gädeke — a failed
 replication of a risk-aversion effect — sat unrepresented in the tree, and nothing in the
@@ -704,7 +706,7 @@ The methodology described above is the disciplined process the prototype would a
 
 ### Authoring discipline not strictly enforced
 
-The ten-step procedure with three independent extractions and a mandatory Step 5 review gate describes a workflow the prototype did not strictly enforce. In practice, authoring was prompt-guided LLM extraction with intermittent rather than systematic human review. The {{claims}} claim files should be read as a draft annotation layer, not as adjudicated output. A scaled-out version — the version this document is the methodology for — would enforce the three-extraction reconciliation and the Step 5 review gate as actual procedural checkpoints. The corpus is the prototype's draft; the methodology is the discipline the draft should be brought up to.
+The procedure above — three independent extractions and a mandatory review gate — describes a workflow the prototype did not strictly enforce. In practice, authoring was prompt-guided LLM extraction with intermittent rather than systematic human review. The {{claims}} claim files should be read as a draft annotation layer, not as adjudicated output. A scaled-out version — the version this document is the methodology for — would enforce the three-extraction reconciliation and the Step 5 review gate as actual procedural checkpoints. The corpus is the prototype's draft; the methodology is the discipline the draft should be brought up to.
 
 ### Verification coverage is shallow
 

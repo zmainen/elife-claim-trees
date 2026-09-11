@@ -1,0 +1,88 @@
+---
+// What the layer runs under, on the layer's own page.
+//
+// For a layer a model answers, the prompt is not an input among others — it is the layer's
+// definition. Every rule the results-reader follows, every failure mode it is warned about,
+// the schema it must return: all of it is in a file the page named and did not show. The path
+// was rendered as a bare monospace string, so a reader who wanted to know what the layer
+// actually asks had to leave the site and find the file in the repository.
+//
+// The prompt is rendered here, whole, from the committed file. Nothing is restated — a
+// summary of a prompt is a second description to keep in step with the first, and this
+// repository has already lost that argument twice.
+//
+// A script gets its own account of itself instead: the module docstring, which is what these
+// scripts open with, and a link to the source. Rendering 600 lines of Python on a layer page
+// would bury the one paragraph a reader came for.
+import { renderMd } from '../lib/markdown';
+import { sources, type Source } from '../lib/layer-source';
+import type { LayerDecl } from '../lib/pipeline';
+
+interface Props { layer: LayerDecl; paper?: string }
+const { layer, paper } = Astro.props;
+
+const files: Source[] = sources(layer, paper);
+const rendered = await Promise.all(
+  files.map(async f => ({ ...f, html: f.text ? await renderMd(f.text) : null })));
+
+const LABEL: Record<string, string> = {
+  prompt: 'the prompt it runs under',
+  code: 'the script that runs it',
+  prose: 'the document it is defined by',
+  data: 'a declared input',
+};
+---
+
+{rendered.length > 0 && (
+  <section class="mb-10">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">How it is defined</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl leading-relaxed">
+      {rendered.some(f => f.kind === 'prompt')
+        ? <>A model answers this layer, so the prompt is the layer. It is reproduced below from the
+           committed file, and it is a declared input — editing it makes every run that used it
+           stale.</>
+        : <>What this layer reads besides its dependencies. Each is a declared input: its content
+           is hashed into every run, so editing one makes those runs stale.</>}
+    </p>
+
+    {rendered.map(f => (
+      <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden mb-4">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-800/40 border-b border-gray-200 dark:border-gray-700">
+          <a href={f.href} target="_blank" rel="noopener"
+             class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{f.path}</a>
+          <span class="text-xs text-gray-500 dark:text-gray-400">{LABEL[f.kind]}</span>
+          <span class="text-xs font-mono text-gray-400 dark:text-gray-500 ml-auto">
+            {f.exists ? `${f.lines} lines` : 'not in the repository'}
+          </span>
+        </div>
+
+        {!f.exists && (
+          <p class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+            The declaration names this path and the repository does not have it. An input that
+            does not exist hashes to nothing, so it cannot make a run stale — the layer is
+            declared to depend on something it is not in fact tracking.
+          </p>
+        )}
+
+        {f.summary && (
+          <div class="px-4 py-3">
+            <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 m-0 mb-1.5">
+              What it says it does
+            </p>
+            <pre class="m-0 text-[13px] leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-sans">{f.summary}</pre>
+          </div>
+        )}
+
+        {f.html && (
+          <details class="group">
+            <summary class="cursor-pointer list-none px-4 py-2.5 text-sm text-amber-700 dark:text-amber-400 hover:bg-gray-50 dark:hover:bg-gray-800/40">
+              <span class="group-open:hidden">Read all {f.lines} lines of it →</span>
+              <span class="hidden group-open:inline">Collapse</span>
+            </summary>
+            <div class="px-4 pb-4 border-t border-gray-100 dark:border-gray-800 method-prose" set:html={f.html} />
+          </details>
+        )}
+      </div>
+    ))}
+  </section>
+)}
