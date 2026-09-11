@@ -536,27 +536,71 @@ if (existsSync(exportsSrc)) {
   console.log(`Copied ${n} export files to public/exports/`);
 }
 
-// ── Record which produced artifacts are actually downloadable ──────────────
-// `produces` in layers.yaml is a repo path, and only some of those families are copied into
-// public/ — exports and the verification figures are, claims/ coverage/ mappings/ marked/
-// runs/ are not. The drawer offers a download for a file the site really serves and a source
-// link for one it does not, and that distinction has to be measured rather than assumed: a
-// download that 404s is worse than an honest "in the repository" link.
+// ── Index the artifacts the pipeline declares ──────────────────────────────
+// `produces` in layers.yaml is a repo path with {paper} unsubstituted, and the site has been
+// treating every one of them as a file that exists. It is not: of the paths this corpus
+// declares, most name output of a layer that has never run for that paper, and the artifacts
+// view was offering each one as a GitHub link that 404s — the exact failure the published set
+// was introduced to prevent, missed because it measured what public/ holds rather than what
+// the pipeline produced.
 //
-// Walks public/ once and writes the set of paths it found. A file that stops being copied
-// stops being offered, with no second list to keep in step.
-const artifactRoots = ['exports', 'verification', 'figures', 'design'];
-const publishedPaths = [];
-const walk = (abs, rel) => {
-  if (!existsSync(abs)) return;
-  for (const e of readdirSync(abs, { withFileTypes: true })) {
-    const r = `${rel}/${e.name}`;
-    if (e.isDirectory()) walk(join(abs, e.name), r);
-    else publishedPaths.push(r);
-  }
+// So each declared path is resolved against the repository and recorded as where it is:
+//
+//   public     already copied into public/, and served at its own path
+//   artifacts  produced but not copied — served at /artifacts/<path> by the endpoint, which
+//              takes its list from this file so the two cannot disagree
+//   repo       produced, and not something the endpoint can serve. A link out.
+//   absent     declared and never produced. Not a link at all.
+//   set        a path containing `*` is a set rather than a file (claims/{paper}/*.md), and
+//              is counted — a count is what a reader can act on.
+const layersDecl = parseYaml(readFileSync(join(projectRoot, 'pipeline/layers.yaml'), 'utf8'));
+const publicRoot = join(__dirname, '../public');
+
+// Only text is served by the endpoint: it reads the file at build and hands back the bytes,
+// and everything produced but uncopied in this corpus is text.
+const TEXT = /\.(json|jsonld|md|ttl|csv|txt|py|js|ts|yaml|yml)$/i;
+
+// The cell page renders a reader's run as its claims and the quote each was found in — but
+// only when the file holds a claim list. `edge-inference` writes a bare array of edges under
+// the same `.output.json` name, and offering a "claim by claim" view of it would send a reader
+// to a page that renders nothing. Cheap to check here, and then it is measured rather than
+// inferred from a filename.
+const renders = (abs, path) => {
+  if (!path.endsWith('.output.json')) return {};
+  try {
+    return Array.isArray(JSON.parse(readFileSync(abs, 'utf8'))?.claims) ? { claims: true } : {};
+  } catch { return {}; }
 };
-for (const root of artifactRoots) walk(join(__dirname, '../public', root), root);
-publishedPaths.sort();
-const artifactsOut = join(__dirname, '../src/data/published-artifacts.json');
-writeFileSync(artifactsOut, JSON.stringify(publishedPaths, null, 0) + '\n');
-console.log(`Written ${artifactsOut}: ${publishedPaths.length} published artifact paths`);
+
+const artifactIndex = {};
+for (const layer of layersDecl.layers) {
+  if (layer.scope === 'corpus') continue;
+  for (const decl of layer.produces ?? []) {
+    for (const { slug } of papers) {
+      const path = decl.replace(/\{paper\}/g, slug);
+      if (path in artifactIndex) continue;
+      const abs = join(projectRoot, path);
+      if (path.includes('*')) {
+        const dir = join(projectRoot, path.slice(0, path.lastIndexOf('/')));
+        const re = new RegExp('^' + path.split('/').pop().replace(/[.]/g, '\\.').replace(/[*]/g, '.*') + '$');
+        const n = existsSync(dir) ? readdirSync(dir).filter(f => re.test(f)).length : 0;
+        artifactIndex[path] = { at: 'set', n };
+      } else if (existsSync(join(publicRoot, path))) {
+        artifactIndex[path] = { at: 'public', bytes: fs.statSync(abs).size };
+      } else if (existsSync(abs)) {
+        artifactIndex[path] = TEXT.test(path)
+          ? { at: 'artifacts', bytes: fs.statSync(abs).size, ...renders(abs, path) }
+          : { at: 'repo', bytes: fs.statSync(abs).size };
+      } else {
+        artifactIndex[path] = { at: 'absent' };
+      }
+    }
+  }
+}
+
+const artifactsOut = join(outDir, 'artifacts.json');
+writeFileSync(artifactsOut,
+  JSON.stringify(Object.fromEntries(Object.entries(artifactIndex).sort()), null, 0) + '\n');
+const tally = Object.values(artifactIndex).reduce((a, v) => ({ ...a, [v.at]: (a[v.at] ?? 0) + 1 }), {});
+console.log(`Written ${artifactsOut}: ` +
+  Object.entries(tally).map(([k, n]) => `${n} ${k}`).join(', '));

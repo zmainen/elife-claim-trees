@@ -207,14 +207,23 @@ const TONE: Record<string, string> = {
       <section class="mb-10">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Artifacts</h2>
         <ul class="list-none p-0 m-0 space-y-1.5">
-          {artifacts(c.produces.filter((x: string) => !isDirectory(x)), base).map(a => (
+          {artifacts(c.produces.filter((x: string) => !isDirectory(x)), base,
+                     { paper: paper.slug, layer: layerId }).map(a => (
             <li class="text-sm">
-              <a href={a.href}
-                 download={a.downloadable ? '' : undefined}
-                 target={a.downloadable ? undefined : '_blank'}
-                 rel={a.downloadable ? undefined : 'noopener'}
-                 class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{a.path}</a>
-              {!a.downloadable && <span class="text-xs text-gray-400 dark:text-gray-500"> · in the repository</span>}
+              {a.href ? (
+                <a href={a.href} download
+                   class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{a.path}</a>
+              ) : a.state === 'repo' && a.source ? (
+                <a href={a.source} target="_blank" rel="noopener"
+                   class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{a.path}</a>
+              ) : (
+                <span class="font-mono text-xs text-gray-400 dark:text-gray-500">{a.path}</span>
+              )}
+              <span class="text-xs text-gray-400 dark:text-gray-500">
+                {a.state === 'repo' ? ' · in the repository'
+                 : a.state === 'absent' ? ' · not produced'
+                 : a.state === 'set' ? ` · ${a.count} files` : ''}
+              </span>
             </li>
           ))}
           {c.produces.filter(isDirectory).map((d: string) => (

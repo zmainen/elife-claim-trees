@@ -91,7 +91,7 @@ const cellView = (paper: string, layer: LayerDecl, base: string): CellView | nul
     note: c.note ?? null,
     href: c.href,
     dataHref: c.dataHref,
-    artifacts: artifacts(produced.filter(p => !isDirectory(p)), base),
+    artifacts: artifacts(produced.filter(p => !isDirectory(p)), base, { paper, layer: layer.id }),
     directories: produced.filter(isDirectory),
     command: c.command ?? null,
   };

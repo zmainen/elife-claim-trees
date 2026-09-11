@@ -14,8 +14,8 @@
 // table of the caption records that happen to sit in the same file; and a layer whose
 // declaration names a view nothing here draws says so on the same page, under Views.
 import { renderMd } from '../lib/markdown';
-import { output, size } from '../lib/layer-source';
-import { artifact } from '../lib/artifacts';
+import { output } from '../lib/layer-source';
+import { artifact, SIZE } from '../lib/artifacts';
 import LayerRecords from './LayerRecords.astro';
 import type { LayerDecl } from '../lib/pipeline';
 
@@ -35,7 +35,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const views = layer.views ?? [];
 const { path, records, document, sections } = output(produces);
 const art = path ? artifact(path, base) : null;
-const bytes = path ? size(path) : null;
 
 const asRecords = records?.records.length && views.some(v => v === 'list' || v === 'table');
 const asDocument = views.includes('document');
@@ -53,7 +52,6 @@ const META_MAX = 120;
 const meta = Object.entries(records?.meta ?? {})
   .filter(([k, v]) => v !== null && v !== '' && k !== 'paper' && k !== 'paper_slug'
                       && !(typeof v === 'string' && v.length > META_MAX));
-const kb = (n: number) => n < 1024 ? `${n} B` : `${Math.round(n / 1024)} KB`;
 const chars = (n: number) => `${(n / 1000).toFixed(1)}k characters`;
 ---
 
@@ -68,10 +66,10 @@ const chars = (n: number) => `${(n / 1000).toFixed(1)}k characters`;
 
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl leading-relaxed">
       {note ? <>{note} </> : null}
-      Read from <a href={art!.href} target={art!.downloadable ? undefined : '_blank'}
+      Read from <a href={art!.href ?? art!.source} target={art!.downloadable ? undefined : '_blank'}
                    rel={art!.downloadable ? undefined : 'noopener'}
                    class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{path}</a>
-      {bytes ? <span class="text-gray-400 dark:text-gray-600">{` · ${kb(bytes)}`}</span> : null}
+      {art?.bytes ? <span class="text-gray-400 dark:text-gray-600">{` · ${SIZE(art.bytes)}`}</span> : null}
       {art!.downloadable ? null : <span class="text-gray-400 dark:text-gray-600"> · in the repository</span>}.
       {meta.length > 0 && (
         <span class="block mt-1 font-mono text-xs">

@@ -11,7 +11,7 @@
 // with no committed intermediate to go stale between them. The build's working directory is
 // site/, so the repository root is one level up — the same resolution lib/markdown.ts uses.
 
-import { readFileSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { LayerDecl } from './pipeline';
 
@@ -202,9 +202,3 @@ export function output(produces: string[]):
   }
   return {};
 }
-
-/** Bytes on disk, for a path the site links but does not serve. */
-export const size = (path: string): number | null => {
-  const abs = join(ROOT, path);
-  return existsSync(abs) ? statSync(abs).size : null;
-};
