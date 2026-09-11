@@ -108,9 +108,15 @@ def _reader(agent: str):
         if _dump(args, lambda: reader_request(agent, args.paper, cfg), f"{agent}-reader"):
             return 0
         path, extraction = reader_layer(agent, args.paper, cfg, answer=args.answer)
+        verified = sum(1 for c in extraction.claims if c.evidence_verified)
+        total = len(extraction.claims)
+        ev_str = (f"  evidence verified {verified}/{total} quotes"
+                  if any(c.evidence_verified is not None for c in extraction.claims) else "")
         print(f"=== {agent}-reader — {args.paper} ===")
         print(f"  model    = {extraction.model}")
-        print(f"  proposed = {len(extraction.claims)} candidate claim(s)")
+        print(f"  proposed = {total} candidate claim(s)")
+        if ev_str:
+            print(ev_str)
         print(f"  written: {path}")
         return 0
     return run
@@ -127,12 +133,16 @@ def cmd_reconcile(args: argparse.Namespace) -> int:
     by_conf: dict[str, int] = {}
     for c in draft.claims:
         by_conf[c.confidence] = by_conf.get(c.confidence, 0) + 1
+    ev_total = sum(len(c.evidence_verified) for c in draft.claims)
+    ev_ok = sum(sum(v for v in c.evidence_verified.values()) for c in draft.claims)
     print(f"=== reconcile — {args.paper} ===")
     print(f"  model  = {draft.model}")
     print(f"  claims = {len(draft.claims)}  (per-agent: {dict(draft.per_agent_counts)})")
     for k in ("high", "contested", "single-source"):
         if k in by_conf:
             print(f"    {k:14s} {by_conf[k]:3d}")
+    if ev_total:
+        print(f"  evidence verified {ev_ok}/{ev_total} quotes")
     print(f"  written: {path}")
     return 0
 

@@ -15,8 +15,9 @@ from __future__ import annotations
 import json
 import logging
 
-from .agents import load_prompt, parse_json_response, stream_text
+from .agents import evidence_found, load_prompt, parse_json_response, slice_for_agent, stream_text
 from .config import Config
+from .prepare import PreparedPaper
 from .schema import AgentExtraction, DraftClaimTable, ReconciledClaim
 
 logger = logging.getLogger(__name__)
@@ -107,6 +108,7 @@ def draft_from_raw(
     paper_title: str | None = None,
     extraction_path: str | None = None,
     extraction_path_note: str | None = None,
+    paper: PreparedPaper | None = None,
 ) -> DraftClaimTable:
     """Validate a raw reconciliation answer into a DraftClaimTable.
 
@@ -156,7 +158,25 @@ def draft_from_raw(
         parsed["extraction_path"] = extraction_path
         parsed["extraction_path_note"] = extraction_path_note
 
-    return DraftClaimTable(**parsed)
+    draft = DraftClaimTable(**parsed)
+    if paper is not None:
+        # Build per-agent slice cache once, not once per claim.
+        _slices: dict[str, str] = {}
+        verified = total = 0
+        for claim in draft.claims:
+            ev: dict[str, bool] = {}
+            for agent, quote in claim.evidence_by_agent.items():
+                if agent not in _slices:
+                    try:
+                        _slices[agent] = slice_for_agent(agent, paper)
+                    except ValueError:
+                        _slices[agent] = ""
+                ev[agent] = evidence_found(quote, _slices[agent])
+                total += 1
+                verified += ev[agent]
+            claim.evidence_verified = ev
+        logger.info("reconciler: evidence verified %d/%d quotes", verified, total)
+    return draft
 
 
 def reconcile(
@@ -168,6 +188,7 @@ def reconcile(
     paper_title: str | None = None,
     extraction_path: str | None = None,
     extraction_path_note: str | None = None,
+    paper: PreparedPaper | None = None,
 ) -> DraftClaimTable:
     """Reconcile three extractions into a draft claim table via Opus.
 
@@ -201,4 +222,4 @@ def reconcile(
         label="reconciler",
     )
     return draft_from_raw(raw, results, caption, structure, cfg, paper_doi,
-                          paper_title, extraction_path, extraction_path_note)
+                          paper_title, extraction_path, extraction_path_note, paper)

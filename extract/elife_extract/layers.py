@@ -112,11 +112,12 @@ def reader_layer(agent: str, paper: str, cfg: Config, *,
     """
     from .agents import model_for, reader_from_raw, run_agent
 
+    prepared = read_prepared(paper, cfg)
     if answer is not None:
         extraction = reader_from_raw(agent, paper, f"supplied:{answer}",
-                                     Path(answer).read_text(encoding="utf-8"))
+                                     Path(answer).read_text(encoding="utf-8"), prepared)
     else:
-        extraction = run_agent(agent, read_prepared(paper, cfg), cfg)
+        extraction = run_agent(agent, prepared, cfg)
     path = _write_json(run_file(paper, READER_OUTPUT[agent], cfg),
                        json.loads(extraction.model_dump_json()))
     return path, extraction
@@ -156,7 +157,8 @@ def reconcile_layer(paper: str, cfg: Config, *,
         r, c, st = _three_readers(paper, cfg)
         draft = draft_from_raw(Path(answer).read_text(encoding="utf-8"), r, c, st, cfg,
                                prepared.doi, prepared.title,
-                               prepared.extraction_path, prepared.extraction_path_note)
+                               prepared.extraction_path, prepared.extraction_path_note,
+                               prepared)
         draft.model = f"supplied:{answer}"
         path = _write_json(run_file(paper, "reconciler.output.json", cfg),
                            json.loads(draft.model_dump_json()))
@@ -168,6 +170,7 @@ def reconcile_layer(paper: str, cfg: Config, *,
         cfg, paper_doi=prepared.doi, paper_title=prepared.title,
         extraction_path=prepared.extraction_path,
         extraction_path_note=prepared.extraction_path_note,
+        paper=prepared,
     )
     draft.model = cfg.model_reconcile
     path = _write_json(run_file(paper, "reconciler.output.json", cfg),
