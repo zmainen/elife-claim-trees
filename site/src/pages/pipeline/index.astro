@@ -41,7 +41,7 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
 ---
 
 <Layout title="Pipeline" description="The processing graph: what each layer asks, what it produces, and which papers have been through it.">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+  <div class="site-frame py-12">
 
     <header class="mb-10 max-w-3xl">
       <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">Pipeline</h1>
@@ -73,11 +73,7 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
       to another page.
     </p>
 
-    <!-- The graph is wide by nature — eight ranks of dependency — so it is allowed out of
-         the prose column, where fitting it whole meant shrinking the labels past reading. -->
-    <div class="lg:-mx-12 xl:-mx-28 2xl:-mx-44">
-      <PipelineExplorer client:load data={explorer} base={base} height={470} />
-    </div>
+    <PipelineExplorer client:load data={explorer} base={base} height={470} />
 
     <div class="h-12"></div>
 

@@ -358,3 +358,35 @@ html.dark {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--map-ring) 28%, transparent);
 }
 .map-node-muted { color: var(--map-node-muted); }
+
+/* ── The page frame ───────────────────────────────────────────────────────────
+   There was no shared container, so every page invented one: the nav sat at 7xl and
+   the bodies underneath it at 3xl, 4xl, 5xl, 6xl and 7xl depending on which page you
+   were on. Nothing lined up with the nav, and moving between two pages shifted the
+   left margin by up to 200px.
+
+   One frame, declared once. It is 6xl because the widest things the site has — the
+   paper x layer matrix and the layer map — need that much, and a frame that cannot
+   hold its own content is what starts the drift again.
+
+   `.reading` is the measure for prose *inside* the frame. The two are different jobs:
+   the frame is where the page sits, the measure is how long a line of text may get. */
+.site-frame {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .site-frame { padding-inline: 1.5rem; }
+}
+.reading { max-width: 56rem; }
+
+/* Most pages are a single column of prose. They used to be a narrower container centred on
+   its own axis, which is why the heading on a text page and the heading on the matrix page
+   started at different x. The frame now positions every page identically and `column` holds
+   the blocks inside it to a reading measure, aligned to the frame's left gutter — so the
+   logo, the h1 and the paragraph all begin on the same line. Wide children that need the
+   whole frame (a table, the layer map) opt out with `full`. */
+.site-frame.column > * { max-width: 56rem; }
+.site-frame.column > .full { max-width: none; }
