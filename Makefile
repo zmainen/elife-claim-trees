@@ -13,9 +13,10 @@
 #   the rest are independent of each other
 #   build-data.js      runs last; it is the only step `npm run build` knows about
 #
-# PYTHON: the generators here are standard library only and run under any python3. The
-# verification scripts under verification/ are not — they need pandas, numpy, scipy and
-# nibabel, so override PYTHON for those.
+# PYTHON: requirements.txt is what these need — PyYAML, and pyshacl for validation. They were
+# described as standard-library-only when this was first written, which CI disproved on the
+# first run. The verification scripts under verification/ need more still (pandas, numpy,
+# scipy, nibabel), so override PYTHON for those.
 
 PYTHON ?= python3
 CORPUS ?= elife
@@ -23,7 +24,7 @@ SITE   := site
 
 .DEFAULT_GOAL := help
 
-.PHONY: help data exports validate build preview check report fresh deps
+.PHONY: help data mira-exports validate build preview check report fresh deps
 
 help:  ## Show this help
 	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -48,14 +49,19 @@ deps: $(SITE)/node_modules  ## Install the site's node modules
 # the exporter flips every paper's mira-export cell from `current` to `stale` with the three
 # export paths listed as `moved`. A timestamp carrying no information defeats the staleness
 # model it feeds. `make exports` runs them by hand until the exporter is deterministic.
-data: $(SITE)/node_modules  ## Regenerate every generated artifact, in dependency order
+data: $(SITE)/node_modules  ## Regenerate the artifacts that are safe to rebuild every time
 	$(PYTHON) scripts/prediction_outcome.py --write
 	$(PYTHON) scripts/corpus_facts.py
 	$(PYTHON) scripts/agents_report.py
 	$(PYTHON) scripts/review_queue.py
 	cd $(SITE) && CORPUS=$(CORPUS) node scripts/build-data.js
 
-exports:  ## Regenerate exports/ and validate them. Not part of `data` — see the note above.
+# Named for what it actually rebuilds. It does NOT regenerate exports/{paper}.oxa.json or
+# exports/{paper}.dg.jsonld — those come from extract/scripts/migrate_to_oxa.py and
+# export_discourse_graphs.py, run per paper — and formats_report reads both. So after a claim
+# change this leaves the formats report computed partly from stale inputs. The pipeline state
+# flags oxa and dg as stale, so it surfaces; calling the target `exports` implied otherwise.
+mira-exports:  ## Rebuild the MIRA exports and formats report, and validate. Not part of `data`.
 	$(PYTHON) scripts/export_mira.py --all
 	$(PYTHON) scripts/formats_report.py --all
 	$(MAKE) validate PYTHON=$(PYTHON)
@@ -75,12 +81,18 @@ validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 check:  ## Gates that are clean on main. A failure here is this change's fault.
 	$(PYTHON) scripts/check_relations.py
 
-# Not muted with `-`. CI marks this job continue-on-error, which already stops it blocking;
-# silencing it here too would make a crash indistinguishable from the expected non-zero exit,
-# and the measurements could stop being produced with no signal anywhere.
+# Both run, and the target still exits non-zero.
+#
+# Neither `-` prefixes nor plain recipe lines work here. Muting both with `-` makes a crash
+# indistinguishable from the expected non-zero exit. Leaving them bare aborts the target on the
+# first command — check_reproductions exits 1 today, so audit_verifications never ran at all
+# and the "records asserting more than their run supports" count this job exists to surface was
+# never printed. Collect the worst status, run everything, then fail with it.
 report:  ## Standing corpus measurements. Expected to be non-zero; informational.
-	$(PYTHON) scripts/check_reproductions.py --corpus --strict
-	$(PYTHON) scripts/audit_verifications.py
+	@s=0; \
+	$(PYTHON) scripts/check_reproductions.py --corpus --strict || s=$$?; \
+	$(PYTHON) scripts/audit_verifications.py || s=$$?; \
+	exit $$s
 
 build: data  ## Regenerate data, then build the site
 	cd $(SITE) && CORPUS=$(CORPUS) npx astro build
@@ -111,6 +123,8 @@ fresh: data  ## Fail if regenerating changed anything that was committed
 	  git status --porcelain -- $(GENERATED); \
 	  echo ""; \
 	  echo "Run 'make data' and commit the result."; \
+	  echo "If corpus-facts.json flipped a cell to \\`stale\\` with export paths under"; \
+	  echo "\\`moved\\`, the cause is exports/ — run 'make mira-exports' first."; \
 	  exit 1; \
 	fi
 	@echo "Generated data matches the corpus."
