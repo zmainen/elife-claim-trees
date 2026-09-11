@@ -1,0 +1,1 @@
+Reads the abstract and results prose only; does not read figure captions or methods. Extracts claims from the argument as written. Captures interpretive and synthesis claims — the paper's conclusions and the reasoning that connects figures into an argument. Gets direction and framing right because it reads what the paper concludes, not what it computes.

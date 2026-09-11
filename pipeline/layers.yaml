@@ -469,6 +469,23 @@ layers:
     produces: ["site/src/data/synthesis-v3/{paper}.json"]
     views: [document, comparison]
 
+  # The paper in three paragraphs, written from its claim graph. It is the block at the top
+  # of every paper page and probably the most-read thing the corpus produces, and no layer
+  # declared it — the third undeclared output found by asking what the methodology described
+  # that the pipeline did not.
+  #
+  # `produces` names one file for all papers rather than one per paper, which is how the
+  # summaries are actually stored. The consequence is real and worth seeing: editing any
+  # paper's summary changes the artifact every paper's cell reads, so they go stale together.
+  - id: summaries
+    kind: step
+    scope: paper
+    title: Paper summary
+    question: What does this paper argue, in three paragraphs?
+    needs: [claim-tree]
+    produces: ["site/src/data/paper-summaries.json"]
+    views: [document]
+
   - id: verification
     kind: step
     scope: paper

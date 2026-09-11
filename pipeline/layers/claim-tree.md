@@ -1,0 +1,1 @@
+Generate a UUID4 for each claim (`python3 -c "import uuid; print(uuid.uuid4())"`). Write one `.md` file per claim into `claims/<paper-slug>/<claim-slug>.md` following the schema. Write the paper's `index.md` with title, DOI, authors, abstract, GitHub URL, and data deposit URL. Commit to the repository.

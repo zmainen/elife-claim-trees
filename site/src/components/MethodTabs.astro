@@ -9,7 +9,7 @@ type Props = {
 const { tabs, defaultTab = 'overview' } = Astro.props as Props;
 ---
 
-<nav class="method-tabs" role="tablist" data-default-tab={defaultTab}>
+<nav class="method-tabs full" role="tablist" data-default-tab={defaultTab}>
   {tabs.map(tab => (
     <button
       class="method-tab"
@@ -26,12 +26,11 @@ const { tabs, defaultTab = 'overview' } = Astro.props as Props;
 <style>
   .method-tabs {
     display: flex;
-    gap: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0 1.5rem;
     border-bottom: 1px solid #e5e7eb;
     margin-bottom: 2rem;
     padding: 0;
-    overflow-x: auto;
-    scrollbar-width: thin;
   }
   .method-tab {
     background: transparent;

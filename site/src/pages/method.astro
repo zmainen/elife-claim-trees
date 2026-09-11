@@ -1,8 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import MethodTabs from '../components/MethodTabs.astro';
-import { readDoc, renderMd } from '../lib/markdown';
-import { columns, groups as layerGroups, byId } from '../lib/pipeline';
+import { readDoc, renderMd, readLayerDoc } from '../lib/markdown';
+import { columns, groups as layerGroups, byId, layers as allLayers } from '../lib/pipeline';
 
 // Reading the document and filling its {{token}}s is shared with /docs, which renders
 // docs/cli/*.md the same way. It lived here, so the convention and its build-failing guard
@@ -57,16 +57,17 @@ function splitSections(md: string): Section[] {
 
 // Map a heading like "1. Overview" or "8. Literature-context as cross-paper primitive"
 // to a short, lowercase tab id and a compact label.
+// Keyed on the section number, so renumbering the document silently relabels its tabs:
+// moving Verification, Paper summaries and Synthesis out to their layers renumbered
+// Literature-context to 5 and Limits to 6, which inherited the labels of the sections that
+// had just left. The ids are kept for `?view=` links that already exist.
 const labelOverrides: Record<string, { id: string; label: string }> = {
   '1': { id: 'overview', label: 'Overview' },
   '2': { id: 'corpus', label: 'Corpus' },
   '3': { id: 'authoring', label: 'Authoring' },
   '4': { id: 'schema', label: 'Schema' },
-  '5': { id: 'verification', label: 'Verification' },
-  '6': { id: 'summaries', label: 'Summaries' },
-  '7': { id: 'synthesis', label: 'Synthesis' },
-  '8': { id: 'literature', label: 'Literature-context' },
-  '9': { id: 'limits', label: 'Limits' },
+  '5': { id: 'literature', label: 'Literature-context' },
+  '6': { id: 'limits', label: 'Limits' },
 };
 
 function makeSection(title: string, body: string): Section {
@@ -82,7 +83,19 @@ function makeSection(title: string, body: string): Section {
   return { id, label: title, title, body };
 }
 
-const sections = splitSections(methodMd);
+// The document's own table of contents. On the page the tabs are the table of contents, so
+// this was a tab whose content was a list of the other tabs.
+const sections = splitSections(methodMd).filter(s => s.id !== 'contents');
+
+// Each layer's own prose, from pipeline/layers/<id>.md — the same files the layer pages
+// render. They were sections of this document until they moved beside the declarations they
+// explain.
+const layerDocs = new Map<string, string>();
+for (const l of allLayers) {
+  const d = readLayerDoc(l.id);
+  if (d) layerDocs.set(l.id, await renderMd(d));
+}
+
 const renderedSections = await Promise.all(
   sections.map(async s => ({ ...s, html: await renderMd(s.body) }))
 );
@@ -132,9 +145,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <article class="method-tab-panel method-prose" data-tab-id="layers" data-tab-active="false">
         <h2 class="section-title">The layers, as declared</h2>
         <p>
-          Every question the pipeline asks of a paper, in dependency order, from
+          Every question the pipeline asks of a paper, in dependency order. Each is declared in
           <a href="https://github.com/zmainen/elife-claim-trees/blob/main/pipeline/layers.yaml"
-             target="_blank" rel="noopener"><code>layers.yaml</code></a>.
+             target="_blank" rel="noopener"><code>layers.yaml</code></a> and documented beside it
+          in <code>pipeline/layers/</code>.
         </p>
         {layerCols.map((col, depth) => (
           <section class="not-prose mb-7">
@@ -156,6 +170,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
                     <span class="block text-xs text-gray-500 dark:text-gray-400 font-mono mt-0.5">
                       rests on {l.needs.filter(n => byId[n]).join(', ')}
                     </span>
+                  )}
+                  {layerDocs.has(l.id) && (
+                    <details class="mt-2">
+                      <summary class="text-xs text-amber-700 dark:text-amber-400 cursor-pointer">how it works</summary>
+                      <article class="method-prose mt-2" set:html={layerDocs.get(l.id)}></article>
+                    </details>
                   )}
                 </div>
               ))}

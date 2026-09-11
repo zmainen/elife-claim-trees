@@ -1,0 +1,1 @@
+Reads methods, supplements, and code. Identifies what is actually computed, what assumptions underlie each result, and which panels are purely methodological. Flags conditional claims, missing controls, and existence claims masquerading as causal ones. Does not report mechanisms as results.

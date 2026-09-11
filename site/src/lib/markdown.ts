@@ -1,7 +1,7 @@
 // Rendering markdown the site owns, and filling its figures from the corpus.
 //
-// Two pages render repository markdown: /method from docs/method.md, and /docs/*
-// from docs/cli/*.md. They shared nothing, which is how a convention gets applied to one of
+// Three surfaces render repository markdown: /method from docs/method.md, /docs/* from
+// docs/cli/*.md, and each layer's page from pipeline/layers/<id>.md. They shared nothing, which is how a convention gets applied to one of
 // them — so the substitution, the guard, and the shiki configuration live here once.
 //
 // Every countable figure in that prose is a {{token}} filled from corpus-facts.json, which
@@ -12,7 +12,7 @@
 //
 // An unknown token throws rather than rendering as {{...}}: a build that fails is a problem
 // someone fixes, and a page that quietly shows its own placeholder is one nobody notices.
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
@@ -115,4 +115,17 @@ export function titleOf(md: string, fallback: string): string {
 /** Everything after the leading `# Heading`, so a layout can render the title itself. */
 export function bodyOf(md: string): string {
   return md.replace(/^#\s+.+$/m, '').trim();
+}
+
+/** A layer's own prose, if it has any.
+ *
+ *  Layer documentation lives in `pipeline/` beside `layers.yaml`, not in `docs/`, because
+ *  `docs/` is about the code and the CLI and this is about the questions. The path is a
+ *  convention rather than a declared field: a layer is explained at
+ *  `pipeline/layers/<id>.md` or it is not explained yet.
+ */
+export function readLayerDoc(id: string): string | null {
+  const path = join(ROOT, 'pipeline', 'layers', `${id}.md`);
+  if (!existsSync(path)) return null;
+  return readDoc(`pipeline/layers/${id}.md`);
 }
