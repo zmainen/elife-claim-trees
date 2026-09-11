@@ -83,6 +83,7 @@ validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 check:  ## Gates that are clean on main. A failure here is this change's fault.
 	$(PYTHON) scripts/check_relations.py
 	cd extract && $(PYTHON) -m elife_extract.cli contract
+	$(PYTHON) scripts/audit_layers.py
 
 contract:  ## Regenerate the prompt contract from vocabulary.py, relations.py and schema.py
 	cd extract && $(PYTHON) -m elife_extract.cli contract --write
