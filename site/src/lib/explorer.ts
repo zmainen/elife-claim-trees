@@ -100,7 +100,8 @@ const cellView = (paper: string, layer: LayerDecl, base: string): CellView | nul
 const layerView = (l: LayerDecl, base: string, only: string | null): LayerView => {
   const scoped = l.scope === 'corpus' ? [] : (only ? [only] : papers);
   const views = scoped.map(p => cellView(p, l, base)).filter((c): c is CellView => c !== null);
-  const done = views.filter(c => c.state === 'current' || c.state === 'stale').length;
+  // Filled, on the same terms as fill_of: an answer exists. `absent` is the empty state.
+  const done = views.filter(c => c.state !== 'absent').length;
   return {
     id: l.id,
     title: l.title,
