@@ -118,6 +118,28 @@ def test_edge_inference_reads_the_vocabulary_that_defines_the_relations():
     assert [r for r in decl["edge-inference"]["reads"] if r.startswith("extract/prompts/")] == reads
 
 
+def test_same_part_or_different_is_rendered():
+    """The reconciler's three-way test is only as good as its examples; the section, and one
+    real pair for each verdict, has to reach the prompt."""
+    md = contract.render_vocabulary(REPO)
+    assert "## Same, part, or different" in md
+    for verdict, _a, _b, _why in vocabulary.SAME_CLAIM:
+        assert f"**{verdict}." in md
+    assert {v for v, *_ in vocabulary.SAME_CLAIM} == {"same", "part", "different"}
+
+
+def test_what_is_not_a_claim_is_rendered_with_methodological_warrants():
+    """The `methodological`-versus-procedure line needs both sides on the page, and every
+    warrant — the positive side — has to resolve to a claim the corpus files as
+    `methodological`."""
+    md = contract.render_vocabulary(REPO)
+    assert "What is not a claim" in md
+    assert vocabulary.WARRANTS and vocabulary.NOT_CLAIMS
+    for paper, slug in vocabulary.WARRANTS:
+        c = contract._claim(REPO, paper, slug)
+        assert c["role"] == "methodological", f"{paper}/{slug} is {c['role']}, shown as a warrant"
+
+
 def test_parts_layer_reads_the_vocabulary_that_defines_composition():
     """The parts layer is sent its task and the vocabulary — where `part-of` is defined — and
     the declaration lists exactly that, so the run hashes what the layer composes its edges

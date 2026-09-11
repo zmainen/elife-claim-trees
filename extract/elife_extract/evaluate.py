@@ -1,21 +1,47 @@
 """Round-trip evaluation — score CLI output against a curated reference corpus.
 
-Wraps the per-paper round-trip workflow into a reusable module that the
-CLI's `evaluate` subcommand exposes. For each paper:
+What this module does
+─────────────────────
+For each paper:
   1. Read the reference paper's index.md to get the DOI.
-  2. Run extract -> reconcile -> (optional external_review) -> write
-     into a temp corpus directory.
-  3. Run the CrossRef-style matcher (Opus) to align CLI claims with
-     reference claims.
-  4. Score: claim recovery, panel agreement, role agreement, match quality.
-  5. Save per-paper scorecard.
+  2. Run prepare → readers → reconcile → (external-review) → edges → write
+     through the same layer runners that `pipeline.py run` uses, into a
+     temporary root (`work_dir`), so the chain scored is the declared one and
+     the temp root gets its own artifacts.
+  3. Find the approved reference: if `runs/<paper>/approvals.jsonl` records an
+     approval of the `claim-tree` layer, use that version's archived directory
+     (`runs/<paper>/claim-tree.v<N>/`); if no approval exists, use the
+     committed tree and say so in `reference`.
+  4. Run the CrossRef-style matcher to align CLI claims with reference claims.
+     The matcher call is factorable: `--dump-prompts` writes the prompt to a
+     file and exits; `--answers` replays a directory of answers; `--matcher-
+     answer` supplies the alignment directly.
+  5. Score: claim recovery, precision, panel, role, edge recovery, role
+     confusion.
+  6. Save a per-paper scorecard.
 
-After all papers complete, render an aggregate scorecard with mean / median
-per-paper scores plus a comparison table.
+After all papers complete, render an aggregate scorecard.
 
-The matcher logic mirrors tests/headley_roundtrip.py (which now imports
-from this module). Promoted to a first-class CLI capability so future
-prompt iterations can be validated the same way without bespoke scripts.
+Offline / no-backend workflow
+──────────────────────────────
+  evaluate --dump-prompts <dir>   write every prompt for each paper to <dir>/
+                                  named by layer; also writes matcher.json.
+                                  Exits without calling any model.
+  evaluate --answers <dir>        replay a directory of layer answers (one JSON
+                                  file per layer, named by layer id, e.g.
+                                  results-reader.json, reconcile.json).
+  --matcher-answer <file>         supply a pre-computed alignment instead of
+                                  calling the matcher model.
+
+The score subcommand
+─────────────────────
+  evaluate score --reference <dir> --candidate <dir> --pairs <file>
+
+  Score two claim directories against each other using pre-computed pairs,
+  with no model call. Accepts the pairs format from `match.v3.pairs.json`
+  (`[{committed, rerun, note}]`) as well as the matcher's own format
+  (`{matches: [{ref_slug, cli_slug, ...}]}`). Reports recovery, precision,
+  panel, role, edges and role confusion in the same style as pairs.py.
 """
 
 from __future__ import annotations
@@ -23,11 +49,12 @@ from __future__ import annotations
 import json
 import logging
 import re
+import shutil
 import statistics
+from collections import defaultdict
 from dataclasses import dataclass, field, asdict, replace
 from datetime import date
 from pathlib import Path
-from typing import Iterable
 
 import yaml
 
@@ -89,6 +116,113 @@ def load_claims(claim_dir: Path, source: str) -> list[Claim]:
             source=source,
         ))
     return claims
+
+
+# ── Edge loading ─────────────────────────────────────────────────────────
+
+
+def _edge_keys() -> set[str]:
+    """The relation vocabulary, loaded from scripts/relations.py once."""
+    import importlib.util
+    p = Path(__file__).resolve().parents[2] / "scripts" / "relations.py"
+    if not p.is_file():
+        # Fallback to a minimal set so the module is importable without the scripts dir.
+        return {"supports", "tests", "validates", "confirms", "predicts", "extends",
+                "replicates", "contradicts", "opposes", "refutes", "rules-out",
+                "dissociates-with", "entails", "derived-from", "interprets",
+                "enables-method", "scopes", "requires", "qualifies", "part-of"}
+    spec = importlib.util.spec_from_file_location("relations", p)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod.EDGE_KEYS
+
+
+def load_edges(claim_dir: Path) -> list[tuple[str, str, str]]:
+    """Load (source, target, relation) triples from a paper's claim files.
+
+    Reads every top-level relation key (EDGE_KEYS) and the `belongings` list.
+    Returns a list of unique triples (de-duplicated within each file).
+    """
+    keys = _edge_keys()
+    triples: list[tuple[str, str, str]] = []
+    for path in sorted(claim_dir.glob("*.md")):
+        if path.name == "index.md":
+            continue
+        fm = _read_frontmatter(path)
+        if not fm:
+            continue
+        slug = fm.get("slug") or path.stem
+        seen: set[tuple[str, str, str]] = set()
+
+        def _add(src: str, tgt: str, rel: str) -> None:
+            t = (src, tgt, rel)
+            if t not in seen:
+                seen.add(t)
+                triples.append(t)
+
+        for key in sorted(keys):
+            for tgt in (fm.get(key) or []):
+                if isinstance(tgt, str):
+                    _add(slug, tgt, key)
+        for item in (fm.get("belongings") or []):
+            if isinstance(item, dict):
+                rel = item.get("relation")
+                tgt = item.get("target")
+                if rel and tgt:
+                    _add(slug, tgt, rel)
+    return triples
+
+
+# ── Approved reference lookup ─────────────────────────────────────────────
+
+
+def find_approved_tree(
+    paper_slug: str,
+    root: Path,
+    committed_dir: Path,
+) -> tuple[Path, str]:
+    """Find the most recently approved claim-tree version for a paper.
+
+    Returns (ref_dir, reference_status) where reference_status is
+    "approved v<N>" or "unapproved". Uses the approvals pipeline.py
+    writes to runs/<paper>/approvals.jsonl.
+
+    If an approved version exists and its archived directory is present at
+    runs/<paper>/claim-tree.v<N>/, that directory is returned. Otherwise
+    the committed_dir is returned with the approval status still noted.
+    """
+    approvals_path = root / "runs" / paper_slug / "approvals.jsonl"
+    if not approvals_path.is_file():
+        return committed_dir, "unapproved"
+
+    approvals: list[dict] = []
+    with approvals_path.open(encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if line:
+                try:
+                    approvals.append(json.loads(line))
+                except json.JSONDecodeError:
+                    pass
+
+    ct_approvals = [a for a in approvals if a.get("layer") == "claim-tree"]
+    if not ct_approvals:
+        return committed_dir, "unapproved"
+
+    latest = max(ct_approvals, key=lambda a: (a.get("v", 0), a.get("when", "")))
+    v = latest.get("v", 1)
+    status = f"approved v{v}"
+
+    # The approved version is archived at runs/<paper>/claim-tree.v<N>/ when
+    # the layer was subsequently replaced. If the archive dir is absent, the
+    # approved version is the current committed tree (it has not been replaced
+    # since the approval).
+    archived = root / "runs" / paper_slug / f"claim-tree.v{v}"
+    if archived.is_dir() and any(archived.glob("*.md")):
+        return archived, status
+
+    # No archive — check if the committed dir looks like the approved version.
+    return committed_dir, status
 
 
 # ── Matcher prompt ───────────────────────────────────────────────────────
@@ -155,32 +289,100 @@ def _format_claim_list(claims: list[Claim], label: str) -> str:
     return "\n".join(lines)
 
 
-def run_matcher(
+def matcher_prompt_inputs(
     ref_claims: list[Claim],
     cli_claims: list[Claim],
-    cfg: Config,
-) -> dict:
-    """Call Opus to align reference and CLI claims; return parsed mapping."""
+) -> tuple[str, str]:
+    """Return (system, user) for the matcher, without calling any model."""
     user = (
         _format_claim_list(ref_claims, "REFERENCE")
         + "\n\n"
         + _format_claim_list(cli_claims, "CLI")
         + "\n\nReturn the JSON object as instructed."
     )
-    raw = stream_text(
-        cfg,
-        model=cfg.model_reconcile,  # matcher, same model class as reconciliation
-        system=MATCHER_PROMPT,
-        user=user,
-        max_tokens=32768,
-        label="matcher",
-    ).strip()
+    return MATCHER_PROMPT, user
+
+
+def run_matcher(
+    ref_claims: list[Claim],
+    cli_claims: list[Claim],
+    cfg: Config,
+    *,
+    dump_prompt: Path | None = None,
+    answer: Path | None = None,
+) -> dict:
+    """Align reference and CLI claims. Return parsed mapping.
+
+    dump_prompt — if set, write {system, user} JSON there and raise
+        _DumpedPrompt so the caller can skip the model call.
+    answer — if set, read the raw model reply from this file instead of
+        calling the backend.
+    """
+    system, user = matcher_prompt_inputs(ref_claims, cli_claims)
+
+    if dump_prompt is not None:
+        dump_prompt.parent.mkdir(parents=True, exist_ok=True)
+        dump_prompt.write_text(json.dumps({"system": system, "user": user}, indent=2,
+                                          ensure_ascii=False))
+        raise _DumpedPrompt(str(dump_prompt))
+
+    if answer is not None:
+        raw = answer.read_text(encoding="utf-8").strip()
+    else:
+        raw = stream_text(
+            cfg,
+            model=cfg.model_reconcile,
+            system=system,
+            user=user,
+            max_tokens=32768,
+            label="matcher",
+        ).strip()
+
     raw = re.sub(r"^```(?:json)?\s*\n?", "", raw, count=1, flags=re.IGNORECASE)
     raw = re.sub(r"\n?```\s*$", "", raw, count=1)
     return json.loads(raw)
 
 
-# ── Per-paper scorecard ─────────────────────────────────────────────────
+class _DumpedPrompt(Exception):
+    """Raised when a prompt has been dumped and the caller should not proceed."""
+
+
+# ── Pairs format normalisation ────────────────────────────────────────────
+
+
+def _normalize_pairs(pairs_data: object) -> list[dict]:
+    """Accept either pairs format and return a canonical matches list.
+
+    Format A (matcher output): {"matches": [{ref_slug, cli_slug, match_quality, ...}]}
+    Format B (match.v*.pairs.json): [{committed, rerun, note}]
+
+    Format B is treated as if every entry is an exact match with no panel/role info,
+    so the caller can score recovery and role agreement without re-querying a model.
+    """
+    if isinstance(pairs_data, dict):
+        return pairs_data.get("matches", [])
+    if isinstance(pairs_data, list):
+        out = []
+        for p in pairs_data:
+            if not isinstance(p, dict):
+                continue
+            ref_slug = p.get("committed") or p.get("ref_slug")
+            cli_slug = p.get("rerun") or p.get("cli_slug")
+            if not ref_slug or not cli_slug:
+                continue
+            out.append({
+                "ref_slug": ref_slug,
+                "cli_slug": cli_slug,
+                "match_quality": p.get("match_quality", "exact"),
+                "panel_match": p.get("panel_match", "n/a"),
+                "role_match": p.get("role_match", "n/a"),
+                "notes": p.get("note") or p.get("notes", ""),
+            })
+        return out
+    return []
+
+
+# ── Scoring ───────────────────────────────────────────────────────────────
 
 
 @dataclass
@@ -201,6 +403,27 @@ class PaperScorecard:
     cli_dir: str = ""
     error: str | None = None
 
+    # ── new fields ──────────────────────────────────────────────────────
+    # Precision: how many of the CLI claims are matched to any ref claim.
+    # n_cli_parts counts CLI claims that carry a part-of relation, as a
+    # separate informational tally (they inflate n_cli without necessarily
+    # inflating n_cli_matched).
+    n_cli_matched: int = 0
+    n_cli_parts: int = 0
+
+    # Edge recovery: of the reference edges between matched claim pairs, how
+    # many does the CLI tree reproduce with the same relation on the same pair.
+    # n_cli_extra_edges: CLI edges on matched pairs that have no ref counterpart.
+    n_ref_edges_on_matched: int = 0
+    n_edge_recovered: int = 0
+    n_cli_extra_edges: int = 0
+
+    # Per-role confusion over matched pairs: {(ref_role, cli_role): count}.
+    role_confusion: dict = field(default_factory=dict)
+
+    # Reference status: "approved v<N>", "approved v<N> (committed)", or "unapproved".
+    reference: str = "unapproved"
+
     @property
     def recovery_pct(self) -> float:
         return self.n_recovered / self.n_ref * 100 if self.n_ref else 0.0
@@ -213,6 +436,96 @@ class PaperScorecard:
     def role_pct(self) -> float:
         return self.n_role_match / self.n_recovered * 100 if self.n_recovered else 0.0
 
+    @property
+    def precision_pct(self) -> float:
+        return self.n_cli_matched / self.n_cli * 100 if self.n_cli else 0.0
+
+    @property
+    def edge_recovery_pct(self) -> float:
+        return (self.n_edge_recovered / self.n_ref_edges_on_matched * 100
+                if self.n_ref_edges_on_matched else 0.0)
+
+
+def _score_edges(
+    matches: list[dict],
+    ref_claims: list[Claim],
+    cli_claims: list[Claim],
+    ref_dir: Path,
+    cli_dir: Path,
+) -> tuple[int, int, int]:
+    """Count reference edges on matched pairs that are recovered in the CLI tree.
+
+    Returns (n_ref_edges_on_matched, n_recovered, n_cli_extra).
+    """
+    # Build ref→cli and cli→ref maps over matched pairs.
+    ref_to_cli: dict[str, str] = {}
+    cli_to_ref: dict[str, str] = {}
+    ref_slugs = {c.slug for c in ref_claims}
+    cli_slugs = {c.slug for c in cli_claims}
+
+    for m in matches:
+        rs = m.get("ref_slug")
+        cs = m.get("cli_slug")
+        if (m.get("match_quality") in ("exact", "partial")
+                and rs in ref_slugs and cs and cs in cli_slugs):
+            ref_to_cli[rs] = cs
+            cli_to_ref[cs] = rs
+
+    if not ref_to_cli:
+        return 0, 0, 0
+
+    ref_edges = load_edges(ref_dir)
+    cli_edges = load_edges(cli_dir)
+
+    # Reference edges where both endpoints are in the matched set.
+    ref_edge_set: set[tuple[str, str, str]] = set()
+    for src, tgt, rel in ref_edges:
+        if src in ref_to_cli and tgt in ref_to_cli:
+            ref_edge_set.add((src, tgt, rel))
+
+    # Map to CLI slugs for recovery check.
+    ref_mapped: set[tuple[str, str, str]] = {
+        (ref_to_cli[src], ref_to_cli[tgt], rel)
+        for src, tgt, rel in ref_edge_set
+    }
+
+    # CLI edges where both endpoints are in matched CLI slugs.
+    cli_edge_set: set[tuple[str, str, str]] = set()
+    for src, tgt, rel in cli_edges:
+        if src in cli_to_ref and tgt in cli_to_ref:
+            cli_edge_set.add((src, tgt, rel))
+
+    n_ref_on_matched = len(ref_edge_set)
+    n_recovered = len(ref_mapped & cli_edge_set)
+    n_extra = len(cli_edge_set - ref_mapped)
+    return n_ref_on_matched, n_recovered, n_extra
+
+
+def _score_role_confusion(
+    matches: list[dict],
+    ref_claims: list[Claim],
+    cli_claims: list[Claim],
+) -> dict[str, int]:
+    """Build a {(ref_role, cli_role): count} table over matched pairs.
+
+    Serialized as a flat dict with "<ref_role>→<cli_role>" keys so it is
+    JSON-serialisable without a custom encoder.
+    """
+    ref_by_slug = {c.slug: c for c in ref_claims}
+    cli_by_slug = {c.slug: c for c in cli_claims}
+    confusion: dict[str, int] = defaultdict(int)
+    for m in matches:
+        rs = m.get("ref_slug")
+        cs = m.get("cli_slug")
+        if m.get("match_quality") not in ("exact", "partial") or not cs:
+            continue
+        ref_c = ref_by_slug.get(rs)
+        cli_c = cli_by_slug.get(cs)
+        if ref_c and cli_c:
+            key = f"{ref_c.role or '?'}→{cli_c.role or '?'}"
+            confusion[key] += 1
+    return dict(confusion)
+
 
 def score_against_reference(
     ref_dir: Path,
@@ -221,8 +534,15 @@ def score_against_reference(
     paper_doi: str,
     review_mode: str,
     cfg: Config,
+    *,
+    reference: str = "unapproved",
+    dump_prompt: Path | None = None,
+    matcher_answer: Path | None = None,
 ) -> PaperScorecard:
-    """Score a CLI output directory against a reference paper directory."""
+    """Score a CLI output directory against a reference paper directory.
+
+    Calls the matcher model unless dump_prompt or matcher_answer is set.
+    """
     ref_claims = load_claims(ref_dir, "ref")
     cli_claims = load_claims(cli_dir, "cli")
     if not ref_claims:
@@ -230,9 +550,95 @@ def score_against_reference(
     if not cli_claims:
         raise ValueError(f"no CLI claims found in {cli_dir}")
 
-    matcher_out = run_matcher(ref_claims, cli_claims, cfg)
+    matcher_out = run_matcher(ref_claims, cli_claims, cfg,
+                              dump_prompt=dump_prompt, answer=matcher_answer)
     matches = matcher_out.get("matches", [])
 
+    return _build_scorecard(
+        paper_slug=paper_slug, paper_doi=paper_doi, review_mode=review_mode,
+        reference=reference, cli_dir=str(cli_dir),
+        ref_claims=ref_claims, cli_claims=cli_claims, matches=matches,
+        ref_dir=ref_dir, cli_dir_path=cli_dir,
+    )
+
+
+def score_from_precomputed_pairs(
+    ref_dir: Path,
+    cli_dir: Path,
+    pairs_path: Path,
+    paper_slug: str | None = None,
+    paper_doi: str = "",
+    review_mode: str = "precomputed",
+    reference: str = "unapproved",
+) -> PaperScorecard:
+    """Score using pre-computed pairs (no model call).
+
+    Accepts both `[{committed, rerun, note}]` and `{matches: [...]}` formats.
+    """
+    ref_claims = load_claims(ref_dir, "ref")
+    cli_claims = load_claims(cli_dir, "cli")
+    if not ref_claims:
+        raise ValueError(f"no reference claims found in {ref_dir}")
+    if not cli_claims:
+        raise ValueError(f"no CLI claims found in {cli_dir}")
+
+    raw_pairs = json.loads(pairs_path.read_text(encoding="utf-8"))
+    matches = _normalize_pairs(raw_pairs)
+
+    slug = paper_slug or ref_dir.name
+    # Augment matches with panel_match and role_match if they are "n/a" (from format B).
+    matches = _fill_panel_role(matches, ref_claims, cli_claims)
+
+    return _build_scorecard(
+        paper_slug=slug, paper_doi=paper_doi, review_mode=review_mode,
+        reference=reference, cli_dir=str(cli_dir),
+        ref_claims=ref_claims, cli_claims=cli_claims, matches=matches,
+        ref_dir=ref_dir, cli_dir_path=cli_dir,
+    )
+
+
+def _fill_panel_role(
+    matches: list[dict],
+    ref_claims: list[Claim],
+    cli_claims: list[Claim],
+) -> list[dict]:
+    """Fill panel_match and role_match for pairs that arrived with "n/a".
+
+    Format B pairs don't carry panel/role, so we compute them from the loaded claims.
+    """
+    ref_by_slug = {c.slug: c for c in ref_claims}
+    cli_by_slug = {c.slug: c for c in cli_claims}
+    out = []
+    for m in matches:
+        m = dict(m)
+        rs = m.get("ref_slug")
+        cs = m.get("cli_slug")
+        if m.get("panel_match") == "n/a" and rs and cs:
+            ref_c = ref_by_slug.get(rs)
+            cli_c = cli_by_slug.get(cs)
+            if ref_c and cli_c:
+                m["panel_match"] = (
+                    (ref_c.panel or "") == (cli_c.panel or "")
+                )
+                m["role_match"] = ref_c.role == cli_c.role
+        out.append(m)
+    return out
+
+
+def _build_scorecard(
+    *,
+    paper_slug: str,
+    paper_doi: str,
+    review_mode: str,
+    reference: str,
+    cli_dir: str,
+    ref_claims: list[Claim],
+    cli_claims: list[Claim],
+    matches: list[dict],
+    ref_dir: Path,
+    cli_dir_path: Path,
+) -> PaperScorecard:
+    """Compute all scores from a resolved matches list and return a PaperScorecard."""
     n_recovered = sum(
         1 for m in matches
         if m.get("match_quality") in ("exact", "partial") and m.get("cli_slug")
@@ -241,6 +647,46 @@ def score_against_reference(
     n_partial = sum(1 for m in matches if m.get("match_quality") == "partial")
     n_panel = sum(1 for m in matches if m.get("panel_match") is True)
     n_role = sum(1 for m in matches if m.get("role_match") is True)
+
+    # Precision: unique CLI claims matched to any ref claim.
+    matched_cli_slugs = {
+        m["cli_slug"] for m in matches
+        if m.get("match_quality") in ("exact", "partial") and m.get("cli_slug")
+    }
+    n_cli_matched = len(matched_cli_slugs)
+
+    # Parts tally (informational).
+    try:
+        keys = _edge_keys()
+    except Exception:
+        keys = set()
+    part_key = "part-of" if "part-of" in keys else None
+
+    def _has_part_of(path: Path) -> bool:
+        if not part_key:
+            return False
+        fm = _read_frontmatter(path)
+        return bool(fm.get(part_key))
+
+    n_cli_parts = sum(
+        1 for p in sorted(cli_dir_path.glob("*.md"))
+        if p.name != "index.md" and _has_part_of(p)
+    )
+
+    # Edge scoring.
+    try:
+        n_ref_edges, n_edge_rec, n_extra = _score_edges(
+            matches, ref_claims, cli_claims, ref_dir, cli_dir_path)
+    except Exception as e:
+        logger.warning("edge scoring failed: %s", e)
+        n_ref_edges = n_edge_rec = n_extra = 0
+
+    # Role confusion.
+    try:
+        role_confusion = _score_role_confusion(matches, ref_claims, cli_claims)
+    except Exception as e:
+        logger.warning("role confusion scoring failed: %s", e)
+        role_confusion = {}
 
     return PaperScorecard(
         paper_slug=paper_slug,
@@ -254,7 +700,14 @@ def score_against_reference(
         n_role_match=n_role,
         matches=matches,
         review_mode=review_mode,
-        cli_dir=str(cli_dir),
+        cli_dir=cli_dir,
+        n_cli_matched=n_cli_matched,
+        n_cli_parts=n_cli_parts,
+        n_ref_edges_on_matched=n_ref_edges,
+        n_edge_recovered=n_edge_rec,
+        n_cli_extra_edges=n_extra,
+        role_confusion=role_confusion,
+        reference=reference,
     )
 
 
@@ -273,151 +726,296 @@ def doi_from_reference_index(ref_paper_dir: Path) -> str:
     return doi
 
 
+# Layer names for --dump-prompts / --answers files.
+LAYER_ANSWER_NAMES = {
+    "results-reader":   "results-reader.json",
+    "caption-reader":   "caption-reader.json",
+    "structure-reader": "structure-reader.json",
+    "reconcile":        "reconcile.json",
+    "external-review":  "external-review.json",
+    "edge-inference":   "edge-inference.json",
+    "matcher":          "matcher.json",
+}
+
+
 def evaluate_paper(
     ref_paper_dir: Path,
     work_dir: Path,
     cfg: Config,
     review_mode: str = "external",
+    *,
+    dump_prompts_dir: Path | None = None,
+    answers_dir: Path | None = None,
+    matcher_answer: Path | None = None,
 ) -> PaperScorecard:
-    """Run the full extract -> review -> write -> score pipeline on one paper.
+    """Run the full layer chain → score one paper.
 
-    work_dir holds the per-paper extraction artifacts:
-      <work_dir>/out/draft-<slug>.json
-      <work_dir>/<slug>/<claim>.md  (the CLI's output corpus)
-      <work_dir>/scorecard.json     (the per-paper PaperScorecard)
+    The chain runs through the layer runner functions in layers.py against a
+    temporary root (`work_dir`), so the same code path as `pipeline.py run`
+    is exercised and the temp root holds a per-run record of what was read.
 
-    Returns the PaperScorecard. On failure, returns a scorecard with
-    error set; the caller can decide whether to abort or continue.
+    If the reference paper has an approved claim-tree version
+    (runs/<paper>/approvals.jsonl), that version is used as the reference
+    rather than the committed tree, and the scorecard records which.
+
+    Offline workflow
+    ────────────────
+    dump_prompts_dir — write each model prompt to a file in this directory
+        (named by LAYER_ANSWER_NAMES) and return early with a scorecard whose
+        error says "prompts dumped".
+    answers_dir — read each model answer from the correspondingly named file
+        in this directory instead of calling the backend.
+    matcher_answer — read the pre-computed matcher alignment from this file
+        instead of calling the matcher model.
     """
-    from .prepare import prepare
-    from .agents import run_all_agents
-    from .reconcile import reconcile as reconcile_step
-    from .external_review import external_review
+    from .layers import (
+        reader_layer, reader_request,
+        reconcile_layer, reconcile_request,
+        external_review_layer, external_review_request,
+        edge_inference_layer,
+        best_draft, read_edges,
+    )
     from .write import write_claim_files
 
-    paper_slug_ref = ref_paper_dir.name
+    paper_slug = ref_paper_dir.name
+
+    # ── 1. Approved reference ─────────────────────────────────────────────
+    ref_dir, reference_status = find_approved_tree(paper_slug, cfg.root, ref_paper_dir)
+
+    # ── 2. DOI ────────────────────────────────────────────────────────────
     try:
         doi = doi_from_reference_index(ref_paper_dir)
     except Exception as e:
-        return PaperScorecard(
-            paper_slug=paper_slug_ref, paper_doi="?",
-            n_ref=0, n_cli=0, n_recovered=0, n_exact=0, n_partial=0,
-            n_panel_match=0, n_role_match=0,
-            review_mode=review_mode, error=f"DOI lookup failed: {e}",
-        )
+        return _err(paper_slug, "?", review_mode, reference_status, f"DOI lookup failed: {e}")
 
+    # ── 3. Temp root setup ────────────────────────────────────────────────
     work_dir.mkdir(parents=True, exist_ok=True)
-    (work_dir / "out").mkdir(parents=True, exist_ok=True)
+    tmp_cfg = replace(cfg, root=work_dir, corpus_dir=work_dir / "claims",
+                      output_dir=work_dir / "out")
 
-    logger.info("evaluate paper=%s doi=%s mode=%s", paper_slug_ref, doi, review_mode)
+    # Copy prepared.json from the main runs dir if it exists (avoids a network
+    # fetch and ensures the same paper text is scored).
+    main_prepared = cfg.root / "runs" / paper_slug / "prepared.json"
+    tmp_runs = work_dir / "runs" / paper_slug
+    tmp_runs.mkdir(parents=True, exist_ok=True)
+    tmp_prepared = tmp_runs / "prepared.json"
 
-    # 1. prepare
-    try:
-        paper = prepare(doi)
-    except Exception as e:
-        return PaperScorecard(
-            paper_slug=paper_slug_ref, paper_doi=doi,
-            n_ref=0, n_cli=0, n_recovered=0, n_exact=0, n_partial=0,
-            n_panel_match=0, n_role_match=0,
-            review_mode=review_mode, error=f"prepare failed: {e}",
-        )
+    if main_prepared.is_file() and not tmp_prepared.is_file():
+        shutil.copy2(main_prepared, tmp_prepared)
 
-    cli_paper_slug = paper.paper_slug
-
-    # 2-3. extract
-    try:
-        results, caption, structure = run_all_agents(paper, cfg)
-    except Exception as e:
-        return PaperScorecard(
-            paper_slug=paper_slug_ref, paper_doi=doi,
-            n_ref=0, n_cli=0, n_recovered=0, n_exact=0, n_partial=0,
-            n_panel_match=0, n_role_match=0,
-            review_mode=review_mode, error=f"extract failed: {e}",
-        )
-
-    # 4. reconcile
-    try:
-        draft = reconcile_step(
-            results, caption, structure, cfg,
-            paper_doi=doi, paper_title=paper.title,
-        )
-    except Exception as e:
-        return PaperScorecard(
-            paper_slug=paper_slug_ref, paper_doi=doi,
-            n_ref=0, n_cli=0, n_recovered=0, n_exact=0, n_partial=0,
-            n_panel_match=0, n_role_match=0,
-            review_mode=review_mode, error=f"reconcile failed: {e}",
-        )
-
-    draft_path = work_dir / "out" / f"draft-{cli_paper_slug}.json"
-    draft_path.write_text(draft.model_dump_json(indent=2))
-
-    # 4.5 (optional). external review
-    if review_mode == "external":
+    if not tmp_prepared.is_file():
+        # Fall through to prepare_layer (fetches from eLife CDN).
         try:
-            draft = external_review(paper, draft, cfg)
-            (work_dir / "out" / f"draft-{cli_paper_slug}.reviewed.json").write_text(
-                draft.model_dump_json(indent=2)
-            )
+            from .layers import prepare_layer
+            prepare_layer(paper_slug, tmp_cfg, doi=doi)
         except Exception as e:
-            return PaperScorecard(
-                paper_slug=paper_slug_ref, paper_doi=doi,
-                n_ref=0, n_cli=0, n_recovered=0, n_exact=0, n_partial=0,
-                n_panel_match=0, n_role_match=0,
-                review_mode=review_mode,
-                error=f"external review failed: {e}",
-            )
+            return _err(paper_slug, doi, review_mode, reference_status, f"prepare failed: {e}")
 
-    # 5-7. write (use a per-paper sub-directory under work_dir)
-    # Copy the whole config and override only the paths. Rebuilding it from a
-    # bare namespace and re-copying selected fields silently dropped `backend`
-    # and `api_key`, so the write step fell back to Vertex and 404'd on a
-    # model name that only exists on the configured provider.
-    write_cfg = replace(cfg, corpus_dir=work_dir, output_dir=work_dir / "out")
+    # ── 4. Readers ────────────────────────────────────────────────────────
+    dumping = dump_prompts_dir is not None
+    for agent in ("results", "caption", "structure"):
+        layer_key = f"{agent}-reader"
+        answer_path = (answers_dir / LAYER_ANSWER_NAMES[layer_key]
+                       if answers_dir else None)
+        dump_path = (dump_prompts_dir / LAYER_ANSWER_NAMES[layer_key]
+                     if dumping else None)
+
+        if dump_path is not None:
+            try:
+                system, user = reader_request(agent, paper_slug, tmp_cfg)
+            except Exception as e:
+                return _err(paper_slug, doi, review_mode, reference_status,
+                            f"{layer_key} prompt build failed: {e}")
+            dump_path.parent.mkdir(parents=True, exist_ok=True)
+            dump_path.write_text(json.dumps({"system": system, "user": user}, indent=2,
+                                            ensure_ascii=False))
+            continue
+
+        try:
+            reader_layer(agent, paper_slug, tmp_cfg,
+                         answer=str(answer_path) if answer_path and answer_path.is_file()
+                         else None)
+        except Exception as e:
+            return _err(paper_slug, doi, review_mode, reference_status,
+                        f"{layer_key} failed: {e}")
+
+    # ── 5. Reconcile ──────────────────────────────────────────────────────
+    answer_path = (answers_dir / LAYER_ANSWER_NAMES["reconcile"]
+                   if answers_dir else None)
+    dump_path = (dump_prompts_dir / LAYER_ANSWER_NAMES["reconcile"] if dumping else None)
+
+    if dump_path is not None:
+        try:
+            system, user = reconcile_request(paper_slug, tmp_cfg)
+        except Exception as e:
+            return _err(paper_slug, doi, review_mode, reference_status,
+                        f"reconcile prompt build failed: {e}")
+        dump_path.parent.mkdir(parents=True, exist_ok=True)
+        dump_path.write_text(json.dumps({"system": system, "user": user}, indent=2,
+                                        ensure_ascii=False))
+    else:
+        try:
+            reconcile_layer(paper_slug, tmp_cfg,
+                            answer=str(answer_path) if answer_path and answer_path.is_file()
+                            else None)
+        except Exception as e:
+            return _err(paper_slug, doi, review_mode, reference_status,
+                        f"reconcile failed: {e}")
+
+    # ── 6. External review (optional) ─────────────────────────────────────
+    if review_mode == "external":
+        answer_path = (answers_dir / LAYER_ANSWER_NAMES["external-review"]
+                       if answers_dir else None)
+        dump_path = (dump_prompts_dir / LAYER_ANSWER_NAMES["external-review"]
+                     if dumping else None)
+
+        if dump_path is not None:
+            try:
+                system, user = external_review_request(paper_slug, tmp_cfg)
+            except Exception as e:
+                return _err(paper_slug, doi, review_mode, reference_status,
+                            f"external-review prompt build failed: {e}")
+            dump_path.parent.mkdir(parents=True, exist_ok=True)
+            dump_path.write_text(json.dumps({"system": system, "user": user}, indent=2,
+                                            ensure_ascii=False))
+        else:
+            try:
+                external_review_layer(paper_slug, tmp_cfg,
+                                      answer=str(answer_path)
+                                      if answer_path and answer_path.is_file() else None)
+            except Exception as e:
+                return _err(paper_slug, doi, review_mode, reference_status,
+                            f"external-review failed: {e}")
+
+    # ── 7. Edge inference ─────────────────────────────────────────────────
+    if not dumping:
+        try:
+            edge_inference_layer(paper_slug, tmp_cfg)
+        except Exception as e:
+            logger.warning("edge inference failed (scoring without edges): %s", e)
+
+    # If we were just dumping prompts, write the matcher prompt and return early.
+    if dumping:
+        try:
+            ref_claims = load_claims(ref_dir, "ref")
+            # We can't run the chain to get CLI claims yet, so we skip the matcher prompt.
+            dump_path = dump_prompts_dir / LAYER_ANSWER_NAMES["matcher"]
+            dump_path.write_text(
+                json.dumps({"note": "matcher prompt requires chain output; run --answers first"},
+                           indent=2))
+        except Exception:
+            pass
+        return _err(paper_slug, doi, review_mode, reference_status,
+                    f"prompts dumped to {dump_prompts_dir}")
+
+    # ── 8. Write claim files ──────────────────────────────────────────────
     try:
-        # Wipe any prior CLI output for this paper to allow re-runs
-        cli_paper_dir = work_dir / cli_paper_slug
+        draft, _ = best_draft(paper_slug, tmp_cfg)
+        edges = read_edges(paper_slug, tmp_cfg)
+        cli_paper_dir = tmp_cfg.corpus_dir / paper_slug
         if cli_paper_dir.exists():
-            import shutil
             shutil.rmtree(cli_paper_dir)
-        write_claim_files(draft, write_cfg)
+        write_claim_files(draft, tmp_cfg, edges=edges)
     except Exception as e:
-        return PaperScorecard(
-            paper_slug=paper_slug_ref, paper_doi=doi,
-            n_ref=0, n_cli=0, n_recovered=0, n_exact=0, n_partial=0,
-            n_panel_match=0, n_role_match=0,
-            review_mode=review_mode, error=f"write failed: {e}",
-        )
+        return _err(paper_slug, doi, review_mode, reference_status, f"write failed: {e}")
 
-    # 8. score
+    # ── 9. Score ──────────────────────────────────────────────────────────
     try:
+        _matcher_answer = matcher_answer
+        if answers_dir and not _matcher_answer:
+            candidate = answers_dir / LAYER_ANSWER_NAMES["matcher"]
+            if candidate.is_file():
+                _matcher_answer = candidate
+
         scorecard = score_against_reference(
-            ref_dir=ref_paper_dir,
-            cli_dir=work_dir / cli_paper_slug,
-            paper_slug=paper_slug_ref,
+            ref_dir=ref_dir,
+            cli_dir=cli_paper_dir,
+            paper_slug=paper_slug,
             paper_doi=doi,
             review_mode=review_mode,
             cfg=cfg,
+            reference=reference_status,
+            matcher_answer=_matcher_answer,
         )
     except Exception as e:
-        return PaperScorecard(
-            paper_slug=paper_slug_ref, paper_doi=doi,
-            n_ref=0, n_cli=0, n_recovered=0, n_exact=0, n_partial=0,
-            n_panel_match=0, n_role_match=0,
-            review_mode=review_mode, error=f"scoring failed: {e}",
-        )
+        return _err(paper_slug, doi, review_mode, reference_status, f"scoring failed: {e}")
 
-    # Persist per-paper scorecard
+    # Persist per-paper scorecard.
     sc_path = work_dir / "scorecard.json"
     sc_path.write_text(json.dumps(asdict(scorecard), indent=2, default=str))
     return scorecard
 
 
-class _NSpace:
-    """Minimal argparse.Namespace stand-in for Config.from_args."""
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
+def _err(paper_slug: str, doi: str, review_mode: str, reference: str, msg: str) -> PaperScorecard:
+    return PaperScorecard(
+        paper_slug=paper_slug, paper_doi=doi,
+        n_ref=0, n_cli=0, n_recovered=0, n_exact=0, n_partial=0,
+        n_panel_match=0, n_role_match=0,
+        review_mode=review_mode, reference=reference, error=msg,
+    )
+
+
+# ── score subcommand (no model required) ─────────────────────────────────
+
+
+def print_score_report(card: PaperScorecard, ref_dir: Path | None = None) -> None:
+    """Print a scorecard in the style of pairs.py, with precision and edges."""
+    p = card
+    print(f"\n  reference   {p.reference}")
+    print(f"  committed {p.n_ref}   re-run {p.n_cli}")
+    print()
+    if p.n_ref:
+        print(f"  RECOVERY  {p.n_recovered}/{p.n_ref} = {p.recovery_pct:.0f}%")
+        print(f"  PRECISION {p.n_cli_matched}/{p.n_cli} = {p.precision_pct:.0f}%"
+              + (f"  ({p.n_cli_parts} part-of)" if p.n_cli_parts else ""))
+    if p.n_recovered:
+        print(f"  ROLE      {p.n_role_match}/{p.n_recovered} = {p.role_pct:.0f}% of matched pairs")
+        print(f"  PANEL     {p.n_panel_match}/{p.n_recovered} = {p.panel_pct:.0f}% of matched pairs")
+    if p.n_ref_edges_on_matched > 0 or p.n_cli_extra_edges > 0:
+        print(f"  EDGES     {p.n_edge_recovered}/{p.n_ref_edges_on_matched} ref edges recovered"
+              f"  ({p.edge_recovery_pct:.0f}%)  |"
+              f"  {p.n_cli_extra_edges} extra CLI edge(s)")
+    print()
+
+    # Missed reference claims: ref slugs that appear in no matched pair.
+    matched_ref = {m.get("ref_slug") for m in p.matches
+                   if m.get("match_quality") in ("exact", "partial") and m.get("cli_slug")}
+    # Try to get ref claim details (slug + role) for a richer report.
+    ref_claims: list[Claim] = []
+    if ref_dir and ref_dir.is_dir():
+        try:
+            ref_claims = load_claims(ref_dir, "ref")
+        except Exception:
+            pass
+    ref_by_slug = {c.slug: c for c in ref_claims}
+
+    # Unmatched entries from the matches list (match_quality "none" or null cli_slug).
+    matched_none = [m.get("ref_slug") for m in p.matches
+                    if not m.get("cli_slug") or m.get("match_quality") == "none"]
+    # Ref slugs that appeared in no match entry at all (format B pairs omit unmatched).
+    all_match_ref_slugs = {m.get("ref_slug") for m in p.matches if m.get("ref_slug")}
+    missing_from_pairs = [c.slug for c in ref_claims if c.slug not in all_match_ref_slugs]
+
+    all_missed = list(dict.fromkeys(matched_none + missing_from_pairs))
+    if all_missed:
+        print(f"  committed claims the re-run did not recover ({len(all_missed)}):")
+        for slug in all_missed[:20]:
+            role = ref_by_slug.get(slug, None)
+            role_str = f"{role.role:<18} " if role else ""
+            print(f"    {role_str}{slug}")
+
+    extra_cli = p.n_cli - p.n_cli_matched
+    print(f"\n  re-run claims with no committed counterpart: {extra_cli}")
+
+    # Role confusion.
+    if p.role_confusion:
+        disagreements = {k: v for k, v in p.role_confusion.items() if "→" in k
+                         and k.split("→")[0] != k.split("→")[1]}
+        if disagreements:
+            print(f"\n  role disagreements on matched pairs ({sum(disagreements.values())}):")
+            for key, count in sorted(disagreements.items(), key=lambda x: -x[1]):
+                ref_role, cli_role = key.split("→", 1)
+                print(f"    {ref_role:<18} → {cli_role:<18} ({count})")
 
 
 # ── Aggregate report ────────────────────────────────────────────────────
@@ -440,11 +1038,15 @@ def aggregate_report(
         return statistics.mean(values), statistics.median(values)
 
     rec_pct = [c.recovery_pct for c in successes]
+    prec_pct = [c.precision_pct for c in successes]
     panel_pct = [c.panel_pct for c in successes]
     role_pct = [c.role_pct for c in successes]
+    edge_pct = [c.edge_recovery_pct for c in successes if c.n_ref_edges_on_matched > 0]
     rec_mean, rec_med = _stats(rec_pct)
+    prec_mean, prec_med = _stats(prec_pct)
     panel_mean, panel_med = _stats(panel_pct)
     role_mean, role_med = _stats(role_pct)
+    edge_mean, edge_med = _stats(edge_pct)
 
     n_papers = len(cards)
     n_success = len(successes)
@@ -463,24 +1065,27 @@ def aggregate_report(
         "| Metric | Mean | Median | n |",
         "|:-------|-----:|-------:|--:|",
         f"| Claim recovery (% of reference recovered) | {rec_mean:.1f}% | {rec_med:.1f}% | {n_success} |",
+        f"| Precision (% of CLI claims matched) | {prec_mean:.1f}% | {prec_med:.1f}% | {n_success} |",
         f"| Panel agreement (% of recovered) | {panel_mean:.1f}% | {panel_med:.1f}% | {n_success} |",
         f"| Role agreement (% of recovered) | {role_mean:.1f}% | {role_med:.1f}% | {n_success} |",
+        f"| Edge recovery (% of ref edges on matched pairs) | {edge_mean:.1f}% | {edge_med:.1f}% | {len(edge_pct)} |",
         "",
         "## Per-paper detail",
         "",
-        "| Paper | n_ref | n_cli | recovered | exact | partial | recovery | panel | role |",
-        "|:------|------:|------:|----------:|------:|--------:|---------:|------:|-----:|",
+        "| Paper | ref | cli | rec | prec | panel | role | ref-edges | edge-rec | extra-edges | reference |",
+        "|:------|----:|----:|----:|-----:|------:|-----:|----------:|---------:|------------:|:----------|",
     ]
     for c in cards:
         if c.error:
             lines.append(
-                f"| `{c.paper_slug}` | — | — | — | — | — | — | — | — | (error: {c.error[:60]}) |"
+                f"| `{c.paper_slug}` | — | — | — | — | — | — | — | — | — | (error: {c.error[:60]}) |"
             )
             continue
         lines.append(
-            f"| `{c.paper_slug}` | {c.n_ref} | {c.n_cli} | {c.n_recovered} | "
-            f"{c.n_exact} | {c.n_partial} | {c.recovery_pct:.0f}% | "
-            f"{c.panel_pct:.0f}% | {c.role_pct:.0f}% |"
+            f"| `{c.paper_slug}` | {c.n_ref} | {c.n_cli} | {c.recovery_pct:.0f}% | "
+            f"{c.precision_pct:.0f}% | {c.panel_pct:.0f}% | {c.role_pct:.0f}% | "
+            f"{c.n_ref_edges_on_matched} | {c.edge_recovery_pct:.0f}% | "
+            f"{c.n_cli_extra_edges} | {c.reference} |"
         )
 
     if failures:

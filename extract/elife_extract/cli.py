@@ -607,6 +607,13 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
     work_root = Path(args.work_dir).expanduser().resolve()
     work_root.mkdir(parents=True, exist_ok=True)
 
+    dump_prompts_dir = (Path(args.dump_prompts).expanduser().resolve()
+                        if getattr(args, "dump_prompts", None) else None)
+    answers_dir = (Path(args.answers).expanduser().resolve()
+                   if getattr(args, "answers", None) else None)
+    matcher_answer = (Path(args.matcher_answer).expanduser().resolve()
+                      if getattr(args, "matcher_answer", None) else None)
+
     if args.papers:
         slugs = [s.strip() for s in args.papers.split(",") if s.strip()]
     elif args.all:
@@ -619,6 +626,12 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
     print(f"  reference_dir  = {reference_dir}")
     print(f"  work_dir       = {work_root}")
     print(f"  external review= {'on' if args.external_review else 'off'}")
+    if dump_prompts_dir:
+        print(f"  dump-prompts   = {dump_prompts_dir}")
+    if answers_dir:
+        print(f"  answers        = {answers_dir}")
+    if matcher_answer:
+        print(f"  matcher-answer = {matcher_answer}")
     print(f"  papers         = {len(slugs)} ({', '.join(slugs[:6])}{'...' if len(slugs) > 6 else ''})")
     print()
 
@@ -642,21 +655,73 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
             print(f"[{i}/{len(slugs)}] {slug}: SKIP (existing scorecard)")
             continue
 
+        paper_dump = (dump_prompts_dir / slug if dump_prompts_dir else None)
+        paper_answers = (answers_dir / slug if answers_dir else None)
+
         print(f"[{i}/{len(slugs)}] {slug}: starting...")
-        card = evaluate_paper(ref_paper_dir=ref_paper_dir, work_dir=paper_work_dir,
-                              cfg=cfg, review_mode=review_mode)
+        card = evaluate_paper(
+            ref_paper_dir=ref_paper_dir, work_dir=paper_work_dir,
+            cfg=cfg, review_mode=review_mode,
+            dump_prompts_dir=paper_dump,
+            answers_dir=paper_answers,
+            matcher_answer=matcher_answer,
+        )
         cards.append(card)
         if card.error:
-            print(f"[{i}/{len(slugs)}] {slug}: FAILED ({card.error})")
+            if dump_prompts_dir and "prompts dumped" in (card.error or ""):
+                print(f"[{i}/{len(slugs)}] {slug}: prompts written to {paper_dump}")
+            else:
+                print(f"[{i}/{len(slugs)}] {slug}: FAILED ({card.error})")
         else:
             print(f"[{i}/{len(slugs)}] {slug}: "
-                  f"recovery={card.recovery_pct:.0f}%, panel={card.panel_pct:.0f}%, "
+                  f"recovery={card.recovery_pct:.0f}%, "
+                  f"precision={card.precision_pct:.0f}%, "
+                  f"panel={card.panel_pct:.0f}%, "
                   f"role={card.role_pct:.0f}% ({card.n_cli} CLI vs {card.n_ref} ref)")
 
     out_path = work_root / "aggregate-scorecard.md"
     aggregate_report(cards=cards, out_path=out_path, reference_dir=reference_dir,
                      work_root=work_root, review_mode=review_mode)
     print(f"\naggregate scorecard: {out_path}")
+    return 0
+
+
+def cmd_score(args: argparse.Namespace) -> int:
+    """Score two claim directories against each other using pre-computed pairs.
+
+    Accepts both the matcher's output format ({matches: [...]}) and the
+    runs/.../evaluation/match.v*.pairs.json format ([{committed, rerun, note}]).
+    No model call is made.
+    """
+    from .evaluate import score_from_precomputed_pairs, print_score_report
+
+    ref_dir = Path(args.reference).expanduser().resolve()
+    cli_dir = Path(args.candidate).expanduser().resolve()
+    pairs_path = Path(args.pairs).expanduser().resolve()
+
+    for p, label in [(ref_dir, "reference"), (cli_dir, "candidate"), (pairs_path, "pairs")]:
+        if not p.exists():
+            print(f"error: {label} not found: {p}", file=sys.stderr)
+            return 2
+
+    print(f"=== evaluate score ===")
+    print(f"  reference = {ref_dir}")
+    print(f"  candidate = {cli_dir}")
+    print(f"  pairs     = {pairs_path}")
+
+    try:
+        card = score_from_precomputed_pairs(
+            ref_dir=ref_dir,
+            cli_dir=cli_dir,
+            pairs_path=pairs_path,
+            paper_slug=getattr(args, "paper", None) or ref_dir.name,
+            review_mode="precomputed",
+        )
+    except Exception as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+
+    print_score_report(card, ref_dir=ref_dir)
     return 0
 
 
@@ -1021,9 +1086,56 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Override the prompts directory (default: package-local prompts/).")
     p_eval.add_argument("--prompt-variant", default=DEFAULT_PROMPT_VARIANT,
                         help="Named prompt variant under prompts/<variant>/.")
+    p_eval.add_argument(
+        "--dump-prompts", metavar="DIR",
+        help=(
+            "Write every prompt the chain would send (one JSON file per layer, named by "
+            "layer id, e.g. results-reader.json) to DIR and exit without calling any model. "
+            "Pass the same DIR to --answers to replay the answers."
+        ),
+    )
+    p_eval.add_argument(
+        "--answers", metavar="DIR",
+        help=(
+            "Read each model answer from a correspondingly named file in DIR instead of "
+            "calling the backend. Layer files: results-reader.json, caption-reader.json, "
+            "structure-reader.json, reconcile.json, external-review.json, "
+            "edge-inference.json. Matcher file: matcher.json (or use --matcher-answer)."
+        ),
+    )
+    p_eval.add_argument(
+        "--matcher-answer", metavar="FILE",
+        help=(
+            "Read a pre-computed matcher alignment from FILE instead of calling the matcher "
+            "model. Accepts both the matcher's own {matches:[...]} format and the "
+            "[{committed, rerun, note}] format from runs/.../evaluation/match.v*.pairs.json."
+        ),
+    )
     _add_model_args(p_eval)
     _add_backend_args(p_eval)
     p_eval.set_defaults(func=cmd_evaluate)
+
+    # ── evaluate score (no model; pre-computed pairs) ─────────────────────
+    p_score = sub.add_parser(
+        "score",
+        help="Score two claim dirs against each other using pre-computed pairs. No model call.",
+        description=(
+            "Score a candidate claim directory against a reference one using a pre-computed "
+            "alignment (pairs file). Accepts both the matcher's own output format and the "
+            "[{committed, rerun, note}] format from runs/.../evaluation/match.v*.pairs.json. "
+            "Reports recovery, precision, panel, role, edge recovery, and role confusion. "
+            "Replaces the evaluate subcommand of runs/.../evaluation/pairs.py."
+        ),
+    )
+    p_score.add_argument("--reference", required=True,
+                         help="Reference claim directory (e.g. claims/<paper>/ or "
+                              "runs/<paper>/claim-tree.v1/).")
+    p_score.add_argument("--candidate", required=True,
+                         help="Candidate (CLI) claim directory to score.")
+    p_score.add_argument("--pairs", required=True,
+                         help="Pairs file mapping reference claims to candidate claims.")
+    p_score.add_argument("--paper", help="Paper slug (default: reference directory name).")
+    p_score.set_defaults(func=cmd_score)
 
     return parser
 
