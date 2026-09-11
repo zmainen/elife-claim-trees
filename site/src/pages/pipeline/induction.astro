@@ -7,7 +7,10 @@
 // sentence it based each claim on.
 //
 // Data comes from scripts/agents_report.py, which reads the committed prompts and the saved
-// run output. Only Gädeke has a saved trace; the page says so rather than implying the rest.
+// run output. Only Gädeke has a saved trace, and that trace is a re-run of the pipeline on
+// that paper rather than the run its committed claim files came from — the claims were first
+// committed 2026-03-30 and the trace on 2026-09-10, sharing no claim text. The page says what
+// it is rather than implying it is the corpus's provenance.
 import Layout from '../../layouts/Layout.astro';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -55,9 +58,10 @@ const AGENT_LABEL: Record<string, string> = {
     <header class="mb-10">
       <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">Agents</h1>
       <p class="text-gray-600 dark:text-gray-400 m-0 max-w-2xl leading-relaxed">
-        Every claim in this corpus was proposed by a language model and reviewed by another
-        one. No human has checked any of them. This page shows which role did what, under
-        which prompt, and what it produced for the worked example.
+        This is a recorded run of the extraction pipeline on one paper: which role read which
+        part of it, under which prompt, using which model, and what each proposed. It shows
+        what the agents do. It is not the record of how this corpus's claim files were
+        produced — see below.
       </p>
     </header>
 
@@ -138,15 +142,16 @@ const AGENT_LABEL: Record<string, string> = {
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What this record does not cover</h2>
     <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
       <p>
-        <strong>{traced.length} of {facts.papers} papers has a saved agent trace.</strong> The
-        rest were extracted before runs were being saved, so their agent-level history no
-        longer exists and would have to be regenerated. Rather than show nine empty templates,
-        this page covers the worked example and states the gap.
+        <strong>The published claim tree for this paper did not come from this run.</strong>
+        Its claim files were first committed five months before this trace was recorded, and
+        no committed claim has even a 0.80 textual match anywhere in the draft above — so this
+        is not those claims at an earlier stage, it is a separate extraction. How the committed
+        tree was produced is not recorded anywhere and cannot be recovered.
       </p>
       <p>
-        The draft above holds {g.drafted} claims. The published tree for this paper holds a
-        different number: the reconciler and reviewer merge, split and drop claims, and the
-        relation layer is a separate pass. The draft is the readers' output, not the corpus.
+        <strong>{traced.length} of {facts.papers} papers has a trace at all.</strong> The rest
+        were extracted before runs were being saved. Rather than show nine empty templates,
+        this page covers the one paper that has been run and states the gap.
       </p>
     </div>
 

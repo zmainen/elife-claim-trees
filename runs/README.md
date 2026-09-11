@@ -1,8 +1,14 @@
-# Runs — the prompts and model output behind the corpus
+# Runs — recorded runs of the pipeline
 
-Every claim in this repository was written by a language model. This directory is what makes
-that checkable rather than merely disclosed: for each paper, the prompt given to each agent
-and the raw output it returned.
+What each layer read and produced, per paper: the run ledger, and where a model answered, the
+prompt it was given and the raw output it returned.
+
+**This is not the provenance of the committed claim files.** For Gädeke, the one paper with a
+full agent trace, the claim files were first committed 2026-03-30 and the trace on 2026-09-10
+— five months later, 47 drafted claims against 33 committed ones, and no committed claim has
+so much as a 0.80 textual match anywhere in the trace. It is a recorded run of the pipeline on
+that paper, which is a worked example of what the agents do. How the committed tree was
+actually produced is not recorded anywhere and cannot be recovered.
 
 A verdict whose prompt and output are not both recorded cannot be reproduced or disputed. That
 had already gone wrong once — the coverage verdicts in `mappings/` were produced by a prompt
@@ -38,6 +44,12 @@ was unavailable. That difference belongs in the provenance, not in a footnote.
 
 ## Coverage
 
-Gädeke only, so far. The other nine papers were extracted before runs were recorded, so their
-agent-level history does not exist and would have to be regenerated. Until then this directory
-is honest about covering one paper rather than implying ten.
+Every paper has a `ledger.jsonl`. Only Gädeke has an agent trace, and that trace is a re-run
+rather than the run its claim files came from — so no paper in this corpus has a recorded
+provenance for its claim tree, and one has a recorded example of the pipeline producing one.
+
+Most ledger entries are `backfilled: true`, written from artifacts that predate the ledger.
+A backfilled entry records that a layer produced something and when, and deliberately records
+no inputs: it cannot know what was read, and a guess in the shape of a measurement is what
+this directory exists to avoid. `pipeline.py state` reports those cells `unrecorded`, not
+`current`.
