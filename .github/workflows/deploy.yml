@@ -18,6 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -25,10 +28,16 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - name: Install dependencies
         run: cd site && npm ci
-      - name: Build data (eLife corpus only — excludes private papers)
-        run: cd site && CORPUS=elife node scripts/build-data.js
-      - name: Build site
-        run: cd site && npm run build
+      # Regenerates every data file, then builds. Previously this ran build-data.js twice —
+      # once with CORPUS=elife, then again inside `npm run build`, which has no CORPUS set
+      # and so discarded the first run's filter. It happened to be harmless because `elife`
+      # is also build-data.js's default, but the env var was doing nothing.
+      #
+      # More seriously, no step here ever ran the Python generators. corpus-facts.json,
+      # agents.json, review.json and mira-validation.json were whatever someone last
+      # committed by hand, and the published site could describe a corpus that had moved on.
+      - name: Build
+        run: make build CORPUS=elife
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site/dist
