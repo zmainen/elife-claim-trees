@@ -300,9 +300,12 @@ def state(decl: dict | None = None, slugs: list[str] | None = None) -> dict:
                           if by_id[d].get("scope") != "corpus"
                           and cells.get(d, {}).get("state") == ABSENT]
 
-            if not run:
-                # No ledger entry. If the outputs exist anyway the layer ran before the
-                # ledger did; report that rather than calling it absent.
+            if not run or run.get("backfilled"):
+                # No observed run. Either there is no entry at all, or there is a backfilled
+                # one — which records that an artifact exists, not that a run was watched.
+                # A backfilled entry carries no inputs, so it cannot answer "is this still
+                # current"; saying `unrecorded` is the honest answer and is what the state
+                # means. The artifact may be perfectly good.
                 st = ABSENT if not produced else "unrecorded"
             else:
                 moved = [i["path"] for i in run.get("in", []) if digest(i["path"]) != i["sha"]]
@@ -399,8 +402,14 @@ def cmd_backfill(args) -> int:
                 "note": "backfilled from " + ("runs/manifest.json" if role else "the artifact on disk"),
                 "by": (role or {}).get("model") or "unrecorded",
                 "backfilled": True,
-                "in": [{"path": r, "sha": digest(r)}
-                       for r in inputs_of(layer, by_id, paper) if digest(r)],
+                # No `in`. Backfill can name the paths the *declaration* says this layer
+                # reads, and hash them as they stand now — but that is a guess about a run
+                # nobody observed, in the same shape as a measurement. For Gädeke's
+                # claim-tree the guess was false: the claim files were committed
+                # 2026-03-30 and the reader outputs the declaration points at on
+                # 2026-09-10, five months later, sharing no claim text with them. The
+                # entry asserted a lineage that never existed, and `state` read those
+                # hashes and called the cell current.
                 "out": [{"path": r, "sha": digest(r)} for r in outs],
             }
             append(paper, rec)
