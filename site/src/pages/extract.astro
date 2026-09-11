@@ -1,462 +1,215 @@
 ---
+// Extract — the pipeline, run end to end on the worked example.
+//
+// This page used to be a UI for an extraction service, fetching console.haak.world and falling
+// back to localhost. GitHub Pages serves static files, so it could never do anything here.
+// It is now the real Gädeke run: the commands that produced the corpus, the artifact each one
+// wrote, and the numbers those artifacts actually contain — every figure read from the
+// generated data, nothing typed.
+//
+// How to run it yourself is the CLI guide's job; this page links there rather than repeating it.
 import Layout from '../layouts/Layout.astro';
-import ReviewTab from '../components/ReviewTab.tsx';
+import { readFileSync, existsSync, statSync } from 'fs';
+import { join } from 'path';
+
+const root = join(process.cwd(), '..');
+const rd = (p: string) => JSON.parse(readFileSync(join(process.cwd(), p), 'utf8'));
+
+const agents = rd('src/data/agents.json');
+const facts  = rd('src/data/corpus-facts.json');
+const claims = rd('src/data/claims.json');
+
+const SLUG = 'gadeke-2026-guilt-insula';
+const g = agents.papers[SLUG];
+const paper = claims.papers.find((p: any) => p.slug === SLUG);
+const model = g.config.model_results ?? Object.values(g.models)[0];
+
+// Artifact sizes are read from disk so a listed file that has gone missing shows as missing
+// rather than as a link to a 404.
+const kb = (rel: string) => {
+  const p = join(root, rel);
+  return existsSync(p) ? Math.max(1, Math.round(statSync(p).size / 1024)) : null;
+};
+
+const mapping = existsSync(join(root, `mappings/${SLUG}.json`))
+  ? JSON.parse(readFileSync(join(root, `mappings/${SLUG}.json`), 'utf8')) : null;
+const spanCount = mapping?.spans?.length ?? null;
+
+const relCount = paper.claims.reduce((n: number, c: any) => {
+  const keys = ['supports','tests','validates','confirms','extends','replicates',
+                'contradicts','rules-out','dissociates-with','entails','derived-from',
+                'requires','scopes','interprets','enables-method','qualifies'];
+  return n + keys.reduce((m, k) => m + ((c[k] || []).length), 0);
+}, 0);
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const url = (path: string) => `${base}${path}/`;
+const ex = (f: string) => `${base}/exports/${f}`;
+
+const STEPS = [
+  {
+    n: 1, cmd: `elife-extract extract \\
+  --doi 10.7554/eLife.105391 \\
+  --paper-slug ${SLUG} \\
+  --corpus-dir ./claims \\
+  --output-dir ./out`,
+    title: 'Read the paper',
+    what: `Fetches the article, then runs the three reader agents in parallel on different slices of it — Results text, figure captions, abstract and structure. Each returns candidate claims with the sentence it based them on. A fourth pass reconciles them into one draft.`,
+    produced: `${g.drafted} drafted claims — ${Object.entries(g.per_agent_counts).map(([k, v]) => `${v} from ${k}`).join(', ')}. ${g.found_by_more} were found by more than one reader.`,
+    files: [
+      { label: 'draft-gadeke-2026-guilt-insula.json', rel: `extract/out/draft-${SLUG}.json`, href: null },
+      { label: 'agents-gadeke-2026-guilt-insula.json', rel: `extract/out/agents-${SLUG}.json`, href: null },
+    ],
+    link: { label: 'Every claim and the agent that proposed it', href: `${base}/agents/` },
+  },
+  {
+    n: 2, cmd: `elife-extract write \\
+  --draft ./out/draft-${SLUG}.json \\
+  --corpus-dir ./claims`,
+    title: 'Write the claim tree',
+    what: `Turns the draft into one Markdown file per claim, each with a UUID, a role, an assertion block naming the panel and dataset, and typed relations to other claims. This is the corpus: the files everything downstream reads.`,
+    produced: `${paper.claims.length} claim files and ${relCount} typed relations.`,
+    files: [],
+    link: { label: `The tree for this paper`, href: `${base}/papers/${SLUG}/` },
+  },
+  {
+    n: 3, cmd: `python3 verification/${SLUG}/verify.py`,
+    title: 'Re-run the analyses',
+    what: `Downloads the authors' deposited data and recomputes what the claims assert, comparing each reproduced value against the published one. Runs under observation, so every file it opens is recorded with a content hash and no status can assert more than the run produced.`,
+    produced: `${facts.layers[SLUG].verified_results} claims verified against deposited data. The rest are recorded as blocked or unattempted rather than assumed.`,
+    files: [
+      { label: 'provenance.json — every file opened, every value computed', rel: `verification/${SLUG}/provenance.json`, href: null },
+    ],
+    link: { label: 'What the verification layer covers', href: `${base}/layers/` },
+  },
+  {
+    n: 4, cmd: `elife-extract coverage --paper-slug ${SLUG}
+elife-extract mark --paper-slug ${SLUG}`,
+    title: 'Measure the tree against the paper',
+    what: `Cuts the paper into spans and adjudicates each one against the tree — accounted for by a claim, asserting no result, or a gap. This is the only step that measures the claim tree against the paper rather than against itself.`,
+    produced: spanCount ? `${spanCount} spans adjudicated, and a copy of the paper with every claim marked in place.` : 'Span adjudication and a marked copy of the paper.',
+    files: [
+      { label: 'gadeke-2026-guilt-insula.marked.md', rel: `marked/${SLUG}.marked.md`, href: null },
+    ],
+    link: null,
+  },
+  {
+    n: 5, cmd: `python3 scripts/export_mira.py --all
+python3 scripts/formats_report.py --all
+python3 scripts/validate_mira.py`,
+    title: 'Export and validate',
+    what: `Writes the tree into each interchange format, reports what every conversion could not carry, and validates the MIRA output against the schema's own shapes pinned at a commit.`,
+    produced: `${facts.mira.carried} of ${facts.mira.relations} relations carried corpus-wide, with ${facts.mira.our_violations} validation violations attributable to the encoding.`,
+    files: [
+      { label: `${SLUG}.mira.jsonld`, rel: `exports/${SLUG}.mira.jsonld`, href: ex(`${SLUG}.mira.jsonld`) },
+      { label: `${SLUG}.oxa.json`, rel: `exports/${SLUG}.oxa.json`, href: ex(`${SLUG}.oxa.json`) },
+      { label: `${SLUG}.dg.jsonld`, rel: `exports/${SLUG}.dg.jsonld`, href: ex(`${SLUG}.dg.jsonld`) },
+      { label: `${SLUG}.gap-report.md`, rel: `exports/${SLUG}.gap-report.md`, href: ex(`${SLUG}.gap-report.md`) },
+    ],
+    link: { label: 'What each format carries', href: `${base}/formats/${SLUG}/` },
+  },
+];
 ---
 
-<Layout title="Extract & Review">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-16">
+<Layout title="Extract">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
 
-    <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight mb-3">Extract & Review</h1>
-    <p class="text-gray-500 dark:text-gray-400 mb-4">
-      Turn a manuscript into a structured claim graph, then review it with AI reviewers.
-    </p>
+    <header class="mb-8">
+      <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">Extract</h1>
+      <p class="text-gray-600 dark:text-gray-400 m-0 max-w-2xl leading-relaxed">
+        The pipeline that produced this corpus, run end to end on the worked example. Each step
+        shows the command, what it does, and the artifact it wrote &mdash; so the path from a
+        published paper to a validated claim graph can be followed rather than described.
+      </p>
+    </header>
 
-    <!-- Brief instructions, up front -->
-    <ol class="mb-6 text-sm text-gray-600 dark:text-gray-400 space-y-1 list-decimal list-inside">
-      <li>Pick a provider and model, and paste <strong>your own API key</strong> below.</li>
-      <li>Upload a manuscript (PDF or DOCX).</li>
-      <li>Click <strong>Extract claims</strong> — then review the results with AI reviewers.</li>
+    <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-10">
+      <p class="text-sm text-gray-800 dark:text-gray-200 m-0 leading-relaxed">
+        <strong>This is a local tool, not a hosted service.</strong> Everything below runs on
+        your machine against public deposits; nothing on this page calls a backend. To run it
+        yourself, start with the
+        <a href={`${base}/docs/cli/install/`} class="text-amber-700 dark:text-amber-400 hover:underline">CLI guide</a>
+        &mdash; it uses this same paper as its example.
+      </p>
+    </div>
+
+    <!-- The paper -->
+    <div class="border-l-2 border-amber-500 pl-4 mb-10">
+      <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 m-0 mb-1">Input</p>
+      <p class="text-base text-gray-900 dark:text-gray-100 m-0 mb-1">{paper.title}</p>
+      <p class="text-sm text-gray-600 dark:text-gray-400 m-0">
+        {paper.authors.slice(0, 3).join(', ')}{paper.authors.length > 3 ? ' et al.' : ''} ·
+        <a href={paper.url} target="_blank" class="text-amber-700 dark:text-amber-400 hover:underline">{paper.doi}</a> ·
+        read from the {g.extraction_path.toUpperCase()} · model <code>{model}</code>
+      </p>
+    </div>
+
+    <!-- Steps -->
+    <ol class="list-none p-0 m-0 space-y-10 mb-12">
+      {STEPS.map(s => (
+        <li>
+          <div class="flex items-baseline gap-3 mb-2">
+            <span class="font-mono text-xs text-amber-700 dark:text-amber-400">{s.n}</span>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 m-0">{s.title}</h2>
+          </div>
+
+          <pre class="bg-gray-900 dark:bg-black text-gray-100 rounded-lg p-4 text-xs overflow-x-auto mb-3"><code>{s.cmd}</code></pre>
+
+          <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0 mb-3">{s.what}</p>
+
+          <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg px-4 py-3 mb-3">
+            <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 m-0 mb-1">Produced</p>
+            <p class="text-sm text-gray-800 dark:text-gray-200 m-0">{s.produced}</p>
+          </div>
+
+          {s.files.length > 0 && (
+            <ul class="list-none p-0 m-0 mb-3 space-y-1">
+              {s.files.map(f => {
+                const size = kb(f.rel);
+                return (
+                  <li class="text-xs font-mono flex flex-wrap items-baseline gap-2">
+                    {size === null
+                      ? <span class="text-gray-400 dark:text-gray-600">{f.label} — not present</span>
+                      : f.href
+                        ? <a href={f.href} target="_blank" class="text-amber-700 dark:text-amber-400 hover:underline no-underline">{f.label}</a>
+                        : <span class="text-gray-700 dark:text-gray-300">{f.rel}</span>}
+                    {size !== null && <span class="text-gray-400 dark:text-gray-500">{size} KB</span>}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+
+          {s.link && (
+            <a href={s.link.href} class="text-sm text-amber-700 dark:text-amber-400 hover:underline no-underline">{s.link.label} &rarr;</a>
+          )}
+        </li>
+      ))}
     </ol>
 
-    <!-- Settings (always visible) -->
-    <div id="settings" class="mb-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/30 space-y-3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Settings</h2>
-        <span class="text-xs text-gray-400 dark:text-gray-500">Your key is sent only to the model provider for this request — never stored.</span>
-      </div>
-      <div class="grid sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-medium text-gray-500 mb-1">Provider</label>
-          <select id="provider"
-            class="w-full px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-            <option value="anthropic">Anthropic (Claude)</option>
-            <option value="google">Google (Gemini)</option>
-            <option value="openai">OpenAI</option>
-            <option value="openrouter">OpenRouter</option>
-            <option value="vertex">Vertex AI (hosted demo — requires token)</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-500 mb-1">Model</label>
-          <select id="model-select"
-            class="w-full px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-            <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (balanced)</option>
-            <option value="claude-opus-4-8">Claude Opus 4.8 (best)</option>
-            <option value="claude-haiku-4-5">Claude Haiku 4.5 (fast/cheap)</option>
-          </select>
-        </div>
-      </div>
-      <div class="grid sm:grid-cols-2 gap-4">
-        <div id="api-key-group">
-          <label class="block text-xs font-medium text-gray-500 mb-1">API key</label>
-          <input type="password" id="api-key" placeholder="sk-ant-..."
-            class="w-full px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
-        </div>
-        <div id="demo-token-group" class="hidden">
-          <label class="block text-xs font-medium text-gray-500 mb-1">Demo token</label>
-          <input type="password" id="demo-token" placeholder="demo token"
-            class="w-full px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
-        </div>
-      </div>
+    <!-- Honest limits -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What this run does not show</h2>
+    <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
+      <p>
+        <strong>No human checked any of it.</strong> The reviewer step in the pipeline is a
+        second model pass, not a person. A human review step could be inserted and is not.
+      </p>
+      <p>
+        <strong>Steps 1 and 4 need model access; the rest do not.</strong> Export, validation
+        and verification run offline against committed files and public deposits, so the parts
+        of this pipeline that check claims are reproducible without an API key. Extraction and
+        coverage adjudication are not.
+      </p>
+      <p>
+        <strong>This trace exists for one paper.</strong> The other {facts.papers - 1} were
+        extracted before runs were saved. The corpus is there; the record of which agent
+        proposed which claim is not.
+      </p>
     </div>
 
-    <!-- Upload -->
-    <div class="mb-6">
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Manuscript (PDF or DOCX)</label>
-      <input type="file" id="file-upload" accept=".pdf,.docx,.doc"
-        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-gray-100 dark:file:bg-gray-700 file:text-gray-700 dark:file:text-gray-300 file:cursor-pointer" />
-    </div>
-
-    <button id="extract-btn"
-      class="px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-700 dark:hover:bg-gray-300 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-      Extract claims
-    </button>
-
-    <!-- Console -->
-    <div id="console" class="hidden mt-6">
-      <div id="console-log" class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50 max-h-48 overflow-y-auto space-y-0.5 text-sm font-mono"></div>
-      <div id="stale-warning" class="hidden mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded text-xs text-yellow-700 dark:text-yellow-300">
-        No response for 30 seconds — the server may be processing a large request or the connection may have dropped.
-      </div>
-    </div>
-
-    <!-- Error -->
-    <div id="error" class="hidden mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-300"></div>
-
-    <!-- Results -->
-    <div id="results" class="hidden mt-8">
-      <div id="result-stats" class="grid grid-cols-3 gap-4 mb-4"></div>
-      <div id="claim-list" class="space-y-2 mb-4"></div>
-      <div id="downloads" class="mb-6"></div>
-
-      <!-- Review section (appears after extraction) -->
-      <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Review</h2>
-        <div id="review-mount"></div>
-      </div>
-    </div>
-
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm flex flex-wrap gap-x-6 gap-y-2">
+      <a href={`${base}/agents/`} class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline">Agents and prompts</a>
+      <a href={`${base}/docs/cli/first-paper/`} class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline">CLI guide</a>
+      <a href={`${base}/papers/${SLUG}/`} class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline">The resulting claim tree</a>
+    </footer>
   </div>
-
-  <script is:inline>
-    const API_URL = window.location.hostname === 'localhost'
-      ? 'http://localhost:8080'
-      : 'https://console.haak.world/elife-extract';
-
-    const btn = document.getElementById('extract-btn');
-    const consoleDiv = document.getElementById('console');
-    const consoleLog = document.getElementById('console-log');
-    const resultsDiv = document.getElementById('results');
-    const errorDiv = document.getElementById('error');
-
-    // Provider → model mapping
-    const providerModels = {
-      anthropic: [{id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6 (balanced)'}, {id: 'claude-opus-4-8', name: 'Claude Opus 4.8 (best)'}, {id: 'claude-haiku-4-5', name: 'Claude Haiku 4.5 (fast/cheap)'}],
-      google: [{id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (best)'}, {id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (fast)'}],
-      openai: [{id: 'gpt-4o', name: 'GPT-4o'}, {id: 'gpt-4o-mini', name: 'GPT-4o Mini'}, {id: 'o3', name: 'o3'}],
-      openrouter: [{id: 'anthropic/claude-sonnet-4', name: 'Claude Sonnet 4'}, {id: 'openai/gpt-4o', name: 'GPT-4o'}, {id: 'google/gemini-2.5-pro', name: 'Gemini 2.5 Pro'}],
-      vertex: [{id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (fastest)'}, {id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro'}, {id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6'}, {id: 'claude-opus-4-6', name: 'Claude Opus 4.6'}],
-    };
-
-    const keyPlaceholders = {
-      anthropic: 'sk-ant-...',
-      openai: 'sk-...',
-      google: 'AIza...',
-      openrouter: 'sk-or-...',
-      vertex: '',
-    };
-
-    const providerSelect = document.getElementById('provider');
-    const modelSelect = document.getElementById('model-select');
-    const apiKeyGroup = document.getElementById('api-key-group');
-    const demoTokenGroup = document.getElementById('demo-token-group');
-    const apiKeyInput = document.getElementById('api-key');
-
-    providerSelect.addEventListener('change', () => {
-      const prov = providerSelect.value;
-      // Update model dropdown
-      const models = providerModels[prov] || [];
-      modelSelect.innerHTML = models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
-      // Toggle key vs token
-      if (prov === 'vertex') {
-        apiKeyGroup.classList.add('hidden');
-        demoTokenGroup.classList.remove('hidden');
-      } else {
-        apiKeyGroup.classList.remove('hidden');
-        demoTokenGroup.classList.add('hidden');
-        apiKeyInput.placeholder = keyPlaceholders[prov] || 'API key';
-      }
-    });
-
-    let currentDetails = null;
-    let currentStep = null;
-    let lastEventTime = Date.now();
-    let staleTimer = null;
-
-    function startStaleDetection() {
-      lastEventTime = Date.now();
-      document.getElementById('stale-warning').classList.add('hidden');
-      if (staleTimer) clearInterval(staleTimer);
-      staleTimer = setInterval(() => {
-        if (Date.now() - lastEventTime > 30000) {
-          document.getElementById('stale-warning').classList.remove('hidden');
-        }
-      }, 5000);
-    }
-
-    function stopStaleDetection() {
-      if (staleTimer) { clearInterval(staleTimer); staleTimer = null; }
-      document.getElementById('stale-warning').classList.add('hidden');
-    }
-
-    function onEvent() {
-      lastEventTime = Date.now();
-      document.getElementById('stale-warning').classList.add('hidden');
-    }
-
-    function log(msg, color, step) {
-      const isStreamToken = msg.startsWith('  ');
-      if (isStreamToken && currentDetails) {
-        // Append streaming line to current foldable section
-        const line = document.createElement('div');
-        line.className = 'text-[11px] text-gray-400 dark:text-gray-500 font-mono';
-        line.textContent = msg;
-        currentDetails.querySelector('.stream-lines').appendChild(line);
-        // Update the summary with token count
-        const match = msg.match(/\[(\d+) tokens\]/);
-        if (match) {
-          currentDetails.querySelector('.token-count').textContent = ` (${match[1]} tokens)`;
-        }
-        consoleLog.scrollTop = consoleLog.scrollHeight;
-        return;
-      }
-
-      // New step — close previous details if any
-      if (step && step !== currentStep) {
-        currentStep = step;
-        currentDetails = document.createElement('details');
-        currentDetails.className = 'mb-1';
-        const summary = document.createElement('summary');
-        summary.className = `cursor-pointer text-sm ${color || 'text-gray-500'}`;
-        summary.innerHTML = `${msg}<span class="token-count text-xs text-gray-400 ml-1"></span>`;
-        currentDetails.appendChild(summary);
-        const streamLines = document.createElement('div');
-        streamLines.className = 'stream-lines ml-4 mt-1 max-h-32 overflow-y-auto';
-        currentDetails.appendChild(streamLines);
-        consoleLog.appendChild(currentDetails);
-      } else {
-        // Non-streaming, non-step message (like "complete" lines)
-        const el = document.createElement('div');
-        el.className = `text-sm ${color || 'text-gray-500 dark:text-gray-400'}`;
-        el.textContent = msg;
-        consoleLog.appendChild(el);
-        currentDetails = null;
-      }
-      consoleLog.scrollTop = consoleLog.scrollHeight;
-    }
-
-    function showError(msg) {
-      errorDiv.textContent = msg;
-      errorDiv.classList.remove('hidden');
-    }
-
-    btn.addEventListener('click', async () => {
-      const fileEl = document.getElementById('file-upload');
-      const file = fileEl?.files?.[0];
-      const apiKey = document.getElementById('api-key').value.trim();
-      const demoToken = document.getElementById('demo-token').value.trim();
-      const selectedProvider = document.getElementById('provider').value;
-      const selectedModel = document.getElementById('model-select').value;
-
-      if (!file) return showError('Please select a file.');
-
-      btn.disabled = true;
-      btn.textContent = 'Extracting...';
-      consoleDiv.classList.remove('hidden');
-      consoleLog.innerHTML = '';
-      resultsDiv.classList.add('hidden');
-      errorDiv.classList.add('hidden');
-      startStaleDetection();
-
-      try {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('api_key', apiKey);
-        formData.append('demo_token', demoToken);
-        formData.append('provider', selectedProvider);
-        formData.append('model_extract', selectedModel);
-        formData.append('model_reconcile', selectedModel);
-
-        const response = await fetch(API_URL + '/extract-file', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) throw new Error('Server error: ' + response.status);
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-        const colors = {
-          prepare: 'text-gray-500 dark:text-gray-400',
-          extract: 'text-amber-700 dark:text-amber-400',
-          reconcile: 'text-blue-700 dark:text-blue-400',
-          review: 'text-purple-700 dark:text-purple-400',
-          edges: 'text-cyan-700 dark:text-cyan-400',
-          done: 'text-green-700 dark:text-green-400',
-          error: 'text-red-600 dark:text-red-400',
-        };
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          // SSE events are separated by double newline
-          const events = buffer.split('\n\n');
-          buffer = events.pop() || '';
-          for (const eventBlock of events) {
-            const dataLine = eventBlock.split('\n').find(l => l.startsWith('data: '));
-            if (!dataLine) continue;
-            try {
-              const event = JSON.parse(dataLine.slice(6));
-              onEvent();
-              if (event.step === 'heartbeat') continue;
-              if (event.message) log(event.message, colors[event.step], event.step);
-              if (event.step === 'done' && event.article) renderResults(event.article, apiKey, demoToken);
-              if (event.step === 'error') showError(event.message);
-            } catch (parseErr) {
-              console.error('SSE parse error:', parseErr, dataLine?.slice(0, 200));
-            }
-          }
-        }
-      } catch (e) {
-        showError(e.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Extract claims';
-        stopStaleDetection();
-      }
-    });
-
-    const roleBadgeColor = {
-      hypothesis: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
-      prediction: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-      empirical: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-      control: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-      scope: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
-      methodological: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400',
-      synthesis: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300',
-      interpretation: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300',
-      'literature-context': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-    };
-
-    const roleTooltips = {
-      hypothesis: 'The paper\'s central bet — often implicit, not stated directly in the prose',
-      prediction: 'A testable consequence deduced from a hypothesis',
-      empirical: 'A measured or computed result, grounded in a figure panel',
-      control: 'An empirical result whose function is to rule out an alternative explanation',
-      scope: 'A boundary condition on other claims ("all results come from...")',
-      methodological: 'A capability or analytical decision of the apparatus',
-      synthesis: 'Integrates multiple empirical results into one higher-order statement',
-      interpretation: 'Reframes results through a theoretical lens — maps to broader theory',
-      'literature-context': 'A cited prior result the paper depends on but did not produce',
-    };
-
-    const edgeTooltips = {
-      'cito:supports': 'Provides factual or intellectual support',
-      'cito:extends': 'Builds on facts, ideas, or understandings',
-      'cito:qualifies': 'Places conditions upon',
-      'cito:disagreesWith': 'Dissociates with — results that separate variables',
-      'cito:usesMethodIn': 'Uses a method from this claim',
-      'cito:citesAsSourceDocument': 'Derived from this claim',
-      'claimrel:requires': 'Logically depends on this claim as a prerequisite',
-      'claimrel:tests': 'Submits this claim to empirical test',
-      'claimrel:entails': 'Logically entails this claim (deductive)',
-      'claimrel:interprets': 'Offers a theoretical reading of this claim',
-      'claimrel:scopes': 'Delimits the domain of applicability',
-      'claimrel:rulesOut': 'Eliminates this claim as a viable hypothesis',
-      'claimrel:replicates': 'Empirically replicates this finding',
-      'claimrel:contradicts': 'Presents findings incompatible with this claim',
-    };
-
-    function edgeLabel(relType) {
-      return relType.split(':').pop().replace(/([A-Z])/g, ' $1').trim().toLowerCase();
-    }
-
-    // Group claims by role in a meaningful order
-    const roleOrder = ['hypothesis', 'prediction', 'empirical', 'control', 'scope', 'methodological', 'synthesis', 'interpretation', 'literature-context'];
-
-    function renderResults(article, apiKey, demoToken) {
-      resultsDiv.classList.remove('hidden');
-      const claims = article.children || [];
-      const nRels = claims.reduce((s, c) => s + (c.relations || []).length, 0);
-      const claimMap = {};
-      claims.forEach(c => { claimMap[c.identifier] = c; });
-
-      document.getElementById('result-stats').innerHTML = `
-        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-          <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">${claims.length}</div>
-          <div class="text-xs text-gray-500 mt-1">claims</div>
-        </div>
-        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-          <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">${nRels}</div>
-          <div class="text-xs text-gray-500 mt-1">relations</div>
-        </div>
-        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-          <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">${new Set(claims.map(c => c.role)).size}</div>
-          <div class="text-xs text-gray-500 mt-1">roles</div>
-        </div>
-      `;
-
-      // Group claims by role
-      const grouped = {};
-      claims.forEach(c => {
-        const r = c.role || 'other';
-        if (!grouped[r]) grouped[r] = [];
-        grouped[r].push(c);
-      });
-
-      let html = '';
-      for (const role of roleOrder) {
-        const group = grouped[role];
-        if (!group || group.length === 0) continue;
-        const badge = roleBadgeColor[role] || 'bg-gray-100 text-gray-800';
-        const tip = roleTooltips[role] || '';
-
-        html += `<div class="mb-6">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-xs font-semibold px-2 py-0.5 rounded ${badge} cursor-help" title="${tip}">${role}</span>
-            <span class="text-xs text-gray-400">${group.length}</span>
-          </div>`;
-
-        for (const c of group) {
-          const text = (c.children || []).map(ch => ch.value || '').join(' ');
-          const rels = c.relations || [];
-          const panelHtml = c.panel ? `<span class="text-[10px] text-gray-400 ml-1">${c.panel.join(', ')}</span>` : '';
-
-          let relsHtml = '';
-          if (rels.length > 0) {
-            relsHtml = '<div class="mt-1.5 flex flex-wrap gap-1">';
-            for (const r of rels) {
-              const label = edgeLabel(r.relationType);
-              const tip = edgeTooltips[r.relationType] || r.relationType;
-              const targetClaim = claimMap[r.xref];
-              const targetText = targetClaim
-                ? (targetClaim.children || []).map(ch => ch.value || '').join(' ').slice(0, 60)
-                : r.xref;
-              relsHtml += `<span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-help" title="${tip}: ${targetText}...">${label} → ${r.xref.slice(0, 25)}</span>`;
-            }
-            relsHtml += '</div>';
-          }
-
-          html += `<div class="border border-gray-100 dark:border-gray-800 rounded-lg p-2.5 mb-1.5">
-            <div class="text-sm text-gray-700 dark:text-gray-300">${text}${panelHtml}</div>
-            ${relsHtml}
-          </div>`;
-        }
-        html += '</div>';
-      }
-
-      document.getElementById('claim-list').innerHTML = html;
-
-      const blob = new Blob([JSON.stringify(article, null, 2)], { type: 'application/json' });
-      document.getElementById('downloads').innerHTML = `
-        <a href="${URL.createObjectURL(blob)}" download="${article.identifier}.oxa.json"
-           class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 no-underline">
-          Download OXA JSON
-        </a>
-      `;
-
-      // Mount ReviewTab with the extracted claims
-      if (window.__mountReview) {
-        window.__mountReview(claims, article.metadata?.title || article.identifier || '', apiKey, demoToken);
-      } else {
-        console.error('ReviewTab mount function not available');
-      }
-
-      // Scroll to results
-      resultsDiv.scrollIntoView({ behavior: 'smooth' });
-    }
-  </script>
 </Layout>
-
-<script>
-  // Mount ReviewTab React component after extraction
-  import { createElement } from 'react';
-  import { createRoot } from 'react-dom/client';
-  import ReviewTab from '../components/ReviewTab.tsx';
-
-  let reviewRoot: any = null;
-
-  (window as any).__mountReview = (claims: any[], title: string, apiKey: string, demoToken: string) => {
-    const mount = document.getElementById('review-mount');
-    if (!mount) return;
-    if (!reviewRoot) {
-      reviewRoot = createRoot(mount);
-    }
-    reviewRoot.render(createElement(ReviewTab, { claims, paperTitle: title, abstract: '', initialApiKey: apiKey, initialDemoToken: demoToken }));
-  };
-</script>
