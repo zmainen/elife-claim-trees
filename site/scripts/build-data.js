@@ -536,6 +536,20 @@ if (existsSync(exportsSrc)) {
   console.log(`Copied ${n} export files to public/exports/`);
 }
 
+// The CiTO extension vocabulary is served from /exports/ alongside them, but it is not an
+// export: it is hand-written and lives in docs/schema-mapping/. It was placed in
+// public/exports/ by hand, and the slug filter above cannot match a `.ttl` name, so nothing
+// ever copied it — leaving the one file in a directory the freshness gate covers that no
+// generator could keep true. Copied from its source so it cannot drift from what the docs
+// link to.
+const ttl = 'claim-relations.ttl';
+const ttlSrc = join(projectRoot, 'docs', 'schema-mapping', ttl);
+if (existsSync(ttlSrc)) {
+  mkdirSync(exportsDst, { recursive: true });
+  fs.copyFileSync(ttlSrc, join(exportsDst, ttl));
+  console.log(`Copied ${ttl} to public/exports/`);
+}
+
 // ── Index the artifacts the pipeline declares ──────────────────────────────
 // `produces` in layers.yaml is a repo path with {paper} unsubstituted, and the site has been
 // treating every one of them as a file that exists. It is not: of the paths this corpus
