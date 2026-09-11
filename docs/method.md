@@ -249,6 +249,7 @@ Edges are propositions about logical structure between claim entities, not citat
 | `interprets` | reframing | A reframes empirical B through theoretical lens (this is an act of mapping, not a derivation). | {{relation_counts.interprets}} |
 | `enables-method` | methodological warrant | A is the methodological capability that warrants B's interpretability. | {{relation_counts.enables-method}} |
 | `scopes` | scope qualification | A is a boundary condition on B (or, if `["*"]`, on every empirical claim in the paper). | {{relation_counts.scopes}} |
+| `part-of` | composition | A is a component of B — one comparison, condition, measure or study of a proposition B states whole. B is weakened but not falsified by A alone; the page shows B with its parts folded beneath it. | {{relation_counts.part-of}} |
 
 ### 4.4 Edge-to-reasoning-form mapping
 

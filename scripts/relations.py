@@ -59,6 +59,9 @@ GAPS = {
     "scopes": "a scope constraint governs another claim's validity",
     "requires": "a claim depends on another holding",
     "qualifies": "a claim narrows another's applicability",
+    "part-of": "a component of another claim — one comparison, condition, measure or study "
+               "of a proposition the target states whole; the target is weakened but not "
+               "falsified by the source alone",
 }
 
 # SUPPORTS and OPPOSES are sets and GAPS is a description map, which is the shape the four
@@ -96,6 +99,8 @@ DIRECTION = {
     "scopes": "from the scope claim to the claims it bounds, or to `*` for every empirical claim in the paper",
     "requires": "from the dependent claim to its prerequisite: the source would be invalid if the target were false",
     "qualifies": "from the qualifying result to the claim whose applicability it narrows",
+    "part-of": "from the component to the claim it is a part of: the source states one "
+               "comparison, condition, measure or study of what the target states as a whole",
 }
 
 # One edge from the corpus per relation, as (paper, source slug, target slug). The prompt
@@ -172,6 +177,15 @@ CONFUSABLE = [
      "would have produced an effect, a sign-flip, a manipulation check) strengthens the warrant "
      "for a target. `supports` is ordinary evidence for a proposition. A control `validates`; a "
      "main result `supports`."),
+    ("part-of", "supports",
+     "`part-of` is composition: the source is one comparison, condition, measure or study *of* "
+     "the proposition the target states whole, and dropping it weakens the target without "
+     "falsifying it. `supports` is evidence: an independent finding that makes the target more "
+     "credible and would survive being removed. The insula-ROI result stated beside the "
+     "voxel-wise result is a *part of* the claim that the insula tracks the guilt effect; a "
+     "distinct finding that happens to bear on that claim merely *supports* it. A filter on "
+     "`supports` cannot tell a component from an independent finding, which is why composition "
+     "needs its own relation."),
 ]
 
 # A finer cut of OPPOSES, for the one check that needs it: which relations may not be aimed at
