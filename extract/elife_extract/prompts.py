@@ -26,9 +26,9 @@ ROLES: dict[str, tuple[str, list[str]]] = {
     "structure-reader": ("structure-reader.md", [_VOCAB, _CANDIDATE]),
     "reconciler": ("reconciler.md", [_VOCAB, _DRAFT]),
     "external-reviewer": ("external-reviewer.md", [_VOCAB, _DRAFT]),
-    # Edge inference keeps its own prompt until it is rewritten against the contract; it reads
-    # no contract file yet, and the declaration says the same.
-    "edge-inference": ("edge-inference.md", []),
+    # Edge inference reads the vocabulary — where the relations, their directions and the
+    # confusable pairs are defined — but not the claim schema: it returns edges, not claims.
+    "edge-inference": ("edge-inference.md", [_VOCAB]),
     "coverage-adjudicator": ("coverage-adjudicator.md", []),
     # Questions gets the vocabulary — it needs the definition of a hypothesis and of a question
     # — but not the claim schema: it returns questions, not claims.

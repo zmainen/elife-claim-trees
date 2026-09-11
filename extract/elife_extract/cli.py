@@ -176,15 +176,26 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
 
     # Emit the prompt and stop. Whatever answers it — an analyst, a reasoning agent — then
     # answers the same question the layer would have asked, rather than a paraphrase of it
-    # written from memory.
+    # written from memory. `--per-arc` writes one prompt per hypothesis arc, for a weaker model
+    # that does better with one job per call; the answers merge through the same validation.
     if args.dump_prompt:
+        from .edges import arcs
         draft, source = best_draft(args.paper, cfg)
-        system, user = build_edge_request(draft, _unique_slugs(draft.claims))
+        slugs = _unique_slugs(draft.claims)
         out = Path(args.dump_prompt).expanduser()
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
-        print(f"  prompt written: {out}  (from {source})")
-        print(f"  answer it with a JSON array, then re-run with --edges-json <answer.json>")
+        if args.per_arc:
+            for n, members in enumerate(arcs(draft.claims), 1):
+                system, user = build_edge_request(draft, slugs, cfg, include=set(members))
+                p = out.with_name(f"{out.stem}.arc{n}{out.suffix}")
+                p.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
+                print(f"  arc {n}: {p}  ({len(members)} claims)")
+            print(f"  {source}: {n} arc prompt(s). Answer each, then --answer <dir or file>.")
+        else:
+            system, user = build_edge_request(draft, slugs, cfg)
+            out.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
+            print(f"  prompt written: {out}  (from {source})")
+            print(f"  answer it (one edge object per line), then re-run with --answer <answer.json>")
         return 0
 
     supplied = args.answer or args.edges_json
@@ -193,10 +204,20 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
         from .layers import _write_json, answer_file
         draft, _ = best_draft(args.paper, cfg)
         p, label = answer_file(supplied, cfg)
-        edges = edges_from_raw(p.read_text(encoding="utf-8"), _unique_slugs(draft.claims),
-                               source=label)
+        # A directory of per-arc answers merges into one reply; validation de-duplicates.
+        raw = ("\n".join(f.read_text(encoding="utf-8") for f in sorted(p.glob("*.json")))
+               if p.is_dir() else p.read_text(encoding="utf-8"))
+        edges = edges_from_raw(raw, draft.claims, _unique_slugs(draft.claims), source=label)
         path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), {
             "paper_slug": args.paper, "model": label, "edges": edges,
+        })
+    elif args.per_arc:
+        from .edges import infer_edges
+        from .layers import _write_json
+        draft, _ = best_draft(args.paper, cfg)
+        edges = infer_edges(draft, _unique_slugs(draft.claims), cfg, per_arc=True)
+        path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), {
+            "paper_slug": args.paper, "model": cfg.model_reconcile, "edges": edges,
         })
     else:
         path, edges = edge_inference_layer(args.paper, cfg)
@@ -887,7 +908,13 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     p_edge.add_argument("--paper", required=True, help="Paper slug.")
-    _add_answerable_args(p_edge, "unknown slugs and self-edges are dropped either way.")
+    _add_answerable_args(p_edge, "unknown, self-referential and mis-directed edges are dropped "
+                                 "either way. --answer may name a directory of per-arc replies.")
+    p_edge.add_argument("--per-arc", action="store_true",
+                        help="Chunk the request into one call per hypothesis arc (the hypothesis, "
+                             "its predictions and the claims that mention them) and merge the "
+                             "answers through the same validation. With --dump-prompt, writes one "
+                             "prompt file per arc. For weaker models; default off.")
     p_edge.add_argument("--edges-json", help=argparse.SUPPRESS)   # the older name for --answer
     _add_common_args(p_edge)
     _add_model_args(p_edge)
