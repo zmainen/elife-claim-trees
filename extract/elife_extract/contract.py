@@ -181,6 +181,20 @@ def render_vocabulary(root: Path | None = None) -> str:
     for name, meaning in vocabulary.CONFIDENCE:
         w(f"- `{name}` — {meaning}")
     w("")
+
+    # The three-way test the reconciler applies to a pair, shown on real pairs.
+    w("## Same, part, or different")
+    w("")
+    w("When two candidates might be one claim, ask what would verify each. **Same**: the same "
+      "computation on the same data, however the two are worded and whichever study each cites "
+      "— merge, keep the more precise wording and carry both readers' evidence. **Part**: one "
+      "states one comparison, condition, measure or study of what the other states as a whole — "
+      "keep both and set the part's `part_of` to the whole. **Different**: a different "
+      "computation, direction, region or condition — keep both, unrelated. On real pairs:")
+    w("")
+    for verdict, a, b, why in vocabulary.SAME_CLAIM:
+        w(f"- **{verdict}.** “{a}” beside “{b}” — {why}")
+        w("")
     return "\n".join(out)
 
 

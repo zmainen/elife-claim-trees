@@ -106,6 +106,16 @@ def test_part_of_has_a_direction_and_an_example():
     assert any({a, b} == {"part-of", "supports"} for a, b, _ in rel.CONFUSABLE)
 
 
+def test_same_part_or_different_is_rendered():
+    """The reconciler's three-way test is only as good as its examples; the section, and one
+    real pair for each verdict, has to reach the prompt."""
+    md = contract.render_vocabulary(REPO)
+    assert "## Same, part, or different" in md
+    for verdict, _a, _b, _why in vocabulary.SAME_CLAIM:
+        assert f"**{verdict}." in md
+    assert {v for v, *_ in vocabulary.SAME_CLAIM} == {"same", "part", "different"}
+
+
 def test_parts_layer_reads_the_vocabulary_that_defines_composition():
     """The parts layer is sent its task and the vocabulary — where `part-of` is defined — and
     the declaration lists exactly that, so the run hashes what the layer composes its edges

@@ -225,3 +225,45 @@ READER_CONFIDENCE = [
     ("tentative", "read between the lines, summarised across sentences, or ambiguous in the "
                   "source; say why in `notes`"),
 ]
+
+# ── Same, part, or different ─────────────────────────────────────────────
+# The reconciler's three-way test, shown on real pairs. Each triple is two candidate sentences
+# and the verdict, with one line of why. All are drawn from the Gädeke pairs the recorded Opus
+# run wrongly kept apart (docs/design/2026-09-11-parts.md); the sentences are quoted literally
+# from the claim files, so a triple is an example of what the reconciler actually receives.
+# `contract.py` renders these; they are strings, not slugs, because the reconciler compares
+# sentences, not files.
+SAME_CLAIM = [
+    ("same",
+     "In both studies, participants felt worse after low lottery outcomes for the partner when "
+     "those outcomes followed their own choice rather than the partner's, which the authors "
+     "interpret as interpersonal guilt.",
+     "When the partner received the low lottery outcome, participant happiness was lower when "
+     "the participant rather than the partner had chosen the lottery — a significant "
+     "partner-outcome × decision-maker interaction (Study 1: t(1180) = 3.52, p = 0.0004, "
+     "β = 0.37; Study 2: t(937) = 2.85, p = 0.0045, β = 0.33) — operationalizing interpersonal "
+     "guilt.",
+     "The same partner-outcome × decision-maker interaction on the same happiness data, cited "
+     "once as a cross-study synthesis and once as the result that computes it: merge, keep the "
+     "wording with the coefficients."),
+    ("part",
+     "One cluster in the left STS responded more to partner reward prediction errors resulting "
+     "from participant rather than partner choices (pFWE = 0.022, T = 4.70, d = 0.53, "
+     "100 voxels, peak MNI [−52 –32 0]).",
+     "The left superior temporal sulcus cluster responded to model-based regressors coding "
+     "participant reward prediction resulting from participant and partner choices across both "
+     "sessions of the experiment.",
+     "The first states one directional contrast — participant-caused above partner-caused — of "
+     "the broader responsiveness the second states as a whole: keep both, the first `part_of` "
+     "the second."),
+    ("different",
+     "During receipt of lottery versus safe outcomes (across all conditions), clusters were "
+     "more active in the bilateral anterior insula, dmPFC, right STS, bilateral ventral "
+     "striatum, right dorsolateral prefrontal cortex, and bilateral inferior parietal lobe.",
+     "The bilateral ventral striatum was more active when participants chose the risky rather "
+     "than the safe option (Cohen's d = 0.72 left, 0.85 right), irrespective of Social or Solo "
+     "condition, replicating previous findings.",
+     "Both light up the ventral striatum, but by different computations — one the "
+     "lottery-versus-safe outcome-receipt contrast, the other the risky-versus-safe choice "
+     "contrast: keep both, no relation between them here."),
+]

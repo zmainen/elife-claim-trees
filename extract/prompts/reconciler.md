@@ -23,8 +23,19 @@ Two candidates are different claims when any of these differs:
   results that support it: that erases the target of every `entails` and `tests` edge the
   graph would carry.
 
-When in doubt, keep them separate and say why in `notes`. A split is easy to repair later; a
-merge hides what was merged.
+Decide between three outcomes by one test — what would verify each candidate:
+
+- **Same**: the two sentences would be verified by the same computation on the same data,
+  whatever their wording and whichever study each cites. Merge: keep the more precise wording,
+  and carry both readers' evidence.
+- **Part**: one states one comparison, one condition, one measure or one study of what the
+  other states as a whole. Keep both, and write `part_of` (below).
+- **Different**: a different computation, a different direction, region or condition. Keep both,
+  with no relation between them.
+
+Apply the test, rather than defaulting to "keep apart": a split you make out of caution hides
+that two readers found one thing, and the merge and the `part_of` are what the confidence tag
+and the part edge are for.
 
 There is a third outcome between merging and keeping two independent claims: one is a **part
 of** the other. A candidate that states one comparison, one condition, one measure or one
