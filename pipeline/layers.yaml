@@ -371,18 +371,25 @@ layers:
     question: Which claims depend on which?
     doc: /docs/layers/#edge-inference--which-claims-depend-on-which
     how: >
-      Given the draft's claims, numbered, it returns typed relations between them — the deductive
-      spine, `entails` from a hypothesis to its predictions and `tests` back from the empirical
-      result. Edges naming an unknown slug, or pointing at themselves, are dropped: an invented
-      target is worse than a missing edge.
+      Given the draft's claims — numbered, each with its role, panel, stance, full sentence, cited
+      spans and the readers' evidence quotes — it returns typed relations in the corpus's own
+      vocabulary, with a one-sentence `why` per edge. The relations, their binding directions and
+      the confusable pairs come from `contract/vocabulary.md`, so the prompt and the checker read
+      one rule. Validation is mechanical: an unknown or self relation is dropped, `derived-from` and
+      `confirms` are synthesised as reciprocals rather than emitted, and the direction is enforced —
+      `tests` from an empirical result or control to a prediction, `entails` from a hypothesis,
+      `scopes` from a scope claim, `rules-out`/`contradicts`/`opposes` only at a claim the paper does
+      not assert, `part-of` only where it forms no cycle and no second whole. An invented target is
+      worse than a missing edge.
 
       `--dump-prompt` writes the exact request and exits, so that an analyst or a different model
       answers the question this layer would have asked rather than a paraphrase written from memory,
-      and `--edges-json` feeds that answer back through the same validation. Edges are the part of a
-      tree most easily lost to one failed call — every other stage can succeed and leave a paper
-      with claims and no structure at all.
+      and `--answer` feeds that answer back through the same validation; `--per-arc` chunks the
+      request into one call per hypothesis arc for weaker models and merges the answers. Edges are
+      the part of a tree most easily lost to one failed call — every other stage can succeed and
+      leave a paper with claims and no structure at all.
     needs: [reconcile, relation-vocab]
-    reads: [extract/prompts/edge-inference.md]
+    reads: [extract/prompts/edge-inference.md, extract/prompts/contract/vocabulary.md]
     produces: ["runs/{paper}/edge-inference.output.json"]
     views: [graph, table]
     by_from: model

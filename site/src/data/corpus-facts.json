@@ -676,7 +676,7 @@
         "command": "cd extract && python3 -m elife_extract.cli edge-inference --paper {paper}",
         "doc": "/docs/layers/#edge-inference--which-claims-depend-on-which",
         "group": "induction",
-        "how": "Given the draft's claims, numbered, it returns typed relations between them \u2014 the deductive spine, `entails` from a hypothesis to its predictions and `tests` back from the empirical result. Edges naming an unknown slug, or pointing at themselves, are dropped: an invented target is worse than a missing edge.\n`--dump-prompt` writes the exact request and exits, so that an analyst or a different model answers the question this layer would have asked rather than a paraphrase written from memory, and `--edges-json` feeds that answer back through the same validation. Edges are the part of a tree most easily lost to one failed call \u2014 every other stage can succeed and leave a paper with claims and no structure at all.\n",
+        "how": "Given the draft's claims \u2014 numbered, each with its role, panel, stance, full sentence, cited spans and the readers' evidence quotes \u2014 it returns typed relations in the corpus's own vocabulary, with a one-sentence `why` per edge. The relations, their binding directions and the confusable pairs come from `contract/vocabulary.md`, so the prompt and the checker read one rule. Validation is mechanical: an unknown or self relation is dropped, `derived-from` and `confirms` are synthesised as reciprocals rather than emitted, and the direction is enforced \u2014 `tests` from an empirical result or control to a prediction, `entails` from a hypothesis, `scopes` from a scope claim, `rules-out`/`contradicts`/`opposes` only at a claim the paper does not assert, `part-of` only where it forms no cycle and no second whole. An invented target is worse than a missing edge.\n`--dump-prompt` writes the exact request and exits, so that an analyst or a different model answers the question this layer would have asked rather than a paraphrase written from memory, and `--answer` feeds that answer back through the same validation; `--per-arc` chunks the request into one call per hypothesis arc for weaker models and merges the answers. Edges are the part of a tree most easily lost to one failed call \u2014 every other stage can succeed and leave a paper with claims and no structure at all.\n",
         "id": "edge-inference",
         "kind": "step",
         "needs": [
@@ -688,7 +688,8 @@
         ],
         "question": "Which claims depend on which?",
         "reads": [
-          "extract/prompts/edge-inference.md"
+          "extract/prompts/edge-inference.md",
+          "extract/prompts/contract/vocabulary.md"
         ],
         "scope": "paper",
         "title": "Edge inference",
@@ -8600,6 +8601,40 @@
             }
           ],
           "ran": "2026-09-11T22:59:04Z",
+          "v": 4
+        },
+        {
+          "answer": {
+            "path": "runs/gadeke-2026-guilt-insula/edge-inference.answer.v4.json",
+            "sha": "442f245fb740"
+          },
+          "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
+          "cmd": "cd extract && python3 -m elife_extract.cli edge-inference --paper gadeke-2026-guilt-insula --answer runs/gadeke-2026-guilt-insula/edge-inference.answer.v4.json",
+          "in": [
+            {
+              "path": "runs/gadeke-2026-guilt-insula/reconciler.output.json",
+              "sha": "7895fd38e8a3"
+            },
+            {
+              "path": "extract/prompts/edge-inference.md",
+              "sha": "a90c6982050e"
+            },
+            {
+              "path": "extract/prompts/contract/vocabulary.md",
+              "sha": "9dcbad36be43"
+            }
+          ],
+          "in_sets": [],
+          "kind": "step",
+          "layer": "edge-inference",
+          "note": "edge inference on the contract (#83)",
+          "out": [
+            {
+              "path": "runs/gadeke-2026-guilt-insula/edge-inference.output.json",
+              "sha": "64ca13ba7e51"
+            }
+          ],
+          "ran": "2026-09-11T23:41:49Z",
           "v": 4
         }
       ],
@@ -17173,17 +17208,14 @@
         },
         "claim-tree": {
           "appeared": [],
-          "blocked_by": [
-            "reconcile",
-            "external-review",
-            "edge-inference"
-          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "runs/gadeke-2026-guilt-insula/edge-inference.output.json"
+          ],
           "note": "claim-tree v2 from the recorded Opus chain (#56): 68 claims, 75 edges; v1 archived to runs/gadeke-2026-guilt-insula/claim-tree.v1; alt- claims, rules-out edges and reproduction records carried from v1",
           "ran": "2026-09-11T19:59:02Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 2
         },
         "coverage": {
@@ -17212,13 +17244,13 @@
           "blocked_by": [
             "reconcile"
           ],
-          "by": "claude-opus-5 (subagent, via --answer)",
+          "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
           "lost": [],
           "moved": [],
-          "note": "first run under the prompt contract (#56 item 4); Opus 5 subagents for every layer; answered through --dump-prompt/--answer, not the configured backend",
-          "ran": "2026-09-11T19:15:06Z",
+          "note": "edge inference on the contract (#83)",
+          "ran": "2026-09-11T23:41:49Z",
           "state": "blocked",
-          "v": 3
+          "v": 4
         },
         "epistemic-vocab": {
           "scope": "corpus",

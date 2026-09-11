@@ -609,6 +609,156 @@ def test_parts_is_answerable_and_its_declared_command_exists():
     assert m and m.group(1) in choices, "parts' command names a subcommand the CLI does not have"
 
 
+# ── edge inference: the direction checks, reciprocals, and the why ─────────
+# The claims are a minimal arc plus one entertained alternative, so every direction rule has a
+# claim that satisfies it and a claim that breaks it. Passed as dicts because a draft claim
+# carries no stance today — `edges._stance` defaults to `asserts`, and only an alternative the
+# reviewer raised reads `entertains`, which is exactly the one target a `rules-out` may have.
+
+_EDGE_SLUGS = ["h", "p", "e", "c", "s", "e2", "alt"]
+
+
+def _edge_claims() -> list[dict]:
+    return [
+        {"role": "hypothesis", "stance": "asserts", "claim": "the hypothesis"},        # 1 h
+        {"role": "prediction", "stance": "asserts", "claim": "the prediction"},        # 2 p
+        {"role": "empirical", "stance": "asserts", "claim": "the result"},             # 3 e
+        {"role": "control", "stance": "asserts", "claim": "the control"},              # 4 c
+        {"role": "scope", "stance": "asserts", "claim": "the scope bound"},            # 5 s
+        {"role": "empirical", "stance": "asserts", "claim": "another result"},         # 6 e2
+        {"role": "hypothesis", "stance": "entertains", "claim": "an alternative"},      # 7 alt
+    ]
+
+
+def _validate(parsed: list, claims: list | None = None) -> list[dict]:
+    from elife_extract.edges import _validate_edges
+    return _validate_edges(parsed, claims or _edge_claims(), _EDGE_SLUGS, source="test")
+
+
+def _triples(edges: list[dict]) -> set[tuple[str, str, str]]:
+    return {(e["source"], e["target"], e["relation"]) for e in edges}
+
+
+def test_edge_rejects_unknown_relation_reference_and_self():
+    """Three ways a reference or relation is unusable — each dropped, the one valid edge kept."""
+    edges = _validate([
+        {"source": 3, "target": 2, "relation": "not-a-relation"},   # unknown relation → drop
+        {"source": 99, "target": 2, "relation": "tests"},           # index out of range → drop
+        {"source": 3, "target": 3, "relation": "supports"},         # self reference → drop
+        {"source": 3, "target": 2, "relation": "tests"},            # valid → kept
+    ])
+    assert _triples(edges) == {("e", "p", "tests")}
+
+
+def test_edge_rejects_the_mechanically_written_reciprocals():
+    """`derived-from` and `confirms` are synthesised, never emitted; emitting them is dropped."""
+    edges = _validate([
+        {"source": 2, "target": 1, "relation": "derived-from"},
+        {"source": 3, "target": 2, "relation": "confirms"},
+    ])
+    assert edges == []
+
+
+def test_edge_direction_tests_entails_scopes():
+    """`tests` runs empirical/control → prediction; `entails` from a hypothesis; `scopes` from a
+    scope claim. The wrong source or target is dropped, the right one kept."""
+    edges = _validate([
+        {"source": 1, "target": 2, "relation": "tests"},     # source hypothesis → drop
+        {"source": 3, "target": 6, "relation": "tests"},     # target empirical → drop
+        {"source": 3, "target": 2, "relation": "tests"},     # kept
+        {"source": 3, "target": 2, "relation": "entails"},   # source empirical → drop
+        {"source": 1, "target": 2, "relation": "entails"},   # kept (+ reciprocal derived-from)
+        {"source": 3, "target": 6, "relation": "scopes"},    # source empirical → drop
+        {"source": 5, "target": 6, "relation": "scopes"},    # kept
+    ])
+    t = _triples(edges)
+    assert {("e", "p", "tests"), ("h", "p", "entails"), ("p", "h", "derived-from"),
+            ("s", "e2", "scopes")} <= t
+    assert ("h", "p", "tests") not in t and ("e", "e2", "tests") not in t
+    assert ("e", "p", "entails") not in t and ("e", "e2", "scopes") not in t
+
+
+def test_edge_contrary_only_targets_a_claim_the_paper_does_not_assert():
+    """`rules-out`/`contradicts`/`opposes` at an asserted claim is dropped; at an entertained
+    alternative it is kept. This is the CONTRARY set `check_relations.py` enforces on the
+    corpus, imported from `relations.py` so the two agree."""
+    edges = _validate([
+        {"source": 4, "target": 2, "relation": "rules-out"},     # target asserts → drop
+        {"source": 3, "target": 2, "relation": "contradicts"},   # target asserts → drop
+        {"source": 3, "target": 2, "relation": "opposes"},       # target asserts → drop
+        {"source": 4, "target": 7, "relation": "rules-out"},     # target entertains → kept
+    ])
+    assert _triples(edges) == {("c", "alt", "rules-out")}
+
+
+def test_edge_part_of_rejects_a_cycle_and_a_second_whole():
+    """A part points at one whole, and the chain of wholes may not close a cycle."""
+    edges = _validate([
+        {"source": 3, "target": 6, "relation": "part-of"},   # e is part of e2 → kept
+        {"source": 6, "target": 3, "relation": "part-of"},   # e2 → e would close a cycle → drop
+        {"source": 3, "target": 5, "relation": "part-of"},   # e already has a whole → drop
+    ])
+    assert _triples(edges) == {("e", "e2", "part-of")}
+
+
+def test_edge_dissociates_with_is_symmetric_and_written_once():
+    """`dissociates-with` is symmetric; the same pair written both ways keeps one edge."""
+    edges = _validate([
+        {"source": 3, "target": 6, "relation": "dissociates-with"},
+        {"source": 6, "target": 3, "relation": "dissociates-with"},   # same pair → drop
+    ])
+    assert len([e for e in edges if e["relation"] == "dissociates-with"]) == 1
+
+
+def test_edge_reciprocals_are_synthesised():
+    """`entails` synthesises `derived-from`; `predicts` synthesises `confirms`. The site's
+    hierarchical numbering walks the reciprocal, so it must be written."""
+    edges = _validate([
+        {"source": 1, "target": 2, "relation": "entails", "why": "h implies p"},
+        {"source": 1, "target": 2, "relation": "predicts", "why": "h predicts p"},
+    ])
+    t = _triples(edges)
+    assert {("h", "p", "entails"), ("p", "h", "derived-from"),
+            ("h", "p", "predicts"), ("p", "h", "confirms")} <= t
+
+
+def test_edge_why_is_carried_through_to_the_output():
+    """The model's one-sentence `why` survives validation, and a synthesised reciprocal says so."""
+    edges = _validate([{"source": 3, "target": 2, "relation": "tests",
+                        "why": "the result tests the prediction, results-002"}])
+    assert edges[0]["why"] == "the result tests the prediction, results-002"
+    recip = [e for e in _validate([{"source": 1, "target": 2, "relation": "entails",
+                                    "why": "h implies p"}])
+             if e["relation"] == "derived-from"][0]
+    assert "reciprocal of entails" in recip["why"]
+
+
+def test_edge_why_lands_in_the_claim_body_not_the_frontmatter():
+    """The writer records each edge's `why` under a Relations note in the body; the frontmatter
+    shape is unchanged — `tests` is still a top-level key, no `why` beside it."""
+    from elife_extract import write as write_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = _cfg(Path(tmp))
+        draft = DraftClaimTable(
+            paper_slug=SLUG, paper_doi=DOI, paper_title="A paper",
+            claims=[
+                {"claim": "The result tests the prediction.", "panel": "fig1a",
+                 "claim_type": "empirical", "role": "empirical", "confidence": "high",
+                 "sources": ["results"]},
+                {"claim": "The prediction.", "panel": None, "claim_type": "prediction",
+                 "role": "prediction", "confidence": "high", "sources": ["results"]},
+            ],
+        )
+        src, tgt = write_mod._unique_slugs(draft.claims)
+        edges = [{"source": src, "target": tgt, "relation": "tests",
+                  "why": "E tests P, results-002"}]
+        write_mod.write_claim_files(draft, cfg, edges=edges)
+        text = (cfg.corpus_dir / SLUG / f"{src}.md").read_text()
+        fm, body = text.split("---", 2)[1], text.split("---", 2)[2]
+        assert "results-002" not in fm, "the why leaked into the frontmatter"
+        assert "**Relations.**" in body and "E tests P, results-002" in body
+
+
 # ── Standalone runner (no pytest required) ────────────────────────────────
 
 if __name__ == "__main__":
