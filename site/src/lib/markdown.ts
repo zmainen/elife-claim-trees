@@ -1,6 +1,6 @@
 // Rendering markdown the site owns, and filling its figures from the corpus.
 //
-// Two pages render repository markdown: /pipeline/method from docs/method.md, and /docs/*
+// Two pages render repository markdown: /method from docs/method.md, and /docs/*
 // from docs/cli/*.md. They shared nothing, which is how a convention gets applied to one of
 // them — so the substitution, the guard, and the shiki configuration live here once.
 //

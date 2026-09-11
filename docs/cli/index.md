@@ -84,5 +84,5 @@ The command surface changed. If you have older notes or scripts:
 | [Papers](/elife-claim-trees/papers/) | the claim graphs themselves |
 | [Pipeline](/elife-claim-trees/pipeline/) | the layer graph, and which papers have been through each layer |
 | [Roles and relations](/elife-claim-trees/pipeline/vocabulary/) | what a claim can be, and what can hold between two |
-| [Methodology](/elife-claim-trees/pipeline/method/) | the procedure the corpus follows |
+| [Methodology](/elife-claim-trees/method/) | the procedure the corpus follows |
 | [Design note](/elife-claim-trees/design/2026-09-11-layers-as-pipeline.html) | why the system is shaped this way |
