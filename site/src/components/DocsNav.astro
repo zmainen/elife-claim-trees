@@ -1,75 +1,49 @@
 ---
-// The docs sidebar — nine entries, written here because there are nine.
+// The docs tab strip — ten entries, written here because there are ten.
 //
 // This replaced a 39-item Starlight sidebar over a section describing a system that had
 // changed underneath it. The list is short enough to read, which is the point: a reader can
 // see the whole of /docs at once and tell what it does not cover.
+//
+// It is a strip rather than a sidebar because every other section of this site puts its own
+// navigation across the top — /standards has the same component one directory over — and a
+// section that navigates differently reads as a different site. Ten entries fit across a line
+// once the labels are the short names rather than the page titles; the page's own h1 carries
+// the long title, so nothing is lost by shortening them here.
 export interface Props { current: string }
 const { current } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-const GROUPS: { label: string; items: { slug: string; label: string }[] }[] = [
-  {
-    label: 'Start',
-    items: [
-      { slug: 'index', label: 'Overview' },
-      { slug: 'install', label: 'Install and configure' },
-      { slug: 'first-paper', label: 'One paper end to end' },
-    ],
-  },
-  {
-    label: 'The tools',
-    items: [
-      { slug: 'runner', label: 'The runner' },
-      { slug: 'layers', label: 'The layer runners' },
-      { slug: 'batch', label: 'Batch operation' },
-      { slug: 'evaluate', label: 'Measuring a prompt change' },
-    ],
-  },
-  {
-    label: 'Reference',
-    items: [
-      { slug: 'config', label: 'Configuration' },
-      { slug: 'prompts', label: 'The prompts' },
-      { slug: 'contributing', label: 'For contributors' },
-    ],
-  },
+// In reading order: start, then the tools, then reference.
+const PAGES: { slug: string; label: string }[] = [
+  { slug: 'index', label: 'Overview' },
+  { slug: 'install', label: 'Install' },
+  { slug: 'first-paper', label: 'First paper' },
+  { slug: 'runner', label: 'Runner' },
+  { slug: 'layers', label: 'Layers' },
+  { slug: 'batch', label: 'Batch' },
+  { slug: 'evaluate', label: 'Evaluate' },
+  { slug: 'config', label: 'Config' },
+  { slug: 'prompts', label: 'Prompts' },
+  { slug: 'contributing', label: 'Contributing' },
 ];
 
 const href = (slug: string) => `${base}/docs/${slug === 'index' ? '' : slug + '/'}`;
 ---
 
-<nav class="docs-nav text-sm" aria-label="Documentation">
-  {GROUPS.map(g => (
-    <div class="mb-5">
-      <div class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
-        {g.label}
-      </div>
-      <ul class="list-none p-0 m-0 space-y-1">
-        {g.items.map(it => (
-          <li>
-            <a href={href(it.slug)}
-               aria-current={it.slug === current ? 'page' : undefined}
-               class={`block no-underline leading-snug py-0.5 ${
-                 it.slug === current
-                   ? 'text-amber-700 dark:text-amber-400 font-medium'
-                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-               }`}>{it.label}</a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  ))}
-
-  <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
-    <div class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
-      Not here
-    </div>
-    <ul class="list-none p-0 m-0 space-y-1 text-gray-500 dark:text-gray-400">
-      <li><a href={`${base}/pipeline/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">The layer model</a></li>
-      <li><a href={`${base}/method/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">The methodology</a></li>
-      <li><a href={`${base}/pipeline/vocabulary/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">Roles and relations</a></li>
-      <li><a href={`${base}/papers/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">The claim graphs</a></li>
-    </ul>
-  </div>
+<nav class="flex flex-wrap border-b-2 border-gray-200 dark:border-gray-700 mb-8" aria-label="Documentation">
+  {PAGES.map(p => {
+    const on = p.slug === current;
+    return (
+      <a href={href(p.slug)}
+         aria-current={on ? 'page' : undefined}
+         class={`font-mono text-xs tracking-wide px-3.5 py-2.5 -mb-0.5 no-underline whitespace-nowrap
+           border-b-2 transition-colors ${
+           on
+             ? 'border-amber-600 dark:border-amber-500 text-gray-900 dark:text-gray-100 font-medium'
+             : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+         }`}>{p.label}</a>
+    );
+  })}
+  <span class="flex-1 border-b-2 border-transparent"></span>
 </nav>
