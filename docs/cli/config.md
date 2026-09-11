@@ -77,10 +77,9 @@ litellm and needs no code of its own, reading its conventional key from the envi
 | `together` | `TOGETHER_API_KEY` |
 | `deepseek` | `DEEPSEEK_API_KEY` |
 
-The published corpus was extracted on `deepseek/deepseek-chat`, which is what the ledger
-records for Gädeke's reader layers — not the Vertex default. A run records the model that
-answered it, so the defaults documented here are not a claim about what produced any particular
-claim file.
+These defaults describe what a run started today would use. They are not a record of what
+produced any particular claim file — for that, read the `by` field of the relevant entry in
+`runs/<paper>/ledger.jsonl`, which names the model that answered each layer.
 
 ## What is not configurable
 
