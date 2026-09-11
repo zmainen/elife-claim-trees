@@ -39,9 +39,8 @@ python3 scripts/pipeline.py state --fail-on-stale
 Exits non-zero if any cell is stale — a prompt or a script changed and the artifacts built from
 it have not been rebuilt. Suitable for CI.
 
-Note what it does *not* fail on: `absent`, and `unrecorded`. A jagged edge in the matrix is the
-normal condition of this corpus rather than a defect, and a gate that treated an un-run layer as
-a failure would be red permanently and read by nobody.
+It does **not** fail on `absent` or `unrecorded`. Most layers have not been run for most
+papers, so a gate that treated an un-run layer as a failure would never be green.
 
 ## Cost
 
@@ -62,9 +61,6 @@ Per paper, for a typical eLife article:
 A hundred-paper corpus with external review is roughly $700 and seventeen hours run
 sequentially. Parallelising across papers is safe — the layers for one paper never read another
 paper's files — and the practical limit is your provider's rate quota, not the pipeline.
-
-`claim-tree` costing nothing is recent. It used to call edge inference itself, paying a second
-time per paper for an answer the `edge-inference` layer had already written to disk.
 
 ## Cutting the cost
 

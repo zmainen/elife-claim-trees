@@ -26,7 +26,6 @@ import json
 import os
 import re
 import sys
-from datetime import date
 
 try:
     import yaml
@@ -402,14 +401,39 @@ NODE_TYPES = {"mira:Claim": "haak:type/Claim",
               "mira:Protocol": "haak:type/Protocol"}
 
 
-def node_type_nodes(author_id, stamp):
+# When a claim was first registered, per docs/claim-format.md — the `priority` field. Used
+# when a paper declares none, which no paper in this corpus does.
+CORPUS_EPOCH = "2026-03-29"
+
+
+def document_dates(claims):
+    """`created` and `modified` for the document's own nodes, from the claims it describes.
+
+    These were `date.today()`, which made the export a function of when it ran rather than of
+    what it read. Re-running the exporter on an unchanged corpus rewrote a timestamp into
+    every node, so the two mechanisms this repository uses to tell whether an export is
+    current — `git diff`, and the content hashes in runs/<paper>/ledger.jsonl — both reported
+    churn on every paper whether or not anything had changed. A staleness check that fires
+    daily for no reason is one nobody reads.
+
+    A generated artifact should be a function of its inputs. The date this document describes
+    is the date its claims were registered: created with the first, modified with the most
+    recent. Editing a claim without touching its `priority` leaves these alone — correctly,
+    because the ledger hashes the content and does not need the date to notice.
+    """
+    dates = sorted(str(c["priority"]) for c in claims if c.get("priority"))
+    first, last = (dates[0], dates[-1]) if dates else (CORPUS_EPOCH, CORPUS_EPOCH)
+    return f"{first}T00:00:00.000Z", f"{last}T00:00:00.000Z"
+
+
+def node_type_nodes(author_id, created, modified):
     return [{"@id": local, "@type": "NodeSchema", "subClassOf": [mira],
              "label": mira.split(":")[1], "creator": author_id,
-             "created": stamp, "modified": stamp}
+             "created": created, "modified": modified}
             for mira, local in NODE_TYPES.items()]
 
 
-def relation_nodes(used, author_id, stamp):
+def relation_nodes(used, author_id, created, modified):
     """The declaration ladder MIRA uses for relation types.
 
     Three nodes per relation, following `sampleData.json`: an `AbstractRelationDef` naming
@@ -428,7 +452,7 @@ def relation_nodes(used, author_id, stamp):
             sub.insert(0, parent)
         node = {"@id": abstract, "@type": "AbstractRelationDef", "subClassOf": sub,
                 "label": key, "creator": author_id,
-                "created": stamp, "modified": stamp}
+                "created": created, "modified": modified}
         # An inverse is a property of the declaration, not of the edges.
         if key in INVERSE_PAIRS and INVERSE_PAIRS[key] in used:
             node["inverseOf"] = _rel_ids(INVERSE_PAIRS[key])[0]
@@ -438,7 +462,7 @@ def relation_nodes(used, author_id, stamp):
                     "range": NODE_TYPES.get(rng, rng),
                     "subClassOf": [abstract, "dgb:RelationInstance"],
                     "label": key, "description": text_item(desc),
-                    "creator": author_id, "created": stamp, "modified": stamp})
+                    "creator": author_id, "created": created, "modified": modified})
     return out
 
 
@@ -446,7 +470,7 @@ def export(paper_slug, extended):
     claims = load_paper(paper_slug)
     by_slug = {c["slug"]: c for c in claims}
     author_id = "haak:agent/elife-claim-trees"
-    stamp = f"{date.today().isoformat()}T00:00:00.000Z"
+    created, modified = document_dates(claims)
 
     nodes, all_dropped = [], []
     for c in claims:
@@ -507,7 +531,7 @@ def export(paper_slug, extended):
                 "source": node_id(c),
                 "destination": dest,
                 "title": f"[[{c['slug']}]] -{key}-> [[{dest_label}]]",
-                "creator": author_id, "created": stamp, "modified": stamp,
+                "creator": author_id, "created": created, "modified": modified,
             })
 
     for text, mid in minted.items():
@@ -526,8 +550,8 @@ def export(paper_slug, extended):
         if fwd in used:
             used.add(inv)
 
-    nodes = (node_type_nodes(author_id, stamp)
-             + relation_nodes(sorted(used), author_id, stamp) + nodes + edges)
+    nodes = (node_type_nodes(author_id, created, modified)
+             + relation_nodes(sorted(used), author_id, created, modified) + nodes + edges)
     nodes.insert(0, {"@id": author_id, "@type": "UserAccount",
                      "accountName": "elife-claim-trees pipeline"})
 
@@ -563,10 +587,15 @@ def gap_report(paper_slug, claims, dropped, questions, minted=(), wildcards=()):
 
     reps = sum(len(c.get("reproductions") or []) for c in claims)
     verified = sum(1 for c in claims if c.get("reproductions"))
+    created, modified = document_dates(claims)
+    registered = created[:10] if created[:10] == modified[:10] else \
+        f"{created[:10]} – {modified[:10]}"
 
     L = []
     L.append(f"# MIRA export — what the strict file cannot carry\n")
-    L.append(f"**Paper:** `{paper_slug}` · **Generated:** {date.today().isoformat()}\n")
+    # Not the date this ran. A report that restamps itself daily makes `git diff` on
+    # exports/ useless as the check that they are current.
+    L.append(f"**Paper:** `{paper_slug}` · **Claims registered:** {registered}\n")
     L.append(f"{len(claims)} claims, {total_edges} typed relations between them.\n")
 
     L.append("## Claims by role\n")

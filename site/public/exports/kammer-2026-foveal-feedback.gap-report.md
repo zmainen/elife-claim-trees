@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `kammer-2026-foveal-feedback` · **Generated:** 2026-09-11
+**Paper:** `kammer-2026-foveal-feedback` · **Claims registered:** 2026-03-30 – 2026-04-20
 
 23 claims, 65 typed relations between them.
 

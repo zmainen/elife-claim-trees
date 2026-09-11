@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `bouyeure-2026-fear-rsa` · **Generated:** 2026-09-11
+**Paper:** `bouyeure-2026-fear-rsa` · **Claims registered:** 2026-03-30 – 2026-04-20
 
 30 claims, 83 typed relations between them.
 

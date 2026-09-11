@@ -1,12 +1,10 @@
 # The runner
 
-`scripts/pipeline.py` is the pipeline. Five subcommands, no dependencies beyond PyYAML, and
-one job: run a layer after running whatever it still needs, and record that it happened.
+`scripts/pipeline.py` is the pipeline. Five subcommands and one job: run a layer after
+running whatever it still needs, and record that it happened.
 
-Until recently none of this was documented anywhere. The layer model — the ledger, staleness,
-propagation, approval — was assumed by every page under `/pipeline` and described in
-`pipeline/layers.yaml`'s own header, and the thirty-three pages that used to be here mentioned
-`ledger` zero times and `approval` zero times. This page is the gap being closed.
+It needs only PyYAML, holds no credentials and calls no model — so reading the graph, the
+state matrix and the whole run history costs nothing and works offline.
 
 ## `graph` — the declaration, as a shape
 
@@ -39,11 +37,11 @@ A cell is one layer asked of one paper, and it is in exactly one state:
 | `n/a` | Declared impossible for this paper, with a reason |
 | `open` | An undecided question; everything downstream of it is provisional |
 
-The distinction between `stale` and `unrecorded` is the one that matters and the one that is
-easiest to collapse. An input that *changed* since a run makes the output wrong. An input that
-was never *recorded* is a different complaint: most of these papers were extracted before the
-ledger existed, and their exports are perfectly consistent with the claim files they were built
-from. Conflating the two would paint the whole corpus red and say nothing.
+`stale` and `unrecorded` are easy to confuse and mean different things. **Stale**: an input
+changed since the run, so the output is probably wrong — rebuild it. **Unrecorded**: the
+output exists but no run accounts for it, which is the normal state for anything produced
+before the ledger existed. An unrecorded artifact may be perfectly good; `backfill` gives it
+a record.
 
 A jagged edge in the matrix is the normal condition. A blank means the layer has not been run
 for that paper — not that it was run and found nothing.
@@ -86,10 +84,7 @@ After each layer succeeds, `run` appends a record naming every input by path and
 ```
 
 `by` names who answered. For a layer a model answers it is the model, read out of the layer's
-own output at the key its declaration names in `by_from` — because from outside the command,
-the runner can only record that it invoked something. Every entry used to say
-`scripts/pipeline.py run` while the fact worth recording lived in a hand-kept manifest beside
-the ledger meant to replace it.
+own output at the key its declaration names in `by_from`; otherwise it is the runner.
 
 ## `approve` — record that a person read a version
 
@@ -108,19 +103,18 @@ It defaults to the version currently on the ledger, because approving a version 
 one on disk is almost always a mistake. `--v` names one explicitly, since reading v2 and
 recording it after v3 has run is a coherent thing to have done.
 
-Approvals live in `runs/<paper>/approvals.jsonl`, apply to any layer, and are **empty for every
-cell in this corpus**. That is what "no human has checked this" is when it is a fact about the
-data rather than a sentence in a preface.
+Approvals live in `runs/<paper>/approvals.jsonl` and apply to any layer. They are **empty for
+every cell in this corpus** — nothing here has been checked by a person, and the site reports
+that from this file rather than from a disclaimer.
 
-There is no way to approve during a run, and that is deliberate. The CLI used to have a
-`--review-mode interactive` gate that opened the draft claim table in an editor before anything
-was written. It reviewed the wrong object: what a curator edited was a draft, while the version
-that reached the corpus was whatever the write step then made of it, which nobody saw — and an
-editor session that deleted three claims left no record that it had happened.
+**Looking for `--review-mode interactive`?** It is gone, and this is its replacement. The
+difference is when it happens: that flag opened the draft in an editor *before* the claim
+files were written, so what you approved was not the version that reached the corpus. You now
+approve a version that exists and can be read.
 
-To correct a claim now, edit the file. That makes the layer stale against its own ledger entry,
-which is true: the files are no longer what the layer produced. Staleness you can see beats an
-edit nobody recorded.
+**To correct a claim, edit the file.** That makes the layer `stale` against its own ledger
+entry, which is accurate — the files are no longer what the layer produced. Re-run the layer
+to rebuild from source, or leave the edit and let the state say so.
 
 ## `backfill` — ledgers from what already exists
 

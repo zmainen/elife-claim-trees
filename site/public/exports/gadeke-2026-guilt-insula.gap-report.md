@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `gadeke-2026-guilt-insula` · **Generated:** 2026-09-11
+**Paper:** `gadeke-2026-guilt-insula` · **Claims registered:** 2026-03-30 – 2026-09-10
 
 33 claims, 93 typed relations between them.
 
