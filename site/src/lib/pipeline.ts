@@ -251,5 +251,20 @@ export const STATE_LABEL: Record<CellState, string> = {
   blocked: 'blocked upstream',
   'n/a': 'not applicable',
   open: 'undecided',
-  unrecorded: 'unrecorded',
+  // `unrecorded` named the ledger's gap rather than the reader's question, and the word does
+  // not say which of the two it means — the file is missing, or the account of it is. It is
+  // the second: the artifact is there and may be perfectly good.
+  unrecorded: 'no run recorded',
+};
+
+/** What each state means, in one line. The label is a word on a chip; a reader meeting it for
+ *  the first time needs the sentence, and it should be the same sentence everywhere. */
+export const STATE_NOTE: Record<CellState, string> = {
+  current: 'It ran, and nothing it read has changed since.',
+  stale: 'An input changed after the run that produced this.',
+  absent: 'The layer has not run for this paper. Nothing was produced.',
+  blocked: 'It ran and is unchanged, but something it depends on is stale.',
+  'n/a': 'Declared not to apply to this paper.',
+  open: 'The layer is a question nobody has answered yet.',
+  unrecorded: 'The file exists; no run was observed, so nothing can say whether it is current.',
 };

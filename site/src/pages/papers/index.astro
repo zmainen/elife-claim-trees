@@ -13,7 +13,7 @@
 // real distinction the layer state does not carry — but it is a footnote now, not a banner.
 import Layout from '../../layouts/Layout.astro';
 import corpus from '../../data/claims.json';
-import { cells, fill_of, approvedCells, STATE_LABEL } from '../../lib/pipeline';
+import { cells, fill_of, approvedCells, STATE_LABEL, STATE_NOTE } from '../../lib/pipeline';
 
 const { papers } = corpus;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -97,9 +97,9 @@ const stageLabel: Record<string, string> = {
     </div>
 
     <div class="flex flex-wrap gap-x-4 gap-y-2 mt-6 text-[11px] text-gray-500 dark:text-gray-400">
-      {[['current','has run'],['stale','out of date'],['unrecorded','ran before the ledger'],['absent','not run']].map(([s, label]) => (
-        <span class="flex items-center gap-1.5">
-          <i class="inline-block w-[9px] h-[14px] rounded-[1.5px]" style={`background: var(--st-${s})`}></i>{label}
+      {(['current', 'stale', 'unrecorded', 'absent'] as const).map(s => (
+        <span class="flex items-center gap-1.5" title={STATE_NOTE[s]}>
+          <i class="inline-block w-[9px] h-[14px] rounded-[1.5px]" style={`background: var(--st-${s})`}></i>{STATE_LABEL[s]}
         </span>
       ))}
       <a href={url('/pipeline')} class="ml-auto text-amber-700 dark:text-amber-400 no-underline hover:underline">the whole matrix →</a>

@@ -39,16 +39,23 @@ function ArtifactRow({ a }: { a: Artifact }) {
     <li className="py-1">
       {/* The filename gets its own line. These names are long and hyphenated, and sharing a
           flex row with the description broke them mid-word. */}
-      <a href={a.href}
-         {...(a.downloadable ? { download: '' } : { target: '_blank', rel: 'noopener' })}
-         className="block font-mono text-[11.5px] text-amber-700 dark:text-amber-400 no-underline hover:underline leading-snug"
-         style={{ overflowWrap: 'anywhere' }}>
-        {a.name}
-      </a>
+      {a.href || a.source ? (
+        <a href={a.href ?? a.source}
+           {...(a.href ? { download: '' } : { target: '_blank', rel: 'noopener' })}
+           className="block font-mono text-[11.5px] text-amber-700 dark:text-amber-400 no-underline hover:underline leading-snug"
+           style={{ overflowWrap: 'anywhere' }}>
+          {a.name}
+        </a>
+      ) : (
+        <span className="block font-mono text-[11.5px] text-gray-400 dark:text-gray-500 leading-snug"
+              style={{ overflowWrap: 'anywhere' }}>
+          {a.name}
+        </span>
+      )}
       <div className="text-[10.5px] text-gray-500 dark:text-gray-400 leading-snug">
-        {EXT_LABEL[a.kind]}
-        {a.note ? ` — ${a.note}` : ''}
-        {a.downloadable ? '' : ' · in the repository'}
+        {a.state === 'absent' ? 'not produced'
+         : a.state === 'set' ? `${a.count} files`
+         : `${EXT_LABEL[a.kind]}${a.note ? ` — ${a.note}` : ''}${a.state === 'repo' ? ' · in the repository' : ''}`}
       </div>
     </li>
   );
