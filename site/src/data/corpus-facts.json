@@ -382,9 +382,32 @@
         ]
       },
       {
+        "command": "cd extract && python3 -m elife_extract.cli prepare --paper {paper} --doi {doi}",
+        "group": "induction",
+        "id": "prepare",
+        "kind": "step",
+        "produces": [
+          "runs/{paper}/prepared.json"
+        ],
+        "question": "What text did the readers actually read?",
+        "reads": [
+          "extract/elife_extract/prepare.py"
+        ],
+        "scope": "paper",
+        "title": "Prepared paper",
+        "views": [
+          "document"
+        ]
+      },
+      {
+        "by_from": "model",
+        "command": "cd extract && python3 -m elife_extract.cli results-reader --paper {paper}",
         "group": "induction",
         "id": "results-reader",
         "kind": "candidate",
+        "needs": [
+          "prepare"
+        ],
         "produces": [
           "runs/{paper}/results-reader.output.json"
         ],
@@ -400,9 +423,14 @@
         ]
       },
       {
+        "by_from": "model",
+        "command": "cd extract && python3 -m elife_extract.cli caption-reader --paper {paper}",
         "group": "induction",
         "id": "caption-reader",
         "kind": "candidate",
+        "needs": [
+          "prepare"
+        ],
         "produces": [
           "runs/{paper}/caption-reader.output.json"
         ],
@@ -418,9 +446,14 @@
         ]
       },
       {
+        "by_from": "model",
+        "command": "cd extract && python3 -m elife_extract.cli structure-reader --paper {paper}",
         "group": "induction",
         "id": "structure-reader",
         "kind": "candidate",
+        "needs": [
+          "prepare"
+        ],
         "produces": [
           "runs/{paper}/structure-reader.output.json"
         ],
@@ -436,6 +469,8 @@
         ]
       },
       {
+        "by_from": "model",
+        "command": "cd extract && python3 -m elife_extract.cli reconcile --paper {paper}",
         "group": "induction",
         "id": "reconcile",
         "kind": "step",
@@ -459,6 +494,32 @@
         ]
       },
       {
+        "added": "2026-09-11",
+        "by_from": "model",
+        "command": "cd extract && python3 -m elife_extract.cli external-review --paper {paper}",
+        "group": "induction",
+        "id": "external-review",
+        "kind": "step",
+        "needs": [
+          "reconcile"
+        ],
+        "produces": [
+          "runs/{paper}/external-review.output.json"
+        ],
+        "question": "What structure did the three readers systematically miss?",
+        "reads": [
+          "extract/prompts/external-reviewer.md"
+        ],
+        "scope": "paper",
+        "title": "External review",
+        "views": [
+          "table",
+          "comparison"
+        ]
+      },
+      {
+        "by_from": "model",
+        "command": "cd extract && python3 -m elife_extract.cli edge-inference --paper {paper}",
         "group": "induction",
         "id": "edge-inference",
         "kind": "step",
@@ -470,6 +531,9 @@
           "runs/{paper}/edge-inference.output.json"
         ],
         "question": "Which claims depend on which?",
+        "reads": [
+          "extract/prompts/edge-inference.md"
+        ],
         "scope": "paper",
         "title": "Edge inference",
         "views": [
@@ -479,12 +543,13 @@
       },
       {
         "added": "2026-03",
-        "command": "cd extract && python3 -m elife_extract.cli write --draft out/draft-{paper}.json --corpus-dir ../claims",
+        "command": "cd extract && python3 -m elife_extract.cli write --paper {paper}",
         "found": "Across {{papers}} papers the corpus holds {{claims}} claims and {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.\n",
         "id": "claim-tree",
         "kind": "step",
         "needs": [
           "reconcile",
+          "external-review",
           "edge-inference",
           "claim-format"
         ],
@@ -518,6 +583,27 @@
         "views": [
           "graph",
           "list"
+        ]
+      },
+      {
+        "added": "2026-09-11",
+        "command": "cd extract && python3 -m elife_extract.cli verify-refs --paper {paper}",
+        "id": "reference-check",
+        "kind": "feature",
+        "needs": [
+          "claim-tree"
+        ],
+        "produces": [
+          "runs/{paper}/reference-check.output.json"
+        ],
+        "question": "Do the cited references resolve, and to what?",
+        "reads": [
+          "extract/elife_extract/verify_refs.py"
+        ],
+        "scope": "paper",
+        "title": "Reference check",
+        "views": [
+          "table"
         ]
       },
       {
@@ -563,12 +649,13 @@
       },
       {
         "added": "2026-09-10",
-        "command": "cd extract && python3 -m elife_extract.cli coverage --doi {doi} --paper-slug {paper} --claims-dir ../claims/{paper} --json ../coverage/{paper}.json",
+        "command": "cd extract && python3 -m elife_extract.cli coverage --paper {paper} --json ../coverage/{paper}.json",
         "found": "G\u00e4deke first. The paper cut into spans and each adjudicated against the claim tree, which is how a tree is measured against its paper rather than against another tree. The mechanical match left 36 spans unaccounted for; 22 were the matcher being wrong and 14 were real.\n",
         "id": "coverage",
         "kind": "step",
         "needs": [
-          "claim-tree"
+          "claim-tree",
+          "prepare"
         ],
         "produces": [
           "coverage/{paper}.json"
@@ -599,12 +686,13 @@
         ]
       },
       {
-        "command": "cd extract && python3 -m elife_extract.cli mark --doi {doi} --paper-slug {paper} --claims-dir ../claims/{paper} --mapping ../mappings/{paper}.json -o ../marked/{paper}.marked.md",
+        "command": "cd extract && python3 -m elife_extract.cli mark --paper {paper} --mapping ../mappings/{paper}.json -o ../marked/{paper}.marked.md",
         "id": "marks",
         "kind": "step",
         "needs": [
           "adjudication",
-          "claim-tree"
+          "claim-tree",
+          "prepare"
         ],
         "produces": [
           "marked/{paper}.marked.md"
@@ -2650,6 +2738,131 @@
           ],
           "ran": "2026-09-10T15:50:03Z",
           "v": 1
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli verify-refs --paper ejdrup-2026-dopamine",
+          "in": [
+            {
+              "path": "claims/ejdrup-2026-dopamine/d1r-tracks-da-50ms-delay.md",
+              "sha": "028094aff4ae"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/d2r-initialization-unjustified.md",
+              "sha": "c47edfe7913d"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/d2r-insensitive-to-brief-pauses.md",
+              "sha": "f6e68cec04ca"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/d2r-integrates-over-seconds.md",
+              "sha": "d966a0592599"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/d2r-occupancy-higher-in-vs.md",
+              "sha": "ca941bd82f18"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/dat-clustering-greater-in-vs.md",
+              "sha": "0d90e869ac15"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/dat-immunostaining-dorsoventral-gradient.md",
+              "sha": "c236bdbd9a39"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/dat-nanoclustering-slows-clearance.md",
+              "sha": "7e1cedb8ed67"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/ds-lacks-pervasive-tonic-da.md",
+              "sha": "853c4888d72a"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/ds-vs-vmax-ratio-assumed.md",
+              "sha": "460032f8f27f"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/fscv-matches-may-wightman-1989.md",
+              "sha": "d55534a395ef"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/hypothesis-d1-d2-temporal-distinction.md",
+              "sha": "ee28d88deec4"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/hypothesis-nanoclustering-regulates-vmax.md",
+              "sha": "612567b9f2a1"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/hypothesis-vmax-explains-regional-difference.md",
+              "sha": "2f7e13081e39"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/index.md",
+              "sha": "8729b0d4c244"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/interprets-cragg-rice-vmax-ratio.md",
+              "sha": "62c1d9f5b7da"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/interprets-may-wightman-1989-fscv.md",
+              "sha": "18a04d7c5be5"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/low-burst-no-spillover-high-burst-does.md",
+              "sha": "93783e84d413"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/nanoclustering-constant-vmax-constraint.md",
+              "sha": "db34034ea007"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/nanoclustering-model-varicosity-scale.md",
+              "sha": "50e646931e1f"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vmat2-gradient-absent.md",
+              "sha": "0b43a4a80bce"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vmax-modulation-larger-impact-in-vs.md",
+              "sha": "6fd319598379"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vmax-only-parameter-driving-regional-difference.md",
+              "sha": "29a5f654a538"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vs-low-active-fraction-resembles-ds-distribution.md",
+              "sha": "c41415917ee2"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vs-lowest-percentiles-above-10nm.md",
+              "sha": "d559f9d192cd"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vs-maintains-pervasive-tonic-da.md",
+              "sha": "d4415247b21d"
+            },
+            {
+              "path": "extract/elife_extract/verify_refs.py",
+              "sha": "fd49b67618f7"
+            }
+          ],
+          "kind": "feature",
+          "layer": "reference-check",
+          "note": "the only implementation, and the first one to keep a record",
+          "out": [
+            {
+              "path": "runs/ejdrup-2026-dopamine/reference-check.output.json",
+              "sha": "49a8c963cbcb"
+            }
+          ],
+          "ran": "2026-09-11T11:03:48Z",
+          "v": 1
         }
       ],
       "gadeke-2026-guilt-insula": [
@@ -4174,6 +4387,27 @@
             }
           ],
           "ran": "2026-09-11T09:01:59Z",
+          "v": 1
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli prepare --paper gadeke-2026-guilt-insula --doi 10.7554/eLife.105391",
+          "in": [
+            {
+              "path": "extract/elife_extract/prepare.py",
+              "sha": "8ee35979be8f"
+            }
+          ],
+          "kind": "step",
+          "layer": "prepare",
+          "note": "the paper the readers read, recorded",
+          "out": [
+            {
+              "path": "runs/gadeke-2026-guilt-insula/prepared.json",
+              "sha": "5512285faceb"
+            }
+          ],
+          "ran": "2026-09-11T11:00:39Z",
           "v": 1
         }
       ],
@@ -8707,7 +8941,10 @@
           ]
         },
         "caption-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "claim-format": {
           "scope": "corpus",
@@ -8722,12 +8959,16 @@
           "state": "current",
           "unrecorded_upstream": [
             "reconcile",
+            "external-review",
             "edge-inference"
           ],
           "v": 1
         },
         "coverage": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "dg-export": {
           "by": "unrecorded",
@@ -8748,6 +8989,12 @@
           "scope": "corpus",
           "state": "open"
         },
+        "external-review": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
@@ -8760,7 +9007,8 @@
         "marks": {
           "state": "absent",
           "unrecorded_upstream": [
-            "adjudication"
+            "adjudication",
+            "prepare"
           ]
         },
         "mira-export": {
@@ -8787,6 +9035,9 @@
           ],
           "v": 1
         },
+        "prepare": {
+          "state": "absent"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -8794,6 +9045,9 @@
             "caption-reader",
             "structure-reader"
           ]
+        },
+        "reference-check": {
+          "state": "absent"
         },
         "relation-vocab": {
           "scope": "corpus",
@@ -8803,13 +9057,19 @@
           "state": "absent"
         },
         "results-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "stance": {
           "state": "absent"
         },
         "structure-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "verification": {
           "state": "absent"
@@ -8832,7 +9092,10 @@
           ]
         },
         "caption-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "claim-format": {
           "scope": "corpus",
@@ -8847,12 +9110,16 @@
           "state": "current",
           "unrecorded_upstream": [
             "reconcile",
+            "external-review",
             "edge-inference"
           ],
           "v": 1
         },
         "coverage": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "dg-export": {
           "by": "unrecorded",
@@ -8873,6 +9140,12 @@
           "scope": "corpus",
           "state": "open"
         },
+        "external-review": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
@@ -8885,7 +9158,8 @@
         "marks": {
           "state": "absent",
           "unrecorded_upstream": [
-            "adjudication"
+            "adjudication",
+            "prepare"
           ]
         },
         "mira-export": {
@@ -8912,6 +9186,9 @@
           ],
           "v": 1
         },
+        "prepare": {
+          "state": "absent"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -8919,6 +9196,9 @@
             "caption-reader",
             "structure-reader"
           ]
+        },
+        "reference-check": {
+          "state": "absent"
         },
         "relation-vocab": {
           "scope": "corpus",
@@ -8928,13 +9208,19 @@
           "state": "absent"
         },
         "results-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "stance": {
           "state": "absent"
         },
         "structure-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "verification": {
           "by": "unrecorded",
@@ -8963,7 +9249,10 @@
           ]
         },
         "caption-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "claim-format": {
           "scope": "corpus",
@@ -8978,12 +9267,16 @@
           "state": "current",
           "unrecorded_upstream": [
             "reconcile",
+            "external-review",
             "edge-inference"
           ],
           "v": 1
         },
         "coverage": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "dg-export": {
           "by": "unrecorded",
@@ -9004,6 +9297,12 @@
           "scope": "corpus",
           "state": "open"
         },
+        "external-review": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
@@ -9016,7 +9315,8 @@
         "marks": {
           "state": "absent",
           "unrecorded_upstream": [
-            "adjudication"
+            "adjudication",
+            "prepare"
           ]
         },
         "mira-export": {
@@ -9043,6 +9343,9 @@
           ],
           "v": 1
         },
+        "prepare": {
+          "state": "absent"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9050,6 +9353,15 @@
             "caption-reader",
             "structure-reader"
           ]
+        },
+        "reference-check": {
+          "by": "scripts/pipeline.py run",
+          "lost": [],
+          "moved": [],
+          "note": "the only implementation, and the first one to keep a record",
+          "ran": "2026-09-11T11:03:48Z",
+          "state": "current",
+          "v": 1
         },
         "relation-vocab": {
           "scope": "corpus",
@@ -9059,13 +9371,19 @@
           "state": "absent"
         },
         "results-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "stance": {
           "state": "absent"
         },
         "structure-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "verification": {
           "by": "unrecorded",
@@ -9116,6 +9434,9 @@
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-11T08:07:29Z",
           "state": "current",
+          "unrecorded_upstream": [
+            "external-review"
+          ],
           "v": 1
         },
         "coverage": {
@@ -9148,6 +9469,9 @@
         "epistemic-vocab": {
           "scope": "corpus",
           "state": "open"
+        },
+        "external-review": {
+          "state": "absent"
         },
         "formats-report": {
           "by": "unrecorded",
@@ -9185,6 +9509,15 @@
           "state": "current",
           "v": 1
         },
+        "prepare": {
+          "by": "scripts/pipeline.py run",
+          "lost": [],
+          "moved": [],
+          "note": "the paper the readers read, recorded",
+          "ran": "2026-09-11T11:00:39Z",
+          "state": "current",
+          "v": 1
+        },
         "reconcile": {
           "by": "unrecorded",
           "lost": [],
@@ -9193,6 +9526,9 @@
           "ran": "2026-09-10T09:40:52Z",
           "state": "current",
           "v": 1
+        },
+        "reference-check": {
+          "state": "absent"
         },
         "relation-vocab": {
           "scope": "corpus",
@@ -9255,7 +9591,10 @@
           ]
         },
         "caption-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "claim-format": {
           "scope": "corpus",
@@ -9270,12 +9609,16 @@
           "state": "current",
           "unrecorded_upstream": [
             "reconcile",
+            "external-review",
             "edge-inference"
           ],
           "v": 1
         },
         "coverage": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "dg-export": {
           "by": "unrecorded",
@@ -9296,6 +9639,12 @@
           "scope": "corpus",
           "state": "open"
         },
+        "external-review": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
@@ -9308,7 +9657,8 @@
         "marks": {
           "state": "absent",
           "unrecorded_upstream": [
-            "adjudication"
+            "adjudication",
+            "prepare"
           ]
         },
         "mira-export": {
@@ -9335,6 +9685,9 @@
           ],
           "v": 1
         },
+        "prepare": {
+          "state": "absent"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9342,6 +9695,9 @@
             "caption-reader",
             "structure-reader"
           ]
+        },
+        "reference-check": {
+          "state": "absent"
         },
         "relation-vocab": {
           "scope": "corpus",
@@ -9351,13 +9707,19 @@
           "state": "absent"
         },
         "results-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "stance": {
           "state": "absent"
         },
         "structure-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "verification": {
           "by": "unrecorded",
@@ -9386,7 +9748,10 @@
           ]
         },
         "caption-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "claim-format": {
           "scope": "corpus",
@@ -9401,12 +9766,16 @@
           "state": "current",
           "unrecorded_upstream": [
             "reconcile",
+            "external-review",
             "edge-inference"
           ],
           "v": 1
         },
         "coverage": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "dg-export": {
           "by": "unrecorded",
@@ -9427,6 +9796,12 @@
           "scope": "corpus",
           "state": "open"
         },
+        "external-review": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
@@ -9439,7 +9814,8 @@
         "marks": {
           "state": "absent",
           "unrecorded_upstream": [
-            "adjudication"
+            "adjudication",
+            "prepare"
           ]
         },
         "mira-export": {
@@ -9466,6 +9842,9 @@
           ],
           "v": 1
         },
+        "prepare": {
+          "state": "absent"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9473,6 +9852,9 @@
             "caption-reader",
             "structure-reader"
           ]
+        },
+        "reference-check": {
+          "state": "absent"
         },
         "relation-vocab": {
           "scope": "corpus",
@@ -9482,13 +9864,19 @@
           "state": "absent"
         },
         "results-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "stance": {
           "state": "absent"
         },
         "structure-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "verification": {
           "state": "absent"
@@ -9508,7 +9896,10 @@
           "state": "absent"
         },
         "caption-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "claim-format": {
           "scope": "corpus",
@@ -9523,6 +9914,7 @@
           "state": "current",
           "unrecorded_upstream": [
             "reconcile",
+            "external-review",
             "edge-inference"
           ],
           "v": 1
@@ -9534,6 +9926,9 @@
           "note": "ran via scripts/pipeline.py",
           "ran": "2026-09-11T09:03:15Z",
           "state": "current",
+          "unrecorded_upstream": [
+            "prepare"
+          ],
           "v": 1
         },
         "dg-export": {
@@ -9555,6 +9950,12 @@
           "scope": "corpus",
           "state": "open"
         },
+        "external-review": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
@@ -9567,7 +9968,8 @@
         "marks": {
           "state": "absent",
           "unrecorded_upstream": [
-            "adjudication"
+            "adjudication",
+            "prepare"
           ]
         },
         "mira-export": {
@@ -9588,6 +9990,9 @@
           "state": "current",
           "v": 1
         },
+        "prepare": {
+          "state": "absent"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9595,6 +10000,9 @@
             "caption-reader",
             "structure-reader"
           ]
+        },
+        "reference-check": {
+          "state": "absent"
         },
         "relation-vocab": {
           "scope": "corpus",
@@ -9604,7 +10012,10 @@
           "state": "absent"
         },
         "results-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "stance": {
           "by": "unrecorded",
@@ -9616,7 +10027,10 @@
           "v": 1
         },
         "structure-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "verification": {
           "by": "unrecorded",
@@ -9642,7 +10056,10 @@
           "state": "absent"
         },
         "caption-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "claim-format": {
           "scope": "corpus",
@@ -9657,6 +10074,7 @@
           "state": "current",
           "unrecorded_upstream": [
             "reconcile",
+            "external-review",
             "edge-inference"
           ],
           "v": 1
@@ -9668,6 +10086,9 @@
           "note": "ran via scripts/pipeline.py",
           "ran": "2026-09-11T09:05:38Z",
           "state": "current",
+          "unrecorded_upstream": [
+            "prepare"
+          ],
           "v": 1
         },
         "dg-export": {
@@ -9689,6 +10110,12 @@
           "scope": "corpus",
           "state": "open"
         },
+        "external-review": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
@@ -9701,7 +10128,8 @@
         "marks": {
           "state": "absent",
           "unrecorded_upstream": [
-            "adjudication"
+            "adjudication",
+            "prepare"
           ]
         },
         "mira-export": {
@@ -9722,6 +10150,9 @@
           "state": "current",
           "v": 1
         },
+        "prepare": {
+          "state": "absent"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9729,6 +10160,9 @@
             "caption-reader",
             "structure-reader"
           ]
+        },
+        "reference-check": {
+          "state": "absent"
         },
         "relation-vocab": {
           "scope": "corpus",
@@ -9738,7 +10172,10 @@
           "state": "absent"
         },
         "results-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "stance": {
           "by": "unrecorded",
@@ -9750,7 +10187,10 @@
           "v": 1
         },
         "structure-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "verification": {
           "state": "absent"
@@ -9773,7 +10213,10 @@
           ]
         },
         "caption-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "claim-format": {
           "scope": "corpus",
@@ -9788,12 +10231,16 @@
           "state": "current",
           "unrecorded_upstream": [
             "reconcile",
+            "external-review",
             "edge-inference"
           ],
           "v": 1
         },
         "coverage": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "dg-export": {
           "by": "unrecorded",
@@ -9814,6 +10261,12 @@
           "scope": "corpus",
           "state": "open"
         },
+        "external-review": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
@@ -9826,7 +10279,8 @@
         "marks": {
           "state": "absent",
           "unrecorded_upstream": [
-            "adjudication"
+            "adjudication",
+            "prepare"
           ]
         },
         "mira-export": {
@@ -9853,6 +10307,9 @@
           ],
           "v": 1
         },
+        "prepare": {
+          "state": "absent"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9860,6 +10317,9 @@
             "caption-reader",
             "structure-reader"
           ]
+        },
+        "reference-check": {
+          "state": "absent"
         },
         "relation-vocab": {
           "scope": "corpus",
@@ -9869,13 +10329,19 @@
           "state": "absent"
         },
         "results-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "stance": {
           "state": "absent"
         },
         "structure-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "verification": {
           "by": "unrecorded",
@@ -9904,7 +10370,10 @@
           ]
         },
         "caption-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "claim-format": {
           "scope": "corpus",
@@ -9919,12 +10388,16 @@
           "state": "current",
           "unrecorded_upstream": [
             "reconcile",
+            "external-review",
             "edge-inference"
           ],
           "v": 1
         },
         "coverage": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "dg-export": {
           "by": "unrecorded",
@@ -9945,6 +10418,12 @@
           "scope": "corpus",
           "state": "open"
         },
+        "external-review": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "reconcile"
+          ]
+        },
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
@@ -9957,7 +10436,8 @@
         "marks": {
           "state": "absent",
           "unrecorded_upstream": [
-            "adjudication"
+            "adjudication",
+            "prepare"
           ]
         },
         "mira-export": {
@@ -9978,6 +10458,9 @@
           "state": "current",
           "v": 1
         },
+        "prepare": {
+          "state": "absent"
+        },
         "reconcile": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -9985,6 +10468,9 @@
             "caption-reader",
             "structure-reader"
           ]
+        },
+        "reference-check": {
+          "state": "absent"
         },
         "relation-vocab": {
           "scope": "corpus",
@@ -9994,7 +10480,10 @@
           "state": "absent"
         },
         "results-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "stance": {
           "by": "unrecorded",
@@ -10006,7 +10495,10 @@
           "v": 1
         },
         "structure-reader": {
-          "state": "absent"
+          "state": "absent",
+          "unrecorded_upstream": [
+            "prepare"
+          ]
         },
         "verification": {
           "by": "unrecorded",

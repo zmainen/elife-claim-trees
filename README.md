@@ -46,28 +46,46 @@ Claims relate to each other via directed belongings: `supports`, `requires`, `co
 
 ## Status
 
-Working prototype. 13 papers (10 eLife + 3 lab), 341 claims, 939 verified references. Public site at https://zmainen.github.io/elife-claim-trees/ (eLife papers only). Full methodology at `docs/method.md`, claim format at `docs/claim-format.md`, cost estimate for 3000-paper scaling at `docs/cost-estimate.md`.
+Working prototype. The published corpus is **10 eLife papers, 254 claims, 919 typed
+relations**; two further claim trees are versions of one bioRxiv preprint, kept as method
+examples and never folded into the corpus totals. Public site at
+https://zmainen.github.io/elife-claim-trees/ (eLife papers only).
+
+Figures on the site are generated — `scripts/corpus_facts.py` counts the claim files and the
+pages substitute `{{token}}`, so a number in prose cannot drift from the corpus because it is
+not in the prose. This README is not built that way, so treat it as the one place a count can
+go stale; `python3 scripts/corpus_facts.py --print` is authoritative.
+
+Full methodology at `docs/method.md`, claim format at `docs/claim-format.md`, cost estimate
+for 3000-paper scaling at `docs/cost-estimate.md`.
 
 ## Producing and exporting a claim tree
 
 The code that produces the corpus is in the repository alongside the corpus it produces.
 
+A layer is run by `scripts/pipeline.py`, which walks the declaration in
+`pipeline/layers.yaml` to find what the layer you asked for still needs, runs each one, and
+records every run in `runs/<paper>/ledger.jsonl` with the content hash of what it read. Run
+the layers by hand and nothing records it; there is no second path that produces the corpus.
+
 ```bash
-# induce a claim tree from a paper (extract -> reconcile -> review -> write)
-cd extract && python3 -m elife_extract.cli run --doi 10.7554/eLife.105391 --corpus-dir ../claims
+# induce a claim tree, running whatever it still needs first
+python3 scripts/pipeline.py run gadeke-2026-guilt-insula claim-tree
+
+# what would that do? — the commands, in dependency order, running none of them
+python3 scripts/pipeline.py run gadeke-2026-guilt-insula claim-tree --dry-run
 
 # what does the paper assert that no claim accounts for? (no model calls)
-python3 -m elife_extract.cli coverage --doi 10.7554/eLife.105391 \
-    --claims-dir ../claims/gadeke-2026-guilt-insula
+python3 scripts/pipeline.py run gadeke-2026-guilt-insula coverage
 
-# ...and again with the adjudicated verdicts folded in, so it reports real gaps
-# rather than everything a string comparison could not match
-python3 -m elife_extract.cli coverage --doi 10.7554/eLife.105391 \
-    --claims-dir ../claims/gadeke-2026-guilt-insula \
-    --mapping ../mappings/gadeke-2026-guilt-insula.json
+# record that a person read a version and approved it
+python3 scripts/pipeline.py approve gadeke-2026-guilt-insula claim-tree --by "your name"
+
+# where every paper stands against every layer
+python3 scripts/pipeline.py state
 
 # export every paper to MIRA JSON-LD, with a gap report per paper
-cd .. && python3 scripts/export_mira.py --all
+python3 scripts/export_mira.py --all
 ```
 
 `mappings/` holds the adjudicated coverage verdicts per paper. The mechanical match answers

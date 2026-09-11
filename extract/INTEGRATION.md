@@ -4,6 +4,13 @@ This guide is for the eLife technical team and any external collaborator who wan
 
 It walks through one full deployment cycle: install → first paper → batch operation → reviewing the output. Each step links to the relevant section of the [README](README.md) for detail.
 
+**The unit of work is a layer.** `pipeline/layers.yaml` declares the processing graph — what
+each layer asks, what it reads, what it produces — and `scripts/pipeline.py` is what runs one,
+after running whatever it still needs. Every run is recorded in `runs/<paper>/ledger.jsonl`
+with the content hash of each input, so whether a result is still current is asked of the files
+rather than of anyone's memory. The `elife-extract` subcommands below are the layer runners
+themselves; you can call them directly, but nothing then records that you did.
+
 ## Prerequisites
 
 - **Python 3.10 or later.** Check with `python3 --version`.
@@ -28,7 +35,10 @@ elife-extract --version
 elife-extract --help
 ```
 
-You should see the version string and the four subcommands listed: `extract`, `write`, `verify-refs`, `run`, `evaluate`.
+You should see the version string and one subcommand per runnable layer: `prepare`,
+`results-reader`, `caption-reader`, `structure-reader`, `reconcile`, `external-review`,
+`edge-inference`, `write`, `verify-refs`, `coverage`, `mark` — plus `evaluate`, which is a
+tool rather than a layer.
 
 ## 2. Configure credentials
 
@@ -48,97 +58,88 @@ For direct Anthropic API:
 export ANTHROPIC_API_KEY=your-anthropic-key
 ```
 
-Verify the auth path works (a smoke test that calls Vertex once):
+Verify the auth path works. `prepare` fetches and slices the paper without calling a model,
+so run it first to separate a network problem from a credentials one, then one reader:
 
 ```bash
-elife-extract extract --doi 10.7554/eLife.95562 \
-  --corpus-dir /tmp/test-corpus
+elife-extract prepare --paper headley-2026-inhibitory-rhythms --doi 10.7554/eLife.95562
+elife-extract results-reader --paper headley-2026-inhibitory-rhythms
 ```
 
-If this prints a step-by-step extraction trace and ends with `draft saved`, your auth works. If it fails on `403 Permission denied` or `404 Publisher Model not found`, the model isn't enabled in your project / region — check the Vertex AI console.
+If the first prints slice sizes and the second prints a candidate-claim count, your auth works.
+If the second fails on `403 Permission denied` or `404 Publisher Model not found`, the model
+isn't enabled in your project / region — check the Vertex AI console.
 
 ## 3. Run on your first paper
 
-Pick an eLife paper. The pipeline needs only the DOI; everything else is fetched.
+Pick an eLife paper. Ask for the layer you want and let the runner work out what it needs:
 
 ```bash
-mkdir -p /tmp/my-corpus
-
-elife-extract extract \
-  --doi 10.7554/eLife.<your-paper-id> \
-  --corpus-dir /tmp/my-corpus
+python3 scripts/pipeline.py run <paper-slug> claim-tree --dry-run   # what would run
+python3 scripts/pipeline.py run <paper-slug> claim-tree             # run it
 ```
 
-Expect ~5 minutes wall time and ~$5 in API cost. Output:
+Expect ~5 minutes wall time and ~$7 in API cost. The dry run prints the chain in dependency
+order — `prepare`, the three readers, `reconcile`, `external-review`, `edge-inference`, then
+`claim-tree` — which is the same list the site's pipeline page shows, because both read the
+same declaration.
 
-```
-=== Step 1 — Prepare ===
-  doi    = 10.7554/eLife.<id>
-  slug   = <author>-<year>-<title-keywords>
-  ...
-  slices = abstract:<size>c results:<size>c captions:<size>c methods:<size>c
-  panels = <N> detected
-
-=== Steps 2-3 — Three-agent extraction ===
-  ...
-
-=== Step 4 — Reconciliation ===
-  draft has <N> claim(s)
-
-=== Output ===
-  draft  → /your/output/draft-<slug>.json
-  Next: elife-extract write ...
-```
-
-The draft JSON is the reconciled claim list. **No claim files have been written yet** — the pipeline waits for the review step.
-
-## 4. Review and write
-
-You have three review modes. Pick the one that fits your operational shape.
-
-### Mode A — Interactive review (curator-quality, single paper)
+A paper that is not yet in the corpus has no `claims/<slug>/index.md` for the runner to take
+the DOI from, so seed it once by hand and then use the runner for everything after:
 
 ```bash
-elife-extract write \
-  --draft <path-from-extract>/draft-<slug>.json \
-  --corpus-dir /tmp/my-corpus \
-  --review-mode interactive
+elife-extract prepare --paper <paper-slug> --doi 10.7554/eLife.<id>
+python3 scripts/pipeline.py run <paper-slug> claim-tree
 ```
 
-Opens the draft in your `$EDITOR` as a YAML file you can revise. Save and exit to commit. The schema is validated on re-read; parse errors preserve your edits to a `.rescue.yaml` for retry.
+Each layer writes to the path its declaration names, under `runs/<paper>/`, and the claim files
+land in `claims/<paper>/`. Nothing is written outside those paths, which is what lets the ledger
+hash a run's outputs rather than take their existence on trust.
 
-### Mode B — External Opus review (recommended for batch)
+## 4. Review
+
+There are no review modes. There used to be a `--review-mode` flag, and it bundled two
+different things.
+
+The first was `external` — an Opus pass that reads the paper plus the draft and revises it for
+the biases prose-level extraction misses, chiefly under-coverage of the `prediction` and
+`hypothesis` roles. That is not review; it changes the artifact, and it happens before the
+version a reviewer would read exists. It is now the `external-review` layer, which runs in the
+chain above. Adds ~$2 and ~3 minutes per paper, and lifts role agreement from ~65% to ~96% on
+the Headley round-trip. Because it is declared, editing `extract/prompts/external-reviewer.md`
+now makes every claim tree built on it stale, which the flag could never express.
+
+The second was `interactive`, an editor opened on the draft before anything was written. That
+reviewed the wrong object: what you edited was a draft table, while the version that reached
+the corpus was whatever `write` then made of it, and your edits left no record that anyone had
+looked. Approval is now an operation on a version that exists:
 
 ```bash
-elife-extract write \
-  --draft <path>/draft-<slug>.json \
-  --corpus-dir /tmp/my-corpus \
-  --review-mode external
+python3 scripts/pipeline.py approve <paper-slug> claim-tree \
+  --by "your name" --note "roles checked against figures 2-4"
 ```
 
-An Opus pass reads the paper plus the draft and revises it for the systematic biases prose-level extraction misses (under-coverage of `prediction` and `hypothesis` roles). Adds ~$2 and ~3 minutes per paper. Verified to lift role-classification accuracy from ~65% (auto-approve) to ~96% (external) on the Headley round-trip — output approaches curator quality without curator time.
-
-### Mode C — Auto-approve (tests, demos)
-
-```bash
-elife-extract write \
-  --draft <path>/draft-<slug>.json \
-  --corpus-dir /tmp/my-corpus \
-  --review-mode auto-approve
-```
-
-Skips review entirely. Use only when you intend to manually review the resulting `.md` files afterwards, or for tests where speed matters more than quality.
+The record names the version. Re-run the layer and the approval does not follow it — it was
+granted to text that no longer exists, and `pipeline.py state` shows it as no longer applying
+rather than silently carrying it forward. To correct a claim, edit the file; that makes the
+layer stale against its own ledger entry, which is true, and visible.
 
 ## 5. Verify literature-context references
 
 ```bash
-elife-extract verify-refs \
-  --paper <slug> \
-  --corpus-dir /tmp/my-corpus \
-  --dry-run   # remove --dry-run to write back resolved DOIs
+python3 scripts/pipeline.py run <paper-slug> reference-check
 ```
 
-For each `role: literature-context` claim, queries CrossRef. Confirms existing DOIs resolve to real papers (anti-hallucination check) and resolves missing DOIs from `Author (Year)` patterns in the claim body.
+For each `role: literature-context` claim, queries CrossRef: confirms existing DOIs resolve to
+real papers (the anti-hallucination check) and resolves missing ones from `Author (Year)`
+patterns in the claim body. It also confirms the paper's own DOI from its `index.md`. The
+verdicts are kept at `runs/<paper>/reference-check.output.json` rather than printed and lost.
+
+To see what it would write without writing it:
+
+```bash
+elife-extract verify-refs --paper <paper-slug> --dry-run
+```
 
 ## 6. Inspect the output
 
@@ -188,44 +189,62 @@ Open a few claim files and skim. Common things to watch for:
 
 ## 7. Batch operation across multiple papers
 
-For more than ~5 papers, run them through `extract` then `write` separately:
+Ask for the same layer once per paper. The runner skips what is already current, so a
+re-run costs nothing for the papers that have not changed:
 
 ```bash
-# Extract drafts for many papers in parallel (or sequence) — outputs to /tmp/drafts/
-for doi in 10.7554/eLife.95562 10.7554/eLife.<other> ...; do
-  elife-extract extract --doi $doi --corpus-dir /tmp/my-corpus --output-dir /tmp/drafts
-done
-
-# Then write claim files with external review for each
-for draft in /tmp/drafts/draft-*.json; do
-  elife-extract write --draft $draft --corpus-dir /tmp/my-corpus --review-mode external
+for paper in $(python3 -c "import yaml;print(' '.join(yaml.safe_load(open('corpus.yaml'))['corpora']['elife']['papers']))"); do
+  python3 scripts/pipeline.py run $paper claim-tree --note "batch $(date +%F)"
 done
 ```
 
-Or, if you have a curated reference corpus to validate against (e.g., the 12-paper public eLife set), use `evaluate`:
+Then see where the corpus stands:
+
+```bash
+python3 scripts/pipeline.py state
+python3 scripts/pipeline.py state --fail-on-stale   # as a CI gate
+```
+
+A jagged edge in that matrix is the normal condition, not a defect: a blank means the layer
+has not been run for that paper, not that it ran and found nothing.
+
+### Validating a prompt change
+
+`evaluate` is the one subcommand that is not a layer, and it is deliberately outside the
+graph: it re-runs the chain into a temp tree and scores the result against the committed claim
+files, so it asks about the prompts rather than about a paper, and produces nothing any layer
+consumes.
 
 ```bash
 elife-extract evaluate \
-  --reference-dir /path/to/curated-reference/ \
+  --reference-dir ../claims/ \
   --work-dir /tmp/eval \
-  --all \
-  --review-mode external
+  --all
 ```
 
-Produces an aggregate scorecard at `<work-dir>/aggregate-scorecard.md` with per-paper recovery / panel / role metrics and means/medians.
+Produces an aggregate scorecard at `<work-dir>/aggregate-scorecard.md` with per-paper recovery
+/ panel / role metrics and means/medians. Change a prompt, re-run, diff the aggregate, decide —
+which is what makes prompt iteration a discipline rather than an impression. Pass
+`--no-external-review` to score the chain without the Opus pass.
 
 ## 8. Cost budget for planning
 
 Approximate per-paper cost (10-page eLife paper, ~30-50 claims):
 
-| Operation | Cost (Sonnet 4.6 + Opus 4.6 mix) | Wall time |
-|:----------|:-----:|:---------:|
-| extract | ~$5 | ~5 min |
-| write (interactive) | $0 (your time) | varies |
-| write (external Opus review) | ~$2 | ~3 min |
-| write (auto-approve) | $0 | <1s |
-| verify-refs | $0 (CrossRef is free) | ~1s per cited paper |
-| **Total: extract + external review + verify-refs** | **~$7** | **~10 min** |
+| Layer | Cost (Sonnet 4.6 + Opus 4.6 mix) | Wall time |
+|:------|:-----:|:---------:|
+| `prepare` | $0 (fetch + slice, cached) | ~2 s |
+| the three readers | ~$4 | ~4 min |
+| `reconcile` | ~$1 | ~1 min |
+| `external-review` | ~$2 | ~3 min |
+| `edge-inference` | ~$0.20 | ~30 s |
+| `claim-tree` | $0 (reads the edges the layer wrote) | <1 s |
+| `reference-check` | $0 (CrossRef is free) | ~1 s per cited paper |
+| `coverage`, `mark` | $0 (no model calls) | ~5 s |
+| **Total, one paper end to end** | **~$7** | **~10 min** |
+
+`claim-tree` used to call edge inference a second time itself, paying twice for an answer the
+`edge-inference` layer had already written to disk.
 
 A 100-paper corpus with external review: ~$700, ~17 hours sequential. Parallelization is straightforward at the shell level (limit by your Vertex rate quota).
 
@@ -235,11 +254,11 @@ A 100-paper corpus with external review: ~$700, ~17 hours sequential. Paralleliz
 |:--------|:-------------|:----|
 | `404 Publisher Model not found` | Anthropic model not enabled in your Vertex region | Enable in the GCP console or change `--vertex-region` |
 | `[Errno 8] nodename nor servname` | DNS / network failure | Check connectivity to `cdn.elifesciences.org` and `*-aiplatform.googleapis.com` |
-| Extract hangs > 15 minutes | Vertex API stalled mid-stream | Kill with Ctrl-C; the cached PDF persists, re-run will start from extract step |
+| A reader hangs > 15 minutes | Vertex API stalled mid-stream | Kill with Ctrl-C. The fetched paper is cached and `prepare`'s output is on disk, so the re-run resumes at the layer that failed rather than at the beginning |
 | `Streaming required for operations longer than 10 minutes` | max_tokens too high for non-streaming | Already handled in the CLI; report this as a bug if you see it |
 | Schema validation error | Reviewer or extraction agent emitted an invalid value | Likely a prompt-output mismatch; report with the full draft JSON for diagnosis |
-| Recovery is < 80% on a paper | Paper layout doesn't match eLife conventions | Check the prepare step's slice sizes; the section-header detection may have failed |
-| Role classification looks wrong | Auto-approve mode | Use `--review-mode external` or `--review-mode interactive` |
+| Recovery is < 80% on a paper | Paper layout doesn't match eLife conventions | Check the slice sizes `prepare` reported, or read `runs/<paper>/prepared.json` directly; the section-header detection may have failed |
+| Role classification looks wrong | `external-review` has not run for that paper | `python3 scripts/pipeline.py run <paper> external-review`, then re-run `claim-tree`. `pipeline.py state` shows which papers have been through it |
 
 ## 10. Where to escalate
 
