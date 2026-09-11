@@ -1,0 +1,1083 @@
+{
+ "slug": "ejdrup-2026-dopamine",
+ "doi": "10.7554/eLife.105214",
+ "articleId": "105214",
+ "source": "https://cdn.elifesciences.org/articles/105214/elife-105214-v1.xml",
+ "title": "Computational modelling identifies key determinants of subregion-specific dopamine dynamics in the striatum",
+ "authors": [
+  "Aske Ejdrup",
+  "Jakob Kisbye Dreyer",
+  "Matthew D Lycas",
+  "Søren H Jørgensen",
+  "Trevor W Robbins",
+  "Jeffrey Dalley",
+  "Freja Herborg",
+  "Ulrik Gether"
+ ],
+ "year": "2026",
+ "keywords": [
+  "three-dimensional computational model",
+  "striatum",
+  "dopamine",
+  "phasic versus tonic release",
+  "dopamine receptors",
+  "dopamine transporter"
+ ],
+ "abstract": [
+  {
+   "text": "Striatal dopamine (DA) release regulates reward-related learning and motivation and is believed to consist of a short-lived phasic and continuous tonic component."
+  },
+  {
+   "text": "Here, we build a large-scale three-dimensional model of extracellular DA dynamics in dorsal (DS) and ventral striatum (VS)."
+  },
+  {
+   "text": "The model predicts rapid dynamics in DS with little to no basal DA and slower dynamics in the VS enabling build-up of tonic DA levels."
+  },
+  {
+   "text": "These regional differences do not reflect release-related phenomena but rather differential dopamine transporter (DAT) activity."
+  },
+  {
+   "text": "Interestingly, our simulations posit DAT nanoclustering as a possible regulator of this activity."
+  },
+  {
+   "text": "Receptor binding simulations show that D1 receptor occupancy follows extracellular DA concentration with milliseconds delay, while D2 receptors do not respond to brief pauses in firing but rather integrate DA signal over seconds."
+  },
+  {
+   "text": "Summarised, our model distills recent experimental observations into a computational framework that challenges prevailing paradigms of striatal DA signalling."
+  }
+ ],
+ "sections": [
+  {
+   "id": "s1",
+   "type": "intro",
+   "title": "Introduction",
+   "depth": 1,
+   "blocks": [
+    {
+     "type": "p",
+     "html": "Striatal dopamine (DA) release is essential for regulating reward-related learning, incentive motivation, and motor function (<span class=\"cite\">Berke, 2018</span>; <span class=\"cite\">Klaus et al., 2019</span>). DA exerts these roles over a broad range of time scales, yet DA primarily operates as a volume transmitter that targets metabotropic receptors located within a micrometre range from the sites of release (<span class=\"cite\">Agnati et al., 1995</span>; <span class=\"cite\">Borroto-Escuela et al., 2018</span>; <span class=\"cite\">Cragg and Rice, 2004</span>; <span class=\"cite\">Gonon et al., 2000</span>; <span class=\"cite\">Sulzer et al., 2016</span>). The temporal and spatial dynamics of DA release in the striatum, however, remain a highly contested topic. Classically, DA release has been divided into <i>tonic</i> release, driven by pacemaker-like spontaneous firing, and <i>phasic</i> release from coordinated bursts of firing across neurons (<span class=\"cite\">Niv et al., 2007</span>; <span class=\"cite\">Schultz, 2007</span>; <span class=\"cite\">Sulzer et al., 2016</span>). However, this sharp distinction in release modes, as well as the existence of a basal DA level, has recently been challenged (<span class=\"cite\">Berke, 2018</span>; <span class=\"cite\">Ejdrup et al., 2023</span>; <span class=\"cite\">Jørgensen et al., 2023</span>; <span class=\"cite\">Liu et al., 2021</span>; <span class=\"cite\">Sippy and Tritsch, 2023</span>).",
+     "text": "Striatal dopamine (DA) release is essential for regulating reward-related learning, incentive motivation, and motor function (Berke, 2018; Klaus et al., 2019). DA exerts these roles over a broad range of time scales, yet DA primarily operates as a volume transmitter that targets metabotropic receptors located within a micrometre range from the sites of release (Agnati et al., 1995; Borroto-Escuela et al., 2018; Cragg and Rice, 2004; Gonon et al., 2000; Sulzer et al., 2016). The temporal and spatial dynamics of DA release in the striatum, however, remain a highly contested topic. Classically, DA release has been divided into tonic release, driven by pacemaker-like spontaneous firing, and phasic release from coordinated bursts of firing across neurons (Niv et al., 2007; Schultz, 2007; Sulzer et al., 2016). However, this sharp distinction in release modes, as well as the existence of a basal DA level, has recently been challenged (Berke, 2018; Ejdrup et al., 2023; Jørgensen et al., 2023; Liu et al., 2021; Sippy and Tritsch, 2023)."
+    },
+    {
+     "type": "p",
+     "html": "The picture is further complicated by major regional differences across striatal subdomains. These include differences in Ca<sup>2+</sup>-channel and nicotinic acetylcholine receptor (nAChR) expression profiles on DA terminals, as well as differential regulation and expression of the DA transporter (DAT; <span class=\"cite\">Brown et al., 2011</span>; <span class=\"cite\">Cardozo and Bean, 1995</span>; <span class=\"cite\">Kearney et al., 2023</span>; <span class=\"cite\">Richards and Zahniser, 2009</span>; <span class=\"cite\">Threlfell et al., 2010</span>). In addition, we and others have found remarkable differences in extracellular DA release dynamics between the dorsal (DS) and ventral striatum (VS; <span class=\"cite\">Jørgensen et al., 2023</span>; <span class=\"cite\">Mohebi et al., 2024</span>; <span class=\"cite\">Salinas et al., 2023</span>). Fibre photometry recordings in the DS in mice using the DA sensor dLight1.3b during self-paced exploratory activity showed a rapidly fluctuating signal, whereas we observed up to minutes-long DA dynamics in VS that correlated with behavioural output (<span class=\"cite\">Jørgensen et al., 2023</span>). Concurrent measurements of extracellular DA by microdialysis and fibre photometry have furthermore corroborated the lack of tonic levels of DA in DS while supporting its presence in VS (<span class=\"cite\">Ejdrup et al., 2023</span>; <span class=\"cite\">Jørgensen et al., 2023</span>). Despite these reported differences in striatal DA dynamics, electrophysiological recordings suggest that DA neurons from the primary innervators of DS, substantia nigra par compacta (SNc) and VS, ventral tegmental area (VTA), have remarkably similar firing patterns at rest (<span class=\"cite\">Dodson et al., 2016</span>). We therefore set out to better understand the fundamental principles governing extracellular DA dynamics by constructing a new computational model of the striatal DA system.",
+     "text": "The picture is further complicated by major regional differences across striatal subdomains. These include differences in Ca2+-channel and nicotinic acetylcholine receptor (nAChR) expression profiles on DA terminals, as well as differential regulation and expression of the DA transporter (DAT; Brown et al., 2011; Cardozo and Bean, 1995; Kearney et al., 2023; Richards and Zahniser, 2009; Threlfell et al., 2010). In addition, we and others have found remarkable differences in extracellular DA release dynamics between the dorsal (DS) and ventral striatum (VS; Jørgensen et al., 2023; Mohebi et al., 2024; Salinas et al., 2023). Fibre photometry recordings in the DS in mice using the DA sensor dLight1.3b during self-paced exploratory activity showed a rapidly fluctuating signal, whereas we observed up to minutes-long DA dynamics in VS that correlated with behavioural output (Jørgensen et al., 2023). Concurrent measurements of extracellular DA by microdialysis and fibre photometry have furthermore corroborated the lack of tonic levels of DA in DS while supporting its presence in VS (Ejdrup et al., 2023; Jørgensen et al., 2023). Despite these reported differences in striatal DA dynamics, electrophysiological recordings suggest that DA neurons from the primary innervators of DS, substantia nigra par compacta (SNc) and VS, ventral tegmental area (VTA), have remarkably similar firing patterns at rest (Dodson et al., 2016). We therefore set out to better understand the fundamental principles governing extracellular DA dynamics by constructing a new computational model of the striatal DA system."
+    },
+    {
+     "type": "p",
+     "html": "Extracellular DA dynamics have been modelled before; either one-dimensionally or with a primary focus on single release events or post-synaptic receptor binding (<span class=\"cite\">Beyene et al., 2017</span>; <span class=\"cite\">Dreyer et al., 2010</span>; <span class=\"cite\">Dreyer and Hounsgaard, 2013</span>; <span class=\"cite\">Dreyer et al., 2016</span>; <span class=\"cite\">Venton et al., 2003</span>; <span class=\"cite\">Wiencke et al., 2020</span>). Here, we present a three-dimensional model of tens of thousands of release sites, focused on larger-scale signalling and based on experimentally observed biological parameters. The model faithfully replicates experimentally observed results as well as the difference in DA dynamics between DS and VS. Importantly, it offers compelling evidence that these differences do not primarily reflect different release phenomena but rather arise from differential expression and possibly nanoscale localisation of the DAT.",
+     "text": "Extracellular DA dynamics have been modelled before; either one-dimensionally or with a primary focus on single release events or post-synaptic receptor binding (Beyene et al., 2017; Dreyer et al., 2010; Dreyer and Hounsgaard, 2013; Dreyer et al., 2016; Venton et al., 2003; Wiencke et al., 2020). Here, we present a three-dimensional model of tens of thousands of release sites, focused on larger-scale signalling and based on experimentally observed biological parameters. The model faithfully replicates experimentally observed results as well as the difference in DA dynamics between DS and VS. Importantly, it offers compelling evidence that these differences do not primarily reflect different release phenomena but rather arise from differential expression and possibly nanoscale localisation of the DAT."
+    }
+   ]
+  },
+  {
+   "id": "s2",
+   "type": "results",
+   "title": "Results",
+   "depth": 1,
+   "blocks": [
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s2-1",
+      "type": "",
+      "title": "Construction of a model of DA dynamics in the striatum",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "We constructed a novel model of DA release using experimentally determined parameters from DS, including release, uptake, and cytoarchitecture (<span class=\"cite\">Doucet et al., 1986</span>; <span class=\"cite\">Dreyer et al., 2010</span>; <span class=\"cite\">Dreyer and Hounsgaard, 2013</span>; <span class=\"cite\">Liu et al., 2021</span>; <span class=\"cite\">Olson et al., 1972</span>; <span class=\"cite\">Sulzer et al., 2016</span>). DA release sites on axons projecting from the midbrain were randomly simulated as uniformly distributed discrete points in a three-dimensional space (<a class=\"xref\" href=\"#fig1\">Figure 1A</a>). The release events themselves were simulated as point source events (<span class=\"cite\">Cragg and Rice, 2004</span>) driven by action potentials (AP). We then modelled DA release for each voxel in the simulation containing a release site as a function of three key parameters: firing rate, release probability, and quantal size:",
+        "text": "We constructed a novel model of DA release using experimentally determined parameters from DS, including release, uptake, and cytoarchitecture (Doucet et al., 1986; Dreyer et al., 2010; Dreyer and Hounsgaard, 2013; Liu et al., 2021; Olson et al., 1972; Sulzer et al., 2016). DA release sites on axons projecting from the midbrain were randomly simulated as uniformly distributed discrete points in a three-dimensional space (Figure 1A). The release events themselves were simulated as point source events (Cragg and Rice, 2004) driven by action potentials (AP). We then modelled DA release for each voxel in the simulation containing a release site as a function of three key parameters: firing rate, release probability, and quantal size:(1)releasen,t=Poisson(fratedt)nP(R%)tQdt\\begin{document}$$\\displaystyle {\\rm release_{n,t}}={\\rm Poisson}\\left (\\rm f_{rate} \\, dt\\right)_{\\rm n} {\\rm P}\\left ({\\rm R}_{\\% }\\right)_{t}\\rm Q \\, dt$$\\end{document}"
+       },
+       {
+        "type": "fig",
+        "id": "fig1"
+       },
+       {
+        "type": "fig",
+        "id": "fig1s1"
+       },
+       {
+        "type": "fig",
+        "id": "fig1s2"
+       },
+       {
+        "type": "p",
+        "html": "where <span class=\"math\">Poisson(fratedt)n\\begin{document}$\\rm Poisson\\left (f_{rate} \\, dt\\right)_{n}$\\end{document}</span> is a Poisson distribution of action potentials (AP) for the given neuron (n) with the firing rate <span class=\"math\">frate(l)\\begin{document}${\\rm f_{rate}}(l)$\\end{document}</span>, <span class=\"math\">P(R%)t\\begin{document}${\\rm P}\\left ({\\rm R}_{\\% }\\right)_{\\rm t}$\\end{document}</span> is the probability of release at the individual terminal (t) for each AP, while <span class=\"math\">Q\\begin{document}$Q$\\end{document}</span> is the number of DA molecules released per event (dopaminergic quantal size) and <span class=\"math\">dt\\begin{document}$\\rm dt$\\end{document}</span> the time step. Changing <span class=\"math\">frate\\begin{document}$\\rm f_{rate}$\\end{document}</span> can be used to model both pacemaker firing, typically reported at 2–10 Hz, and burst firing, which can exceed 20 Hz (<span class=\"cite\">Sulzer et al., 2016</span>).",
+        "text": "where Poisson(fratedt)n\\begin{document}$\\rm Poisson\\left (f_{rate} \\, dt\\right)_{n}$\\end{document} is a Poisson distribution of action potentials (AP) for the given neuron (n) with the firing rate frate(l)\\begin{document}${\\rm f_{rate}}(l)$\\end{document}, P(R%)t\\begin{document}${\\rm P}\\left ({\\rm R}_{\\% }\\right)_{\\rm t}$\\end{document} is the probability of release at the individual terminal (t) for each AP, while Q\\begin{document}$Q$\\end{document} is the number of DA molecules released per event (dopaminergic quantal size) and dt\\begin{document}$\\rm dt$\\end{document} the time step. Changing frate\\begin{document}$\\rm f_{rate}$\\end{document} can be used to model both pacemaker firing, typically reported at 2–10 Hz, and burst firing, which can exceed 20 Hz (Sulzer et al., 2016)."
+       },
+       {
+        "type": "p",
+        "html": "DA reuptake in the striatum is almost exclusively mediated by the DAT (<span class=\"cite\">Jones et al., 1998</span>), which is widely distributed along DA axons and varicosities (<span class=\"cite\">Block et al., 2015</span>; <span class=\"cite\">Eriksen et al., 2010</span>; <span class=\"cite\">Eriksen et al., 2009</span>). As reuptake follows concentration-dependent Michaelis-Menten kinetics (<span class=\"cite\">Nicholson, 1995</span>), we simulated uptake as follows:",
+        "text": "DA reuptake in the striatum is almost exclusively mediated by the DAT (Jones et al., 1998), which is widely distributed along DA axons and varicosities (Block et al., 2015; Eriksen et al., 2010; Eriksen et al., 2009). As reuptake follows concentration-dependent Michaelis-Menten kinetics (Nicholson, 1995), we simulated uptake as follows:(2)uptake=Vmax[DA]Km+[DA]dt\\begin{document}$$\\displaystyle \\rm uptake=\\frac{V_{max}\\left [DA\\right ]}{K_{m}+\\left [DA\\right ]}dt$$\\end{document}"
+       },
+       {
+        "type": "p",
+        "html": "where <span class=\"math\">[DA]\\begin{document}$\\left [DA\\right ]$\\end{document}</span> is the concentration of DA for each voxel in the model, <span class=\"math\">Vmax\\begin{document}$\\rm V_{max}$\\end{document}</span> is the maximal uptake capacity in the region and <span class=\"math\">Km\\begin{document}$\\rm K_{m}$\\end{document}</span> is the concentration of DA at which half of <span class=\"math\">Vmax\\begin{document}$\\rm V_{max}$\\end{document}</span> is reached.",
+        "text": "where [DA]\\begin{document}$\\left [DA\\right ]$\\end{document} is the concentration of DA for each voxel in the model, Vmax\\begin{document}$\\rm V_{max}$\\end{document} is the maximal uptake capacity in the region and Km\\begin{document}$\\rm K_{m}$\\end{document} is the concentration of DA at which half of Vmax\\begin{document}$\\rm V_{max}$\\end{document} is reached."
+       },
+       {
+        "type": "p",
+        "html": "The spatial distribution of released DA is a complex interplay between release, uptake, and diffusion. Diffusion in an open 3D space can be simulated for each voxel with a Laplacian operator:",
+        "text": "The spatial distribution of released DA is a complex interplay between release, uptake, and diffusion. Diffusion in an open 3D space can be simulated for each voxel with a Laplacian operator:(3)diffusion=∂DAx,y,z,t∂t=Dadt(∂2DAx,y,z,t∂x2+∂2DAx,y,z,t∂y2+∂2DAx,y,z,t∂z2)\\begin{document}$$\\displaystyle \\rm diffusion=\\frac{\\partial DA_{x,y,z,t}}{\\partial t}=D_{a}dt\\left (\\frac{\\partial ^{2}DA_{x,y,z,t}}{\\partial x^{2}}+\\frac{\\partial ^{2}DA_{x,y,z,t}}{\\partial y^{2}}+\\frac{\\partial ^{2}DA_{x,y,z,t}}{\\partial z^{2}}\\right)$$\\end{document}"
+       },
+       {
+        "type": "p",
+        "html": "where <span class=\"math\">Da\\begin{document}$\\rm D_{a}$\\end{document}</span> is a corrected diffusion coefficient and <i>dt</i> is the timestep. As the extracellular space of the striatum is tortuous, we modified the conventional diffusion coefficient <span class=\"math\">D\\begin{document}$D$\\end{document}</span> to an apparent diffusion coefficient (<span class=\"math\">Da\\begin{document}$\\rm D_{a}$\\end{document}</span>) to correct for the tortuosity (<span class=\"math\">λ\\begin{document}$\\lambda $\\end{document}</span>) of the striatum (<span class=\"cite\">Cragg and Rice, 2004</span>; <span class=\"cite\">Nicholson, 1985</span>):",
+        "text": "where Da\\begin{document}$\\rm D_{a}$\\end{document} is a corrected diffusion coefficient and dt is the timestep. As the extracellular space of the striatum is tortuous, we modified the conventional diffusion coefficient D\\begin{document}$D$\\end{document} to an apparent diffusion coefficient (Da\\begin{document}$\\rm D_{a}$\\end{document}) to correct for the tortuosity (λ\\begin{document}$\\lambda $\\end{document}) of the striatum (Cragg and Rice, 2004; Nicholson, 1985):(4)Da=Dλ2\\begin{document}$$\\displaystyle {\\rm D_{a}}=\\frac{\\rm D}{\\lambda ^{2}}$$\\end{document}"
+       },
+       {
+        "type": "p",
+        "html": "As the cerebellum exhibits a tortuosity similar to that recorded in the striatum, we assumed a uniform tortuosity throughout the striatum (<span class=\"cite\">Nicholson and Phillips, 1981</span>). Combining Equations 1–4, we model DA changes in each voxel with a single conceptual equation:",
+        "text": "As the cerebellum exhibits a tortuosity similar to that recorded in the striatum, we assumed a uniform tortuosity throughout the striatum (Nicholson and Phillips, 1981). Combining Equations 1–4, we model DA changes in each voxel with a single conceptual equation:(5)dDAdt=release−uptake+diffusion\\begin{document}$$\\displaystyle \\frac{\\rm dDA}{\\rm dt}=\\rm release- uptake+diffusion$$\\end{document}"
+       },
+       {
+        "type": "p",
+        "html": "We first compared our 3D model of DA dynamics to the analytical solution of a single release event (<span class=\"cite\">Cragg and Rice, 2004</span>; <span class=\"cite\">Gonon et al., 2000</span>). To do this, we simulated a quantal event of 3000 DA molecules and calculated DA concentrations across space at three separate time points (<a class=\"xref\" href=\"#fig1\">Figure 1B and C</a>). The analytic solution and our model predicted almost identical results. Slight differences were introduced as the analytical solution assumes linear uptake from DAT while our model incorporates non-linear Michaelis-Menten kinetics. These differences, however, were almost negligible. The main difference between the two models lies in scalability across both space and time. Summarised, the model enables a dynamic incorporation of the surrounding DA concentration, release events, and uptake and can be scaled to cover DA dynamics of a large 3D space, whose size and granularity is only limited by computing power (see Code Availability Section for the Python code with numerical implementations of the equations listed and scripts to run the simulations and plot the main figures).",
+        "text": "We first compared our 3D model of DA dynamics to the analytical solution of a single release event (Cragg and Rice, 2004; Gonon et al., 2000). To do this, we simulated a quantal event of 3000 DA molecules and calculated DA concentrations across space at three separate time points (Figure 1B and C). The analytic solution and our model predicted almost identical results. Slight differences were introduced as the analytical solution assumes linear uptake from DAT while our model incorporates non-linear Michaelis-Menten kinetics. These differences, however, were almost negligible. The main difference between the two models lies in scalability across both space and time. Summarised, the model enables a dynamic incorporation of the surrounding DA concentration, release events, and uptake and can be scaled to cover DA dynamics of a large 3D space, whose size and granularity is only limited by computing power (see Code Availability Section for the Python code with numerical implementations of the equations listed and scripts to run the simulations and plot the main figures)."
+       },
+       {
+        "type": "p",
+        "html": "We also tested the validity of our model by examining the response to electrical stimulation. Importantly, our model faithfully mirrored DA release seen with fast-scan cyclic voltammetry (FSCV) recordings upon direct stimulation of striatal slices when we corrected for kinetics of the typical FSCV recording setup (<a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1A, B</a> and Appendix 1 - supplementary text) (<span class=\"cite\">Atcherley et al., 2015</span>; <span class=\"cite\">Brimblecombe et al., 2019</span>; <span class=\"cite\">Stuber et al., 2010</span>; <span class=\"cite\">Xie et al., 2020</span>).",
+        "text": "We also tested the validity of our model by examining the response to electrical stimulation. Importantly, our model faithfully mirrored DA release seen with fast-scan cyclic voltammetry (FSCV) recordings upon direct stimulation of striatal slices when we corrected for kinetics of the typical FSCV recording setup (Figure 1—figure supplement 1A, B and Appendix 1 - supplementary text) (Atcherley et al., 2015; Brimblecombe et al., 2019; Stuber et al., 2010; Xie et al., 2020)."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s2-2",
+      "type": "",
+      "title": "Simulating large-scale DA dynamics of the dorsal striatum",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "To better understand the extracellular DA dynamics that arise from the balance between dopaminergic pacemaker activity and uptake, we simulated DA dynamics in the DS generated by pacemaker activity (4 Hz) of 150 neurons in the midbrain in a 100 x 100 × 100 µm space (<a class=\"xref\" href=\"#fig1\">Figure 1D</a>, see parameters in <a class=\"xref\" href=\"#table1\">Table 1</a>). Our simulations yielded a pattern of partially segregated DA hot spots with large fractions of the simulated space devoid of DA, suggesting that release events in DS only elevate DA in the immediate surroundings, with DAT-dependent clearance preventing a larger spread in space (<a class=\"xref\" href=\"#fig1\">Figure 1D</a> and Figure 1—video 1). This was also illustrated by a cross-section in time (<a class=\"xref\" href=\"#fig1\">Figure 1E</a>). In line with our recent in vivo microdialysis experiments, the average DA concentration in the simulations during pacemaker activity was approximately 10 nM (<span class=\"cite\">Ejdrup et al., 2023</span>). Further, when we calculated the average concentration of a larger area across time, which fibre photometry conceivably does, the results resembled a tonic DA concentration (<a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1C</a>). However, our model predicted a spatial distribution that is highly heterogenous and devoid of pervasive resting or tonic DA levels (<a class=\"xref\" href=\"#fig1\">Figure 1D–F</a>).",
+        "text": "To better understand the extracellular DA dynamics that arise from the balance between dopaminergic pacemaker activity and uptake, we simulated DA dynamics in the DS generated by pacemaker activity (4 Hz) of 150 neurons in the midbrain in a 100 x 100 × 100 µm space (Figure 1D, see parameters in Table 1). Our simulations yielded a pattern of partially segregated DA hot spots with large fractions of the simulated space devoid of DA, suggesting that release events in DS only elevate DA in the immediate surroundings, with DAT-dependent clearance preventing a larger spread in space (Figure 1D and Figure 1—video 1). This was also illustrated by a cross-section in time (Figure 1E). In line with our recent in vivo microdialysis experiments, the average DA concentration in the simulations during pacemaker activity was approximately 10 nM (Ejdrup et al., 2023). Further, when we calculated the average concentration of a larger area across time, which fibre photometry conceivably does, the results resembled a tonic DA concentration (Figure 1—figure supplement 1C). However, our model predicted a spatial distribution that is highly heterogenous and devoid of pervasive resting or tonic DA levels (Figure 1D–F)."
+       },
+       {
+        "type": "table",
+        "id": "table1"
+       },
+       {
+        "type": "p",
+        "html": "To ensure our simulations were performed within a sufficiently large space to yield consistent results, we tested different sizes of the simulated area and found a diameter of 50 μm to faithfully mimic the results of larger simulations (<a class=\"xref\" href=\"#fig1s2\">Figure 1—figure supplement 2A, B</a>). Additionally, we tested our simulations at different granularity (0.1, 0.5, 1, and 2 μm). The finer the spatial grain, the higher the detail close to a release event; however, at a spatial granularity of 1 μm, [DA] deviated by &lt;2% across most percentiles and only by &gt;1 nM above the 99.5<sup>th</sup> percentile (<a class=\"xref\" href=\"#fig1s2\">Figure 1—figure supplement 2C-F</a>), leading us to use this voxel size for our simulations.",
+        "text": "To ensure our simulations were performed within a sufficiently large space to yield consistent results, we tested different sizes of the simulated area and found a diameter of 50 μm to faithfully mimic the results of larger simulations (Figure 1—figure supplement 2A, B). Additionally, we tested our simulations at different granularity (0.1, 0.5, 1, and 2 μm). The finer the spatial grain, the higher the detail close to a release event; however, at a spatial granularity of 1 μm, [DA] deviated by <2% across most percentiles and only by >1 nM above the 99.5th percentile (Figure 1—figure supplement 2C-F), leading us to use this voxel size for our simulations."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s2-3",
+      "type": "",
+      "title": "Burst firing and receptor occupancy",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "DA neurons are known to fire short bursts of APs, which is a phenomenon strongly linked to reward-prediction error and learning (<span class=\"cite\">Schultz, 2007</span>). These bursts can also be induced locally in the striatum by nicotinic receptor activation (<span class=\"cite\">Liu et al., 2022</span>; <span class=\"cite\">Matityahu et al., 2023</span>). To gain insights into extracellular DA dynamics following a locally induced burst, we simulated three different firing scenarios for a group of terminals within a 10 x 10 × 10 µm field encompassing roughly 40 release sites from the randomly simulated 150 neurons: 3 pulses at 10 Hz, 6 pulses at 20 Hz, and 12 pulses at 40 Hz (<a class=\"xref\" href=\"#fig1\">Figure 1G</a> – burst properties matched to be the same duration). The middle scenario most closely resembles the physiological burst behaviour reported in the literature, whereas the high-activity burst is above what is typically seen. Unsurprisingly, peak DA concentration was reached at the end of the bursts (<a class=\"xref\" href=\"#fig1\">Figure 1G</a>). The 3 APs/10 Hz bursting scenario generated no significant spill-over of DA outside the region of activity, whereas the 6 APs/20 Hz and 12 APs/40 Hz bursting scenarios markedly overwhelmed uptake (<a class=\"xref\" href=\"#fig1\">Figure 1G</a>). The relationship between firing rate and the sphere of influence by DA became further evident when plotting maximal concentration of the surrounding space (<a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1D</a>) and the volume of space with a DA concentration above 100 nM (<a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1E</a>). We found that the 3 APs/10 Hz stimulation produced DA responses that largely resembled that of a single pulse. In both cases, DA was mostly cleared after 100ms and the volume exposed to greater than 100 nM was similar (<a class=\"xref\" href=\"#fig1\">Figure 1G</a>, <a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1E</a>). In contrast, the high bursting activities caused a frequency-dependent spill-over, where the areas exposed to a DA concentration above 100 nM were 10 and 30 times larger than the terminal origin for 6 APs/20 Hz and 12 APs/40 Hz, respectively. Even after 100ms, a considerable amount of DA remained in the 12 APs/40 Hz scenario (<a class=\"xref\" href=\"#fig1\">Figure 1G</a>).",
+        "text": "DA neurons are known to fire short bursts of APs, which is a phenomenon strongly linked to reward-prediction error and learning (Schultz, 2007). These bursts can also be induced locally in the striatum by nicotinic receptor activation (Liu et al., 2022; Matityahu et al., 2023). To gain insights into extracellular DA dynamics following a locally induced burst, we simulated three different firing scenarios for a group of terminals within a 10 x 10 × 10 µm field encompassing roughly 40 release sites from the randomly simulated 150 neurons: 3 pulses at 10 Hz, 6 pulses at 20 Hz, and 12 pulses at 40 Hz (Figure 1G – burst properties matched to be the same duration). The middle scenario most closely resembles the physiological burst behaviour reported in the literature, whereas the high-activity burst is above what is typically seen. Unsurprisingly, peak DA concentration was reached at the end of the bursts (Figure 1G). The 3 APs/10 Hz bursting scenario generated no significant spill-over of DA outside the region of activity, whereas the 6 APs/20 Hz and 12 APs/40 Hz bursting scenarios markedly overwhelmed uptake (Figure 1G). The relationship between firing rate and the sphere of influence by DA became further evident when plotting maximal concentration of the surrounding space (Figure 1—figure supplement 1D) and the volume of space with a DA concentration above 100 nM (Figure 1—figure supplement 1E). We found that the 3 APs/10 Hz stimulation produced DA responses that largely resembled that of a single pulse. In both cases, DA was mostly cleared after 100ms and the volume exposed to greater than 100 nM was similar (Figure 1G, Figure 1—figure supplement 1E). In contrast, the high bursting activities caused a frequency-dependent spill-over, where the areas exposed to a DA concentration above 100 nM were 10 and 30 times larger than the terminal origin for 6 APs/20 Hz and 12 APs/40 Hz, respectively. Even after 100ms, a considerable amount of DA remained in the 12 APs/40 Hz scenario (Figure 1G)."
+       },
+       {
+        "type": "p",
+        "html": "To understand how these DA dynamics could affect the postsynaptic response, we modelled receptor binding. D1 receptors (-Rs) were assumed to have a half maximal effective concentration (EC<sub>50</sub>) of 1000 nM, and we extrapolated the reverse rate constant (<i>k</i><sub>off</sub>) to 19.5 s<sup>–1</sup> based on a linear fit of the recently characterised DA-receptor-based sensors (<a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1E</a>; <span class=\"cite\">Labouesse and Patriarchi, 2021</span>). We set the EC<sub>50</sub> of D2Rs to 7 nM and <i>k</i><sub>off</sub> to 0.2 s<sup>–1</sup> based on the DA sensor kinetic fit (<a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1F</a>), which matches a recent binding study (0.197 s<sup>–1</sup> for binding study vs. 0.204 s<sup>–1</sup> based on linear fit), indicating the receptor-based sensor fit can be extrapolated to the endogenous receptors (<span class=\"cite\">Ågren et al., 2021</span>). To determine how these receptors would respond to our predicted DA dynamics, we simulated pacemaker activity at 4 Hz with an added burst of 6 APs/20 Hz. <a class=\"xref\" href=\"#fig1\">Figure 1H</a> shows a representative trace of DA concentration and occupancy of the D1R and D2R for a voxel with a release site. During pacemaker activity, D1R showed an occupancy close to 0, whereas D2R occupancy was approximately 0.55 (<a class=\"xref\" href=\"#fig1\">Figure 1H</a>). Both D1R and D2R occupancies were due to a high diffusion rate mostly invariant to individual release events caused by pacemaker activity. However, upon coordinated burst firing, the occupancy rapidly increased (<a class=\"xref\" href=\"#fig1\">Figure 1H</a> and Figure 1—video 2) as diffusion no longer equilibrates the extracellular concentrations on a timescale faster than the receptors. D1R receptor occupancy closely tracked extracellular DA with a delay of only ~50 ms for the typically reported affinity of 1 µM (<a class=\"xref\" href=\"#fig1\">Figure 1I</a>). By contrast, it took at least 5 s before the burst-induced increase in D2R occupancy had declined to baseline levels (<a class=\"xref\" href=\"#fig1\">Figure 1H</a> and Figure 1—video 2). This made the D2R incapable of temporally separating closely linked bursts of activity and rather summarised the output, whereas the D1R occupancy reset between each individual burst (<a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1G</a>). Perhaps more surprisingly, the D2R occupancy only fell from approximately from 0.55 to 0.45 when simulating a full second pause in firing due to the slow off kinetics (<a class=\"xref\" href=\"#fig1\">Figure 1J</a>). Indeed, this finding was robust across an order of magnitude of D2R affinity (2 nm - 20 nM), although the sensitivity to a one-second pause was larger at an affinity of 20 nM (<a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1H</a>).",
+        "text": "To understand how these DA dynamics could affect the postsynaptic response, we modelled receptor binding. D1 receptors (-Rs) were assumed to have a half maximal effective concentration (EC50) of 1000 nM, and we extrapolated the reverse rate constant (koff) to 19.5 s–1 based on a linear fit of the recently characterised DA-receptor-based sensors (Figure 1—figure supplement 1E; Labouesse and Patriarchi, 2021). We set the EC50 of D2Rs to 7 nM and koff to 0.2 s–1 based on the DA sensor kinetic fit (Figure 1—figure supplement 1F), which matches a recent binding study (0.197 s–1 for binding study vs. 0.204 s–1 based on linear fit), indicating the receptor-based sensor fit can be extrapolated to the endogenous receptors (Ågren et al., 2021). To determine how these receptors would respond to our predicted DA dynamics, we simulated pacemaker activity at 4 Hz with an added burst of 6 APs/20 Hz. Figure 1H shows a representative trace of DA concentration and occupancy of the D1R and D2R for a voxel with a release site. During pacemaker activity, D1R showed an occupancy close to 0, whereas D2R occupancy was approximately 0.55 (Figure 1H). Both D1R and D2R occupancies were due to a high diffusion rate mostly invariant to individual release events caused by pacemaker activity. However, upon coordinated burst firing, the occupancy rapidly increased (Figure 1H and Figure 1—video 2) as diffusion no longer equilibrates the extracellular concentrations on a timescale faster than the receptors. D1R receptor occupancy closely tracked extracellular DA with a delay of only ~50 ms for the typically reported affinity of 1 µM (Figure 1I). By contrast, it took at least 5 s before the burst-induced increase in D2R occupancy had declined to baseline levels (Figure 1H and Figure 1—video 2). This made the D2R incapable of temporally separating closely linked bursts of activity and rather summarised the output, whereas the D1R occupancy reset between each individual burst (Figure 1—figure supplement 1G). Perhaps more surprisingly, the D2R occupancy only fell from approximately from 0.55 to 0.45 when simulating a full second pause in firing due to the slow off kinetics (Figure 1J). Indeed, this finding was robust across an order of magnitude of D2R affinity (2 nm - 20 nM), although the sensitivity to a one-second pause was larger at an affinity of 20 nM (Figure 1—figure supplement 1H)."
+       },
+       {
+        "type": "p",
+        "html": "These simulations suggest that the dopaminergic architecture of the DS limits DA overflow during physiologically relevant bursting activity. Further, DA receptors had a temporally mostly uniform response to DA release caused by pacemaker activity, with D1R occupancy responding rapidly to both onset and offset extracellular DA concentrations following bursts, while D2R showed seconds-long delays in offset.",
+        "text": "These simulations suggest that the dopaminergic architecture of the DS limits DA overflow during physiologically relevant bursting activity. Further, DA receptors had a temporally mostly uniform response to DA release caused by pacemaker activity, with D1R occupancy responding rapidly to both onset and offset extracellular DA concentrations following bursts, while D2R showed seconds-long delays in offset."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s2-4",
+      "type": "",
+      "title": "Ventral striatum maintains pervasive DA tone",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Mounting evidence points to considerable differences in DA dynamics across striatal subregions (<span class=\"cite\">Jørgensen et al., 2023</span>; <span class=\"cite\">Mohebi et al., 2024</span>), which might reflect differences in the cytoarchitectural and/or molecular dopaminergic makeup. In line with this, most studies report lower dopaminergic density in the VS than in DS regardless of methodological modality with a median value of ~90% in VS relative to DS (<a class=\"xref\" href=\"#app2table1\">Appendix 2—table 1</a>). Further, DAT-mediated uptake capacity is reported to be lower in VS with a median capacity at ~30% of DS (<a class=\"xref\" href=\"#app2table1 app2table2\">Appendix 2—Tables 1 and 2</a>). Consistently, we observed a clear dorsoventral gradient for DAT expression when analysing immunostainings in striatal mouse brain slices from a previous publication (<span class=\"cite\">Sørensen et al., 2021</span>; <a class=\"xref\" href=\"#fig2s1\">Figure 2—figure supplement 1A, B</a>). By contrast, the VMAT2 staining only decreased slightly from VS to DS (<a class=\"xref\" href=\"#fig2s1\">Figure 2—figure supplement 1A–C</a>).",
+        "text": "Mounting evidence points to considerable differences in DA dynamics across striatal subregions (Jørgensen et al., 2023; Mohebi et al., 2024), which might reflect differences in the cytoarchitectural and/or molecular dopaminergic makeup. In line with this, most studies report lower dopaminergic density in the VS than in DS regardless of methodological modality with a median value of ~90% in VS relative to DS (Appendix 2—table 1). Further, DAT-mediated uptake capacity is reported to be lower in VS with a median capacity at ~30% of DS (Appendix 2—Tables 1 and 2). Consistently, we observed a clear dorsoventral gradient for DAT expression when analysing immunostainings in striatal mouse brain slices from a previous publication (Sørensen et al., 2021; Figure 2—figure supplement 1A, B). By contrast, the VMAT2 staining only decreased slightly from VS to DS (Figure 2—figure supplement 1A–C)."
+       },
+       {
+        "type": "p",
+        "html": "We simulated DA release during pacemaker activity in both DS and VS. DS values were set as previously described (25 µm<sup>3</sup> per terminal, uptake capacity of 6.0 μM s<sup>–1</sup>), but for VS we reduced the terminal density to 90% (27.8 µm<sup>3</sup> per terminal) and DAT uptake capacity to 33% (2.0 µM s<sup>–1</sup>) (<a class=\"xref\" href=\"#app2table1 app2table2\">Appendix 2—Tables 1 and 2</a>). The remaining parameters were kept identical. With these two differences, our simulations revealed markedly different spatiotemporal DA distributions during pacemaker activity. While DS formed segregated domains with low DA concentrations in the inter-domain space (<a class=\"xref\" href=\"#fig2\">Figure 2A</a> and Figure 1—video 1), DA diffused further throughout the simulated space in VS, before being cleared by DAT. This gave rise to what may be considered a tonic DA level with hotspots of higher DA concentrations, although the concentration distribution is continuous (<a class=\"xref\" href=\"#fig2\">Figure 2A–C</a> and Figure 1—video 1).",
+        "text": "We simulated DA release during pacemaker activity in both DS and VS. DS values were set as previously described (25 µm3 per terminal, uptake capacity of 6.0 μM s–1), but for VS we reduced the terminal density to 90% (27.8 µm3 per terminal) and DAT uptake capacity to 33% (2.0 µM s–1) (Appendix 2—Tables 1 and 2). The remaining parameters were kept identical. With these two differences, our simulations revealed markedly different spatiotemporal DA distributions during pacemaker activity. While DS formed segregated domains with low DA concentrations in the inter-domain space (Figure 2A and Figure 1—video 1), DA diffused further throughout the simulated space in VS, before being cleared by DAT. This gave rise to what may be considered a tonic DA level with hotspots of higher DA concentrations, although the concentration distribution is continuous (Figure 2A–C and Figure 1—video 1)."
+       },
+       {
+        "type": "fig",
+        "id": "fig2"
+       },
+       {
+        "type": "fig",
+        "id": "fig2s1"
+       },
+       {
+        "type": "p",
+        "html": "We compared our model of the two regions with existing experimental data. In an earlier study by May and Wightman, 120 stimulus pulses were delivered in the medial forebrain bundle (MFB) at either 10, 30, or 60 Hz and DA responses were recorded by FSCV in both caudate-putamen (CPu) and nucleus accumbens (Nac; <span class=\"cite\">May and Wightman, 1989</span>). To mirror this, we simulated 120 action potentials at similar frequencies (10, 30, and 60 Hz) at 6% release probability and ran the result through convolution, as in <a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1A and B</a>, to generate an FSCV read-out (<a class=\"xref\" href=\"#fig2\">Figure 2E</a>). Since May and Wightman reported no significant difference in DA released per electrically delivered pulse ([DA]<sub>p</sub>) between VS and DS, we applied equal quantal size and R<sub>%</sub> for DS and VS in our simulations, while uptake capacity in VS was kept to a third of DS and terminal density was set to 90% as specified above. Importantly, our simulated FSCV data closely resembled the earlier findings, with VS reaching considerably higher DA levels for all three stimulation frequencies (<a class=\"xref\" href=\"#fig2\">Figure 2E</a> – see <span class=\"cite\">May and Wightman, 1989</span>). This regional difference presumably arises from differences in DAT capacity between DS and VS, as the lower terminal density in VS would have the opposite effect (see below) and the remaining parameters were held identical.",
+        "text": "We compared our model of the two regions with existing experimental data. In an earlier study by May and Wightman, 120 stimulus pulses were delivered in the medial forebrain bundle (MFB) at either 10, 30, or 60 Hz and DA responses were recorded by FSCV in both caudate-putamen (CPu) and nucleus accumbens (Nac; May and Wightman, 1989). To mirror this, we simulated 120 action potentials at similar frequencies (10, 30, and 60 Hz) at 6% release probability and ran the result through convolution, as in Figure 1—figure supplement 1A and B, to generate an FSCV read-out (Figure 2E). Since May and Wightman reported no significant difference in DA released per electrically delivered pulse ([DA]p) between VS and DS, we applied equal quantal size and R% for DS and VS in our simulations, while uptake capacity in VS was kept to a third of DS and terminal density was set to 90% as specified above. Importantly, our simulated FSCV data closely resembled the earlier findings, with VS reaching considerably higher DA levels for all three stimulation frequencies (Figure 2E – see May and Wightman, 1989). This regional difference presumably arises from differences in DAT capacity between DS and VS, as the lower terminal density in VS would have the opposite effect (see below) and the remaining parameters were held identical."
+       },
+       {
+        "type": "p",
+        "html": "To compare with our results for DS, we tested how VS responded during simulated burst activity. Using firing patterns identical to the DS simulations (<a class=\"xref\" href=\"#fig1\">Figure 1G</a>), we found a larger spill-over of DA into the surrounding areas in VS (<a class=\"xref\" href=\"#fig2\">Figure 2F</a>, <a class=\"xref\" href=\"#fig2s1\">Figure 2—figure supplement 1D, E</a>). Significant amounts of extracellular DA also remained 100 ms after the physiologically relevant 6 APs/20 Hz firing stimulus. At the receptor level, D1R occupancy in VS showed a similar response to that in DS during the burst (<a class=\"xref\" href=\"#fig1\">Figures 1I</a> and <a class=\"xref\" href=\"#fig2\">2G</a> and Figure 1—video 2). By contrast, D2R occupancy during pacemaker activity was higher in VS than DS (~0.8 versus ~0.55 in DS), in accordance with the higher prevailing basal DA concentration. Additionally, the larger DA overflow in VS after a burst caused a higher relative increase in receptor occupancy further away from the area actively bursting than compared to DS (<a class=\"xref\" href=\"#fig2\">Figure 2H</a>). A pause in firing had the same effect on D2R as in DS (<a class=\"xref\" href=\"#fig2s1\">Figure 2—figure supplement 1F</a>).",
+        "text": "To compare with our results for DS, we tested how VS responded during simulated burst activity. Using firing patterns identical to the DS simulations (Figure 1G), we found a larger spill-over of DA into the surrounding areas in VS (Figure 2F, Figure 2—figure supplement 1D, E). Significant amounts of extracellular DA also remained 100 ms after the physiologically relevant 6 APs/20 Hz firing stimulus. At the receptor level, D1R occupancy in VS showed a similar response to that in DS during the burst (Figures 1I and 2G and Figure 1—video 2). By contrast, D2R occupancy during pacemaker activity was higher in VS than DS (~0.8 versus ~0.55 in DS), in accordance with the higher prevailing basal DA concentration. Additionally, the larger DA overflow in VS after a burst caused a higher relative increase in receptor occupancy further away from the area actively bursting than compared to DS (Figure 2H). A pause in firing had the same effect on D2R as in DS (Figure 2—figure supplement 1F)."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s2-5",
+      "type": "",
+      "title": "Changes to uptake capacity greatly affect [DA] in the ventral striatum",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "The values used to model the striatum (<a class=\"xref\" href=\"#table1\">Table 1</a>) in the previous simulations were chosen to best mimic the physiological system found in vivo. However, to test the robustness of the results, we performed simulations across wide ranges of the variable key parameters on which the model is based. First, we varied the number of varicosities actively releasing DA by setting the varicosity density to one site per 9 µm<sup>3</sup> (<span class=\"cite\">Doucet et al., 1986</span>) and simulating 4 Hz pacemaker activity with the release-capable fraction ranging from 5% to 100% (reported values range from 20% to virtually all) (<span class=\"cite\">Ducrot et al., 2021</span>; <span class=\"cite\">Liu et al., 2021</span>; <span class=\"cite\">Liu et al., 2018</span>; <span class=\"cite\">Pereira et al., 2016</span>; <a class=\"xref\" href=\"#fig3\">Figure 3A</a>). As the fraction of active sites increased, DA concentrations increased at both the median level (50<sup>th</sup> percentile), which we consider a measure of tonic or baseline DA levels, and at peak levels (99.5<sup>th</sup> percentile) in both DS and VS (<a class=\"xref\" href=\"#fig3\">Figure 3B</a>, see <a class=\"xref\" href=\"#fig3s1\">Figure 3—figure supplement 1A</a> for schematic of tonic and peak DA). We then used the 99.5<sup>th</sup>/50<sup>th</sup> percentile ratio as a measure of the focality of the DA distribution (i.e. hotspot DA relative to baseline DA). This was intended as a measure of heterogeneity, that is, the higher focality, the greater competence for spatially heterogenous signalling, as has been reported in <span class=\"cite\">Hamid et al., 2021</span>; <span class=\"cite\">Howe and Dombeck, 2016</span>. Quantifying this across the percentage of active terminals showed that the focality of the DA distribution dropped as the active fraction increased in both regions (<a class=\"xref\" href=\"#fig3\">Figure 3C</a>). However, the percentage of active sites in VS needed to drop to 5% to reach a relative distribution resembling the DS at a full 100% active sites, underscoring a marked difference in the spatial confinement of DA signals in VS and DS.",
+        "text": "The values used to model the striatum (Table 1) in the previous simulations were chosen to best mimic the physiological system found in vivo. However, to test the robustness of the results, we performed simulations across wide ranges of the variable key parameters on which the model is based. First, we varied the number of varicosities actively releasing DA by setting the varicosity density to one site per 9 µm3 (Doucet et al., 1986) and simulating 4 Hz pacemaker activity with the release-capable fraction ranging from 5% to 100% (reported values range from 20% to virtually all) (Ducrot et al., 2021; Liu et al., 2021; Liu et al., 2018; Pereira et al., 2016; Figure 3A). As the fraction of active sites increased, DA concentrations increased at both the median level (50th percentile), which we consider a measure of tonic or baseline DA levels, and at peak levels (99.5th percentile) in both DS and VS (Figure 3B, see Figure 3—figure supplement 1A for schematic of tonic and peak DA). We then used the 99.5th/50th percentile ratio as a measure of the focality of the DA distribution (i.e. hotspot DA relative to baseline DA). This was intended as a measure of heterogeneity, that is, the higher focality, the greater competence for spatially heterogenous signalling, as has been reported in Hamid et al., 2021; Howe and Dombeck, 2016. Quantifying this across the percentage of active terminals showed that the focality of the DA distribution dropped as the active fraction increased in both regions (Figure 3C). However, the percentage of active sites in VS needed to drop to 5% to reach a relative distribution resembling the DS at a full 100% active sites, underscoring a marked difference in the spatial confinement of DA signals in VS and DS."
+       },
+       {
+        "type": "fig",
+        "id": "fig3"
+       },
+       {
+        "type": "fig",
+        "id": "fig3s1"
+       },
+       {
+        "type": "fig",
+        "id": "fig3s2"
+       },
+       {
+        "type": "p",
+        "html": "The predicted total DA content of a vesicle and the fraction of content released per fusion event is reported to range from 1,000–30,000 molecules (<span class=\"cite\">Garris et al., 1994</span>; <span class=\"cite\">Pothos et al., 1998</span>; <span class=\"cite\">Staal et al., 2004</span>; <span class=\"cite\">Sulzer and Pothos, 2000</span>; <a class=\"xref\" href=\"#fig3\">Figure 3D</a>). As expected, tonic and peak concentrations increased in both DS and VS as quantal size was increased (<a class=\"xref\" href=\"#fig3\">Figure 3E</a>). Also, as expected, the focality of the DA distributions dropped for both regions as quantal size increased (<a class=\"xref\" href=\"#fig3\">Figure 3F</a>). The relative difference in tonic DA, however, remained persistently higher in VS and even increased as quantal size increased, indicating a tendency for VS to maintain basal levels of DA regardless of release content (<a class=\"xref\" href=\"#fig3\">Figure 3G</a>). The higher end of quantal sizes, however, resulted in median concentrations far beyond what is typically reported (<a class=\"xref\" href=\"#fig3\">Figure 3E</a>; <span class=\"cite\">Sulzer et al., 2016</span>). We observed a largely similar pattern when changing either release probability or firing rate (<a class=\"xref\" href=\"#fig3s1\">Figure 3—figure supplement 1B-G</a>).",
+        "text": "The predicted total DA content of a vesicle and the fraction of content released per fusion event is reported to range from 1,000–30,000 molecules (Garris et al., 1994; Pothos et al., 1998; Staal et al., 2004; Sulzer and Pothos, 2000; Figure 3D). As expected, tonic and peak concentrations increased in both DS and VS as quantal size was increased (Figure 3E). Also, as expected, the focality of the DA distributions dropped for both regions as quantal size increased (Figure 3F). The relative difference in tonic DA, however, remained persistently higher in VS and even increased as quantal size increased, indicating a tendency for VS to maintain basal levels of DA regardless of release content (Figure 3G). The higher end of quantal sizes, however, resulted in median concentrations far beyond what is typically reported (Figure 3E; Sulzer et al., 2016). We observed a largely similar pattern when changing either release probability or firing rate (Figure 3—figure supplement 1B-G)."
+       },
+       {
+        "type": "p",
+        "html": "DAT activity is governed by two parameters: K<sub>m</sub> and V<sub>max</sub> (<span class=\"cite\">Kristensen et al., 2011</span>). To mimic competitive inhibition of DAT by, for example cocaine, we ran a simulation across various K<sub>m</sub> values (<a class=\"xref\" href=\"#fig3\">Figure 3H</a>) showing that increasing K<sub>m</sub> caused a linear increase in DA levels, consistent with DAT uptake rate responding almost linearly to increases in [DA] below K<sub>m</sub> (<a class=\"xref\" href=\"#fig3\">Figure 3I</a>). Of note, most microdialysis studies have reported that cocaine increases [DA] to the same degree in both DS and VSBEsrt wishes; however, these quantifications are usually derived as a ratio of the absolute baseline level (<span class=\"cite\">Carboni et al., 2001</span>; <span class=\"cite\">Maisonneuve and Glick, 1992</span>). If we divide our simulations of increasing K<sub>m</sub> with the basal levels estimated in <a class=\"xref\" href=\"#fig3\">Figure 3A-C</a> a similar response for DS and VS is found (<a class=\"xref\" href=\"#fig3s2\">Figure 3—figure supplement 2A</a>). Further, we observe a convergence on a twofold difference in the absolute values at both tonic and peak levels, which matches reports from earlier FSCV studies (<a class=\"xref\" href=\"#fig3s2\">Figure 3—figure supplement 2B</a>; <span class=\"cite\">Wu et al., 2001</span>). This regionally differential response to cocaine matches our observations in a previous biosensor-based study (<span class=\"cite\">Jørgensen et al., 2023</span>).",
+        "text": "DAT activity is governed by two parameters: Km and Vmax (Kristensen et al., 2011). To mimic competitive inhibition of DAT by, for example cocaine, we ran a simulation across various Km values (Figure 3H) showing that increasing Km caused a linear increase in DA levels, consistent with DAT uptake rate responding almost linearly to increases in [DA] below Km (Figure 3I). Of note, most microdialysis studies have reported that cocaine increases [DA] to the same degree in both DS and VSBEsrt wishes; however, these quantifications are usually derived as a ratio of the absolute baseline level (Carboni et al., 2001; Maisonneuve and Glick, 1992). If we divide our simulations of increasing Km with the basal levels estimated in Figure 3A-C a similar response for DS and VS is found (Figure 3—figure supplement 2A). Further, we observe a convergence on a twofold difference in the absolute values at both tonic and peak levels, which matches reports from earlier FSCV studies (Figure 3—figure supplement 2B; Wu et al., 2001). This regionally differential response to cocaine matches our observations in a previous biosensor-based study (Jørgensen et al., 2023)."
+       },
+       {
+        "type": "p",
+        "html": "Finally, we changed V<sub>max</sub> by ±50% in both regions and observed a smaller change in tonic level in DS (11 nM) than in VS (38 nM) (<a class=\"xref\" href=\"#fig3\">Figure 3K</a>). This suggests modulation of V<sub>max</sub> has higher impact in VS than DS. Further, the impact of changing V<sub>max</sub> in VS was independent of both Q and R<sub>%</sub> within values typically reported in the literature (<a class=\"xref\" href=\"#fig3s2\">Figure 3—figure supplement 2C, D</a>). In contrast to the changes in tonic levels, the relative effect V<sub>max</sub> had on peak levels was much more modest (<a class=\"xref\" href=\"#fig3\">Figure 3L</a>).",
+        "text": "Finally, we changed Vmax by ±50% in both regions and observed a smaller change in tonic level in DS (11 nM) than in VS (38 nM) (Figure 3K). This suggests modulation of Vmax has higher impact in VS than DS. Further, the impact of changing Vmax in VS was independent of both Q and R% within values typically reported in the literature (Figure 3—figure supplement 2C, D). In contrast to the changes in tonic levels, the relative effect Vmax had on peak levels was much more modest (Figure 3L)."
+       },
+       {
+        "type": "p",
+        "html": "Changes to uptake rate may be mediated by DAT internalisation pathways, but to our knowledge, there is not in vivo evidence of differential release-uptake balances between animals that could lead to varying tonic DA levels across animals. We therefore reanalysed data from our previously published comparison of fibre photometry and microdialysis (<span class=\"cite\">Ejdrup et al., 2023</span>) and found evidence of natural variations in the release-uptake balance of the mice (<a class=\"xref\" href=\"#fig3s2\">Figure 3—figure supplement 2E, F</a>), which may underlie different tonic levels of DA in the striatum between animals.",
+        "text": "Changes to uptake rate may be mediated by DAT internalisation pathways, but to our knowledge, there is not in vivo evidence of differential release-uptake balances between animals that could lead to varying tonic DA levels across animals. We therefore reanalysed data from our previously published comparison of fibre photometry and microdialysis (Ejdrup et al., 2023) and found evidence of natural variations in the release-uptake balance of the mice (Figure 3—figure supplement 2E, F), which may underlie different tonic levels of DA in the striatum between animals."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s2-6",
+      "type": "",
+      "title": "DAT nanoclustering affects steady state [DA] and clearance after bursts",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Our simulations highlight DAT V<sub>max</sub> as an effective regulator of extracellular DA levels in VS (<a class=\"xref\" href=\"#fig3\">Figure 3K</a>). Internalisation of DAT can serve as a mechanism for this control but is a relatively slow process operating on the order of minutes (<span class=\"cite\">Kristensen et al., 2011</span>). Interestingly, our recent studies have provided evidence that DAT move laterally in the plasma membrane and transition from a clustered to an unclustered nanoscale distribution in response to excitatory drive and other inputs (<span class=\"cite\">Lycas et al., 2022</span>; <span class=\"cite\">Rahbek-Clemmensen et al., 2017</span>). This led us to hypothesise that DAT nanoclustering serves as a mechanism for regulating DAT activity on a faster time scale. We speculated that dense nanoclusters of DAT would produce domains of low [DA] due to uptake overpowering diffusion (<a class=\"xref\" href=\"#fig4\">Figure 4A</a>). As the uptake rate is concentration dependent, this would reduce uptake efficiency (<a class=\"xref\" href=\"#fig4\">Figure 4B</a>). To address this hypothesis, we simulated a single ellipsoid varicosity of 1.5 μm in length and 800 nm thick with surrounding extracellular space (<span class=\"cite\">Ducrot et al., 2021</span>). The surface was unfolded to a square of equal area (<a class=\"xref\" href=\"#fig4\">Figure 4D</a>), and as 9–16.4% of terminals in the striatum are estimated to be dopaminergic (<span class=\"cite\">Hökfelt, 1968</span>; <span class=\"cite\">Tennyson et al., 1974</span>), we set the volume of the surrounding space to seven times the varicosity volume. On the surface of the varicosity, we randomly distributed eight DAT nanoclusters (<a class=\"xref\" href=\"#fig4\">Figure 4C</a>) and ran simulations of how DAT clustering density influenced the DA clearance from the surrounding space. The observed DA concentration in the space surrounding the varicosity shown in <a class=\"xref\" href=\"#fig4\">Figure 4C</a> is illustrated by the cross-section shown in <a class=\"xref\" href=\"#fig4\">Figure 4D</a>. Mean DA uptake capacity of the entire space was kept constant at 4 μM s<sup>–1</sup> (between the values observed for DS and VS) throughout the simulations, representing a constant amount of DAT molecules on the surface of the varicosity. We only changed the fraction of the surface of the varicosity that was uptake competent by altering the cluster size from small clusters of high density to large clusters of lower density. We ran simulations of eight identical clusters at either 20, 40, 80, or 160 nm in diameter to mirror experimentally observed cluster sizes on DA varicosities, as well as a scenario with DAT fully dispersed (<a class=\"xref\" href=\"#fig4\">Figure 4E</a>; <span class=\"cite\">Lycas et al., 2022</span>; <span class=\"cite\">Rahbek-Clemmensen et al., 2017</span>). We first performed a test to see the effect clustering would have at steady state concentrations during pacemaker activity. In the unclustered scenario, average [DA] in the simulation hovered at ~15 nM (<a class=\"xref\" href=\"#fig4\">Figure 4F</a>). However, upon changing to a clustered architecture, [DA] rapidly increased up to 100% (~30 nM) in just 400 ms depending on the degree of clustering (<a class=\"xref\" href=\"#fig4\">Figure 4F</a>). We further wanted to test what effect nanoclustering would have on clearance after burst activity. To do this, we set the extracellular space to a [DA] of 100 nM and performed simulations for the same clustering scenarios (<a class=\"xref\" href=\"#fig4\">Figure 4G</a>). Cluster size dramatically affected clearance time, with the most dense clusters taking almost 400ms to reduce [DA] to 5 nM, compared to just ~200 ms for the unclustered scenario. The hyper-local low-[DA] environment that arose around the dense DAT clusters became apparent when we plotted the [DA] at the centre of a cluster compared to the mean [DA] of the extracellular space (<a class=\"xref\" href=\"#fig4\">Figure 4H</a> – unclustered also showed a drop from surface of varicosity to mean of extracellular space; see general gradient of [DA] in <a class=\"xref\" href=\"#fig4\">Figure 4D</a>). For the 20 nm cluster scenario, the clearance was almost entirely limited by how quickly DA diffused to the nanocluster, as the local [DA] dropped to near zero. We originally hypothesised the effect would mainly be due to a depression in [DA] at the very cluster centre, but a concentration profile of the 80 nm cluster scenario revealed the entirety of the cluster was enveloped in a low-[DA] environment (<a class=\"xref\" href=\"#fig4\">Figure 4I</a>). Accordingly, if DA receptors are located directly next to a dense nanocluster, this effect could feasibly alter the concentration the individual receptors are exposed to.",
+        "text": "Our simulations highlight DAT Vmax as an effective regulator of extracellular DA levels in VS (Figure 3K). Internalisation of DAT can serve as a mechanism for this control but is a relatively slow process operating on the order of minutes (Kristensen et al., 2011). Interestingly, our recent studies have provided evidence that DAT move laterally in the plasma membrane and transition from a clustered to an unclustered nanoscale distribution in response to excitatory drive and other inputs (Lycas et al., 2022; Rahbek-Clemmensen et al., 2017). This led us to hypothesise that DAT nanoclustering serves as a mechanism for regulating DAT activity on a faster time scale. We speculated that dense nanoclusters of DAT would produce domains of low [DA] due to uptake overpowering diffusion (Figure 4A). As the uptake rate is concentration dependent, this would reduce uptake efficiency (Figure 4B). To address this hypothesis, we simulated a single ellipsoid varicosity of 1.5 μm in length and 800 nm thick with surrounding extracellular space (Ducrot et al., 2021). The surface was unfolded to a square of equal area (Figure 4D), and as 9–16.4% of terminals in the striatum are estimated to be dopaminergic (Hökfelt, 1968; Tennyson et al., 1974), we set the volume of the surrounding space to seven times the varicosity volume. On the surface of the varicosity, we randomly distributed eight DAT nanoclusters (Figure 4C) and ran simulations of how DAT clustering density influenced the DA clearance from the surrounding space. The observed DA concentration in the space surrounding the varicosity shown in Figure 4C is illustrated by the cross-section shown in Figure 4D. Mean DA uptake capacity of the entire space was kept constant at 4 μM s–1 (between the values observed for DS and VS) throughout the simulations, representing a constant amount of DAT molecules on the surface of the varicosity. We only changed the fraction of the surface of the varicosity that was uptake competent by altering the cluster size from small clusters of high density to large clusters of lower density. We ran simulations of eight identical clusters at either 20, 40, 80, or 160 nm in diameter to mirror experimentally observed cluster sizes on DA varicosities, as well as a scenario with DAT fully dispersed (Figure 4E; Lycas et al., 2022; Rahbek-Clemmensen et al., 2017). We first performed a test to see the effect clustering would have at steady state concentrations during pacemaker activity. In the unclustered scenario, average [DA] in the simulation hovered at ~15 nM (Figure 4F). However, upon changing to a clustered architecture, [DA] rapidly increased up to 100% (~30 nM) in just 400 ms depending on the degree of clustering (Figure 4F). We further wanted to test what effect nanoclustering would have on clearance after burst activity. To do this, we set the extracellular space to a [DA] of 100 nM and performed simulations for the same clustering scenarios (Figure 4G). Cluster size dramatically affected clearance time, with the most dense clusters taking almost 400ms to reduce [DA] to 5 nM, compared to just ~200 ms for the unclustered scenario. The hyper-local low-[DA] environment that arose around the dense DAT clusters became apparent when we plotted the [DA] at the centre of a cluster compared to the mean [DA] of the extracellular space (Figure 4H – unclustered also showed a drop from surface of varicosity to mean of extracellular space; see general gradient of [DA] in Figure 4D). For the 20 nm cluster scenario, the clearance was almost entirely limited by how quickly DA diffused to the nanocluster, as the local [DA] dropped to near zero. We originally hypothesised the effect would mainly be due to a depression in [DA] at the very cluster centre, but a concentration profile of the 80 nm cluster scenario revealed the entirety of the cluster was enveloped in a low-[DA] environment (Figure 4I). Accordingly, if DA receptors are located directly next to a dense nanocluster, this effect could feasibly alter the concentration the individual receptors are exposed to."
+       },
+       {
+        "type": "fig",
+        "id": "fig4"
+       },
+       {
+        "type": "p",
+        "html": "Summarised, the data supports that DAT nanoclusters produce domains of low [DA] as uptake outcompetes diffusion. As transporter uptake is concentration dependent, the overall uptake efficiency is reduced, which in turn may lead to higher extracellular concentrations of DA. The simulations therefore posit DAT nanoclustering as an efficient way to regulate the extracellular levels of both tonic DA and the spatiotemporal [DA] profiles following release.",
+        "text": "Summarised, the data supports that DAT nanoclusters produce domains of low [DA] as uptake outcompetes diffusion. As transporter uptake is concentration dependent, the overall uptake efficiency is reduced, which in turn may lead to higher extracellular concentrations of DA. The simulations therefore posit DAT nanoclustering as an efficient way to regulate the extracellular levels of both tonic DA and the spatiotemporal [DA] profiles following release."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s2-7",
+      "type": "",
+      "title": "DAT clusters more in the ventral striatum",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "As our simulations suggest that nanodomain clustering is a way of regulating uptake, and this may be particularly efficient at controlling extracellular DA in VS, we hypothesised nanoscale clustering would be more prominent in VS. To investigate this, we reanalysed data from a previous publication (<span class=\"cite\">Sørensen et al., 2021</span>), where we acquired super-resolution images of coronally sliced striatal sections from mice stained for DAT. For the present study, images were split into DS and VS based on where in the slices they were taken (<a class=\"xref\" href=\"#fig4\">Figure 4J</a>). DA terminals were identified by vesicular monoamine transporter 2 (VMAT2) expression, and qualitatively, DAT appeared more clustered in VS than DS (<a class=\"xref\" href=\"#fig4\">Figure 4K</a>). To quantify this, we applied the clustering algorithm Density-Based Spatial Clustering of Applications with Noise (DBSCAN) (<a class=\"xref\" href=\"#fig4\">Figure 4L</a>). This confirmed a regional difference with more DAT localised clusters when using DBSCAN to identify clusters with scanning diameter of 80 nm in VS compared to DS (<a class=\"xref\" href=\"#fig4\">Figure 4L and M</a>), and we observed a similar regional difference across the range of cluster sizes typically reported (20–200 nm; <a class=\"xref\" href=\"#fig4\">Figure 4N</a>; <span class=\"cite\">Lycas et al., 2022</span>; <span class=\"cite\">Rahbek-Clemmensen et al., 2017</span>) supporting the conclusion that DAT nanoclustering is more prevalent in VS than DS.",
+        "text": "As our simulations suggest that nanodomain clustering is a way of regulating uptake, and this may be particularly efficient at controlling extracellular DA in VS, we hypothesised nanoscale clustering would be more prominent in VS. To investigate this, we reanalysed data from a previous publication (Sørensen et al., 2021), where we acquired super-resolution images of coronally sliced striatal sections from mice stained for DAT. For the present study, images were split into DS and VS based on where in the slices they were taken (Figure 4J). DA terminals were identified by vesicular monoamine transporter 2 (VMAT2) expression, and qualitatively, DAT appeared more clustered in VS than DS (Figure 4K). To quantify this, we applied the clustering algorithm Density-Based Spatial Clustering of Applications with Noise (DBSCAN) (Figure 4L). This confirmed a regional difference with more DAT localised clusters when using DBSCAN to identify clusters with scanning diameter of 80 nm in VS compared to DS (Figure 4L and M), and we observed a similar regional difference across the range of cluster sizes typically reported (20–200 nm; Figure 4N; Lycas et al., 2022; Rahbek-Clemmensen et al., 2017) supporting the conclusion that DAT nanoclustering is more prevalent in VS than DS."
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "s3",
+   "type": "discussion",
+   "title": "Discussion",
+   "depth": 1,
+   "blocks": [
+    {
+     "type": "p",
+     "html": "We developed a three-dimensional, finite-difference computational model to investigate spatiotemporal DA dynamics of striatal subregions in detail. Leveraging prior experimental information on regional differences in dopaminergic innervation density and DAT uptake capacity, our model predicts important differences in dopaminergic dynamics between DS and VS. Strikingly, our simulations suggest that large areas of the DS are effectively devoid of a basal level of DA at pacemaker activity, whereas VS maintain a more homogenous tonic-like basal DA concentration with only small changes in uptake activity powerfully regulating the extracellular DA tone. Furthermore, we modelled receptor binding kinetics and found that D1R binding faithfully followed recently described rapid DA dynamics of the striatum (<span class=\"cite\">Ejdrup et al., 2023</span>; <span class=\"cite\">Jørgensen et al., 2023</span>; <span class=\"cite\">Markowitz et al., 2023</span>), while D2R, with an off-rate of ~5 s, appeared better suited for detecting background tone and integrating prolonged activity (<span class=\"cite\">Howe et al., 2013</span>; <span class=\"cite\">Jørgensen et al., 2023</span>). Collectively, these observations have important implications for our understanding of striatal function in behaviour, including decoding of inputs from the prefrontal cortex (PFC) and limbic system as well as the influential phasic-tonic model of dopaminergic signalling (<span class=\"cite\">Grace et al., 2007</span>; <span class=\"cite\">Niv et al., 2007</span>; <span class=\"cite\">Schultz, 2007</span>).",
+     "text": "We developed a three-dimensional, finite-difference computational model to investigate spatiotemporal DA dynamics of striatal subregions in detail. Leveraging prior experimental information on regional differences in dopaminergic innervation density and DAT uptake capacity, our model predicts important differences in dopaminergic dynamics between DS and VS. Strikingly, our simulations suggest that large areas of the DS are effectively devoid of a basal level of DA at pacemaker activity, whereas VS maintain a more homogenous tonic-like basal DA concentration with only small changes in uptake activity powerfully regulating the extracellular DA tone. Furthermore, we modelled receptor binding kinetics and found that D1R binding faithfully followed recently described rapid DA dynamics of the striatum (Ejdrup et al., 2023; Jørgensen et al., 2023; Markowitz et al., 2023), while D2R, with an off-rate of ~5 s, appeared better suited for detecting background tone and integrating prolonged activity (Howe et al., 2013; Jørgensen et al., 2023). Collectively, these observations have important implications for our understanding of striatal function in behaviour, including decoding of inputs from the prefrontal cortex (PFC) and limbic system as well as the influential phasic-tonic model of dopaminergic signalling (Grace et al., 2007; Niv et al., 2007; Schultz, 2007)."
+    },
+    {
+     "type": "p",
+     "html": "It has been assumed for long that there are tonic levels of DA in the striatum (<span class=\"cite\">Niv et al., 2007</span>; <span class=\"cite\">Schultz, 2007</span>; <span class=\"cite\">Sulzer et al., 2016</span>), although the phenomenon has no clear definition (<span class=\"cite\">Berke, 2018</span>). Our simulation of DA dynamics in DS during pacemaker activity showed no evidence for a homogenous extracellular distribution. Rather, elevated [DA] was transiently present around release sites during pacemaker activity, with the remaining space mostly depleted of DA. The absence of a general tonic DA level in DS predicted by our model directly supports the notion that DA release sites in DS establish distinct and only partially overlapping DA domains rather than diffuse, tonic DA levels (see <span class=\"cite\">Liu et al., 2021</span>). This conclusion aligns with recent data where we found that DA concentrations measured by microdialysis correlate with the average of rapid activity recorded with fibre photometry rather than a baseline DA tone (<span class=\"cite\">Ejdrup et al., 2023</span>). Earlier modelling work by Wickens and colleagues predicted pacemaker activity would generate a tonic, uniform concentration (<span class=\"cite\">Arbuthnott and Wickens, 2007</span>). But our modelling suggested this is prevented by the significant DA uptake capacity of the DS, as measured by more recent reuptake studies (see <a class=\"xref\" href=\"#app2table2\">Appendix 2—table 2</a>).",
+     "text": "It has been assumed for long that there are tonic levels of DA in the striatum (Niv et al., 2007; Schultz, 2007; Sulzer et al., 2016), although the phenomenon has no clear definition (Berke, 2018). Our simulation of DA dynamics in DS during pacemaker activity showed no evidence for a homogenous extracellular distribution. Rather, elevated [DA] was transiently present around release sites during pacemaker activity, with the remaining space mostly depleted of DA. The absence of a general tonic DA level in DS predicted by our model directly supports the notion that DA release sites in DS establish distinct and only partially overlapping DA domains rather than diffuse, tonic DA levels (see Liu et al., 2021). This conclusion aligns with recent data where we found that DA concentrations measured by microdialysis correlate with the average of rapid activity recorded with fibre photometry rather than a baseline DA tone (Ejdrup et al., 2023). Earlier modelling work by Wickens and colleagues predicted pacemaker activity would generate a tonic, uniform concentration (Arbuthnott and Wickens, 2007). But our modelling suggested this is prevented by the significant DA uptake capacity of the DS, as measured by more recent reuptake studies (see Appendix 2—table 2)."
+    },
+    {
+     "type": "p",
+     "html": "In contrast to the DS, our model predicted VS to hold a considerable basal level of DA even in spaces without an immediately adjacent release site. This is conceivably what most refer to as tonic DA. In this study, we quantified tonic DA as the median concentration of the entire space (50<sup>th</sup> percentile), which appeared significantly higher in VS than DS because of the lower VS uptake capacity. Importantly, this matches the results of our direct in vivo comparison of DS and VS in freely moving mice (<span class=\"cite\">Jørgensen et al., 2023</span>), as well as supporting a spatial gradient of time horizons in the striatum previously predicted in a separate work by <span class=\"cite\">Wickens et al., 2007</span> and measured in vivo by <span class=\"cite\">Mohebi et al., 2024</span>.",
+     "text": "In contrast to the DS, our model predicted VS to hold a considerable basal level of DA even in spaces without an immediately adjacent release site. This is conceivably what most refer to as tonic DA. In this study, we quantified tonic DA as the median concentration of the entire space (50th percentile), which appeared significantly higher in VS than DS because of the lower VS uptake capacity. Importantly, this matches the results of our direct in vivo comparison of DS and VS in freely moving mice (Jørgensen et al., 2023), as well as supporting a spatial gradient of time horizons in the striatum previously predicted in a separate work by Wickens et al., 2007 and measured in vivo by Mohebi et al., 2024."
+    },
+    {
+     "type": "p",
+     "html": "To challenge our model predictions, we performed our simulations across a wide range of parameters. Only changes to V<sub>max</sub> for uptake generated differential responses in the two regions. With release and uptake parameters at values from the literature, VS was at a critical point where minor changes to uptake significantly impacted the tonic levels without any major effect on peak concentrations.",
+     "text": "To challenge our model predictions, we performed our simulations across a wide range of parameters. Only changes to Vmax for uptake generated differential responses in the two regions. With release and uptake parameters at values from the literature, VS was at a critical point where minor changes to uptake significantly impacted the tonic levels without any major effect on peak concentrations."
+    },
+    {
+     "type": "p",
+     "html": "Contrary to our observations, some previous microdialysis experiments have suggested higher basal DA levels in the DS compared to VS (<span class=\"cite\">Kuczenski and Segal, 1992</span>; <span class=\"cite\">Shen et al., 2004</span>) and have reported two to four times higher [DA] in DS compared to VS (<span class=\"cite\">Kuczenski and Segal, 1992</span>; <span class=\"cite\">Shen et al., 2004</span>). However, there are disparate observations in the literature (e.g. <span class=\"cite\">Carboni et al., 2001</span> reported 20% higher [DA] in VS <span class=\"cite\">Carboni et al., 2001</span>). Moreover, it is important to note that regional comparisons in microdialysis might be confounded by the considerably higher uptake rate in DS. This will increase the extraction fraction and possibly lead to a significant overestimation of the extracellular concentration as compared to a region with lower uptake rate, such as the VS (<span class=\"cite\">Chefer et al., 2009</span>).",
+     "text": "Contrary to our observations, some previous microdialysis experiments have suggested higher basal DA levels in the DS compared to VS (Kuczenski and Segal, 1992; Shen et al., 2004) and have reported two to four times higher [DA] in DS compared to VS (Kuczenski and Segal, 1992; Shen et al., 2004). However, there are disparate observations in the literature (e.g. Carboni et al., 2001 reported 20% higher [DA] in VS Carboni et al., 2001). Moreover, it is important to note that regional comparisons in microdialysis might be confounded by the considerably higher uptake rate in DS. This will increase the extraction fraction and possibly lead to a significant overestimation of the extracellular concentration as compared to a region with lower uptake rate, such as the VS (Chefer et al., 2009)."
+    },
+    {
+     "type": "p",
+     "html": "Our three-dimensional simulations highlight DAT-mediated reuptake as a key mechanism governing striatal DA dynamics and as a key mediator of regional-specific DA dynamics. A physiologically relevant way to regulate uptake capacity is moving DAT to and from the plasma membrane. Indeed, DAT is subject to such regulation and some of these mechanisms may even be exclusive to the ventral region, including protein kinase C-induced DAT internalisation and Vav2 regulation of DAT surface expression (<span class=\"cite\">Fagan et al., 2020</span>; <span class=\"cite\">Zhu et al., 2015</span>). Chemogenetic G<sub>q</sub>-coupled DREADD activation of DA neurons also results in differential DAT trafficking in the two regions (<span class=\"cite\">Fagan et al., 2020</span>; <span class=\"cite\">Kearney et al., 2023</span>). The findings position DAT regulation as an excellent candidate for changing tonic DA levels in VS, which has been proposed to selectively attenuate afferent drive from the PFC through D2R activation (<span class=\"cite\">Grace et al., 2007</span>). Recent studies of D2R-expressing spiny projection neurons (SPNs) in the VS also suggest that the receptor is not fully saturated under basal firing (<span class=\"cite\">Lee et al., 2020</span>), matching both our simulations of receptor binding and the notion that tonic DA can be manipulated to alter D2R activation.",
+     "text": "Our three-dimensional simulations highlight DAT-mediated reuptake as a key mechanism governing striatal DA dynamics and as a key mediator of regional-specific DA dynamics. A physiologically relevant way to regulate uptake capacity is moving DAT to and from the plasma membrane. Indeed, DAT is subject to such regulation and some of these mechanisms may even be exclusive to the ventral region, including protein kinase C-induced DAT internalisation and Vav2 regulation of DAT surface expression (Fagan et al., 2020; Zhu et al., 2015). Chemogenetic Gq-coupled DREADD activation of DA neurons also results in differential DAT trafficking in the two regions (Fagan et al., 2020; Kearney et al., 2023). The findings position DAT regulation as an excellent candidate for changing tonic DA levels in VS, which has been proposed to selectively attenuate afferent drive from the PFC through D2R activation (Grace et al., 2007). Recent studies of D2R-expressing spiny projection neurons (SPNs) in the VS also suggest that the receptor is not fully saturated under basal firing (Lee et al., 2020), matching both our simulations of receptor binding and the notion that tonic DA can be manipulated to alter D2R activation."
+    },
+    {
+     "type": "p",
+     "html": "If changing uptake capacity is to have a behavioural relevance on a fast timescale, a mechanism to regulate DAT function faster than internalisation must exist. Importantly, the transporter does not only move to and from the surface, but also laterally in the plasma membrane. We have reported that DAT forms nanoclusters in the plasma membrane that dynamically reshape based on excitatory and inhibitory input (<span class=\"cite\">Lycas et al., 2022</span>; <span class=\"cite\">Rahbek-Clemmensen et al., 2017</span>). Moreover, we have previously shown that cocaine, which both competitively inhibits DAT and reorganises the transporter nanodomains (<span class=\"cite\">Lycas et al., 2022</span>), changes the DA signal of the DS to dynamics akin to the VS (<span class=\"cite\">Jørgensen et al., 2023</span>). Importantly, our simulations showed that nanoclustering may be an effective way to sequester DAT in a dense domain where uptake overpowers diffusion and, as a result, brings down effective uptake speed through local DA depletion. This is in line with evidence that these DAT nanoclusters are enriched in phosphatidylinositol-4,5-bisphosphate (PIP2), and that metabolism of PIP2 decreases uptake rate of DAT (<span class=\"cite\">Lycas et al., 2022</span>; <span class=\"cite\">Carvelli et al., 2002</span>). We also found that the nanoclustering phenomenon was considerably more prevalent in VS than in DS. Taken together, these data point to DAT nanoclustering as a way to shape both the spatiotemporal profile of DA release as well as the tonic levels of DA in the striatum – particularly in the VS.",
+     "text": "If changing uptake capacity is to have a behavioural relevance on a fast timescale, a mechanism to regulate DAT function faster than internalisation must exist. Importantly, the transporter does not only move to and from the surface, but also laterally in the plasma membrane. We have reported that DAT forms nanoclusters in the plasma membrane that dynamically reshape based on excitatory and inhibitory input (Lycas et al., 2022; Rahbek-Clemmensen et al., 2017). Moreover, we have previously shown that cocaine, which both competitively inhibits DAT and reorganises the transporter nanodomains (Lycas et al., 2022), changes the DA signal of the DS to dynamics akin to the VS (Jørgensen et al., 2023). Importantly, our simulations showed that nanoclustering may be an effective way to sequester DAT in a dense domain where uptake overpowers diffusion and, as a result, brings down effective uptake speed through local DA depletion. This is in line with evidence that these DAT nanoclusters are enriched in phosphatidylinositol-4,5-bisphosphate (PIP2), and that metabolism of PIP2 decreases uptake rate of DAT (Lycas et al., 2022; Carvelli et al., 2002). We also found that the nanoclustering phenomenon was considerably more prevalent in VS than in DS. Taken together, these data point to DAT nanoclustering as a way to shape both the spatiotemporal profile of DA release as well as the tonic levels of DA in the striatum – particularly in the VS."
+    },
+    {
+     "type": "p",
+     "html": "Our incorporation of receptor binding was inspired by important previous modelling work (<span class=\"cite\">Dreyer et al., 2010</span>; <span class=\"cite\">Dreyer and Hounsgaard, 2013</span>; <span class=\"cite\">Hunger et al., 2020</span>). However, earlier models by Dreyer &amp; colleagues assumed instantaneous equilibrium between extracellular DA and receptor occupation, which disregards differences in kinetics of the DA receptors that greatly impact transmission dynamics. While later work by Hunger and colleagues introduced more complex receptor modelling, they based their kinetics parameters on early pharmacological studies, whose values likely would prevent DA receptors from decoding signal below the order of minutes (<span class=\"cite\">Burt et al., 1976</span>; <span class=\"cite\">Maeno, 1982</span>; <span class=\"cite\">Nishikori et al., 1980</span>; <span class=\"cite\">Sano et al., 1979</span>). Instead, we based our receptor kinetics on newer pharmacological experiments in live cells (<span class=\"cite\">Ågren et al., 2021</span>) and properties of the recently developed DA receptor-based biosensors (<span class=\"cite\">Labouesse and Patriarchi, 2021</span>), whose receptor values match well despite different methodological approaches. The biosensors are mutated receptors whose kinetics may not be identical to the endogenous receptors, but only the intracellular domains are altered, with no apparent changes of the binding site (<span class=\"cite\">Labouesse and Patriarchi, 2021</span>). Indeed, these biosensors exhibit kinetics that are well aligned with both modelled and experimentally reported extracellular DA dynamics using non-biosensor-based methods (<span class=\"cite\">Atcherley et al., 2015</span>; <span class=\"cite\">Gonon et al., 2000</span>; <span class=\"cite\">Venton et al., 2002</span>). We believe accordingly that our updated parameters are more accurate portrayals of in vivo conditions; however, as shown throughout the study, the affinity values greatly affect the results. Therefore, we find it important that our model will be available to the research community, allowing others to test their own estimates of receptor kinetics and assess their impact on the model’s behaviour.",
+     "text": "Our incorporation of receptor binding was inspired by important previous modelling work (Dreyer et al., 2010; Dreyer and Hounsgaard, 2013; Hunger et al., 2020). However, earlier models by Dreyer & colleagues assumed instantaneous equilibrium between extracellular DA and receptor occupation, which disregards differences in kinetics of the DA receptors that greatly impact transmission dynamics. While later work by Hunger and colleagues introduced more complex receptor modelling, they based their kinetics parameters on early pharmacological studies, whose values likely would prevent DA receptors from decoding signal below the order of minutes (Burt et al., 1976; Maeno, 1982; Nishikori et al., 1980; Sano et al., 1979). Instead, we based our receptor kinetics on newer pharmacological experiments in live cells (Ågren et al., 2021) and properties of the recently developed DA receptor-based biosensors (Labouesse and Patriarchi, 2021), whose receptor values match well despite different methodological approaches. The biosensors are mutated receptors whose kinetics may not be identical to the endogenous receptors, but only the intracellular domains are altered, with no apparent changes of the binding site (Labouesse and Patriarchi, 2021). Indeed, these biosensors exhibit kinetics that are well aligned with both modelled and experimentally reported extracellular DA dynamics using non-biosensor-based methods (Atcherley et al., 2015; Gonon et al., 2000; Venton et al., 2002). We believe accordingly that our updated parameters are more accurate portrayals of in vivo conditions; however, as shown throughout the study, the affinity values greatly affect the results. Therefore, we find it important that our model will be available to the research community, allowing others to test their own estimates of receptor kinetics and assess their impact on the model’s behaviour."
+    },
+    {
+     "type": "p",
+     "html": "The presented simulations suggested that receptor binding was largely invariant to single release events during pacemaker activity, while bursts of activity rapidly changed occupancy. Both D1R and D2R immediately responded to burst onset; however, while D1R occupancy rapidly declined to zero within approximately 50 ms, the slow D2R kinetics resulted in an occupancy decline over ~5 s, returning to the baseline maintained by tonic firing. This means that D1R is better suited to discriminate inputs in rapid succession and allow for postsynaptic decoding of the fast-paced in vivo dynamics described particularly for DS (<span class=\"cite\">Ejdrup et al., 2023</span>; <span class=\"cite\">Jørgensen et al., 2023</span>; <span class=\"cite\">Markowitz et al., 2023</span>). By contrast, our analysis shows that D2Rs integrate DA signals over several seconds. As D1R occupancy is negligible during pacemaker activity and D2R kinetics are too slow to pick up rapid changes in DA concentration, our simulations moreover suggest pauses in firing of less than 1 s are not an effective way of signalling for the striatal dopaminergic system. Notably, this finding was apparent even when the D2 affinity was increased an order of magnitude. This challenges the effectiveness of proposed negative reward prediction errors, as even a long pause in firing would have a limited effect on D2 receptor occupation and downstream signalling. This may explain why DA drops during reward omissions are not nearly as prominent as positive signals (<span class=\"cite\">Farrell et al., 2022</span>; <span class=\"cite\">Greenstreet et al., 2025</span>).",
+     "text": "The presented simulations suggested that receptor binding was largely invariant to single release events during pacemaker activity, while bursts of activity rapidly changed occupancy. Both D1R and D2R immediately responded to burst onset; however, while D1R occupancy rapidly declined to zero within approximately 50 ms, the slow D2R kinetics resulted in an occupancy decline over ~5 s, returning to the baseline maintained by tonic firing. This means that D1R is better suited to discriminate inputs in rapid succession and allow for postsynaptic decoding of the fast-paced in vivo dynamics described particularly for DS (Ejdrup et al., 2023; Jørgensen et al., 2023; Markowitz et al., 2023). By contrast, our analysis shows that D2Rs integrate DA signals over several seconds. As D1R occupancy is negligible during pacemaker activity and D2R kinetics are too slow to pick up rapid changes in DA concentration, our simulations moreover suggest pauses in firing of less than 1 s are not an effective way of signalling for the striatal dopaminergic system. Notably, this finding was apparent even when the D2 affinity was increased an order of magnitude. This challenges the effectiveness of proposed negative reward prediction errors, as even a long pause in firing would have a limited effect on D2 receptor occupation and downstream signalling. This may explain why DA drops during reward omissions are not nearly as prominent as positive signals (Farrell et al., 2022; Greenstreet et al., 2025)."
+    },
+    {
+     "type": "p",
+     "html": "In conclusion, we have developed a three-dimensional model for DA release dynamics and receptor binding that integrates a wealth of experimentally determined parameters and generates responses to electrical and pharmacological input that fits robustly with literature observations. The model offers an important theoretical framework and a predictive tool that can serve as the basis for future experimental endeavours and help guide the interpretation of new as well as older empirical findings on DA signalling dynamics under both physiological conditions and in disease.",
+     "text": "In conclusion, we have developed a three-dimensional model for DA release dynamics and receptor binding that integrates a wealth of experimentally determined parameters and generates responses to electrical and pharmacological input that fits robustly with literature observations. The model offers an important theoretical framework and a predictive tool that can serve as the basis for future experimental endeavours and help guide the interpretation of new as well as older empirical findings on DA signalling dynamics under both physiological conditions and in disease."
+    }
+   ]
+  },
+  {
+   "id": "s4",
+   "type": "materials|methods",
+   "title": "Materials and methods",
+   "depth": 1,
+   "blocks": [
+    {
+     "type": "table",
+     "id": "keyresource"
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-1",
+      "type": "",
+      "title": "Three-dimensional finite difference model",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "DA release sites in the striatum were simulated at a density of one site per 25 µm<sup>3</sup> in DS and one site per 27.8 µm<sup>3</sup> in VS (except for <a class=\"xref\" href=\"#fig4\">Figure 4B</a> and). As a single medium spiny neuron in the striatum is estimated to be influenced by axons from 95 to 194 dopaminergic neurons (<span class=\"cite\">Matsuda et al., 2009</span>), we simulated DA release sites as originating from 150 separate cell bodies. These were set to fire independently from each other at 4 Hz generated by a Poisson distribution. We set the release probability in response to an action potential at the individual terminal levels to 6% (<span class=\"cite\">Dreyer et al., 2010</span>), and if a release occurred, the DA concentration of the voxel was elevated by the equivalent of 3000 DA molecules as per Equation 1. The volume of each voxel was corrected for an extracellular volume fraction of 0.21 (<span class=\"cite\">Rice and Nicholson, 1991</span>).",
+        "text": "DA release sites in the striatum were simulated at a density of one site per 25 µm3 in DS and one site per 27.8 µm3 in VS (except for Figure 4B and). As a single medium spiny neuron in the striatum is estimated to be influenced by axons from 95 to 194 dopaminergic neurons (Matsuda et al., 2009), we simulated DA release sites as originating from 150 separate cell bodies. These were set to fire independently from each other at 4 Hz generated by a Poisson distribution. We set the release probability in response to an action potential at the individual terminal levels to 6% (Dreyer et al., 2010), and if a release occurred, the DA concentration of the voxel was elevated by the equivalent of 3000 DA molecules as per Equation 1. The volume of each voxel was corrected for an extracellular volume fraction of 0.21 (Rice and Nicholson, 1991)."
+       },
+       {
+        "type": "p",
+        "html": "We did not incorporate paired-pulse depression in our model as most in vivo FSCV studies have not reported this phenomenon (<span class=\"cite\">Chergui et al., 1994</span>; <span class=\"cite\">Garris and Wightman, 1994</span>; <span class=\"cite\">Hamid et al., 2016</span>; <span class=\"cite\">May and Wightman, 1989</span>). In addition, we could explain the gradual blunt of the response during prolonged stimulation (<a class=\"xref\" href=\"#fig2\">Figure 2E</a>) as the result of an equilibrium between release and uptake rather than a depression in release. Newer in vivo biosensor-based studies observe the same ‘blunting’ phenomenon during stimulation trains (<span class=\"cite\">Mohebi et al., 2023</span>). A low initial release probability that scales well with frequency has also been reported for VMAT2-positive release sites in dopaminergic cultures where the axons are not severed from their cell bodies as in acute striatal slices (<span class=\"cite\">Silm et al., 2019</span>). Note that we did not explicitly model autoreceptor inhibition at pacemaker activity. However, this value should be implicitly reflected in the in vivo estimates we base our model on.",
+        "text": "We did not incorporate paired-pulse depression in our model as most in vivo FSCV studies have not reported this phenomenon (Chergui et al., 1994; Garris and Wightman, 1994; Hamid et al., 2016; May and Wightman, 1989). In addition, we could explain the gradual blunt of the response during prolonged stimulation (Figure 2E) as the result of an equilibrium between release and uptake rather than a depression in release. Newer in vivo biosensor-based studies observe the same ‘blunting’ phenomenon during stimulation trains (Mohebi et al., 2023). A low initial release probability that scales well with frequency has also been reported for VMAT2-positive release sites in dopaminergic cultures where the axons are not severed from their cell bodies as in acute striatal slices (Silm et al., 2019). Note that we did not explicitly model autoreceptor inhibition at pacemaker activity. However, this value should be implicitly reflected in the in vivo estimates we base our model on."
+       },
+       {
+        "type": "p",
+        "html": "When simulating bursts or trains of stimulations, action potentials were added as described for each simulation, but release probability was kept the same unless otherwise noted. Uptake was evenly distributed throughout the simulation space with a V<sub>max</sub> at 6 µm s<sup>–1</sup> for DS and 2 µm s<sup>–1</sup> for VS (see <a class=\"xref\" href=\"#app2table2\">Appendix 2—table 2</a>) and a K<sub>m</sub> at 210 nM (<span class=\"cite\">Hovde et al., 2019</span>) and calculated for each voxel as per Equation 2. For each time step, <i>dt</i>, diffusion is calculated with a finite difference implementation of the Laplacian operator described in Equation 3 using a diffusion coefficient corrected for tortuosity at 321.7 µm<sup>2</sup> s<sup>–1</sup>. Periodic boundaries were used to avoid edge issues with a simulation size of 50 x 50 × 50 µm unless otherwise noted. The Python-based implementation of the model can be found as described in the Code and Data Availability section.",
+        "text": "When simulating bursts or trains of stimulations, action potentials were added as described for each simulation, but release probability was kept the same unless otherwise noted. Uptake was evenly distributed throughout the simulation space with a Vmax at 6 µm s–1 for DS and 2 µm s–1 for VS (see Appendix 2—table 2) and a Km at 210 nM (Hovde et al., 2019) and calculated for each voxel as per Equation 2. For each time step, dt, diffusion is calculated with a finite difference implementation of the Laplacian operator described in Equation 3 using a diffusion coefficient corrected for tortuosity at 321.7 µm2 s–1. Periodic boundaries were used to avoid edge issues with a simulation size of 50 x 50 × 50 µm unless otherwise noted. The Python-based implementation of the model can be found as described in the Code and Data Availability section."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-2",
+      "type": "",
+      "title": "Receptor occupancy",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Our modelling of receptor binding was based on the work of <span class=\"cite\">Dreyer and Hounsgaard, 2013</span>. Occupancy of the receptors for any given voxel was calculated numerically by numerical integration of:",
+        "text": "Our modelling of receptor binding was based on the work of Dreyer and Hounsgaard, 2013. Occupancy of the receptors for any given voxel was calculated numerically by numerical integration of:(6)dDxRocc,tdt=[DA]tkon(1−DxRocc,t)−koffDxRocc,t\\begin{document}$$\\displaystyle \\frac{ dD_{x}R_{occ,t}}{dt}=\\left [\\rm DA\\right]_{ t} k_{on}\\left (1- D_{x}R_{occ,t}\\right)- k_{off}\\,D_{x}R_{occ,t}$$\\end{document}"
+       },
+       {
+        "type": "p",
+        "html": "Where [DA]<sub>t</sub> was the dopamine concentration at the given voxel, D<sub>x</sub>R<sub>occ,t</sub> the fraction of DA receptors occupied in the same voxel, <i>k</i><sub>on</sub> the rate constant and <i>k</i><sub>off</sub> the reverse rate constant. The model assumed no buffering effect from DA bound to receptors, as DA receptors are GPCRs typically expressed at very low levels (<span class=\"cite\">Zhang et al., 2024</span>).",
+        "text": "Where [DA]t was the dopamine concentration at the given voxel, DxRocc,t the fraction of DA receptors occupied in the same voxel, kon the rate constant and koff the reverse rate constant. The model assumed no buffering effect from DA bound to receptors, as DA receptors are GPCRs typically expressed at very low levels (Zhang et al., 2024)."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-3",
+      "type": "",
+      "title": "Immunohistochemistry analysis",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Analysed widefield images were obtained from <span class=\"cite\">Sørensen et al., 2021</span>. The mouse striatum slices were stained for either DAT or VMAT2 see <span class=\"cite\">Sørensen et al., 2021</span> for slicing, fixation, staining, and imaging protocol (<span class=\"cite\">Sørensen et al., 2021</span>). Fluorescence intensities were extracted in a single dorsoventral line parallel to the midline through the horizontally centre of the anterior commissure using ImageJ v1.53q for each slice. Data was vertically centred around the anterior commissure. No background subtraction was performed.",
+        "text": "Analysed widefield images were obtained from Sørensen et al., 2021. The mouse striatum slices were stained for either DAT or VMAT2 see Sørensen et al., 2021 for slicing, fixation, staining, and imaging protocol (Sørensen et al., 2021). Fluorescence intensities were extracted in a single dorsoventral line parallel to the midline through the horizontally centre of the anterior commissure using ImageJ v1.53q for each slice. Data was vertically centred around the anterior commissure. No background subtraction was performed."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-4",
+      "type": "",
+      "title": "FSCV modelling",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "FSCV recordings were modelled by convolving a simulated DA response to a pseudo FSCV trace. The impulse function used was as described in <span class=\"cite\">Venton et al., 2002</span>. In brief, the impulse function was defined as <span class=\"math\">IFFSCV=e−(t+1)(k−1∗ts+k−2∗to)\\begin{document}${\\rm IF_{FSCV}}=e^{- \\left (\\rm t+1\\right)\\left ({\\rm k}_{- 1}\\ast {\\rm t_{s}}+{\\rm k_{- 2}}\\ast {\\rm t_{o}}\\right)}$\\end{document}</span>, where <span class=\"math\">t\\begin{document}$t$\\end{document}</span> is time, <span class=\"math\">ts\\begin{document}$t_{s}$\\end{document}</span> is scan time, <span class=\"math\">to\\begin{document}$t_{o}$\\end{document}</span> is oxidation time, and <span class=\"math\">k−1\\begin{document}$\\rm k_{- 1}$\\end{document}</span> and <span class=\"math\">k−2\\begin{document}$\\rm k_{- 2}$\\end{document}</span> desorption constants. <span class=\"math\">ts\\begin{document}$t_{s}$\\end{document}</span> was set to 100 ms as reported in <span class=\"cite\">May and Wightman, 1989</span> and <span class=\"math\">to\\begin{document}$t_{o}$\\end{document}</span> to 4 ms, which is half of the typically reported symmetrical waveform length. The desorption constants (k<sub>-1</sub>=1.2 s<sup>–1</sup> and k<sub>-2</sub>=12 s<sup>–1</sup>) were taken directly from <span class=\"cite\">Venton et al., 2002</span>.",
+        "text": "FSCV recordings were modelled by convolving a simulated DA response to a pseudo FSCV trace. The impulse function used was as described in Venton et al., 2002. In brief, the impulse function was defined as IFFSCV=e−(t+1)(k−1∗ts+k−2∗to)\\begin{document}${\\rm IF_{FSCV}}=e^{- \\left (\\rm t+1\\right)\\left ({\\rm k}_{- 1}\\ast {\\rm t_{s}}+{\\rm k_{- 2}}\\ast {\\rm t_{o}}\\right)}$\\end{document}, where t\\begin{document}$t$\\end{document} is time, ts\\begin{document}$t_{s}$\\end{document} is scan time, to\\begin{document}$t_{o}$\\end{document} is oxidation time, and k−1\\begin{document}$\\rm k_{- 1}$\\end{document} and k−2\\begin{document}$\\rm k_{- 2}$\\end{document} desorption constants. ts\\begin{document}$t_{s}$\\end{document} was set to 100 ms as reported in May and Wightman, 1989 and to\\begin{document}$t_{o}$\\end{document} to 4 ms, which is half of the typically reported symmetrical waveform length. The desorption constants (k-1=1.2 s–1 and k-2=12 s–1) were taken directly from Venton et al., 2002."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-5",
+      "type": "",
+      "title": "Nanocluster uptake modelling",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Nanoclustering of DAT was simulated in Python. An ellipsoid-shaped varicosity of 1.5 μm in length and 800 nm in width was modelled as a flat, square surface with a width of 1.8 μm to match the total surface area (<span class=\"cite\">Lycas et al., 2022</span>; <span class=\"cite\">Rahbek-Clemmensen et al., 2017</span>). As 9–16.4% of terminals in the striatum are estimated to be dopaminergic (<span class=\"cite\">Hökfelt, 1968</span>; <span class=\"cite\">Tennyson et al., 1974</span>), we set the height of the simulation space to 3.52 μm to generate an extracellular volume seven times the size of the varicosity. Axons and cell bodies are likely a non-negligible part of the striatal volume but omitted in this analysis due to a lack of information in the literature (however, decreasing the share of striatal space taken up by DA varicosities works in the direction of our hypothesis). Spatial granularity was set to 20 nm, and we randomly placed eight non-overlapping locations for clusters on the simulated varicosity. Uptake capacity per voxel for each clustering scenario was set so the mean uptake of the entire space was 4 μm s<sup>–1</sup>, which resulted in clusters with increased DAT density with decreasing cluster size.",
+        "text": "Nanoclustering of DAT was simulated in Python. An ellipsoid-shaped varicosity of 1.5 μm in length and 800 nm in width was modelled as a flat, square surface with a width of 1.8 μm to match the total surface area (Lycas et al., 2022; Rahbek-Clemmensen et al., 2017). As 9–16.4% of terminals in the striatum are estimated to be dopaminergic (Hökfelt, 1968; Tennyson et al., 1974), we set the height of the simulation space to 3.52 μm to generate an extracellular volume seven times the size of the varicosity. Axons and cell bodies are likely a non-negligible part of the striatal volume but omitted in this analysis due to a lack of information in the literature (however, decreasing the share of striatal space taken up by DA varicosities works in the direction of our hypothesis). Spatial granularity was set to 20 nm, and we randomly placed eight non-overlapping locations for clusters on the simulated varicosity. Uptake capacity per voxel for each clustering scenario was set so the mean uptake of the entire space was 4 μm s–1, which resulted in clusters with increased DAT density with decreasing cluster size."
+       },
+       {
+        "type": "p",
+        "html": "For the steady state simulations, we added [DA] at a constant rate of 224 nM s<sup>–1</sup> calculated as follows:",
+        "text": "For the steady state simulations, we added [DA] at a constant rate of 224 nM s–1 calculated as follows:(7)[DA]add=QconcfrateR%ATdensity\\begin{document}$$\\displaystyle \\left [DA\\right]_{add}=Q_{conc}\\,{\\rm f_{rate}}\\,{\\rm R}_{{\\% }}\\,AT_{density}$$\\end{document}"
+       },
+       {
+        "type": "p",
+        "html": "Where <span class=\"math\">DAadd\\begin{document}$\\left [DA\\right ]_{add}$\\end{document}</span> was the DA concentration added per second, <span class=\"math\">Qconc\\begin{document}$Q_{conc}$\\end{document}</span> the DA concentration added to a voxel by a single release event, <span class=\"math\">frate\\begin{document}$\\rm f_{rate}$\\end{document}</span> the firing rate at pacemaker activity, <span class=\"math\">R%\\begin{document}$R_{\\text{\\% }}$\\end{document}</span> the probability of release for each action potential and <span class=\"math\">ATdensity\\begin{document}$AT_{density}$\\end{document}</span> the density of actively releasing terminals. <span class=\"math\">Qconc\\begin{document}$Q_{conc}$\\end{document}</span> was calculated as follows:",
+        "text": "Where DAadd\\begin{document}$\\left [DA\\right ]_{add}$\\end{document} was the DA concentration added per second, Qconc\\begin{document}$Q_{conc}$\\end{document} the DA concentration added to a voxel by a single release event, frate\\begin{document}$\\rm f_{rate}$\\end{document} the firing rate at pacemaker activity, R%\\begin{document}$R_{\\text{\\% }}$\\end{document} the probability of release for each action potential and ATdensity\\begin{document}$AT_{density}$\\end{document} the density of actively releasing terminals. Qconc\\begin{document}$Q_{conc}$\\end{document} was calculated as follows:(8)Qconc=VesiclevolVoxelvolVesicleconc1EVF\\begin{document}$$\\displaystyle Q_{conc}=\\frac{Vesicle_{vol}}{Voxel_{vol}}Vesicle_{conc}\\frac{1}{EVF}$$\\end{document}"
+       },
+       {
+        "type": "p",
+        "html": "where <span class=\"math\">Vesiclevol\\begin{document}$Vesicle_{vol}$\\end{document}</span> is the volume of a vesicle (with an assumed radius of 25 nm), <span class=\"math\">Voxelvol\\begin{document}$Voxel_{vol}$\\end{document}</span> the volume of a voxel in the simulation space, <span class=\"math\">Vesicleconc\\begin{document}$Vesicle_{conc}$\\end{document}</span> the concentration of DA in a single vesicle (assuming 3000 DA molecules) and <span class=\"math\">EVF\\begin{document}$EVF$\\end{document}</span> the extracellular volume fraction of the striatum.",
+        "text": "where Vesiclevol\\begin{document}$Vesicle_{vol}$\\end{document} is the volume of a vesicle (with an assumed radius of 25 nm), Voxelvol\\begin{document}$Voxel_{vol}$\\end{document} the volume of a voxel in the simulation space, Vesicleconc\\begin{document}$Vesicle_{conc}$\\end{document} the concentration of DA in a single vesicle (assuming 3000 DA molecules) and EVF\\begin{document}$EVF$\\end{document} the extracellular volume fraction of the striatum."
+       },
+       {
+        "type": "p",
+        "html": "For the clearance after burst simulations, we set the initial DA concentration of the entire space to 100 nM.",
+        "text": "For the clearance after burst simulations, we set the initial DA concentration of the entire space to 100 nM."
+       },
+       {
+        "type": "p",
+        "html": "We ran all the nanoclustering simulations with a time step of 1.875e<sup>–7</sup> s to avoid numerical instability. Diffusion corrected for tortuosity was set to 321.7 µm<sup>2</sup> s<sup>–1</sup> and calculated with a Laplacian operation as described in Equation 3. Periodic boundaries were used to account for the varicosity being circular and avoid issues at the edge of the simulation space. The full implementation in Python can be found as described in the Code and Data Availability section.",
+        "text": "We ran all the nanoclustering simulations with a time step of 1.875e–7 s to avoid numerical instability. Diffusion corrected for tortuosity was set to 321.7 µm2 s–1 and calculated with a Laplacian operation as described in Equation 3. Periodic boundaries were used to account for the varicosity being circular and avoid issues at the edge of the simulation space. The full implementation in Python can be found as described in the Code and Data Availability section."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-6",
+      "type": "",
+      "title": "Super-resolution clustering analysis",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Super-resolved fluorescence microscopy dual-color images from <span class=\"cite\">Sørensen et al., 2021</span> of striatal brain slices from mice were analysed based on their position in the dorsal or ventral regions (<a class=\"xref\" href=\"#fig4\">Figure 4J</a>). Localisations were fitted using DAOSTORM (<span class=\"cite\">Babcock et al., 2012</span>) on the originally acquired direct stochastic optical reconstruction microscopy (dSTORM) videos with the following settings: background sigma of 8, maximum likelihood estimation as the fitting error model, 20 peak identification iterations, an initial sigma estimate of 1.5 and a threshold adjusted to each imaging session. Each image was analysed for percentage of localisations within a cluster using density-based spatial clustering of applications with noise (DBSCAN; <span class=\"cite\">Ester et al., 1996</span>) using the Python package Scikit-learn 0.22 (<span class=\"cite\">Pedregosa et al., 2021</span>). To uncover broader trends, we scanned across a range of parameters: radius was run from 10 nm to 200 nm and number of localisations from 10 to 200. For <a class=\"xref\" href=\"#fig4\">Figure 4M</a>, a diameter of 80 nm was chosen to match the size reported in <span class=\"cite\">Rahbek-Clemmensen et al., 2017</span>.",
+        "text": "Super-resolved fluorescence microscopy dual-color images from Sørensen et al., 2021 of striatal brain slices from mice were analysed based on their position in the dorsal or ventral regions (Figure 4J). Localisations were fitted using DAOSTORM (Babcock et al., 2012) on the originally acquired direct stochastic optical reconstruction microscopy (dSTORM) videos with the following settings: background sigma of 8, maximum likelihood estimation as the fitting error model, 20 peak identification iterations, an initial sigma estimate of 1.5 and a threshold adjusted to each imaging session. Each image was analysed for percentage of localisations within a cluster using density-based spatial clustering of applications with noise (DBSCAN; Ester et al., 1996) using the Python package Scikit-learn 0.22 (Pedregosa et al., 2021). To uncover broader trends, we scanned across a range of parameters: radius was run from 10 nm to 200 nm and number of localisations from 10 to 200. For Figure 4M, a diameter of 80 nm was chosen to match the size reported in Rahbek-Clemmensen et al., 2017."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-7",
+      "type": "",
+      "title": "Statistical analysis",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "The statistical analyses performed can be found in the legends of each figure. Statistical analyses were performed using open-source python packages SciPy v1.5.2 and NumPy v1.18.1. Boxplots show the 25th and 75th percentile range, and whiskers indicate up to 1.5 times the interquartile range. The remaining data points are plotted as individual outliers.",
+        "text": "The statistical analyses performed can be found in the legends of each figure. Statistical analyses were performed using open-source python packages SciPy v1.5.2 and NumPy v1.18.1. Boxplots show the 25th and 75th percentile range, and whiskers indicate up to 1.5 times the interquartile range. The remaining data points are plotted as individual outliers."
+       }
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig1",
+   "num": "1",
+   "label": "Figure 1",
+   "title": "Large-scale 3D model of the dorsal striatum.",
+   "caption": "<p>(<b>A</b>) Self-enveloped simulation space of 100 µm<sup>3</sup> with approximately 40,000 release sites from 150 neurons. Colours of individual release sites are not matched to neurons. (<b>B</b>) Simulation of a single release event after 5 ms and 10 ms. Colour-coded by DA concentration. (<b>C</b>) Comparison of analytical solution and simulation of diffusion after a single release event at three different time points. (<b>D</b>) Representative snapshot of steady state DA dynamics at 4 Hz tonic firing with parameters mirroring the dorsal striatum. (<b>E</b>) Cross-section of temporal dynamics for a midway section through the simulation space shown in (<b>d</b>). (<b>F</b>) Histogram of DA concentrations ([DA]) across the entire space in (<b>d</b>). (<b>G</b>) DA release during three burst activity scenarios for all release sites in a 10 x 10 × 10 µm cube (black boxes) and spill-over into the surrounding space. Burst simulated as an increase in firing rate on top of continued tonic firing of the surrounding space. Traces on top are average DA concentrations for the marked cubes, with bursts schematised by coloured lines below. The first image row is at the end of the burst, and the second row is 100 ms after. Scale bars for traces are 200 ms and 500 nM. Scale bar for the images is 20 µm. (<b>H</b>) Top: representative [DA] trace for a voxel with a release site during pacemaker and burst activity. Bottom: Occupancy of D1Rs and D2Rs for the same site. (<b>I</b>) Zoom on a DA burst as in (<b>h</b>), with [DA] in blue and D1R occupancy in teal with line style indicating different affinities. The shaded area indicates the period of bursting with 6 APs at 20 Hz. (<b>J</b>) Effect of complete pause in firing for 1 s on both average [DA] and D1R and D2R occupation.</p><p>Figure 1—source code 1.Source code used to generate data in A, D, E, and F.</p><p>Figure 1—source code 2.Source code used to generate data in B and C.</p><p>Figure 1—source code 3.Source code used to generate data in G.</p><p>Figure 1—source code 4.Source code used to generate data in J.</p><p>Figure 1—source code 5.Source code used to generate data in H.</p><p>Figure 1—source code 6.Source code used to generate data in I.</p>",
+   "supplement": false,
+   "src": "https://iiif.elifesciences.org/lax/105214%2Felife-105214-fig1-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig1s1",
+   "num": "1",
+   "label": "Figure 1—figure supplement 1",
+   "title": "Average concentration and receptor kinetics.",
+   "caption": "<p>(<b>A</b>) Average DA concentration across a 100 x 100 × 100 µm volume of simulated DS at pacemaker activity. (<b>B</b>) Mean concentration change in response to a single event with 60% release probability (see supplementary notes on electrical stimulation) in all neurons at time zero. Blue trace is output directly from simulation, grey trace is the predicted FSCV measurement. (<b>C</b>) Modelling of predicted FSCV measurement and representative snapshot of simulation space just after a release event. (<b>D</b>) Peak DA concentration reached at different distances from the area with phasic activity for the three firing scenarios. (<b>E</b>) Volume of space exposed to greater than 100 nM DA after firing relative to volume of space where terminals actively burst. (<b>F</b>) Least-squares fit linear regression of the dLight and GRAB<sub>DA</sub> sensors based on reported kinetics (<span class=\"cite\">Labouesse and Patriarchi, 2021</span>) and newest experimental characterisation of D2R (<span class=\"cite\">Ågren et al., 2021</span>). Shaded areas indicate 95% C.I. (<b>G</b>) Top: representative [DA] trace for a voxel with a release site during pacemaker and a triple burst scenario (300 ms long bursts of 3 APs at 10 Hz, three times in a row with 300 ms in between). Bottom: Occupancy of D1Rs and D2Rs for the same site. (<b>H</b>) Effect of complete pause in firing for 1 s on both average [DA] and D2R occupation at different affinities.</p><p>Figure 1—figure supplement 1—source code 1.Source code used to generate data in <a class=\"xref\" href=\"#fig1s1\">Figure 1—figure supplement 1</a>.</p>",
+   "supplement": true,
+   "src": "https://iiif.elifesciences.org/lax/105214%2Felife-105214-fig1-figsupp1-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig1s2",
+   "num": "1",
+   "label": "Figure 1—figure supplement 2",
+   "title": "Simulation size and granularity.",
+   "caption": "<p>(<b>A</b>) Schematic of different simulation sizes. (<b>B</b>) Concentration percentiles at different simulation diameters. Results are not robust until a diameter close to 50 µm is reached (line runs behind 100 µm line). (<b>C</b>) Schematic of simulation granularity. (<b>D</b>) Effect of simulation voxel diameter on concentration percentiles. Virtually no difference in concentration profiles below the 99.9<sup>th</sup> percentile of [DA], with the 1.0 µm voxel size still following 0.1 and 0.5 µm well above that level. The inset shows 99.75<sup>th</sup> to 100<sup>th</sup> percentile with y-axis matching main y-axis. (<b>E</b>) Absolute difference in [DA] between simulations at 0.1 µm voxel diameter and 0.5, 1.0, and 2.0 µm. The inset shows 99<sup>th</sup> to 100<sup>th</sup> percentile with y-axis matching main y-axis. (<b>F</b>) Percentage difference in [DA] between simulations at 0.1 µm voxel diameter and 0.5, 1.0, and 2.0 µm.</p><p>Figure 1—figure supplement 2—source code 1.Source code used to generate data in <a class=\"xref\" href=\"#fig1s2\">Figure 1—figure supplement 2</a>.</p>",
+   "supplement": true,
+   "src": "https://iiif.elifesciences.org/lax/105214%2Felife-105214-fig1-figsupp2-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig2",
+   "num": "2",
+   "label": "Figure 2",
+   "title": "Regional differences in uptake greatly impact DA dynamics.",
+   "caption": "<p>(<b>A</b>) Representative snapshots of steady state dynamics at 4 Hz tonic firing with parameters mirroring the dorsal (left) and ventral striatum (right). (<b>B</b>) Cross-section of temporal dynamics for data shown in a. The bottom row shows concentrations of the dashed lines in the top panels. (<b>C</b>) Normalised density of DA concentration of simulations in (<b>a</b>). Thick lines are for the entire space, and thin lines are across time for five randomly sampled locations. Dashed red line is for simulation of the ventral striatum with lowest reported innervation density in the literature. (<b>D</b>) Same data as in (<b>c</b>), but for concentration percentiles. Note that even the lowest percentiles of VS were above 10 nM in [DA]. (<b>E</b>) Convolved model response (Figure S1c) to mimic FSCV measurements mirroring the experimentally tested stimulation paradigm in <span class=\"cite\">May and Wightman, 1989</span> for the dorsal (left) and ventral striatum (right) (<b>F</b>) DA release during three burst activity scenarios for all release sites in a 10 x 10 × 10 µm cube (black boxes) and spill-over into the surrounding space. Burst simulated as an increase in firing rate on top of continued tonic firing of the surrounding space. Traces on top are average DA concentrations for the marked cubes, with bursts schematised by coloured lines below. The first image row is at the end of the burst, and the second row is another 100 ms after. Scale bars for traces are 200 ms and 500 nM. Scale bar for the images is 20 µm. (<b>G</b>) Top: representative [DA] trace 1 µm away from a release site during pacemaker and burst activity. Bottom: Occupancy of D1Rs and D2Rs for the same site. Occupancy data from the corresponding DS simulation on <a class=\"xref\" href=\"#fig1\">Figure 1k</a> shown as a dotted line. (<b>H</b>) Peak occupancy at different distances from the area bursting, normalised to maximal and minimum occupancy.</p><p>Figure 2—source code 1.Source code used to generate data in A-F.</p><p>Figure 2—source code 2.Source code used to generate data in G and H.</p>",
+   "supplement": false,
+   "src": "https://iiif.elifesciences.org/lax/105214%2Felife-105214-fig2-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig2s1",
+   "num": "2",
+   "label": "Figure 2—figure supplement 1",
+   "title": "Histochemical gradient of DAT and VMAT2 fluorescence.",
+   "caption": "<p>(<b>A</b>) Representative image of the mouse striatal slices analysed in B. Dashed white line indicates the quantified dorsoventral gradient (length 2 mm). (<b>B</b>) Relative intensity of the DAT and VMAT2 immunosignal in the dorsoventral axis of striatal mouse brain slices from <span class=\"cite\">Sørensen et al., 2021</span>. All slices show a drop at the anterior commissure (AC). Shaded areas around lines denote S.E.M. (<b>C</b>) Mean relative intensity of the DAT and VMAT2 signal before and after AC. Two-sided t-test, VS-DAT:VMAT2, p=0.012(*), n=4 mice; one-sided t-tests, DAT-DS:VS, p=0.0021(**), VMAT2-DS:VS, p=0.0086(**), n=4 mice. (<b>D</b>) Peak DA concentration reached at different distances from area with phasic activity for the three firing scenarios in VS. (<b>E</b>) Volume of space in VS exposed to greater than 100 nM after firing relative to volume of space where terminals actively burst. (<b>F</b>) Effect of complete pause in firing in VS for 1 s on both average [DA] and D1R and D2R occupation.</p>",
+   "supplement": true,
+   "src": "https://iiif.elifesciences.org/lax/105214%2Felife-105214-fig2-figsupp1-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig3",
+   "num": "3",
+   "label": "Figure 3",
+   "title": "Sensitivity of the model to parameter changes.",
+   "caption": "<p>(<b>A</b>) Schematic of the fraction of active release sites. Black dots are inactive sites, and green dots indicate actively releasing sites. (<b>B</b>) Effect of changing fraction of active release sites on DA concentrations. Blue line, DS peak DA concentration (99.5<sup>th</sup> percentile); Red line, VS peak DA concentration (99.5<sup>th</sup> percentile); Dotted blue line, DS tonic DA concentration (50<sup>th</sup> percentile); Dotted red line, VS tonic DA concentration (50<sup>th</sup> percentile). (<b>C</b>) Ratio between peak (99.5<sup>th</sup> percentile) and tonic (50<sup>th</sup> percentile) concentrations across fractions of active release sites in the DS (blue line) and VS (red line) as a measure of DA signal focality. (<b>D</b>) Schematic of changing quantal size (<b>Q</b>). (<b>E</b>) Effect of changing quantal size on tonic and peak DA concentrations in DS (blue lines) and VS (red lines). (<b>F</b>) Ratio between peak and tonic concentrations across various quantal sizes in in DS (blue line) and VS (red line). (<b>G</b>) Relative difference between the DS and VS for peak (black line) and tonic DA (dotted line) at different quantal sizes. (<b>H</b>) Schematic of changing DAT K<sub>m</sub>. (<b>i</b>) Effect of changing DAT K<sub>m</sub> on DA concentrations in DS (blue lines) and VS (red lines). (<b>J</b>) Schematic of changing DAT V<sub>max</sub>. (<b>K</b>) Effect of changing DAT V<sub>max</sub> on DA concentrations. Shaded areas are median V<sub>max</sub> of the two regions (DS and VS) as found in the literature shown in <a class=\"xref\" href=\"#app2table2\">Appendix 2—table 2</a> ± 50%. (<b>L</b>) Effect of changing DAT V<sub>max</sub>, with tonic (50<sup>th</sup> percentile) and peak (99.5<sup>th</sup> percentile) DA concentrations normalised to their value at 2 µm s<sup>–1</sup> (median value for VS). The shaded area indicates median V<sub>max</sub> for VS found in the literature shown in <a class=\"xref\" href=\"#app2table2\">Appendix 2—table 2</a> ± 50%.</p><p>Figure 3—source code 1.Source code used to generate data in B, C, E-G.</p><p>Figure 3—source code 2.Source code used to generate data in I.</p><p>Figure 3—source code 3.Source code used to generate data in K and L.</p>",
+   "supplement": false,
+   "src": "/figures/ejdrup-2026-dopamine/fig3.jpg"
+  },
+  {
+   "id": "fig3s1",
+   "num": "3",
+   "label": "Figure 3—figure supplement 1",
+   "title": "Model parameter testing.",
+   "caption": "<p>(<b>A</b>) Schematic of our definitions of tonic (50<sup>th</sup> percentile/median, dashed lines) and peak (99.5<sup>th</sup> percentile, solid line) DA for both the dorsal and ventral striatum. (<b>B</b>) Effect of changing release probability (R<sub>%</sub>) on DA concentrations. (<b>C</b>) Relative difference between the ventral and dorsal striatum at different percentiles for different release probabilities. (<b>D</b>) Ratio between 99.5<sup>th</sup> and 50<sup>th</sup> percentiles as a measure of focality for both regions. As R<sub>%</sub> increases, the concentrations become more homogeneous. (<b>E</b>) Effect of changing firing rate on DA concentrations. (<b>F</b>) Relative difference between the ventral and dorsal striatum at different percentiles for different firing rates. (<b>G</b>) Ratio between 99.5<sup>th</sup> and 50<sup>th</sup> percentiles for both regions. As the firing rate increases, the concentrations become more homogeneous.</p><p>Figure 3—figure supplement 1—source code 1.Source code used to generate data in <a class=\"xref\" href=\"#fig3s1\">Figure 3—figure supplement 1</a>.</p>",
+   "supplement": true,
+   "src": "https://iiif.elifesciences.org/lax/105214%2Felife-105214-fig3-figsupp1-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig3s2",
+   "num": "3",
+   "label": "Figure 3—figure supplement 2",
+   "title": "Fold change during inhibition, Vmax-sensitivity at different release parameters and release-uptake balance.",
+   "caption": "<p>(<b>A</b>) Fold change over baseline (K<sub>m</sub> of 210 nM) for mean DA concentration in the dorsal (DS) and ventral striatum (VS) with changing DAT K<sub>m</sub>. (<b>B</b>) Relative difference between the dorsal and ventral striatum for both phasic and tonic DA at different K<sub>m</sub> values. (<b>C</b>) Effect of changing DAT V<sub>max</sub> on DA concentrations for three different quantal sizes (<b>Q</b>). [DA] normalised to highest values within each Q. Shaded area indicates median V<sub>max</sub> for DS and VS as found in the literature shown in <a class=\"xref\" href=\"#app2table2\">Appendix 2—table 2</a> with ±50%. (<b>D</b>) Effect of changing DAT V<sub>max</sub> on DA concentrations for three different release probabilities (R<sub>%</sub>). [DA] normalised to highest values within each R<sub>%</sub>. Shaded area indicates median V<sub>max</sub> for DS and VS as found in the literature shown in <a class=\"xref\" href=\"#app2table2\">Appendix 2—table 2</a> with ±50%. (<b>E</b>) Least-square fit linear regression between release rate and autocorrelation decay rate (τ) (<span class=\"cite\">Ejdrup et al., 2023</span>). Shaded area highlights 95% C.I. (<b>F</b>) Partial regression plot error of the regression in (<b>f</b>) and error between DA response to amphetamine as measured by microdialysis and the release rate from <span class=\"cite\">Ejdrup et al., 2023</span> to show that the less release and uptake correlate, the less release rate can explain the microdialysis response, suggesting release and uptake are partially independent of each other. Shaded area highlights 95% C.I.</p><p>Figure 3—figure supplement 2—source code 1.Source code used to generate data in <a class=\"xref\" href=\"#fig3s2\">Figure 3—figure supplement 2A-D</a>.</p>",
+   "supplement": true,
+   "src": "https://iiif.elifesciences.org/lax/105214%2Felife-105214-fig3-figsupp2-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig4",
+   "num": "4",
+   "label": "Figure 4",
+   "title": "DAT nanoclustering reduces uptake and shows regional variation.",
+   "caption": "<p>(<b>A</b>) Schematic of dense DA cluster. White dots represent individual DAT molecules, and colour gradient the surrounding DA concentration. (<b>B</b>) Effective transport rate dependent on local concentration. (<b>C</b>) Top view of unfolded DA varicosity. Black shapes denote clusters of DAT. A dashed white line indicates placement of cross-section shown in (<b>d</b>). (<b>D</b>) Cross-section showing DA concentration in space surrounding varicosity unfolded in c. The grey line at the bottom is the surface of the varicosity. Colour-coded for DA concentration. (<b>E</b>) Top view from (<b>c</b>), but colour coded for DA concentration immediately above membrane surface at different DAT cluster sizes. (<b>F</b>) Changes in [DA] from 15 nM unclustered (Un.) steady state with constant release after changing to four different cluster size scenarios (ø=diameter). (<b>G</b>) Clearance of 100 nM [DA] for different DAT cluster sizes. (<b>H</b>) Difference between DA concentration at the centre of clusters (or general surface of varicosity for unclustered) and mean concentration of the full simulation space (<b>I</b>) Concentrations across a cross section of a surface with 80 nm diameter clusters. Shaded areas highlight cluster locations. (<b>J</b>) Location of images of the dorsal (DS) and ventral striatum (VS) in striatal slices from mice as imaged in <span class=\"cite\">Sørensen et al., 2021</span> with direct stochastic optical reconstruction microscopy (dSTORM). (<b>K</b>) Two representative DA varicosities from DS and VS with VMAT2 in white and DAT in magenta. Images are 1.5x2 µm (scale bar 0.5 µm). (<b>L</b>) Individual DAT localisations (locs.) from images in (<b>k</b>) coloured by clustering. Black indicates localisation identified as clustered based on DBSCAN with parameters 80 nm diameter and 40 localisations. Grey indicates unclustered localisations. (<b>M</b>) Quantification of clustering across all images in (<b>j</b>) with parameters in (<b>l</b>). Welch’s two-sample t-test, p=0.012(*), n=12 (DS) and 13 (VS). (<b>N</b>) Absolute difference in percentage of clustering as assessed with DBSCAN across a range of parameters. VS has a higher propensity to cluster across cluster sizes typically reported for DAT clusters.</p><p>Figure 4—source code 1.Source code for simulation.</p><p>Figure 4—source code 2.Source code used to generate data in A-E and G-I.</p><p>Figure 4—source code 3.Source code used to generate data in F.</p>",
+   "supplement": false,
+   "src": "/figures/ejdrup-2026-dopamine/fig4.jpg"
+  }
+ ],
+ "tables": [
+  {
+   "id": "table1",
+   "label": "Table 1",
+   "title": "List of variables used in the simulation of the dorsal striatum.",
+   "caption": "",
+   "rows": [
+    [
+     {
+      "tag": "th",
+      "html": "Variable",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Abbreviation",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Value",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Reference",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Firing rate",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "4 Hz",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<span class=\"cite\">Paladini et al., 2003</span>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Release probability",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "6%",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<span class=\"cite\">Dreyer et al., 2010</span>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "DA molecules per vesicle",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "3000",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<span class=\"cite\">Klaus et al., 2019</span>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Diffusion coefficient",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "763 µm<sup>2</sup> s<sup>-1</sup>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<span class=\"cite\">Nicholson, 1995</span>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Tortuosity",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "1.54",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<span class=\"cite\">Rice and Nicholson, 1991</span>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Vmax",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "6.0 µm s<sup>-1</sup>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "See <a class=\"xref\" href=\"#app2table2\">Appendix 2—table 2</a>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Km",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "210 nM",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<span class=\"cite\">Hovde et al., 2019</span>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Active terminal density",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "-",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.04 µm<sup>-3</sup>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<span class=\"cite\">Liu et al., 2021</span>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Extracellular volume fraction",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.21",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<span class=\"cite\">Rice and Nicholson, 1991</span>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Number of neurons in simulation space",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "-",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "150",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<span class=\"cite\">Matsuda et al., 2009</span>",
+      "colspan": null
+     }
+    ]
+   ]
+  },
+  {
+   "id": "keyresource",
+   "label": "Key resources table",
+   "title": "",
+   "caption": "",
+   "rows": [
+    [
+     {
+      "tag": "th",
+      "html": "Reagent type (species) or resource",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Designation",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Source or reference",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Identifiers",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Additional information",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Software, algorithm",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Python",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "https://www.python.org",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "v3.9.7",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Software, algorithm",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Spyder IDE",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "https://www.spyder-ide.org",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "v5.1.5",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Software, algorithm",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Model code",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "https://github.com/GetherLab/striatal-dopamine-modelling",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Developed for this work",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Strain, strain background (<i>Mus musculus</i>)",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "C57Bl/6 J",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Details provided in <span class=\"cite\">Sørensen et al., 2021</span>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Data used are from <span class=\"cite\">Sørensen et al., 2021</span>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Antibody",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "anti-DAT Nt (rat monoclonal)",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Sigma-Aldrich",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "MAB369RRID:AB_2190413",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "IF (1:200)<span class=\"cite\">Sørensen et al., 2021</span>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Antibody",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Anti-VMAT2(rabbit polyclonal)",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Kind gift from Dr Gary W. Miller, Columbia University <span class=\"cite\">Sørensen et al., 2021</span>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "IF (1:4000)<span class=\"cite\">Sørensen et al., 2021</span>",
+      "colspan": null
+     }
+    ]
+   ]
+  }
+ ]
+}

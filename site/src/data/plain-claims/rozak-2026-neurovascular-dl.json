@@ -1,0 +1,151 @@
+{
+ "paper": "rozak-2026-neurovascular-dl",
+ "model": "claude-opus-5 via --dump-prompt",
+ "prompt": "extract/prompts/plain-claim.md",
+ "claims": [
+  {
+   "slug": "alt-point-measurement-estimates-vessel-volume",
+   "role": "hypothesis",
+   "panel": "",
+   "plain": "Measuring a capillary's width at one point is enough to track how its volume changes, so full 3D segmentation is unnecessary."
+  },
+  {
+   "slug": "artery-dilates-venule-unchanged-at-low-power",
+   "role": "empirical",
+   "panel": "fig7A",
+   "plain": "Under weak blue-light stimulation an artery and a capillary dilated while a venule did not change."
+  },
+  {
+   "slug": "baseline-intra-vessel-radius-varies-24pct",
+   "role": "empirical",
+   "panel": "fig7",
+   "plain": "A capillary's radius varies substantially along its own length even at rest, so a single-point width cannot stand for its volume."
+  },
+  {
+   "slug": "blue-light-dilations-exceed-green-control",
+   "role": "control",
+   "panel": "fig8A",
+   "plain": "Capillary dilations after blue light that activates ChR2 are larger than those after green control light."
+  },
+  {
+   "slug": "capillary-efficiency-increases-4pct",
+   "role": "empirical",
+   "panel": "fig9C",
+   "plain": "Blood-flow efficiency across the capillary network rises slightly at the peak of optogenetic stimulation."
+  },
+  {
+   "slug": "constrictions-deeper-than-dilations",
+   "role": "empirical",
+   "panel": "fig8E",
+   "plain": "Capillaries that constrict after stimulation sit deeper in cortex than those that dilate, which cluster nearer the surface."
+  },
+  {
+   "slug": "dilations-nearer-neurons-than-constrictions",
+   "role": "empirical",
+   "panel": "fig8D",
+   "plain": "Capillaries that dilate after ChR2 activation lie closer to labelled pyramidal neurons than ones that constrict, with no such split under control light."
+  },
+  {
+   "slug": "dl-model-scope-single-pipeline",
+   "role": "scope",
+   "panel": "fig1 (architecture)",
+   "plain": "Every neurovascular measurement comes from one deep-learning pipeline trained on a single mouse preparation and needing a GPU."
+  },
+  {
+   "slug": "hypothesis-dl-pipeline-enables-network-nvc",
+   "role": "hypothesis",
+   "panel": "hypothesis",
+   "plain": "A deep-learning segmentation and graph pipeline can measure neurovascular coupling automatically across hundreds of connected vessels at once."
+  },
+  {
+   "slug": "hypothesis-network-level-nvc-coordination",
+   "role": "hypothesis",
+   "panel": "hypothesis",
+   "plain": "Activating cortical neurons drives a coordinated network-wide vascular response that single-vessel measurements cannot reveal."
+  },
+  {
+   "slug": "network-assortativity-increases-stimulation",
+   "role": "empirical",
+   "panel": "fig9B",
+   "plain": "During strong optogenetic stimulation highly connected vessels respond together with other highly connected vessels more than at rest."
+  },
+  {
+   "slug": "novas3d-generalizes-qualitatively-ood",
+   "role": "empirical",
+   "panel": "app1fig12, app1fig13",
+   "plain": "The NOVAS3D segmentation model gives plausible vessel outlines on another mouse strain, on rat, and on light-sheet images, without retraining."
+  },
+  {
+   "slug": "novas3d-outperforms-ilastik",
+   "role": "control",
+   "panel": "fig3, fig4",
+   "plain": "NOVAS3D segments vessels in three dimensions more accurately than the ilastik classifier on the deposited two-photon test images."
+  },
+  {
+   "slug": "novas3d-single-preparation-scope",
+   "role": "scope",
+   "panel": "fig1 (architecture); methods section",
+   "plain": "NOVAS3D's accuracy is measured only in Thy1-ChR2-YFP mice under one imaging protocol, and in no other strain, species or modality."
+  },
+  {
+   "slug": "prediction-pipeline-outperforms-baselines",
+   "role": "prediction",
+   "panel": "prediction",
+   "plain": "The pipeline should beat ilastik at segmentation, find more vessel segments than any single time point, and recover simulated radii accurately."
+  },
+  {
+   "slug": "prediction-pipeline-reveals-network-coordination",
+   "role": "prediction",
+   "panel": "prediction",
+   "plain": "Blue-light stimulation should separate dilations from constrictions by distance from neurons and shift network-wide flow measures, unlike control light."
+  },
+  {
+   "slug": "radius-estimation-r2-0p68",
+   "role": "methodological",
+   "panel": "fig5",
+   "plain": "The pipeline's radius estimator recovers simulated vessel radii well and stays stable as image noise rises."
+  },
+  {
+   "slug": "registration-doubles-vessel-count",
+   "role": "methodological",
+   "panel": "",
+   "plain": "Aligning the volumes across time points and merging their masks nearly doubles the number of vessel segments found per field of view."
+  },
+  {
+   "slug": "responder-threshold-2sd-untested",
+   "role": "scope",
+   "panel": "app1fig14",
+   "plain": "A vessel counts as responding if its radius change exceeds twice its baseline variability, a threshold varied only in an appendix."
+  },
+  {
+   "slug": "scope-pipeline-and-application-paper",
+   "role": "scope",
+   "panel": "scope",
+   "plain": "The pipeline is benchmarked and applied in one anaesthetised mouse preparation, with generalisation to others shown only by eye."
+  },
+  {
+   "slug": "synthesis-individual-vessel-measurements-insufficient",
+   "role": "synthesis",
+   "panel": "synthesis (Discussion)",
+   "plain": "Measuring vessels one at a time cannot predict how blood flow is redistributed across the cortical microvascular network."
+  },
+  {
+   "slug": "unetr-outperforms-ilastik-hd95",
+   "role": "control",
+   "panel": "fig3",
+   "plain": "The UNETR ensemble traces vessel and neuron surfaces more accurately than ilastik, which over-segments vessels."
+  },
+  {
+   "slug": "vessel-radius-heterogeneity-stimulation",
+   "role": "empirical",
+   "panel": "fig6",
+   "plain": "Vessel radius changes during stimulation vary widely, and dilating vessels lie closer to active neurons than constricting ones."
+  },
+  {
+   "slug": "wt-controls-no-blue-green-difference",
+   "role": "control",
+   "panel": "app1fig9",
+   "plain": "In wild-type mice without ChR2, blue and green light produce no difference in capillary radius."
+  }
+ ]
+}
