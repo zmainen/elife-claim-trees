@@ -101,8 +101,14 @@ def test_declaration_reads_what_the_prompt_composes():
     """A prompt file sent but not declared is an input the ledger never hashes."""
     decl = _declaration()
     for role, layer in LAYER_OF.items():
-        assert decl[layer].get("reads") == prompts.declared_reads(role), \
-            f"{layer}: reads {decl[layer].get('reads')} but the runner sends {prompts.declared_reads(role)}"
+        # layers.yaml may also declare non-prompt reads (e.g. scripts/adjudicate.py); the
+        # test only verifies that the prompt files the runner composes are all declared.
+        declared_prompt_reads = [
+            r for r in (decl[layer].get("reads") or [])
+            if r.startswith("extract/prompts/")
+        ]
+        assert declared_prompt_reads == prompts.declared_reads(role), \
+            f"{layer}: reads {declared_prompt_reads} but the runner sends {prompts.declared_reads(role)}"
 
 
 def test_prompt_is_task_then_contract():

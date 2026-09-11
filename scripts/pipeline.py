@@ -20,6 +20,7 @@ appends to one ledger in one shape, so staleness and propagation are computed on
     python3 scripts/pipeline.py state            the paper x layer matrix
     python3 scripts/pipeline.py state --json     the same, for the site
     python3 scripts/pipeline.py run   <paper> <layer>   run it, and its unmet dependencies
+    python3 scripts/pipeline.py run   <paper> <layer> --answer FILE   record an answer made elsewhere
     python3 scripts/pipeline.py approve <paper> <layer> --by NAME   record that someone read it
 
 Usage as a library: `load()`, `state()`.
@@ -32,6 +33,8 @@ import glob
 import hashlib
 import json
 import os
+import shlex
+import shutil
 import subprocess
 import sys
 from collections import OrderedDict
@@ -556,6 +559,24 @@ def cmd_run(args) -> int:
             continue
 
         cmd = cmd.replace("{paper}", args.paper).replace("{doi}", doi or "")
+        # An answer made somewhere other than the configured backend — a subagent, a person —
+        # goes through the same runner and the same validation, so the ledger records it the
+        # same way. Before this the answered path could only be taken by calling the CLI by
+        # hand, which recorded nothing, and the first end-to-end run of the chain had to live
+        # in experiments/ because the ledger could not hold it.
+        answered = args.answer if lid == args.layer and args.answer else None
+        if answered:
+            # The raw reply is kept beside the output, before validation and under the
+            # version it will get: a verdict whose prompt and output are not both recorded
+            # cannot be disputed, and the prompt is already hashed through `reads`. The CLI
+            # is handed the kept copy, so the output's `model` field names a path in the
+            # repository rather than wherever the reply happened to be written.
+            prev = _latest(read_ledger(args.paper), lid)
+            kept = os.path.join("runs", args.paper,
+                                f"{lid}.answer.v{(prev['v'] + 1) if prev else 1}.json")
+            os.makedirs(os.path.dirname(os.path.join(ROOT, kept)), exist_ok=True)
+            shutil.copyfile(answered, os.path.join(ROOT, kept))
+            cmd += f" --answer {shlex.quote(kept)}"
         print(f"  {lid}: {cmd}")
         if args.dry_run:
             continue
@@ -569,6 +590,12 @@ def cmd_run(args) -> int:
         # The command is the record. Deriving `by` from its first token gave "cd" for every
         # layer whose command starts by changing directory.
         rec["cmd"] = cmd
+        if answered:
+            rec["answer"] = {"path": kept, "sha": digest(kept)}
+            # The output can only say the answer was supplied; who supplied it is known to
+            # whoever ran this, and is the fact the ledger exists to keep.
+            if args.by:
+                rec["by"] = args.by
         append(args.paper, rec)
         ran += 1
 
@@ -644,6 +671,10 @@ def main() -> int:
     r.add_argument("--no-deps", action="store_true", help="run only the named layer")
     r.add_argument("--dry-run", action="store_true", help="print the commands, run nothing")
     r.add_argument("--note", help="the changelog line for the ledger entry")
+    r.add_argument("--answer", metavar="FILE",
+                   help="record this file as the named layer's answer instead of calling a "
+                        "backend; the raw reply is kept beside the output as a version")
+    r.add_argument("--by", help="with --answer: who answered, e.g. the model of the subagent")
     r.set_defaults(fn=cmd_run)
     a = sub.add_parser("approve", help="record that a person approved one version of a layer")
     a.add_argument("paper")
