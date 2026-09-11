@@ -1,14 +1,18 @@
 ---
-// Review — the v5 layer.
+// Review — the v6 layer.
 //
 // Every claim, relation and verdict here was produced by a language model and checked by
 // nobody. The site has said so since the Agents page went up; this is the first surface where
 // a person can do something about it.
 //
-// What the page is for: reading the evidence and forming a judgement. It does not record one —
-// GitHub Pages is static, and a decision that lived only in a browser would be lost. Decisions
-// go back into `review/<topic>.json`, which is also what this page renders, so the queue and
-// the page cannot disagree.
+// Grouped by proposed type rather than by paper. Reviewing means judging like against like:
+// thirteen atlas entries that look identical can be settled in one pass, while the five items
+// that carry real argumentative weight deserve reading one at a time. Sorting by paper buries
+// those five among forty that do not need the same attention.
+//
+// The page renders review/<topic>.json, which is also where decisions are recorded, so the
+// queue and the page cannot disagree. It cannot take a decision itself — GitHub Pages is
+// static, and a judgement that lived only in a browser would be lost.
 import Layout from '../layouts/Layout.astro';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -29,22 +33,34 @@ const nameOf = (slug: string) => {
       ?? want.replace(/^./, (c: string) => c.toUpperCase());
 };
 
-const pending = items.filter(i => i.decision === 'pending');
-const decided = items.length - pending.length;
+const pendingN = items.filter(i => i.decision === 'pending').length;
+const reciprocalN = items.filter(i => i.reciprocal).length;
+// Reciprocity as a share of declared edges, not of collapsed pairs. A mutual pair is two
+// edges, so 20 of 45 pairs is 40 of 65 edges — and the 1% figure it is compared against was
+// computed over edges. Quoting 44% beside 1% would compare two different denominators, which
+// is the error this whole layer exists to catch.
+const edgeN = items.length + reciprocalN;
+const reciprocalPct = Math.round(100 * (2 * reciprocalN) / edgeN);
+const alsoSupportsN = items.filter(i => i.also_carries.length > 0).length;
 
-// Group by paper, exemplar first — it is the one anyone is most likely to read.
-const EXEMPLAR = 'gadeke-2026-guilt-insula';
-const papers = [...new Set(items.map(i => i.paper))]
-  .sort((a, b) => (a === EXEMPLAR ? -1 : b === EXEMPLAR ? 1 : a.localeCompare(b)));
+// Most argumentative first. An unproposed item sorts last rather than into an arbitrary group.
+const ORDER = ['tension', 'selective', 'property', 'parallel'];
+const groups = ORDER
+  .map(t => ({ type: t, rows: items.filter(i => i.proposed === t) }))
+  .filter(g => g.rows.length > 0);
+const unsorted = items.filter(i => !ORDER.includes(i.proposed));
 
-// Full class strings, not interpolated fragments: Tailwind scans source text, so
-// `text-${colour}-700` generates nothing and the dark variant silently never appears.
-const TYPE_CLASS: Record<string, string> = {
-  tension:   'text-rose-700 dark:text-rose-400',
-  selective: 'text-teal-700 dark:text-teal-400',
-  property:  'text-indigo-700 dark:text-indigo-400',
-  parallel:  'text-gray-600 dark:text-gray-400',
+const STYLE: Record<string, { text: string; rule: string; dot: string }> = {
+  tension:   { text: 'text-rose-700 dark:text-rose-400',     rule: 'border-rose-500/60',   dot: 'bg-rose-500' },
+  selective: { text: 'text-teal-700 dark:text-teal-400',     rule: 'border-teal-500/60',   dot: 'bg-teal-500' },
+  property:  { text: 'text-indigo-700 dark:text-indigo-400', rule: 'border-indigo-500/60', dot: 'bg-indigo-500' },
+  parallel:  { text: 'text-gray-600 dark:text-gray-400',     rule: 'border-gray-400/50',   dot: 'bg-gray-400' },
 };
+const LABEL: Record<string, string> = {
+  tension: 'Interpretive tension', selective: 'Selective effect',
+  property: 'Property separation', parallel: 'Parallel facts',
+};
+
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
@@ -55,153 +71,196 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 m-0 mb-2">Layer v6</p>
       <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">Review</h1>
       <p class="text-gray-600 dark:text-gray-400 m-0 max-w-2xl leading-relaxed">
-        Claims and relations where an automated check found something a person should rule on.
-        Each item carries the evidence, an agent&rsquo;s proposed reading, and the decision it
-        is waiting for.
+        Claims and relations an automated check found but cannot settle. Each carries its
+        evidence, an agent&rsquo;s proposed reading, and the decision it is waiting for.
       </p>
     </header>
 
+    <!-- Evidence -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{items.length}</div>
-        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">items in the queue</div>
+        <div class="text-2xl font-semibold text-amber-700 dark:text-amber-400">{pendingN}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">of {items.length} awaiting a decision</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-        <div class="text-2xl font-semibold text-amber-700 dark:text-amber-400">{pending.length}</div>
-        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">awaiting a human decision</div>
+        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{reciprocalPct}%</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">of {edgeN} declared edges are one half of a mutual pair, against 1% of supporting relations</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{decided}</div>
-        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">decided</div>
+        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{alsoSupportsN}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">also carry a <em>supporting</em> relation to the same claim</div>
       </div>
       <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
         <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">42%</div>
-        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">accuracy of the best structural heuristic — why this is not automated</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">best structural heuristic — why this is not automated</div>
       </div>
     </div>
 
     <!-- The question -->
-    <section class="border border-gray-200 dark:border-gray-700 rounded-xl p-5 mb-10">
-      <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 m-0 mb-2">
-        {topic.question}
-      </h2>
-      <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0 mb-4">{topic.why}</p>
-      <div class="grid sm:grid-cols-2 gap-3">
-        {Object.entries(topic.types).map(([k, d]: any) => (
-          <div class="text-sm">
-            <code class={`${TYPE_CLASS[k] ?? ''} font-semibold`}>{k}</code>
-            <span class="text-gray-600 dark:text-gray-400"> — {d}</span>
-            <div class="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
-              if chosen: {topic.actions[k]}
-            </div>
-          </div>
-        ))}
-      </div>
+    <section class="border border-gray-200 dark:border-gray-700 rounded-xl p-5 mb-6">
+      <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 m-0 mb-2">{topic.question}</h2>
+      <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0">{topic.why}</p>
     </section>
 
-    <div class="rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/60 dark:bg-amber-950/20 p-5 mb-10">
-      <p class="text-sm text-gray-800 dark:text-gray-200 m-0 leading-relaxed">
+    <div class="rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/60 dark:bg-amber-950/20 p-5 mb-6">
+      <p class="text-sm text-gray-800 dark:text-gray-200 m-0 mb-3 leading-relaxed">
         <strong>Why a person and not a script.</strong> A heuristic using every structural
-        signal available &mdash; whether the relation is declared in both directions, whether a
-        supporting relation runs alongside it, shared neighbours, claim roles, whether either
-        claim reports a null &mdash; reproduces an agent&rsquo;s reading of these 45 items
-        <strong>42% of the time</strong>, against 25% for guessing among four types. The
-        distinction is not in the shape of the graph. It is in what the claims say.
+        signal available &mdash; direction, co-occurring relations, shared neighbours, claim
+        roles, whether either claim reports a null &mdash; reproduces an agent&rsquo;s reading
+        of these items <strong>42% of the time</strong>, against 25% for guessing among four
+        types. The distinction is not in the shape of the graph. It is in what the claims say.
+      </p>
+      <p class="text-sm text-gray-800 dark:text-gray-200 m-0 leading-relaxed">
+        <strong>What the direction already tells you.</strong> An opposition is directed: A
+        refutes B, and the reverse is a different statement. A dissociation is symmetric &mdash;
+        “A and B come apart” reads the same from either end. Supporting relations here are
+        reciprocal 1% of the time; this one is reciprocal {reciprocalPct}%
+        of the time, and <strong>every interpretive-tension item is directed</strong>.
       </p>
     </div>
 
-    <!-- Queue -->
-    {papers.map(paper => {
-      const rows = items.filter(i => i.paper === paper);
-      return (
-        <section class="mb-10">
-          <div class="flex flex-wrap items-baseline gap-3 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 m-0">{nameOf(paper)}</h2>
-            {paper === EXEMPLAR && (
-              <span class="text-[10px] font-mono uppercase tracking-wider text-amber-700 dark:text-amber-400">worked example</span>
-            )}
-            <span class="text-xs font-mono text-gray-500 dark:text-gray-400 ml-auto">
-              {rows.filter(r => r.decision === 'pending').length} of {rows.length} pending
-            </span>
-          </div>
+    <!-- Proposal -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-10 mb-3">What each answer would do</h2>
+    <div class="overflow-x-auto mb-10">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="text-left text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+            <th class="py-2 pr-4 font-semibold">Reading</th>
+            <th class="py-2 pr-4 font-semibold">Items</th>
+            <th class="py-2 pr-4 font-semibold">Means</th>
+            <th class="py-2 font-semibold">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ORDER.filter(t => topic.types[t]).map(t => (
+            <tr class="border-b border-gray-100 dark:border-gray-800 align-top">
+              <td class="py-2 pr-4 whitespace-nowrap"><code class={`${STYLE[t].text} font-semibold`}>{t}</code></td>
+              <td class="py-2 pr-4 font-mono text-xs text-gray-500 dark:text-gray-400">
+                {items.filter(i => i.proposed === t).length}
+              </td>
+              <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{topic.types[t]}</td>
+              <td class="py-2 text-gray-700 dark:text-gray-300">{topic.actions[t]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
 
-          <div class="space-y-4">
-            {rows.map(i => (
-              <article class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <div class="flex flex-wrap items-center gap-2 mb-3">
-                  <span class={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded ${
-                    i.decision === 'pending'
-                      ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300'
-                      : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300'}`}>
-                    {i.decision}
+    <!-- The queue, grouped by proposed reading -->
+    {groups.map(g => (
+      <section class="mb-12">
+        <div class={`flex flex-wrap items-baseline gap-x-3 gap-y-1 pb-2 mb-4 border-b-2 ${STYLE[g.type].rule}`}>
+          <h2 class={`text-lg font-semibold m-0 ${STYLE[g.type].text}`}>{LABEL[g.type]}</h2>
+          <span class="text-xs font-mono text-gray-500 dark:text-gray-400">
+            {g.rows.length} items · {g.rows.filter(r => r.reciprocal).length} reciprocal ·
+            {' '}{g.rows.filter(r => r.decision === 'pending').length} pending
+          </span>
+          <span class="text-xs text-gray-500 dark:text-gray-400 ml-auto">
+            proposed: {topic.actions[g.type]}
+          </span>
+        </div>
+
+        <p class="text-sm text-gray-600 dark:text-gray-400 max-w-3xl mb-5 leading-relaxed">
+          {topic.types[g.type]}
+        </p>
+
+        <div class="space-y-3">
+          {g.rows.map(i => (
+            <article class={`border border-gray-200 dark:border-gray-700 border-l-2 ${STYLE[g.type].rule} rounded-r-lg p-4`}>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3">
+                <a href={`${base}/papers/${i.paper}/`}
+                   class="font-mono text-[11px] text-gray-500 dark:text-gray-400 hover:text-amber-700 dark:hover:text-amber-400 no-underline">
+                  {nameOf(i.paper)}
+                </a>
+                <span class="font-mono text-sm text-gray-400 dark:text-gray-500"
+                      title={i.reciprocal ? 'declared in both directions' : 'one direction only'}>
+                  {i.reciprocal ? '↔' : '→'}
+                </span>
+                {i.also_carries.length > 0 && (
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                    also +{i.also_carries.join(', +')}
                   </span>
-                  {i.proposed && (
-                    <span class="text-[10px] font-mono uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      proposed: {i.proposed}
-                    </span>
-                  )}
-                  <span class="text-xs font-mono text-gray-400 dark:text-gray-500">
-                    {i.reciprocal ? '↔ both directions' : '→ one direction'}
-                  </span>
-                  {i.also_carries.length > 0 && (
-                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                      also +{i.also_carries.join(', +')}
-                    </span>
-                  )}
-                  {(i.a_reports_null || i.b_reports_null) && (
-                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                      a null result
-                    </span>
-                  )}
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-4">
-                  {[['a', i.a, i.a_text, i.a_role], ['b', i.b, i.b_text, i.b_role]].map(
-                    ([, slug, text, role]: any) => (
-                    <div>
-                      <a href={`${base}/papers/${paper}/?claim=${slug}`}
-                         class="block font-mono text-[11px] text-amber-700 dark:text-amber-400 hover:underline no-underline mb-1 break-words">
-                        {slug}
-                      </a>
-                      <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0">{text}</p>
-                      <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mt-1 mb-0">{role}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {i.note && (
-                  <p class="text-xs text-gray-600 dark:text-gray-400 mt-3 mb-0 border-t border-gray-100 dark:border-gray-800 pt-2">
-                    {i.note}
-                  </p>
                 )}
-              </article>
-            ))}
-          </div>
-        </section>
-      );
-    })}
+                {(i.a_reports_null || i.b_reports_null) && (
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                    a null result
+                  </span>
+                )}
+                <span class={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded ml-auto ${
+                  i.decision === 'pending'
+                    ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300'
+                    : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300'}`}>
+                  {i.decision === 'pending' ? 'pending' : `decided: ${i.decision}`}
+                </span>
+              </div>
 
-    <!-- How a decision is made -->
+              <div class="grid md:grid-cols-2 gap-x-6 gap-y-3">
+                {[[i.a, i.a_text, i.a_role], [i.b, i.b_text, i.b_role]].map(([slug, text, role]: any) => (
+                  <div>
+                    <a href={`${base}/papers/${i.paper}/?claim=${slug}`}
+                       class="block font-mono text-[11px] text-amber-700 dark:text-amber-400 hover:underline no-underline mb-1 break-words">
+                      {slug}
+                    </a>
+                    <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0">{text}</p>
+                    <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mt-1 mb-0">{role}</p>
+                  </div>
+                ))}
+              </div>
+
+              {i.note && (
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-3 mb-0 pt-2 border-t border-gray-100 dark:border-gray-800">
+                  {i.note}
+                </p>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    {unsorted.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 pb-2 border-b-2 border-gray-300 dark:border-gray-600">
+          No proposed reading <span class="text-xs font-mono text-gray-500 dark:text-gray-400">{unsorted.length} items</span>
+        </h2>
+        <div class="space-y-3">
+          {unsorted.map(i => (
+            <article class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <p class="font-mono text-[11px] text-gray-500 dark:text-gray-400 m-0 mb-2">{nameOf(i.paper)}</p>
+              <div class="grid md:grid-cols-2 gap-x-6 gap-y-3">
+                <div><code class="text-[11px] text-amber-700 dark:text-amber-400">{i.a}</code>
+                  <p class="text-sm text-gray-700 dark:text-gray-300 m-0 mt-1">{i.a_text}</p></div>
+                <div><code class="text-[11px] text-amber-700 dark:text-amber-400">{i.b}</code>
+                  <p class="text-sm text-gray-700 dark:text-gray-300 m-0 mt-1">{i.b_text}</p></div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Recording -->
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-12 mb-3">Recording a decision</h2>
     <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
       <p>
-        This page is static, so it cannot take the decision. It renders
-        <code>review/dissociates-with.json</code>, which is where decisions live &mdash; the
-        same file, so the queue and this page cannot disagree.
+        Every reading above is an agent&rsquo;s, unverified &mdash; the same standard as every
+        claim in this corpus. They are grouped so they can be disputed a group at a time where
+        the items are alike, and one at a time where they are not.
       </p>
-      <pre class="bg-gray-900 dark:bg-black text-gray-100 rounded-lg p-4 text-xs overflow-x-auto"><code>{`# set "decision" on an item: parallel | selective | property | tension
-# then check what it would do, before anything is written
-python3 scripts/apply_review.py dissociates-with --paper gadeke-2026-guilt-insula
-python3 scripts/apply_review.py dissociates-with --paper gadeke-2026-guilt-insula --write`}</code></pre>
+      <p>
+        This page is static and cannot take the decision. It renders
+        <code>review/{topic.topic}.json</code>, which is where decisions live &mdash; the same
+        file, so the queue and this page cannot disagree.
+      </p>
+      <pre class="bg-gray-900 dark:bg-black text-gray-100 rounded-lg p-4 text-xs overflow-x-auto"><code>{`# set "decision" on an item: ${ORDER.join(' | ')}
+python3 scripts/apply_review.py ${topic.topic} --paper gadeke-2026-guilt-insula
+python3 scripts/apply_review.py ${topic.topic} --paper gadeke-2026-guilt-insula --write`}</code></pre>
       <p>
         The applier refuses while any item is <code>pending</code>: a half-reviewed queue would
         leave the corpus in a state nobody chose. It removes both declared directions of a
         reciprocal pair, skips items already applied, and writes into each claim the review that
-        changed it.
-      </p>
-      <p>
-        <code>python3 scripts/review_queue.py</code> refreshes the queue from the corpus.
-        Decisions already recorded survive the refresh.
+        changed it. <code>scripts/review_queue.py</code> refreshes from the corpus without
+        discarding a decision already made.
       </p>
     </div>
 
