@@ -317,7 +317,37 @@ def assess_spans(paper: PreparedPaper, claims: list[dict],
 VERDICTS = ("covered", "gap", "not-an-assertion")
 
 
-def apply_mapping(rep: SpanCoverage, mapping: dict) -> SpanCoverage:
+def tree_fingerprint(claims: list[dict]) -> str:
+    """Which claims exist, as a fingerprint. Names only, not their wording.
+
+    A verdict already carries the fingerprint of the *sentence* it judged, so it is discarded
+    when the paper's text moves under it. It carried nothing about the other half of the
+    judgement. "No claim in this tree accounts for this span" is a statement about the tree,
+    and the tree is the half that changes: closing a gap means adding a claim, and the verdict
+    that recorded the gap then outlived its subject with nothing to say so.
+
+    Names rather than contents, deliberately. Adding or removing a claim is what can turn a
+    gap into coverage, and it moves this. Rewording an existing claim does not, because
+    invalidating 121 verdicts over a typo in one of them would make the check something to
+    switch off. The residual case — a rewording that newly covers a span — is what the
+    mechanical match is for.
+    """
+    import hashlib
+    slugs = sorted((c.get("slug") or "") for c in claims)
+    return hashlib.sha256("\n".join(slugs).encode("utf-8")).hexdigest()[:8]
+
+
+def claim_fingerprint(claim: dict) -> str:
+    """What one claim says. A `covered` verdict names a claim, so it is hostage to that
+    claim's wording as well as to its existence: reword it and the verdict may no longer be
+    true of it."""
+    import hashlib
+    text = re.sub(r"\s+", " ", (claim.get("claim") or "")).strip()
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:8]
+
+
+def apply_mapping(rep: SpanCoverage, mapping: dict,
+                  claims: list[dict] | None = None) -> SpanCoverage:
     """Fold adjudicated verdicts into a report.
 
     The mechanical match answers "does a claim restate this statistic or name
@@ -346,17 +376,32 @@ def apply_mapping(rep: SpanCoverage, mapping: dict) -> SpanCoverage:
     by_uid = {m["uid"]: m for m in rows if isinstance(m, dict) and m.get("uid")}
     still_orphan, covered_late, excluded = [], [], []
     stale = 0
+    tree = tree_fingerprint(claims) if claims is not None else None
+    by_slug = {c.get("slug"): c for c in (claims or [])}
     for u in rep.orphans:
         v = by_uid.get(u.uid)
-        # A verdict carries the fingerprint of the sentence it was made about. A span id is
-        # positional, so inserting one sentence earlier in a section shifts every id after
-        # it — and a verdict would then reattach to a different sentence with nothing to
-        # notice. Fail closed: a mismatched verdict is discarded and the span goes back to
-        # being unexamined, which is recoverable. Applying it would be a wrong judgement
-        # wearing the authority of a human decision.
+        # A verdict is checked against both halves of what it judged: the sentence, and the
+        # claim tree it was judged against. A span id is positional, so inserting one
+        # sentence earlier in a section shifts every id after it, and a verdict would then
+        # reattach to different text with nothing to notice. The tree moves for a different
+        # reason — somebody wrote the claim that closes the gap.
+        #
+        # Fail closed in either case: a verdict that can no longer be trusted is discarded
+        # and its span goes back to being unexamined, which is recoverable and visible.
+        # Applying it would be a wrong judgement wearing the authority of a settled one.
+        why = None
         if v and v.get("sha") and v["sha"] != u.sha:
-            logger.warning("stale verdict for %s: judged text no longer matches "
-                           "(verdict %s, current %s) — discarding", u.uid, v["sha"], u.sha)
+            why = f"the sentence it judged has changed ({v['sha']} → {u.sha})"
+        elif v and tree and v.get("verdict") == "gap" and v.get("tree") and v["tree"] != tree:
+            why = f"a claim has been added or removed since it was judged ({v['tree']} → {tree})"
+        elif v and by_slug and v.get("verdict") == "covered" and v.get("claim_sha"):
+            named = by_slug.get(v.get("claim"))
+            if named is None:
+                why = f"the claim it named, {v.get('claim')}, no longer exists"
+            elif claim_fingerprint(named) != v["claim_sha"]:
+                why = f"the claim it named, {v.get('claim')}, has been reworded"
+        if why:
+            logger.warning("stale verdict for %s: %s — discarding", u.uid, why)
             stale += 1
             v = None
         if not v:

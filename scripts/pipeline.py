@@ -137,6 +137,48 @@ def digest(rel: str) -> str | None:
     return h.hexdigest()[:12]
 
 
+GLOB_CHARS = "*?["
+
+
+def patterns_of(layer: dict, by_id: dict, paper: str | None, doi=None) -> list[str]:
+    """The same inputs as `inputs_of`, unexpanded — the patterns themselves."""
+    out = []
+    for dep in layer.get("needs") or []:
+        out += (by_id[dep].get("produces") or [])
+    out += (layer.get("reads") or [])
+    return [p.replace("{paper}", paper or "").replace("{doi}", doi or "") for p in out]
+
+
+def manifest(pat: str) -> str | None:
+    """Which files a pattern matches right now — their names, not their contents.
+
+    `digest` already hashes a *directory* as the sorted concatenation of its members, so that
+    adding a file to one moves it. Nothing recorded a directory: `expand` resolves
+    `claims/{paper}/*.md` into the files that existed at that moment, and staleness then
+    re-hashes exactly those paths. A file that appeared afterwards is on nobody's list, so
+    nothing looks at it.
+
+    Adding a claim file is precisely that edit, and it is how a gap gets closed — so the one
+    change the corpus most needs to notice was the one change it could not. This is the
+    missing half: contents per file in `in`, membership per pattern here.
+    """
+    if not any(ch in pat for ch in GLOB_CHARS):
+        return None
+    hits = sorted(glob.glob(os.path.join(ROOT, pat)))
+    names = [os.path.relpath(h, ROOT) for h in hits]
+    return hashlib.sha256("\n".join(names).encode("utf-8")).hexdigest()[:12]
+
+
+def input_sets(layer: dict, by_id: dict, paper: str | None, doi=None) -> list[dict]:
+    """Membership fingerprints for every input pattern of this layer that globs."""
+    out = []
+    for pat in patterns_of(layer, by_id, paper, doi):
+        sha = manifest(pat)
+        if sha:
+            out.append({"pat": pat, "sha": sha})
+    return out
+
+
 def inputs_of(layer: dict, by_id: dict, paper: str | None, doi=None) -> list[str]:
     """Every path a run of this layer reads: its dependencies' outputs, plus `reads`."""
     out = []
@@ -217,6 +259,7 @@ def record(paper: str, layer: dict, by_id: dict, *, note: str, by: str,
         "note": note,
         "by": by,
         "in": [{"path": r, "sha": digest(r)} for r in ins if digest(r)],
+        "in_sets": input_sets(layer, by_id, paper, doi),
         "out": [{"path": r, "sha": digest(r)} for r in outs if digest(r)],
     }
 
@@ -328,10 +371,14 @@ def state(decl: dict | None = None, slugs: list[str] | None = None) -> dict:
             else:
                 moved = [i["path"] for i in run.get("in", []) if digest(i["path"]) != i["sha"]]
                 lost = [o["path"] for o in run.get("out", []) if not digest(o["path"])]
-                st = STALE if (moved or lost) else CURRENT
+                # A pattern whose membership has changed: a file it matches appeared or was
+                # removed since the run. Entries recorded before `in_sets` existed carry
+                # none, and are left alone rather than guessed at.
+                appeared = [x["pat"] for x in run.get("in_sets", []) if manifest(x["pat"]) != x["sha"]]
+                st = STALE if (moved or lost or appeared) else CURRENT
                 cells[lid] = {"state": st, "v": run["v"], "ran": run.get("ran"),
                               "note": run.get("note"), "by": run.get("by"),
-                              "moved": moved, "lost": lost}
+                              "moved": moved, "lost": lost, "appeared": appeared}
             if lid not in cells:
                 cells[lid] = {"state": st}
             if st == CURRENT and upstream:
@@ -476,7 +523,7 @@ def cmd_state(args) -> int:
     stale = [(p, lid, c[lid]) for p, c in st.items() for lid in paper_layers
              if c[lid]["state"] == STALE]
     if stale:
-        print(f"\n{len(stale)} stale cell(s) — an input moved since the run:")
+        print(f"\n{len(stale)} stale cell(s) — an input moved, vanished or appeared since the run:")
         for p, lid, cell in stale:
             for path in (cell.get("moved") or [])[:3]:
                 print(f"  {p} · {lid}  ←  {path}")

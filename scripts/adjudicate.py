@@ -35,6 +35,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "extract"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from elife_extract.coverage import claim_fingerprint, tree_fingerprint  # noqa: E402
 from elife_extract.segment import span_sha  # noqa: E402
 from corpus_facts import frontmatter  # noqa: E402
 
@@ -51,9 +52,13 @@ ALIASES = {"no-assertion": "not-an-assertion", "not an assertion": "not-an-asser
 
 NOTE = ("Verdicts for spans the mechanical match could not resolve. covered = a claim does "
         "account for it; gap = a real hole; not-an-assertion = the span states no result of "
-        "its own. Each verdict carries `sha`, the fingerprint of the sentence it was made "
-        "about; a verdict whose fingerprint no longer matches is discarded by `coverage` "
-        "rather than reattached to text nobody judged.")
+        "its own. Every verdict carries `sha`, the fingerprint of the sentence it judged. A "
+        "`gap` also carries `tree`, the fingerprint of which claims existed when it was "
+        "judged, and a `covered` carries `claim_sha`, the wording of the claim it named — "
+        "because a gap is a statement about the tree, and closing one is exactly the edit "
+        "that used to leave the verdict standing over nothing. `coverage` discards a verdict "
+        "whose fingerprints no longer match rather than applying a judgement nobody made "
+        "about what is there now.")
 
 
 def orphans(paper: str) -> list[dict]:
@@ -114,7 +119,9 @@ def parse(raw: str) -> list[dict]:
 def validate(answer: list[dict], paper: str) -> tuple[list[dict], list[str]]:
     """Normalise and check. Returns the verdicts to write and what is wrong with them."""
     want = {s["uid"]: s for s in orphans(paper)}
-    slugs = {c["slug"] for c in claims(paper)}
+    tree_claims = claims(paper)
+    by_slug_claims = {c["slug"]: c for c in tree_claims}
+    slugs = set(by_slug_claims)
     problems, out, seen = [], [], set()
 
     for v in answer:
@@ -140,8 +147,17 @@ def validate(answer: list[dict], paper: str) -> tuple[list[dict], list[str]]:
         why = (v.get("why") or "").strip()
         if not why:
             problems.append(f"{uid}: no reason given, and the reason becomes the mark's body")
-        out.append({"uid": uid, "verdict": verdict, "claim": claim if verdict == "covered" else None,
-                    "why": why, "sha": span_sha(want[uid]["text"])})
+        rec = {"uid": uid, "verdict": verdict, "claim": claim if verdict == "covered" else None,
+               "why": why, "sha": span_sha(want[uid]["text"])}
+        # The second fingerprint, and which one depends on what the verdict rests on.
+        # `not-an-assertion` rests on the sentence alone — it says the span states no result,
+        # which no claim anywhere can make false — so it carries neither and never goes stale
+        # for a reason outside itself.
+        if verdict == "gap":
+            rec["tree"] = tree_fingerprint(tree_claims)
+        elif verdict == "covered" and claim in by_slug_claims:
+            rec["claim_sha"] = claim_fingerprint(by_slug_claims[claim])
+        out.append(rec)
 
     for uid in want:
         if uid not in seen:
