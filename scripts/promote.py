@@ -21,8 +21,19 @@ and throwing it away would leave only the drafts that happened to be good.
 
 What this deliberately does NOT do: invent relations. A drafted claim enters the tree
 unconnected, because `requires`, `supports` and the rest are assertions about logical structure
-that neither the drafting layer nor this script is in a position to make. `edge-inference` is
-the layer that answers that question, and adding the claim is exactly what makes it stale.
+that neither the drafting layer nor this script is in a position to make.
+
+An earlier version of this note said `edge-inference` would pick them up, and that is false.
+`edge-inference` needs only `reconcile`: it runs on the reconciled candidates, upstream of the
+claim files, and `claim-tree` then writes the edges it inferred. Nothing downstream of
+`claim-tree` decides a relation. So a promoted claim is not merely unconnected for now — no
+layer in the pipeline can ever connect it, and the graph gains a node that nothing points at
+and that points at nothing.
+
+That is a hole in the pipeline rather than in this script, and it is the reason a promoted
+claim should be treated as provisional until a layer exists that asks, of the claim set as it
+now stands, what each unconnected claim depends on and supports. Until then this prints what
+it is leaving undone rather than implying somebody else will do it.
 """
 
 from __future__ import annotations
@@ -108,7 +119,10 @@ def write_claim(d: dict, cand: dict) -> Path:
     paper = d["paper"]
     slug = (d.get("slug") or cand["slug"]).strip()
     claim = re.sub(r"\s+", " ", (d.get("claim") or cand["claim"])).strip()
-    role = cand.get("role") or "empirical"
+    # The reviewer's role wins over the drafter's. Changing what kind of claim this is was the
+    # first thing the first reviewer reached for and could not do; a surface that offers the
+    # change and a script that quietly discards it would be worse than not offering it.
+    role = (d.get("role") or cand.get("role") or "empirical").strip()
     panel = cand.get("panel") or "~"
     doi = ""
     index = ROOT / "claims" / paper / "index.md"
@@ -180,6 +194,8 @@ def main() -> int:
             cand = cands[d["uid"]]
             slug = d.get("slug") or cand["slug"]
             mark = "edited" if d.get("decision") == "edit" else "as drafted"
+            if d.get("role") and d["role"] != cand.get("role"):
+                mark += f" · retyped {cand.get('role')} → {d['role']}"
             print(f"  + {slug:52} {mark}")
             if args.write:
                 write_claim(d, cand)
@@ -204,6 +220,9 @@ def main() -> int:
     print("\nThe claim files are written and the approvals recorded. What follows from that:")
     print("  python3 scripts/pipeline.py state      # coverage and adjudication are now stale")
     print("  the gap verdicts these close no longer match the tree they were judged against")
+    print(f"\n  {total_new} claim(s) entered the graph with no relations, and no layer can give")
+    print("  them any: edge-inference runs on the reconciled candidates, upstream of the claim")
+    print("  files. Until a layer asks that question of the claim set, these are provisional.")
     return 0
 
 
