@@ -1,0 +1,124 @@
+---
+// What a layer produced, read from the file it produced, in the views the layer declares.
+//
+// The same block on a layer page (one paper, as the worked example) and on a cell page (this
+// paper's own run), because they are the same question at two altitudes and there is no reason
+// for two renderings of it to drift apart.
+//
+// Before this, `produces: runs/{paper}/results-reader.output.json` reached the page with its
+// placeholder unsubstituted and no link — the site named the file and could neither resolve it
+// nor open it — and `views: [list, table]` was two words beside it, implemented nowhere.
+//
+// A view is rendered because the declaration asks for it, not because the file would allow it.
+// So `prepare`, which declares `document`, shows the text the readers were given rather than a
+// table of the caption records that happen to sit in the same file; and a layer whose
+// declaration names a view nothing here draws says so on the same page, under Views.
+import { renderMd } from '../lib/markdown';
+import { output, size } from '../lib/layer-source';
+import { artifact } from '../lib/artifacts';
+import LayerRecords from './LayerRecords.astro';
+import type { LayerDecl } from '../lib/pipeline';
+
+interface Props {
+  layer: LayerDecl;
+  paper: string;
+  /** The layer's produced paths, already resolved for this paper. */
+  produces: string[];
+  heading?: string;
+  /** Text between the heading and the output. The layer page says which paper this is. */
+  note?: string;
+  limit?: number;
+}
+const { layer, paper, produces, heading = 'What it produced', note, limit } = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const views = layer.views ?? [];
+const { path, records, document, sections } = output(produces);
+const art = path ? artifact(path, base) : null;
+const bytes = path ? size(path) : null;
+
+const asRecords = records?.records.length && views.some(v => v === 'list' || v === 'table');
+const asDocument = views.includes('document');
+const html = asDocument && document ? await renderMd(document.text) : null;
+const prose = asDocument ? (sections ?? []) : [];
+
+// The scalars beside the records: which model answered, which paper, what it counted. Worth a
+// line, because "answered by deepseek/deepseek-chat" is the provenance of everything below it.
+//
+// Only the short ones. `prepare` keeps the whole abstract and the whole results section in
+// string fields of the same file, and `verification` keeps the tail of the run's stdout, so a
+// line meant to carry six labels carried thirty thousand characters of paper. The long fields
+// are the document view; this is the caption above it.
+const META_MAX = 120;
+const meta = Object.entries(records?.meta ?? {})
+  .filter(([k, v]) => v !== null && v !== '' && k !== 'paper' && k !== 'paper_slug'
+                      && !(typeof v === 'string' && v.length > META_MAX));
+const kb = (n: number) => n < 1024 ? `${n} B` : `${Math.round(n / 1024)} KB`;
+const chars = (n: number) => `${(n / 1000).toFixed(1)}k characters`;
+---
+
+{path && (
+  <section class="mb-10">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">
+      {heading}
+      {asRecords && <span class="font-mono text-sm text-gray-400 dark:text-gray-500 ml-2">
+        {`${records!.records.length} ${records!.key ?? 'records'}`}
+      </span>}
+    </h2>
+
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl leading-relaxed">
+      {note ? <>{note} </> : null}
+      Read from <a href={art!.href} target={art!.downloadable ? undefined : '_blank'}
+                   rel={art!.downloadable ? undefined : 'noopener'}
+                   class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{path}</a>
+      {bytes ? <span class="text-gray-400 dark:text-gray-600">{` · ${kb(bytes)}`}</span> : null}
+      {art!.downloadable ? null : <span class="text-gray-400 dark:text-gray-600"> · in the repository</span>}.
+      {meta.length > 0 && (
+        <span class="block mt-1 font-mono text-xs">
+          {meta.map(([k, v]) => <span class="mr-3"><span class="text-gray-400 dark:text-gray-600">{`${k} `}</span>{String(v)}</span>)}
+        </span>
+      )}
+    </p>
+
+    {asRecords && (
+      <LayerRecords data={records!} views={views} limit={limit} id={`${paper}-${layer.id}`} />
+    )}
+
+    {html && (
+      <details class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <summary class="cursor-pointer list-none px-4 py-2.5 text-sm text-amber-700 dark:text-amber-400 hover:bg-gray-50 dark:hover:bg-gray-800/40">
+          Read the document →
+        </summary>
+        <div class="px-4 pb-4 border-t border-gray-100 dark:border-gray-800 method-prose" set:html={html} />
+        {document!.truncated && (
+          <p class="px-4 pb-4 text-xs text-gray-500 dark:text-gray-400 m-0">
+            Truncated here. The file has the rest.
+          </p>
+        )}
+      </details>
+    )}
+
+    {prose.length > 0 && (
+      <div class="space-y-2">
+        {prose.map(s => (
+          <details class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <summary class="cursor-pointer list-none px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800/40">
+              <span class="font-mono text-xs text-gray-700 dark:text-gray-300">{s.key}</span>
+              <span class="text-xs text-gray-400 dark:text-gray-600">{` · ${chars(s.chars)}`}</span>
+            </summary>
+            <pre class="m-0 px-4 py-3 border-t border-gray-100 dark:border-gray-800 text-[13px] leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-sans max-h-[32rem] overflow-y-auto">{s.text}</pre>
+          </details>
+        ))}
+      </div>
+    )}
+
+    {!asRecords && !html && prose.length === 0 && (
+      <p class="text-sm text-gray-500 dark:text-gray-400 m-0">
+        {views.length > 0
+          ? <>Nothing on this page renders {views.join(' or ')} for this file yet — the link above
+             is the artifact itself.</>
+          : <>The declaration names no view for this layer, so the artifact is offered as it is.</>}
+      </p>
+    )}
+  </section>
+)}

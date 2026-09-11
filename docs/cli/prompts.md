@@ -20,9 +20,11 @@ been built with the old one.
 | `edge-inference.md` | [`edge-inference`](/elife-claim-trees/pipeline/edge-inference/) | The draft's claims, numbered |
 | `coverage-adjudicator.md` | [`adjudication`](/elife-claim-trees/pipeline/adjudication/) | Unresolved coverage spans against the claim tree |
 
-The [agents page](/elife-claim-trees/pipeline/induction/) renders each prompt's full text
-alongside what it produced for the worked example, generated from the committed prompt files —
-so what a reader sees there cannot differ from what ran.
+Each layer's own page renders the prompt it runs under, in full, read from the committed file
+at build — so what a reader sees on
+[`results-reader`](/elife-claim-trees/pipeline/results-reader/) is the prompt that produced the
+claims below it on the same page. The [agents page](/elife-claim-trees/pipeline/induction/)
+shows all seven side by side, for reading them against each other.
 
 ## Shared structure
 

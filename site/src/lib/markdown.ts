@@ -20,6 +20,8 @@ import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
 import rehypeShiki from '@shikijs/rehype';
 import rehypeStringify from 'rehype-stringify';
+import { visit } from 'unist-util-visit';
+import GithubSlugger from 'github-slugger';
 
 // Paths resolve against site/, which is process.cwd() at build.
 const ROOT = join(process.cwd(), '..');
@@ -72,11 +74,32 @@ export function readDoc(relPath: string): string {
   });
 }
 
+/** Give every heading an id, so a section can be linked to.
+ *
+ *  The layer declarations point at the section of /docs that explains how to run each layer,
+ *  and a link to a 200-line page is a link to its top: the reader arrives at "The layer
+ *  runners" and has to find `reconcile` themselves. Ids are the GitHub slug of the heading
+ *  text, which is the spelling anyone writing a link would guess, and the one the markdown
+ *  files already use among themselves. */
+function headingIds() {
+  return (tree: any) => {
+    const slugger = new GithubSlugger();
+    visit(tree, 'element', (node: any) => {
+      if (!/^h[1-6]$/.test(node.tagName) || node.properties?.id) return;
+      const text: string[] = [];
+      visit(node, 'text', (t: any) => { text.push(t.value); });
+      const slug = slugger.slug(text.join(''));
+      if (slug) node.properties = { ...node.properties, id: slug };
+    });
+  };
+}
+
 // allowDangerousHtml is fine here — the source is the repository's own prose.
 const processor = unified()
   .use(remarkParse)
   .use(remarkGfm)
   .use(remarkRehype, { allowDangerousHtml: true })
+  .use(headingIds)
   .use(rehypeShiki, { theme: 'github-dark', fallbackLanguage: 'text' })
   .use(rehypeStringify, { allowDangerousHtml: true });
 

@@ -18,7 +18,15 @@
 #   reads       paths that are inputs but not other layers' outputs: scripts, prompts, schema.
 #               Hashed like any input, so changing a prompt makes every run that used it stale.
 #   produces    paths this writes. `{paper}` is substituted per paper.
-#   views       how a version of this layer can be looked at
+#   views       how a version of this layer can be looked at. `list` and `table` are rendered
+#               generically from whatever the layer produced; the rest name a view that lives
+#               somewhere specific, and the layer page says where. A view named here and built
+#               nowhere is reported as such rather than printed as a word.
+#   how         how it works, in prose: what it is given, what it returns, and what it gets
+#               wrong. `question` says why the layer exists; this says how it answers. Rendered
+#               on the layer page above what it found. `{{token}}` is filled as in `found`.
+#   doc         where the narrative documentation for this layer is, deep-linked to its
+#               section. The layer page links it; it does not restate it.
 #   command     what runs it. `{paper}` and `{doi}` substituted. Absent means no runner exists.
 #   by_from     a key in the first produced file holding who answered — the model, for a layer
 #               a model answers. The runner reads it into the ledger's `by`, because from
@@ -70,6 +78,17 @@ layers:
     scope: corpus
     title: Claim format
     question: What is a claim, and what may be said about one?
+    doc: /pipeline/vocabulary/
+    how: >
+      One file per claim: a YAML frontmatter block over a markdown body, carrying a uuid, a slug,
+      the claim sentence, a `claim-type` and a `role`, the concepts it touches, an `epistemic` mark,
+      and an `assertions` list naming the paper that asserts it and with what stance. Relations are
+      frontmatter keys whose values are other claims' slugs, so the graph lives in the same files as
+      the claims and there is no separate edge store to fall out of step with them.
+
+      Almost everything below reads or writes this, which is why a change here is never small. The
+      document is a declared input of `relation-vocab` and `claim-tree` both, so editing it marks
+      every tree in the corpus stale.
     reads: [docs/claim-format.md]
     views: [document]
 
@@ -78,8 +97,19 @@ layers:
     scope: corpus
     title: Relation semantics
     question: What does each relation assert, and which are oppositions?
+    doc: /pipeline/vocabulary/
+    how: >
+      `scripts/relations.py` holds the vocabulary once — which relations exist, what each asserts,
+      which pairs are oppositions — after four scripts each kept their own copy of the list and the
+      four disagreed. `check_relations.py` runs that vocabulary over the corpus and is the gate
+      `make check` enforces.
+
+      What is undecided is not the implementation but the semantics: whether `supports` and
+      `consistent-with` assert different things, and whether opposition is one relation or several.
+      Until issue #19 closes, every count and every export downstream is provisional in the precise
+      sense that it would change if the answer did.
     needs: [claim-format]
-    reads: [scripts/relations.py, scripts/check_relations.py, exports/claim-relations.ttl]
+    reads: [scripts/relations.py, scripts/check_relations.py, docs/schema-mapping/claim-relations.ttl]
     views: [table, comparison]
     issue: 19
     open: true                 # no decision yet; everything downstream is provisional
@@ -89,6 +119,14 @@ layers:
     scope: corpus
     title: Epistemic vocabulary
     question: Does `epistemic` record support strength, or restate the role?
+    how: >
+      `epistemic:` appears in every claim file and means two things at once. On some claims it
+      records how strongly the evidence supports the proposition. On others it restates the claim's
+      role — a hypothesis marked `weak` because hypotheses are hypotheses, not because anything
+      about the evidence was measured.
+
+      Nothing runs here. There is no script and no output, which is what an open question looks like
+      before anyone has built the machinery to evaluate it.
     needs: [claim-format]
     views: [table]
     issue: 20
@@ -104,6 +142,16 @@ layers:
     status: proposed
     title: Prediction outcomes
     question: Did the paper's predictions come out, and does the tree say so?
+    how: >
+      The rule is mechanical. For each `role: prediction` claim it looks at the edges pointing in
+      and out, and sorts the prediction by the shape of that wiring: a `tests` edge with a
+      `confirms` beside it, a `tests` edge alone, a conjunction of several. It reads the graph and
+      nothing else — not the paper, and not whether the prediction was in fact met.
+
+      That limit is the point of running it. Three wiring conventions are in use across the corpus
+      and they split by paper rather than by case, so the buckets measure how the trees were written
+      as much as what the papers found. Accepting the rule would mean accepting that reading, which
+      is why the declaration is `proposed` and not accepted.
     needs: [claim-format, relation-vocab]
     reads: [scripts/prediction_outcome.py]
     produces: [review/prediction-outcome.json]
@@ -133,6 +181,17 @@ layers:
     scope: paper
     title: Prepared paper
     question: What text did the readers actually read?
+    doc: /docs/layers/#prepare--the-paper-the-readers-read
+    how: >
+      Fetches the paper and cuts it into the slices the three readers each get. For an eLife DOI
+      that is JATS XML from the CDN, which gives labelled sections, typed figures and caption text;
+      for anything else it is pdfplumber with regex section detection. Which path was taken is
+      recorded in the output, because it constrains what the readers can possibly extract. The fetch
+      is cached, so every later layer on the same paper runs offline and free.
+
+      Check the slice sizes when a paper extracts badly. A short `results` almost always means
+      section detection failed, and then all three readers read the wrong text and every claim below
+      them is wrong for the same single reason.
     reads: [extract/elife_extract/prepare.py]
     produces: ["runs/{paper}/prepared.json"]
     views: [document]
@@ -144,6 +203,17 @@ layers:
     scope: paper
     title: Results reader
     question: What does the Results section assert?
+    doc: /docs/layers/#the-three-readers
+    how: >
+      Given the abstract and the results prose — and nothing else: no captions, no methods, no
+      figures — it returns candidate claims, each with a role, a claim type, the panel where the
+      prose names one, and the verbatim sentence it rests on.
+
+      The partition is what makes it worth running separately. It is the only reader positioned to
+      see the paper's argument as an argument, so it is the one asked for hypotheses, predictions
+      and synthesis rather than for numbers. It is also the reader most prone to flattening exactly
+      that: where a paper derives a prediction from a hypothesis and then tests it, the easy output
+      is one empirical claim, and the longest section of the prompt below exists to stop that.
     needs: [prepare]
     reads: [extract/prompts/results-reader.md]
     produces: ["runs/{paper}/results-reader.output.json"]
@@ -157,6 +227,15 @@ layers:
     scope: paper
     title: Caption reader
     question: What do the figure captions assert?
+    doc: /docs/layers/#the-three-readers
+    how: >
+      Given the figure and table captions, panel by panel, it returns the quantitative claims
+      anchored to the panel that shows them. It does not see the results prose, so it cannot lift a
+      number out of a sentence that summarises one, and it does not see the methods, so it cannot
+      invent how a measurement was made.
+
+      Panel assignment is where the three readers most often disagree, and it is the standing
+      failure the evaluation harness measures.
     needs: [prepare]
     reads: [extract/prompts/caption-reader.md]
     produces: ["runs/{paper}/caption-reader.output.json"]
@@ -170,6 +249,13 @@ layers:
     scope: paper
     title: Structure reader
     question: What is the paper's argument structure?
+    doc: /docs/layers/#the-three-readers
+    how: >
+      Given the methods, the supplements and the section structure, it returns what the paper frames
+      as its own conclusions, together with the methodological capabilities and the scope conditions
+      the other two readers have no text for. Scope claims — what a study does and does not cover —
+      appear almost nowhere else in a paper, so a pipeline without this reader does not under-report
+      them, it loses them.
     needs: [prepare]
     reads: [extract/prompts/structure-reader.md]
     produces: ["runs/{paper}/structure-reader.output.json"]
@@ -183,6 +269,17 @@ layers:
     scope: paper
     title: Reconciliation
     question: Which candidates survive, and which readers agreed?
+    doc: /docs/layers/#reconcile--which-candidates-survive
+    how: >
+      Reads the three readers' outputs from disk and aligns them into one draft table. Each
+      surviving claim carries which readers proposed it and the evidence each quoted, and a
+      confidence that is a fact about agreement rather than about the world: `high` where more than
+      one reader surfaced it, `contested` where they surfaced it differently, `single-source` where
+      one did.
+
+      This is the whole reason the readers run separately rather than as one pass over the paper.
+      Agreement between three partitions is evidence; one agent reading everything produces a longer
+      list and no way to tell which of it is load-bearing.
     needs: [results-reader, caption-reader, structure-reader]
     reads: [extract/prompts/reconciler.md]
     produces: ["runs/{paper}/reconciler.output.json"]
@@ -201,6 +298,16 @@ layers:
     scope: paper
     title: External review
     question: What structure did the three readers systematically miss?
+    doc: /docs/layers/#external-review--what-the-readers-systematically-miss
+    how: >
+      One Opus pass over the reconciled draft with the paper beside it, recovering what prose-level
+      extraction systematically under-covers: the `prediction` and `hypothesis` roles, and multi-
+      panel claims collapsed onto a single panel. Roughly two dollars and three minutes a paper, and
+      it moved role agreement on the Headley round-trip from about 65% to about 96%.
+
+      It is not review in this file's sense — it is a second model, not a person, and it changes the
+      artifact rather than approving a version of one. Running it is optional: `claim-tree` builds
+      on this output where it exists and on the reconciled draft where it does not.
     added: "2026-09-11"
     needs: [reconcile]
     reads: [extract/prompts/external-reviewer.md]
@@ -215,6 +322,18 @@ layers:
     scope: paper
     title: Edge inference
     question: Which claims depend on which?
+    doc: /docs/layers/#edge-inference--which-claims-depend-on-which
+    how: >
+      Given the draft's claims, numbered, it returns typed relations between them — the deductive
+      spine, `entails` from a hypothesis to its predictions and `tests` back from the empirical
+      result. Edges naming an unknown slug, or pointing at themselves, are dropped: an invented
+      target is worse than a missing edge.
+
+      `--dump-prompt` writes the exact request and exits, so that an analyst or a different model
+      answers the question this layer would have asked rather than a paraphrase written from memory,
+      and `--edges-json` feeds that answer back through the same validation. Edges are the part of a
+      tree most easily lost to one failed call — every other stage can succeed and leave a paper
+      with claims and no structure at all.
     needs: [reconcile, relation-vocab]
     reads: [extract/prompts/edge-inference.md]
     produces: ["runs/{paper}/edge-inference.output.json"]
@@ -229,6 +348,16 @@ layers:
     scope: paper
     title: Claim tree
     question: What does this paper assert, and how do its assertions depend on each other?
+    doc: /docs/layers/#write--the-claim-tree
+    how: >
+      Assigns each surviving claim a slug and a UUID, attaches the edges `edge-inference` produced,
+      and writes one markdown file per claim into `claims/<paper>/` with the paper's `index.md`
+      beside them. It calls no model and needs no credentials — the reasoning already happened
+      upstream — but it does need those edges. Run it without them and the claims are written with
+      no structure, and it says so.
+
+      It refuses to overwrite a non-empty paper directory. The claim files are edited afterwards by
+      hand and by later layers, and a silent overwrite would discard work no ledger records.
     added: "2026-03"
     found: >
       Across {{papers}} papers the corpus holds {{claims}} claims and {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.
@@ -242,6 +371,15 @@ layers:
     scope: paper
     title: Alternatives and stance
     question: What does this paper rule out, and what does it merely entertain?
+    how: >
+      Adds the claims a paper argues against. Each is an ordinary claim file — prefixed `alt-` —
+      whose `assertions` entry carries `stance: rejects` rather than `asserts`, so an alternative
+      the paper rules out is a node in the graph like any other and an eliminative edge has
+      something correct to point at.
+
+      Before these existed, a rejected alternative lived only as prose inside the claim that
+      dismissed it, and an edge that should have pointed at it pointed at whatever claim was
+      nearest.
     added: "2026-09-10"
     found: >
       A missing node does not only lose information, it misdirects the edges that would have pointed at it. Five eliminative relations were found aiming at claims their own paper asserts. {{dangling_rules_out}} eliminative edges still name prose that resolves to no claim.
@@ -268,6 +406,18 @@ layers:
     scope: paper
     title: Reference check
     question: Do the cited references resolve, and to what?
+    doc: /docs/layers/#verify-refs--the-reference-check
+    how: >
+      Two different operations under one name, and the difference is the whole of what this layer is
+      worth. Where a `role: literature-context` claim already carries a top-level `doi:`, the layer
+      confirms with CrossRef that it resolves to a real paper: that is the anti-hallucination check.
+      Where there is no DOI, it extracts hints from the claim text and slug, queries CrossRef, and
+      writes back the highest-scoring match above a threshold — a search, which can return a
+      confident match to the wrong paper.
+
+      The report is what the layer produces; the confirmed DOIs land in the claim files themselves.
+      Two earlier implementations both edited those files and disagreed about the result, and one of
+      them recorded a fuzzy title match as a confirmed DOI.
     added: "2026-09-11"
     needs: [claim-tree]
     reads: [extract/elife_extract/verify_refs.py]
@@ -280,6 +430,14 @@ layers:
     scope: paper
     title: Abstract ↔ claims
     question: Which claims does the abstract carry, and which does it drop?
+    how: >
+      Cuts the abstract into sentences and asks of each which claims carry it, and of each claim
+      whether any sentence of the abstract does. The output holds both directions, and the
+      interesting column is the empty one: claims the tree holds that the abstract drops, and
+      abstract sentences no claim accounts for.
+
+      An abstract is the paper's own summary of itself, so the difference between the two lists is
+      the difference between what a paper found and what it advertises.
     needs: [claim-tree]
     produces: ["site/src/data/abstract-mapping/{paper}.json"]
     views: [document, comparison]
@@ -298,6 +456,14 @@ layers:
     scope: paper
     title: Argument from graph
     question: Restated from the claim graph alone, what does this paper argue — and where does that part from its abstract?
+    how: >
+      Restates the paper's argument from the claim graph alone — no abstract, no prose — and then
+      holds that restatement against the abstract the authors wrote. Every sentence of the
+      restatement carries the claims and edges it was built from, so any of it can be followed back
+      to the nodes that produced it.
+
+      It is the closest thing in the pipeline to a test of whether the graph was worth building: if
+      the tree carries the argument, a restatement from it should be recognisable as the same paper.
     added: "2026-09-11"
     needs: [claim-tree, abstract-map]
     produces: ["site/src/data/synthesis-v3/{paper}.json"]
@@ -308,6 +474,16 @@ layers:
     scope: paper
     title: Verification
     question: Did anyone check, and what did they find?
+    how: >
+      Runs the paper's own deposited script under observation and records what it actually did —
+      every path it opened, every value it computed — rather than what its output said it did.
+      Nothing is taken from the script's own account of itself, because that is precisely what
+      failed: the first script audited had a claim recorded `verified` while the function named in
+      its record raised a shape-mismatch error, and a reproduction record naming a file the code
+      never opened.
+
+      This is not replication. It re-runs the authors' code on the authors' data, so it can catch a
+      record that does not match its own run and it cannot tell you whether the finding is true.
     added: "2026-09-06"
     found: >
       {{eligible_with_record}} of {{eligible_claims}} claims that a re-run could settle carry a reproduction record, and their outcomes are not uniform. Observing the runs from outside also showed that most records were reached by reading a deposit rather than by running the paper's own script.
@@ -324,6 +500,15 @@ layers:
     scope: paper
     title: Coverage
     question: What does the paper assert that no claim represents?
+    doc: /docs/layers/#coverage-and-mark
+    how: >
+      Takes its denominator from the paper rather than from the claim set. It builds the paper's own
+      inventories — every panel, every table, every reported statistic — cuts the whole text into
+      one-sentence spans, and asks of each span whether any claim accounts for it. Comparing two
+      claim sets cannot see what this sees: two trees can agree perfectly over a third of a paper.
+
+      It calls no model, so it is free and fast enough to run corpus-wide. What it cannot do is tell
+      a real gap from a string match that failed, which is what `adjudication` is for.
     added: "2026-09-10"
     found: >
       Gädeke first. The paper cut into spans and each adjudicated against the claim tree, which is how a tree is measured against its paper rather than against another tree. The mechanical match left 36 spans unaccounted for; 22 were the matcher being wrong and 14 were real.
@@ -337,6 +522,15 @@ layers:
     scope: paper
     title: Coverage adjudication
     question: Of the spans the matcher could not resolve, which are real gaps?
+    doc: /docs/layers/#coverage-and-mark
+    how: >
+      Reads the spans the mechanical match could not resolve and returns a verdict for each: the
+      span is covered by a claim after all, it states a result no claim carries, or it asserts
+      nothing at all. The verdicts are stored rather than recomputed — a verdict is a judgement
+      about meaning, and re-running it would quietly produce a different one.
+
+      On Gädeke the matcher left 36 spans unaccounted for. Adjudication found that 22 were the
+      matcher being wrong and 14 were real.
     needs: [coverage]
     reads: [extract/prompts/coverage-adjudicator.md]
     produces: ["mappings/{paper}.json"]
@@ -348,6 +542,14 @@ layers:
     scope: paper
     title: Marked paper
     question: Where, in the document itself, is each claim and each gap?
+    doc: /docs/layers/#coverage-and-mark
+    how: >
+      Writes the adjudicated verdicts into the document itself, as marks carrying each claim's UUID,
+      so a gap is something a reader sees in the paper rather than a number in a report. A span that
+      states no result says so; a span carrying a result no claim states is marked as a gap.
+
+      The marks are read straight back after writing and checked against the assignments they were
+      written from. A marked document that cannot reproduce them is not a record of anything.
     needs: [adjudication, claim-tree, prepare]
     produces: ["marked/{paper}.marked.md"]
     views: [document]
@@ -363,6 +565,14 @@ layers:
     scope: paper
     title: Replication
     question: Has an independent study found the same thing?
+    how: >
+      Nothing runs here, and the layer is declared so that the absence is a column rather than an
+      omission. The `replicates` relation is defined in the schema and used zero times: no claim in
+      this corpus has been checked against an independent study.
+
+      It is a different question from `verification`, answered by different evidence. Verification
+      re-runs the authors' own code on their own data and can tell you the record matches the run.
+      Only replication can tell you the finding holds.
     needs: [claim-tree]
     views: [table, comparison]
 
@@ -375,6 +585,15 @@ layers:
     scope: paper
     title: MIRA export
     question: What does the schema eLife reads carry, and what does it drop?
+    how: >
+      Writes two files and a gap report. `<paper>.mira.jsonld` is strict MIRA core, safe to hand to
+      any MIRA reader; `<paper>.mira-extended.jsonld` is the same graph plus a `haak:` namespace
+      carrying the structure MIRA has no vocabulary for; the gap report says what the strict file
+      dropped, and why.
+
+      The split is the design rather than a compromise in it. MIRA can express roughly half of what
+      a claim tree holds, and a single converted file either loses the other half quietly or emits
+      something a strict reader rejects.
     added: "2026-09-09"
     found: >
       {{mira_carried}} of {{mira_relations}} relations reach the export, with {{mira_our_violations}} validation violations attributable to the encoding. The gaps that remain are specific: {{mira_lost}} paper-level scope relations the schema has no node for, and {{mira_verification_records}} verification records for which no interchange format has a node type at all.
@@ -393,6 +612,13 @@ layers:
     scope: paper
     title: OXA export
     question: What does the open document architecture carry?
+    how: >
+      Reads the claim files and writes the paper as one OXA Article JSON with a Claim node per
+      claim. OXA is document-shaped rather than graph-shaped, so it keeps the text and the
+      sectioning of a paper well and carries relations as properties of the nodes they leave.
+
+      It is also the input to the Discourse Graphs export, so anything lost here is lost there too,
+      one conversion further along.
     needs: [claim-tree, stance]
     reads: [extract/scripts/migrate_to_oxa.py]
     produces: ["exports/{paper}.oxa.json"]
@@ -405,6 +631,14 @@ layers:
     scope: paper
     title: Discourse Graphs export
     question: What does the Q/C/E/S ontology carry?
+    how: >
+      Maps the OXA nodes onto the Discourse Graphs Q/C/E/S ontology: hypothesis, prediction,
+      synthesis and interpretation become `dg:Claim`; empirical and control become `dg:Evidence`;
+      literature-context becomes `dg:Source`. A relation becomes `dg:supports` or `dg:opposedBy`
+      where one of those fits, and carries its CiTO IRI as a typed annotation where neither does.
+
+      Four node types for nine roles: the mapping is lossy by construction, and `formats-report` is
+      where the amount is measured rather than asserted.
     needs: [oxa-export]
     reads: [extract/scripts/export_discourse_graphs.py]
     produces: ["exports/{paper}.dg.jsonld"]
@@ -417,6 +651,15 @@ layers:
     scope: paper
     title: Formats comparison
     question: Measured from the exports, what did each conversion cost?
+    how: >
+      Measures each conversion from the generated files rather than from the mapping tables. A
+      mapping table says what a converter intends; the export says what it did, and those two came
+      apart once already — the Discourse Graphs exporter looked for claims one level above where
+      they sit and wrote a file with a single node, in valid JSON-LD that nothing would have
+      flagged.
+
+      The markdown report is the artifact and the site renders it, so a figure on the page cannot
+      disagree with the export it describes.
     needs: [mira-export, oxa-export, dg-export]
     reads: [scripts/formats_report.py]
     produces:
