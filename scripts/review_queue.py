@@ -90,9 +90,22 @@ def dissociates_with(paper):
         for k, t in relations(c):
             out[c["slug"]].add((k, t))
 
+    # Both loops iterate in sorted order, and a reciprocal pair is emitted under the
+    # alphabetically smaller slug. Neither is cosmetic.
+    #
+    # `rels` is a set, and Python randomises string hashing per process, so iterating it
+    # directly visited a claim's relations in a different order on every run. For a reciprocal
+    # pair — 62% of them here — whichever direction was reached first won the dedup below and
+    # decided which slug became `a`. The item's `id` is f"{paper}:{a}|{b}", so the same pair
+    # was published as `paper:x|y` one run and `paper:y|x` the next.
+    #
+    # That is not a cosmetic diff. `apply_review.py` matches decisions to items by `id`, so a
+    # judgement recorded against one run's identifier silently found no item in the next. A
+    # queue whose membership is stable and whose names are not is worse than one that changes
+    # visibly.
     items, seen = [], set()
-    for a, rels in out.items():
-        for k, b in rels:
+    for a, rels in sorted(out.items()):
+        for k, b in sorted(rels):
             if k != "dissociates-with" or b not in claims:
                 continue
             recip = ("dissociates-with", a) in out.get(b, set())
@@ -100,6 +113,10 @@ def dissociates_with(paper):
             if recip and key in seen:
                 continue
             seen.add(key)
+            if recip:
+                # Direction carries no meaning when the relation is declared both ways, so
+                # the identifier must not depend on which way we happened to walk it.
+                a, b = key
 
             ta = {t for _, t in out.get(a, set())}
             tb = {t for _, t in out.get(b, set())}
