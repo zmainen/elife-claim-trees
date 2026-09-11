@@ -122,6 +122,25 @@ def render_vocabulary(root: Path | None = None) -> str:
         w(f"- Carries: {r['carries']}")
         w(f"- Example: {_quote(root, paper, slug)}")
         w("")
+        # The line between a methodological claim and procedure lives right here, so its
+        # examples do too: what a result turns on, and what it does not.
+        if r["role"] == "methodological":
+            w("#### What is not a claim")
+            w("")
+            w("Procedure is a claim only when a result turns on it. The test is one question: "
+              "would any result mean something different if this had been done differently? If "
+              "not, it is not a claim, however carefully the methods state it.")
+            w("")
+            w("Procedure a result does turn on, and so is methodological:")
+            w("")
+            for paper_w, slug_w in vocabulary.WARRANTS:
+                w(f"- {_quote(root, paper_w, slug_w)}")
+            w("")
+            w("Procedure no result turns on, so not a claim — each is only what the clause says:")
+            w("")
+            for sentence, why in vocabulary.NOT_CLAIMS:
+                w(f"- “{sentence}” — {why}.")
+            w("")
 
     w("### Roles that are confused for each other")
     w("")

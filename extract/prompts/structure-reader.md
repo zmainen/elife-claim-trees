@@ -35,6 +35,17 @@ which scanner was used: these are facts, not claims, unless a result turns on th
 is whether a downstream result would mean something different if this were different. If not,
 leave it out.
 
+The vocabulary's **What is not a claim** section, under the `methodological` role, works this
+test on real sentences: a normalisation, a measure's definition, a seed choice, a
+significance threshold, a software choice — each returned by a reader and each not a claim,
+set beside the procedure that a result does turn on and so is methodological. Read it before
+you return a methodological claim, and check your candidate against the negative list.
+
+One line is easy to cross: an exclusion count, the sample size and the description of the
+design are components of the paper's scope claim, not claims of their own — fold them into the
+scope claim that says where the results apply rather than returning each as a separate
+methodological or scope claim.
+
 ## Rules
 
 - **Never infer a result from a method.** "We computed the correlation between X and Y" says

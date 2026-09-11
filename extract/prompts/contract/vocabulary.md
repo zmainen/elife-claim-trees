@@ -78,6 +78,27 @@ A capability or analytical commitment that a downstream result depends on for it
 - Carries: `enables-method` to the results it warrants
 - Example: `preregistered-design-validates-mvpa` (methodological, Kammer): “The preregistered analysis plan (osf.io/rxacd) specifies the MVPA decoding pipeline, ROI definitions, and statistical tests in advance, reducing the risk of analytic flexibility inflating the decoding accuracy results.”
 
+#### What is not a claim
+
+Procedure is a claim only when a result turns on it. The test is one question: would any result mean something different if this had been done differently? If not, it is not a claim, however carefully the methods state it.
+
+Procedure a result does turn on, and so is methodological:
+
+- `preregistered-design-validates-mvpa` (methodological, Kammer): “The preregistered analysis plan (osf.io/rxacd) specifies the MVPA decoding pipeline, ROI definitions, and statistical tests in advance, reducing the risk of analytic flexibility inflating the decoding accuracy results.”
+- `model-based-glm-entered-best-fitting-computational` (methodological, Gadeke): “A model-based GLM (GLM2) entered the best-fitting computational (Responsibility) model's variables — certain rewards (CR), expected value (EV), participant RPE (sRPE), and partner RPE from participant choices (social_pRPE) and from partner choices (partner_pRPE) — as regressors to locate brain regions reflecting them.”
+- `momentary-happiness-modelled-five-computational` (methodological, Gadeke): “Momentary happiness was modelled with five computational models (Basic, Inequality, Guilt-envy, Responsibility, and Responsibility Redux) sharing separate, exponentially decaying terms for certain rewards, expected value, and reward prediction errors.”
+- `parameter-recovery-procedure-synthetic-data-generated` (methodological, Gadeke): “A parameter-recovery procedure on synthetic data generated from each participant's estimated parameters showed the happiness-model parameters could be reliably recovered, verifying their stability.”
+
+Procedure no result turns on, so not a claim — each is only what the clause says:
+
+- “Happiness ratings were Z-scored per participant to remove the influence of differing rating variability across participants.” — a normalisation — no result reads differently for it.
+- “Risk attitude was quantified as a risk premium — the EVdiff value yielding 50% risky choices from a fitted logistic regression — and compared between Solo and Social conditions with paired t-tests in both studies.” — a definition of a measure — the finding is that the premium did not differ, not that it was defined this way.
+- “Two gPPI seed-to-voxel connectivity analyses used functionally defined seeds: the left insula cluster more sensitive to Risky versus Safe outcomes (GLM3) and the left STS cluster responding more to social_pRPE than partner_pRPE (GLM4), with identical seeds across participants.” — a seed choice — the connectivity result is the claim, not which seeds produced it.
+- “All reported clusters survive a whole-brain family-wise-error-corrected threshold of p < 0.05 with a cluster-forming voxel-wise threshold of p < 0.001 (or a smaller volume where explicitly mentioned).” — a threshold applied to every result alike — a scope condition folded into the paper's scope claim, not a finding.
+- “The fMRI data of four Study 2 participants were excluded from the fMRI analysis for excessive head motion (>3 mm or >3°).” — an exclusion count — a component of the paper's scope claim, not a claim of its own.
+- “The Study 2 sample size of 44 was fixed a priori by a G*Power analysis based on Study 1's effect size (Cohen's d = 0.56), with alpha = 0.05 and power = 0.95.” — a power analysis fixing the sample — a component of the paper's scope claim.
+- “The experiment was implemented in MATLAB using Psychtoolbox.” — a software choice — no result would mean anything different in another toolbox.
+
 ### `synthesis`
 
 A higher-order proposition that integrates several of the paper's own results into one claim, staying inside the paper's evidence: the dissociation, the reconciliation, the summary that several panels jointly establish.

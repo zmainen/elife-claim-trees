@@ -189,6 +189,50 @@ ROLE_CONFUSABLE = [
      ("headley-2026-inhibitory-rhythms", "pv-gamma-sst-beta-correspondence")),
 ]
 
+# ── What is not a claim ──────────────────────────────────────────────────
+# The `methodological` definition drew the line — procedure is a claim only when a result turns
+# on it — but the recorded Opus structure reader returned procedure anyway, because the line had
+# no examples (docs/design/2026-09-11-parts.md). `WARRANTS` are the positive side: procedure a
+# result does turn on, quoted through `_quote` so each resolves to a real methodological claim.
+# `NOT_CLAIMS` are the negative side: sentences the reader returned (the six from Gädeke's v3
+# structure output, plus one from the earlier DeepSeek run) that no result turns on, each with
+# the one thing it merely records.
+WARRANTS = [
+    ("kammer-2026-foveal-feedback", "preregistered-design-validates-mvpa"),
+    ("gadeke-2026-guilt-insula", "model-based-glm-entered-best-fitting-computational"),
+    ("gadeke-2026-guilt-insula", "momentary-happiness-modelled-five-computational"),
+    ("gadeke-2026-guilt-insula", "parameter-recovery-procedure-synthetic-data-generated"),
+]
+
+NOT_CLAIMS = [
+    ("Happiness ratings were Z-scored per participant to remove the influence of differing "
+     "rating variability across participants.",
+     "a normalisation — no result reads differently for it"),
+    ("Risk attitude was quantified as a risk premium — the EVdiff value yielding 50% risky "
+     "choices from a fitted logistic regression — and compared between Solo and Social "
+     "conditions with paired t-tests in both studies.",
+     "a definition of a measure — the finding is that the premium did not differ, not that it "
+     "was defined this way"),
+    ("Two gPPI seed-to-voxel connectivity analyses used functionally defined seeds: the left "
+     "insula cluster more sensitive to Risky versus Safe outcomes (GLM3) and the left STS "
+     "cluster responding more to social_pRPE than partner_pRPE (GLM4), with identical seeds "
+     "across participants.",
+     "a seed choice — the connectivity result is the claim, not which seeds produced it"),
+    ("All reported clusters survive a whole-brain family-wise-error-corrected threshold of "
+     "p < 0.05 with a cluster-forming voxel-wise threshold of p < 0.001 (or a smaller volume "
+     "where explicitly mentioned).",
+     "a threshold applied to every result alike — a scope condition folded into the paper's "
+     "scope claim, not a finding"),
+    ("The fMRI data of four Study 2 participants were excluded from the fMRI analysis for "
+     "excessive head motion (>3 mm or >3°).",
+     "an exclusion count — a component of the paper's scope claim, not a claim of its own"),
+    ("The Study 2 sample size of 44 was fixed a priori by a G*Power analysis based on Study 1's "
+     "effect size (Cohen's d = 0.56), with alpha = 0.05 and power = 0.95.",
+     "a power analysis fixing the sample — a component of the paper's scope claim"),
+    ("The experiment was implemented in MATLAB using Psychtoolbox.",
+     "a software choice — no result would mean anything different in another toolbox"),
+]
+
 # ── Claim types ──────────────────────────────────────────────────────────
 # The epistemic character of the proposition, independent of the role it plays. Seven values:
 # the five in docs/claim-format.md and the two the corpus uses for its deductive layer, which
