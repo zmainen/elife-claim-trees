@@ -24,7 +24,7 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 **30 of 65 relations (46%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
 - `haak:enables-method` (17) — a result makes a downstream method possible
-- `haak:derived-from` (9) — a prediction derived from its hypothesis
+- `haak:derived-from` (9) — a prediction derived from its hypothesis (inverse of entails)
 - `haak:entails` (4) — a hypothesis entails its prediction — the deductive step
 - `haak:scopes` (4) — a scope constraint governs another claim's validity
 - `haak:interprets` (3) — one claim interprets another

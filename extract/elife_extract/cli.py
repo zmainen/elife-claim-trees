@@ -1,14 +1,24 @@
 """Command-line entry point.
 
-Subcommands implement the 8-step methodology in two phases:
-    extract     — Steps 1-4 (no disk writes to corpus)
-    write       — Steps 5-7 (claim files emitted)
-    verify-refs — CrossRef DOI resolution for literature-context claims
-    run         — Composed shorthand (extract + write + verify-refs)
+One subcommand per runnable layer in `pipeline/layers.yaml`. Each reads the paths its layer
+declares and writes the path it declares, and nothing here walks the graph or records a run —
+`scripts/pipeline.py` does both, and does them once.
 
-The two-phase shape is required by the methodology's Step 5 review gate
-(`docs/method.md` § 3.3): "Nothing is written to disk until the table is
-approved." Bypass for tests/automation: `--auto-approve`.
+That division is the point. This CLI used to be a pipeline of its own: `extract` did five
+layers' work in one process, `run` chained extract → write → verify-refs, and both wrote to
+`out/`, which no layer declares. So the graph described a shape it could not execute
+(`pipeline.py run <paper> results-reader` answered "no runner declared"), a run left artifacts
+the ledger could not hash, and the provenance that mattered — which model wrote these claims —
+lived in a hand-kept manifest beside the ledger meant to replace it.
+
+`--review-mode` is gone with them. It bundled two different things: `external`, which revises
+the draft and is now the `external-review` layer, and `interactive`, a gate before the write,
+where the architecture puts approval on a version after it exists —
+`scripts/pipeline.py approve <paper> <layer>`.
+
+`evaluate` is the one subcommand that is not a layer. It scores a re-extraction against the
+committed corpus, so it asks about the prompts rather than about a paper, produces nothing any
+layer consumes, and deliberately runs outside the graph.
 """
 
 from __future__ import annotations
@@ -28,358 +38,285 @@ from .config import (
 )
 
 
-# ── Subcommand handlers (Phase B: stubs that print intent) ───────────────
+def _logging(verbose: bool = False) -> None:
+    import logging
+    logging.basicConfig(
+        level=logging.DEBUG if verbose else logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+        datefmt="%H:%M:%S",
+    )
 
 
-def cmd_extract(args: argparse.Namespace) -> int:
-    """Steps 1-4: fetch paper, abstract scan, three-agent extraction, reconciliation."""
+def _cfg(args: argparse.Namespace) -> Config:
     cfg = Config.from_args(args)
     errors = cfg.validate()
     if errors:
         for e in errors:
             print(f"error: {e}", file=sys.stderr)
-        return 2
+        raise SystemExit(2)
+    _logging(getattr(args, "verbose", False))
+    return cfg
 
+
+# ── layer runners ────────────────────────────────────────────────────────
+
+
+def cmd_prepare(args: argparse.Namespace) -> int:
+    """Layer `prepare` — fetch and slice the paper the readers will read."""
+    from .layers import prepare_layer
+
+    cfg = _cfg(args)
+    path = prepare_layer(args.paper, cfg, doi=args.doi,
+                         pdf_path=Path(args.pdf_path) if args.pdf_path else None,
+                         input_format=args.input_format)
     import json
-    import logging
-    from .prepare import prepare
-    from .agents import run_all_agents
-    from .reconcile import reconcile as reconcile_step
+    data = json.loads(path.read_text(encoding="utf-8"))
+    print(f"=== prepare — {args.paper} ===")
+    print(f"  doi    = {data['doi']}")
+    print(f"  title  = {data['title']}")
+    print(f"  path   = {data['extraction_path']}")
+    print(f"  slices = abstract:{len(data['abstract'])}c results:{len(data['results_text'])}c "
+          f"captions:{len(data['captions_text'])}c methods:{len(data['methods_text'])}c")
+    print(f"  figures= {len(data['figure_captions'])}  tables={len(data['tables'])}")
+    print(f"  written: {path}")
+    return 0
 
-    # Honor a --verbose flag if present; default to INFO logging
-    log_level = logging.DEBUG if getattr(args, "verbose", False) else logging.INFO
-    logging.basicConfig(
-        level=log_level,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-        datefmt="%H:%M:%S",
-    )
 
-    # ── Step 1: prepare ──────────────────────────────────────────────────
-    pdf_path = getattr(args, "pdf_path", None)
-    if not args.doi and not pdf_path:
-        print("error: at least one of --doi or --pdf-path is required", file=sys.stderr)
-        return 2
-    print(f"=== Step 1 — Prepare ===")
-    if pdf_path:
-        print(f"  pdf    = {pdf_path}")
-    if args.doi:
-        print(f"  doi    = {args.doi}")
-    try:
-        paper = prepare(
-            doi=args.doi,
-            paper_slug_override=getattr(args, "paper_slug", None),
-            input_format=getattr(args, "input_format", "auto"),
-            pdf_path=Path(pdf_path) if pdf_path else None,
-        )
-    except Exception as e:
-        print(f"error: prepare failed: {e}", file=sys.stderr)
-        return 3
+def _reader(agent: str):
+    def run(args: argparse.Namespace) -> int:
+        from .layers import reader_layer
 
-    print(f"  slug   = {paper.paper_slug}")
-    print(f"  title  = {paper.title}")
-    print(f"  path   = {paper.extraction_path}")
-    print(
-        f"  slices = abstract:{len(paper.abstract)}c results:{len(paper.results_text)}c "
-        f"captions:{len(paper.captions_text)}c methods:{len(paper.methods_text)}c"
-    )
-    print(f"  panels = {len(paper.panel_ids)} detected")
-    print()
+        cfg = _cfg(args)
+        path, extraction = reader_layer(agent, args.paper, cfg)
+        print(f"=== {agent}-reader — {args.paper} ===")
+        print(f"  model    = {extraction.model}")
+        print(f"  proposed = {len(extraction.claims)} candidate claim(s)")
+        print(f"  written: {path}")
+        return 0
+    return run
 
-    # ── Steps 2-3: three-agent extraction ────────────────────────────────
-    print(f"=== Steps 2-3 — Three-agent extraction ===")
-    print(f"  Results-reader   ({cfg.model_results})")
-    print(f"  Caption-reader   ({cfg.model_caption})")
-    print(f"  Structure-reader ({cfg.model_structure})")
-    if cfg.backend == "vertex":
-        print(f"  backend: vertex (project={cfg.vertex_project} region={cfg.vertex_region})")
-    else:
-        print(f"  backend: {cfg.backend}")
-    print()
-    try:
-        results, caption, structure = run_all_agents(paper, cfg)
-    except Exception as e:
-        print(f"error: extraction failed: {e}", file=sys.stderr)
-        return 4
 
-    print(f"  results-reader   → {len(results.claims):3d} candidate claim(s)")
-    print(f"  caption-reader   → {len(caption.claims):3d} candidate claim(s)")
-    print(f"  structure-reader → {len(structure.claims):3d} candidate claim(s)")
-    print()
+def cmd_reconcile(args: argparse.Namespace) -> int:
+    """Layer `reconcile` — which candidates survive, and which readers agreed."""
+    from .layers import reconcile_layer
 
-    # ── Step 4: reconciliation ───────────────────────────────────────────
-    print(f"=== Step 4 — Reconciliation ({cfg.model_reconcile}) ===")
-    try:
-        draft = reconcile_step(
-            results, caption, structure, cfg,
-            paper_doi=paper.doi,
-            paper_title=paper.title,
-        )
-    except Exception as e:
-        print(f"error: reconciliation failed: {e}", file=sys.stderr)
-        return 5
-
+    cfg = _cfg(args)
+    path, draft = reconcile_layer(args.paper, cfg)
     by_conf: dict[str, int] = {}
     for c in draft.claims:
         by_conf[c.confidence] = by_conf.get(c.confidence, 0) + 1
-    print(f"  draft has {len(draft.claims)} claim(s):")
+    print(f"=== reconcile — {args.paper} ===")
+    print(f"  model  = {draft.model}")
+    print(f"  claims = {len(draft.claims)}  (per-agent: {dict(draft.per_agent_counts)})")
     for k in ("high", "contested", "single-source"):
         if k in by_conf:
-            print(f"    {k:14s}  {by_conf[k]:3d}")
-    print()
+            print(f"    {k:14s} {by_conf[k]:3d}")
+    print(f"  written: {path}")
+    return 0
 
-    # ── Write draft to disk ──────────────────────────────────────────────
-    cfg.output_dir.mkdir(parents=True, exist_ok=True)
-    draft_path = cfg.output_dir / f"draft-{paper.paper_slug}.json"
-    draft_path.write_text(draft.model_dump_json(indent=2))
-    # Also save raw agent outputs for debugging / future tooling
-    (cfg.output_dir / f"agents-{paper.paper_slug}.json").write_text(
-        json.dumps(
-            {
-                "results": json.loads(results.model_dump_json()),
-                "caption": json.loads(caption.model_dump_json()),
-                "structure": json.loads(structure.model_dump_json()),
-            },
-            indent=2,
-        )
-    )
-    # `run` composes the subcommands in one process; hand the next two stages
-    # their input rather than making the caller re-derive a slug it never saw.
-    args.draft = draft_path
-    args.paper = paper.paper_slug
 
-    print(f"=== Output ===")
-    print(f"  draft  → {draft_path}")
-    print(f"  agents → {cfg.output_dir}/agents-{paper.paper_slug}.json")
-    print(f"  Next: elife-extract write --draft {draft_path} --corpus-dir {cfg.corpus_dir}")
+def cmd_external_review(args: argparse.Namespace) -> int:
+    """Layer `external-review` — recover the structure the three readers miss."""
+    from .layers import external_review_layer, run_file
+    import json
+
+    cfg = _cfg(args)
+    before = len(json.loads(run_file(args.paper, "reconciler.output.json", cfg)
+                            .read_text(encoding="utf-8"))["claims"]) \
+        if run_file(args.paper, "reconciler.output.json", cfg).is_file() else 0
+    path, revised = external_review_layer(args.paper, cfg)
+    print(f"=== external-review — {args.paper} ===")
+    print(f"  model  = {revised.model}")
+    print(f"  claims = {before} → {len(revised.claims)}")
+    print(f"  written: {path}")
+    return 0
+
+
+def cmd_edge_inference(args: argparse.Namespace) -> int:
+    """Layer `edge-inference` — which claims depend on which."""
+    from .layers import best_draft, edge_inference_layer, run_file
+    from .edges import build_edge_request
+    from .write import _unique_slugs
+
+    cfg = _cfg(args)
+
+    # Emit the prompt and stop. Whatever answers it — an analyst, a reasoning agent — then
+    # answers the same question the layer would have asked, rather than a paraphrase of it
+    # written from memory.
+    if args.dump_prompt:
+        draft, source = best_draft(args.paper, cfg)
+        system, user = build_edge_request(draft, _unique_slugs(draft.claims))
+        out = Path(args.dump_prompt).expanduser()
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
+        print(f"  prompt written: {out}  (from {source})")
+        print(f"  answer it with a JSON array, then re-run with --edges-json <answer.json>")
+        return 0
+
+    if args.edges_json:
+        from .edges import edges_from_raw
+        from .layers import _write_json
+        draft, _ = best_draft(args.paper, cfg)
+        edges = edges_from_raw(Path(args.edges_json).read_text(encoding="utf-8"),
+                               _unique_slugs(draft.claims),
+                               source=f"supplied:{args.edges_json}")
+        path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), {
+            "paper_slug": args.paper, "model": f"supplied:{args.edges_json}", "edges": edges,
+        })
+    else:
+        path, edges = edge_inference_layer(args.paper, cfg)
+
+    kinds: dict[str, int] = {}
+    for e in edges:
+        k = e.get("relationType", "?")
+        kinds[k] = kinds.get(k, 0) + 1
+    print(f"=== edge-inference — {args.paper} ===")
+    print(f"  edges = {len(edges)} across {len(kinds)} relation type(s)")
+    for k, n in sorted(kinds.items(), key=lambda kv: -kv[1]):
+        print(f"    {k:28s} {n:3d}")
+    print(f"  written: {path}")
     return 0
 
 
 def cmd_write(args: argparse.Namespace) -> int:
-    """Steps 5-7: review + dependency mapping + write claim files."""
-    cfg = Config.from_args(args)
-    errors = cfg.validate()
-    if errors:
-        for e in errors:
-            print(f"error: {e}", file=sys.stderr)
-        return 2
-
-    import json
-    import logging
-    from .review import review as review_step
+    """Layer `claim-tree` — the claim files, from the best draft and the inferred edges."""
+    from .layers import best_draft, read_edges
     from .write import write_claim_files, write_oxa_document
-    from .schema import DraftClaimTable
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-        datefmt="%H:%M:%S",
-    )
+    cfg = _cfg(args)
+    draft, source = best_draft(args.paper, cfg)
+    edges = read_edges(args.paper, cfg)
 
-    # Load the draft
-    draft_path = Path(args.draft).expanduser().resolve()
-    if not draft_path.is_file():
-        print(f"error: draft not found: {draft_path}", file=sys.stderr)
-        return 3
-
-    print(f"=== Step 5 — Review gate ({cfg.review_mode}) ===")
-    print(f"  draft = {draft_path}")
-    try:
-        draft_data = json.loads(draft_path.read_text())
-        draft = DraftClaimTable(**draft_data)
-    except Exception as e:
-        print(f"error: failed to parse draft: {e}", file=sys.stderr)
-        return 4
-
-    print(f"  paper = {draft.paper_slug} ({draft.paper_doi})")
-    print(f"  claims = {len(draft.claims)} (per-agent: {dict(draft.per_agent_counts)})")
-    print()
-
-    # Emit the Step 6 prompt and stop. Whatever answers it — an analyst, a reasoning agent —
-    # then answers the same question the pipeline would have asked, rather than a paraphrase
-    # of it written from memory.
-    if getattr(args, "dump_edge_prompt", None):
-        from .edges import build_edge_request
-        from .write import _unique_slugs
-        slugs = _unique_slugs(draft.claims)
-        system, user = build_edge_request(draft, slugs)
-        out = Path(args.dump_edge_prompt).expanduser()
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
-        print(f"  Step 6 prompt written: {out}")
-        print(f"  Answer it with a JSON array, then: "
-              f"elife-extract write --draft {draft_path} --corpus-dir {cfg.corpus_dir} "
-              f"--edges-json <answer.json>")
-        return 0
-
-    # external mode: run Opus reviewer pass before write; substitutes for
-    # the human review at Step 5.
-    if cfg.review_mode == "external":
-        from .prepare import prepare
-        from .external_review import external_review
-        print(f"  external reviewer: re-fetching paper context for {draft.paper_doi}...")
-        try:
-            paper = prepare(draft.paper_doi)
-        except Exception as e:
-            print(f"error: failed to fetch paper for external review: {e}", file=sys.stderr)
-            return 5
-        print(f"  external reviewer: calling {cfg.model_reconcile}...")
-        try:
-            revised = external_review(paper, draft, cfg)
-        except Exception as e:
-            print(f"error: external review failed: {e}", file=sys.stderr)
-            return 6
-        print(f"  external review: {len(draft.claims)} -> {len(revised.claims)} claims after revision")
-        # Save the revised draft alongside the original for audit
-        revised_path = draft_path.with_name(draft_path.stem + ".reviewed.json")
-        revised_path.write_text(revised.model_dump_json(indent=2))
-        print(f"  revised draft saved: {revised_path}")
-        approved = revised
-    else:
-        approved = review_step(draft, cfg)
-        if approved is None:
-            print("review aborted; no claim files written.", file=sys.stderr)
-            return 6
-        if cfg.review_mode == "interactive" and len(approved.claims) != len(draft.claims):
-            print(
-                f"  review: {len(draft.claims)} -> {len(approved.claims)} claims after edit"
-            )
-
-    # Step 7: write claim files
-    output_format = getattr(args, "format", "yaml")
-    print()
-    print(f"=== Steps 6-7 — Write claim files (format: {output_format}) ===")
-    print(f"  corpus_dir = {cfg.corpus_dir}")
+    print(f"=== claim-tree — {args.paper} ===")
+    print(f"  draft  = {source} ({len(draft.claims)} claims)")
+    print(f"  edges  = {len(edges)} from the edge-inference layer"
+          if edges else "  edges  = none — the edge-inference layer has not run")
 
     try:
-        if output_format == "oxa":
-            # OXA-native output: one JSON Document per paper
-            oxa_path = write_oxa_document(approved, cfg)
-            print(f"  OXA document → {oxa_path}")
-            print(f"  {len(approved.claims)} claims as validated OXA JSON")
-            print()
-            print(f"  Downstream: oxa validate {oxa_path}")
-            print(f"  Export:     python3 scripts/export_discourse_graphs.py {oxa_path}")
-        else:
-            # Legacy YAML-frontmatter markdown: one file per claim
-            print(f"  paper_dir  = {cfg.corpus_dir / approved.paper_slug}")
-            written = write_claim_files(approved, cfg)
-            print(f"  wrote {len(written)} files:")
-            for p in written[:5]:
-                print(f"    {p.relative_to(cfg.corpus_dir)}")
-            if len(written) > 5:
-                print(f"    ... and {len(written) - 5} more")
-            print()
-            print(f"  Step 6 (dependency mapping) is scaffolded — claim files have empty")
-            print(f"  edge sections. Analyst fills in or runs a future edge-inference pass.")
+        if args.format == "oxa":
+            path = write_oxa_document(draft, cfg)
+            print(f"  written: {path}")
+            return 0
+        written = write_claim_files(draft, cfg, edges=edges)
     except FileExistsError as e:
         print(f"error: {e}", file=sys.stderr)
         return 7
-    except Exception as e:
+    except Exception as e:                                       # noqa: BLE001
         print(f"error: write failed: {e}", file=sys.stderr)
         return 8
 
-    print(f"  Next: elife-extract verify-refs --paper {approved.paper_slug} --corpus-dir {cfg.corpus_dir}")
+    print(f"  wrote {len(written)} file(s) into {cfg.corpus_dir / draft.paper_slug}")
     return 0
 
 
 def cmd_verify_refs(args: argparse.Namespace) -> int:
-    """CrossRef DOI resolution for literature-context claims."""
-    cfg = Config.from_args(args)
-    errors = cfg.validate()
-    if errors:
-        for e in errors:
-            print(f"error: {e}", file=sys.stderr)
-        return 2
-
-    import logging
+    """Layer `reference-check` — do the cited references resolve, and to what?"""
+    import json
+    from dataclasses import asdict
+    from .layers import _write_json, run_file
     from .verify_refs import verify_refs
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-        datefmt="%H:%M:%S",
-    )
-
-    paper = getattr(args, "paper", None)
-    dry_run = getattr(args, "dry_run", False)
-
-    print(f"=== verify-refs (paper={paper}, dry_run={dry_run}) ===")
+    cfg = _cfg(args)
+    print(f"=== reference-check — {args.paper or 'whole corpus'} ===")
     print(f"  corpus_dir = {cfg.corpus_dir}")
-    print()
-
     try:
-        results = verify_refs(paper, cfg, dry_run=dry_run)
-    except Exception as e:
-        print(f"error: verify-refs failed: {e}", file=sys.stderr)
+        results = verify_refs(args.paper, cfg, dry_run=args.dry_run)
+    except Exception as e:                                       # noqa: BLE001
+        print(f"error: reference check failed: {e}", file=sys.stderr)
         return 3
 
-    # Summarize
     by_status: dict[str, int] = {}
     for r in results:
         by_status[r.status] = by_status.get(r.status, 0) + 1
-    print()
-    print(f"=== Summary ({len(results)} literature-context claim(s)) ===")
-    for status in (
-        "confirmed", "found", "low-confidence", "not-found",
-        "no-hint", "unresolvable",
-    ):
+    print(f"\n=== Summary ({len(results)} literature-context claim(s)) ===")
+    for status in ("confirmed", "found", "low-confidence", "not-found",
+                   "no-hint", "unresolvable"):
         if status in by_status:
             print(f"  {status:18s} {by_status[status]}")
-
     n_resolved = by_status.get("confirmed", 0) + by_status.get("found", 0)
-    n_total = len(results)
-    rate = (n_resolved / n_total * 100) if n_total else 0
+    rate = (n_resolved / len(results) * 100) if results else 0
     print(f"  {'=' * 30}")
-    print(f"  resolution rate    {rate:.1f}% ({n_resolved}/{n_total})")
-    if dry_run and "found" in by_status:
-        print()
-        print(f"  --dry-run: {by_status['found']} new DOI(s) NOT written. Re-run without --dry-run to commit.")
+    print(f"  resolution rate    {rate:.1f}% ({n_resolved}/{len(results)})")
+
+    # The report is what the layer produces. Two implementations of this check existed and
+    # neither kept one: scripts/verify-references.py wrote a corpus-wide JSON that nothing
+    # regenerated, and this path printed to the terminal and kept nothing at all.
+    if args.dry_run:
+        print("\n  --dry-run: no DOIs written and no report kept.")
+        return 0
+    if not args.paper:
+        print("\n  no report written — a version belongs to one paper. "
+              "Re-run with --paper <slug> to record one.")
+        return 0
+    path = _write_json(run_file(args.paper, "reference-check.output.json", cfg), {
+        "paper_slug": args.paper,
+        "resolution_pct": round(rate, 1),
+        "by_status": by_status,
+        "results": [asdict(r) for r in results],
+    })
+    print(f"  written: {path}")
     return 0
 
 
-def cmd_coverage(args: argparse.Namespace) -> int:
-    """Exhaustive coverage: what in the paper does no claim account for?
+# ── layers that read the paper as well as the tree ───────────────────────
 
-    No model calls, so it is fast and free, and it can be run on every paper in
-    the corpus as a gate. It answers a different question from `evaluate`:
-    evaluate scores agreement between two claim sets, which says nothing about
-    what neither of them mentioned. You can score 100% agreement on a third of a
-    paper. This takes its denominator from the paper itself.
+
+def _load_claim_frontmatter(d: Path) -> list:
+    """Read every claim file's YAML frontmatter from a claim-tree directory."""
+    import re
+    import yaml
+    out = []
+    for f in sorted(d.glob("*.md")):
+        if f.name == "index.md":
+            continue
+        m = re.match(r"^---\n(.*?)\n---", f.read_text(encoding="utf-8"), re.S)
+        if not m:
+            continue
+        # Some committed files put an empty list at column 0 on the line after
+        # its key, which strict YAML rejects. Normalise rather than edit source.
+        body = re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2",
+                      m.group(1), flags=re.M)
+        try:
+            fm = yaml.safe_load(body) or {}
+        except yaml.YAMLError:
+            continue
+        if fm.get("slug"):
+            out.append(fm)
+    return out
+
+
+def _claims_of(args: argparse.Namespace, cfg: Config) -> tuple[Path, list]:
+    d = (Path(args.claims_dir).expanduser().resolve() if args.claims_dir
+         else cfg.corpus_dir / args.paper)
+    if not d.is_dir():
+        print(f"error: claims dir not found: {d}", file=sys.stderr)
+        raise SystemExit(2)
+    claims = _load_claim_frontmatter(d)
+    if not claims:
+        print(f"error: no claim files under {d}", file=sys.stderr)
+        raise SystemExit(2)
+    return d, claims
+
+
+def cmd_coverage(args: argparse.Namespace) -> int:
+    """Layer `coverage` — what in the paper does no claim account for?
+
+    No model calls, so it is fast and free, and it can be run on every paper in the corpus
+    as a gate. It answers a different question from `evaluate`: evaluate scores agreement
+    between two claim sets, which says nothing about what neither of them mentioned. You can
+    score 100% agreement on a third of a paper. This takes its denominator from the paper.
     """
     import json
-    import logging
-    from .prepare import prepare
     from .coverage import assess, render, assess_spans, render_spans
+    from .layers import read_prepared
 
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-                        datefmt="%H:%M:%S")
-
-    pdf_path = getattr(args, "pdf_path", None)
-    if not args.doi and not pdf_path:
-        print("error: at least one of --doi or --pdf-path is required", file=sys.stderr)
-        return 2
-    try:
-        paper = prepare(doi=args.doi,
-                        paper_slug_override=getattr(args, "paper_slug", None),
-                        input_format=getattr(args, "input_format", "auto"),
-                        pdf_path=Path(pdf_path) if pdf_path else None)
-    except Exception as e:
-        print(f"error: prepare failed: {e}", file=sys.stderr)
-        return 3
-
-    claims_dir = Path(args.claims_dir).expanduser().resolve()
-    if not claims_dir.is_dir():
-        print(f"error: claims dir not found: {claims_dir}", file=sys.stderr)
-        return 2
-    claims = _load_claim_frontmatter(claims_dir)
-    if not claims:
-        print(f"error: no claim files under {claims_dir}", file=sys.stderr)
-        return 2
+    cfg = _cfg(args)
+    paper = read_prepared(args.paper, cfg)
+    claims_dir, claims = _claims_of(args, cfg)
 
     inv = assess(paper, claims)
     spans = assess_spans(paper, claims, include_methods=args.include_methods)
-    if getattr(args, "mapping", None):
+    if args.mapping:
         from .coverage import apply_mapping
         spans = apply_mapping(spans, json.loads(Path(args.mapping).read_text(encoding="utf-8")))
 
@@ -422,57 +359,22 @@ def cmd_coverage(args: argparse.Namespace) -> int:
     return 0
 
 
-def _load_claim_frontmatter(d: Path) -> list:
-    """Read every claim file's YAML frontmatter from a claim-tree directory."""
-    import re
-    import yaml
-    out = []
-    for f in sorted(d.glob("*.md")):
-        if f.name == "index.md":
-            continue
-        m = re.match(r"^---\n(.*?)\n---", f.read_text(encoding="utf-8"), re.S)
-        if not m:
-            continue
-        # Some committed files put an empty list at column 0 on the line after
-        # its key, which strict YAML rejects. Normalise rather than edit source.
-        body = re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2",
-                      m.group(1), flags=re.M)
-        try:
-            fm = yaml.safe_load(body) or {}
-        except yaml.YAMLError:
-            continue
-        if fm.get("slug"):
-            out.append(fm)
-    return out
-
-
 def cmd_mark(args: argparse.Namespace) -> int:
-    """Write the paper's claim assignments into the document, as tika marks.
+    """Layer `marks` — write the paper's claim assignments into the document.
 
-    The marked document is the record: an assigned span carries the claim's
-    UUID, a span that states no result says so, and a span carrying a result
-    with no mark is a gap you can see by looking.
+    The marked document is the record: an assigned span carries the claim's UUID, a span
+    that states no result says so, and a span carrying a result with no mark is a gap you
+    can see by looking.
     """
     import json
-    import logging
-    from .prepare import prepare
     from .coverage import assess_spans, apply_mapping
     from .marks import render_marked, assignments_from_marked, NO_ASSERTION, GAP
+    from .layers import read_prepared
 
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-                        datefmt="%H:%M:%S")
-    try:
-        paper = prepare(doi=args.doi, paper_slug_override=getattr(args, "paper_slug", None))
-    except Exception as e:
-        print(f"error: prepare failed: {e}", file=sys.stderr)
-        return 3
+    cfg = _cfg(args)
+    paper = read_prepared(args.paper, cfg)
+    _, claims = _claims_of(args, cfg)
 
-    claims_dir = Path(args.claims_dir).expanduser().resolve()
-    claims = _load_claim_frontmatter(claims_dir)
-    if not claims:
-        print(f"error: no claim files under {claims_dir}", file=sys.stderr)
-        return 2
     uuid_of = {c["slug"]: c.get("uuid") for c in claims}
     # A card in the margin shows the note's body. With the UUID alone in the payload every
     # card read `49d08c4f-7b31-4967-9ab7-06aa50a006b4`, which is correct, durable and
@@ -482,14 +384,14 @@ def cmd_mark(args: argparse.Namespace) -> int:
 
     rep = assess_spans(paper, claims, include_methods=args.include_methods)
     mapping = {}
-    if args.mapping:
+    if args.mapping and Path(args.mapping).is_file():
         mapping = json.loads(Path(args.mapping).read_text(encoding="utf-8"))
         rep = apply_mapping(rep, mapping)
 
-    # A span is assigned the UUID of a claim that accounts for it. Where several
-    # do, the first is written — the mark records that the span is covered, and
-    # which claim leads; a span belonging to several claims is a curation
-    # question rather than something to guess at here.
+    # A span is assigned the UUID of a claim that accounts for it. Where several do, the
+    # first is written — the mark records that the span is covered, and which claim leads;
+    # a span belonging to several claims is a curation question rather than something to
+    # guess at here.
     assignments: dict[str, str] = {}
     labels: dict[str, str] = {}
     for span, slugs in rep.accounted:
@@ -516,12 +418,12 @@ def cmd_mark(args: argparse.Namespace) -> int:
 
     text = render_marked(paper, assignments, author=args.author,
                          include_methods=args.include_methods, reasons=reasons)
-    out = Path(args.out).expanduser() if args.out else Path(f"{paper.paper_slug}.marked.md")
+    out = Path(args.out).expanduser() if args.out else cfg.root / "marked" / f"{paper.paper_slug}.marked.md"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(text, encoding="utf-8")
 
-    # Read the marks straight back. If the document cannot reproduce the
-    # assignments it was just written from, it is not a record of anything.
+    # Read the marks straight back. If the document cannot reproduce the assignments it was
+    # just written from, it is not a record of anything.
     back = assignments_from_marked(text, paper, include_methods=args.include_methods)
     n = lambda p: sum(1 for v in assignments.values() if v == p)
     print(f"=== Marked — {paper.paper_slug} ===")
@@ -538,27 +440,22 @@ def cmd_mark(args: argparse.Namespace) -> int:
     return 1
 
 
+# ── the one subcommand that is not a layer ───────────────────────────────
+
+
 def cmd_evaluate(args: argparse.Namespace) -> int:
-    """Round-trip evaluation against a curated reference corpus.
+    """Score a re-extraction against the committed corpus.
 
-    For each named (or all) paper in the reference corpus, run the full
-    pipeline (extract -> reconcile -> optional external review -> write)
-    and score the CLI's output against the reference. Aggregate per-paper
-    scorecards into a multi-paper report.
+    Deliberately outside the graph. It asks about the prompts rather than about a paper,
+    writes nothing any layer consumes, and runs the chain into a temp tree — so its answer
+    is "if today's prompts re-read these papers, how close would they land", which is not a
+    question about a version of anything.
     """
-    import logging
     from .evaluate import evaluate_paper, aggregate_report
-    from .config import Config
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-        datefmt="%H:%M:%S",
-    )
-
+    _logging(getattr(args, "verbose", False))
     cfg = Config.from_args(args)
-    # corpus_dir is not needed for evaluate — we use --reference-dir instead.
-    # Minimum required: reference dir exists and prompts dir is reachable.
+    # corpus_dir is not used — evaluate reads --reference-dir and writes into --work-dir.
     if cfg.prompts_dir is None or not cfg.prompts_dir.is_dir():
         print(f"error: prompts dir invalid: {cfg.prompts_dir}", file=sys.stderr)
         return 2
@@ -571,7 +468,6 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
     work_root = Path(args.work_dir).expanduser().resolve()
     work_root.mkdir(parents=True, exist_ok=True)
 
-    # Resolve which papers to evaluate
     if args.papers:
         slugs = [s.strip() for s in args.papers.split(",") if s.strip()]
     elif args.all:
@@ -581,12 +477,13 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
         return 2
 
     print(f"=== evaluate ===")
-    print(f"  reference_dir = {reference_dir}")
-    print(f"  work_dir      = {work_root}")
-    print(f"  review_mode   = {args.review_mode}")
-    print(f"  papers        = {len(slugs)} ({', '.join(slugs[:6])}{'...' if len(slugs) > 6 else ''})")
+    print(f"  reference_dir  = {reference_dir}")
+    print(f"  work_dir       = {work_root}")
+    print(f"  external review= {'on' if args.external_review else 'off'}")
+    print(f"  papers         = {len(slugs)} ({', '.join(slugs[:6])}{'...' if len(slugs) > 6 else ''})")
     print()
 
+    review_mode = "external" if args.external_review else "auto-approve"
     cards = []
     for i, slug in enumerate(slugs, 1):
         ref_paper_dir = reference_dir / slug
@@ -607,60 +504,21 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
             continue
 
         print(f"[{i}/{len(slugs)}] {slug}: starting...")
-        card = evaluate_paper(
-            ref_paper_dir=ref_paper_dir,
-            work_dir=paper_work_dir,
-            cfg=cfg,
-            review_mode=args.review_mode,
-        )
+        card = evaluate_paper(ref_paper_dir=ref_paper_dir, work_dir=paper_work_dir,
+                              cfg=cfg, review_mode=review_mode)
         cards.append(card)
         if card.error:
             print(f"[{i}/{len(slugs)}] {slug}: FAILED ({card.error})")
         else:
-            print(
-                f"[{i}/{len(slugs)}] {slug}: "
-                f"recovery={card.recovery_pct:.0f}%, "
-                f"panel={card.panel_pct:.0f}%, "
-                f"role={card.role_pct:.0f}% "
-                f"({card.n_cli} CLI vs {card.n_ref} ref)"
-            )
+            print(f"[{i}/{len(slugs)}] {slug}: "
+                  f"recovery={card.recovery_pct:.0f}%, panel={card.panel_pct:.0f}%, "
+                  f"role={card.role_pct:.0f}% ({card.n_cli} CLI vs {card.n_ref} ref)")
 
-    # Aggregate report
     out_path = work_root / "aggregate-scorecard.md"
-    aggregate_report(
-        cards=cards,
-        out_path=out_path,
-        reference_dir=reference_dir,
-        work_root=work_root,
-        review_mode=args.review_mode,
-    )
-    print()
-    print(f"aggregate scorecard: {out_path}")
+    aggregate_report(cards=cards, out_path=out_path, reference_dir=reference_dir,
+                     work_root=work_root, review_mode=review_mode)
+    print(f"\naggregate scorecard: {out_path}")
     return 0
-
-
-def cmd_run(args: argparse.Namespace) -> int:
-    """Composed shorthand: extract + write + verify-refs in sequence.
-
-    Implies --auto-approve (the human review gate is bypassed). For
-    interactive use, run the three subcommands separately.
-    """
-    print(f"=== run (extract → write → verify-refs) ===")
-    print(f"  doi    = {args.doi or args.pdf_path}")
-    print(f"  review = auto-approve (the Step 5 gate is bypassed)")
-    print()
-
-    args.review_mode = "auto-approve"
-    # `args.draft` and `args.paper` are set by cmd_extract, from the paper it
-    # prepared — the draft it wrote and the slug it derived.
-    rc = cmd_extract(args)
-    if rc != 0:
-        return rc
-    rc = cmd_write(args)
-    if rc != 0:
-        return rc
-    rc = cmd_verify_refs(args)
-    return rc
 
 
 # ── Argument parser construction ──────────────────────────────────────────
@@ -669,368 +527,285 @@ def cmd_run(args: argparse.Namespace) -> int:
 def _add_backend_args(parser: argparse.ArgumentParser) -> None:
     """Backend routing. Shared by every subcommand that calls a model."""
     parser.add_argument(
-        "--backend",
-        default=None,
-        help=(
-            "Model backend: vertex (default), anthropic, openrouter, openai, "
-            "google, groq, together, deepseek. Anything but vertex/anthropic "
-            "is routed via litellm. Or set ELIFE_EXTRACT_BACKEND."
-        ),
+        "--backend", default=None,
+        help=("Model backend: vertex (default), anthropic, openrouter, openai, "
+              "google, groq, together, deepseek. Anything but vertex/anthropic "
+              "is routed via litellm. Or set ELIFE_EXTRACT_BACKEND."),
     )
     parser.add_argument(
-        "--api-key",
-        default=None,
-        help=(
-            "API key for the chosen backend. Defaults to that backend's "
-            "environment variable (e.g. OPENROUTER_API_KEY). Not needed for vertex."
-        ),
+        "--api-key", default=None,
+        help=("API key for the chosen backend. Defaults to that backend's "
+              "environment variable (e.g. OPENROUTER_API_KEY). Not needed for vertex."),
     )
 
 
 def _add_common_args(parser: argparse.ArgumentParser) -> None:
-    """Args shared across all subcommands."""
+    """Args shared across every layer runner."""
     parser.add_argument(
-        "--corpus-dir",
-        type=Path,
-        help="Where claim files are read/written. Required (or set ELIFE_CORPUS_DIR).",
+        "--root", type=Path,
+        help="The corpus repository — what pipeline/layers.yaml resolves its paths against. "
+             "Defaults to the directory this package ships in, or ELIFE_CLAIM_TREES_ROOT.",
     )
     parser.add_argument(
-        "--prompts-dir",
-        type=Path,
+        "--corpus-dir", type=Path,
+        help="Where claim files are read and written (default: <root>/claims).",
+    )
+    parser.add_argument(
+        "--prompts-dir", type=Path,
         help="Override the prompts directory (default: package-local prompts/).",
     )
     parser.add_argument(
-        "--prompt-variant",
-        default=DEFAULT_PROMPT_VARIANT,
+        "--prompt-variant", default=DEFAULT_PROMPT_VARIANT,
         help=f"Named prompt variant under prompts/<variant>/ (default: {DEFAULT_PROMPT_VARIANT}).",
     )
     parser.add_argument(
-        "-v", "--verbose",
-        action="store_true",
-        help="Per-chunk DEBUG logging. Default is INFO, which reports each stage and a progress heartbeat.",
-    )
-    parser.add_argument(
-        "--no-infer-edges",
-        action="store_true",
-        help="Skip Step 6 dependency mapping. Claims are written with no edges.",
+        "-v", "--verbose", action="store_true",
+        help="Per-chunk DEBUG logging. Default is INFO, which reports each stage and a "
+             "progress heartbeat.",
     )
     _add_backend_args(parser)
 
 
 def _add_model_args(parser: argparse.ArgumentParser) -> None:
-    """Model-routing knobs for the extraction subcommands."""
-    parser.add_argument(
-        "--model-results",
-        default=None,
-        help=f"Model for the Results-reader agent (default: {DEFAULT_MODEL_RESULTS}).",
-    )
-    parser.add_argument(
-        "--model-caption",
-        default=None,
-        help=f"Model for the Caption-reader agent (default: {DEFAULT_MODEL_CAPTION}).",
-    )
-    parser.add_argument(
-        "--model-structure",
-        default=None,
-        help=f"Model for the Structure-reader agent (default: {DEFAULT_MODEL_STRUCTURE}).",
-    )
-    parser.add_argument(
-        "--model-reconcile",
-        default=None,
-        help=f"Model for the reconciliation step (default: {DEFAULT_MODEL_RECONCILE}).",
-    )
-    parser.add_argument(
-        "--vertex-project",
-        default=None,
-        help="Vertex AI project ID (default: VERTEX_PROJECT_ID env or cr-mainen).",
-    )
-    parser.add_argument(
-        "--vertex-region",
-        default=None,
-        help="Vertex AI region (default: VERTEX_REGION env or europe-west1).",
-    )
+    """Model-routing knobs for the subcommands that call a model."""
+    parser.add_argument("--model-results", default=None,
+                        help=f"Model for the Results-reader (default: {DEFAULT_MODEL_RESULTS}).")
+    parser.add_argument("--model-caption", default=None,
+                        help=f"Model for the Caption-reader (default: {DEFAULT_MODEL_CAPTION}).")
+    parser.add_argument("--model-structure", default=None,
+                        help=f"Model for the Structure-reader (default: {DEFAULT_MODEL_STRUCTURE}).")
+    parser.add_argument("--model-reconcile", default=None,
+                        help=f"Model for reconciliation, external review and edge inference "
+                             f"(default: {DEFAULT_MODEL_RECONCILE}).")
+    parser.add_argument("--vertex-project", default=None,
+                        help="Vertex AI project ID (default: VERTEX_PROJECT_ID env or cr-mainen).")
+    parser.add_argument("--vertex-region", default=None,
+                        help="Vertex AI region (default: VERTEX_REGION env or europe-west1).")
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="elife-extract",
         description=(
-            "8-step claim induction pipeline for eLife papers. "
-            "Three-agent extraction → reconciliation → review → write. "
-            "See: ~/Projects/mainenlab/elife-claim-trees/docs/method.md § 3."
+            "Layer runners for the claim-trees pipeline. One subcommand per runnable layer "
+            "in pipeline/layers.yaml; each reads and writes the paths its layer declares. "
+            "To run a layer and its unmet dependencies, and to record the run, use "
+            "`python3 scripts/pipeline.py run <paper> <layer>` rather than calling these "
+            "in sequence."
+        ),
+        epilog=(
+            "Layers, in dependency order: prepare, results-reader, caption-reader, "
+            "structure-reader, reconcile, external-review, edge-inference, write "
+            "(claim-tree), verify-refs (reference-check), coverage, mark (marks). "
+            "`evaluate` is a tool, not a layer."
         ),
     )
     parser.add_argument("--version", action="version", version=f"elife-extract {__version__}")
-
     sub = parser.add_subparsers(dest="command", required=True, metavar="COMMAND")
 
-    # ── extract ──────────────────────────────────────────────────────────
-    p_extract = sub.add_parser(
-        "extract",
-        help="Steps 1-4: fetch paper, run three-agent extraction, reconcile.",
+    # ── prepare ──────────────────────────────────────────────────────────
+    p_prep = sub.add_parser(
+        "prepare", help="Layer `prepare` — fetch and slice the paper.",
         description=(
-            "Fetch paper, do abstract scan, run the three-agent extraction "
-            "(Results / Caption / Structure), and reconcile into a draft "
-            "claim table. No claim files are written; the draft is emitted "
-            "as JSON for the write subcommand to consume after review."
+            "Fetch the paper, slice it into the abstract / results / captions / methods the "
+            "three readers each get, and write runs/<paper>/prepared.json. A layer so that "
+            "the paper itself is hashed: without it a reader's only declared input is its "
+            "prompt, and a run records which prompt read a paper but not which paper."
         ),
     )
-    p_extract.add_argument("--doi", default=None, help="Paper DOI. Optional when --pdf-path is given.")
-    p_extract.add_argument("--pdf-path", default=None, help="Path to a local PDF. Bypasses eLife DOI fetch.")
-    p_extract.add_argument(
-        "--input-format",
-        choices=["auto", "jats", "pdf"],
-        default="auto",
-        help="Input source: jats (structured XML, default for eLife), pdf (fallback), auto (jats for eLife DOIs).",
-    )
-    p_extract.add_argument(
-        "--paper-slug",
-        help="Override the slug derived from DOI/title (e.g., headley-2026-inhibitory-rhythms).",
-    )
-    p_extract.add_argument(
-        "--max-claims",
-        type=int,
-        default=None,
-        help="Hard cap on per-paper claim count (cost control for batches).",
-    )
-    p_extract.add_argument(
-        "--no-retry-on-thin",
-        dest="retry_on_thin",
-        action="store_false",
-        default=True,
-        help="Disable retrying an agent if its output looks thin.",
-    )
-    p_extract.add_argument(
-        "--reconcile-strategy",
-        choices=["confidence-tagged", "union", "intersection-only", "majority-vote"],
-        default="confidence-tagged",
-        help="How to handle disagreements between agents (default: confidence-tagged).",
-    )
-    p_extract.add_argument(
-        "--output-dir",
-        type=Path,
-        help="Where the draft and raw agent JSON land (default: ./out, or ELIFE_EXTRACT_OUTPUT).",
-    )
-    _add_common_args(p_extract)
-    _add_model_args(p_extract)
-    p_extract.set_defaults(func=cmd_extract)
+    p_prep.add_argument("--paper", required=True, help="Paper slug.")
+    p_prep.add_argument("--doi", default=None,
+                        help="Paper DOI. Defaults to the one in claims/<paper>/index.md, "
+                             "which a new paper does not have yet.")
+    p_prep.add_argument("--pdf-path", default=None,
+                        help="A local PDF, for a paper that is not on the eLife CDN.")
+    p_prep.add_argument("--input-format", choices=["auto", "jats", "pdf"], default="auto",
+                        help="Input source (default: auto = jats for eLife DOIs).")
+    _add_common_args(p_prep)
+    p_prep.set_defaults(func=cmd_prepare)
 
-    # ── write ────────────────────────────────────────────────────────────
-    p_write = sub.add_parser(
-        "write",
-        help="Steps 5-7: review + dependency mapping + write claim files.",
+    # ── the three readers ────────────────────────────────────────────────
+    for agent, reads in (("results", "the Results section"),
+                         ("caption", "the figure and table captions"),
+                         ("structure", "the methods, supplements and section structure")):
+        p = sub.add_parser(
+            f"{agent}-reader", help=f"Layer `{agent}-reader` — read {reads}.",
+            description=(
+                f"Run the {agent}-reader against {reads} of runs/<paper>/prepared.json and "
+                f"write its candidate claims to runs/<paper>/{agent}-reader.output.json. "
+                f"The three readers are kept apart because their agreement is the signal; "
+                f"none sees another's output."
+            ),
+        )
+        p.add_argument("--paper", required=True, help="Paper slug.")
+        _add_common_args(p)
+        _add_model_args(p)
+        p.set_defaults(func=_reader(agent))
+
+    # ── reconcile ────────────────────────────────────────────────────────
+    p_rec = sub.add_parser(
+        "reconcile", help="Layer `reconcile` — which candidates survive.",
         description=(
-            "Take a draft claim table from extract, present it for human "
-            "review (or skip review with --review-mode=auto-approve), map "
-            "dependency edges, generate UUIDs, and write claim .md files "
-            "into the corpus."
+            "Align the three readers' outputs into one draft claim table, tagged by "
+            "confidence and carrying which readers surfaced each claim."
         ),
     )
-    p_write.add_argument("--draft", required=True, type=Path, help="Path to draft claim JSON from extract.")
-    p_write.add_argument(
-        "--format",
-        choices=["yaml", "oxa"],
-        default="yaml",
-        help=(
-            "Output format: yaml (per-claim YAML-frontmatter markdown, default) "
-            "or oxa (single OXA JSON Document with ClaimGraph)."
+    p_rec.add_argument("--paper", required=True, help="Paper slug.")
+    p_rec.add_argument("--reconcile-strategy",
+                       choices=["confidence-tagged", "union", "intersection-only",
+                                "majority-vote"],
+                       default="confidence-tagged")
+    _add_common_args(p_rec)
+    _add_model_args(p_rec)
+    p_rec.set_defaults(func=cmd_reconcile)
+
+    # ── external review ──────────────────────────────────────────────────
+    p_ext = sub.add_parser(
+        "external-review", help="Layer `external-review` — recover missed structure.",
+        description=(
+            "One Opus pass over the reconciled draft, recovering the prediction and "
+            "hypothesis roles and the multi-panel claims the three readers systematically "
+            "miss. Was --review-mode external; it is a step rather than review, because it "
+            "changes the artifact and runs before the version it would approve exists."
         ),
     )
-    p_write.add_argument(
-        "--review-mode",
-        choices=["interactive", "auto-approve", "external", "dry-run"],
-        default="interactive",
-        help=(
-            "Step 5 review gate handling: interactive (open $EDITOR), "
-            "auto-approve (skip review for tests/demos), external (run Opus "
-            "reviewer pass before write — substitutes for human review), "
-            "or dry-run (print only)."
+    p_ext.add_argument("--paper", required=True, help="Paper slug.")
+    _add_common_args(p_ext)
+    _add_model_args(p_ext)
+    p_ext.set_defaults(func=cmd_external_review)
+
+    # ── edge inference ───────────────────────────────────────────────────
+    p_edge = sub.add_parser(
+        "edge-inference", help="Layer `edge-inference` — which claims depend on which.",
+        description=(
+            "Infer typed relations between the draft's claims and write them to "
+            "runs/<paper>/edge-inference.output.json, which the claim-tree layer then reads "
+            "rather than paying for the same answer twice."
         ),
     )
+    p_edge.add_argument("--paper", required=True, help="Paper slug.")
+    p_edge.add_argument("--dump-prompt", metavar="PATH",
+                        help="Write the exact prompt to PATH and exit, so whatever answers "
+                             "it answers the same question the layer would have asked.")
+    p_edge.add_argument("--edges-json",
+                        help="Record this file's edge answer instead of calling a backend. "
+                             "It goes through the same validation as an inferred one.")
+    _add_common_args(p_edge)
+    _add_model_args(p_edge)
+    p_edge.set_defaults(func=cmd_edge_inference)
+
+    # ── write (claim-tree) ───────────────────────────────────────────────
+    p_write = sub.add_parser(
+        "write", help="Layer `claim-tree` — write the claim files.",
+        description=(
+            "Assign slugs and UUIDs, attach the edges the edge-inference layer produced, "
+            "and write one claim file per claim into <corpus-dir>/<paper>/. Builds on the "
+            "external-review output where that layer has run, and on the reconciled draft "
+            "where it has not."
+        ),
+    )
+    p_write.add_argument("--paper", required=True, help="Paper slug.")
+    p_write.add_argument("--format", choices=["yaml", "oxa"], default="yaml",
+                         help="yaml (per-claim markdown, default) or oxa (one JSON Document).")
     _add_common_args(p_write)
-    # write needs model routing too: the external reviewer (Step 4.5) and
-    # edge inference (Step 6) both call cfg.model_reconcile.
-    _add_model_args(p_write)
-    p_write.add_argument(
-        "--edges-json",
-        help="Use this file's edge answer instead of calling a backend for Step 6. It goes "
-             "through the same validation as an inferred one. For answering the edge step "
-             "from outside the configured provider — an analyst, or a reasoning agent.",
-    )
-    p_write.add_argument(
-        "--dump-edge-prompt", metavar="PATH",
-        help="Write the exact Step 6 prompt to PATH and exit, so whatever answers it "
-             "answers the same question the pipeline would have asked.",
-    )
     p_write.set_defaults(func=cmd_write)
 
-    # ── verify-refs ──────────────────────────────────────────────────────
+    # ── verify-refs (reference-check) ────────────────────────────────────
     p_refs = sub.add_parser(
-        "verify-refs",
-        help="CrossRef DOI resolution for literature-context claims.",
+        "verify-refs", help="Layer `reference-check` — do the cited references resolve?",
         description=(
-            "For each literature-context claim in the named paper, resolve "
-            "the cited reference via CrossRef and write the verified DOI "
-            "back to the claim's frontmatter. Flags unresolvable references."
+            "For each literature-context claim, resolve the cited reference via CrossRef, "
+            "write the confirmed DOI back to the claim's frontmatter, and record what was "
+            "found in runs/<paper>/reference-check.output.json."
         ),
     )
-    p_refs.add_argument(
-        "--paper",
-        default=None,
-        help="Paper slug under corpus-dir/. Omit to sweep the whole corpus.",
-    )
-    p_refs.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Print resolutions without writing back to claim files.",
-    )
+    p_refs.add_argument("--paper", default=None,
+                        help="Paper slug. Omit to sweep the corpus — which writes no report, "
+                             "because a version belongs to one paper.")
+    p_refs.add_argument("--dry-run", action="store_true",
+                        help="Print resolutions without writing DOIs back or keeping a report.")
     _add_common_args(p_refs)
     p_refs.set_defaults(func=cmd_verify_refs)
 
-    # ── evaluate (multi-paper round-trip) ────────────────────────────────
-    p_eval = sub.add_parser(
-        "evaluate",
-        help="Round-trip score CLI output against a curated reference corpus.",
+    # ── coverage ─────────────────────────────────────────────────────────
+    p_cov = sub.add_parser(
+        "coverage", help="Layer `coverage` — what does no claim account for?",
         description=(
-            "For each paper in the reference corpus (or a named subset), "
-            "run extract -> reconcile -> optional external review -> write, "
-            "score against the reference, and aggregate per-paper scorecards "
-            "into a multi-paper report. Use to validate prompt iterations "
-            "before deploying."
+            "Take the denominator from the paper rather than from the claim set. Builds the "
+            "panel and statistic inventories, segments the whole text into sentences, and "
+            "reports which carry a result no claim states. Unlike `evaluate`, which scores "
+            "agreement between two claim sets, this can see what both of them missed."
         ),
     )
-    p_eval.add_argument(
-        "--reference-dir", required=True,
-        help="Path to the curated reference corpus (e.g., elife-claim-trees/claims/).",
-    )
-    p_eval.add_argument(
-        "--work-dir", required=True,
-        help="Where per-paper extraction artifacts and scorecards go.",
-    )
-    grp = p_eval.add_mutually_exclusive_group()
-    grp.add_argument(
-        "--paper", dest="papers",
-        help="Single paper slug (in reference dir) to evaluate.",
-    )
-    grp.add_argument(
-        "--papers",
-        help="Comma-separated list of paper slugs to evaluate.",
-    )
-    grp.add_argument(
-        "--all", action="store_true",
-        help="Evaluate every paper directory under reference-dir.",
-    )
-    p_eval.add_argument(
-        "--review-mode",
-        choices=["auto-approve", "external"],
-        default="external",
-        help="How the write step is run for each paper (default: external).",
-    )
-    p_eval.add_argument(
-        "--skip-existing", action="store_true",
-        help="Skip papers that already have a scorecard.json under work-dir.",
-    )
-    _add_model_args(p_eval)
-    _add_backend_args(p_eval)
-    p_eval.add_argument(
-        "--prompts-dir", type=Path,
-        help="Override the prompts directory (default: package-local prompts/).",
-    )
-    p_eval.add_argument(
-        "--prompt-variant", default="default",
-        help="Named prompt variant under prompts/<variant>/.",
-    )
-    p_eval.set_defaults(func=cmd_evaluate)
+    p_cov.add_argument("--paper", required=True, help="Paper slug.")
+    p_cov.add_argument("--claims-dir", help="The claim tree to measure against "
+                                            "(default: <corpus-dir>/<paper>).")
+    p_cov.add_argument("--include-methods", action="store_true",
+                       help="Count methods sentences as obligations too (off by default: "
+                            "the corpus claims results, not procedure).")
+    p_cov.add_argument("--mapping",
+                       help="Adjudicated verdicts for spans the mechanical match could not "
+                            "resolve, so the report shows real gaps rather than everything "
+                            "the string match missed.")
+    p_cov.add_argument("--json", help="Also write the full report as JSON here.")
+    p_cov.add_argument("--fail-on-orphans", action="store_true",
+                       help="Exit non-zero if any panel or result is unaccounted for.")
+    _add_common_args(p_cov)
+    p_cov.set_defaults(func=cmd_coverage)
 
-    # ── coverage ─────────────────────────────────────────────────────────
+    # ── mark (marks) ─────────────────────────────────────────────────────
     p_mark = sub.add_parser(
-        "mark",
-        help="Write claim assignments into the paper as tika marks.",
+        "mark", help="Layer `marks` — write claim assignments into the document.",
         description=(
             "Render the paper with a tika claim mark on every span a claim accounts for, "
-            "carrying that claim's UUID. Spans that state no result are marked as such; "
-            "spans carrying a result that no claim states are left bare, so a gap is "
-            "visible by absence rather than only countable in a report."
+            "carrying that claim's UUID. Spans that state no result are marked as such; a "
+            "span carrying a result that no claim states is marked as a gap, so it is "
+            "visible by looking rather than only countable in a report."
         ),
     )
-    p_mark.add_argument("--doi", required=True)
-    p_mark.add_argument("--paper-slug")
-    p_mark.add_argument("--claims-dir", required=True)
+    p_mark.add_argument("--paper", required=True, help="Paper slug.")
+    p_mark.add_argument("--claims-dir", help="Default: <corpus-dir>/<paper>.")
     p_mark.add_argument("--mapping", help="Adjudicated verdicts, as for `coverage`.")
     p_mark.add_argument("--include-methods", action="store_true")
     p_mark.add_argument("--author", default="zach", help="Mark author (default: zach).")
-    p_mark.add_argument("-o", "--out", help="Output path (default: <slug>.marked.md).")
+    p_mark.add_argument("-o", "--out", help="Output path (default: <root>/marked/<paper>.marked.md).")
+    _add_common_args(p_mark)
     p_mark.set_defaults(func=cmd_mark)
 
-    p_cov = sub.add_parser(
-        "coverage",
-        help="What in the paper does no claim account for? (no model calls)",
+    # ── evaluate (not a layer) ───────────────────────────────────────────
+    p_eval = sub.add_parser(
+        "evaluate", help="Score a re-extraction against the committed corpus. Not a layer.",
         description=(
-            "Take the denominator from the paper rather than from the claim set. "
-            "Builds the paper's panel and statistic inventories, then segments the "
-            "whole text into sentences and reports which of them carry a result "
-            "that no claim states. Unlike `evaluate`, which scores agreement "
-            "between two claim sets, this can see what both of them missed."
+            "Re-run the chain into a temp tree for each paper and score the result against "
+            "the committed claim files: recovery, panel agreement, role agreement. Use it to "
+            "validate a prompt change before keeping it. Outside the graph deliberately — it "
+            "asks about the prompts rather than about a paper, and produces nothing any "
+            "layer consumes."
         ),
     )
-    p_cov.add_argument("--doi", help="Paper DOI (eLife DOIs fetch JATS).")
-    p_cov.add_argument("--pdf-path", help="Path to a local PDF instead.")
-    p_cov.add_argument("--input-format", choices=["auto", "jats", "pdf"], default="auto")
-    p_cov.add_argument("--paper-slug", help="Override slug.")
-    p_cov.add_argument(
-        "--claims-dir", required=True,
-        help="The claim tree to measure against (e.g. claims/gadeke-2026-guilt-insula).",
-    )
-    p_cov.add_argument(
-        "--include-methods", action="store_true",
-        help="Count methods sentences as obligations too (off by default: the corpus "
-             "claims results, not procedure).",
-    )
-    p_cov.add_argument(
-        "--mapping",
-        help="Adjudicated verdicts for spans the mechanical match could not resolve "
-             "(covered / gap / not-an-assertion). Folds them in so the report shows real "
-             "gaps rather than everything the string match missed.",
-    )
-    p_cov.add_argument("--json", help="Also write the full report as JSON here.")
-    p_cov.add_argument(
-        "--fail-on-orphans", action="store_true",
-        help="Exit non-zero if any panel or result is unaccounted for — for use as a gate.",
-    )
-    p_cov.set_defaults(func=cmd_coverage)
-
-    # ── run (composed shorthand) ─────────────────────────────────────────
-    p_run = sub.add_parser(
-        "run",
-        help="Composed shorthand: extract + write + verify-refs (--auto-approve implied).",
-        description=(
-            "End-to-end run for tests, demos, and batch extraction. The "
-            "human review gate is bypassed (review-mode=auto-approve). "
-            "For interactive runs that go through human review, invoke "
-            "extract / write / verify-refs separately."
-        ),
-    )
-    p_run.add_argument("--doi", default=None, help="Paper DOI. Optional when --pdf-path is given.")
-    p_run.add_argument("--pdf-path", default=None, help="Path to a local PDF.")
-    p_run.add_argument(
-        "--input-format", choices=["auto", "jats", "pdf"], default="auto",
-        help="Input source (default: auto = jats for eLife DOIs).",
-    )
-    p_run.add_argument("--paper-slug", help="Override slug.")
-    p_run.add_argument("--max-claims", type=int, default=None)
-    p_run.add_argument(
-        "--reconcile-strategy",
-        choices=["confidence-tagged", "union", "intersection-only", "majority-vote"],
-        default="confidence-tagged",
-    )
-    p_run.add_argument(
-        "--output-dir",
-        type=Path,
-        help="Where the draft and raw agent JSON land (default: ./out, or ELIFE_EXTRACT_OUTPUT).",
-    )
-    _add_common_args(p_run)
-    _add_model_args(p_run)
-    p_run.set_defaults(func=cmd_run)
+    p_eval.add_argument("--reference-dir", required=True,
+                        help="The curated reference corpus (e.g. claims/).")
+    p_eval.add_argument("--work-dir", required=True,
+                        help="Where per-paper extraction artifacts and scorecards go.")
+    grp = p_eval.add_mutually_exclusive_group()
+    grp.add_argument("--paper", dest="papers", help="Single paper slug to evaluate.")
+    grp.add_argument("--papers", help="Comma-separated list of paper slugs.")
+    grp.add_argument("--all", action="store_true",
+                     help="Evaluate every paper directory under reference-dir.")
+    p_eval.add_argument("--external-review", action="store_true", default=True,
+                        help="Run the external-review step in the scored chain (default: on).")
+    p_eval.add_argument("--no-external-review", dest="external_review", action="store_false",
+                        help="Score the chain without external review.")
+    p_eval.add_argument("--skip-existing", action="store_true",
+                        help="Skip papers that already have a scorecard.json under work-dir.")
+    p_eval.add_argument("-v", "--verbose", action="store_true")
+    p_eval.add_argument("--prompts-dir", type=Path,
+                        help="Override the prompts directory (default: package-local prompts/).")
+    p_eval.add_argument("--prompt-variant", default=DEFAULT_PROMPT_VARIANT,
+                        help="Named prompt variant under prompts/<variant>/.")
+    _add_model_args(p_eval)
+    _add_backend_args(p_eval)
+    p_eval.set_defaults(func=cmd_evaluate)
 
     return parser
 
@@ -1042,4 +817,4 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

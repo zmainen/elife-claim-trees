@@ -84,8 +84,14 @@ RELATION_DEFS = {
                          "The source claim extends the destination claim to new conditions."),
     "replicates":       ("mira:supports", "mira:Evidence", "mira:Claim",
                          "The source evidence independently replicates the destination claim."),
+    "predicts":         ("mira:supports", "mira:Claim", "mira:Evidence",
+                         "The source claim predicts the destination result; inverse of confirms."),
     "contradicts":      ("mira:opposes", "mira:Claim", "mira:Claim",
                          "The source claim contradicts the destination claim."),
+    "opposes":          ("mira:opposes", "mira:Claim", "mira:Claim",
+                         "The source claim stands against the destination claim."),
+    "refutes":          ("mira:opposes", "mira:Evidence", "mira:Claim",
+                         "The source evidence is incompatible with the destination claim."),
     "rules-out":        ("mira:opposes", "mira:Evidence", "mira:Claim",
                          "The source evidence eliminates the destination claim as viable."),
     "dissociates-with": ("mira:opposes", "mira:Evidence", "mira:Claim",
@@ -147,21 +153,7 @@ def epistemic_status(role, epistemic):
         return "mira:Claim"
     return "mira:Claim"
 
-SUPPORTS = {"tests", "confirms", "validates", "supports", "extends", "replicates"}
-OPPOSES  = {"contradicts", "opposes", "dissociates-with", "rules-out"}
-
-# Relations with no MIRA predicate at all. These are the export's real cost.
-GAPS = {
-    "entails":        "hypothesis entails its prediction — the deductive step",
-    "derived-from":   "prediction derived from its hypothesis (inverse of entails)",
-    "interprets":     "one claim interprets another",
-    "enables-method": "a result makes a downstream method possible",
-    "scopes":         "a scope constraint governs another claim's validity",
-    "requires":       "a claim depends on another holding",
-    "qualifies":      "a claim narrows another's applicability",
-}
-
-EDGE_KEYS = SUPPORTS | OPPOSES | set(GAPS)
+from relations import EDGE_KEYS, GAPS, OPPOSES, SUPPORTS  # noqa: E402
 
 
 # ── Reading ───────────────────────────────────────────────────────────────────

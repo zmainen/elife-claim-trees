@@ -77,10 +77,15 @@ The R1 revision of the Meijer paper carries 41 claims against 24 in the v1 prepr
 > - The claims are **found** by three model calls reading the paper independently, and
 >   **reconciled** by a fourth.
 > - The relations between claims — the deductive spine — are **inferred** by a model call.
-> - Step 5 below is written as an analyst's review gate. In this version it runs either as
->   `--review-mode auto-approve`, which writes the files unread, or as
->   `--review-mode external`, which is **another model** reading the draft. There is no
->   configuration in which a person sees the table before it is written.
+> - Step 5 below is written as an analyst's review gate. There is no such gate. What stood in
+>   for one was a flag — `--review-mode external`, which is **another model** revising the
+>   draft, or `--review-mode auto-approve`, which wrote the files unread — and both are gone.
+>   The model's revision is now a declared layer, `external-review`, so changing the prompt
+>   behind it makes every claim tree built on it stale. Approval is what it should always have
+>   been: an operation on a version that already exists, recorded in
+>   `runs/<paper>/approvals.jsonl` by `scripts/pipeline.py approve`. That file is empty for
+>   every cell in this corpus — the same fact as before, now stated where it can be checked
+>   rather than inferred from a default.
 > - The `agent:` field on a verification record names **the agent identity that ran the
 >   script**, not a person who checked the result. All 225 records read `agent: mainen-z`;
 >   none of them means Zach Mainen read that claim.
@@ -163,9 +168,20 @@ reclassifies roles and types, adds missing claims, removes spurious ones, revise
 adjudicates single-source candidates. Nothing reaches disk until the table is approved. It is
 the intellectual gate — the claim graph should be right before it is made permanent.
 
-As it runs today, the gate is passed by a model or skipped entirely: `--review-mode external`
-sends the draft to another model, and `--review-mode auto-approve` writes the files unread.
-The corpus in this repository was produced without a person passing this gate. The step is
+As it runs today the gate does not exist, and the shape of its absence has changed. It used to
+be a flag with three settings, which bundled two unrelated things: `external` sent the draft to
+another model, and `interactive` opened an editor before anything was written. Only the second
+was review, and it reviewed the wrong object — what a curator edited was a draft table, while
+the version that reached the corpus was whatever the write step then made of it, which nobody
+saw.
+
+Both are now what they are. The model's pass is the `external-review` layer, declared like any
+other, versioned and hashed. A person's approval is an operation on a version that already
+exists: `scripts/pipeline.py approve <paper> <layer> --by NAME` records who read which version
+of what, and because the record names the version, re-running the layer does not carry the
+approval forward — it was granted to text that no longer exists. Nothing forces an approval and
+none has been granted, so the corpus is still unreviewed; the difference is that this is now a
+readable fact about the data rather than a consequence of which flag was passed. The step is
 documented in full because it is what the method requires, and its absence is the single
 largest gap between the method and the artefact. Step 5 is where the schema's role labels (`hypothesis`, `prediction`, `empirical`, `control`, `scope`, `methodological`, `synthesis`, `interpretation`, `literature-context`) are first assigned definitively, because role-assignment requires the analyst's judgment about what kind of work each claim is doing in the paper's argument.
 
@@ -192,7 +208,7 @@ replication of a risk-aversion effect — sat unrepresented in the tree, and not
 pipeline registered their absence, because every check ran over the claims rather than over
 the paper.
 
-`elife-extract coverage --doi <doi> --claims-dir claims/<paper-slug>` takes its denominator
+`elife-extract coverage --paper <paper-slug>` takes its denominator
 from the paper instead. It builds the paper's own inventories — every figure panel, every
 table, every reported statistic — and then cuts the entire text into **spans** (one sentence
 each) and asks, of every span, whether any claim accounts for it. No sampling, and no model

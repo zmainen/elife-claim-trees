@@ -40,21 +40,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from export_mira import (CLAIMS_DIR, load_paper, public_papers,  # noqa: E402
                          relations)
 
-SUPPORTS = {"supports", "tests", "validates", "confirms", "extends", "replicates"}
+from relations import (CONTRARY, DISTINGUISHES, OPPOSES,  # noqa: E402
+                       STANCES, SUPPORTS)
 
-# `rules-out` and `contradicts` are unambiguous: both assert the target is false, so aiming
-# one at a claim the same paper asserts is an error under any reading.
-#
-# `dissociates-with` is held apart deliberately. It is declared under `mira:opposes`, but it
-# is used 65 times -- more than the other two combined -- and 11 of those sit alongside a
-# *supporting* relation on the same pair, which is only coherent if the term means "these two
-# things come apart" rather than "the target is wrong". Whether it is an opposition at all is
-# open (issue #19), and a checker that assumed the answer would report 65 errors and force the
-# question closed by attrition. So they are counted and shown for review, never failed.
-CONTRARY = {"contradicts", "rules-out"}
-DISTINGUISHES = {"dissociates-with"}
-OPPOSES = CONTRARY | DISTINGUISHES
-STANCES = {"asserts", "entertains", "rejects", "attributes"}
+# `dissociates-with` is held apart from the rest of OPPOSES deliberately. It is declared under
+# `mira:opposes`, but it is used more than the other opposing relations combined and many of
+# those uses sit alongside a *supporting* relation on the same pair, which is only coherent if
+# the term means "these two things come apart" rather than "the target is wrong". Whether it is
+# an opposition at all is open (issue #19), and a checker that assumed the answer would report
+# those as errors and force the question closed by attrition. So they are counted and shown for
+# review, never failed.
 
 
 def stance(claim, paper_slug):

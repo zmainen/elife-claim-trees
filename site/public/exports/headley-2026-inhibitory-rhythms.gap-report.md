@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `headley-2026-inhibitory-rhythms` · **Generated:** 2026-09-10
+**Paper:** `headley-2026-inhibitory-rhythms` · **Generated:** 2026-09-11
 
 26 claims, 85 typed relations between them.
 
@@ -20,8 +20,8 @@
 | Relation | Dropped | What is lost |
 |---|---:|---|
 | `requires` | 28 | a claim depends on another holding |
-| `derived-from` | 6 | prediction derived from its hypothesis (inverse of entails) |
-| `entails` | 6 | hypothesis entails its prediction — the deductive step |
+| `derived-from` | 6 | a prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 6 | a hypothesis entails its prediction — the deductive step |
 | `interprets` | 5 | one claim interprets another |
 | `scopes` | 2 | a scope constraint governs another claim's validity |
 

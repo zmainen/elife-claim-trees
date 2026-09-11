@@ -28,7 +28,7 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 - `haak:scopes` (29) — a scope constraint governs another claim's validity
 - `haak:interprets` (5) — one claim interprets another
 - `haak:entails` (5) — a hypothesis entails its prediction — the deductive step
-- `haak:derived-from` (5) — a prediction derived from its hypothesis
+- `haak:derived-from` (5) — a prediction derived from its hypothesis (inverse of entails)
 - `haak:requires` (4) — a claim depends on another holding
 - `haak:enables-method` (2) — a result makes a downstream method possible
 - `haak:qualifies` (1) — a claim narrows another's applicability

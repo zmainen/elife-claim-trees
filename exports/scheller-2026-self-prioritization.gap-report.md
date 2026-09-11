@@ -1,8 +1,8 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `scheller-2026-self-prioritization` · **Generated:** 2026-09-10
+**Paper:** `scheller-2026-self-prioritization` · **Generated:** 2026-09-11
 
-23 claims, 90 typed relations between them.
+23 claims, 91 typed relations between them.
 
 ## Claims by role
 
@@ -18,7 +18,7 @@
 
 ## Relations dropped
 
-**54 of 90 relations (60%) have no MIRA predicate and are absent from the strict export.**
+**54 of 91 relations (59%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
@@ -26,8 +26,8 @@
 | `scopes` | 14 | a scope constraint governs another claim's validity |
 | `interprets` | 10 | one claim interprets another |
 | `enables-method` | 7 | a result makes a downstream method possible |
-| `derived-from` | 4 | prediction derived from its hypothesis (inverse of entails) |
-| `entails` | 4 | hypothesis entails its prediction — the deductive step |
+| `derived-from` | 4 | a prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 4 | a hypothesis entails its prediction — the deductive step |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.
 

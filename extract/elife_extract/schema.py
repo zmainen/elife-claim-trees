@@ -88,6 +88,10 @@ class DraftClaimTable(BaseModel):
     extraction_path: Literal["pdf", "github-readme", "elife-api", "web-fetch"] = "pdf"
     extraction_path_note: str | None = None
     per_agent_counts: dict[AgentName, int] = Field(default_factory=dict)
+    # Which model produced this draft, at the top level so the pipeline's `by_from: model`
+    # can read it out of the file. Every ledger entry used to record `scripts/pipeline.py
+    # run` as the author of a claim table an LLM wrote.
+    model: str | None = None
     claims: list[ReconciledClaim]
     config_snapshot: dict = Field(
         default_factory=dict,

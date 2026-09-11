@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `bouyeure-2026-fear-rsa` · **Generated:** 2026-09-10
+**Paper:** `bouyeure-2026-fear-rsa` · **Generated:** 2026-09-11
 
 30 claims, 83 typed relations between them.
 
@@ -23,8 +23,8 @@
 |---|---:|---|
 | `requires` | 13 | a claim depends on another holding |
 | `scopes` | 11 | a scope constraint governs another claim's validity |
-| `derived-from` | 6 | prediction derived from its hypothesis (inverse of entails) |
-| `entails` | 6 | hypothesis entails its prediction — the deductive step |
+| `derived-from` | 6 | a prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 6 | a hypothesis entails its prediction — the deductive step |
 | `interprets` | 5 | one claim interprets another |
 | `enables-method` | 3 | a result makes a downstream method possible |
 

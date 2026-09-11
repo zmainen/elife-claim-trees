@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `kammer-2026-foveal-feedback` · **Generated:** 2026-09-10
+**Paper:** `kammer-2026-foveal-feedback` · **Generated:** 2026-09-11
 
 23 claims, 65 typed relations between them.
 
@@ -22,8 +22,8 @@
 | Relation | Dropped | What is lost |
 |---|---:|---|
 | `enables-method` | 17 | a result makes a downstream method possible |
-| `derived-from` | 9 | prediction derived from its hypothesis (inverse of entails) |
-| `entails` | 4 | hypothesis entails its prediction — the deductive step |
+| `derived-from` | 9 | a prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 4 | a hypothesis entails its prediction — the deductive step |
 | `scopes` | 4 | a scope constraint governs another claim's validity |
 | `interprets` | 3 | one claim interprets another |
 | `requires` | 2 | a claim depends on another holding |

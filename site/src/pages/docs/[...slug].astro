@@ -1,0 +1,70 @@
+---
+// /docs — the reference for the two command-line tools, rendered from docs/cli/*.md.
+//
+// The prose is markdown in the repository rather than pages in this directory, for the same
+// reason /pipeline/method renders docs/method.md: documentation written as Astro pages is
+// documentation with a second place to be wrong. It also means these pages get the {{token}}
+// substitution, so a figure in them cannot drift from the corpus.
+//
+// This replaced 33 MDX pages under Starlight. They had their own sidebar, their own header
+// component and their own theme handling, and 25 of them had not been touched in four months —
+// they described a three-agent pipeline with a review gate, which is not what this repository
+// does. Starlight went with them: a section this size does not need a docs framework, and
+// carrying one meant carrying a second theme system keyed on `data-theme` where the site keys
+// on `.dark`.
+import Layout from '../../layouts/Layout.astro';
+import DocsNav from '../../components/DocsNav.astro';
+import { readDoc, renderMd, titleOf, bodyOf } from '../../lib/markdown';
+
+// The page list lives inside getStaticPaths because Astro hoists it and evaluates it in
+// isolation — it cannot see the component script around it. Nothing below needs the list:
+// the slug arrives as a prop.
+export function getStaticPaths() {
+  return [
+    'index', 'install', 'first-paper', 'runner', 'layers',
+    'batch', 'evaluate', 'config', 'prompts', 'contributing',
+  ].map(slug => ({
+    params: { slug: slug === 'index' ? undefined : slug },
+    props: { slug },
+  }));
+}
+
+const { slug } = Astro.props;
+const md = readDoc(`docs/cli/${slug}.md`);
+const title = titleOf(md, slug);
+const html = await renderMd(bodyOf(md));
+
+// The first paragraph is the page's own summary; the layout uses it as the meta description
+// rather than repeating a generic one across ten pages.
+const description = bodyOf(md).split('\n\n')[0].replace(/\s+/g, ' ').replace(/[*`\[\]]/g, '').slice(0, 180);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title={title} description={description}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <div class="md:grid md:grid-cols-[190px_minmax(0,1fr)] md:gap-10">
+
+      <aside class="mb-8 md:mb-0">
+        <div class="md:sticky md:top-16">
+          <DocsNav current={slug} />
+        </div>
+      </aside>
+
+      <article class="min-w-0">
+        <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-6">
+          {title}
+        </h1>
+        <div class="method-prose" set:html={html} />
+
+        <footer class="mt-12 pt-6 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+          <p class="m-0">
+            This page is <code>docs/cli/{slug}.md</code> in the repository, rendered here.
+            The model these commands operate on is on
+            <a href={`${base}/pipeline/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">the pipeline pages</a>.
+          </p>
+        </footer>
+      </article>
+
+    </div>
+  </div>
+</Layout>

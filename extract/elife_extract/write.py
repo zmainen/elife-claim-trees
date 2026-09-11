@@ -293,12 +293,44 @@ def write_oxa_document(draft: DraftClaimTable, cfg: Config) -> Path:
 # ── Top-level write ──────────────────────────────────────────────────────
 
 
-def write_claim_files(draft: DraftClaimTable, cfg: Config) -> list[Path]:
+def resolve_edges(draft: DraftClaimTable, slugs: list[str], cfg: Config) -> list[dict]:
+    """The edges to write, when the caller has not already got them.
+
+    A supplied edge answer wins over calling a backend, and goes through exactly the same
+    validation — unknown slugs dropped, self-edges dropped, reciprocals synthesised. The
+    route in differs; the checks do not. This exists because the deductive spine is the
+    part of a claim tree that matters most and the part most easily lost to a provider
+    outage: on a live Gädeke run every other stage succeeded and the edges were gone.
+    """
+    supplied = getattr(cfg, "edges_json", None)
+    if supplied:
+        from .edges import edges_from_raw
+        try:
+            return edges_from_raw(Path(supplied).read_text(encoding="utf-8"),
+                                  slugs, source=f"supplied:{supplied}")
+        except Exception as e:                                   # noqa: BLE001
+            logger.warning("supplied edge file unusable (%s); writing claims without edges", e)
+            return []
+    if getattr(cfg, "infer_edges", True):
+        from .edges import infer_edges
+        try:
+            return infer_edges(draft, slugs, cfg)
+        except Exception as e:                                   # noqa: BLE001
+            logger.warning("edge inference failed (%s); writing claims without edges", e)
+    return []
+
+
+def write_claim_files(draft: DraftClaimTable, cfg: Config,
+                      edges: list[dict] | None = None) -> list[Path]:
     """Emit claim files into <corpus_dir>/<paper_slug>/.
 
     Returns the list of paths written (the index plus one per claim).
     Refuses to overwrite existing files; use --force in a future pass
     to allow reruns. For now, the analyst can rm the directory first.
+
+    `edges` comes from the edge-inference layer, which has already run and written them.
+    Passing None re-derives them, which is a second paid call for an answer already on
+    disk — kept only for `evaluate`, which runs the chain into a temp tree with no ledger.
     """
     if cfg.corpus_dir is None:
         raise ValueError("corpus_dir not set; cannot write claim files")
@@ -314,28 +346,9 @@ def write_claim_files(draft: DraftClaimTable, cfg: Config) -> list[Path]:
     slugs = _unique_slugs(draft.claims)
     written: list[Path] = []
 
-    # Step 6 — infer the edges between claims before writing any of them,
-    # since an edge names two slugs and both must already be assigned.
-    edges: list[dict] = []
-    # A supplied edge answer wins over calling a backend, and goes through exactly the same
-    # validation — unknown slugs dropped, self-edges dropped, reciprocals synthesised. The
-    # route in differs; the checks do not. This exists because the deductive spine is the
-    # part of a claim tree that matters most and the part most easily lost to a provider
-    # outage: on a live Gädeke run every other stage succeeded and the edges were gone.
-    supplied = getattr(cfg, "edges_json", None)
-    if supplied:
-        from .edges import edges_from_raw
-        try:
-            edges = edges_from_raw(Path(supplied).read_text(encoding="utf-8"),
-                                   slugs, source=f"supplied:{supplied}")
-        except Exception as e:                                   # noqa: BLE001
-            logger.warning("supplied edge file unusable (%s); writing claims without edges", e)
-    elif getattr(cfg, "infer_edges", True):
-        from .edges import infer_edges
-        try:
-            edges = infer_edges(draft, slugs, cfg)
-        except Exception as e:                                   # noqa: BLE001
-            logger.warning("edge inference failed (%s); writing claims without edges", e)
+    # An edge names two slugs and both must be assigned before any file is written.
+    if edges is None:
+        edges = resolve_edges(draft, slugs, cfg)
 
     # Per-claim files
     for claim, slug in zip(draft.claims, slugs):
