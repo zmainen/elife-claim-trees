@@ -17,6 +17,7 @@ import { renderMd } from '../lib/markdown';
 import { output } from '../lib/layer-source';
 import { artifact, SIZE } from '../lib/artifacts';
 import LayerRecords from './LayerRecords.astro';
+import LayerOverlap from './LayerOverlap.astro';
 import type { LayerDecl } from '../lib/pipeline';
 
 interface Props {
@@ -37,6 +38,10 @@ const { path, records, document, sections } = output(produces);
 const art = path ? artifact(path, base) : null;
 
 const asRecords = records?.records.length && views.some(v => v === 'list' || v === 'table');
+// The agreement matrix, when the layer declares it and the output carries what it needs:
+// which readers surfaced each claim. Rendered above the plain table, as the headline view.
+const asOverlap = Boolean(records?.records.length && views.includes('overlap')
+  && (records!.fields.includes('sources') || records!.fields.includes('evidence_by_agent')));
 const asDocument = views.includes('document');
 const html = asDocument && document ? await renderMd(document.text) : null;
 const prose = asDocument ? (sections ?? []) : [];
@@ -77,6 +82,17 @@ const chars = (n: number) => `${(n / 1000).toFixed(1)}k characters`;
         </span>
       )}
     </p>
+
+    {asOverlap && (
+      <div class="mb-6">
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3 max-w-2xl leading-relaxed">
+          Which reader surfaced each claim, the evidence each quoted, and the confidence that
+          follows from how many agreed. Agreement between three partitions is the informative
+          case — a claim only one reader saw is a different thing from one all three did.
+        </p>
+        <LayerOverlap data={records!} id={`${paper}-${layer.id}-overlap`} />
+      </div>
+    )}
 
     {asRecords && (
       <LayerRecords data={records!} views={views} limit={limit} id={`${paper}-${layer.id}`} />

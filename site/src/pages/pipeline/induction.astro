@@ -12,6 +12,8 @@
 // committed 2026-03-30 and the trace on 2026-09-10, sharing no claim text. The page says what
 // it is rather than implying it is the corpus's provenance.
 import Layout from '../../layouts/Layout.astro';
+import LayerOverlap from '../../components/LayerOverlap.astro';
+import { records } from '../../lib/layer-source';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -37,17 +39,14 @@ const STAGES: Record<string, string> = {
 };
 const stageOrder = ['read', 'reconcile', 'relate', 'cover'];
 
-// Claims ordered so the ones more than one reader found come first — that is the part a
-// reader should see, and there are only a few.
-const claims = [...g.claims].sort(
-  (a: any, b: any) => b.sources.length - a.sources.length);
-const agreed = claims.filter((c: any) => c.sources.length > 1);
-
-const model = g.config.model_results ?? Object.values(g.models)[0];
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const AGENT_LABEL: Record<string, string> = {
-  results: 'results-reader', caption: 'caption-reader', structure: 'structure-reader',
-};
+
+// The agreement matrix for the one paper with a trace, drawn by the same component that draws
+// `reconcile`'s `overlap` view on every cell — rather than a second, hand-built copy here.
+const overlapPaper = 'gadeke-2026-guilt-insula';
+const overlap = traced.includes(overlapPaper)
+  ? records(`runs/${overlapPaper}/reconciler.output.json`)
+  : null;
 ---
 
 <Layout title="Induction">
@@ -83,6 +82,21 @@ const AGENT_LABEL: Record<string, string> = {
         that has been checked.
       </p>
     </div>
+
+    {overlap && overlap.records.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">The agreement matrix</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-5 max-w-2xl leading-relaxed">
+          One paper — {overlapPaper} — reconciled: which reader surfaced each claim, the
+          sentence each quoted, and the confidence that follows. This is
+          <a href={`${base}/pipeline/reconcile/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">reconcile</a>'s
+          <code>overlap</code> view, and it is drawn on
+          <a href={`${base}/papers/${overlapPaper}/reconcile/`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">that paper's cell</a>
+          by the same component.
+        </p>
+        <LayerOverlap data={overlap} id="induction-overlap" />
+      </section>
+    )}
 
     <!-- Roles -->
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">The {roleCount} roles</h2>
