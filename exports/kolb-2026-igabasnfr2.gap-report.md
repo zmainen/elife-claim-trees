@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `kolb-2026-igabasnfr2` · **Generated:** 2026-09-11
+**Paper:** `kolb-2026-igabasnfr2` · **Claims registered:** 2026-03-30 – 2026-09-10
 
 21 claims, 90 typed relations between them.
 

@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `artiushin-2026-spider-atlas` · **Generated:** 2026-09-11
+**Paper:** `artiushin-2026-spider-atlas` · **Claims registered:** 2026-03-30
 
 17 claims, 67 typed relations between them.
 

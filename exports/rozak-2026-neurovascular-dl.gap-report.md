@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `rozak-2026-neurovascular-dl` · **Generated:** 2026-09-11
+**Paper:** `rozak-2026-neurovascular-dl` · **Claims registered:** 2026-03-30 – 2026-09-10
 
 24 claims, 129 typed relations between them.
 

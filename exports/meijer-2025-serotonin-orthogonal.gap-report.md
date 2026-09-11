@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `meijer-2025-serotonin-orthogonal` · **Generated:** 2026-09-11
+**Paper:** `meijer-2025-serotonin-orthogonal` · **Claims registered:** 2026-04-19 – 2026-09-10
 
 25 claims, 63 typed relations between them.
 
