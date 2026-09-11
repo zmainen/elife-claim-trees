@@ -14,6 +14,11 @@ import { join } from 'path';
 
 const facts = JSON.parse(readFileSync(
   join(process.cwd(), 'src/data/corpus-facts.json'), 'utf8'));
+const review = JSON.parse(readFileSync(
+  join(process.cwd(), 'src/data/review.json'), 'utf8'));
+const rItems = review.topics.flatMap((t: any) => t.items);
+const rPending = rItems.filter((i: any) => i.decision === 'pending').length;
+const rPapers = new Set(rItems.map((i: any) => i.paper)).size;
 const claims = JSON.parse(readFileSync(
   join(process.cwd(), 'src/data/claims.json'), 'utf8'));
 
@@ -41,7 +46,7 @@ const slugs = Object.keys(L);
 const count = (k: string) => slugs.filter(s => L[s][k]).length;
 const altTotal = slugs.reduce((n, s) => n + (L[s].alternatives_n ?? 0), 0);
 
-const LAYERS = [
+const LAYERS = ([
   {
     v: 'v1', date: '2026-03', key: 'tree',
     title: 'Claim trees',
@@ -64,6 +69,13 @@ const LAYERS = [
     covers: `${count('formats')} of ${slugs.length} papers`,
   },
   {
+    v: 'v6', date: '2026-09-11', key: 'review',
+    title: 'Review',
+    question: 'Which of these does a person need to rule on?',
+    detail: `An automated check finds claims and relations whose reading a script cannot settle, and puts each in a queue with its evidence and an agent's proposed answer. This is the first layer that asks for a human rather than producing something: ${rItems.length} items are open, ${rPending} of them still awaiting a decision. It exists because a heuristic using every structural signal available reproduces an agent's reading of the current queue 42% of the time, against 25% for guessing — the judgement is not in the shape of the graph.`,
+    covers: `${rPapers} of ${slugs.length} papers have items in the queue`,
+  },
+  {
     v: 'v4', date: '2026-09-10', key: 'coverage',
     title: 'Coverage',
     question: 'What does the paper assert that no claim represents?',
@@ -77,7 +89,7 @@ const LAYERS = [
     detail: `A tree could say what a result supports but not what it eliminates, because a rival nobody asserts had nowhere to be. Alternatives are now claims like any other, and \`stance\` on the assertion records the paper's posture toward each — asserts, entertains, rejects, attributes. A rejected alternative is an \`entertains\` with an incoming \`rules-out\`; an \`entertains\` without one is an open rival, which is common and was previously inexpressible. ${altTotal} propositions across the corpus are now recorded as ones their paper does not assert.`,
     covers: `${count('alternatives')} of ${slugs.length} papers`,
   },
-];
+]).sort((a, b) => a.v.localeCompare(b.v));
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const has = (s: string, k: string) => L[s][k];
@@ -237,6 +249,16 @@ const has = (s: string, k: string) => L[s][k];
           Gädeke only. The paper was cut into spans and each adjudicated against the claim tree,
           which is how the tree is measured against the paper rather than against itself. The
           remaining nine papers have not been through this layer.
+        </p>
+      </section>
+      <section class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+        <p class="font-mono text-xs text-amber-700 dark:text-amber-400 m-0 mb-1">v6 &middot; review &middot; 2026-09-11</p>
+        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0">
+          The first queue holds every use of <code>dissociates-with</code>, the corpus's most
+          common oppositional relation at 65 uses. It is declared under <code>mira:opposes</code>
+          in every export, and reading the pairs suggests most are not oppositions at all — but
+          that reading is an agent's and unverified, which is exactly what the queue is for.
+          <a href={`${base}/review/`} class="text-amber-700 dark:text-amber-400 hover:underline ml-1">Open the queue</a>
         </p>
       </section>
     </div>

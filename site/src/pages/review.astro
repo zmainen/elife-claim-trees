@@ -1,0 +1,215 @@
+---
+// Review — the v5 layer.
+//
+// Every claim, relation and verdict here was produced by a language model and checked by
+// nobody. The site has said so since the Agents page went up; this is the first surface where
+// a person can do something about it.
+//
+// What the page is for: reading the evidence and forming a judgement. It does not record one —
+// GitHub Pages is static, and a decision that lived only in a browser would be lost. Decisions
+// go back into `review/<topic>.json`, which is also what this page renders, so the queue and
+// the page cannot disagree.
+import Layout from '../layouts/Layout.astro';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+const review = JSON.parse(readFileSync(
+  join(process.cwd(), 'src/data/review.json'), 'utf8'));
+const claims = JSON.parse(readFileSync(
+  join(process.cwd(), 'src/data/claims.json'), 'utf8'));
+
+const topic = review.topics[0];
+const items = topic.items as any[];
+
+const fold = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const nameOf = (slug: string) => {
+  const want = slug.split('-')[0];
+  const toks = (claims.papers.find((p: any) => p.slug === slug)?.authors?.[0] ?? '').split(/\s+/);
+  return toks.find((t: string) => fold(t) === want)
+      ?? want.replace(/^./, (c: string) => c.toUpperCase());
+};
+
+const pending = items.filter(i => i.decision === 'pending');
+const decided = items.length - pending.length;
+
+// Group by paper, exemplar first — it is the one anyone is most likely to read.
+const EXEMPLAR = 'gadeke-2026-guilt-insula';
+const papers = [...new Set(items.map(i => i.paper))]
+  .sort((a, b) => (a === EXEMPLAR ? -1 : b === EXEMPLAR ? 1 : a.localeCompare(b)));
+
+// Full class strings, not interpolated fragments: Tailwind scans source text, so
+// `text-${colour}-700` generates nothing and the dark variant silently never appears.
+const TYPE_CLASS: Record<string, string> = {
+  tension:   'text-rose-700 dark:text-rose-400',
+  selective: 'text-teal-700 dark:text-teal-400',
+  property:  'text-indigo-700 dark:text-indigo-400',
+  parallel:  'text-gray-600 dark:text-gray-400',
+};
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title="Review">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+
+    <header class="mb-8">
+      <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 m-0 mb-2">Layer v6</p>
+      <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">Review</h1>
+      <p class="text-gray-600 dark:text-gray-400 m-0 max-w-2xl leading-relaxed">
+        Claims and relations where an automated check found something a person should rule on.
+        Each item carries the evidence, an agent&rsquo;s proposed reading, and the decision it
+        is waiting for.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{items.length}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">items in the queue</div>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+        <div class="text-2xl font-semibold text-amber-700 dark:text-amber-400">{pending.length}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">awaiting a human decision</div>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{decided}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">decided</div>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+        <div class="text-2xl font-semibold text-gray-900 dark:text-gray-100">42%</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">accuracy of the best structural heuristic — why this is not automated</div>
+      </div>
+    </div>
+
+    <!-- The question -->
+    <section class="border border-gray-200 dark:border-gray-700 rounded-xl p-5 mb-10">
+      <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 m-0 mb-2">
+        {topic.question}
+      </h2>
+      <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0 mb-4">{topic.why}</p>
+      <div class="grid sm:grid-cols-2 gap-3">
+        {Object.entries(topic.types).map(([k, d]: any) => (
+          <div class="text-sm">
+            <code class={`${TYPE_CLASS[k] ?? ''} font-semibold`}>{k}</code>
+            <span class="text-gray-600 dark:text-gray-400"> — {d}</span>
+            <div class="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
+              if chosen: {topic.actions[k]}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <div class="rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/60 dark:bg-amber-950/20 p-5 mb-10">
+      <p class="text-sm text-gray-800 dark:text-gray-200 m-0 leading-relaxed">
+        <strong>Why a person and not a script.</strong> A heuristic using every structural
+        signal available &mdash; whether the relation is declared in both directions, whether a
+        supporting relation runs alongside it, shared neighbours, claim roles, whether either
+        claim reports a null &mdash; reproduces an agent&rsquo;s reading of these 45 items
+        <strong>42% of the time</strong>, against 25% for guessing among four types. The
+        distinction is not in the shape of the graph. It is in what the claims say.
+      </p>
+    </div>
+
+    <!-- Queue -->
+    {papers.map(paper => {
+      const rows = items.filter(i => i.paper === paper);
+      return (
+        <section class="mb-10">
+          <div class="flex flex-wrap items-baseline gap-3 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 m-0">{nameOf(paper)}</h2>
+            {paper === EXEMPLAR && (
+              <span class="text-[10px] font-mono uppercase tracking-wider text-amber-700 dark:text-amber-400">worked example</span>
+            )}
+            <span class="text-xs font-mono text-gray-500 dark:text-gray-400 ml-auto">
+              {rows.filter(r => r.decision === 'pending').length} of {rows.length} pending
+            </span>
+          </div>
+
+          <div class="space-y-4">
+            {rows.map(i => (
+              <article class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                  <span class={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded ${
+                    i.decision === 'pending'
+                      ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300'
+                      : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300'}`}>
+                    {i.decision}
+                  </span>
+                  {i.proposed && (
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      proposed: {i.proposed}
+                    </span>
+                  )}
+                  <span class="text-xs font-mono text-gray-400 dark:text-gray-500">
+                    {i.reciprocal ? '↔ both directions' : '→ one direction'}
+                  </span>
+                  {i.also_carries.length > 0 && (
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                      also +{i.also_carries.join(', +')}
+                    </span>
+                  )}
+                  {(i.a_reports_null || i.b_reports_null) && (
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                      a null result
+                    </span>
+                  )}
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                  {[['a', i.a, i.a_text, i.a_role], ['b', i.b, i.b_text, i.b_role]].map(
+                    ([, slug, text, role]: any) => (
+                    <div>
+                      <a href={`${base}/papers/${paper}/?claim=${slug}`}
+                         class="block font-mono text-[11px] text-amber-700 dark:text-amber-400 hover:underline no-underline mb-1 break-words">
+                        {slug}
+                      </a>
+                      <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0">{text}</p>
+                      <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mt-1 mb-0">{role}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {i.note && (
+                  <p class="text-xs text-gray-600 dark:text-gray-400 mt-3 mb-0 border-t border-gray-100 dark:border-gray-800 pt-2">
+                    {i.note}
+                  </p>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    })}
+
+    <!-- How a decision is made -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mt-12 mb-3">Recording a decision</h2>
+    <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+      <p>
+        This page is static, so it cannot take the decision. It renders
+        <code>review/dissociates-with.json</code>, which is where decisions live &mdash; the
+        same file, so the queue and this page cannot disagree.
+      </p>
+      <pre class="bg-gray-900 dark:bg-black text-gray-100 rounded-lg p-4 text-xs overflow-x-auto"><code>{`# set "decision" on an item: parallel | selective | property | tension
+# then check what it would do, before anything is written
+python3 scripts/apply_review.py dissociates-with --paper gadeke-2026-guilt-insula
+python3 scripts/apply_review.py dissociates-with --paper gadeke-2026-guilt-insula --write`}</code></pre>
+      <p>
+        The applier refuses while any item is <code>pending</code>: a half-reviewed queue would
+        leave the corpus in a state nobody chose. It removes both declared directions of a
+        reciprocal pair, skips items already applied, and writes into each claim the review that
+        changed it.
+      </p>
+      <p>
+        <code>python3 scripts/review_queue.py</code> refreshes the queue from the corpus.
+        Decisions already recorded survive the refresh.
+      </p>
+    </div>
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm flex flex-wrap gap-x-6 gap-y-2">
+      <a href={`${base}/layers/`} class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline">Layers</a>
+      <a href={`${base}/agents/`} class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline">Agents</a>
+      <a href="https://github.com/zmainen/elife-claim-trees/issues/19" target="_blank"
+         class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 no-underline">Issue #19 &nearr;</a>
+    </footer>
+  </div>
+</Layout>
