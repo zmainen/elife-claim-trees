@@ -32,6 +32,14 @@
 #   judgement   a decision by a person or an agent, stored because recomputing destroys it
 #   feature     a capability that revises existing artifacts; runs once, then it is the schema
 #   question    a decision about meaning, then a propagation of it
+#
+# APPROVAL IS NOT A KIND
+#   Review is not a layer. It is an operation on a *version*: a person reads what a layer
+#   produced and approves that version, and the approval names the version it was given to.
+#   When the layer runs again the approval does not follow — it was granted to text that no
+#   longer exists. Approvals live in runs/<paper>/approvals.jsonl, apply to any layer, and are
+#   empty for every cell in this corpus, which is what "no human has checked this" is when it
+#   is a fact about the data rather than a sentence in a preface.
 
 version: 1
 
@@ -149,25 +157,6 @@ layers:
     views: [graph, list, table]
     command: "cd extract && python3 -m elife_extract.cli write --draft out/draft-{paper}.json --corpus-dir ../claims"
 
-  # The methodology's Step 5 gate. It is declared here and absent everywhere, which is the
-  # honest rendering of "no human checks this corpus": not a disclaimer in prose but an empty
-  # column in the matrix. A review targets the version it read — when claim-tree produces a
-  # new version, the review of the old one is stale, and the site says so rather than
-  # carrying a tick earned against different text.
-  - id: review
-    kind: judgement
-    scope: paper
-    title: Human review
-    question: Has a person read this tree and approved it?
-    added: "2026-09-11"
-    found: >
-      Nothing, because it has never run. Declared so that its absence is a fact about the corpus rather than a sentence in a preface.
-    needs: [claim-tree]
-    produces: ["reviews/{paper}.json"]
-    views: [table, comparison]
-    reviews: claim-tree
-    requires_human: true
-
   - id: stance
     kind: feature
     scope: paper
@@ -239,6 +228,19 @@ layers:
     produces: ["marked/{paper}.marked.md"]
     views: [document]
     command: "cd extract && python3 -m elife_extract.cli mark --doi {doi} --paper-slug {paper} --claims-dir ../claims/{paper} --mapping ../mappings/{paper}.json -o ../marked/{paper}.marked.md"
+
+  # Distinct from verification, which re-runs the authors' own deposited code against their
+  # own data. Replication asks whether an independent study found the same thing — a different
+  # question, with a different kind of evidence, and one this corpus has never asked. The
+  # `replicates` relation is defined in the schema and used zero times. Declared so that the
+  # gap is a column rather than an omission.
+  - id: replication
+    kind: step
+    scope: paper
+    title: Replication
+    question: Has an independent study found the same thing?
+    needs: [claim-tree]
+    views: [table, comparison]
 
   # ── interchange ────────────────────────────────────────────────────────────
   # Fans out: one tree into three encodings that never rejoin.

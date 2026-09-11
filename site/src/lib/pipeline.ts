@@ -30,7 +30,6 @@ export interface LayerDecl {
   command?: string;
   issue?: number;
   open?: boolean;
-  reviews?: string;
   requires_human?: boolean;
   added?: string;
   found?: string;
@@ -57,6 +56,9 @@ export interface Cell {
   command?: string;
   /** Every recorded run of this layer for this paper, newest first. */
   versions: Version[];
+  /** Approval is an operation on a version, not a layer. `applies` is false when the layer
+   *  has run again since — the approval was granted to output that no longer exists. */
+  approved?: { v: number; by?: string; when?: string; note?: string; applies: boolean };
   /** Addresses. */
   href: string;
   dataHref: string;
@@ -123,6 +125,7 @@ export function cell(paper: string, layerId: string): Cell | null {
     blockedBy: raw.blocked_by,
     unrecordedUpstream: raw.unrecorded_upstream,
     versions: history(paper, layerId),
+    approved: raw.approved,
     produces: (layer.produces ?? []).map(p => fill(p, paper)),
     command: layer.command ? fill(layer.command, paper) : undefined,
     href: `${base}/papers/${paper}/${layerId}/`,
@@ -216,6 +219,11 @@ export function resolve(text: string): string {
     }
     return String(FLAT[key]);
   });
+}
+
+/** Cells a person has approved, and whose approval still applies to what is there now. */
+export function approvedCells(): Cell[] {
+  return papers.flatMap(p => cells(p).filter(c => c.approved?.applies));
 }
 
 export const STATE_LABEL: Record<CellState, string> = {

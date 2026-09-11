@@ -6,7 +6,7 @@
 import Layout from '../../layouts/Layout.astro';
 import {
   layers, groups, papers, columns, cells, titleOf, fill_of, inState, byId,
-  corpusLayers, paperLayers, STATE_LABEL, allHistory, resolve,
+  corpusLayers, paperLayers, STATE_LABEL, allHistory, resolve, approvedCells,
 } from '../../lib/pipeline';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -35,6 +35,8 @@ const TONE: Record<string, string> = {
   open:    'bg-blue-200 dark:bg-blue-900',
   unrecorded: 'bg-gray-300 dark:bg-gray-600',
 };
+const approved = approvedCells();
+const totalCells = papers.reduce((n, p) => n + cells(p).length, 0);
 const counts: Record<string, number> = {};
 for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.state] ?? 0) + 1;
 ---
@@ -146,6 +148,20 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
         </span>
       ))}
     </div>
+
+    <!-- ── approval, which is not a state ────────────────────────── -->
+    <section class="mb-12 border-l-2 border-amber-400 dark:border-amber-600 pl-4">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 m-0 mb-1">
+        Approved by a person: <span class="font-mono">{approved.length} of {totalCells}</span>
+      </h2>
+      <p class="text-sm text-gray-700 dark:text-gray-300 m-0 max-w-3xl leading-relaxed">
+        Approval is an operation on a version, not a layer of its own: a person reads what a
+        layer produced and approves <em>that output</em>. The approval names the version it was
+        granted to, so running the layer again does not carry it forward. Every cell above can
+        be current — its inputs unchanged since it ran — and unread by anyone. That is the
+        state of this corpus, and it is a count rather than a caveat.
+      </p>
+    </section>
 
     <!-- ── the two standing queries ──────────────────────────────── -->
     <div class="grid md:grid-cols-2 gap-6 mb-12">

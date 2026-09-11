@@ -62,8 +62,6 @@ def load(path: str = DECL) -> dict:
                 raise SystemExit(f"{lid}: needs unknown layer {dep!r}")
         if l.get("group") and l["group"] not in (decl.get("groups") or {}):
             raise SystemExit(f"{lid}: unknown group {l['group']!r}")
-        if l.get("reviews") and l["reviews"] not in layers:
-            raise SystemExit(f"{lid}: reviews unknown layer {l['reviews']!r}")
     _toposort(layers)                      # raises on a cycle
     decl["by_id"] = layers
     return decl
@@ -198,6 +196,41 @@ def record(paper: str, layer: dict, by_id: dict, *, note: str, by: str,
 
 # ── state ─────────────────────────────────────────────────────────────────────
 
+def approvals_path(paper: str) -> str:
+    return os.path.join(ROOT, "runs", paper, "approvals.jsonl")
+
+
+def read_approvals(paper: str) -> list[dict]:
+    """Approvals recorded for this paper's layer versions.
+
+    An approval is an operation on a version, not a layer of its own: a person read what a
+    layer produced and approved *that* output. It names the version it was granted to, so
+    when the layer runs again the approval does not follow — it was given to text that no
+    longer exists.
+    """
+    p = approvals_path(paper)
+    if not os.path.isfile(p):
+        return []
+    out = []
+    with open(p, encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if line:
+                out.append(json.loads(line))
+    return out
+
+
+def approve(paper: str, layer_id: str, v: int, *, by: str, note: str = "") -> dict:
+    """Record that a person approved one version of one layer."""
+    rec = {"layer": layer_id, "v": v, "by": by, "note": note,
+           "when": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    p = approvals_path(paper)
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    with open(p, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(rec, sort_keys=True) + "\n")
+    return rec
+
+
 def state(decl: dict | None = None, slugs: list[str] | None = None) -> dict:
     """The paper x layer matrix.
 
@@ -215,6 +248,7 @@ def state(decl: dict | None = None, slugs: list[str] | None = None) -> dict:
     out = {}
     for paper in slugs:
         entries = read_ledger(paper)
+        oks = read_approvals(paper)
         cells = {}
         for lid in order:
             layer = by_id[lid]
@@ -263,15 +297,17 @@ def state(decl: dict | None = None, slugs: list[str] | None = None) -> dict:
                 # accounted for, which is worth showing beside it rather than instead of it.
                 cells[lid]["unrecorded_upstream"] = unrecorded
 
-            # A review is stale when the thing it read has changed, not only when its own
-            # inputs have. Reviewing v2 does not bless v3.
-            target = layer.get("reviews")
-            if target and run:
-                t = _latest(entries, target)
-                if t and run.get("reviewed_v") not in (None, t["v"]):
-                    cells[lid]["state"] = STALE
-                    cells[lid]["reviewed_v"] = run.get("reviewed_v")
-                    cells[lid]["current_v"] = t["v"]
+            # Approval, which is about this cell's version rather than about its inputs.
+            # An approval of v2 says nothing about v3, so it is reported beside the state
+            # rather than folded into it: the output can be perfectly current and unread.
+            ok = max((a for a in oks if a.get("layer") == lid),
+                     key=lambda a: (a.get("v", 0), a.get("when", "")), default=None)
+            if ok:
+                cells[lid]["approved"] = {
+                    "v": ok["v"], "by": ok.get("by"), "when": ok.get("when"),
+                    "note": ok.get("note"),
+                    "applies": bool(run) and ok["v"] == run.get("v"),
+                }
         out[paper] = cells
     return out
 
