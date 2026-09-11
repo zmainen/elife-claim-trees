@@ -10,6 +10,8 @@ import LayerState from '../../../components/LayerState.astro';
 import { getCollection, render } from 'astro:content';
 import { paperLayers, byId, cell, STATE_LABEL } from '../../../lib/pipeline';
 import corpus from '../../../data/claims.json';
+import { readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 export async function getStaticPaths() {
   const formats = await getCollection('formats');
@@ -50,6 +52,23 @@ const c = cell(paper.slug, layerId)!;
 const rendered = report ? await render(report) : null;
 const showReport = layerId === 'formats-report' && rendered && c.state !== 'absent';
 const Content = rendered?.Content;
+
+// The layer's own output, read from the artifact it produced. A reader's claims and the
+// quote each was found in are the provenance this whole corpus rests on, and they were only
+// ever visible for one paper on one narrated page. They belong on the cell.
+function readRun(paths: string[]) {
+  for (const rel of paths) {
+    if (!rel.endsWith('.output.json')) continue;
+    const abs = join(process.cwd(), '..', rel);
+    if (!existsSync(abs)) continue;
+    try {
+      const d = JSON.parse(readFileSync(abs, 'utf-8'));
+      if (Array.isArray(d?.claims)) return { path: rel, model: d.model, agent: d.agent, claims: d.claims };
+    } catch { /* a malformed run record is not worth failing the page over */ }
+  }
+  return null;
+}
+const run = readRun(c.produces);
 
 const TONE: Record<string, string> = {
   current: 'text-emerald-700 dark:text-emerald-400 border-emerald-500 dark:border-emerald-600',
@@ -125,6 +144,33 @@ const TONE: Record<string, string> = {
           here cannot disagree with the export it describes.
         </p>
         <article class="formats-report"><Content /></article>
+      </section>
+    )}
+
+    {run && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">
+          What it produced <span class="font-mono text-sm text-gray-400 dark:text-gray-500">{run.claims.length} claims</span>
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">
+          Read from <code>{run.path}</code>{run.model ? <> · answered by <code>{run.model}</code></> : null}.
+          Each claim as this agent wrote it, with the passage it was found in.
+        </p>
+        <ol class="list-none p-0 m-0 space-y-4">
+          {run.claims.map((cl: any, i: number) => (
+            <li class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+              <p class="text-[15px] text-gray-800 dark:text-gray-200 m-0 leading-snug">{cl.claim}</p>
+              <p class="font-mono text-[11px] text-gray-500 dark:text-gray-400 m-0 mt-1">
+                {[cl.role, cl.claim_type, cl.panel, cl.confidence].filter(Boolean).join(' · ')}
+              </p>
+              {cl.evidence && (
+                <p class="text-xs text-gray-600 dark:text-gray-400 m-0 mt-1.5 italic leading-snug">
+                  “{String(cl.evidence).slice(0, 320)}{String(cl.evidence).length > 320 ? '…' : ''}”
+                </p>
+              )}
+            </li>
+          ))}
+        </ol>
       </section>
     )}
 
