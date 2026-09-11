@@ -489,10 +489,13 @@ def _validate_parts(raw: dict, paper: str, cfg: Config) -> dict:
             log.warning("parts: %r already has whole %r; second whole %r dropped",
                         part, whole_of[part], whole)
             continue
+        # Following the new whole's chain of wholes must not lead back to the part.
         node, cyclic = whole, False
-        while node in whole_of:
+        while True:
             if node == part:
                 cyclic = True
+                break
+            if node not in whole_of:
                 break
             node = whole_of[node]
         if cyclic:
