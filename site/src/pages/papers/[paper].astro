@@ -7,6 +7,7 @@ import ArgumentFromGraph from '../../components/ArgumentFromGraph.astro';
 import PaperTabs from '../../components/PaperTabs.astro';
 import ClaimDrawer from '../../components/ClaimDrawer.tsx';
 import ReviewTab from '../../components/ReviewTab.tsx';
+import { isReplicable } from '../../lib/replication';
 import corpus from '../../data/claims.json';
 import paperSummaries from '../../data/paper-summaries.json';
 
@@ -54,9 +55,14 @@ if (hypothesisClaims.length >= 2) {
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (path: string) => `${base}${path}/`;
 
-// Simple: are ALL claims verified?
-const verifiedCount = paperData.claims.filter((c: any) => c.status.startsWith('verified')).length;
-const allVerified = verifiedCount === paperData.claimCount && paperData.claimCount > 0;
+// How far our re-runs got on this paper. Deliberately not a badge and deliberately not a
+// ratio over every claim: a prediction or a hypothesis has no number to reproduce, so
+// counting those in the denominator invents a shortfall that does not exist. The old header
+// read "✓ All claims verified", which told the reader eLife had checked the paper and found
+// it correct. It meant a script re-ran the authors' own deposited numbers.
+const replicable = paperData.claims.filter((c: any) => isReplicable(c.status));
+const matched = replicable.filter((c: any) => c.status === 'verified').length;
+const notRun = replicable.filter((c: any) => c.status === 'unattempted').length;
 
 const stageLabel: Record<string, string> = {
   published: '',
@@ -113,9 +119,6 @@ const tabs = [
     <div class="mb-8">
       <div class="flex items-start gap-4 mb-1">
         <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100 leading-snug flex-1 m-0">{paperData.title}</h1>
-        {allVerified && (
-          <span class="flex-shrink-0 all-verified-badge">✓ All claims verified</span>
-        )}
       </div>
       <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
         {paperData.authors.join(', ')} · {(paperData as any).journal}
@@ -169,11 +172,14 @@ const tabs = [
       <p class="paper-summary paper-summary-fallback">{paperSummaryFallback}</p>
     )}
 
-    <!-- Claim count + verified count -->
-    <div class="mb-6 flex items-center gap-3">
+    <!-- Claim count, then a plain sentence about our re-runs. Not a score. -->
+    <div class="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1">
       <span class="text-sm text-gray-500 dark:text-gray-400">{paperData.claimCount} claims</span>
-      {verifiedCount > 0 && !allVerified && (
-        <span class="text-sm text-green-700 dark:text-green-400 font-medium">{verifiedCount} verified</span>
+      {replicable.length > 0 && (
+        <span class="text-sm replication-summary">
+          {matched} of {replicable.length} re-runnable claims reproduced when we ran them
+          {notRun > 0 && <span class="replication-summary-rest">&nbsp;· {notRun} not yet attempted</span>}
+        </span>
       )}
     </div>
 
@@ -294,16 +300,13 @@ const tabs = [
     vertical-align: baseline;
   }
 
-  .all-verified-badge {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--ok-fg);
-    background: var(--ok-bg);
-    border: 1px solid var(--ok-border);
-    padding: 3px 10px;
-    border-radius: 4px;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
+  /* Our re-run tally, set as running text in the page's own neutral. It used to be a green
+     badge, which made a provenance fact look like a grade. */
+  .replication-summary {
+    color: var(--repl-fg);
+  }
+  .replication-summary-rest {
+    color: var(--repl-faint-fg);
   }
 
   /* Alphabetical claim index at the bottom of the Claims tab */

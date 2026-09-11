@@ -1,13 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import corpus from '../data/claims.json';
+import { isReplicable } from '../lib/replication';
 
 const { papers, totalClaims } = corpus;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (path: string) => `${base}${path}/`;
 
 const allClaims = papers.flatMap(p => p.claims);
-const verifiedCount = allClaims.filter(c => c.status.startsWith('verified')).length;
+// Counted over claims that have something to re-run. Counting it over all 254 claims made
+// the figure look like a pass rate, with predictions and hypotheses silently failing.
+const replicableCount = allClaims.filter(c => isReplicable(c.status)).length;
+const matchedCount = allClaims.filter(c => c.status === 'verified').length;
 ---
 
 <Layout title="eLife Claim Trees">
@@ -54,9 +58,13 @@ const verifiedCount = allClaims.filter(c => c.status.startsWith('verified')).len
           <div class="text-3xl font-semibold text-gray-900 dark:text-gray-100">{totalClaims}</div>
           <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">claims</div>
         </div>
-        <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-5">
-          <div class="text-3xl font-semibold text-green-700 dark:text-green-400">{verifiedCount}</div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">verified by code</div>
+        <!-- Our re-runs. Not a green tile: this counts what we reproduced, which is a fact
+             about our coverage, not a score the papers earned. -->
+        <div class="bg-slate-100 dark:bg-slate-800/50 rounded-xl p-5">
+          <div class="text-3xl font-semibold text-slate-700 dark:text-slate-300">
+            {matchedCount}<span class="text-xl text-slate-400 dark:text-slate-500">/{replicableCount}</span>
+          </div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">reproduced when we re-ran them</div>
         </div>
       </div>
     </div>
@@ -94,15 +102,10 @@ const verifiedCount = allClaims.filter(c => c.status.startsWith('verified')).len
       <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-5">Papers</h2>
       <div class="grid sm:grid-cols-2 gap-4">
         {papers.map(p => {
-          const v = p.claims.filter((c: any) => c.status.startsWith('verified')).length;
-          const allV = v === p.claimCount && p.claimCount > 0;
           return (
             <a href={url(`/papers/${p.slug}`)} class="block border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-gray-400 hover:shadow-sm transition-all no-underline group">
               <div class="flex items-start justify-between gap-2 mb-2">
                 <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 leading-snug group-hover:text-blue-700 transition-colors">{p.title}</h3>
-                {allV && (
-                  <span class="flex-shrink-0 text-[10px] font-semibold text-green-800 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded whitespace-nowrap">✓</span>
-                )}
               </div>
               <div class="text-xs text-gray-500 dark:text-gray-400 mb-3">
                 {p.authors.join(', ')} · {(p as any).journal}

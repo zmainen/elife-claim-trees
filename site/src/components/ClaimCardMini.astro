@@ -1,5 +1,7 @@
 ---
-import { STATUS_LABEL } from '../lib/status';
+import {
+  REPLICATION_LABEL, REPLICATION_SHORT, BLOCKED_HINT, hasReplication,
+} from '../lib/replication';
 
 type Claim = {
   slug: string;
@@ -45,27 +47,18 @@ const roleStyle: Record<string, string> = {
   scope:          'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700',
 };
 
-// Status dot color — role-aware palette
-function statusDot(status: string, role: string | null): { color: string; label: string } {
-  if (status === 'verified') return { color: '#22c55e', label: STATUS_LABEL[status] ?? status };
-  if (status?.startsWith('verified:')) return { color: '#86efac', label: STATUS_LABEL[status] ?? status };
-  if (status === 'failed' || status?.startsWith('unverified:code-error') || status?.startsWith('unverified:compute-infeasible')) {
-    return { color: '#f59e0b', label: STATUS_LABEL[status] ?? status };
-  }
-  // Role-based colors for claims that don't get code verification
-  if (status === 'unknown' || !status) {
-    if (role === 'hypothesis' || role === 'prediction') return { color: '#60a5fa', label: role };
-    if (role === 'literature-context') return { color: '#a78bfa', label: 'cited claim' };
-    if (role === 'synthesis' || role === 'interpretation') return { color: '#60a5fa', label: role };
-  }
-  return { color: '#9ca3af', label: STATUS_LABEL[status] ?? status ?? 'unknown' };
-}
-
-const dot = statusDot(claim.status, claim.role);
+// The card carries two layers and they are kept apart on purpose. Everything to the left of
+// the divider is the paper's own voice — its number, its role, its stance. The single chip to
+// the right is ours, and it reports a re-run, not a verdict. There used to be one dot doing
+// both jobs: blue meant "this is a prediction", green meant "we reproduced it", and a reader
+// had no way to tell which question the colour was answering.
 const claimText = (claim.displayClaim?.trim()) || claim.claim;
 const hasCode = !!claim.script;
 const hasFigure = !!claim.figureUrl;
-const isVerified = claim.status.startsWith('verified');
+const showReplication = hasReplication(claim.status);
+const replicationTitle = claim.status === 'blocked'
+  ? `${REPLICATION_LABEL.blocked} — ${BLOCKED_HINT}`
+  : (REPLICATION_LABEL[claim.status] ?? '');
 
 // Recursive children (requires) for supporting-claims disclosure
 const children = (claim.requires ?? [])
@@ -78,7 +71,7 @@ const children = (claim.requires ?? [])
   data-claim-slug={claim.slug}
   id={`claim-card-${claim.slug}`}
 >
-  <div class={`claim-mini-card ${isVerified ? 'claim-mini-verified' : ''}`} data-claim-slug={claim.slug} tabindex="0" role="button" aria-label={`Open details for ${claim.slug}`}>
+  <div class="claim-mini-card" data-claim-slug={claim.slug} tabindex="0" role="button" aria-label={`Open details for ${claim.slug}`}>
     {/* Top row: number + role chip + panel ref + status dot + code/figure glyphs */}
     <div class="claim-mini-top">
       {claim.number && (
@@ -99,17 +92,17 @@ const children = (claim.requires ?? [])
       {claim.panel && claim.panel.toLowerCase() !== (claim.role ?? '').toLowerCase() && (
         <span class="mini-panel">{claim.panel}</span>
       )}
-      <span
-        class="mini-status-dot"
-        style={`background:${dot.color}`}
-        title={dot.label}
-        aria-label={`Status: ${dot.label}`}
-      />
-      {isVerified && (
-        <span class="mini-verified-badge" title="Verified" aria-label="Verified">✓ verified</span>
+      {/* Everything above is the paper. Everything after this divider is ours. */}
+      <span class="mini-layer-gap" />
+      {showReplication && (
+        <span
+          class={`mini-repl-chip mini-repl-${claim.status}`}
+          title={replicationTitle}
+          aria-label={replicationTitle}
+        >{REPLICATION_SHORT[claim.status]}</span>
       )}
-      {!isVerified && hasCode && (
-        <span class="mini-code-badge" title="Has verification code" aria-label="Has verification code">{ } code</span>
+      {hasCode && (
+        <span class="mini-code-badge" title="A script re-runs this claim" aria-label="A script re-runs this claim">{ } code</span>
       )}
     </div>
 
@@ -153,9 +146,6 @@ const children = (claim.requires ?? [])
     background: var(--card-bg);
     transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
     outline: none;
-  }
-  .claim-mini-verified {
-    border-left: 3px solid #22c55e;
   }
   .claim-mini-card:hover,
   .claim-mini-card:focus-visible {
@@ -212,23 +202,42 @@ const children = (claim.requires ?? [])
     font-size: 10px;
     font-variant: small-caps;
   }
-  .mini-status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    display: inline-block;
-    flex-shrink: 0;
+  /* Pushes our chip to the right edge, away from the paper's own chips. The separation is
+     the point: two voices, two sides. */
+  .mini-layer-gap {
+    margin-left: auto;
   }
-  .mini-verified-badge {
+  /* Monochrome by design. This chip reports a re-run, and a green or red chip would read as a
+     grade on the paper — which is not what any of these values mean. */
+  .mini-repl-chip {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 9.5px;
-    font-weight: 600;
-    color: var(--ok-fg);
-    background: var(--ok-bg);
-    border: 1px solid var(--ok-border);
+    font-weight: 500;
     padding: 0px 5px;
     border-radius: 3px;
     letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: var(--repl-fg);
+    background: var(--repl-bg);
+    border: 1px solid var(--repl-border);
+  }
+  .mini-repl-partial {
+    color: var(--repl-faint-fg);
+  }
+  /* The one flag. Amber, not red: it says "look at this", not "the paper is wrong". */
+  .mini-repl-mismatch {
+    color: var(--repl-flag-fg);
+    background: var(--repl-flag-bg);
+    border-color: var(--repl-flag-border);
+    font-weight: 600;
+  }
+  /* Nobody has run it, or nobody could. Drawn as an outline so it reads as an absence rather
+     than as a failing grade — the old "Unverified" chip sat on 48 claims nobody had tried. */
+  .mini-repl-blocked,
+  .mini-repl-unattempted {
+    color: var(--repl-faint-fg);
+    background: transparent;
+    border: 1px dashed var(--repl-border);
   }
   .mini-code-badge {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;

@@ -16,7 +16,8 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import dagre from '@dagrejs/dagre';
-import { nodeColor } from '../lib/status';
+import { nodeColor, REPLICATION_COLOR, REPLICATION_LABEL, ROLE_COLOR, hasReplication }
+  from '../lib/replication';
 
 interface Claim {
   slug: string;
@@ -43,8 +44,12 @@ function shortLabel(slug: string): string {
 
 // Custom node renderer
 function ClaimNode({ data }: { data: any }) {
+  // The node's colour is what the claim *is* — its role. It used to be our re-run result, so
+  // a green box meant "we reproduced it" and a blue box meant "this is a prediction", in one
+  // undifferentiated colour key. Our result is now a separate marker on the right edge.
   const color = nodeColor(data.status, data.role);
   const isAssessment = data.isAssessment;
+  const showRepl = hasReplication(data.status);
 
   return (
     <>
@@ -89,6 +94,23 @@ function ClaimNode({ data }: { data: any }) {
         >
           {shortLabel(data.slug)}
         </span>
+        {/* Our re-run, as a marker clipped to the edge — attached to the node, not part of
+            it. Monochrome, so it cannot be read as a grade on the claim. */}
+        {showRepl && (
+          <span
+            title={REPLICATION_LABEL[data.status]}
+            style={{
+              marginLeft: 'auto',
+              width: 6,
+              height: 6,
+              flexShrink: 0,
+              borderRadius: 1,
+              background: data.status === 'unattempted' || data.status === 'blocked'
+                ? 'transparent' : REPLICATION_COLOR[data.status],
+              border: `1px solid ${REPLICATION_COLOR[data.status]}`,
+            }}
+          />
+        )}
       </div>
       <Handle type="source" position={Position.Top} style={{ visibility: 'hidden' }} />
     </>
@@ -245,21 +267,37 @@ function DAGInner({ claims, paperSlug }: Props) {
           />
           <Panel position="top-left">
             <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs shadow-sm space-y-1.5">
-              <div className="font-semibold text-gray-700 mb-1">Status</div>
+              <div className="font-semibold text-gray-700 mb-1">What each claim is</div>
               {[
-                ['#22c55e', 'Verified by code'],
-                ['#86efac', 'Partially verified'],
-                ['#ef4444', 'Failed / mismatch'],
-                ['#60a5fa', 'Hypothesis / prediction / synthesis'],
-                ['#a78bfa', 'Cited claim (literature)'],
-                ['#9ca3af', 'Unverified'],
-                ['#f97316', 'Code error / compute'],
+                [ROLE_COLOR.empirical, 'Empirical result'],
+                [ROLE_COLOR.control, 'Control'],
+                [ROLE_COLOR.hypothesis, 'Hypothesis / prediction / synthesis'],
+                [ROLE_COLOR['literature-context'], 'Cited claim (literature)'],
+                [ROLE_COLOR.scope, 'Scope / method'],
               ].map(([color, label]) => (
                 <div key={label} className="flex items-center gap-1.5">
                   <span style={{ width: 10, height: 10, borderRadius: 2, background: color, display: 'inline-block' }} />
                   <span className="text-gray-600">{label}</span>
                 </div>
               ))}
+              <div className="border-t border-gray-100 pt-1.5 mt-1 space-y-1">
+                <div className="font-semibold text-gray-700 mb-1">What our re-run found</div>
+                {[
+                  ['verified', 'matches'],
+                  ['partial', 'partly matches'],
+                  ['mismatch', 'differs'],
+                  ['unattempted', 'not re-run / blocked'],
+                ].map(([st, label]) => (
+                  <div key={st} className="flex items-center gap-1.5">
+                    <span style={{
+                      width: 8, height: 8, borderRadius: 1, display: 'inline-block',
+                      background: st === 'unattempted' ? 'transparent' : REPLICATION_COLOR[st],
+                      border: `1px solid ${REPLICATION_COLOR[st]}`,
+                    }} />
+                    <span className="text-gray-600">{label}</span>
+                  </div>
+                ))}
+              </div>
               <div className="border-t border-gray-100 pt-1.5 mt-1 space-y-1">
                 <div className="flex items-center gap-1.5">
                   <span style={{ width: 22, height: 8, border: '1.5px solid #6b7280', display: 'inline-block', borderRadius: 1 }} />

@@ -75,7 +75,7 @@ const STEPS = [
     n: 3, cmd: `python3 verification/${SLUG}/verify.py`,
     title: 'Re-run the analyses',
     what: `Downloads the authors' deposited data and recomputes what the claims assert, comparing each reproduced value against the published one. Runs under observation, so every file it opens is recorded with a content hash and no status can assert more than the run produced.`,
-    produced: `${facts.layers[SLUG].verified_results} claims verified against deposited data. The rest are recorded as blocked or unattempted rather than assumed.`,
+    produced: `${facts.layers[SLUG].verified_results} claims came back matching when re-run against the authors' deposited data. The rest are recorded as blocked or not yet attempted rather than assumed. This measures reproducibility, not whether the paper's conclusions are right.`,
     files: [
       { label: 'provenance.json — every file opened, every value computed', rel: `verification/${SLUG}/provenance.json`, href: null },
     ],

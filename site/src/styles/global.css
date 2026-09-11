@@ -251,17 +251,45 @@ html.dark {
 :root {
   --verif-bg: #f9fafb; --verif-border: #e5e7eb; --verif-fg: #111827; --verif-muted: #4b5563;
 }
-:root .verif-L1 { --verif-bg: #eff6ff; --verif-border: #bfdbfe; }
+/* The ladder used to climb from pale blue into green, which read as a grade on the paper —
+   green is the universal "correct" signal and none of these levels mean that. They mean how
+   much of the paper's analysis we were able to re-run. Now it climbs in weight within one
+   neutral hue: same information, no verdict. */
+:root .verif-L1 { --verif-bg: #f8fafc; --verif-border: #e2e8f0; }
 :root .verif-L2,
-:root .verif-L3 { --verif-bg: #f0fdf4; --verif-border: #bbf7d0; }
-:root .verif-L4 { --verif-bg: #ecfdf5; --verif-border: #86efac; }
+:root .verif-L3 { --verif-bg: #f1f5f9; --verif-border: #cbd5e1; }
+:root .verif-L4 { --verif-bg: #e2e8f0; --verif-border: #94a3b8; }
 html.dark {
   --verif-bg: #1a1e23; --verif-border: #2c333b; --verif-fg: #e2e8f0; --verif-muted: #9aa4b2;
 }
-html.dark .verif-L1 { --verif-bg: rgba(59,130,246,0.10); --verif-border: rgba(59,130,246,0.32); }
+html.dark .verif-L1 { --verif-bg: rgba(148,163,184,0.08); --verif-border: rgba(148,163,184,0.25); }
 html.dark .verif-L2,
-html.dark .verif-L3 { --verif-bg: rgba(34,197,94,0.10); --verif-border: rgba(34,197,94,0.30); }
-html.dark .verif-L4 { --verif-bg: rgba(16,185,129,0.12); --verif-border: rgba(16,185,129,0.38); }
+html.dark .verif-L3 { --verif-bg: rgba(148,163,184,0.13); --verif-border: rgba(148,163,184,0.38); }
+html.dark .verif-L4 { --verif-bg: rgba(148,163,184,0.20); --verif-border: rgba(148,163,184,0.55); }
+
+/* ── The replication layer ─────────────────────────────────────────────────────
+   Chips reporting what happened when *we* re-ran a claim, as opposed to what the paper
+   argues. Monochrome on purpose: this layer must never be mistaken for a verdict on the
+   paper, and a green chip is a verdict whatever its label says. The single amber flag is
+   reserved for a divergence the reader needs to notice. */
+:root {
+  --repl-fg: #334155;
+  --repl-faint-fg: #64748b;
+  --repl-bg: #f1f5f9;
+  --repl-border: #cbd5e1;
+  --repl-flag-fg: #92400e;
+  --repl-flag-bg: #fffbeb;
+  --repl-flag-border: #fcd34d;
+}
+html.dark {
+  --repl-fg: #cbd5e1;
+  --repl-faint-fg: #94a3b8;
+  --repl-bg: rgba(148, 163, 184, 0.12);
+  --repl-border: rgba(148, 163, 184, 0.34);
+  --repl-flag-fg: #fcd34d;
+  --repl-flag-bg: rgba(217, 119, 6, 0.12);
+  --repl-flag-border: rgba(217, 119, 6, 0.45);
+}
 
 /* ── Claim drawer status banner ────────────────────────────────────────────────
    Its colours were inline styles produced by a function in the component, so no

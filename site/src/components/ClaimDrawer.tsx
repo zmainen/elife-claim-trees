@@ -1,4 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  REPLICATION_LABEL, REPLICATION_COLOR, BLOCKED_HINT, hasReplication,
+} from '../lib/replication';
 
 type Claim = {
   slug: string;
@@ -51,26 +54,10 @@ type Props = {
   baseUrl: string;
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  verified: 'Verified',
-  failed: 'Failed',
-  'unverified:no-data': 'No data',
-  'unverified:no-code': 'No code',
-  unverified: 'Unverified',
-  'unverified:code-error': 'Code error',
-  'unverified:compute-infeasible': 'Compute-infeasible',
-  unknown: 'Unknown',
-};
-
-function statusDotColor(status: string): string {
-  if (status === 'verified') return '#22c55e';
-  if (
-    status === 'failed' ||
-    status === 'unverified:code-error' ||
-    status === 'unverified:compute-infeasible'
-  )
-    return '#f59e0b';
-  return 'var(--card-faint)';
+// The drawer used to keep its own copy of the status labels, with a legacy vocabulary the
+// corpus no longer emits. Labels now come from one place, and they say whose result this is.
+function replicationDotColor(status: string): string {
+  return REPLICATION_COLOR[status] ?? 'var(--card-faint)';
 }
 
 const roleChipStyle: Record<string, string> = {
@@ -158,81 +145,51 @@ function verificationBanner(status: string, role?: string | null, stance?: strin
     };
   }
 
-  // --- Code-executed verification statuses ---
+  // --- What happened when we re-ran it ---
+  //
+  // Every label below is about our work, not the paper's standing. The banner used to be
+  // green for `verified` and headed "Verified by code", which invited the reader to take a
+  // provenance fact as a verdict; it is now neutral, and says who did what.
+  //
+  // This block also used to enumerate a vocabulary the corpus no longer emits
+  // (`verified:partial`, `unverified:no-code`, `failed:mismatch`, …) while omitting two
+  // statuses it does: `blocked` and `unattempted` fell through to the fallback, so 100 claims
+  // across the corpus showed a banner reading "blocked — Status not recognized".
   if (status === 'verified') return {
-    bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', hue: 'green', icon: '✓',
+    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '=',
     label: (role === 'scope' || role === 'methodological')
-      ? 'Confirmed by inspection'
-      : 'Verified by code',
+      ? 'We checked this by reading'
+      : 'We re-ran it — the numbers match',
     detail: (role === 'scope' || role === 'methodological')
-      ? 'Confirmed by reading the deposited code, methods text, or data records.'
-      : 'A verification script ran against the deposited data and reproduced this result.',
+      ? 'Confirmed by reading the deposited code, methods text, or data records. This says the paper reports what it says it reports, not that its conclusion is correct.'
+      : 'A script re-ran this analysis against the authors\' deposited data and got their number back. That is a statement about reproducibility, not about whether the claim is true.',
   };
-  if (status === 'verified:partial') return {
-    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', hue: 'green', icon: '~',
-    label: 'Partially verified',
-    detail: 'A subset of this claim was verified against deposited data; the remainder is documented in notes.',
+  if (status === 'partial') return {
+    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '≈',
+    label: 'We re-ran it — it partly matches',
+    detail: 'Part of this claim came back as the paper reports it and part did not, or the re-run could only be done on a subset of the deposited data. The specifics are in the notes below.',
   };
-  if (status === 'verified:with-nuance') return {
-    bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '~',
-    label: 'Verified with nuance',
-    detail: 'Direction or trend matches; magnitude or significance differs from the paper. Discrepancy documented.',
+  if (status === 'mismatch') return {
+    bg: '#fffbeb', border: '#fcd34d', text: '#92400e', hue: 'amber', icon: '≠',
+    label: 'We re-ran it — the numbers differ',
+    detail: 'A script re-ran this analysis on the deposited data and did not get the reported number. That can mean a discrepancy in the paper, or that our re-run does not match what the authors did. The notes say which we think it is.',
   };
-  if (status === 'verified:interpretive') return {
-    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', hue: 'green', icon: '✓',
-    label: 'Verified by reasoning',
-    detail: 'This interpretive claim was confirmed by examining the evidence structure, not by running code.',
-  };
-  if (status === 'verified:direction-and-trend') return {
-    bg: '#f0fdf4', border: '#d1fae5', text: '#166534', hue: 'green', icon: '~',
-    label: 'Direction confirmed',
-    detail: 'The direction and trend match the paper; exact values differ.',
-  };
-
-  // --- Failure ---
-  if (status === 'failed' || status === 'failed:mismatch') return {
-    bg: '#fef2f2', border: '#fecaca', text: '#991b1b', hue: 'red', icon: '✗',
-    label: 'Result mismatch',
-    detail: 'The verification script ran on the deposited data and produced a different result than the paper reports.',
-  };
-
-  // --- Unverified with reason ---
-  if (status === 'unverified:code-error') return {
-    bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '!',
-    label: 'Code error',
-    detail: 'A verification script exists but encountered an error during execution.',
-  };
-  if (status === 'unverified:compute-infeasible') return {
-    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '⏱',
-    label: 'Compute-infeasible',
-    detail: 'Verification requires specialist hardware or long compute times beyond our current infrastructure.',
-  };
-  if (status === 'unverified:no-data') return {
+  if (status === 'blocked') return {
     bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
-    label: 'No data deposited',
-    detail: 'The data needed to verify this claim is not publicly available.',
+    label: 'We could not re-run it',
+    detail: 'Something stops the re-run: data that was not deposited, or an analysis needing software or hardware we do not have. Nothing here reflects on the claim — we simply have no result of our own.',
   };
-  if (status === 'unverified:no-code') return {
-    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
-    label: 'No verification code',
-    detail: 'No verification script has been written for this claim yet.',
-  };
-  if (status === 'unverified' || status === 'unverified:partial' || status.startsWith('partial')) return {
+  if (status === 'unattempted') return {
     bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '○',
-    label: 'Unverified',
-    detail: 'This empirical claim has not yet been verified against deposited data.',
-  };
-  if (status === 'N/A') return {
-    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
-    label: 'Not applicable',
-    detail: 'This claim is not the kind that can be verified by running code.',
+    label: 'We have not re-run it yet',
+    detail: 'This claim could be re-run against the deposited data and nobody has done it. It is a gap in our coverage, not a finding about the paper.',
   };
 
   // --- Fallback ---
   return {
     bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '?',
-    label: status,
-    detail: 'Status not recognized — see notes for details.',
+    label: 'No re-run recorded',
+    detail: 'We hold no reproduction result for this claim.',
   };
 }
 
@@ -334,7 +291,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
 
   const claimText = (claim.displayClaim?.trim()) || claim.claim;
   const original = claim.displayClaim && claim.displayClaim.trim() !== claim.claim ? claim.claim : null;
-  const dotColor = statusDotColor(claim.status);
+  const dotColor = replicationDotColor(claim.status);
   const banner = verificationBanner(claim.status, claim.role, claim.stance);
 
   const hasCode = !!claim.script;
@@ -548,11 +505,15 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
 
           {/* Metadata row */}
           <div className="drawer-meta">
+            {hasReplication(claim.status) && (
+              <span className="drawer-meta-item" title={claim.status === 'blocked' ? BLOCKED_HINT : undefined}>
+                <span className="drawer-dot" style={{ background: dotColor }} />
+                {REPLICATION_LABEL[claim.status]}
+              </span>
+            )}
             <span className="drawer-meta-item">
-              <span className="drawer-dot" style={{ background: dotColor }} />
-              {STATUS_LABEL[claim.status] ?? claim.status}
+              the paper calls this {claim.epistemic}
             </span>
-            <span className="drawer-meta-item">{claim.epistemic}</span>
             {claim['claim-type'] && (
               <span className="drawer-meta-item">{claim['claim-type']}</span>
             )}

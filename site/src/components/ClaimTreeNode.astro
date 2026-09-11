@@ -1,5 +1,6 @@
 ---
-import { STATUS_TAILWIND, EPISTEMIC_TAILWIND, STATUS_LABEL } from '../lib/status';
+import { REPLICATION_TAILWIND, REPLICATION_SHORT, EPISTEMIC_TAILWIND, hasReplication }
+  from '../lib/replication';
 
 type Claim = {
   slug: string;
@@ -62,12 +63,16 @@ const cardBg = isSecondaryRoot
           {claimText}
         </p>
         <div class="flex items-center gap-2 flex-wrap mt-2">
-          <span class={`text-xs px-1.5 py-0.5 rounded ${STATUS_TAILWIND[claim.status] ?? 'bg-gray-50 text-gray-500'}`}>
-            {STATUS_LABEL[claim.status] ?? claim.status}
-          </span>
+          {/* The paper's own confidence first, then ours — they are different questions and
+              used to sit side by side in the same visual register. */}
           <span class={`text-xs px-1.5 py-0.5 rounded ${EPISTEMIC_TAILWIND[claim.epistemic] ?? 'bg-gray-50 text-gray-500'}`}>
             {claim.epistemic}
           </span>
+          {hasReplication(claim.status) && (
+            <span class={`text-xs px-1.5 py-0.5 rounded font-mono ${REPLICATION_TAILWIND[claim.status]}`}>
+              {REPLICATION_SHORT[claim.status]}
+            </span>
+          )}
           {claim.isAssessment && (
             <span class="text-xs text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">assessment</span>
           )}
