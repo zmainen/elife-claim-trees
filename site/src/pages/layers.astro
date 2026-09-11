@@ -154,6 +154,7 @@ const has = (s: string, k: string) => L[s][k];
             <th class="py-2 px-3 font-semibold text-center">v3 formats</th>
             <th class="py-2 px-3 font-semibold text-center">v4 coverage</th>
             <th class="py-2 px-3 font-semibold text-center">v5 alternatives</th>
+            <th class="py-2 px-3 font-semibold text-center">v6 review</th>
           </tr>
         </thead>
         <tbody>
@@ -179,6 +180,11 @@ const has = (s: string, k: string) => L[s][k];
               <td class="py-2 px-3 text-center">
                 {has(s, 'alternatives')
                   ? <span class="text-emerald-600 dark:text-emerald-400 font-mono text-xs">{L[s].alternatives_n}</span>
+                  : <span class="text-gray-300 dark:text-gray-700">&mdash;</span>}
+              </td>
+              <td class="py-2 px-3 text-center">
+                {has(s, 'review')
+                  ? <span class="font-mono text-xs text-amber-700 dark:text-amber-400">{L[s].review_pending} pending</span>
                   : <span class="text-gray-300 dark:text-gray-700">&mdash;</span>}
               </td>
             </tr>

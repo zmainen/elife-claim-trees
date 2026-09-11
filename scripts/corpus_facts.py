@@ -197,6 +197,27 @@ def stances(slug):
     return out
 
 
+def _review_counts():
+    """Queue items per paper, from review/*.json — empty when no queue has been generated."""
+    total, pending = {}, {}
+    d = os.path.join(ROOT, "review")
+    if not os.path.isdir(d):
+        return total, pending
+    for fn in sorted(os.listdir(d)):
+        if not fn.endswith(".json"):
+            continue
+        try:
+            with open(os.path.join(d, fn), encoding="utf-8") as fh:
+                doc = json.load(fh)
+        except Exception:                                             # noqa: BLE001
+            continue
+        for i in doc.get("items", []):
+            total[i["paper"]] = total.get(i["paper"], 0) + 1
+            if i.get("decision") == "pending":
+                pending[i["paper"]] = pending.get(i["paper"], 0) + 1
+    return total, pending
+
+
 def layers(site):
     """Which analytic layer each paper has, detected from the artifacts on disk.
 
@@ -207,6 +228,7 @@ def layers(site):
     layer it does not have.
     """
     out = {}
+    review_counts, pending_counts = _review_counts()
     for s in site:
         has_tree = os.path.isdir(os.path.join(CLAIMS, s))
         prov = os.path.join(ROOT, "verification", s, "provenance.json")
@@ -231,6 +253,9 @@ def layers(site):
             "agent_trace": os.path.isfile(os.path.join(ROOT, "mappings", f"{s}.json")),
             "alternatives": bool(st),
             "alternatives_n": sum(st.values()),
+            "review": s in review_counts,
+            "review_n": review_counts.get(s, 0),
+            "review_pending": pending_counts.get(s, 0),
         }
     return out
 
