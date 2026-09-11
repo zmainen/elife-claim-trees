@@ -201,7 +201,7 @@ One markdown file per claim, stored at `claims/<paper-slug>/<claim-slug>.md`. Th
 | `slug` | filename slug, lowercase, hyphenated, 3–6 words, verb phrase |
 | `doi` | placeholder `~` for now (claims are not yet citable units) |
 | `claim` | one declarative sentence, active voice, quantitative where the result is quantitative |
-| `claim-type` | `empirical` / `interpretive` / `existence` / `synthesis` / `assessment` |
+| `claim-type` | `empirical` / `interpretive` / `existence` / `synthesis` / `assessment` / `hypothesis` / `prediction` |
 | `role` | one of nine values (Section 4.2) |
 | `concepts` | controlled list of domain terms |
 | `priority` | date the claim was first registered |

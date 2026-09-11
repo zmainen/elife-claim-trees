@@ -31,14 +31,9 @@ logger = logging.getLogger(__name__)
 
 
 def load_reviewer_prompt(cfg: Config) -> str:
-    """Load the external-reviewer prompt from disk (variant-aware)."""
-    if cfg.prompt_variant == "default":
-        path = cfg.prompts_dir / "external-reviewer.md"
-    else:
-        path = cfg.prompts_dir / cfg.prompt_variant / "external-reviewer.md"
-    if not path.is_file():
-        raise FileNotFoundError(f"External reviewer prompt not found: {path}")
-    return path.read_text()
+    """The reviewer's system prompt: its task, then the contract. See prompts.py."""
+    from .prompts import prompt
+    return prompt("external-reviewer", cfg)
 
 
 def _format_paper_context(paper: PreparedPaper, max_results_chars: int = 60000) -> str:

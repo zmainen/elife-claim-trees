@@ -1,10 +1,12 @@
 Compare the three extraction lists. For each candidate claim:
 
-- If all three agree: high confidence. Include.
-- If two agree, one differs: flag the discrepancy. Note which agent and why.
-- If agents find different claims: add all candidates, flagged as single-source.
+- If more than one reader surfaced it and they agree: `high`.
+- If more than one reader surfaced it and they disagree — on panel, direction, or role class: `contested`, with what each said in the notes.
+- If one reader surfaced it: `single-source`. This is the expected case wherever a reader's slice is unique — panel numerics, scope, synthesis — and not a mark against the claim.
 
-The reconciled list carries a confidence column (high / contested / single-source). This is what goes to the review gate, `external-review`.
+The partition means most claims are visible to at most two readers, so "all three agree" was never the bar for `high`; the reconciler prompt said it was, and a model given that definition called every two-source claim `high` and some one-source claims too. The runner now corrects a label that disagrees with the source count and logs how many it moved.
+
+The reconciled list carries the confidence column. This is what goes to the review gate, `external-review`.
 
 ## Common errors in claim extraction
 

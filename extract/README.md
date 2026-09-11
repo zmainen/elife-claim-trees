@@ -226,6 +226,20 @@ set rather than any paper, and it produces nothing another layer consumes. That 
 the last caller of the run-the-whole-chain-in-one-process path, which the layer runners
 otherwise replaced.
 
+## Prompts
+
+A prompt is two things. The **task** is a page per role, written by hand, saying what that
+role reads and what to look for. The **contract** is what every role shares — the vocabulary
+of roles, claim types, relations and confidence with one corpus example each and the pairs a
+reader confuses, and the exact output schema — and it is generated from the code that already
+defines it: `elife_extract/vocabulary.py`, `scripts/relations.py`, `elife_extract/schema.py`.
+Edit those and run `make contract`; `make check` fails when the committed contract is not what
+the sources generate.
+
+`prompts.py` composes task and contract for a role, and `pipeline/layers.yaml` declares the
+same files as the layer's inputs, so a prompt file cannot be sent without being hashed into
+the run. A `--prompt-variant` directory overrides any file and inherits the rest.
+
 ## Empirical-test knobs
 
 The CLI exposes the knobs future experiments will sweep:
@@ -279,11 +293,17 @@ extract/
 ├── pyproject.toml               # package config, entry point: elife-extract
 ├── README.md                    # this file
 ├── prompts/
-│   ├── results-reader.md        # Agent A — abstract + results prose
-│   ├── caption-reader.md        # Agent B — figure captions, panel-by-panel
-│   ├── structure-reader.md      # Agent C — methods + supplements + code
-│   ├── reconciler.md            # Step 4 — Opus reconciliation
-│   └── external-reviewer.md     # Step 4.5 — Opus structural-inference pass
+│   ├── results-reader.md        # each role's task: what it reads and what to look for
+│   ├── caption-reader.md
+│   ├── structure-reader.md
+│   ├── reconciler.md
+│   ├── external-reviewer.md
+│   ├── edge-inference.md
+│   ├── coverage-adjudicator.md
+│   └── contract/                # GENERATED — `elife-extract contract --write`
+│       ├── vocabulary.md        # roles, claim types, relations, confidence, corpus examples
+│       ├── schema-candidate.md  # what a reader returns, from schema.py
+│       └── schema-draft.md      # what the reconciler and reviewer return, from schema.py
 ├── elife_extract/
 │   ├── __init__.py
 │   ├── cli.py                   # argparse CLI, subcommand dispatch

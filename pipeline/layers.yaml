@@ -215,7 +215,12 @@ layers:
       that: where a paper derives a prediction from a hypothesis and then tests it, the easy output
       is one empirical claim, and the longest section of the prompt below exists to stop that.
     needs: [prepare]
-    reads: [extract/prompts/results-reader.md]
+    # A prompt is a task file and the contract: the vocabulary of roles, types, relations and
+    # confidence, and the output schema, both generated from the code that defines them
+    # (`elife-extract contract --write`). Every model layer lists what its runner composes,
+    # and a test holds the two lists equal — so a definition cannot change without every run
+    # that read the old one going stale.
+    reads: [extract/prompts/results-reader.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-candidate.md]
     produces: ["runs/{paper}/results-reader.output.json"]
     views: [list, table]
     by_from: model
@@ -237,7 +242,7 @@ layers:
       Panel assignment is where the three readers most often disagree, and it is the standing
       failure the evaluation harness measures.
     needs: [prepare]
-    reads: [extract/prompts/caption-reader.md]
+    reads: [extract/prompts/caption-reader.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-candidate.md]
     produces: ["runs/{paper}/caption-reader.output.json"]
     views: [list, table]
     by_from: model
@@ -257,7 +262,7 @@ layers:
       appear almost nowhere else in a paper, so a pipeline without this reader does not under-report
       them, it loses them.
     needs: [prepare]
-    reads: [extract/prompts/structure-reader.md]
+    reads: [extract/prompts/structure-reader.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-candidate.md]
     produces: ["runs/{paper}/structure-reader.output.json"]
     views: [list, table]
     by_from: model
@@ -281,7 +286,7 @@ layers:
       Agreement between three partitions is evidence; one agent reading everything produces a longer
       list and no way to tell which of it is load-bearing.
     needs: [results-reader, caption-reader, structure-reader]
-    reads: [extract/prompts/reconciler.md]
+    reads: [extract/prompts/reconciler.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-draft.md]
     produces: ["runs/{paper}/reconciler.output.json"]
     views: [table, overlap]
     by_from: model
@@ -310,7 +315,7 @@ layers:
       on this output where it exists and on the reconciled draft where it does not.
     added: "2026-09-11"
     needs: [reconcile]
-    reads: [extract/prompts/external-reviewer.md]
+    reads: [extract/prompts/external-reviewer.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-draft.md]
     produces: ["runs/{paper}/external-review.output.json"]
     views: [table, comparison]
     by_from: model

@@ -25,15 +25,33 @@ logger = logging.getLogger(__name__)
 # ── Reconciler prompt loading ────────────────────────────────────────────
 
 
-def load_reconciler_prompt(cfg: Config):
-    """Load the reconciler prompt from disk (variant-aware)."""
-    if cfg.prompt_variant == "default":
-        path = cfg.prompts_dir / "reconciler.md"
-    else:
-        path = cfg.prompts_dir / cfg.prompt_variant / "reconciler.md"
-    if not path.is_file():
-        raise FileNotFoundError(f"Reconciler prompt not found: {path}")
-    return path.read_text()
+def load_reconciler_prompt(cfg: Config) -> str:
+    """The reconciler's system prompt: its task, then the contract. See prompts.py."""
+    from .prompts import prompt
+    return prompt("reconciler", cfg)
+
+
+def _normalise_confidence(claims: list[dict]) -> int:
+    """Make each claim's confidence agree with its source count; return how many moved.
+
+    Confidence is defined as a fact about agreement — one reader is `single-source`, more than
+    one is `high` or `contested` — and the source list is that fact. The prompt used to define
+    `high` as all three readers, which the partition makes almost impossible, and a model
+    resolved the gap by calling every two-source claim `high` and some one-source claims too.
+    The count wins; a disagreement between readers that the model marked `contested` is kept.
+    """
+    moved = 0
+    for c in claims:
+        n = len(c.get("sources") or [])
+        want = None
+        if n <= 1 and c.get("confidence") != "single-source":
+            want = "single-source"
+        elif n > 1 and c.get("confidence") == "single-source":
+            want = "high"
+        if want:
+            c["confidence"] = want
+            moved += 1
+    return moved
 
 
 # ── Reconciler invocation ───────────────────────────────────────────────
@@ -101,6 +119,10 @@ def draft_from_raw(
         raise ValueError(
             f"reconciler returned non-dict JSON: {type(parsed).__name__}"
         )
+    moved = _normalise_confidence(parsed.get("claims") or [])
+    if moved:
+        logger.warning("reconciler: %d confidence label(s) did not match the source count "
+                       "and were corrected", moved)
 
     # Build the DraftClaimTable, filling in fields the reconciler may have skipped
     parsed.setdefault("paper_doi", paper_doi)

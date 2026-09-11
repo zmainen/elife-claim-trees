@@ -6,6 +6,10 @@
 # be installed. Pinned loosely — nothing here depends on a specific version.
 PyYAML>=6.0
 
+# The prompt contract check (`make check`) renders the output schema from the pydantic models
+# in extract/elife_extract/schema.py, so the models have to import.
+pydantic>=2.0
+
 # SHACL validation of the MIRA exports (scripts/validate_mira.py shells out to `pyshacl`).
 # Kept here rather than installed ad hoc in the workflow so there is one list to read.
 pyshacl>=0.25
