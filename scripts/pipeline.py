@@ -479,18 +479,33 @@ def cmd_run(args) -> int:
 
     st = state(decl, [args.paper])[args.paper]
 
-    # Dependency order, restricted to this layer's ancestors.
+    # Dependency order, restricted to this layer's ancestors — and pruned at the ones that
+    # are already satisfied.
+    #
+    # Walking *through* a satisfied ancestor rebuilds a subtree nothing is waiting for. That
+    # was harmless while the induction layers declared no command, because each one printed
+    # "no runner declared" and was skipped; now that they run, asking for `coverage` on a
+    # paper whose claim tree is current would re-run induction underneath it — three reader
+    # calls, a reconciliation and an Opus review, to rebuild inputs to a file that is already
+    # correct. A satisfied ancestor is a leaf, which is what make has always done.
+    #
+    # Satisfied means the outputs are there and nothing says they are wrong: `current`, or
+    # `unrecorded` — produced before the ledger existed, and consistent with what it was
+    # built from as far as anything can tell. `stale` and `blocked` are rebuilt.
+    SATISFIED = (CURRENT, "unrecorded")
     wanted, seen = [], set()
 
-    def walk(lid):
+    def walk(lid, target=False):
         if lid in seen:
             return
         seen.add(lid)
+        if not target and st.get(lid, {}).get("state") in SATISFIED:
+            return
         for dep in by_id[lid].get("needs") or []:
             walk(dep)
         wanted.append(lid)
 
-    walk(args.layer)
+    walk(args.layer, target=True)
     if args.no_deps:
         wanted = [args.layer]
 

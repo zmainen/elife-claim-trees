@@ -82,6 +82,10 @@ class Config:
     api_key: str | None = None
 
     # Paths (resolved at runtime, not import-time)
+    # `root` is the corpus repository — the directory `pipeline/layers.yaml` resolves its
+    # declared paths against. Every layer runner writes under it, so the paths a run produces
+    # are the paths the ledger hashes.
+    root: Path | None = None
     corpus_dir: Path | None = None
     prompts_dir: Path | None = None
     output_dir: Path | None = None
@@ -89,7 +93,6 @@ class Config:
     # Variant selection
     prompt_variant: str = DEFAULT_PROMPT_VARIANT
     reconcile_strategy: str = "confidence-tagged"
-    review_mode: str = "interactive"
 
     # Behavioral knobs
     max_claims: int | None = None
@@ -156,10 +159,16 @@ class Config:
             or DEFAULT_VERTEX_REGION
         )
 
-        # Paths
+        # Paths. The package ships inside the corpus repo as extract/elife_extract/, so the
+        # repository root is two directories up — the same guess prompts_dir already makes.
+        root = (getattr(args, "root", None)
+                or os.environ.get("ELIFE_CLAIM_TREES_ROOT")
+                or Path(__file__).resolve().parents[2])
+        cfg.root = Path(root).expanduser().resolve()
+
         corpus = getattr(args, "corpus_dir", None) or os.environ.get("ELIFE_CORPUS_DIR")
-        if corpus:
-            cfg.corpus_dir = Path(corpus).expanduser().resolve()
+        cfg.corpus_dir = (Path(corpus).expanduser().resolve() if corpus
+                          else cfg.root / "claims")
 
         cfg.infer_edges = not getattr(args, "no_infer_edges", False)
         cfg.edges_json = getattr(args, "edges_json", None)
@@ -175,7 +184,6 @@ class Config:
         # Variants
         cfg.prompt_variant = getattr(args, "prompt_variant", None) or DEFAULT_PROMPT_VARIANT
         cfg.reconcile_strategy = getattr(args, "reconcile_strategy", None) or "confidence-tagged"
-        cfg.review_mode = getattr(args, "review_mode", None) or "interactive"
 
         # Knobs
         cfg.max_claims = getattr(args, "max_claims", None)
@@ -192,9 +200,10 @@ class Config:
     def validate(self) -> list[str]:
         """Return a list of error strings, or empty if valid."""
         errors = []
-        if self.corpus_dir is None:
+        if self.root is None or not self.root.is_dir():
             errors.append(
-                "corpus_dir not set. Pass --corpus-dir or set ELIFE_CORPUS_DIR environment variable."
+                f"root not found: {self.root}. Pass --root, or set ELIFE_CLAIM_TREES_ROOT, "
+                f"to the corpus repository pipeline/layers.yaml resolves its paths against."
             )
         if self.prompts_dir is None or not self.prompts_dir.is_dir():
             errors.append(

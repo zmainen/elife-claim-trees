@@ -284,10 +284,10 @@ layers:
     added: "2026-09-10"
     found: >
       Gädeke first. The paper cut into spans and each adjudicated against the claim tree, which is how a tree is measured against its paper rather than against another tree. The mechanical match left 36 spans unaccounted for; 22 were the matcher being wrong and 14 were real.
-    needs: [claim-tree]
+    needs: [claim-tree, prepare]
     produces: ["coverage/{paper}.json"]
     views: [document, table]
-    command: "cd extract && python3 -m elife_extract.cli coverage --doi {doi} --paper-slug {paper} --claims-dir ../claims/{paper} --json ../coverage/{paper}.json"
+    command: "cd extract && python3 -m elife_extract.cli coverage --paper {paper} --json ../coverage/{paper}.json"
 
   - id: adjudication
     kind: judgement
@@ -304,10 +304,10 @@ layers:
     scope: paper
     title: Marked paper
     question: Where, in the document itself, is each claim and each gap?
-    needs: [adjudication, claim-tree]
+    needs: [adjudication, claim-tree, prepare]
     produces: ["marked/{paper}.marked.md"]
     views: [document]
-    command: "cd extract && python3 -m elife_extract.cli mark --doi {doi} --paper-slug {paper} --claims-dir ../claims/{paper} --mapping ../mappings/{paper}.json -o ../marked/{paper}.marked.md"
+    command: "cd extract && python3 -m elife_extract.cli mark --paper {paper} --mapping ../mappings/{paper}.json -o ../marked/{paper}.marked.md"
 
   # Distinct from verification, which re-runs the authors' own deposited code against their
   # own data. Replication asks whether an independent study found the same thing — a different
