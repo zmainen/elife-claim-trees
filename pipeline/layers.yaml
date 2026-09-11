@@ -597,9 +597,26 @@ layers:
     scope: paper
     title: Paper summary
     question: What does this paper argue, in three paragraphs?
+    how: >
+      Given the tree's claims — slug, role, panel, sentence and edges — and nothing from the
+      paper, it returns the three paragraphs the page opens with: `hypotheses` (the bets the
+      work makes good on), `claims` (what it establishes empirically) and `inferences` (what it
+      concludes). An atlas or descriptive paper returns `subject` in place of `hypotheses`. It
+      writes the paper's entry into the one shared paper-summaries.json, so editing any paper's
+      summary restates the artifact every paper's cell reads.
+
+      `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through
+      the same validation — one of `hypotheses`/`subject` and both other paragraphs, or nothing is
+      written — so a model with no backend here can still answer it. The prompt reasons about the
+      claims by role, so it reads the contract's vocabulary too. The model is recorded inside the
+      paper's entry, since the shared file has no top-level place for it, and `pipeline.py`'s
+      by_from reader falls back to that per-paper entry.
     needs: [claim-tree]
+    reads: [extract/prompts/summaries.md, extract/prompts/contract/vocabulary.md]
     produces: ["site/src/data/paper-summaries.json"]
     views: [document]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli summaries --paper {paper}"
 
   # The wording a reader meets first.
   #

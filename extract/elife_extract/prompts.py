@@ -36,6 +36,9 @@ ROLES: dict[str, tuple[str, list[str]]] = {
     # Parts gets the vocabulary — it needs the definition of `part-of` and how it differs from
     # `supports` — but not the claim schema: it returns `part-of` edges, not claims.
     "parts": ("parts.md", [_VOCAB]),
+    # Summaries reasons about the claims by role — hypothesis, empirical, synthesis — so it gets
+    # the vocabulary that defines a role, but not the claim schema: it returns prose, not claims.
+    "summaries": ("summaries.md", [_VOCAB]),
 }
 
 

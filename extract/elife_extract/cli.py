@@ -299,6 +299,23 @@ def cmd_parts(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_summaries(args: argparse.Namespace) -> int:
+    """Layer `summaries` — the paper in three paragraphs, written from its claim graph."""
+    from .layers import summaries_layer, summaries_request
+
+    cfg = _cfg(args)
+    if _dump(args, lambda: summaries_request(args.paper, cfg), "summaries"):
+        return 0
+    path, payload = summaries_layer(args.paper, cfg, answer=args.answer)
+    print(f"=== summaries — {args.paper} ===")
+    print(f"  model = {payload['model']}")
+    for k in ("hypotheses", "subject", "claims", "inferences"):
+        if payload.get(k):
+            print(f"  {k}: {payload[k][:90]}{'…' if len(payload[k]) > 90 else ''}")
+    print(f"  written: {path}")
+    return 0
+
+
 def cmd_verify_refs(args: argparse.Namespace) -> int:
     """Layer `reference-check` — do the cited references resolve, and to what?"""
     import json
@@ -864,6 +881,24 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common_args(p_parts)
     _add_model_args(p_parts)
     p_parts.set_defaults(func=cmd_parts)
+
+    # ── summaries ──────────────────────────────────────────────────────────
+    p_sum = sub.add_parser(
+        "summaries", help="Layer `summaries` — the paper in three paragraphs.",
+        description=(
+            "The block at the top of every paper page, written from the claim graph alone. Given "
+            "the tree's claims — slug, role, panel, sentence and edges — return three paragraphs: "
+            "`hypotheses` (or `subject` for an atlas), `claims` and `inferences`. It writes the "
+            "paper's entry into the shared site/src/data/paper-summaries.json. "
+            "`--dump-prompt` writes the exact request, `--answer` feeds a reply back through the "
+            "same validation."
+        ),
+    )
+    p_sum.add_argument("--paper", required=True, help="Paper slug.")
+    _add_answerable_args(p_sum, "the three paragraphs are checked, one of hypotheses/subject kept.")
+    _add_common_args(p_sum)
+    _add_model_args(p_sum)
+    p_sum.set_defaults(func=cmd_summaries)
 
     # ── write (claim-tree) ───────────────────────────────────────────────
     p_write = sub.add_parser(
