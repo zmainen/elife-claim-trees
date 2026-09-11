@@ -1,0 +1,130 @@
+---
+// Two versions of a cell, aligned by the matcher and shown as a diff.
+//
+// This is the view a prompt change needs and the site did not have: same paper, two versions
+// of a reader, a reconciliation or a claim tree, with the claims aligned by text so what
+// actually changed is legible. The alignment is mechanical and local (lib/compare.ts) — exact
+// claim text, then a token overlap — because two claim sets about one paper share neither
+// slugs nor wording, which is what defeated evaluate's first string matcher.
+//
+// Matched pairs come first, with a role or panel that changed between the versions marked;
+// then the claims only the old version had (dropped), then only the new (added). A missed
+// pairing shows as one dropped and one added rather than as a change that never happened.
+import { align, type ClaimLite } from '../lib/compare';
+import type { LayerVersion } from '../lib/layer-source';
+
+interface Props {
+  older: LayerVersion;
+  newer: LayerVersion;
+}
+const { older, newer } = Astro.props;
+const { matched, onlyOld, onlyNew } = align(older.claims, newer.claims);
+
+const changed = matched.filter(p => p.roleChanged || p.panelChanged).length;
+const oldLabel = `v${older.v}`;
+const newLabel = `v${newer.v}`;
+
+const chip = 'font-mono text-[10px] px-1.5 py-0.5 rounded';
+const dim = 'text-gray-400 dark:text-gray-600';
+const flag = 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300';
+const calm = 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400';
+
+// A claim's role/panel chips, highlighting the one that differs from its pair.
+const facet = (v: string | null | undefined, changed: boolean) =>
+  ({ text: v ?? '—', cls: v == null ? dim : changed ? flag : calm });
+---
+
+<section class="mb-10">
+  <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">
+    {oldLabel} → {newLabel}
+    <span class="font-mono text-sm text-gray-400 dark:text-gray-500 ml-2">comparison</span>
+  </h2>
+  <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl leading-relaxed">
+    Aligned by the claim text — exact wording first, then a token overlap — because two
+    versions share no slugs. {matched.length} matched{changed > 0 ? <>, {changed} with a role or
+    panel that changed</> : null}; {onlyOld.length} only in {oldLabel}; {onlyNew.length} only
+    in {newLabel}.
+    <span class={`block mt-1 font-mono text-xs ${dim}`}>
+      {oldLabel} {older.path} · {older.claims.length} claims
+      <span class="mx-1">·</span>
+      {newLabel} {newer.path} · {newer.claims.length} claims
+    </span>
+  </p>
+
+  {matched.length > 0 && (
+    <div class="mb-6">
+      <h3 class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3">Matched</h3>
+      <ol class="list-none p-0 m-0 space-y-3">
+        {matched.map(p => {
+          const or = facet(p.old.role, p.roleChanged);
+          const nr = facet(p.new.role, p.roleChanged);
+          const op = facet(p.old.panel, p.panelChanged);
+          const np = facet(p.new.panel, p.panelChanged);
+          return (
+            <li class={`grid md:grid-cols-2 gap-x-6 gap-y-1 border-l-2 pl-4 ${
+              p.roleChanged || p.panelChanged
+                ? 'border-amber-400 dark:border-amber-600'
+                : 'border-gray-200 dark:border-gray-700'}`}>
+              <div>
+                <p class="text-sm text-gray-800 dark:text-gray-200 m-0 leading-snug">{p.old.text}</p>
+                <p class="m-0 mt-1 space-x-1.5">
+                  <span class={`${chip} ${or.cls}`}>{or.text}</span>
+                  <span class={`${chip} ${op.cls}`}>{op.text}</span>
+                </p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-800 dark:text-gray-200 m-0 leading-snug">{p.new.text}</p>
+                <p class="m-0 mt-1 space-x-1.5">
+                  <span class={`${chip} ${nr.cls}`}>{nr.text}</span>
+                  <span class={`${chip} ${np.cls}`}>{np.text}</span>
+                  {!p.exact && (
+                    <span class={`${chip} ${dim}`} title="normalised token overlap">
+                      ~{p.score.toFixed(2)}
+                    </span>
+                  )}
+                </p>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  )}
+
+  <div class="grid md:grid-cols-2 gap-x-6 gap-y-6">
+    <div>
+      <h3 class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3">
+        Only in {oldLabel} <span class="normal-case font-mono text-gray-400 dark:text-gray-600">dropped</span>
+      </h3>
+      {onlyOld.length === 0
+        ? <p class={`text-sm ${dim} m-0`}>Nothing — every {oldLabel} claim survived.</p>
+        : (
+          <ol class="list-none p-0 m-0 space-y-2">
+            {onlyOld.map((c: ClaimLite) => (
+              <li class="border-l-2 border-gray-200 dark:border-gray-700 pl-3">
+                <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-snug">{c.text}</p>
+                {c.role && <span class={`${chip} ${calm}`}>{c.role}</span>}
+              </li>
+            ))}
+          </ol>
+        )}
+    </div>
+    <div>
+      <h3 class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3">
+        Only in {newLabel} <span class="normal-case font-mono text-gray-400 dark:text-gray-600">added</span>
+      </h3>
+      {onlyNew.length === 0
+        ? <p class={`text-sm ${dim} m-0`}>Nothing — {newLabel} added no claim.</p>
+        : (
+          <ol class="list-none p-0 m-0 space-y-2">
+            {onlyNew.map((c: ClaimLite) => (
+              <li class="border-l-2 border-gray-200 dark:border-gray-700 pl-3">
+                <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-snug">{c.text}</p>
+                {c.role && <span class={`${chip} ${calm}`}>{c.role}</span>}
+              </li>
+            ))}
+          </ol>
+        )}
+    </div>
+  </div>
+</section>

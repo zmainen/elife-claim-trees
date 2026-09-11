@@ -9,11 +9,13 @@ import Layout from '../../../layouts/Layout.astro';
 import LayerState from '../../../components/LayerState.astro';
 import LayerDefinition from '../../../components/LayerDefinition.astro';
 import LayerOutput from '../../../components/LayerOutput.astro';
+import LayerComparison from '../../../components/LayerComparison.astro';
 import AbstractAlignment from '../../../components/AbstractAlignment.astro';
 import ArgumentFromGraph from '../../../components/ArgumentFromGraph.astro';
 import { getCollection, render } from 'astro:content';
 import { paperLayers, byId, cell, STATE_LABEL } from '../../../lib/pipeline';
 import { artifacts, isDirectory } from '../../../lib/artifacts';
+import { layerVersions } from '../../../lib/layer-source';
 import corpus from '../../../data/claims.json';
 
 export async function getStaticPaths() {
@@ -73,6 +75,16 @@ const synthesisBlock = layerId === 'synthesis'
   : null;
 const claimsBySlug: Record<string, any> = {};
 if (abstractMapping || synthesisBlock) for (const cl of paper.claims) claimsBySlug[cl.slug] = cl;
+// Two versions of this cell, aligned by the matcher — offered only where the layer declares
+// the view and more than one version's bytes are addressable on disk. Most cells have one
+// version, and claim-tree is the one with an archived earlier tree today; records layers gain
+// theirs as they run again, since scripts/pipeline.py keeps a copy of each output per version.
+const comparable = (layer.views ?? []).includes('comparison')
+  ? layerVersions(paper.slug, layerId, c.produces, c.v ?? c.versions[0]?.v ?? 1)
+  : [];
+const current = comparable[0] ?? null;
+const earlier = comparable.slice(1);
+
 const rendered = report ? await render(report) : null;
 const showReport = layerId === 'formats-report' && rendered && c.state !== 'absent';
 const Content = rendered?.Content;
@@ -212,6 +224,17 @@ const TONE: Record<string, string> = {
 
     {!showReport && !abstractMapping && !synthesisBlock && (
       <LayerOutput layer={layer} paper={paper.slug} produces={c.produces} />
+    )}
+
+    {current && earlier.length > 0 && (
+      <div class="mb-4">
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl leading-relaxed">
+          This cell has more than one version on the ledger, and their bytes are kept, so the
+          current version can be held against an earlier one — the view a prompt change or a
+          model swap needs.
+        </p>
+        {earlier.map(old => <LayerComparison older={old} newer={current} />)}
+      </div>
     )}
 
     <LayerDefinition layer={layer} paper={paper.slug} />
