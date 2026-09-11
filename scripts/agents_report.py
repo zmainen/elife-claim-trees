@@ -103,9 +103,13 @@ def paper_trace(slug):
         block = _load(os.path.join(RUNS_DIR, slug, f"{fname}.output.json"))
         if block:
             models[key] = block.get("model")
-    if not models:
+    # Consulted whenever any reader is unaccounted for, not only when all three are. One
+    # reader present used to be enough to skip the fallback and publish a partial list.
+    if len(models) < len(READER_FILE):
         agents = _load(os.path.join(OUT_DIR, f"agents-{slug}.json")) or {}
-        models = {k: b.get("model") for k, b in agents.items() if isinstance(b, dict)}
+        for k, b in agents.items():
+            if k not in models and isinstance(b, dict):
+                models[k] = b.get("model")
 
     claims = []
     for c in draft.get("claims", []):
@@ -147,13 +151,17 @@ def main():
                       "prompt_lines": len(text.splitlines()) if text else 0,
                       "prompt_path": f"extract/prompts/{r['id']}.md" if text else None})
 
-    slugs = sorted(
-        {d for d in os.listdir(RUNS_DIR)
-         if os.path.isfile(os.path.join(RUNS_DIR, d, "reconciler.output.json"))}
-        if os.path.isdir(RUNS_DIR) else set()
-        | ({f[len("draft-"):-len(".json")]
-            for f in os.listdir(OUT_DIR) if f.startswith("draft-")}
-           if os.path.isdir(OUT_DIR) else set()))
+    # Both operands parenthesised. Without them a conditional expression binds looser than
+    # `|`, so the whole union sat inside the `else` branch and the extract/out/ fallback was
+    # unreachable — runs/README.md is tracked, so runs/ exists in every clone and the else
+    # never ran. A freshly extracted paper would have been silently absent from the page.
+    from_runs = ({d for d in os.listdir(RUNS_DIR)
+                  if os.path.isfile(os.path.join(RUNS_DIR, d, "reconciler.output.json"))}
+                 if os.path.isdir(RUNS_DIR) else set())
+    from_out = ({f[len("draft-"):-len(".json")]
+                 for f in os.listdir(OUT_DIR) if f.startswith("draft-")}
+                if os.path.isdir(OUT_DIR) else set())
+    slugs = sorted(from_runs | from_out)
     papers = {s: paper_trace(s) for s in slugs}
     papers = {k: v for k, v in papers.items() if v}
 
