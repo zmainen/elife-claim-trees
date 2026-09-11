@@ -32,6 +32,8 @@ export interface LayerDecl {
   open?: boolean;
   reviews?: string;
   requires_human?: boolean;
+  added?: string;
+  found?: string;
 }
 
 export interface Cell {
@@ -185,6 +187,35 @@ export function allHistory(): (Version & { paper: string; layer: string })[] {
   return papers
     .flatMap(p => (LEDGER[p] ?? []).map(e => ({ ...e, paper: p })))
     .sort((a, b) => (b.ran ?? '').localeCompare(a.ran ?? ''));
+}
+
+/** Fill {{token}} from corpus-facts, flattening one level so `mira.carried` is `mira_carried`.
+ *
+ *  An unknown token throws rather than rendering as {{...}}: a build that fails is a problem
+ *  someone fixes, and a page that quietly shows its own placeholder is one nobody notices.
+ *  Same convention, and same reasoning, as docs/method.md. */
+const FLAT: Record<string, unknown> = (() => {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(facts as Record<string, unknown>)) {
+    out[k] = v;
+    if (v && typeof v === 'object' && !Array.isArray(v)) {
+      for (const [k2, v2] of Object.entries(v as Record<string, unknown>)) {
+        if (typeof v2 !== 'object') out[`${k}_${k2}`] = v2;
+      }
+    }
+  }
+  return out;
+})();
+
+export function resolve(text: string): string {
+  return text.replace(/\{\{(\w+)\}\}/g, (_m, key) => {
+    if (!(key in FLAT)) {
+      throw new Error(
+        `pipeline/layers.yaml uses {{${key}}}, which corpus-facts.json does not define. ` +
+        `Add it to scripts/corpus_facts.py or fix the token.`);
+    }
+    return String(FLAT[key]);
+  });
 }
 
 export const STATE_LABEL: Record<CellState, string> = {

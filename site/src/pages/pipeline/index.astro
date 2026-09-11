@@ -6,7 +6,7 @@
 import Layout from '../../layouts/Layout.astro';
 import {
   layers, groups, papers, columns, cells, titleOf, fill_of, inState, byId,
-  corpusLayers, paperLayers, STATE_LABEL, allHistory,
+  corpusLayers, paperLayers, STATE_LABEL, allHistory, resolve,
 } from '../../lib/pipeline';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -17,6 +17,10 @@ const stale = inState('stale', 'blocked');
 const absent = inState('absent');
 const open = corpusLayers.filter(l => l.open);
 const recent = allHistory().filter(h => !h.backfilled).slice(0, 6);
+// Findings belong to the layer that produced them and carry the date it was added, so a
+// returning reader sees what is new rather than a page that has quietly changed.
+const found = layers.filter(l => l.found)
+  .sort((a, b) => (a.added ?? '').localeCompare(b.added ?? ''));
 
 const shortOf = (slug: string) =>
   slug.split('-')[0].replace(/^./, c => c.toUpperCase());
@@ -47,9 +51,7 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
         all {papers.length} papers; each layer's own page asks it of one.
       </p>
       <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 m-0">
-        <a href={url('/layers')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">The layers page</a>
-        carries the history — when each was added and what it found. This one carries the graph and
-        its state. Generated from <code>pipeline/layers.yaml</code> and <code>runs/&lt;paper&gt;/ledger.jsonl</code>.
+        Generated from <code>pipeline/layers.yaml</code> and <code>runs/&lt;paper&gt;/ledger.jsonl</code>.
         Every cell is fetchable at <code>/data/&lt;paper&gt;/&lt;layer&gt;.json</code>.
       </p>
     </header>
@@ -191,6 +193,28 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
         </ul>
       </section>
     </div>
+
+    <!-- ── what each layer found ─────────────────────────────────── -->
+    <section class="mb-12">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">What each layer found</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+        A finding belongs to the layer that produced it and carries the date that layer was added.
+        Every figure is filled from <code>corpus-facts.json</code> at build; an unknown one fails
+        the build rather than rendering as a placeholder nobody notices.
+      </p>
+      <div class="space-y-5">
+        {found.map(l => (
+          <section class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+            <p class="font-mono text-xs text-amber-700 dark:text-amber-400 m-0 mb-1">
+              <a href={url(`/pipeline/${l.id}`)} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">{l.id}</a>
+              {l.added ? ` · ${l.added}` : ''}
+            </p>
+            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0 max-w-3xl"
+               set:html={resolve(l.found!).replace(/`([^`]+)`/g, '<code class="text-xs">$1</code>')}></p>
+          </section>
+        ))}
+      </div>
+    </section>
 
     <!-- ── what has run lately ───────────────────────────────────── -->
     {recent.length > 0 && (

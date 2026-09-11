@@ -6,7 +6,7 @@
 // this is the corpus altitude of the same cell.
 import Layout from '../../layouts/Layout.astro';
 import {
-  layers, byId, groups, papers, cell, dependents, titleOf, STATE_LABEL,
+  layers, byId, groups, papers, cell, dependents, titleOf, STATE_LABEL, resolve,
 } from '../../lib/pipeline';
 
 export function getStaticPaths() {
@@ -73,6 +73,17 @@ const KIND_NOTE: Record<string, string> = {
         </p>
       )}
     </header>
+
+    {layer.found && (
+      <section class="mb-10 border-l-2 border-emerald-500 dark:border-emerald-600 pl-4">
+        <h2 class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 m-0 mb-2">
+          What it found{layer.added ? ` · added ${layer.added}` : ''}
+        </h2>
+        <p class="text-[15px] text-gray-700 dark:text-gray-300 m-0 leading-relaxed max-w-2xl"
+           set:html={resolve(layer.found).replace(/`([^`]+)`/g,
+             '<code class="text-[13px]">$1</code>')}></p>
+      </section>
+    )}
 
     <!-- ── position in the graph ─────────────────────────────────── -->
     <div class="grid sm:grid-cols-2 gap-5 mb-10">
