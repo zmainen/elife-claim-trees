@@ -1,0 +1,101 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import StandardsTabs from '../../components/StandardsTabs.astro';
+import { byId as stdById, DEPTH_NOTE } from '../../lib/standards';
+import facts from '../../data/corpus-facts.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const url = (p: string) => `${base}${p}/`;
+const f = facts as any;
+const std = stdById['cito'];
+---
+
+<Layout title="CiTO — standards" description={std.blurb}>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+
+    <StandardsTabs current="cito" />
+
+    <header class="mb-9 max-w-2xl">
+      <div class="flex flex-wrap items-baseline gap-3 mb-2">
+        <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0">CiTO</h1>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-500"
+              title={DEPTH_NOTE[std.depth]}>{std.depth}</span>
+      </div>
+      <p class="text-gray-600 dark:text-gray-400 m-0 leading-relaxed">The Citation Typing Ontology: forty typed relations between documents, and the standard vocabulary of the SPAR ontologies. We borrow it for relations between claims, which is outside its intended scope.</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 m-0"><code>docs/schema-mapping/cito-mapping.md</code> · extensions in <code>exports/claim-relations.ttl</code></p>
+    </header>
+
+    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-5 mb-10 max-w-2xl">
+      <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+        <strong>This tab is thin, and saying so is more useful than padding it.</strong> The
+        mapping is forty-four lines of notes and a vocabulary file. Nothing has been validated,
+        and no export targets CiTO directly — it is used inside the OXA export as the relation
+        vocabulary.
+      </p>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What it requires</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-8 max-w-2xl">
+      CiTO types the relationship between two documents — <code>cito:supports</code>,
+      <code>cito:extends</code>, <code>cito:disagreesWith</code>, <code>cito:usesMethodIn</code>
+      — as an OWL property with a domain and range of bibliographic resources. It is the
+      standard vocabulary of the SPAR ontologies, and it has no notion of a claim within a paper.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">How a claim tree maps onto it</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+      Six of our relations have a CiTO property. The other eight are defined as CiTO
+      subproperties, so a query written against CiTO still finds them.
+    </p>
+    <div class="grid sm:grid-cols-2 gap-6 mb-4">
+      <div>
+        <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">Direct</p>
+        <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+          <code class="text-xs">supports</code> <code class="text-xs">extends</code>
+          <code class="text-xs">qualifies</code> <code class="text-xs">disagreesWith</code>
+          <code class="text-xs">usesMethodIn</code> <code class="text-xs">citesAsSourceDocument</code>
+        </p>
+      </div>
+      <div>
+        <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">Extensions</p>
+        <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+          <code class="text-xs">tests</code> <code class="text-xs">entails</code>
+          <code class="text-xs">requires</code> <code class="text-xs">scopes</code>
+          <code class="text-xs">interprets</code> <code class="text-xs">rulesOut</code>
+          <code class="text-xs">replicates</code> <code class="text-xs">contradicts</code>
+        </p>
+      </div>
+    </div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-10 max-w-2xl leading-relaxed">
+      The gap is instructive: CiTO covers the social relations between papers and misses the
+      logical relations within an argument. Those missing types are what makes a claim graph
+      different from a citation graph.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">Does it validate</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-10 max-w-2xl">
+      Unknown. <code>exports/claim-relations.ttl</code> defines the eight extensions as OWL
+      subproperties; nothing has been run against a reasoner, and no export is checked for CiTO
+      conformance. That is a gap, not a result.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What it cannot carry</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-10 max-w-2xl">
+      Anything below the document. CiTO relates works, so every relation in a claim tree is
+      already outside its intended scope — the subproperties are a borrowing of its vocabulary,
+      not a use of its model.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What we would ask its authors</h2>
+    <ul class="space-y-2 text-gray-700 dark:text-gray-300 leading-relaxed list-disc pl-5 max-w-2xl">
+      <li>Is subproperty extension the intended way to use CiTO for relations between units smaller than a document?</li>
+      <li>Would intra-document relations be in scope for SPAR, or do they belong in a sibling ontology?</li>
+    </ul>
+
+    <footer class="pt-6 mt-10 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+      <code>docs/schema-mapping/cito-mapping.md</code> ·
+      <a href={`${base}/exports/claim-relations.ttl`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">the OWL vocabulary</a>
+    </footer>
+
+  </div>
+</Layout>
