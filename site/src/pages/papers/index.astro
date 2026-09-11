@@ -19,7 +19,6 @@ const stageLabel: Record<string, string> = {
     <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-8">Papers</h1>
     <div class="space-y-3">
       {papers.map(p => {
-        const reran = p.claims.filter((c: any) => c.status.startsWith('verified')).length;
         const stage = stageLabel[(p as any).stage] || '';
         return (
           <a href={url(`/papers/${p.slug}`)} class="flex items-start gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-gray-400 hover:shadow-sm transition-all no-underline group">

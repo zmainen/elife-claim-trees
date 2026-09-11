@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { outcomeOf, OUTCOME_LABEL, OUTCOME_COLOR, BLOCKED_REASON } from '../lib/status';
 
 type Claim = {
   slug: string;
@@ -51,37 +52,11 @@ type Props = {
   baseUrl: string;
 };
 
-// What we did, in the first person — the same vocabulary as lib/status.ts. A drawer that
-// said "Verified" in green was the site's most direct claim that a proposition is true, on
-// the strength of having re-run a script.
-const STATUS_LABEL: Record<string, string> = {
-  'verified': 're-ran: numbers match',
-  'verified:partial': 're-ran: partly matches',
-  'verified:with-nuance': 're-ran: matches, with nuance',
-  'verified:direction-and-trend': 're-ran: direction and trend match',
-  'verified:interpretive': 'checked by reading, not by running',
-  'failed': 're-ran: differs',
-  'failed:mismatch': 're-ran: differs',
-  'unverified:no-data': 'couldn\u2019t re-run — no data deposited',
-  'unverified:no-code': 'couldn\u2019t re-run — no code deposited',
-  'unverified:code-error': 'couldn\u2019t re-run — the deposited code errored',
-  'unverified:compute-infeasible': 'couldn\u2019t re-run — needs specialist compute',
-  'unverified:partial': 'not re-run yet',
-  'unverified': 'not re-run yet',
-  'unknown': 'not re-run yet',
-};
-
-function statusDotColor(status: string): string {
-  // Slate, not green. The dot says we re-ran something; green would say the claim is true.
-  if (status === 'verified') return '#475569';
-  if (
-    status === 'failed' ||
-    status === 'unverified:code-error' ||
-    status === 'unverified:compute-infeasible'
-  )
-    return '#f59e0b';
-  return 'var(--card-faint)';
-}
+// The vocabulary lives in lib/status.ts and is read through outcomeOf(), not copied here.
+// The copy this replaces enumerated the `verified:*` and `unverified:*` forms — which
+// build-data.js no longer emits onto a claim — and had no entry for `blocked` or
+// `unattempted`, which are what it does emit. 100 of 254 claims therefore reached the
+// fallback and rendered the raw status word under "We do not recognise this status".
 
 const roleChipStyle: Record<string, string> = {
   hypothesis: 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900',
@@ -168,81 +143,52 @@ function verificationBanner(status: string, role?: string | null, stance?: strin
     };
   }
 
-  // --- Code-executed verification statuses ---
-  if (status === 'verified') return {
+  // --- What happened when we re-ran it ---
+  //
+  // Driven by outcomeOf(), so this reads the same five outcomes every other surface reads.
+  // The branch list it replaces was keyed on stored status strings and had drifted from what
+  // the corpus emits: it covered `verified:with-nuance` and `unverified:no-code`, which no
+  // claim carries, and not `blocked` or `unattempted`, which 100 of them do.
+  const outcome = outcomeOf(status);
+
+  if (outcome === 'match') return {
     bg: '#f8fafc', border: '#cbd5e1', text: '#334155', hue: 'slate', icon: '=',
     label: (role === 'scope' || role === 'methodological')
       ? 'we checked this by reading'
-      : 're-ran: numbers match',
+      : OUTCOME_LABEL.match,
     detail: (role === 'scope' || role === 'methodological')
       ? 'Someone read the deposited code, methods text or data records and found this to hold. Not a judgement of whether the claim is correct.'
       : 'We ran a script against the authors\u2019 deposited data and the number that came out matched the number in the paper. That is a fact about the re-run, not about whether the claim is true.',
   };
-  if (status === 'verified:partial') return {
+  if (outcome === 'partial') return {
     bg: '#f8fafc', border: '#cbd5e1', text: '#334155', hue: 'slate', icon: '~',
-    label: 're-ran: partly matches',
-    detail: 'Part of this claim came back matching against the deposited data. What we could not re-run is in the notes.',
+    label: OUTCOME_LABEL.partial,
+    detail: 'Part of this claim came back matching against the deposited data, and part did not — or the re-run could only be done on a subset. The specifics are in the notes.',
   };
-  if (status === 'verified:with-nuance') return {
-    bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '~',
-    label: 're-ran: matches, with a discrepancy',
-    detail: 'Direction or trend came back matching; magnitude or significance differs from the paper. The discrepancy is documented below.',
-  };
-  if (status === 'verified:interpretive') return {
-    bg: '#f8fafc', border: '#cbd5e1', text: '#334155', hue: 'slate', icon: '=',
-    label: 'checked by reading, not by running',
-    detail: 'An interpretive claim with no code to run. Someone examined the evidence structure behind it — which is weaker evidence than a re-run, and is recorded separately for that reason.',
-  };
-  if (status === 'verified:direction-and-trend') return {
-    bg: '#f8fafc', border: '#cbd5e1', text: '#334155', hue: 'slate', icon: '~',
-    label: 're-ran: direction and trend match',
-    detail: 'The direction and trend came back matching the paper; exact values differ.',
-  };
-
-  // --- Failure ---
-  if (status === 'failed' || status === 'failed:mismatch') return {
-    bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '≠',
-    label: 're-ran: differs',
+  if (outcome === 'differs') return {
+    bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '\u2260',
+    label: OUTCOME_LABEL.differs,
     detail: 'We ran the authors\u2019 deposited code on their deposited data and got a different number than the paper reports. That is a disagreement worth looking at, not a verdict: it can be our error as easily as theirs.',
   };
-
-  // --- Unverified with reason ---
-  if (status === 'unverified:code-error') return {
-    bg: '#fffbeb', border: '#fde68a', text: '#92400e', hue: 'amber', icon: '!',
-    label: 'couldn\u2019t re-run — the code errored',
-    detail: 'A script exists and we tried to run it, but it failed. Nothing follows about the claim.',
-  };
-  if (status === 'unverified:compute-infeasible') return {
-    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '⏱',
-    label: 'couldn\u2019t re-run — needs specialist compute',
-    detail: 'Re-running this needs hardware or compute time we do not have. Not attempted, rather than attempted and failed.',
-  };
-  if (status === 'unverified:no-data') return {
-    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
-    label: 'couldn\u2019t re-run — no data deposited',
-    detail: 'The data this claim rests on is not publicly available, so there is nothing to re-run it against.',
-  };
-  if (status === 'unverified:no-code') return {
-    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
-    label: 'not re-run yet — no script written',
-    detail: 'Nobody has written a script to re-run this one. A gap in our effort, not in the paper.',
-  };
-  if (status === 'unverified' || status === 'unverified:partial' || status.startsWith('partial')) return {
-    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '○',
-    label: 'not re-run yet',
-    detail: 'Nobody has attempted to re-run this claim against the deposited data. It says nothing about whether the claim holds.',
-  };
-  if (status === 'N/A') return {
-    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '—',
-    label: 'nothing to re-run',
-    detail: 'This is not the kind of claim a script can check \u2014 a scope condition, or an interpretation.',
+  if (outcome === 'blocked') {
+    const why = BLOCKED_REASON[status];
+    return {
+      bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '\u2014',
+      label: why ? `couldn\u2019t re-run \u2014 ${why}` : OUTCOME_LABEL.blocked,
+      detail: 'Something stops the re-run \u2014 data that was never deposited, or an analysis needing software or hardware we do not have. Nothing here reflects on the claim; we simply have no result of our own.',
+    };
+  }
+  if (outcome === 'not-attempted') return {
+    bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '\u25cb',
+    label: OUTCOME_LABEL['not-attempted'],
+    detail: 'This claim could be re-run against the deposited data and nobody has done it. A gap in our coverage, not a finding about the paper.',
   };
 
   // --- Fallback ---
   return {
     bg: 'var(--card-sunk)', border: 'var(--card-border)', text: 'var(--card-muted)', icon: '?',
-    label: status,
-    detail: 'We do not recognise this status \u2014 see the notes.',
+    label: 'nothing to re-run',
+    detail: 'This is not the kind of claim a script can check \u2014 a scope condition, a hypothesis, or an interpretation.',
   };
 }
 
@@ -344,7 +290,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
 
   const claimText = (claim.displayClaim?.trim()) || claim.claim;
   const original = claim.displayClaim && claim.displayClaim.trim() !== claim.claim ? claim.claim : null;
-  const dotColor = statusDotColor(claim.status);
+  const dotColor = OUTCOME_COLOR[outcomeOf(claim.status)];
   const banner = verificationBanner(claim.status, claim.role, claim.stance);
 
   const hasCode = !!claim.script;
@@ -560,7 +506,7 @@ export default function ClaimDrawer({ allClaims, paperSlug, baseUrl }: Props) {
           <div className="drawer-meta">
             <span className="drawer-meta-item">
               <span className="drawer-dot" style={{ background: dotColor }} />
-              {STATUS_LABEL[claim.status] ?? claim.status}
+              {OUTCOME_LABEL[outcomeOf(claim.status)]}
             </span>
             <span className="drawer-meta-item">{claim.epistemic}</span>
             {claim['claim-type'] && (
