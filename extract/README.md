@@ -164,7 +164,7 @@ CrossRef DOI verification (verify-refs): 12/12 literature-context claims across 
 - **Step 6 (dependency mapping) is scaffolded** — claim files emit with empty `belongings:` / edge sections. The methodology calls for analyst judgment at edge mapping; a future LLM-suggestion pass can populate edges when adoption justifies it.
 - **PDF metadata extraction is heuristic** — title may truncate (eLife title spans two lines), year may catch a citation rather than the publication year, author affiliation superscripts may leak into the names. Override slug via `--paper-slug` if the auto-derived form is wrong.
 - **Methodology fallback chain not implemented** — `prepare()` raises on PDF fetch failure rather than degrading to GitHub README / API / web fetch per `docs/method.md` § 3.3. Add when papers in the wild break the PDF path.
-- **Schema bug in canonical script** — `~/Projects/mainenlab/elife-claim-trees/scripts/verify-references.py` checks `assertions[0].doi`, but the schema actually puts cited DOIs at top-level `doi:` for literature-context claims. This CLI's `verify-refs` reads from the right field; the canonical script is in latent disagreement with the data.
+- **The duplicate reference checker is gone** — `scripts/verify-references.py` checked `assertions[0].doi`, a field no claim in the corpus uses (the schema puts cited DOIs at top-level `doi:`), so every verdict it recorded came from a fuzzy title search. `verify-refs` is now the `reference-check` layer and the only implementation; it absorbed the paper-level DOI check the old script alone performed.
 
 ## Directory layout
 
