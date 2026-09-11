@@ -1,0 +1,1561 @@
+{
+ "slug": "gadeke-2026-guilt-insula",
+ "doi": "10.7554/eLife.105391",
+ "articleId": "105391",
+ "source": "https://cdn.elifesciences.org/articles/105391/elife-105391-v1.xml",
+ "title": "Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions",
+ "authors": [
+  "Maria Gädeke",
+  "Tom Eric Willems",
+  "Omar Salah Ahmed",
+  "Bernd Weber",
+  "Rene Hurlemann",
+  "Johannes Schultz"
+ ],
+ "year": "2026",
+ "keywords": [
+  "social decision-making",
+  "decisions under risk",
+  "computational modelling",
+  "neuroimaging"
+ ],
+ "abstract": [
+  {
+   "text": "This study investigated the neural mechanisms involved in feelings of interpersonal guilt and responsibility evoked by social decisions in humans."
+  },
+  {
+   "text": "In two studies (one during fMRI), participants repeatedly chose between safe and risky monetary outcomes in social contexts."
+  },
+  {
+   "text": "Across conditions, each participant chose for both themselves and a partner (Social condition), or the partner chose for both themselves and the participant (Partner condition), or the participant chose just for themselves (Solo condition, control)."
+  },
+  {
+   "text": "If the risky option was chosen in the Social or Partner condition, participant and partner could each receive either the high or the low outcome of a lottery with 50% probability, independently of each other."
+  },
+  {
+   "text": "Participants were shown the outcomes for themselves and for their partner on each trial and reported their momentary happiness every few trials."
+  },
+  {
+   "text": "As expected, participant happiness decreased following both low lottery outcomes for themselves and for the partner."
+  },
+  {
+   "text": "Crucially, happiness decreases following low outcomes for the partner were larger when the participant rather than their partner had made the choice, which fits an operational definition of guilt."
+  },
+  {
+   "text": "This guilt effect was associated with BOLD signal increase in the left anterior insula."
+  },
+  {
+   "text": "Connectivity between this region and the right inferior frontal gyrus varied depending on choice and experimental condition, suggesting that this part of prefrontal cortex is sensitive to guilt-related information during social choices."
+  },
+  {
+   "text": "Variations in happiness were well explained by computational models based on participants’ and partners’ rewards and reward prediction errors."
+  },
+  {
+   "text": "A model-based analysis revealed a left superior temporal sulcus cluster that tracked partner reward prediction errors that followed participant choices."
+  },
+  {
+   "text": "Our findings identify neural mechanisms of guilt and social responsibility during social decisions under risk."
+  }
+ ],
+ "sections": [
+  {
+   "id": "s1",
+   "type": "intro",
+   "title": "Introduction",
+   "depth": 1,
+   "blocks": [
+    {
+     "type": "p",
+     "html": "Imagine that you go out to dinner with a friend and it is your turn to choose the restaurant. You can choose between two restaurants: one that you both know well, with very predictable food of good quality, and a new restaurant that neither you nor your friend has eaten in before. You decide to try the new one. Unfortunately, while your dish is nice, your friend’s turns out to be worse than the known restaurant’s dishes. How would you feel? Would you feel differently if it had been your friend’s turn to choose the restaurant? Being responsible for such suboptimal outcomes for others can induce a feeling of interpersonal guilt, formally described as a negative emotional response to harming someone with whom one has a positive social bond (<span class=\"cite\">Baumeister, 1998</span>; <span class=\"cite\">Baumeister et al., 1994</span>; <span class=\"cite\">Berndsen et al., 2004</span>; <span class=\"cite\">Tangney et al., 2007</span>; <span class=\"cite\">Zeelenberg and Breugelmans, 2008</span>). Guilt influences decisions (e.g., <span class=\"cite\">Charness and Dufwenberg, 2006</span>), and abnormal sensitivity to guilt is associated with severe social dysfunctions ranging from psychopathy to depression and anxiety, depending on whether sensitivity to guilt is, respectively, reduced or increased (<span class=\"cite\">Tangney et al., 2007</span>).",
+     "text": "Imagine that you go out to dinner with a friend and it is your turn to choose the restaurant. You can choose between two restaurants: one that you both know well, with very predictable food of good quality, and a new restaurant that neither you nor your friend has eaten in before. You decide to try the new one. Unfortunately, while your dish is nice, your friend’s turns out to be worse than the known restaurant’s dishes. How would you feel? Would you feel differently if it had been your friend’s turn to choose the restaurant? Being responsible for such suboptimal outcomes for others can induce a feeling of interpersonal guilt, formally described as a negative emotional response to harming someone with whom one has a positive social bond (Baumeister, 1998; Baumeister et al., 1994; Berndsen et al., 2004; Tangney et al., 2007; Zeelenberg and Breugelmans, 2008). Guilt influences decisions (e.g., Charness and Dufwenberg, 2006), and abnormal sensitivity to guilt is associated with severe social dysfunctions ranging from psychopathy to depression and anxiety, depending on whether sensitivity to guilt is, respectively, reduced or increased (Tangney et al., 2007)."
+    },
+    {
+     "type": "p",
+     "html": "Several brain regions have been associated with the feeling of guilt: the anterior insula (aIns) (<span class=\"cite\">Bastin et al., 2016</span>; <span class=\"cite\">Lamm and Singer, 2010</span>; <span class=\"cite\">Piretti et al., 2023</span>), the dorsal cingulate cortex (<span class=\"cite\">Bastin et al., 2016</span>; <span class=\"cite\">Gifuni et al., 2017</span>) and the left temporo-parietal junction (<span class=\"cite\">Bastin et al., 2016</span>; <span class=\"cite\">Piretti et al., 2023</span>), the ventromedial prefrontal cortex (<span class=\"cite\">Krajbich et al., 2009</span>), and with various other regions and networks involved depending on the method used to induce guilt (<span class=\"cite\">Bastin et al., 2016</span>; <span class=\"cite\">Gifuni et al., 2017</span>). However, we are interested in the mechanisms involved in a specific, as yet understudied aspect of guilt: the kind that can result from everyday choices that expose others to an uncertain outcome. To study this, we built on findings from experimental social decision-making tasks.",
+     "text": "Several brain regions have been associated with the feeling of guilt: the anterior insula (aIns) (Bastin et al., 2016; Lamm and Singer, 2010; Piretti et al., 2023), the dorsal cingulate cortex (Bastin et al., 2016; Gifuni et al., 2017) and the left temporo-parietal junction (Bastin et al., 2016; Piretti et al., 2023), the ventromedial prefrontal cortex (Krajbich et al., 2009), and with various other regions and networks involved depending on the method used to induce guilt (Bastin et al., 2016; Gifuni et al., 2017). However, we are interested in the mechanisms involved in a specific, as yet understudied aspect of guilt: the kind that can result from everyday choices that expose others to an uncertain outcome. To study this, we built on findings from experimental social decision-making tasks."
+    },
+    {
+     "type": "p",
+     "html": "Several studies have used games from behavioural economics or perceptual tasks linked to punishment of a partner. For example, participants behaving in accord with an economic definition of guilt aversion during a trust game showed activation in insula, supplementary motor area, dorsolateral prefrontal cortex (dlPFC) and temporal parietal junction (<span class=\"cite\">Chang et al., 2011</span>). In another study, partners received painful stimuli when participants made errors during a difficult perception task. These errors evoked activations in the left aIns and dlPFC in the participants (<span class=\"cite\">Koban et al., 2013</span>). In a variation of this task, participants could decide to bear a proportion of their partner’s pain (<span class=\"cite\">Yu et al., 2014</span>). The level of pain taken, indicative of guilt, and activations in anterior middle cingulate cortex and aIns were higher when the pain followed errors made only by the participant rather than by both players. A multivariate reanalysis of these two datasets revealed a neural signature for guilt (<span class=\"cite\">Yu et al., 2020</span>), with key regions including the anterior medial cingulate cortex, insula, inferior frontal gyrus (IFG), inferior temporal cortex, thalamus, and cerebellum.",
+     "text": "Several studies have used games from behavioural economics or perceptual tasks linked to punishment of a partner. For example, participants behaving in accord with an economic definition of guilt aversion during a trust game showed activation in insula, supplementary motor area, dorsolateral prefrontal cortex (dlPFC) and temporal parietal junction (Chang et al., 2011). In another study, partners received painful stimuli when participants made errors during a difficult perception task. These errors evoked activations in the left aIns and dlPFC in the participants (Koban et al., 2013). In a variation of this task, participants could decide to bear a proportion of their partner’s pain (Yu et al., 2014). The level of pain taken, indicative of guilt, and activations in anterior middle cingulate cortex and aIns were higher when the pain followed errors made only by the participant rather than by both players. A multivariate reanalysis of these two datasets revealed a neural signature for guilt (Yu et al., 2020), with key regions including the anterior medial cingulate cortex, insula, inferior frontal gyrus (IFG), inferior temporal cortex, thalamus, and cerebellum."
+    },
+    {
+     "type": "p",
+     "html": "One recent study paired the aforementioned perception-and-pain paradigm with dictator game decisions that allowed the participant to compensate for the partner’s outcome (<span class=\"cite\">Gao et al., 2018</span>). The guilt context increased advantageous-inequity aversion and decreased disadvantageous-inequity aversion and affected the neural correlates of these inequities (respectively, mentalizing-related and emotion- and conflict-related regions). Finally, another study contrasted guilt and shame: confederates either experienced economic loss due to bad participant advice (participants experienced guilt), or experienced no loss when participants’ bad advice was correctly refused by the confederate (participants experienced shame) (<span class=\"cite\">Zhu et al., 2019</span>). Guilt relative to shame activated supramarginal gyrus and temporo-parietal junction as well as orbitofrontal cortex, ventrolateral, and dorsolateral prefrontal cortex. Multivariate analyses revealed that guilt could be distinguished from shame based on activation in ventral anterior cingulate cortex and dorsomedial prefrontal cortex.",
+     "text": "One recent study paired the aforementioned perception-and-pain paradigm with dictator game decisions that allowed the participant to compensate for the partner’s outcome (Gao et al., 2018). The guilt context increased advantageous-inequity aversion and decreased disadvantageous-inequity aversion and affected the neural correlates of these inequities (respectively, mentalizing-related and emotion- and conflict-related regions). Finally, another study contrasted guilt and shame: confederates either experienced economic loss due to bad participant advice (participants experienced guilt), or experienced no loss when participants’ bad advice was correctly refused by the confederate (participants experienced shame) (Zhu et al., 2019). Guilt relative to shame activated supramarginal gyrus and temporo-parietal junction as well as orbitofrontal cortex, ventrolateral, and dorsolateral prefrontal cortex. Multivariate analyses revealed that guilt could be distinguished from shame based on activation in ventral anterior cingulate cortex and dorsomedial prefrontal cortex."
+    },
+    {
+     "type": "p",
+     "html": "One landmark study reported on the mechanisms involved in seeking or avoiding responsibility in decisions affecting a group of individuals, and reported involvement of medial prefrontal cortex, aIns and temporo-parietal junction (<span class=\"cite\">Edelson et al., 2018</span>). In this elegant study, participants could delegate their choice between a risky and a safe option to a group or decide themselves; in separate conditions, the choice affected payoff either only for the participant or for all group members. Interestingly, most participants displayed responsibility aversion, and this effect could not be explained by guilt, suggesting people associate a psychological cost with assuming responsibility for others’ outcomes. However, in many situations, one does not have the possibility to delegate a decision to others, and choosing a risky option in such a case may evoke guilt when the outcome for others is negative. The neural mechanisms underlying guilt evoked during such situations of social responsibility are still unknown. These questions are the subject of the present study. Similarly to Edelson et al.’s and more recent studies (<span class=\"cite\">Arioli et al., 2023</span>; <span class=\"cite\">Fareri et al., 2022</span>), our paradigm leveraged a risky choice task with social conditions.",
+     "text": "One landmark study reported on the mechanisms involved in seeking or avoiding responsibility in decisions affecting a group of individuals, and reported involvement of medial prefrontal cortex, aIns and temporo-parietal junction (Edelson et al., 2018). In this elegant study, participants could delegate their choice between a risky and a safe option to a group or decide themselves; in separate conditions, the choice affected payoff either only for the participant or for all group members. Interestingly, most participants displayed responsibility aversion, and this effect could not be explained by guilt, suggesting people associate a psychological cost with assuming responsibility for others’ outcomes. However, in many situations, one does not have the possibility to delegate a decision to others, and choosing a risky option in such a case may evoke guilt when the outcome for others is negative. The neural mechanisms underlying guilt evoked during such situations of social responsibility are still unknown. These questions are the subject of the present study. Similarly to Edelson et al.’s and more recent studies (Arioli et al., 2023; Fareri et al., 2022), our paradigm leveraged a risky choice task with social conditions."
+    },
+    {
+     "type": "p",
+     "html": "In our experiment, participants were paired with a partner and played an ‘ice-breaker’ game that created a positive social bond between them, increasing the likelihood of feeling empathy and guilt for each other (<span class=\"cite\">Baumeister, 1998</span>; <span class=\"cite\">Julle-Danière et al., 2020</span>; <span class=\"cite\">Loewenstein et al., 1989</span>). Participants or their partner then chose between risky and safe monetary options in three conditions (<a class=\"xref\" href=\"#fig1\">Figure 1</a>). In the <i>Social</i> condition, the outcome of choices affected both participant and partner; participants were and felt responsible for these outcomes because they had agency over their decisions and knew that they could have chosen otherwise (<span class=\"cite\">Frith, 2014</span>). We contrasted this condition with similar choices made by a simple expected-value-maximizing algorithm posing for the partner (<i>Partner</i> condition), and participant choices only affecting the participant themselves (<i>Solo</i> condition, acting as control). Importantly, we assessed the emotional impact of the outcomes of these choices by monitoring participants’ happiness every two trials (<span class=\"cite\">Rutledge et al., 2014</span>; <span class=\"cite\">Rutledge et al., 2016</span>). This allowed us to fit computational models to happiness data and search for networks sensitive to reward prediction errors resulting from participant or partner choices. We ran two experiments, Study 1 outside the MRI scanner and Study 2 during fMRI, with separate groups of participants.",
+     "text": "In our experiment, participants were paired with a partner and played an ‘ice-breaker’ game that created a positive social bond between them, increasing the likelihood of feeling empathy and guilt for each other (Baumeister, 1998; Julle-Danière et al., 2020; Loewenstein et al., 1989). Participants or their partner then chose between risky and safe monetary options in three conditions (Figure 1). In the Social condition, the outcome of choices affected both participant and partner; participants were and felt responsible for these outcomes because they had agency over their decisions and knew that they could have chosen otherwise (Frith, 2014). We contrasted this condition with similar choices made by a simple expected-value-maximizing algorithm posing for the partner (Partner condition), and participant choices only affecting the participant themselves (Solo condition, acting as control). Importantly, we assessed the emotional impact of the outcomes of these choices by monitoring participants’ happiness every two trials (Rutledge et al., 2014; Rutledge et al., 2016). This allowed us to fit computational models to happiness data and search for networks sensitive to reward prediction errors resulting from participant or partner choices. We ran two experiments, Study 1 outside the MRI scanner and Study 2 during fMRI, with separate groups of participants."
+    },
+    {
+     "type": "fig",
+     "id": "fig1"
+    },
+    {
+     "type": "p",
+     "html": "We analysed our behavioural data using several complementary methods: choices were modelled with mixed-effects regressions serving as manipulation checks; risk preferences expressed in choices were assessed using a comprehensive expected utility model as well as with a simpler, more robust ‘risk premium’ approach; and happiness data were fitted, in addition to the computational models, with several linear mixed models (LMMs) to assess the impact of both the participant’s and their partner’s rewards, the impact of agency and their interactions. Inspired by findings reported in previous neuroimaging of social emotions, we also used several methods to analyse our fMRI data, including conventional methods (both region-of-interest and mass univariate); mixed-effects regression models; computational model-based analyses (inspired by, e.g., <span class=\"cite\">Konovalov et al., 2021a</span>; <span class=\"cite\">Rutledge et al., 2014</span>); and functional connectivity (e.g., <span class=\"cite\">Edelson et al., 2018</span>; <span class=\"cite\">Konovalov et al., 2021a</span>). The behavioural modelling is thus complemented by neuroimaging analyses that offer insight about both the activity in regions associated with guilt as well as their place in a wider network, providing an in-depth comprehensive analysis of the mechanisms behind guilt evoked by social responsibility.",
+     "text": "We analysed our behavioural data using several complementary methods: choices were modelled with mixed-effects regressions serving as manipulation checks; risk preferences expressed in choices were assessed using a comprehensive expected utility model as well as with a simpler, more robust ‘risk premium’ approach; and happiness data were fitted, in addition to the computational models, with several linear mixed models (LMMs) to assess the impact of both the participant’s and their partner’s rewards, the impact of agency and their interactions. Inspired by findings reported in previous neuroimaging of social emotions, we also used several methods to analyse our fMRI data, including conventional methods (both region-of-interest and mass univariate); mixed-effects regression models; computational model-based analyses (inspired by, e.g., Konovalov et al., 2021a; Rutledge et al., 2014); and functional connectivity (e.g., Edelson et al., 2018; Konovalov et al., 2021a). The behavioural modelling is thus complemented by neuroimaging analyses that offer insight about both the activity in regions associated with guilt as well as their place in a wider network, providing an in-depth comprehensive analysis of the mechanisms behind guilt evoked by social responsibility."
+    }
+   ]
+  },
+  {
+   "id": "s2",
+   "type": "results",
+   "title": "Results",
+   "depth": 1,
+   "blocks": [
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s2-1",
+      "type": "",
+      "title": "Behaviour",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s2-1-1",
+         "type": "",
+         "title": "Overview",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "We first verified that participants’ choices were reasonable in the <i>Solo</i> and <i>Social</i> conditions, then assessed whether these choices and the risk preferences they revealed changed depending on whether participants chose just for themselves (<i>solo</i>) or for themselves and the interaction partner (<i>social</i>). Next, we assessed whether momentary happiness varied with decision outcomes and whether responsibility influenced this relationship. Lastly, we fitted computational models to the happiness data. While Study 1 (behaviour only) was run before Study 2 (fMRI), we will report the results of both studies together as their results were highly consistent.",
+           "text": "We first verified that participants’ choices were reasonable in the Solo and Social conditions, then assessed whether these choices and the risk preferences they revealed changed depending on whether participants chose just for themselves (solo) or for themselves and the interaction partner (social). Next, we assessed whether momentary happiness varied with decision outcomes and whether responsibility influenced this relationship. Lastly, we fitted computational models to the happiness data. While Study 1 (behaviour only) was run before Study 2 (fMRI), we will report the results of both studies together as their results were highly consistent."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s2-1-2",
+         "type": "",
+         "title": "Choices: manipulation check",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "As expected, participants’ probability of choosing the risky option (lottery) increased with the difference between the expected value of the lottery and the value of the safe option (Study 1: <a class=\"xref\" href=\"#fig2\">Figure 2A</a>, <i>t</i>(4796) = 9.26, p &lt; 3.1e<sup>–20</sup>, <i>β</i> = 0.074, 95% CI = [0.059 0.090]; Study 2: <a class=\"xref\" href=\"#fig2\">Figure 2D</a>, <i>t</i>(3829) <i>=</i> 10.62, p &lt; 5.3e<sup>–26</sup>, <i>β</i> = 0.093, 95% CI = [0.075 0.110]; mixed-effects regressions, see Equation 1, detailed results are reported in <a class=\"xref\" href=\"#app1table1\">Appendix 1—table 1</a>). Participants chose the lottery more often in the <i>Solo</i> condition than in the <i>Social</i> condition in Study 1 (<i>t</i>(4796) = 2.54, p = 0.011, <i>β</i> = 0.164, 95% CI = [0.038 0.291]), but this difference was not found in Study 2 (<i>t</i>(3829) = 0.23, p = 0.82, <i>β</i> = 0.015, 95% CI = [–0.109 0.138]). There was no significant interaction between the difference in expected values and experimental conditions in either study (p &gt; 0.52).",
+           "text": "As expected, participants’ probability of choosing the risky option (lottery) increased with the difference between the expected value of the lottery and the value of the safe option (Study 1: Figure 2A, t(4796) = 9.26, p < 3.1e–20, β = 0.074, 95% CI = [0.059 0.090]; Study 2: Figure 2D, t(3829) = 10.62, p < 5.3e–26, β = 0.093, 95% CI = [0.075 0.110]; mixed-effects regressions, see Equation 1, detailed results are reported in Appendix 1—table 1). Participants chose the lottery more often in the Solo condition than in the Social condition in Study 1 (t(4796) = 2.54, p = 0.011, β = 0.164, 95% CI = [0.038 0.291]), but this difference was not found in Study 2 (t(3829) = 0.23, p = 0.82, β = 0.015, 95% CI = [–0.109 0.138]). There was no significant interaction between the difference in expected values and experimental conditions in either study (p > 0.52)."
+          },
+          {
+           "type": "fig",
+           "id": "fig2"
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s2-1-3",
+         "type": "",
+         "title": "Choices: risk preferences",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "To better assess whether people’s risk preferences varied between the <i>Solo</i> and the <i>Social</i> condition, we evaluated two additional measures. First, we calculated for each participant a ‘risk premium’, defined as the difference between the expected value of a lottery and its certainty equivalent (see Equation 2 in Methods; positive risk premiums indicate risk aversion). Second, we used an expected utility theory (EUT) approach to calculate a parameter <i>ρ</i> that describes a decision-maker’s risk attitude under the assumption of constant absolute risk aversion (see Equation 3 in Methods). We used two measures because fitting the EUT model, the more comprehensive measure that takes into account all choices of a participant, requires many trials to be fitted reliably, a condition that was not satisfied in many participants of both studies; in contrast, the risk premium’s single-point measure of risk aversion could be estimated in all participants. Risk premiums did not differ between <i>Social</i> and <i>Solo</i> conditions (Study 1: <a class=\"xref\" href=\"#fig2\">Figure 2B</a>, <i>t</i>(39) = 1.53, p = 0.134, Cohen’s <i>d</i> = 0.24, <i>BF</i><sub>10</sub> = 0.49; Study 2: <a class=\"xref\" href=\"#fig2\">Figure 2E</a>, <i>t</i>(43) = –0.21, p = 0.84, <i>d</i> = –0.03, <i>BF</i><sub>10</sub> = 0.17). Turning to the EUT approach, as differences in risk attitudes for gains and losses are well known (<span class=\"cite\">Kahneman and Tversky, 1979</span>), we first estimated <i>ρ</i> separately for gain and loss trials. As the number of these types of trials varied across participants, we only obtained reliable estimates for both types of trials in some participants (Study 1: 18 of 40; Study 2: 16 of 44). As <i>ρ</i> did not vary between gain and loss trials (Study 1: <i>t</i>(17) = 0.21, p = 0.84, <i>d</i> = 0.05; Study 2: <i>t</i>(15) = –0.61, p = 0.55, <i>d</i> = 0.15; paired <i>t</i>-test), we then pooled across gain and loss trials, then estimated and compared <i>ρ</i> for the <i>Solo</i> and <i>Social</i> conditions using paired <i>t</i>-tests. We found that participants were slightly more risk averse in the <i>Social</i> than in the <i>Solo</i> condition in Study 1 (<a class=\"xref\" href=\"#fig2\">Figure 2C</a>, <i>t</i>(39) = 2.27, p = 0.03, <i>d</i> = 0.36, <i>BF</i><sub>10</sub> = 1.69) but not in Study 2Study 2 (<a class=\"xref\" href=\"#fig2\">Figure 2F</a>, <i>t</i>(43) = 1.40, p = 0.17, <i>d</i> = 0.21, <i>BF</i><sub>10</sub> = 0.41). Risk premium and <i>ρ</i> were highly consistent with each other across participants in both conditions for both studies (Study 1: <i>Solo</i> condition: <i>F</i>(1,38) = 69.9, p &lt; 0.001, <i>R</i><sup>2</sup> = 0.65; <i>Social</i> condition: <i>F</i>(1,38) = 42.0, p &lt; 0.001, <i>R</i><sup>2</sup> = 0.55; Study 2: <i>Solo</i> condition: <i>F</i>(1,41) = 57.9, p &lt; 0.001, <i>R</i><sup>2</sup> = 0.59; <i>Social</i> condition: <i>F</i>(1,41) = 74.2, p &lt; 0.001, <i>R</i><sup>2</sup> = 0.64; these and all subsequent regressions are robust).",
+           "text": "To better assess whether people’s risk preferences varied between the Solo and the Social condition, we evaluated two additional measures. First, we calculated for each participant a ‘risk premium’, defined as the difference between the expected value of a lottery and its certainty equivalent (see Equation 2 in Methods; positive risk premiums indicate risk aversion). Second, we used an expected utility theory (EUT) approach to calculate a parameter ρ that describes a decision-maker’s risk attitude under the assumption of constant absolute risk aversion (see Equation 3 in Methods). We used two measures because fitting the EUT model, the more comprehensive measure that takes into account all choices of a participant, requires many trials to be fitted reliably, a condition that was not satisfied in many participants of both studies; in contrast, the risk premium’s single-point measure of risk aversion could be estimated in all participants. Risk premiums did not differ between Social and Solo conditions (Study 1: Figure 2B, t(39) = 1.53, p = 0.134, Cohen’s d = 0.24, BF10 = 0.49; Study 2: Figure 2E, t(43) = –0.21, p = 0.84, d = –0.03, BF10 = 0.17). Turning to the EUT approach, as differences in risk attitudes for gains and losses are well known (Kahneman and Tversky, 1979), we first estimated ρ separately for gain and loss trials. As the number of these types of trials varied across participants, we only obtained reliable estimates for both types of trials in some participants (Study 1: 18 of 40; Study 2: 16 of 44). As ρ did not vary between gain and loss trials (Study 1: t(17) = 0.21, p = 0.84, d = 0.05; Study 2: t(15) = –0.61, p = 0.55, d = 0.15; paired t-test), we then pooled across gain and loss trials, then estimated and compared ρ for the Solo and Social conditions using paired t-tests. We found that participants were slightly more risk averse in the Social than in the Solo condition in Study 1 (Figure 2C, t(39) = 2.27, p = 0.03, d = 0.36, BF10 = 1.69) but not in Study 2Study 2 (Figure 2F, t(43) = 1.40, p = 0.17, d = 0.21, BF10 = 0.41). Risk premium and ρ were highly consistent with each other across participants in both conditions for both studies (Study 1: Solo condition: F(1,38) = 69.9, p < 0.001, R2 = 0.65; Social condition: F(1,38) = 42.0, p < 0.001, R2 = 0.55; Study 2: Solo condition: F(1,41) = 57.9, p < 0.001, R2 = 0.59; Social condition: F(1,41) = 74.2, p < 0.001, R2 = 0.64; these and all subsequent regressions are robust)."
+          },
+          {
+           "type": "p",
+           "html": "In sum, participants showed very similar risk preferences when making decisions affecting only themselves (<i>Solo</i> condition) or themselves and their partner (<i>Social</i> condition), with a tendency towards higher risk aversion in the <i>Social</i> condition in Study 1.",
+           "text": "In sum, participants showed very similar risk preferences when making decisions affecting only themselves (Solo condition) or themselves and their partner (Social condition), with a tendency towards higher risk aversion in the Social condition in Study 1."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s2-1-4",
+         "type": "",
+         "title": "Momentary happiness: links to reward",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "Momentary happiness was assessed every two trials in a similar manner to previous studies by <span class=\"cite\">Rutledge et al., 2014</span>; <span class=\"cite\">Rutledge et al., 2016</span>. Across all trials, in both studies, participant momentary happiness correlated with rewards obtained in the current trial by the participant and by the partner (Correlations with participant reward, Study 1: <i>F</i>(1,3598) = 691.5, p &lt; 0.001, <i>R</i><sup>2</sup> = 0.16; partner reward, Study 1: <i>F</i>(1,2426) = 128.6, p &lt; 0.001, <i>R</i><sup>2</sup> = 0.05; participant reward, Study 2: <i>F</i>(1,2630) = 650.8, p &lt; 0.001, <i>R</i><sup>2</sup> = 0.20; partner reward, Study 2: <i>F</i>(1,1735) = 111.8, p &lt; 0.001, <i>R</i><sup>2</sup> = 0.06; <a class=\"xref\" href=\"#fig3\">Figure 3A, B, E, F</a>). Based on previous findings (<span class=\"cite\">Rutledge et al., 2016</span>), we reasoned that participants’ momentary happiness would be influenced not only by rewards obtained in the current trial, but also by expected rewards, reward prediction errors, rewards received in previous trials, and differences between rewards obtained by the participant and the partner. Crucial for our research question, we aimed to assess whether responsibility for these rewards, that is, taking into account whether the rewards occurred following choices made by the participant or the partner, would also influence variations in happiness.",
+           "text": "Momentary happiness was assessed every two trials in a similar manner to previous studies by Rutledge et al., 2014; Rutledge et al., 2016. Across all trials, in both studies, participant momentary happiness correlated with rewards obtained in the current trial by the participant and by the partner (Correlations with participant reward, Study 1: F(1,3598) = 691.5, p < 0.001, R2 = 0.16; partner reward, Study 1: F(1,2426) = 128.6, p < 0.001, R2 = 0.05; participant reward, Study 2: F(1,2630) = 650.8, p < 0.001, R2 = 0.20; partner reward, Study 2: F(1,1735) = 111.8, p < 0.001, R2 = 0.06; Figure 3A, B, E, F). Based on previous findings (Rutledge et al., 2016), we reasoned that participants’ momentary happiness would be influenced not only by rewards obtained in the current trial, but also by expected rewards, reward prediction errors, rewards received in previous trials, and differences between rewards obtained by the participant and the partner. Crucial for our research question, we aimed to assess whether responsibility for these rewards, that is, taking into account whether the rewards occurred following choices made by the participant or the partner, would also influence variations in happiness."
+          },
+          {
+           "type": "fig",
+           "id": "fig3"
+          },
+          {
+           "type": "fig",
+           "id": "fig3s1"
+          },
+          {
+           "type": "p",
+           "html": "Following Rutledge and colleagues’ methodology, which considers that changes in momentary happiness in response to outcomes of a probabilistic reward task are explained by the combined influence of recent reward expectations and prediction errors arising from those expectations, we fitted computational models to each participant’s happiness data. In these models, certain rewards, the expected value of chosen lotteries, reward prediction errors and additional outcome parameters are modelled separately with influences that decay exponentially with time (see Methods for equations and details). We first fitted a ‘<i>Basic</i>’ model (Equation 4) containing regressors coding for certain reward, expected value of chosen lotteries and participant reward prediction errors to evaluate whether these fundamental reward variables explained variations in momentary happiness. This model explained the data reasonably well (see <a class=\"xref\" href=\"#table1\">Table 1</a>). Next, based on the notion that inequality between rewards received by the participant and the partner would influence happiness (e.g., <span class=\"cite\">Loewenstein et al., 1989</span>), we assessed the fit of an ‘<i>Inequality</i>’ model that included one term modelling the difference between the participant and partner outcomes (Equation 5). We also assessed the fit of <span class=\"cite\">Rutledge et al., 2016</span> ‘<i>Guilt-envy</i>’ model in which advantageous and disadvantageous inequality were modelled separately (Equation 6). Next, we tested a ‘<i>Responsibility</i>’ model in which separate terms represented the partner’s reward prediction errors resulting from choices made by the participant and by the partner (Equation 7). Finally, we optimized the Responsibility model by removing the regressor modelling partner reward prediction errors resulting from choices made by the partner, yielding a ‘<i>Responsibility Redux</i>’ model (Equation 8).",
+           "text": "Following Rutledge and colleagues’ methodology, which considers that changes in momentary happiness in response to outcomes of a probabilistic reward task are explained by the combined influence of recent reward expectations and prediction errors arising from those expectations, we fitted computational models to each participant’s happiness data. In these models, certain rewards, the expected value of chosen lotteries, reward prediction errors and additional outcome parameters are modelled separately with influences that decay exponentially with time (see Methods for equations and details). We first fitted a ‘Basic’ model (Equation 4) containing regressors coding for certain reward, expected value of chosen lotteries and participant reward prediction errors to evaluate whether these fundamental reward variables explained variations in momentary happiness. This model explained the data reasonably well (see Table 1). Next, based on the notion that inequality between rewards received by the participant and the partner would influence happiness (e.g., Loewenstein et al., 1989), we assessed the fit of an ‘Inequality’ model that included one term modelling the difference between the participant and partner outcomes (Equation 5). We also assessed the fit of Rutledge et al., 2016 ‘Guilt-envy’ model in which advantageous and disadvantageous inequality were modelled separately (Equation 6). Next, we tested a ‘Responsibility’ model in which separate terms represented the partner’s reward prediction errors resulting from choices made by the participant and by the partner (Equation 7). Finally, we optimized the Responsibility model by removing the regressor modelling partner reward prediction errors resulting from choices made by the partner, yielding a ‘Responsibility Redux’ model (Equation 8)."
+          },
+          {
+           "type": "table",
+           "id": "table1"
+          },
+          {
+           "type": "p",
+           "html": "All models explained variations in happiness reasonably well (<a class=\"xref\" href=\"#table1\">Table 1</a>). Overall, the <i>Responsibility</i> and <i>Responsibility Redux</i> (<a class=\"xref\" href=\"#fig3\">Figure 3C, G</a>) models explained the data best (highest <i>R</i><sup>2</sup>/adjusted <i>R</i><sup>2</sup> or lowest AIC/BIC); a likelihood ratio test (Equation 9) revealed that the <i>Responsibility</i> model fitted better than all the other models, including the <i>Responsibility Redux</i> model (Study 1: all LR ≥47.36, p &lt; 0.0001; Study 2: all LR ≥77.83, p &lt; 0.0001). We also compared the <i>R</i><sup>2</sup> and adjusted <i>R</i><sup>2</sup> values obtained for each participant and model using <i>t</i>-tests, for both studies (average values are reported in <a class=\"xref\" href=\"#table1\">Table 1</a>). The <i>Responsibility</i> model yielded higher <i>R</i><sup>2</sup> values than all the other models (Study 1: all <i>t</i> &gt; 3.6, p &lt; 0.007; Study 2: all <i>t</i> &gt; 2.9, p &lt; 0.034; Bonferroni-corrected <i>t</i>-tests) except for the <i>Guilt-envy</i> model in the data of Study 1 (<i>t</i> = 2.19, p = 0.17). The <i>Responsibility</i> and <i>Responsibility Redux</i> models yielded higher <i>adjusted R</i><sup>2</sup> than the <i>Basic</i> model (Study 1: all <i>t</i> &gt; 3.6, p &lt; 0.01; Study 2: all <i>t</i> &gt; 3.6, p &lt; 0.01). Weights for certain rewards, expected value of the lotteries, participant reward prediction errors and the forgetting factor <i>γ</i> were overall positive across participants, models and studies (Study 1: all <i>Z</i> &gt; 5.4, p &lt; 0.0001; Study 2: all <i>Z</i> &gt; 4.9, p &lt; 0.0001, Wilcoxon sign-rank tests were used because data were not normally distributed). Medians of the forgetting factor <i>γ</i> varied little across models, ranging from 0.39 to 0.44 in Study 1 and from 0.42 to 0.46 in Study 2, indicating stable influences of previous trials on happiness across models. Participants’ reward prediction errors (sRPE) influenced happiness more than partner’s reward prediction errors, whether the latter resulted from the participant or the partner’s choices (respectively, <i>social_pRPE</i> and <i>partner_pRPE</i>): weights for <i>sRPE</i> were higher than for <i>social_pRPE</i> or <i>partner_pRPE</i> (Study 1: all <i>Z</i> &gt; 6.0, p &lt; 0.001; Study 2: all <i>Z</i> &gt; 3.7, p &lt; 0.003). The stability of these estimated parameters was verified using a parameter recovery procedure (see Methods and <a class=\"xref\" href=\"#fig3s1\">Figure 3—figure supplement 1</a>). These results thus replicate the finding that outcomes of risky social decisions influence momentary happiness (<span class=\"cite\">Rutledge et al., 2016</span>). Crucially, we find here that the partner’s reward prediction errors (<i>social_pRPE</i> and <i>partner_pRPE</i>) contributed to explaining changes in participants’ momentary happiness: the <i>Responsibility</i> and <i>ResponsibilityRedux</i> models explained the data better than the models without these parameters (see <a class=\"xref\" href=\"#table1\">Table 1</a>). In particular, the partner’s reward prediction errors resulting from the participants’ decisions (<i>social_pRPE</i>), that is, those pRPE for which participants were responsible contributed to explaining our data (weights for <i>social_pRPE</i> were greater than 0: <i>Responsibility model</i>: Study 1: <i>Z</i> = 2.85, p = 0.004, Study 2: <i>Z</i> = 3.26, p = 0.001; <i>ResponsibilityRedux model</i>: Study 1: <i>Z</i> = 2.93, p = 0.003, Study 2: <i>Z</i> = 3.30, p = 0.001; weights for <i>social_pRPE</i> tended to be higher than weights for <i>partner_pRPE: Responsibility model</i>: Study 1: <i>Z</i> = 2.14, p = 0.033; Study 2: <i>Z</i> = 1.41, p = 0.16).",
+           "text": "All models explained variations in happiness reasonably well (Table 1). Overall, the Responsibility and Responsibility Redux (Figure 3C, G) models explained the data best (highest R2/adjusted R2 or lowest AIC/BIC); a likelihood ratio test (Equation 9) revealed that the Responsibility model fitted better than all the other models, including the Responsibility Redux model (Study 1: all LR ≥47.36, p < 0.0001; Study 2: all LR ≥77.83, p < 0.0001). We also compared the R2 and adjusted R2 values obtained for each participant and model using t-tests, for both studies (average values are reported in Table 1). The Responsibility model yielded higher R2 values than all the other models (Study 1: all t > 3.6, p < 0.007; Study 2: all t > 2.9, p < 0.034; Bonferroni-corrected t-tests) except for the Guilt-envy model in the data of Study 1 (t = 2.19, p = 0.17). The Responsibility and Responsibility Redux models yielded higher adjusted R2 than the Basic model (Study 1: all t > 3.6, p < 0.01; Study 2: all t > 3.6, p < 0.01). Weights for certain rewards, expected value of the lotteries, participant reward prediction errors and the forgetting factor γ were overall positive across participants, models and studies (Study 1: all Z > 5.4, p < 0.0001; Study 2: all Z > 4.9, p < 0.0001, Wilcoxon sign-rank tests were used because data were not normally distributed). Medians of the forgetting factor γ varied little across models, ranging from 0.39 to 0.44 in Study 1 and from 0.42 to 0.46 in Study 2, indicating stable influences of previous trials on happiness across models. Participants’ reward prediction errors (sRPE) influenced happiness more than partner’s reward prediction errors, whether the latter resulted from the participant or the partner’s choices (respectively, social_pRPE and partner_pRPE): weights for sRPE were higher than for social_pRPE or partner_pRPE (Study 1: all Z > 6.0, p < 0.001; Study 2: all Z > 3.7, p < 0.003). The stability of these estimated parameters was verified using a parameter recovery procedure (see Methods and Figure 3—figure supplement 1). These results thus replicate the finding that outcomes of risky social decisions influence momentary happiness (Rutledge et al., 2016). Crucially, we find here that the partner’s reward prediction errors (social_pRPE and partner_pRPE) contributed to explaining changes in participants’ momentary happiness: the Responsibility and ResponsibilityRedux models explained the data better than the models without these parameters (see Table 1). In particular, the partner’s reward prediction errors resulting from the participants’ decisions (social_pRPE), that is, those pRPE for which participants were responsible contributed to explaining our data (weights for social_pRPE were greater than 0: Responsibility model: Study 1: Z = 2.85, p = 0.004, Study 2: Z = 3.26, p = 0.001; ResponsibilityRedux model: Study 1: Z = 2.93, p = 0.003, Study 2: Z = 3.30, p = 0.001; weights for social_pRPE tended to be higher than weights for partner_pRPE: Responsibility model: Study 1: Z = 2.14, p = 0.033; Study 2: Z = 1.41, p = 0.16)."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s2-1-5",
+         "type": "",
+         "title": "Momentary happiness: effects of agency, responsibility, and guilt",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "Next, we assessed whether happiness varied depending on the participant’s agency (<i>Social + Solo</i> vs. <i>Partner</i>), and found happiness to be lower when the participant chose, independent of the outcome (Study 1: <i>t</i>(3600) = –3.92, p &lt; 0.0001, <i>β</i> = –0.14, 95% CI = [−0.20 to 0.07]; Study 2: <i>t</i>(2870) = –6.07, p &lt; 0.0001, <i>β</i> = –0.24, 95% CI = [−0.31 to 0.16]). This is interesting in itself and may reflect the drive behind responsibility aversion reported by Edelson et al.’s 2018 study: being assigned the role of the decider in a social setting may make people slightly unhappy, perhaps due to ‘weight of the responsibility’. To specifically search for a sign of interpersonal guilt, we analysed happiness values reported after outcomes of lottery choices in the <i>Social</i> and <i>Partner</i> conditions using conventional LMMs (Equation 10). Fitting several models revealed that lottery outcomes influenced happiness, and that the identity of the decision-maker played a role (<a class=\"xref\" href=\"#app1table2\">Appendix 1—table 2</a>). Crucially, the interaction between partner outcome and decision-maker was significant (Study 1: <i>t</i>(1180) = 3.52, p = 0.0004, <i>β</i> = 0.37, 95% CI = [0.16 0.58]; Study 2: <i>t</i>(937) = 2.85, p = 0.0045, <i>β</i> = 0.33, 95% CI = [0.10 0.56]). When the partner received the low lottery outcome, participant happiness was lower when they rather than the partner had chosen the lottery (<a class=\"xref\" href=\"#fig3\">Figure 3D, H</a>). When the partner received the low lottery outcome of a participant-chosen lottery, they would presumably feel let down because the participant could have chosen the better safe option. As participants knew this, they were likely to feel ‘simple guilt’ (<span class=\"cite\">Battigalli and Dufwenberg, 2007</span>). This behavioural effect (difference in happiness obtained when the partner received low lottery outcomes after participant rather than partner choices) is thus compatible with ‘simple guilt’, and we will thus refer to it as ‘guilt effect’. The ‘guilt effect’ occurred whether the participant received the high lottery outcome (Study 1: <i>t</i>(39) = –3.58, p &lt; 0.001, <i>d</i> = 0.56, <i>BF</i><sub>10</sub> = 32; Study 2: <i>t</i>(43) = –2.68, p = 0.01, <i>d</i> = 0.4, <i>BF</i><sub>10</sub> = 3.8) or the low lottery outcome (Study 1: <i>t</i>(39) = –3.39, p = 0.002, <i>d</i> = 0.54, <i>BF</i><sub>10</sub> = 19; Study 2: <i>t</i>(43) = –3.58, p &lt; 0.001, <i>d</i> = 0.54, <i>BF</i><sub>10</sub> = 33.5). In Study 2, we will compare individual ‘guilt effect’ values to individual guilt-related brain activation patterns (see end of the section on BOLD signal results). Responsibility for choices did not influence happiness following positive lottery outcomes for the partner (both studies, all |<i>t|</i> &lt; 1.3, p &gt; 0.2, <i>BF</i><sub>10</sub> &lt; 0.2).",
+           "text": "Next, we assessed whether happiness varied depending on the participant’s agency (Social + Solo vs. Partner), and found happiness to be lower when the participant chose, independent of the outcome (Study 1: t(3600) = –3.92, p < 0.0001, β = –0.14, 95% CI = [−0.20 to 0.07]; Study 2: t(2870) = –6.07, p < 0.0001, β = –0.24, 95% CI = [−0.31 to 0.16]). This is interesting in itself and may reflect the drive behind responsibility aversion reported by Edelson et al.’s 2018 study: being assigned the role of the decider in a social setting may make people slightly unhappy, perhaps due to ‘weight of the responsibility’. To specifically search for a sign of interpersonal guilt, we analysed happiness values reported after outcomes of lottery choices in the Social and Partner conditions using conventional LMMs (Equation 10). Fitting several models revealed that lottery outcomes influenced happiness, and that the identity of the decision-maker played a role (Appendix 1—table 2). Crucially, the interaction between partner outcome and decision-maker was significant (Study 1: t(1180) = 3.52, p = 0.0004, β = 0.37, 95% CI = [0.16 0.58]; Study 2: t(937) = 2.85, p = 0.0045, β = 0.33, 95% CI = [0.10 0.56]). When the partner received the low lottery outcome, participant happiness was lower when they rather than the partner had chosen the lottery (Figure 3D, H). When the partner received the low lottery outcome of a participant-chosen lottery, they would presumably feel let down because the participant could have chosen the better safe option. As participants knew this, they were likely to feel ‘simple guilt’ (Battigalli and Dufwenberg, 2007). This behavioural effect (difference in happiness obtained when the partner received low lottery outcomes after participant rather than partner choices) is thus compatible with ‘simple guilt’, and we will thus refer to it as ‘guilt effect’. The ‘guilt effect’ occurred whether the participant received the high lottery outcome (Study 1: t(39) = –3.58, p < 0.001, d = 0.56, BF10 = 32; Study 2: t(43) = –2.68, p = 0.01, d = 0.4, BF10 = 3.8) or the low lottery outcome (Study 1: t(39) = –3.39, p = 0.002, d = 0.54, BF10 = 19; Study 2: t(43) = –3.58, p < 0.001, d = 0.54, BF10 = 33.5). In Study 2, we will compare individual ‘guilt effect’ values to individual guilt-related brain activation patterns (see end of the section on BOLD signal results). Responsibility for choices did not influence happiness following positive lottery outcomes for the partner (both studies, all |t| < 1.3, p > 0.2, BF10 < 0.2)."
+          },
+          {
+           "type": "p",
+           "html": "In sum, in both studies, we found evidence that participants’ happiness was influenced by the outcomes of choices for their partner, especially by outcomes resulting from participant decisions, that is, partner outcomes for which participants were responsible. Within these outcomes, participants felt worse following low lottery outcomes for the partner if those outcomes were consequences of their own choice rather than the partner’s, which we interpret as interpersonal guilt.",
+           "text": "In sum, in both studies, we found evidence that participants’ happiness was influenced by the outcomes of choices for their partner, especially by outcomes resulting from participant decisions, that is, partner outcomes for which participants were responsible. Within these outcomes, participants felt worse following low lottery outcomes for the partner if those outcomes were consequences of their own choice rather than the partner’s, which we interpret as interpersonal guilt."
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s2-2",
+      "type": "",
+      "title": "BOLD signal",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Next, we sought to uncover the neural mechanisms associated with our guilt effect and those involved in tracking consequences of participants’ decisions on their partner. We analysed the BOLD responses of brain regions engaged during decision-making and at the time of receiving the outcomes of the choice using conventional as well as computational model-based analyses, using the fMRI data collected in Study 2.",
+        "text": "Next, we sought to uncover the neural mechanisms associated with our guilt effect and those involved in tracking consequences of participants’ decisions on their partner. We analysed the BOLD responses of brain regions engaged during decision-making and at the time of receiving the outcomes of the choice using conventional as well as computational model-based analyses, using the fMRI data collected in Study 2."
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s2-2-1",
+         "type": "",
+         "title": "Brain regions engaged during social decision-making",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "Given that our task involved several conditions and successive trial components, we aimed to first replicate previous results related to the neural correlates of decisions under economic risk. We searched for brain regions engaged more when participants chose the risky instead of the safe option and found such responses in the bilateral ventral striatum (Cohen’s <i>d</i> = 0.72 and 0.85 in the left and right clusters, respectively; <a class=\"xref\" href=\"#fig4\">Figure 4A</a> and <a class=\"xref\" href=\"#app1table3\">Appendix 1—table 3</a>), which replicates previous findings (<span class=\"cite\">Cui et al., 2022</span>; <span class=\"cite\">Preuschoff et al., 2006</span>). Next, we aimed to identify the brain regions associated with social decision-making under risk and searched for regions more engaged during decisions in the <i>Social</i> condition compared to the <i>Solo</i> condition. Three significant clusters of voxels were identified (<a class=\"xref\" href=\"#fig4\">Figure 4B</a> and <a class=\"xref\" href=\"#app1table3\">Appendix 1—table 3</a>), in the precuneus (<i>d</i> = 0.79), the left temporo-parietal junction (TPJ; <i>d</i> = 0.59) and the medial prefrontal cortex (mPFC; <i>d</i> = 0.54). This also replicates previous findings associating this region with social decisions (e.g., <span class=\"cite\">Fareri et al., 2012</span>; <span class=\"cite\">Jung et al., 2013</span>; <span class=\"cite\">Nicolle et al., 2012</span>; <span class=\"cite\">Ogawa et al., 2018</span>; <span class=\"cite\">Piva et al., 2019</span>).",
+           "text": "Given that our task involved several conditions and successive trial components, we aimed to first replicate previous results related to the neural correlates of decisions under economic risk. We searched for brain regions engaged more when participants chose the risky instead of the safe option and found such responses in the bilateral ventral striatum (Cohen’s d = 0.72 and 0.85 in the left and right clusters, respectively; Figure 4A and Appendix 1—table 3), which replicates previous findings (Cui et al., 2022; Preuschoff et al., 2006). Next, we aimed to identify the brain regions associated with social decision-making under risk and searched for regions more engaged during decisions in the Social condition compared to the Solo condition. Three significant clusters of voxels were identified (Figure 4B and Appendix 1—table 3), in the precuneus (d = 0.79), the left temporo-parietal junction (TPJ; d = 0.59) and the medial prefrontal cortex (mPFC; d = 0.54). This also replicates previous findings associating this region with social decisions (e.g., Fareri et al., 2012; Jung et al., 2013; Nicolle et al., 2012; Ogawa et al., 2018; Piva et al., 2019)."
+          },
+          {
+           "type": "fig",
+           "id": "fig4"
+          },
+          {
+           "type": "p",
+           "html": "To assess whether activations in these five regions were sensitive to the interaction between choice and condition using a sensitive method, we analysed the responses in all the voxels in these regions using LMMs. Our model included factors <i>Choice</i> (<i>Safe</i> or <i>Risky</i>), <i>Condition</i> (<i>Social</i>, <i>Partner</i> or <i>Solo</i>), <i>Run</i> (run one or two), and <i>ROI</i> (left and right ventral striatum, mPFC, precuneus, and TPJ), with all interactions. We also tested the same model without the factor <i>Run</i>, but this fitted less well (higher BIC) and was thus discarded. As all factors and interactions were significant (data not shown for sake of brevity), we applied the same models to each region separately (<a class=\"xref\" href=\"#app1table4\">Appendix 1—table 4</a>). All regions showed a significant interaction between <i>Condition</i> and <i>Choice</i>, prompting us to examine these responses in detail. As we were particularly interested in the response to <i>Risky</i> decisions, we subtracted from it the responses to <i>Safe</i> decisions (labelled as ‘(R–S)’ in <a class=\"xref\" href=\"#fig4\">Figure 4C</a>) and compared this difference between (1) <i>Social</i> and <i>Solo</i> conditions, and (2) between the <i>Social</i> and <i>Partner</i> conditions using LMMs. As above, we tested these models both with and without the factor <i>Run</i> and associated interaction, and we report the best-fitting model (see <a class=\"xref\" href=\"#app1table5\">Appendix 1—table 5</a> and <a class=\"xref\" href=\"#app1table6\">Appendix 1—table 6</a>). Only the precuneus and TPJ showed positive differences in both comparisons (<a class=\"xref\" href=\"#fig4\">Figure 4C</a>), indicating that these regions were most active when participants chose the lottery in the <i>Social</i> condition, the critical situation in which participants assume responsibility over others.",
+           "text": "To assess whether activations in these five regions were sensitive to the interaction between choice and condition using a sensitive method, we analysed the responses in all the voxels in these regions using LMMs. Our model included factors Choice (Safe or Risky), Condition (Social, Partner or Solo), Run (run one or two), and ROI (left and right ventral striatum, mPFC, precuneus, and TPJ), with all interactions. We also tested the same model without the factor Run, but this fitted less well (higher BIC) and was thus discarded. As all factors and interactions were significant (data not shown for sake of brevity), we applied the same models to each region separately (Appendix 1—table 4). All regions showed a significant interaction between Condition and Choice, prompting us to examine these responses in detail. As we were particularly interested in the response to Risky decisions, we subtracted from it the responses to Safe decisions (labelled as ‘(R–S)’ in Figure 4C) and compared this difference between (1) Social and Solo conditions, and (2) between the Social and Partner conditions using LMMs. As above, we tested these models both with and without the factor Run and associated interaction, and we report the best-fitting model (see Appendix 1—table 5 and Appendix 1—table 6). Only the precuneus and TPJ showed positive differences in both comparisons (Figure 4C), indicating that these regions were most active when participants chose the lottery in the Social condition, the critical situation in which participants assume responsibility over others."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s2-2-2",
+         "type": "",
+         "title": "Brain regions engaged during receipt of outcomes",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "Next, we focused on responses during choice outcomes. A cluster of voxels more active during receipt of lottery outcomes than outcomes of safe choices was identified in the bilateral anterior insula, dorsal mPFC (dmPFC), right superior temporal sulcus (STS), bilateral ventral striatum, right dorsolateral prefrontal cortex, and bilateral inferior parietal lobe (<a class=\"xref\" href=\"#fig4\">Figure 4D</a>; for details including effect sizes, see <a class=\"xref\" href=\"#app1table7\">Appendix 1—table 7</a>). Except for the STS, all these regions have been previously associated with processing of risk and/or ambiguity (<span class=\"cite\">Wu et al., 2021</span>).",
+           "text": "Next, we focused on responses during choice outcomes. A cluster of voxels more active during receipt of lottery outcomes than outcomes of safe choices was identified in the bilateral anterior insula, dorsal mPFC (dmPFC), right superior temporal sulcus (STS), bilateral ventral striatum, right dorsolateral prefrontal cortex, and bilateral inferior parietal lobe (Figure 4D; for details including effect sizes, see Appendix 1—table 7). Except for the STS, all these regions have been previously associated with processing of risk and/or ambiguity (Wu et al., 2021)."
+          },
+          {
+           "type": "p",
+           "html": "In our definition, guilt occurs due to responsibility for low lottery outcomes for the partner. To search for regions involved in this situation, we again analysed voxel responses using LMMs. Our first model included factors <i>Lottery outcome</i> (<i>High</i> or <i>Low</i>), <i>Condition</i> (<i>Social</i> or <i>Partner</i>), <i>Run</i> (run one or two), and <i>ROI</i> (left and right ventral striatum, left and right insula, left and right parietal cortex, dmPFC, right prefrontal, and right middle temporal regions), with all interactions. We also tested the same model without the factor <i>Run</i>, which fitted less well and was discarded. As in the analysis of responses to decisions above, all factors and interactions were significant (data not shown for sake of brevity), and we applied the same models to each region separately (<a class=\"xref\" href=\"#app1table8\">Appendix 1—table 8</a>). To identify regions likely to be involved in the guilt effect, we selected those satisfying two conditions: higher activity in the <i>Social</i> compared to the <i>Partner</i> condition, and a significant <i>Social:LowOutcome</i> interaction. This procedure revealed the insulae (<a class=\"xref\" href=\"#fig4\">Figure 4E</a>) and the right middle temporal cortex (trend significant <i>Social</i> vs. <i>Partner</i> difference in the latter region). To test if these regions responded more to <i>LowOutcomes</i> in the <i>Social</i> condition, we ran additional models on the responses to <i>Low lottery outcomes</i> only (labelled as ‘(L) Social &gt; Partner’ in <a class=\"xref\" href=\"#fig4\">Figure 4E</a>), and on this response minus the response to <i>High lottery outcomes</i> (labelled as ‘(L–H) Social &gt; Partner’ in <a class=\"xref\" href=\"#fig4\">Figure 4E</a>); and indeed, the insulae showed the sought-after effect (see <a class=\"xref\" href=\"#app1table9\">Appendix 1—table 9</a>, <a class=\"xref\" href=\"#app1table10\">Appendix 1—table 10</a>, and <a class=\"xref\" href=\"#fig4\">Figure 4E</a>). Thus, activation in our insula ROIs increased in situations during which participants experienced guilt for low outcomes impacting their partner, compared to similar outcomes resulting from the partner’s choices.",
+           "text": "In our definition, guilt occurs due to responsibility for low lottery outcomes for the partner. To search for regions involved in this situation, we again analysed voxel responses using LMMs. Our first model included factors Lottery outcome (High or Low), Condition (Social or Partner), Run (run one or two), and ROI (left and right ventral striatum, left and right insula, left and right parietal cortex, dmPFC, right prefrontal, and right middle temporal regions), with all interactions. We also tested the same model without the factor Run, which fitted less well and was discarded. As in the analysis of responses to decisions above, all factors and interactions were significant (data not shown for sake of brevity), and we applied the same models to each region separately (Appendix 1—table 8). To identify regions likely to be involved in the guilt effect, we selected those satisfying two conditions: higher activity in the Social compared to the Partner condition, and a significant Social:LowOutcome interaction. This procedure revealed the insulae (Figure 4E) and the right middle temporal cortex (trend significant Social vs. Partner difference in the latter region). To test if these regions responded more to LowOutcomes in the Social condition, we ran additional models on the responses to Low lottery outcomes only (labelled as ‘(L) Social > Partner’ in Figure 4E), and on this response minus the response to High lottery outcomes (labelled as ‘(L–H) Social > Partner’ in Figure 4E); and indeed, the insulae showed the sought-after effect (see Appendix 1—table 9, Appendix 1—table 10, and Figure 4E). Thus, activation in our insula ROIs increased in situations during which participants experienced guilt for low outcomes impacting their partner, compared to similar outcomes resulting from the partner’s choices."
+          },
+          {
+           "type": "p",
+           "html": "To attempt to confirm these results with a classic fine-grained mass-univariate voxel-wise analysis, we searched, within regions responding more to outcomes of risky compared to safe choices, for higher responses to low lottery outcomes for the partner following participant choices compared to the same outcomes resulting from partner choices. We found a weak response in a small cluster within the left anterior insula (peak <i>T</i> = 3.95, <i>d</i> = 0.59, 22 voxels, peak intensity at [–28 24 –4]; <a class=\"xref\" href=\"#fig4\">Figure 4F</a>). Given the documented association between anterior insula and guilt (see Introduction), we proceeded to test whether this result survived correction for family-wise errors due to multiple comparisons restricted to the left anterior insula grey matter [defined anatomically and thus independently from our findings, as the anterior short gyrus, middle short gyrus, and anterior inferior cortex in an anatomical maximum probability map (<span class=\"cite\">Faillenot et al., 2017</span>)]. This correction resulted in a p value of 0.024. This result, although it is only a small effect in a small cluster, is consistent with the mixed model analysis reported earlier.",
+           "text": "To attempt to confirm these results with a classic fine-grained mass-univariate voxel-wise analysis, we searched, within regions responding more to outcomes of risky compared to safe choices, for higher responses to low lottery outcomes for the partner following participant choices compared to the same outcomes resulting from partner choices. We found a weak response in a small cluster within the left anterior insula (peak T = 3.95, d = 0.59, 22 voxels, peak intensity at [–28 24 –4]; Figure 4F). Given the documented association between anterior insula and guilt (see Introduction), we proceeded to test whether this result survived correction for family-wise errors due to multiple comparisons restricted to the left anterior insula grey matter [defined anatomically and thus independently from our findings, as the anterior short gyrus, middle short gyrus, and anterior inferior cortex in an anatomical maximum probability map (Faillenot et al., 2017)]. This correction resulted in a p value of 0.024. This result, although it is only a small effect in a small cluster, is consistent with the mixed model analysis reported earlier."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s2-2-3",
+         "type": "",
+         "title": "Neural correlates of responsibility for partner reward prediction errors revealed by computational model-based analysis",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "Next, we attempted to explain BOLD responses using predictions of the <i>‘Responsibility</i>’ computational model (see Behaviour/Computational modelling of happiness data, above). We used the model to create expected BOLD responses for each participant (see Methods) and as a manipulation check searched for responses in ventral striatum evoked by participant rewards (<span class=\"cite\">O’Doherty et al., 2004</span>; <span class=\"cite\">O’Doherty et al., 2007</span>). We found that activation in bilateral ventral striatum indeed increased with the amount of expected certain rewards and the expected values of chosen lotteries (left: p<i><sub>FWE</sub></i> = 0.002, <i>T</i> = 5.63, <i>d</i> = 0.75, <i>Z</i> = 5.41, 110 voxels, peak at MNI [–14 8 –8], right: p<i><sub>FWE</sub></i> = 0.005, <i>T</i> = 5.46, <i>d</i> = 0.70, <i>Z</i> = 5.26, 80 voxels, peak at MNI [10 10 −4], correction for multiple tests applied across the whole brain; <a class=\"xref\" href=\"#fig4\">Figure 4G</a>). We thus used this model to search for voxels responding more to partner reward prediction errors resulting from participant rather than partner choices, within the regions sensitive to outcomes of risky choices. We found this effect in one cluster within the left STS (p<i><sub>FWE</sub></i> = 0.022, <i>T</i> = 4.70, <i>d</i> = 0.53, <i>Z</i> = 4.57, 100 voxels, peak at MNI [−52 –32 0]; <a class=\"xref\" href=\"#fig4\">Figure 4H</a>). Responses to the computational-model-based regressors coding for partner reward prediction errors resulting from participant and from partner choices in this cluster are shown in <a class=\"xref\" href=\"#fig4\">Figure 4I</a>. This finding suggests that this region of the left STS tracks a partner’s unexpected outcomes less when they do not follow from the participant’s decisions.",
+           "text": "Next, we attempted to explain BOLD responses using predictions of the ‘Responsibility’ computational model (see Behaviour/Computational modelling of happiness data, above). We used the model to create expected BOLD responses for each participant (see Methods) and as a manipulation check searched for responses in ventral striatum evoked by participant rewards (O’Doherty et al., 2004; O’Doherty et al., 2007). We found that activation in bilateral ventral striatum indeed increased with the amount of expected certain rewards and the expected values of chosen lotteries (left: pFWE = 0.002, T = 5.63, d = 0.75, Z = 5.41, 110 voxels, peak at MNI [–14 8 –8], right: pFWE = 0.005, T = 5.46, d = 0.70, Z = 5.26, 80 voxels, peak at MNI [10 10 −4], correction for multiple tests applied across the whole brain; Figure 4G). We thus used this model to search for voxels responding more to partner reward prediction errors resulting from participant rather than partner choices, within the regions sensitive to outcomes of risky choices. We found this effect in one cluster within the left STS (pFWE = 0.022, T = 4.70, d = 0.53, Z = 4.57, 100 voxels, peak at MNI [−52 –32 0]; Figure 4H). Responses to the computational-model-based regressors coding for partner reward prediction errors resulting from participant and from partner choices in this cluster are shown in Figure 4I. This finding suggests that this region of the left STS tracks a partner’s unexpected outcomes less when they do not follow from the participant’s decisions."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s2-2-4",
+         "type": "",
+         "title": "Functional connectivity",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "Functional connectivity analyses have revealed differences in networks engaged by social and self-only choices (<span class=\"cite\">Jung et al., 2013</span>; <span class=\"cite\">Ogawa et al., 2018</span>), interactions between midbrain and anterior cingulate during compensation for guilt (<span class=\"cite\">Yu et al., 2014</span>), and links between insula connectivity and responsibility aversion (<span class=\"cite\">Edelson et al., 2018</span>). We hypothesized that connectivity with regions that showed guilt- and responsibility-related responses during the outcome phase (see previous paragraph) might change depending on whether participants made decisions for themselves only or for themselves and their partner, and depending on the type of choice (<i>Safe</i> or <i>Risky</i>). To this end, we used the left insula and left STS as seed regions for whole-brain seed-to-voxel psychophysiological interaction (PPI) analyses (see Methods), to search for connectivity changes, during the choice phase of the trial, as a function of <i>Condition</i> and <i>Choice</i> (i.e., voxels with a significant interaction to <i>Condition</i> by <i>Choice</i>). The first analysis revealed a cluster in the right IFG whose connectivity to the insula (the seed region) was highest when participants made <i>Risky</i> choices for themselves and <i>Safe</i> choices for both players (p<i><sub>FWE</sub></i> = 0.020, <i>T</i> = 4.34, <i>d</i> = 0.80, <i>Z</i> = 4.21, 115 voxels, peak at MNI [46 16 22]; <a class=\"xref\" href=\"#fig5\">Figure 5</a>). A smaller cluster in the left IFG showed the same effect but did not survive correction for multiple tests (p<i><sub>uncorrected</sub></i> = 0.001, <i>T</i> = 4.08, <i>Z</i> = 3.97, 38 voxels, peak at MNI [−38 –2 26]). The second analysis revealed a smaller cluster in the left IFG that did not survive corrections for multiple tests, where connectivity with the left STS (the seed region) showed the opposite pattern: connectivity was highest when participants made <i>Safe</i> choices for themselves and <i>Risky</i> choices for both players (p<i><sub>uncorrected</sub></i> = 0.001, <i>T</i> = 4.44, <i>Z</i> = 4.30, 35 voxels, peak at MNI [–48 14 6]; <a class=\"xref\" href=\"#fig5s1\">Figure 5—figure supplement 1</a>).",
+           "text": "Functional connectivity analyses have revealed differences in networks engaged by social and self-only choices (Jung et al., 2013; Ogawa et al., 2018), interactions between midbrain and anterior cingulate during compensation for guilt (Yu et al., 2014), and links between insula connectivity and responsibility aversion (Edelson et al., 2018). We hypothesized that connectivity with regions that showed guilt- and responsibility-related responses during the outcome phase (see previous paragraph) might change depending on whether participants made decisions for themselves only or for themselves and their partner, and depending on the type of choice (Safe or Risky). To this end, we used the left insula and left STS as seed regions for whole-brain seed-to-voxel psychophysiological interaction (PPI) analyses (see Methods), to search for connectivity changes, during the choice phase of the trial, as a function of Condition and Choice (i.e., voxels with a significant interaction to Condition by Choice). The first analysis revealed a cluster in the right IFG whose connectivity to the insula (the seed region) was highest when participants made Risky choices for themselves and Safe choices for both players (pFWE = 0.020, T = 4.34, d = 0.80, Z = 4.21, 115 voxels, peak at MNI [46 16 22]; Figure 5). A smaller cluster in the left IFG showed the same effect but did not survive correction for multiple tests (puncorrected = 0.001, T = 4.08, Z = 3.97, 38 voxels, peak at MNI [−38 –2 26]). The second analysis revealed a smaller cluster in the left IFG that did not survive corrections for multiple tests, where connectivity with the left STS (the seed region) showed the opposite pattern: connectivity was highest when participants made Safe choices for themselves and Risky choices for both players (puncorrected = 0.001, T = 4.44, Z = 4.30, 35 voxels, peak at MNI [–48 14 6]; Figure 5—figure supplement 1)."
+          },
+          {
+           "type": "fig",
+           "id": "fig5"
+          },
+          {
+           "type": "fig",
+           "id": "fig5s1"
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s2-2-5",
+         "type": "",
+         "title": "Comparison with multivariate neural guilt signature (Yu et al., 2020)",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "A recent study by Yu and colleagues re-analysed the results of two previous neuroimaging studies of guilt and obtained a neural multivariate guilt-related brain signature (GRBS) (<span class=\"cite\">Yu et al., 2020</span>). As the GRBS and code to compare neural responses to it is freely available at GitHub (<span class=\"cite\">Wager, 2019</span>), we compared this brain signature to the neural responses obtained in our task (response to low partner outcomes resulting from participant vs. partner responses). The dot products between individual responses and the GRBS varied between –40.1 and 36.7, but overall these values were positive (mean = 5.22; median = 6.97; sign test: p = 0.017; <i>Cliff’s Delta</i> = 0.4 = medium effect size; data are not normally distributed). We assessed whether inter-individual differences in these dot product values correlated with the behavioural guilt responses, but did not find a significant association [<i>Spearman’s Rho</i> = –0.058, p = 0.725].",
+           "text": "A recent study by Yu and colleagues re-analysed the results of two previous neuroimaging studies of guilt and obtained a neural multivariate guilt-related brain signature (GRBS) (Yu et al., 2020). As the GRBS and code to compare neural responses to it is freely available at GitHub (Wager, 2019), we compared this brain signature to the neural responses obtained in our task (response to low partner outcomes resulting from participant vs. partner responses). The dot products between individual responses and the GRBS varied between –40.1 and 36.7, but overall these values were positive (mean = 5.22; median = 6.97; sign test: p = 0.017; Cliff’s Delta = 0.4 = medium effect size; data are not normally distributed). We assessed whether inter-individual differences in these dot product values correlated with the behavioural guilt responses, but did not find a significant association [Spearman’s Rho = –0.058, p = 0.725]."
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "s3",
+   "type": "discussion",
+   "title": "Discussion",
+   "depth": 1,
+   "blocks": [
+    {
+     "type": "p",
+     "html": "We report findings from an experiment on social responsibility and guilt in risky economic decisions, and their neural correlates. Being responsible for choosing a lottery that yielded a low outcome for a partner made our participants feel worse than witnessing the same outcome resulting from their partner’s choice, which we interpret as interpersonal guilt; although we note that we have not asked participants specifically about which emotion they felt in these situations. Activation in the left anterior insula (aIns) reflected this effect, replicating previous associations between this region and feelings of guilt. Whole-brain activation patterns also resembled a neurometric marker of guilt (<span class=\"cite\">Yu et al., 2020</span>). Connectivity between aIns and the right IFG varied depending on whether participants chose the risky or safe option and whether only the participant or both themselves and the partner were affected by the outcome of this choice, suggesting that this part of prefrontal cortex is sensitive to guilt-related information during social choices. Computational models explained trial-by-trial variations in momentary happiness during the task; the best-fitting model differentiated between partner reward prediction errors resulting from participant and partner choices, indicating that the impact of outcomes for the partner on participants’ happiness varied depending on who chose. This confirms the importance of responsibility in determining the emotional consequences of risky social choices. fMRI analyses based on this computational model identified a left STS region responding more to partner reward prediction errors resulting from participant rather than partner choices. This suggests a critical role of the STS in monitoring the consequences of one’s risky decisions on others, an essential social cognitive function. A last analysis showed that connectivity between this STS region and the right IFG varied depending on condition and choice, suggesting that the information processed in the STS is relayed to the IFG during social decisions. Our findings add to current understanding of the neural mechanisms underlying responsibility for, and guilt evoked by, the outcomes on others of social decisions under economic risk.",
+     "text": "We report findings from an experiment on social responsibility and guilt in risky economic decisions, and their neural correlates. Being responsible for choosing a lottery that yielded a low outcome for a partner made our participants feel worse than witnessing the same outcome resulting from their partner’s choice, which we interpret as interpersonal guilt; although we note that we have not asked participants specifically about which emotion they felt in these situations. Activation in the left anterior insula (aIns) reflected this effect, replicating previous associations between this region and feelings of guilt. Whole-brain activation patterns also resembled a neurometric marker of guilt (Yu et al., 2020). Connectivity between aIns and the right IFG varied depending on whether participants chose the risky or safe option and whether only the participant or both themselves and the partner were affected by the outcome of this choice, suggesting that this part of prefrontal cortex is sensitive to guilt-related information during social choices. Computational models explained trial-by-trial variations in momentary happiness during the task; the best-fitting model differentiated between partner reward prediction errors resulting from participant and partner choices, indicating that the impact of outcomes for the partner on participants’ happiness varied depending on who chose. This confirms the importance of responsibility in determining the emotional consequences of risky social choices. fMRI analyses based on this computational model identified a left STS region responding more to partner reward prediction errors resulting from participant rather than partner choices. This suggests a critical role of the STS in monitoring the consequences of one’s risky decisions on others, an essential social cognitive function. A last analysis showed that connectivity between this STS region and the right IFG varied depending on condition and choice, suggesting that the information processed in the STS is relayed to the IFG during social decisions. Our findings add to current understanding of the neural mechanisms underlying responsibility for, and guilt evoked by, the outcomes on others of social decisions under economic risk."
+    },
+    {
+     "type": "p",
+     "html": "We used several approaches to compare choices made for self only or for both participant and partner. Participants made slightly more risk-seeking choices when deciding for themselves than for both themselves and the partner in Study 1, but this difference disappeared in Study 2. The <i>ρ</i> parameter on which this finding in Study 1 is based could only be estimated in a minority of participants due to a relatively low number of trials, which suggests that this finding may not be very reliable. The simpler and more robust method (evaluation of a risk premium) showed no difference in risk aversion across conditions in either study. Overall, we believe that we do not have strong evidence of differences in risk preferences across conditions. Our findings are not unexpected given previous work. At least two studies reported that being responsible for somebody else’s payoffs increases risk aversion (<span class=\"cite\">Fareri et al., 2022</span>; <span class=\"cite\">Pahlke et al., 2015</span>). However, participants in a recent neuroimaging study were more loss averse when choosing for themselves rather than known other people (<span class=\"cite\">Arioli et al., 2023</span>). Indeed, recent large meta-analyses comparing risky choices for oneself vs. for others report either no difference in risk preferences (<span class=\"cite\">Batteux et al., 2019</span>) or a small shift towards more risky decisions for others (<span class=\"cite\">Polman and Wu, 2020</span>), with large variations across studies. Personal closeness to the others for which we decide seems to reduce differences in risk preferences (<span class=\"cite\">Fareri et al., 2022</span>; <span class=\"cite\">Zhang et al., 2017</span>), as does making decisions for self before making decisions for others (<span class=\"cite\">Ifcher and Zarghamee, 2020</span>). In our study, decisions never only affected the partner, which most likely ‘watered down’ any differences in risk attitude in decisions for oneself vs. for someone else. We also created a friendly prosocial environment in which people felt closer to each other than two strangers would (see Experiment Partner in Methods), and interleaved decisions for self only vs. for self and other. Similar risk preferences in decisions for self vs. self and other are thus unsurprising. The fact that participants made similarly risky decisions for themselves or for both during the fMRI study was to our advantage, because it made the neural signals evoked in these situations more comparable.",
+     "text": "We used several approaches to compare choices made for self only or for both participant and partner. Participants made slightly more risk-seeking choices when deciding for themselves than for both themselves and the partner in Study 1, but this difference disappeared in Study 2. The ρ parameter on which this finding in Study 1 is based could only be estimated in a minority of participants due to a relatively low number of trials, which suggests that this finding may not be very reliable. The simpler and more robust method (evaluation of a risk premium) showed no difference in risk aversion across conditions in either study. Overall, we believe that we do not have strong evidence of differences in risk preferences across conditions. Our findings are not unexpected given previous work. At least two studies reported that being responsible for somebody else’s payoffs increases risk aversion (Fareri et al., 2022; Pahlke et al., 2015). However, participants in a recent neuroimaging study were more loss averse when choosing for themselves rather than known other people (Arioli et al., 2023). Indeed, recent large meta-analyses comparing risky choices for oneself vs. for others report either no difference in risk preferences (Batteux et al., 2019) or a small shift towards more risky decisions for others (Polman and Wu, 2020), with large variations across studies. Personal closeness to the others for which we decide seems to reduce differences in risk preferences (Fareri et al., 2022; Zhang et al., 2017), as does making decisions for self before making decisions for others (Ifcher and Zarghamee, 2020). In our study, decisions never only affected the partner, which most likely ‘watered down’ any differences in risk attitude in decisions for oneself vs. for someone else. We also created a friendly prosocial environment in which people felt closer to each other than two strangers would (see Experiment Partner in Methods), and interleaved decisions for self only vs. for self and other. Similar risk preferences in decisions for self vs. self and other are thus unsurprising. The fact that participants made similarly risky decisions for themselves or for both during the fMRI study was to our advantage, because it made the neural signals evoked in these situations more comparable."
+    },
+    {
+     "type": "p",
+     "html": "Anterior insula (aIns) response, particularly in the left hemisphere, was highest when partners received low lottery outcomes resulting from participants’ risky choices. This replicates a large body of evidence associating aIns with feelings of guilt evoked during social decisions (see Introduction). Because we have neither asked our participants specifically what they felt in these situations, nor specifically whether they experienced guilt, we cannot exclude the possibility that they have instead or in addition felt empathy for their partner, a feeling of failure or bad luck, or some other emotion. The aIns region has also been associated with empathy for negative emotions such as disgust (<span class=\"cite\">Wicker et al., 2003</span>) or pain (<span class=\"cite\">Gu et al., 2012</span>; <span class=\"cite\">Lamm et al., 2011</span>), with affective empathy during charitable giving (<span class=\"cite\">Tusche et al., 2016</span>), and more generally with emotion awareness (<span class=\"cite\">Bird et al., 2010</span>; <span class=\"cite\">Gu et al., 2013</span>). These functions might be supported by interoception (<span class=\"cite\">Craig, 2002</span>): posterior insula is thought to receive interoceptive information from the body and to pass it on to the anterior insula for integration with sensory, emotional, cognitive, and motivational signals from other regions (<span class=\"cite\">Bid Craig, 2009</span>; <span class=\"cite\">Rogers-Carter and Christianson, 2019</span>). This integration would allow one to represent one’s own, as well as estimates of other people’s, feelings and bodily states and allow error-based learning based on these (<span class=\"cite\">Lamm and Singer, 2010</span>; <span class=\"cite\">Rogers-Carter and Christianson, 2019</span>; <span class=\"cite\">Singer et al., 2009</span>). Our finding of changing functional connectivity between aIns and prefrontal cortex as a function of decision taken and experimental condition during choice may reflect changing emotional information transfer between these structures depending on choice and social context. How we feel when we witness our decisions’ consequences on others is an important signal to consider when attempting to make good social decisions. Unsurprisingly, lesions of aIns are associated with reduced altruistic attitudes (<span class=\"cite\">Chau et al., 2018</span>), individuals with higher levels of psychopathic traits show reduced modulation of aIns response to anticipated guilt (<span class=\"cite\">Seara-Cardoso et al., 2016</span>), and show reduced guilt aversion (<span class=\"cite\">Gong et al., 2019</span>).",
+     "text": "Anterior insula (aIns) response, particularly in the left hemisphere, was highest when partners received low lottery outcomes resulting from participants’ risky choices. This replicates a large body of evidence associating aIns with feelings of guilt evoked during social decisions (see Introduction). Because we have neither asked our participants specifically what they felt in these situations, nor specifically whether they experienced guilt, we cannot exclude the possibility that they have instead or in addition felt empathy for their partner, a feeling of failure or bad luck, or some other emotion. The aIns region has also been associated with empathy for negative emotions such as disgust (Wicker et al., 2003) or pain (Gu et al., 2012; Lamm et al., 2011), with affective empathy during charitable giving (Tusche et al., 2016), and more generally with emotion awareness (Bird et al., 2010; Gu et al., 2013). These functions might be supported by interoception (Craig, 2002): posterior insula is thought to receive interoceptive information from the body and to pass it on to the anterior insula for integration with sensory, emotional, cognitive, and motivational signals from other regions (Bid Craig, 2009; Rogers-Carter and Christianson, 2019). This integration would allow one to represent one’s own, as well as estimates of other people’s, feelings and bodily states and allow error-based learning based on these (Lamm and Singer, 2010; Rogers-Carter and Christianson, 2019; Singer et al., 2009). Our finding of changing functional connectivity between aIns and prefrontal cortex as a function of decision taken and experimental condition during choice may reflect changing emotional information transfer between these structures depending on choice and social context. How we feel when we witness our decisions’ consequences on others is an important signal to consider when attempting to make good social decisions. Unsurprisingly, lesions of aIns are associated with reduced altruistic attitudes (Chau et al., 2018), individuals with higher levels of psychopathic traits show reduced modulation of aIns response to anticipated guilt (Seara-Cardoso et al., 2016), and show reduced guilt aversion (Gong et al., 2019)."
+    },
+    {
+     "type": "p",
+     "html": "Deciding for both self and partner rather than just for oneself evoked increased activations in precuneus, left TPJ, and dmPFC, areas classically associated with social cognition (<span class=\"cite\">Frith and Frith, 2006</span>; <span class=\"cite\">Schurz et al., 2014</span>; <span class=\"cite\">Van Overwalle, 2009</span>), and also with feelings of guilt (for meta-analyses, see <span class=\"cite\">Gifuni et al., 2017</span>; <span class=\"cite\">Piretti et al., 2023</span>). This replicates previous findings of engagement of dmPFC, STS, and/or TPJ when making decisions involving others (<span class=\"cite\">Jung et al., 2013</span>; <span class=\"cite\">Nicolle et al., 2012</span>; <span class=\"cite\">Ogawa et al., 2018</span>; <span class=\"cite\">Piva et al., 2019</span>). Interestingly, our computational model-based analysis revealed a cluster of voxels in the left STS that responded positively to partner prediction errors, but only when these resulted from decisions made by the participant instead of the partner. This is congruent with associations between STS and cognitive perspective taking during charitable giving (<span class=\"cite\">Tusche et al., 2016</span>), representation of other people’s interests during altruistic choice (<span class=\"cite\">Hutcherson et al., 2015</span>), or more generally with mentalizing computations during strategic social choice (<span class=\"cite\">Carter et al., 2012</span>; <span class=\"cite\">Hampton et al., 2008</span>; <span class=\"cite\">Hill et al., 2017</span>). The features of our experimental design (direct contrast of similar decisions made by the participant and partner; independent lottery outcomes for self and other; quantification of the consequences of decisions through variations of momentary happiness) allowed us to identify this very specific neural signal indicative of a neural sensitivity to the consequences of one’s own actions on others, whether positive or negative. A neural signal coding partner reward prediction errors resulting from one’s decisions seems essential to guide social decisions and as a basis for empathic concern for the people influenced by our actions. Anecdotally, we found a weak functional connection between this left STS cluster and left aIns that varied as a function of choice and experimental condition; this is interesting because connections between a region in the left TPJ and aIns have been shown to vary depending on people’s tendency to seek or avoid responsibility for others (<span class=\"cite\">Edelson et al., 2018</span>). Given the roles of the left STS/TPJ and aIns in guilt and social decisions, it is not surprising to find information exchanges between these structures. More experiments investigating specific computations in which these regions are involved (as in, e.g., <span class=\"cite\">Charpentier and O’Doherty, 2018</span>; <span class=\"cite\">Konovalov et al., 2021a</span>; <span class=\"cite\">Konovalov and Ruff, 2021b</span>) are likely to help understand the neural mechanisms by which guilt and responsibility influence social decision-making.",
+     "text": "Deciding for both self and partner rather than just for oneself evoked increased activations in precuneus, left TPJ, and dmPFC, areas classically associated with social cognition (Frith and Frith, 2006; Schurz et al., 2014; Van Overwalle, 2009), and also with feelings of guilt (for meta-analyses, see Gifuni et al., 2017; Piretti et al., 2023). This replicates previous findings of engagement of dmPFC, STS, and/or TPJ when making decisions involving others (Jung et al., 2013; Nicolle et al., 2012; Ogawa et al., 2018; Piva et al., 2019). Interestingly, our computational model-based analysis revealed a cluster of voxels in the left STS that responded positively to partner prediction errors, but only when these resulted from decisions made by the participant instead of the partner. This is congruent with associations between STS and cognitive perspective taking during charitable giving (Tusche et al., 2016), representation of other people’s interests during altruistic choice (Hutcherson et al., 2015), or more generally with mentalizing computations during strategic social choice (Carter et al., 2012; Hampton et al., 2008; Hill et al., 2017). The features of our experimental design (direct contrast of similar decisions made by the participant and partner; independent lottery outcomes for self and other; quantification of the consequences of decisions through variations of momentary happiness) allowed us to identify this very specific neural signal indicative of a neural sensitivity to the consequences of one’s own actions on others, whether positive or negative. A neural signal coding partner reward prediction errors resulting from one’s decisions seems essential to guide social decisions and as a basis for empathic concern for the people influenced by our actions. Anecdotally, we found a weak functional connection between this left STS cluster and left aIns that varied as a function of choice and experimental condition; this is interesting because connections between a region in the left TPJ and aIns have been shown to vary depending on people’s tendency to seek or avoid responsibility for others (Edelson et al., 2018). Given the roles of the left STS/TPJ and aIns in guilt and social decisions, it is not surprising to find information exchanges between these structures. More experiments investigating specific computations in which these regions are involved (as in, e.g., Charpentier and O’Doherty, 2018; Konovalov et al., 2021a; Konovalov and Ruff, 2021b) are likely to help understand the neural mechanisms by which guilt and responsibility influence social decision-making."
+    },
+    {
+     "type": "p",
+     "html": "There are several limitations to our study. The first limitation is that the partner’s decisions were in fact taken by an algorithm. This was not communicated to the participants and was thus a case of deception, which is inadmissible in behavioural economics. To our defence, this study was planned as a social neuroscience study and was executed before we had taken into account the practices of behavioural economists. However, this approach did have the advantage of eliminating potentially complex iterative reciprocal influences of decisions and outcomes between the players, which would have led to much more complicated emotional states and decisions that would have been difficult to understand and model. Thus, from an analytical point of view, our approach might have actually allowed a cleaner comparison between decisions and outcomes than if the partner had really made the decisions. The fact that partner outcomes also influenced participants’ momentary happiness demonstrates that participants were not emotionally detached from the consequences of their actions on their partner. This finding is, of course, essential for the validity of our results and suggests that the effects could get stronger with more direct interactions. Therefore, although we will abstain from using deceptive practices when pursuing this research, we believe our findings to be valid.",
+     "text": "There are several limitations to our study. The first limitation is that the partner’s decisions were in fact taken by an algorithm. This was not communicated to the participants and was thus a case of deception, which is inadmissible in behavioural economics. To our defence, this study was planned as a social neuroscience study and was executed before we had taken into account the practices of behavioural economists. However, this approach did have the advantage of eliminating potentially complex iterative reciprocal influences of decisions and outcomes between the players, which would have led to much more complicated emotional states and decisions that would have been difficult to understand and model. Thus, from an analytical point of view, our approach might have actually allowed a cleaner comparison between decisions and outcomes than if the partner had really made the decisions. The fact that partner outcomes also influenced participants’ momentary happiness demonstrates that participants were not emotionally detached from the consequences of their actions on their partner. This finding is, of course, essential for the validity of our results and suggests that the effects could get stronger with more direct interactions. Therefore, although we will abstain from using deceptive practices when pursuing this research, we believe our findings to be valid."
+    },
+    {
+     "type": "p",
+     "html": "Another limitation is that we have not asked participants to specifically name emotions as they proceeded through the experiment. As a result, we cannot ascertain whether people experienced guilt, shame, regret, disappointment or another specific emotion during the experiment. However, asking about specific emotions is itself associated with several drawbacks: emotion labels might have coloured participants’ spontaneous emotional state; participant responses might be influenced by social desirability; thinking about which emotion best characterizes one’s mental state takes time and distracts from the decision task; and the list of emotions to choose from is necessarily limited. In any case, the precise naming of emotions was not the aim of our study; instead, we relied on a definition of guilt from psychological game theory (<span class=\"cite\">Battigalli and Dufwenberg, 2007</span>). Indeed, previous work on social emotions recommends ‘study the experiential phenomenology of emotions instead of mere emotion labels’, because ‘as a psychological explanation of human behaviour, the phenomenological experience of an emotion is much more important than the label attached to this experience’ (<span class=\"cite\">Zeelenberg and Breugelmans, 2008</span>). The ‘neurometrics’ analysis of our guilt-related activation maps showed a significant similarity to a published guilt-related brain signature (<span class=\"cite\">Yu et al., 2020</span>). We thus believe that our participants did experience guilt when their choices led to low outcomes for their partner.",
+     "text": "Another limitation is that we have not asked participants to specifically name emotions as they proceeded through the experiment. As a result, we cannot ascertain whether people experienced guilt, shame, regret, disappointment or another specific emotion during the experiment. However, asking about specific emotions is itself associated with several drawbacks: emotion labels might have coloured participants’ spontaneous emotional state; participant responses might be influenced by social desirability; thinking about which emotion best characterizes one’s mental state takes time and distracts from the decision task; and the list of emotions to choose from is necessarily limited. In any case, the precise naming of emotions was not the aim of our study; instead, we relied on a definition of guilt from psychological game theory (Battigalli and Dufwenberg, 2007). Indeed, previous work on social emotions recommends ‘study the experiential phenomenology of emotions instead of mere emotion labels’, because ‘as a psychological explanation of human behaviour, the phenomenological experience of an emotion is much more important than the label attached to this experience’ (Zeelenberg and Breugelmans, 2008). The ‘neurometrics’ analysis of our guilt-related activation maps showed a significant similarity to a published guilt-related brain signature (Yu et al., 2020). We thus believe that our participants did experience guilt when their choices led to low outcomes for their partner."
+    },
+    {
+     "type": "p",
+     "html": "Several open questions remain at the end of this study. As discussed above, asking participants directly about which emotions they have felt during the different stages of this task would allow us to link subjective experience with our analytical measures. Testing more participants would allow us to assess the impact of inter-individual variations in personality traits on the experience as well as the behavioural and neural correlates of guilt and responsibility. Using more trials in the experiment would allow separate modelling of risk preferences in gain and loss trials in each experimental condition using expected utility models, and could allow testing whether changes in momentary happiness affect subsequent choices. Varying partner identities (friends, stranger, and artificial agent) could reveal the impact of social discounting on guilt and responsibility. Functional connectivity analyses could also be performed for the data obtained in the feedback part of the paradigm. In sum, we believe that this experimental approach lends itself very well to the study of several aspects of social emotions.",
+     "text": "Several open questions remain at the end of this study. As discussed above, asking participants directly about which emotions they have felt during the different stages of this task would allow us to link subjective experience with our analytical measures. Testing more participants would allow us to assess the impact of inter-individual variations in personality traits on the experience as well as the behavioural and neural correlates of guilt and responsibility. Using more trials in the experiment would allow separate modelling of risk preferences in gain and loss trials in each experimental condition using expected utility models, and could allow testing whether changes in momentary happiness affect subsequent choices. Varying partner identities (friends, stranger, and artificial agent) could reveal the impact of social discounting on guilt and responsibility. Functional connectivity analyses could also be performed for the data obtained in the feedback part of the paradigm. In sum, we believe that this experimental approach lends itself very well to the study of several aspects of social emotions."
+    }
+   ]
+  },
+  {
+   "id": "s4",
+   "type": "materials|methods",
+   "title": "Materials and methods",
+   "depth": 1,
+   "blocks": [
+    {
+     "type": "table",
+     "id": "keyresource"
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-1",
+      "type": "",
+      "title": "Participants",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Forty healthy participants (14 male, mean age 26.1, range 22–31) participated in Study 1 (behaviour only study), and 44 healthy participants (19 male, mean (SD) age = 30.6 (6.5), range 23–50) participated in Study 2 (fMRI study). All participants provided written informed consent. Participants were recruited from the local population through advertisements on online blackboards at the University of Bonn and on local community websites, and through flyers posted in libraries, university cafeterias and sports facilities. The number of participants recruited in Study 2 corresponds to the sample size estimated using G*Power 3.1 software (<span class=\"cite\">Faul et al., 2007</span>) for a two-way <i>t</i>-test assessing the difference between two means (matched pairs) based on the results of Study 1 (Cohen’s <i>d</i> = 0.56), with alpha error = 0.05 and power (1 − beta) = 0.95, the required sample size was 44. The fMRI data from four participants in Study 2 were excluded from the fMRI data analysis because of excessive head motion (&gt;3 mm or &gt;3°).",
+        "text": "Forty healthy participants (14 male, mean age 26.1, range 22–31) participated in Study 1 (behaviour only study), and 44 healthy participants (19 male, mean (SD) age = 30.6 (6.5), range 23–50) participated in Study 2 (fMRI study). All participants provided written informed consent. Participants were recruited from the local population through advertisements on online blackboards at the University of Bonn and on local community websites, and through flyers posted in libraries, university cafeterias and sports facilities. The number of participants recruited in Study 2 corresponds to the sample size estimated using G*Power 3.1 software (Faul et al., 2007) for a two-way t-test assessing the difference between two means (matched pairs) based on the results of Study 1 (Cohen’s d = 0.56), with alpha error = 0.05 and power (1 − beta) = 0.95, the required sample size was 44. The fMRI data from four participants in Study 2 were excluded from the fMRI data analysis because of excessive head motion (>3 mm or >3°)."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-2",
+      "type": "",
+      "title": "Experimental procedure",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "The design of the experiment was inspired by previous studies investigating how risky choices and their consequences influence momentary happiness (<span class=\"cite\">Rutledge et al., 2014</span>; <span class=\"cite\">Rutledge et al., 2016</span>). It was implemented in MATLAB (Version R2016b; RRID:SCR_001622; The MathWorks, Inc, Natick, MA) using the Psychtoolbox extensions (RRID:SCR_002881).",
+        "text": "The design of the experiment was inspired by previous studies investigating how risky choices and their consequences influence momentary happiness (Rutledge et al., 2014; Rutledge et al., 2016). It was implemented in MATLAB (Version R2016b; RRID:SCR_001622; The MathWorks, Inc, Natick, MA) using the Psychtoolbox extensions (RRID:SCR_002881)."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-3",
+      "type": "",
+      "title": "Experiment partner",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Participants played with a friendly same-sex experiment partner (pairs of participants in Study 1, authors TW and MG in Study 2), whom they met before the scan for an introduction session. In this session lasting about 15 min, participants played an ice breaker game with their experiment partner, in which both participant and partner took turns in drawing one half of a simple picture while being blindfolded and following verbal instructions given by their game partner. Encouragements and other positive feedback were given by the partner throughout the task. This icebreaker game led to an agreeable social atmosphere and positive, non-competitive, sympathetic attitude between the participants and the partner. Results of a brief questionnaire indicate that this approach was successful: participants’ average ratings of their partners in terms of sympathy, cooperativity, honesty, openness and sociability were all above 8 on a scale of 1–10, in both studies (<a class=\"xref\" href=\"#app1table11\">Appendix 1—table 11</a>).",
+        "text": "Participants played with a friendly same-sex experiment partner (pairs of participants in Study 1, authors TW and MG in Study 2), whom they met before the scan for an introduction session. In this session lasting about 15 min, participants played an ice breaker game with their experiment partner, in which both participant and partner took turns in drawing one half of a simple picture while being blindfolded and following verbal instructions given by their game partner. Encouragements and other positive feedback were given by the partner throughout the task. This icebreaker game led to an agreeable social atmosphere and positive, non-competitive, sympathetic attitude between the participants and the partner. Results of a brief questionnaire indicate that this approach was successful: participants’ average ratings of their partners in terms of sympathy, cooperativity, honesty, openness and sociability were all above 8 on a scale of 1–10, in both studies (Appendix 1—table 11)."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-4",
+      "type": "",
+      "title": "Decision task",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Following the icebreaker game, participants in Study 1 performed three sessions of a task in which they decided on each trial between a safe and a risky monetary option (<a class=\"xref\" href=\"#fig1\">Figure 1</a>). The risky monetary option was a lottery with two equiprobable outcomes (lottery). There were three kinds of trials: decisions by the participant only for themselves (<i>Solo</i> condition), decisions by the participant for themselves and the partner (<i>Social</i> condition), and decisions by the partner for both themselves and the participant (<i>Partner</i> condition). Importantly, when the risky option was selected in the <i>Social</i> or <i>Partner</i> condition, the lottery was played out independently for the participant and the partner, such that both could receive the higher (<i>HighOutcome</i>) or lower outcome (<i>LowOutcome</i>), independently from each other. In order to ascertain constant decisions by the partner, the partner’s decisions were simulated using a simple algorithm that always selected the option with the highest expected value; i.e., it selected the lottery if EV diff &gt;0; <i>EVdiff</i> = (<i>high lottery outcome + low lottery outcome</i>)/2 – <i>safe outcome</i>. The amounts earned per trial were determined as in a previous study (<span class=\"cite\">Rutledge et al., 2014</span>), as follows. There were 20 mixed trials, 20 gain trials, and 20 loss trials per session. In the mixed trials, participants chose between a safe option of 0 € and a lottery consisting of a gain and a loss amount. Gain amounts were selected randomly out of the following: [15, 25, 40, 55, 75] cents. Loss options were determined by multiplying the gain amount with one randomly selected value out of the following: [-0.2, –0.34, −0.5, –0.64, −0.77, –0.89, −1, –1.1, −1.35, –2]. In gain trials, participants chose between a safe gain out of the following: [10, 15, 20, 25, 30] cents and a lottery with 0 € and a higher gain amount, calculated by multiplying the safe amount with one of the following values: [1.68, 1.82, 2, 2.22, 2.48, 2.8, 3.16, 3.6, 4.2, 5]. In loss trials, participants chose between a certain loss or a lottery with 0 € or a larger loss. Certain loss amounts were one of [–10, –15, −20,–25, –30] cents, and the larger loss amount of the lottery was a multiple of the certain loss amount and one of the following values: [1.68, 1.82, 2, 2.22, 2.48, 2.8, 3.16, 3.6, 4.2, 5]. The position of the safe and risky option on the screen (left or right) was determined randomly on every trial, and the different trial types (<i>Solo</i>, <i>Social</i>, or <i>Partner</i> condition; gain, loss and mixed trials) were presented in randomized order, with the constraint that there could not be more than two trials of the same condition in a row. Participants had unlimited time to choose between the safe or risky option. Decisions were displayed for 2 s and lottery outcomes for 2.5 s. Trials were separated in time by an inter-stimulus interval (ISI) of 1–2 s drawn randomly from a gamma distribution.",
+        "text": "Following the icebreaker game, participants in Study 1 performed three sessions of a task in which they decided on each trial between a safe and a risky monetary option (Figure 1). The risky monetary option was a lottery with two equiprobable outcomes (lottery). There were three kinds of trials: decisions by the participant only for themselves (Solo condition), decisions by the participant for themselves and the partner (Social condition), and decisions by the partner for both themselves and the participant (Partner condition). Importantly, when the risky option was selected in the Social or Partner condition, the lottery was played out independently for the participant and the partner, such that both could receive the higher (HighOutcome) or lower outcome (LowOutcome), independently from each other. In order to ascertain constant decisions by the partner, the partner’s decisions were simulated using a simple algorithm that always selected the option with the highest expected value; i.e., it selected the lottery if EV diff >0; EVdiff = (high lottery outcome + low lottery outcome)/2 – safe outcome. The amounts earned per trial were determined as in a previous study (Rutledge et al., 2014), as follows. There were 20 mixed trials, 20 gain trials, and 20 loss trials per session. In the mixed trials, participants chose between a safe option of 0 € and a lottery consisting of a gain and a loss amount. Gain amounts were selected randomly out of the following: [15, 25, 40, 55, 75] cents. Loss options were determined by multiplying the gain amount with one randomly selected value out of the following: [-0.2, –0.34, −0.5, –0.64, −0.77, –0.89, −1, –1.1, −1.35, –2]. In gain trials, participants chose between a safe gain out of the following: [10, 15, 20, 25, 30] cents and a lottery with 0 € and a higher gain amount, calculated by multiplying the safe amount with one of the following values: [1.68, 1.82, 2, 2.22, 2.48, 2.8, 3.16, 3.6, 4.2, 5]. In loss trials, participants chose between a certain loss or a lottery with 0 € or a larger loss. Certain loss amounts were one of [–10, –15, −20,–25, –30] cents, and the larger loss amount of the lottery was a multiple of the certain loss amount and one of the following values: [1.68, 1.82, 2, 2.22, 2.48, 2.8, 3.16, 3.6, 4.2, 5]. The position of the safe and risky option on the screen (left or right) was determined randomly on every trial, and the different trial types (Solo, Social, or Partner condition; gain, loss and mixed trials) were presented in randomized order, with the constraint that there could not be more than two trials of the same condition in a row. Participants had unlimited time to choose between the safe or risky option. Decisions were displayed for 2 s and lottery outcomes for 2.5 s. Trials were separated in time by an inter-stimulus interval (ISI) of 1–2 s drawn randomly from a gamma distribution."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-5",
+      "type": "",
+      "title": "Momentary happiness",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Every two trials, one ISI after the outcome of the previous trial, participants were asked ‘How happy are you right now?’. They could respond by selecting a value on a scale from ‘very happy’ (right) to ‘very unhappy’ (left) by moving a cursor with a button press. The start position of the cursor was the midpoint of the scale, and the scale had 100 selectable options. For analysis, happiness ratings were <i>Z</i>-scored to cancel out effects of different rating variabilities across participants.",
+        "text": "Every two trials, one ISI after the outcome of the previous trial, participants were asked ‘How happy are you right now?’. They could respond by selecting a value on a scale from ‘very happy’ (right) to ‘very unhappy’ (left) by moving a cursor with a button press. The start position of the cursor was the midpoint of the scale, and the scale had 100 selectable options. For analysis, happiness ratings were Z-scored to cancel out effects of different rating variabilities across participants."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-6",
+      "type": "",
+      "title": "Difference between studies 1 (behaviour only) and 2 (fMRI study)",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "In Study 2, participants performed two sessions of the experiment described above inside the fMRI scanner. All parameters were identical except that ISIs varied from 3 to 11 s (drawn randomly from a gamma distribution). In Study 2, instead of playing against another same-sex participant, participants played either against experimenter MG or TW depending on sex (participant and partner were always of same sex) who were outside the scanner.",
+        "text": "In Study 2, participants performed two sessions of the experiment described above inside the fMRI scanner. All parameters were identical except that ISIs varied from 3 to 11 s (drawn randomly from a gamma distribution). In Study 2, instead of playing against another same-sex participant, participants played either against experimenter MG or TW depending on sex (participant and partner were always of same sex) who were outside the scanner."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-7",
+      "type": "",
+      "title": "Statistical analysis",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s4-7-1",
+         "type": "",
+         "title": "General information",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "Statistical analysis was performed using Matlab R2024A (RRID:SCR_001622) and the lme4 package (<span class=\"cite\">Bates et al., 2022</span>) (RRID:SCR_015654) in R (version 4.2.1, RRID:SCR_001905), and JASP (version 0.16.1, RRID:SCR_015823, JASP Team 2021). fMRI data were analysed using SPM12 software (RRID:SCR_007037; Wellcome Trust Centre for Neuroimaging, London, UK). All statistical tests were two-tailed. Bayes factors were calculated using default priors in JASP and express the probability of the data given <i>H</i><sub>1</sub> relative to <i>H</i><sub>0</sub> (BF<sub>10</sub>, values larger than one are in favour of H1). Effect sizes were calculated using standard approaches implemented in Matlab, including the Measures of Effect Size Toolbox (RRID:SCR_014703).",
+           "text": "Statistical analysis was performed using Matlab R2024A (RRID:SCR_001622) and the lme4 package (Bates et al., 2022) (RRID:SCR_015654) in R (version 4.2.1, RRID:SCR_001905), and JASP (version 0.16.1, RRID:SCR_015823, JASP Team 2021). fMRI data were analysed using SPM12 software (RRID:SCR_007037; Wellcome Trust Centre for Neuroimaging, London, UK). All statistical tests were two-tailed. Bayes factors were calculated using default priors in JASP and express the probability of the data given H1 relative to H0 (BF10, values larger than one are in favour of H1). Effect sizes were calculated using standard approaches implemented in Matlab, including the Measures of Effect Size Toolbox (RRID:SCR_014703)."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s4-7-2",
+         "type": "",
+         "title": "Decisions",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "sec",
+           "sec": {
+            "id": "s4-7-2-1",
+            "type": "",
+            "title": "Generalized linear mixed logistic regression",
+            "depth": 4,
+            "blocks": [
+             {
+              "type": "p",
+              "html": "First, we assessed whether choices between the safe and risky options were reasonable and whether these choices varied between <i>Solo</i> and <i>Social</i> conditions. To do so, we modelled choices with a mixed-effects logistic regression with subject-specific random intercepts <i>u</i><sub>0</sub><i><sub>j</sub></i> ~ <i>N</i>(0,<i>δ<sub>u</sub></i><sup>2</sup>) and slopes [<i>u</i><sub>1</sub><i><sub>j</sub></i>, <i>u</i><sub>2</sub><i><sub>j</sub></i>] ~ <i>N</i>(0,<i>δ<sub>u</sub></i><sup>2</sup>) and residual <i>ε<sub>ij</sub></i> ~ <i>L</i>(0,1), assumed to follow the standard logistic distribution. In this regression model, the choice of the risky option (Chose risky: 1 = Yes, 0 = No) was entered as the dependent variable, and explanatory variables were the difference between the expected value of the lottery minus the value of the safe option [<i>EVdiff</i> = (<i>high lottery outcome + low lottery outcome</i>)/2 – <i>safe outcome</i>] and condition (<i>Cond</i>: 1 = <i>Solo</i>, 2 = <i>Social</i>; a categorical variable), as well as the interaction between them (<i>EVdiff × Cond</i>). All explanatory variables were mean-centred. The random slopes are designed to account for between-subject heterogeneity:",
+              "text": "First, we assessed whether choices between the safe and risky options were reasonable and whether these choices varied between Solo and Social conditions. To do so, we modelled choices with a mixed-effects logistic regression with subject-specific random intercepts u0j ~ N(0,δu2) and slopes [u1j, u2j] ~ N(0,δu2) and residual εij ~ L(0,1), assumed to follow the standard logistic distribution. In this regression model, the choice of the risky option (Chose risky: 1 = Yes, 0 = No) was entered as the dependent variable, and explanatory variables were the difference between the expected value of the lottery minus the value of the safe option [EVdiff = (high lottery outcome + low lottery outcome)/2 – safe outcome] and condition (Cond: 1 = Solo, 2 = Social; a categorical variable), as well as the interaction between them (EVdiff × Cond). All explanatory variables were mean-centred. The random slopes are designed to account for between-subject heterogeneity:Chose riskyij=1ifβ0+(β1+u1j)∗EVdiffij+(β2+u2j)∗Condij+β3∗EVdiff×condij+u0j+εij>0,and Chose safeij=0otherwise.\\begin{document}$$\\displaystyle \\begin{array}{ll}Chose\\ risky_{ij} &=1\\, if\\, {\\beta_0}+(\\beta_1+u_{1j})^* EVdiff_{ij} + (\\beta_2+u_{2j})^* Cond_{ij} + {\\beta_3}^* EVdiff \\times cond_{ij} \\\\& \\qquad +u_{0j} + \\varepsilon_{ij} \\gt 0, {\\rm and}\\ Chose\\ safe_{ij} =0 \\, \\rm{otherwise}.\\end{array}$$\\end{document}"
+             },
+             {
+              "type": "p",
+              "html": "This gives rise to the regression equation:",
+              "text": "This gives rise to the regression equation:(1)Chose riskyij=F(β0+(β1+u1j)∗EVdiffij+(β2+u2j)∗Condij+β3∗EVdiff×condij+uj)\\begin{document}$$\\displaystyle Chose\\ risky_{ij} =F(\\beta_0 + (\\beta_1+u_{1j})^* EVdiff_{ij} + (\\beta_2+u_{2j})^* Cond_{ij} + {\\beta_3}^* EVdiff \\times cond_{ij} +u_j)$$\\end{document}"
+             },
+             {
+              "type": "p",
+              "html": "where <i>F</i>(<i>x</i>) = 1/[1 + exp(−<i>x</i>)] is the cumulative distribution function of the standard logistic distribution. The subscript <i>j</i> indexes participants, while <i>i</i> indexes observations per participant. An observation corresponds to one choice (<i>Chose risky</i>: 1 = Yes, 0 = No).",
+              "text": "where F(x) = 1/[1 + exp(−x)] is the cumulative distribution function of the standard logistic distribution. The subscript j indexes participants, while i indexes observations per participant. An observation corresponds to one choice (Chose risky: 1 = Yes, 0 = No)."
+             },
+             {
+              "type": "p",
+              "html": "This model was estimated for Studies 1 and 2 separately, using the package <i>lme4</i> in R.",
+              "text": "This model was estimated for Studies 1 and 2 separately, using the package lme4 in R."
+             }
+            ]
+           }
+          },
+          {
+           "type": "sec",
+           "sec": {
+            "id": "s4-7-2-2",
+            "type": "",
+            "title": "Estimating risk attitude 1: risk premium",
+            "depth": 4,
+            "blocks": [
+             {
+              "type": "p",
+              "html": "Next, we estimated risk attitudes by calculating a <i>risk premium</i> for each participant and condition, defined as the difference between the expected value of a lottery and its certainty equivalent (positive values indicate risk aversion, negative values risk seeking). The certainty equivalent is the smallest amount an individual would be indifferent to spending on a lottery. We estimated the certainty equivalent of the lotteries by fitting to each participant’s decisions in each condition the logistic regression model with residual <i>ε<sub>ij</sub></i> ~ <i>L</i>(0,1), assumed to follow the standard logistic distribution:",
+              "text": "Next, we estimated risk attitudes by calculating a risk premium for each participant and condition, defined as the difference between the expected value of a lottery and its certainty equivalent (positive values indicate risk aversion, negative values risk seeking). The certainty equivalent is the smallest amount an individual would be indifferent to spending on a lottery. We estimated the certainty equivalent of the lotteries by fitting to each participant’s decisions in each condition the logistic regression model with residual εij ~ L(0,1), assumed to follow the standard logistic distribution:(2)Chose riskyi=F(β0+β1 ∗EVdiffi)\\begin{document}$$\\displaystyle Chose\\ risky_i =F(\\beta_0 + \\beta_1\\ ^* EVdiff_i)$$\\end{document}"
+             },
+             {
+              "type": "p",
+              "html": "The <i>risk premium</i> for each condition was defined as the EVdiff value corresponding to 50% <i>risky</i> choices indicated by the fitted logistic regression model. In both studies, these <i>risk premium</i> values were compared between <i>Solo</i> and <i>Social</i> conditions using paired <i>t</i>-tests.",
+              "text": "The risk premium for each condition was defined as the EVdiff value corresponding to 50% risky choices indicated by the fitted logistic regression model. In both studies, these risk premium values were compared between Solo and Social conditions using paired t-tests."
+             }
+            ]
+           }
+          },
+          {
+           "type": "sec",
+           "sec": {
+            "id": "s4-7-2-3",
+            "type": "",
+            "title": "Estimating risk attitude 2: CARA model",
+            "depth": 4,
+            "blocks": [
+             {
+              "type": "p",
+              "html": "Next, we estimated risk attitudes using expected utility theory. In this approach, an agent chooses between two options by comparing their expected utility values. Utility values reflect the agent’s subjective values or preferences for a set of choice options, revealed by the agent’s choices. Expected utility theory uses utility functions to describe the agents’ preferences, including that agent’s attitude towards risk. One simple model of risk aversion termed Constant Absolute Risk Aversion (CARA) assumes an exponential utility function:",
+              "text": "Next, we estimated risk attitudes using expected utility theory. In this approach, an agent chooses between two options by comparing their expected utility values. Utility values reflect the agent’s subjective values or preferences for a set of choice options, revealed by the agent’s choices. Expected utility theory uses utility functions to describe the agents’ preferences, including that agent’s attitude towards risk. One simple model of risk aversion termed Constant Absolute Risk Aversion (CARA) assumes an exponential utility function:U(x,ρ)=1−e(−ρx)\\begin{document}$$\\displaystyle U(x,\\rho)=1-\\mathtt{e} (-\\rho x)$$\\end{document}"
+             },
+             {
+              "type": "p",
+              "html": "where <i>x</i> is a monetary amount and <i>⍴</i> is a constant that represents the degree of risk preference. <i>U</i> has an upward slope for perceived gains, indicating higher utility for a larger amount received. For a risk-averse individual facing a choice in the domain of gains, <i>⍴</i> is positive and <i>U</i> is concave: a sure amount is preferred over a lottery with the same expected value. For a risk-seeking individual facing the same choices, <i>⍴</i> is negative.",
+              "text": "where x is a monetary amount and ⍴ is a constant that represents the degree of risk preference. U has an upward slope for perceived gains, indicating higher utility for a larger amount received. For a risk-averse individual facing a choice in the domain of gains, ⍴ is positive and U is concave: a sure amount is preferred over a lottery with the same expected value. For a risk-seeking individual facing the same choices, ⍴ is negative."
+             },
+             {
+              "type": "p",
+              "html": "Under CARA, the expected utility of a lottery is:",
+              "text": "Under CARA, the expected utility of a lottery is:EUlottery=p∗U(x1,ρ)+(1−p)∗U(x2,ρ)\\begin{document}$$\\displaystyle EU_{lottery} =p ^* U(x_1,\\rho) + (1-p) ^* U(x_2,\\rho)$$\\end{document}"
+             },
+             {
+              "type": "p",
+              "html": "where <i>x</i><sub>1</sub> and <i>x</i><sub>2</sub> are the two possible outcomes of the lottery and <i>p</i> is the probability of obtaining outcome <i>x</i><sub>1</sub>.",
+              "text": "where x1 and x2 are the two possible outcomes of the lottery and p is the probability of obtaining outcome x1."
+             },
+             {
+              "type": "p",
+              "html": "The certainty equivalent of a lottery under CARA is:",
+              "text": "The certainty equivalent of a lottery under CARA is:(3)CElottery=log(1−ρ∗EUlottery)/−ρ\\begin{document}$$\\displaystyle CE_{lottery} = log(1 - \\rho^* EU_{lottery}) / - \\rho$$\\end{document}"
+             },
+             {
+              "type": "p",
+              "html": "For <i>⍴</i> ≠ 0.",
+              "text": "For ⍴ ≠ 0."
+             },
+             {
+              "type": "p",
+              "html": "Following an econometric method (<span class=\"cite\">von Gaudecker et al., 2011</span>), we estimated <i>⍴</i> by fitting a probit regression with a cumulative Gaussian link function <i>Φ</i> to choices obtained in the <i>Solo</i> and <i>Social</i> conditions of each participant:",
+              "text": "Following an econometric method (von Gaudecker et al., 2011), we estimated ⍴ by fitting a probit regression with a cumulative Gaussian link function Φ to choices obtained in the Solo and Social conditions of each participant:ϕ=0.5∗(1+erf((CE−VS)/(2∗σ)));\\begin{document}$$\\displaystyle \\phi = 0.5^* (1 + erf((CE - VS) / ({\\sqrt{2}}^* \\sigma)));$$\\end{document}"
+             },
+             {
+              "type": "p",
+              "html": "where <i>CE</i> is the certainty equivalent of the lottery, <i>VS</i> the value of the safe alternative option, <i>σ</i> is Fechner noise and erf is the error function. The regression was fitted using non-linear least-squares implemented in Matlab’s nlinfit.m. In both studies, these <i>⍴</i> values were compared between <i>Solo</i> and <i>Social</i> conditions using paired <i>t</i>-tests.",
+              "text": "where CE is the certainty equivalent of the lottery, VS the value of the safe alternative option, σ is Fechner noise and erf is the error function. The regression was fitted using non-linear least-squares implemented in Matlab’s nlinfit.m. In both studies, these ⍴ values were compared between Solo and Social conditions using paired t-tests."
+             }
+            ]
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-8",
+      "type": "",
+      "title": "Momentary happiness",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s4-8-1",
+         "type": "",
+         "title": "Computational models of happiness variations",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "Following previous work (<span class=\"cite\">Rutledge et al., 2014</span>; <span class=\"cite\">Rutledge et al., 2016</span>), we modelled the variations in momentary well-being (happiness ratings) using computational models that considered the influence of recent reward expectations, prediction errors resulting from those expectations, and differences in rewards obtained by the game partners. All models contained separate terms for certain rewards, expected value for lotteries and reward prediction errors, with influences that decayed exponentially over trials. We ran five models: (1) a ‘Basic’ model (Equation 4; the winning model in <span class=\"cite\">Rutledge et al., 2014</span> in which there was no <i>Social</i> condition) with certain rewards (<i>CR</i>), expected value of chosen lotteries (<i>EV</i>), participant’s reward prediction errors (<i>sRPE</i>, where s stands for ‘self’) and a forgetting factor that makes events in more recent trials more influential than those in earlier trials (gamma); (2) an ‘Inequality’ model, in which one regressor modelled both disadvantageous and advantageous inequality (Equation 5); (3) a ‘Guilt-envy’ model, the winning model in the social task in <span class=\"cite\">Rutledge et al., 2016</span>, which contains separate additional regressors for disadvantageous and advantageous inequality (Equation 6); (4) a ‘Responsibility’ model in which in addition to the participant’s reward prediction errors (<i>sRPE</i>) we also modelled the partner’s reward prediction errors (<i>pRPE</i>, where p stands for partner), with a distinction between <i>pRPE</i>s resulting from participant choices (<i>social_pRPE</i>) and partner choices (<i>partner_pRPE</i>) (Equation 7); and (5) a ‘Responsibility Redux’ model identical to the precedent except for the absence of <i>partner_pRPE</i>s, as we realized that this regressor explained little variance (Equation 8). The Basic, Inequality and Guilt-envy models are identical to those used in <span class=\"cite\">Rutledge et al., 2016</span>.",
+           "text": "Following previous work (Rutledge et al., 2014; Rutledge et al., 2016), we modelled the variations in momentary well-being (happiness ratings) using computational models that considered the influence of recent reward expectations, prediction errors resulting from those expectations, and differences in rewards obtained by the game partners. All models contained separate terms for certain rewards, expected value for lotteries and reward prediction errors, with influences that decayed exponentially over trials. We ran five models: (1) a ‘Basic’ model (Equation 4; the winning model in Rutledge et al., 2014 in which there was no Social condition) with certain rewards (CR), expected value of chosen lotteries (EV), participant’s reward prediction errors (sRPE, where s stands for ‘self’) and a forgetting factor that makes events in more recent trials more influential than those in earlier trials (gamma); (2) an ‘Inequality’ model, in which one regressor modelled both disadvantageous and advantageous inequality (Equation 5); (3) a ‘Guilt-envy’ model, the winning model in the social task in Rutledge et al., 2016, which contains separate additional regressors for disadvantageous and advantageous inequality (Equation 6); (4) a ‘Responsibility’ model in which in addition to the participant’s reward prediction errors (sRPE) we also modelled the partner’s reward prediction errors (pRPE, where p stands for partner), with a distinction between pRPEs resulting from participant choices (social_pRPE) and partner choices (partner_pRPE) (Equation 7); and (5) a ‘Responsibility Redux’ model identical to the precedent except for the absence of partner_pRPEs, as we realized that this regressor explained little variance (Equation 8). The Basic, Inequality and Guilt-envy models are identical to those used in Rutledge et al., 2016."
+          },
+          {
+           "type": "p",
+           "html": "The equations of these models were as follows.",
+           "text": "The equations of these models were as follows."
+          },
+          {
+           "type": "p",
+           "html": "The equation for the Basic model was:",
+           "text": "The equation for the Basic model was:(4)Happiness(t)=w1∑j=1tγt−jCRj+w2∑j=1tγt−jEVj+w3∑j=1tγt−jsRPEj\\begin{document}$$\\displaystyle Happiness\\left (t\\right)=w_{1}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}CR_{j}+w_{2}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}EV_{j}+w_{3}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}sRPE_{j}$$\\end{document}"
+          },
+          {
+           "type": "p",
+           "html": "where <i>t</i> is trial number, <i>γ</i> is a forgetting factor (0 ≤ <i>γ</i> ≤ 1) that weighs events in more recent trials more heavily than events in earlier trials (exponential decay over time), and weights <i>w</i><sub>1</sub> to <i>w</i><sub>3</sub> capture the influence of the following different event types: <i>CR<sub>j</sub></i> is the certain reward received when the safe option was chosen instead of the lottery on trial <i>j</i>, <i>EV<sub>j</sub></i> is the average reward for the lottery if chosen on trial <i>j</i> and <i>sRPE<sub>j</sub></i> is the participant’s reward prediction error on trial <i>j</i> obtained as a result of choosing the lottery. Terms for unchosen options were set to zero. No constant term was used as ratings were <i>Z</i>-scored, resulting in a mean of the data of 0.",
+           "text": "where t is trial number, γ is a forgetting factor (0 ≤ γ ≤ 1) that weighs events in more recent trials more heavily than events in earlier trials (exponential decay over time), and weights w1 to w3 capture the influence of the following different event types: CRj is the certain reward received when the safe option was chosen instead of the lottery on trial j, EVj is the average reward for the lottery if chosen on trial j and sRPEj is the participant’s reward prediction error on trial j obtained as a result of choosing the lottery. Terms for unchosen options were set to zero. No constant term was used as ratings were Z-scored, resulting in a mean of the data of 0."
+          },
+          {
+           "type": "p",
+           "html": "As described above, we complemented the Basic model by adding terms representing additional influences on variations in participant happiness. Two models included regressors accounting for inequality, and two models included regressors accounting for partner reward prediction errors. The equation for the first of the inequality models, the ‘Inequality’ model, was as follows:",
+           "text": "As described above, we complemented the Basic model by adding terms representing additional influences on variations in participant happiness. Two models included regressors accounting for inequality, and two models included regressors accounting for partner reward prediction errors. The equation for the first of the inequality models, the ‘Inequality’ model, was as follows:(5)Happiness(t)=w1∑j=1tγt−jCRj+w2∑j=1tγt−jEVj+w3∑j=1tγt−jsRPEj+w4∑j=1tγt−jmax(|Sj−Pj|,0)j\\begin{document}$$\\displaystyle \\begin{array}{ll} Happiness\\left (t\\right)&=w_{1}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}CR_{j}+w_{2}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}EV_{j}+w_{3}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}sRPE_{j} \\\\ &+w_{4}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}\\mathrm{m}\\mathrm{a}\\mathrm{x} \\left (|S_{j}-P_{j}|, 0\\right)_{j}\\end{array}$$\\end{document}"
+          },
+          {
+           "type": "p",
+           "html": "Here, <i>S<sub>j</sub></i> and <i>P<sub>j</sub></i> are the rewards received by the participant and by their experiment partner, respectively, and thus <i>w</i><sub>4</sub> relates to the influence of inequality of any kind on the variation in happiness. The equation of the ‘Guilt-envy’ model was as follows:",
+           "text": "Here, Sj and Pj are the rewards received by the participant and by their experiment partner, respectively, and thus w4 relates to the influence of inequality of any kind on the variation in happiness. The equation of the ‘Guilt-envy’ model was as follows:(6)Happiness(t)=w1∑j=1tγt−jCRj+w2∑j=1tγt−jEVj+w3∑j=1tγt−jsRPEj+w4∑j=1tγt−jmax(Sj−Pj,0)j+w5∑j=1tγt−jmax(Pj−Sj,0)j\\begin{document}$$\\displaystyle \\begin{array}{ll} Happiness\\left (t\\right) &=w_{1}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}CR_{j}+w_{2}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}EV_{j}+w_{3}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}sRPE_{j} \\\\ &+w_{4}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}\\mathrm{m}\\mathrm{a}\\mathrm{x} \\left (S_{j}-P_{j}, 0\\right)_{j}+w_{5}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}\\mathrm{m}\\mathrm{a}\\mathrm{x} \\left (P_{j}-S_{j}, 0\\right)_{j}\\end{array}$$\\end{document}"
+          },
+          {
+           "type": "p",
+           "html": "Here, <i>w</i><sub>4</sub> relates to advantageous inequality and <i>w</i><sub>5</sub> relates to disadvantageous inequality, modelled separately. The next two models included terms relating to the partner’s RPE.",
+           "text": "Here, w4 relates to advantageous inequality and w5 relates to disadvantageous inequality, modelled separately. The next two models included terms relating to the partner’s RPE."
+          },
+          {
+           "type": "p",
+           "html": "The equation for the ‘Responsibility’ model was:",
+           "text": "The equation for the ‘Responsibility’ model was:(7)Happiness(t)=w1∑j=1tγt−jCRj+w2∑j=1tγt−jEVj+w3∑j=1tγt−jsRPEj+w4∑j=1tγt−jsocial_pRPEj+w5∑j=1tγt−jpartner_pRPEj\\begin{document}$$\\displaystyle \\begin{array}{ll} Happiness\\left (t\\right) &=w_{1}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}CR_{j}+w_{2}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}EV_{j}+w_{3}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}sRPE_{j} \\\\ &+w_{4}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}social\\_ pRPE_{j}+ w_{5}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}partner\\_ pRPE_{j}\\end{array}$$\\end{document}"
+          },
+          {
+           "type": "p",
+           "html": "In this model, the influence of the partner’s RPE resulting from participant choices in the <i>Social</i> condition (<i>social_pRPE</i>) is modelled separately from the influence of the partner’s RPE resulting from partner choices, in the <i>Partner</i> condition (<i>partner_pRPE</i>). The equation for the last model, ‘Responsibility Redux’, was the same as for the Responsibility model (Equation 7), except that we omitted the regressor coding partner’s RPE resulting from partner choices, as they had a smaller impact on participant happiness. This led to the following equation:",
+           "text": "In this model, the influence of the partner’s RPE resulting from participant choices in the Social condition (social_pRPE) is modelled separately from the influence of the partner’s RPE resulting from partner choices, in the Partner condition (partner_pRPE). The equation for the last model, ‘Responsibility Redux’, was the same as for the Responsibility model (Equation 7), except that we omitted the regressor coding partner’s RPE resulting from partner choices, as they had a smaller impact on participant happiness. This led to the following equation:(8)Happiness(t)=w1∑j=1tγt−jCRj+w2∑j=1tγt−jEVj+w3∑j=1tγt−jsRPEj+w4∑j=1tγt−jsocial_pRPEj\\begin{document}$$\\displaystyle \\begin{array}{ll} Happiness\\left (t\\right)&=w_{1}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}CR_{j}+w_{2}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}EV_{j}+w_{3}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}sRPE_{j}\\\\&+w_{4}\\sum \\limits_{j=1}^{t}\\gamma ^{t-j}social\\_ pRPE_{j}\\end{array}$$\\end{document}"
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-9",
+      "type": "",
+      "title": "Likelihood ratio test",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "To formally assess which of our models fitted the data best, we supplemented the AIC, BIC, <i>R</i><sup>2</sup> and adjusted <i>R</i><sup>2</sup> values reported in <a class=\"xref\" href=\"#table1\">Table 1</a> with a series of <i>likelihood ratio tests</i>: we compared pair-wise the likelihoods of the <i>Responsibility</i> model given the data to the likelihoods of all the other models. The equation for this test was the following:",
+        "text": "To formally assess which of our models fitted the data best, we supplemented the AIC, BIC, R2 and adjusted R2 values reported in Table 1 with a series of likelihood ratio tests: we compared pair-wise the likelihoods of the Responsibility model given the data to the likelihoods of all the other models. The equation for this test was the following:LR=2∗log(L0/L1);\\begin{document}$$\\displaystyle LR =2^* {\\rm log} (L_0/L_1);$$\\end{document}"
+       },
+       {
+        "type": "p",
+        "html": "where <i>L</i><sub>0</sub> and <i>L</i><sub>1</sub> are, respectively, the likelihoods of the simpler and more complex model. The likelihood ratio follows a Chi-square distribution, with degrees of freedom equal to the number of extra parameters in the more complex model. The equation simplifies to:",
+        "text": "where L0 and L1 are, respectively, the likelihoods of the simpler and more complex model. The likelihood ratio follows a Chi-square distribution, with degrees of freedom equal to the number of extra parameters in the more complex model. The equation simplifies to:(9)LR=−2∗(log(L1)−log(L0))\\begin{document}$$\\displaystyle LR = -2^* ({\\rm log} (L_1)-{\\rm log} (L_0))$$\\end{document}"
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-10",
+      "type": "",
+      "title": "Parameter recovery",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Stability of the estimated parameters of these models was evaluated by attempting to recover parameters from synthetic data created using each participant’s real estimated parameters. After fitting each participant’s momentary happiness data (see above), we synthesized new momentary happiness data based on each participant’s estimated parameters, added 1SD of noise to the happiness data, fitted the model to these synthetic data, and repeated this procedure 10 times, for both studies. We then compared these new estimated parameters to the actual parameters from which the synthetic data were generated, as follows: For each parameter, we calculated the mean of each participant’s recovered parameters and regressed these means on the participants’ actual parameters (see <a class=\"xref\" href=\"#fig3s1\">Figure 3—figure supplement 1</a>). The results show that the estimated parameters could be reliably recovered from noisy synthetic data.",
+        "text": "Stability of the estimated parameters of these models was evaluated by attempting to recover parameters from synthetic data created using each participant’s real estimated parameters. After fitting each participant’s momentary happiness data (see above), we synthesized new momentary happiness data based on each participant’s estimated parameters, added 1SD of noise to the happiness data, fitted the model to these synthetic data, and repeated this procedure 10 times, for both studies. We then compared these new estimated parameters to the actual parameters from which the synthetic data were generated, as follows: For each parameter, we calculated the mean of each participant’s recovered parameters and regressed these means on the participants’ actual parameters (see Figure 3—figure supplement 1). The results show that the estimated parameters could be reliably recovered from noisy synthetic data."
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s4-10-1",
+         "type": "",
+         "title": "LMM regressions of happiness variations",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "To better understand the impact of responsibility for outcomes of risky social choices on happiness, we focused on the happiness reported after outcomes of lottery choices in <i>Social</i> and <i>Partner</i> trials and evaluated the impact of who chose the lottery. We performed this analysis using a mixed-effects linear regression analysis with residual ε<i><sub>ij</sub></i> ∼ <i>N</i>(0, <i>σε</i><sup>2</sup>) and subject-specific random intercepts <i>uj</i> ∼ <i>N</i>(0, <i>σu</i><sup>2</sup>). Specifically, we regressed <i>Z</i>-scored momentary happiness ratings reported after these outcomes on dummy variables representing occurrences (coded as 1 if event present, 0 otherwise) of the participant receiving the high lottery outcome, the partner receiving the high lottery outcome, the participant having chosen the lottery, and interactions between these terms.",
+           "text": "To better understand the impact of responsibility for outcomes of risky social choices on happiness, we focused on the happiness reported after outcomes of lottery choices in Social and Partner trials and evaluated the impact of who chose the lottery. We performed this analysis using a mixed-effects linear regression analysis with residual εij ∼ N(0, σε2) and subject-specific random intercepts uj ∼ N(0, σu2). Specifically, we regressed Z-scored momentary happiness ratings reported after these outcomes on dummy variables representing occurrences (coded as 1 if event present, 0 otherwise) of the participant receiving the high lottery outcome, the partner receiving the high lottery outcome, the participant having chosen the lottery, and interactions between these terms.(10)Happiness(t)=1+β1sHighij+β2pHighij+β3sDecij+β4sHigh∗pHighij+β5sHigh∗sDecij+β6pHigh∗sDecij+uj+εij.\\begin{document}$$\\displaystyle \\begin{array}{ll}{\\rm Happiness(t)}&=1 + \\beta_1sHigh_{ij} + \\beta_2pHigh_{ij} + \\beta_3sDec_{ij} + \\beta_4sHigh^*pHigh_{ij} + \\beta_5sHigh^*sDec_{ij} \\\\ & \\qquad + \\beta_6pHigh^*sDec_{ij} +uj + \\varepsilon ij.\\end{array}$$\\end{document}"
+          },
+          {
+           "type": "p",
+           "html": "<i>sHigh</i> and <i>pHigh</i> had a value of 1 if the participant or the partner (respectively) received the high lottery outcome and 0 otherwise, <i>sDec</i> had a value of 1 if the participant chose the lottery. All models were estimated for Studies 1 and 2 separately, using the <i>lme4 package in R</i>. In both studies, the model reported in Equation 10 fitted the data significantly better (p &lt; 2e−5) than the simpler models without interactions (higher total and adjusted <i>R</i><sup>2</sup>, see <a class=\"xref\" href=\"#app1table2\">Appendix 1—table 2</a>), but not significantly worse than the model with all interactions (p &gt; 0.5; tested with the ANOVA function in R). The regressors of the different models tested and their relative effects are reported in <a class=\"xref\" href=\"#app1table2\">Appendix 1—table 2</a>.",
+           "text": "sHigh and pHigh had a value of 1 if the participant or the partner (respectively) received the high lottery outcome and 0 otherwise, sDec had a value of 1 if the participant chose the lottery. All models were estimated for Studies 1 and 2 separately, using the lme4 package in R. In both studies, the model reported in Equation 10 fitted the data significantly better (p < 2e−5) than the simpler models without interactions (higher total and adjusted R2, see Appendix 1—table 2), but not significantly worse than the model with all interactions (p > 0.5; tested with the ANOVA function in R). The regressors of the different models tested and their relative effects are reported in Appendix 1—table 2."
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-11",
+      "type": "",
+      "title": "fMRI data acquisition and pre-processing",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "Imaging data were collected on a 3T Siemens TRIO MRI system (Siemens AG, Erlangen, Germany) with a Siemens 32-channel head coil. Functional data were acquired using a T2* echo-planar imaging (EPI) BOLD sequence, with a repetition time (TR) of 2500 ms, an echo time (TE) of 30 ms, 37 slices with voxel sizes of 2 × 2 × 3 mm, a flip angle of 90°, a field of view of 192 mm and PAT two acceleration. To exclude participants with apparent brain pathologies and facilitate normalization of the functional data, a high-resolution T1-weighted structural image was acquired, with a TR of 1660 ms, a TE of 2540 ms, 208 slices with voxel sizes of 0.8 × 0.8 × 0.8 mm and a field of view of 256 mm. Data were then pre-processed and analysed as in previous studies (e.g., <span class=\"cite\">Schultz et al., 2019</span>) using standard procedures in SPM12. The first five volumes of each functional time series were discarded to allow for T1 signal equilibration. The structural image of each participant was coregistered with the mean functional image of that participant. Functional images were corrected for head movement between scans by a 6-parameter affine realignment to the first image of the time-series and then re-realigned to the mean of all images. The structural scan of each participant was spatially normalized to the current Montreal Neurological Institute template (MNI305) by segmentation and non-linear warping to reference tissue probability maps in MNI space, and the resulting normalization parameters were applied to all functional images which were then resampled at 2 × 2 × 2 mm voxel size, then smoothed using an 8 mm full width at half maximum Gaussian kernel. Time series were de-trended by the application of a high-pass filter (cut-off period, 128 s).",
+        "text": "Imaging data were collected on a 3T Siemens TRIO MRI system (Siemens AG, Erlangen, Germany) with a Siemens 32-channel head coil. Functional data were acquired using a T2* echo-planar imaging (EPI) BOLD sequence, with a repetition time (TR) of 2500 ms, an echo time (TE) of 30 ms, 37 slices with voxel sizes of 2 × 2 × 3 mm, a flip angle of 90°, a field of view of 192 mm and PAT two acceleration. To exclude participants with apparent brain pathologies and facilitate normalization of the functional data, a high-resolution T1-weighted structural image was acquired, with a TR of 1660 ms, a TE of 2540 ms, 208 slices with voxel sizes of 0.8 × 0.8 × 0.8 mm and a field of view of 256 mm. Data were then pre-processed and analysed as in previous studies (e.g., Schultz et al., 2019) using standard procedures in SPM12. The first five volumes of each functional time series were discarded to allow for T1 signal equilibration. The structural image of each participant was coregistered with the mean functional image of that participant. Functional images were corrected for head movement between scans by a 6-parameter affine realignment to the first image of the time-series and then re-realigned to the mean of all images. The structural scan of each participant was spatially normalized to the current Montreal Neurological Institute template (MNI305) by segmentation and non-linear warping to reference tissue probability maps in MNI space, and the resulting normalization parameters were applied to all functional images which were then resampled at 2 × 2 × 2 mm voxel size, then smoothed using an 8 mm full width at half maximum Gaussian kernel. Time series were de-trended by the application of a high-pass filter (cut-off period, 128 s)."
+       }
+      ]
+     }
+    },
+    {
+     "type": "sec",
+     "sec": {
+      "id": "s4-12",
+      "type": "",
+      "title": "fMRI data analysis",
+      "depth": 2,
+      "blocks": [
+       {
+        "type": "p",
+        "html": "The pre-processed functional data were analysed using a standard two-stage approach based on the general linear model (GLM) implemented in SPM12 running in MATLAB, with corrections for multiple comparisons. Individual participants’ data were modelled with fixed effects models, and their summary data were entered in random effects models for group statistics and inferences at the population level.",
+        "text": "The pre-processed functional data were analysed using a standard two-stage approach based on the general linear model (GLM) implemented in SPM12 running in MATLAB, with corrections for multiple comparisons. Individual participants’ data were modelled with fixed effects models, and their summary data were entered in random effects models for group statistics and inferences at the population level."
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s4-12-1",
+         "type": "",
+         "title": "Fixed-effects models",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "The fixed effects models implemented a mass univariate analysis applied to the pre-processed data. The first GLM (GLM1) included the following event types for each session: presentation of choice options, safe choice, risky choice (=lottery), receipt of outcome of safe option, all modelled separately for the <i>Social</i>, <i>Partner</i>, and <i>Solo</i> conditions; then receipt of high lottery outcome by the partner, separately coded for the <i>Social</i> and <i>Partner</i> conditions, and receipt of high lottery outcome by the participant; then receipt of low lottery outcome by the partner, separately coded for the <i>Social</i> and <i>Partner</i> conditions, and receipt of low lottery outcome by the participant; a final regressor modelled the button presses that occurred when reporting momentary happiness. All events were modelled as stick functions at the time of occurrence and convolved by SPM using the canonical haemodynamic function. In addition, we created another GLM (GLM2) with regressors designed to identify brain regions whose activation reflected the variables of the best-fitting computational model (see above). This model contained regressors coding the receipt of certain rewards (<i>CR</i>), the expected value of the chosen option (<i>EV</i>), the participant’s reward prediction error (<i>sRPE</i>), the partner RPE resulting from decisions made by the participant (<i>social_pRPE</i>) and the partner RPE resulting from decisions made by the partner (<i>partner_pRPE</i>). Those regressors were applied as follows to each experimental session of each participant: (1) fitting the computational model to the momentary happiness data; (2) creation of a series of stick functions representing the time of occurrence of the modelled events during the scan, with stick magnitude determined by the fitted value calculated by the model; and (3) convolution of the series of stick functions with the canonical BOLD function (as implemented in SPM). The 5 computational regressors were entered as covariates into each participant’s model, which also contained one regressor modelling the button presses that occurred when reporting momentary happiness. All GLMs contained six motion-correction parameters included as regressors of no-interest to account for motion-related artefacts. Regression coefficients (parameter estimates) were estimated for each regressor in each voxel of each participant’s brain.",
+           "text": "The fixed effects models implemented a mass univariate analysis applied to the pre-processed data. The first GLM (GLM1) included the following event types for each session: presentation of choice options, safe choice, risky choice (=lottery), receipt of outcome of safe option, all modelled separately for the Social, Partner, and Solo conditions; then receipt of high lottery outcome by the partner, separately coded for the Social and Partner conditions, and receipt of high lottery outcome by the participant; then receipt of low lottery outcome by the partner, separately coded for the Social and Partner conditions, and receipt of low lottery outcome by the participant; a final regressor modelled the button presses that occurred when reporting momentary happiness. All events were modelled as stick functions at the time of occurrence and convolved by SPM using the canonical haemodynamic function. In addition, we created another GLM (GLM2) with regressors designed to identify brain regions whose activation reflected the variables of the best-fitting computational model (see above). This model contained regressors coding the receipt of certain rewards (CR), the expected value of the chosen option (EV), the participant’s reward prediction error (sRPE), the partner RPE resulting from decisions made by the participant (social_pRPE) and the partner RPE resulting from decisions made by the partner (partner_pRPE). Those regressors were applied as follows to each experimental session of each participant: (1) fitting the computational model to the momentary happiness data; (2) creation of a series of stick functions representing the time of occurrence of the modelled events during the scan, with stick magnitude determined by the fitted value calculated by the model; and (3) convolution of the series of stick functions with the canonical BOLD function (as implemented in SPM). The 5 computational regressors were entered as covariates into each participant’s model, which also contained one regressor modelling the button presses that occurred when reporting momentary happiness. All GLMs contained six motion-correction parameters included as regressors of no-interest to account for motion-related artefacts. Regression coefficients (parameter estimates) were estimated for each regressor in each voxel of each participant’s brain."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s4-12-2",
+         "type": "",
+         "title": "PPI analysis",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "We used the gPPI toolbox (<span class=\"cite\">McLaren et al., 2012</span>) for SPM to run seed-to-voxel functional connectivity analyses. We ran two models for each participant, both based on GLM1, with the following seeds: the left insula cluster more sensitive to the outcomes of <i>Risky</i> vs<i>. Safe</i> choices, yielding GLM3 (see <a class=\"xref\" href=\"#fig4\">Figure 4D, E</a>), and the left STS cluster responding more to <i>social_pRPE</i> than <i>partner_pRPE</i>, yielding GLM4 (<a class=\"xref\" href=\"#fig4\">Figure 4H</a>). Seeds were identical for all participants. PPI models thus contained the same regressors as GLM1, plus the interaction between the first eigenvariate of the signal in the seed region and the regressors coding the experimental conditions of interest: <i>Safe</i> and <i>Risky</i> choice in <i>Social</i>, <i>Partner</i> and <i>Solo</i> conditions.",
+           "text": "We used the gPPI toolbox (McLaren et al., 2012) for SPM to run seed-to-voxel functional connectivity analyses. We ran two models for each participant, both based on GLM1, with the following seeds: the left insula cluster more sensitive to the outcomes of Risky vs. Safe choices, yielding GLM3 (see Figure 4D, E), and the left STS cluster responding more to social_pRPE than partner_pRPE, yielding GLM4 (Figure 4H). Seeds were identical for all participants. PPI models thus contained the same regressors as GLM1, plus the interaction between the first eigenvariate of the signal in the seed region and the regressors coding the experimental conditions of interest: Safe and Risky choice in Social, Partner and Solo conditions."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s4-12-3",
+         "type": "",
+         "title": "Random-effects models",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "Individual parameter estimate maps of the responses to the experimental conditions were assessed in random-effects tests to evaluate effects at the level of the group of participants. These tests were second-level models based on individual parameter estimate maps. We tested six models: a full factorial model to investigate the response during decisions [factors <i>Choice</i> (<i>Safe</i> or <i>Risky</i>) and <i>Condition</i> (<i>Social</i> or <i>Solo</i>), based on GLM1 estimate maps]; a full factorial model to investigate the response during the receipt of outcomes [factors <i>Outcome</i> (<i>Safe</i>, <i>HighOutcome</i>, or <i>LowOutcome</i>) and <i>Condition</i> (<i>Social</i>, <i>Partner</i>, or <i>Solo</i>), based on GLM1 estimate maps]; a paired <i>t</i>-test contrasting negative lottery outcomes for the partner resulting from participant or partner choices (based on GLM1 estimate maps); a model to investigate the response to the computational regressors (<i>CR</i>, <i>EV</i>, <i>sRPE</i>, <i>social_pRPE</i>, and <i>social_pRPE</i>, based on GLM2 estimate maps); and two full factorial models to investigate functional connectivity during decisions [factors <i>Choice</i> (<i>Safe</i> or <i>Risky</i>) and <i>Condition</i> (<i>Social</i> or <i>Solo</i>), based on estimate maps of GLM3 and GLM4].",
+           "text": "Individual parameter estimate maps of the responses to the experimental conditions were assessed in random-effects tests to evaluate effects at the level of the group of participants. These tests were second-level models based on individual parameter estimate maps. We tested six models: a full factorial model to investigate the response during decisions [factors Choice (Safe or Risky) and Condition (Social or Solo), based on GLM1 estimate maps]; a full factorial model to investigate the response during the receipt of outcomes [factors Outcome (Safe, HighOutcome, or LowOutcome) and Condition (Social, Partner, or Solo), based on GLM1 estimate maps]; a paired t-test contrasting negative lottery outcomes for the partner resulting from participant or partner choices (based on GLM1 estimate maps); a model to investigate the response to the computational regressors (CR, EV, sRPE, social_pRPE, and social_pRPE, based on GLM2 estimate maps); and two full factorial models to investigate functional connectivity during decisions [factors Choice (Safe or Risky) and Condition (Social or Solo), based on estimate maps of GLM3 and GLM4]."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s4-12-4",
+         "type": "",
+         "title": "Linear mixed models",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "Similar to the behavioural data, we analysed GLM1 parameter estimates from voxels of specific regions of interest (see Results) using mixed-effects linear regressions with residual ε<i><sub>ij</sub></i> ∼ <i>N</i>(0, <i>σε</i><sup>2</sup>) and subject-specific random effects <i>uj</i> ∼ <i>N</i>(0, <i>σu</i><sup>2</sup>). These models were implemented in Matlab and fitted with the fitlme.m function using restricted maximum likelihood estimation. We regressed parameter estimates on dummy variables representing variables of interest. For responses during the decision phase of the experiment, our models included factors <i>Choice</i> (<i>Safe</i> or <i>Risky</i>), <i>Condition</i> (<i>Social</i>, <i>Partner</i>, or <i>Solo</i>), <i>Run</i> (run one or two), and <i>ROI</i>, with all interactions. For responses during the outcome phase, our models included the factors <i>Social</i> (value of 1 for the <i>Social</i> condition and 0 for the <i>Partner</i> condition), <i>LowOutcome</i> (value of 1 for <i>Low lottery outcome</i> and 0 for <i>High lottery outcome)</i>, <i>Run</i>, with all interactions. Models without the factor <i>Run</i> were tested as well, and the best-fitting models were tested further. In all models, <i>Subject</i> was the only random factor (random intercept). To better understand significant interaction effects, we ran subsequent analyses on contrasts of parameter estimates (see Results and Appendix 1).",
+           "text": "Similar to the behavioural data, we analysed GLM1 parameter estimates from voxels of specific regions of interest (see Results) using mixed-effects linear regressions with residual εij ∼ N(0, σε2) and subject-specific random effects uj ∼ N(0, σu2). These models were implemented in Matlab and fitted with the fitlme.m function using restricted maximum likelihood estimation. We regressed parameter estimates on dummy variables representing variables of interest. For responses during the decision phase of the experiment, our models included factors Choice (Safe or Risky), Condition (Social, Partner, or Solo), Run (run one or two), and ROI, with all interactions. For responses during the outcome phase, our models included the factors Social (value of 1 for the Social condition and 0 for the Partner condition), LowOutcome (value of 1 for Low lottery outcome and 0 for High lottery outcome), Run, with all interactions. Models without the factor Run were tested as well, and the best-fitting models were tested further. In all models, Subject was the only random factor (random intercept). To better understand significant interaction effects, we ran subsequent analyses on contrasts of parameter estimates (see Results and Appendix 1)."
+          }
+         ]
+        }
+       },
+       {
+        "type": "sec",
+        "sec": {
+         "id": "s4-12-5",
+         "type": "",
+         "title": "Thresholding",
+         "depth": 3,
+         "blocks": [
+          {
+           "type": "p",
+           "html": "All clusters reported survive a significance threshold of p &lt; 0.05 with family-wise error correction for multiple comparisons across the whole brain or a smaller volume when explicitly mentioned, based on an uncorrected voxel-wise (cluster-forming) threshold of <i>p</i> &lt; 0.001.",
+           "text": "All clusters reported survive a significance threshold of p < 0.05 with family-wise error correction for multiple comparisons across the whole brain or a smaller volume when explicitly mentioned, based on an uncorrected voxel-wise (cluster-forming) threshold of p < 0.001."
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "figures": [
+  {
+   "id": "fig1",
+   "num": "1",
+   "label": "Figure 1",
+   "title": "Experimental design.",
+   "caption": "<p>In every trial, participants were presented with pairs of monetary options (a safe and a risky option; the risky option was a lottery with equally probable high and low outcomes). There were three conditions: a non-social ‘Solo’ condition, in which the participant’s choice led to an outcome just for themselves (left panel); and two conditions in which choices were made by the participant (‘Social’ condition) or by their partner (‘Partner’ condition) and led to outcomes affecting both players (right panel). Importantly, selecting the risky option in the social or partner conditions led to the lottery being played out independently for both players; that is, participant and partner could receive the high or low outcome independently from each other (coloured boxes). Selecting the safe option led to both players receiving an equal outcome.</p>",
+   "supplement": false,
+   "src": "https://iiif.elifesciences.org/lax/105391%2Felife-105391-fig1-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig2",
+   "num": "2",
+   "label": "Figure 2",
+   "title": "Participant choices in Studies 1 (outside fMRI, N = 40) and 2 (inside fMRI, N = 44).",
+   "caption": "<p>(<b>A, D</b>) The probability of choosing the risky option (lottery) in both Solo and Social conditions is well explained by the difference in expected value of the risky and safe choice options (EV<sub>risky</sub> – <i>V</i><sub>safe</sub>). Participants chose the risky option slightly more often in the Solo condition than in the Social condition in Study 1 (<b>A</b>) but not in Study 2 (<b>D</b>). Lines are predicted values of a logit linear mixed regression model fitted to the choice data (see Results). Error areas indicate 95% pointwise confidence intervals for the predicted values. Triangles indicate individual average choice proportions binned by EV<sub>risky</sub> – <i>V</i><sub>safe</sub> value; size of triangle reflects the number of participants contributing to a datapoint. Blue upward-pointing and red downward-pointing triangles are data from the Solo and Social conditions, respectively. (<b>B, E</b>) Risk premiums did not differ between Solo and Social conditions. (<b>C, F</b>) Values of the risk aversion parameter ρ in the Solo and Social conditions were broadly consistent with Risk premium values, but showed that participants were slightly more risk averse in the Social than in the Solo condition in Study 1 only (see Results). In panels B, C, E and F, grey lines and markers show individual data, red lines show means with 95% confidence intervals about the means, and grey areas are kernel density plots representing the distribution of the data.</p>",
+   "supplement": false,
+   "src": "https://iiif.elifesciences.org/lax/105391%2Felife-105391-fig2-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig3",
+   "num": "3",
+   "label": "Figure 3",
+   "title": "Participant momentary happiness in Studies 1 (A–D) and 2 (E–H).",
+   "caption": "<p>Happiness varied with rewards received by the participant (<b>A, E</b>) and by the partner (<b>B, F</b>). Each dot is one trial; data are pooled across participants. Lines are fitted regression lines. A computational model taking into account expected, previous and current rewards, reward prediction errors for both participant and partner, and decision-maker (Responsibility Redux model, see Results) predicted the variations in participants’ momentary happiness well (<b>C, G</b>, and <a class=\"xref\" href=\"#table1\">Table 1</a>). Changes in momentary happiness after lottery choices in Social and Partner conditions varied with lottery outcome and decision-maker (<b>D, H</b>). Data were binned according to outcome for each participant and decision-maker (Social = participant chose the lottery, Partner = partner chose the lottery). Crucially, responsibility for low lottery outcomes for the partner decreased participant happiness more than the same outcomes following partner choices (see Results), which fits the definition of interpersonal guilt. In D and H, dots are individual datapoints, the bar indicates the mean, the error bars are 95% confidence intervals about the mean, and the stars indicate the significance of the ‘guilt effect’ (see text): ***p &lt; 0.001; **p &lt; 0.01.</p>",
+   "supplement": false,
+   "src": "https://iiif.elifesciences.org/lax/105391%2Felife-105391-fig3-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig3s1",
+   "num": "3",
+   "label": "Figure 3—figure supplement 1",
+   "title": "Parameter recovery for Responsibility Redux model.",
+   "caption": "<p>Stability of the estimated parameters of the temporal difference models was evaluated by attempting to recover parameters from synthetic data created using each participant’s real estimated parameters. After fitting each participant’s momentary happiness data (see above), we synthesized new momentary happiness data based on each participant’s estimated parameters, added 1SD of noise to the happiness data, fitted the model to these synthetic data, and repeated this procedure 10 times, for both studies. We then compared these new estimated parameters to the actual parameters from which the synthetic data were generated. For each parameter, we calculated the mean of each participant’s recovered parameters and regressed these means on the participants’ actual parameters (black dots and grey regression line, with 95% confidence interval). Each coloured dot is one recovered parameter value; different colours represent different participants.</p>",
+   "supplement": true,
+   "src": "https://iiif.elifesciences.org/lax/105391%2Felife-105391-fig3-figsupp1-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig4",
+   "num": "4",
+   "label": "Figure 4",
+   "title": "BOLD responses.",
+   "caption": "<p>(<b>A</b>) Regions showing a greater response when participants chose the risky (lottery) rather than the safe option, irrespective of Social or Solo condition. (<b>B</b>) Regions showing a greater response when participants chose for both themselves and their partner rather than just for themselves (Social &gt; Solo). (<b>C</b>) Coefficients of linear mixed models (LMMs) indicate that two of these regions, precuneus and TPJ, were most active when participants chose the lottery in the Social condition. R–S indicates results of LMMs based on the Risky–Safe response difference. All coefficients and differences reported are significantly different from 0 (see <a class=\"xref\" href=\"#app1table4\">Appendix 1—table 4</a>). (<b>D</b>) Brain regions more active during receipt of the outcomes of lotteries than safe choices (all conditions). (<b>E</b>) Coefficients of LMMs indicated that insula ROIs (see D) mirrored the guilt effect observed in our behavioural data: voxels here responded more to low lottery outcomes (L) for the partner when these resulted from participant’s rather than the partner’s choices, even when responses to high outcomes were subtracted (L–H). All coefficients and differences reported are significantly different from 0 (see <a class=\"xref\" href=\"#app1table6\">Appendix 1—table 6</a>). (<b>F</b>) A mass-univariate, voxel-wise analysis showed a compatible result: A cluster of voxels within the left insula ROI showed higher responses to low lottery outcomes for the partner if these resulted from participant rather than partner choices. (<b>G</b>) Activation in bilateral ventral striatum explained by a computational model-based regressor coding participant rewards. (<b>H</b>) Within brain regions sensitive to outcomes of risky choices, one cluster in the left superior temporal sulcus region showed a higher response to partner reward prediction errors resulting from participant rather than partner choices. (<b>I</b>) Response in this cluster to the computational-model-based regressors coding participant reward prediction resulting from participant and partner choices, for both sessions of the experiment. All results shown survive thresholding at p &lt; 0.05 corrected for multiple comparisons at the cluster level, based on a voxel-wise uncorrected threshold of p &lt; 0.001. Colours in panels A–I indicate T values. In C and E, bars indicate the estimated coefficients. In C, E, and I, error bars are 95% confidence intervals.</p>",
+   "supplement": false,
+   "src": "https://iiif.elifesciences.org/lax/105391%2Felife-105391-fig4-v1.tif/full/1500,/0/default.jpg"
+  },
+  {
+   "id": "fig5",
+   "num": "5",
+   "label": "Figure 5",
+   "title": "Changes in functional connectivity between the left anterior insula (seed) and a cluster in the right inferior frontal gyrus at the time of the choice as a function of condition (Social vs. Solo) and choice (Risky or Safe).",
+   "caption": "<p>In the righthand panel, dots are data of individual participants, the markers represent means, and error bars indicate 95 confidence intervals about the mean.</p>",
+   "supplement": false,
+   "src": "/figures/gadeke-2026-guilt-insula/fig5.jpg"
+  },
+  {
+   "id": "fig5s1",
+   "num": "5",
+   "label": "Figure 5—figure supplement 1",
+   "title": "Functional connectivity with the left TD-model-defined superior temporal sulcus (STS; seed) during choices in Solo and Social conditions.",
+   "caption": "<p>Connectivity between the left STS (seed) and a cluster in the left inferior frontal gyrus that did not survive corrections for multiple tests, where connectivity with the left STS (the seed region) showed the opposite pattern: connectivity was highest when participants made Safe choices for themselves and Risky choices for both players (p<sub>uncorrected</sub> = 0.001, <i>T</i> = 4.44, <i>Z</i> = 4.30, 35 voxels, peak at MNI [–48 14 6]). In the righthand panel, dots are data of individual participants, the markers represent means, and error bars indicate 95 confidence intervals about the mean.</p>",
+   "supplement": true,
+   "src": "https://iiif.elifesciences.org/lax/105391%2Felife-105391-fig5-figsupp1-v1.tif/full/1500,/0/default.jpg"
+  }
+ ],
+ "tables": [
+  {
+   "id": "table1",
+   "label": "Table 1",
+   "title": "Fits of computational models to momentary happiness data.",
+   "caption": "",
+   "rows": [
+    [
+     {
+      "tag": "th",
+      "html": "Model",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "<i>N</i> param",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Mean <i>R</i><sup>2</sup>",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Mean <i>R</i><sup>2</sup>adj",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "BIC",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "AIC",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Study 1",
+      "colspan": "6"
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Basic",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "3",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.328",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.305",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<b>–1000</b>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–1399",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Inequality",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "4",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.346",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.316",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–916",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–1416",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Guilt-envy",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "5",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.354",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.316",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–785",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–1385",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Responsibility",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "5",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<b>0.370</b>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<b>0.333</b>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–866",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–1466",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Responsibility Redux",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "4",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.361",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.331",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–999",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<b>–1499</b>",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Study 2",
+      "colspan": "6"
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Basic",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "3",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.374",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.340",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–693",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–1062",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Inequality",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "4",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.394",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.350",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–620",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–1080",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Guilt-envy",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "5",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.405",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.350",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–491",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–1043",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Responsibility",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "5",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<b>0.433</b>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<b>0.380</b>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–616",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "–1168",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Responsibility Redux",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "4",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.422",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "0.379",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<b>–735</b>",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "<b>–1195</b>",
+      "colspan": null
+     }
+    ]
+   ]
+  },
+  {
+   "id": "keyresource",
+   "label": "Key resources table",
+   "title": "",
+   "caption": "",
+   "rows": [
+    [
+     {
+      "tag": "th",
+      "html": "Reagent type (species) or resource",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Designation",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Source or reference",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Identifiers",
+      "colspan": null
+     },
+     {
+      "tag": "th",
+      "html": "Additional information",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Software, algorithm",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "MATLAB",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "https://www.mathworks.com/products/matlab.html",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "RRID:SCR_001622",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Version R2016B and R2024A",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Software, algorithm",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Psychtoolbox",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "http://psychtoolbox.org",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "RRID:SCR_002881",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Software, algorithm",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "SPM",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "http://psychtoolbox.org",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "RRID:SCR_007037",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "SPM12 (7771)",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Software, algorithm",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "R",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "https://www.r-project.org",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "RRID:SCR_001905",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Version 4.2.1",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Software, algorithm",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "lme4",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "https://cran.r-project.org/package=lme4",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "RRID:SCR_015654",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Software, algorithm",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "JASP",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "https://jasp-stats.org",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "RRID:SCR_015823",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Version 0.16.1",
+      "colspan": null
+     }
+    ],
+    [
+     {
+      "tag": "td",
+      "html": "Software, algorithm",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "Measures of Effect Size Toolbox for Matlab",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "https://github.com/hhentschke/measures-of-effect-size-toolbox",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "RRID:SCR_014703",
+      "colspan": null
+     },
+     {
+      "tag": "td",
+      "html": "",
+      "colspan": null
+     }
+    ]
+   ]
+  }
+ ]
+}
