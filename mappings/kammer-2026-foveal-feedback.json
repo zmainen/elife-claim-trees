@@ -2,7 +2,7 @@
  "paper": "kammer-2026-foveal-feedback",
  "adjudicated": "2026-09-11",
  "by": "supplied:runs/kammer-2026-foveal-feedback/adjudication.answer.json",
- "note": "Verdicts for spans the mechanical match could not resolve. covered = a claim does account for it; gap = a real hole; not-an-assertion = the span states no result of its own. Each verdict carries `sha`, the fingerprint of the sentence it was made about; a verdict whose fingerprint no longer matches is discarded by `coverage` rather than reattached to text nobody judged.",
+ "note": "Verdicts for spans the mechanical match could not resolve. covered = a claim does account for it; gap = a real hole; not-an-assertion = the span states no result of its own. Every verdict carries `sha`, the fingerprint of the sentence it judged. A `gap` also carries `tree`, the fingerprint of which claims existed when it was judged, and a `covered` carries `claim_sha`, the wording of the claim it named — because a gap is a statement about the tree, and closing one is exactly the edit that used to leave the verdict standing over nothing. `coverage` discards a verdict whose fingerprints no longer match rather than applying a judgement nobody made about what is there now.",
  "spans": [
   {
    "uid": "results-003",
@@ -23,7 +23,8 @@
    "verdict": "covered",
    "claim": "foveal-v1-decodes-peripheral-saccade-target",
    "why": "The claim already specifies the four saccade targets as varying in shape and semantic category, which is exactly the stimulus set this panel depicts.",
-   "sha": "40f7e118"
+   "sha": "40f7e118",
+   "claim_sha": "f6f5df80"
   },
   {
    "uid": "results-021",
@@ -44,7 +45,8 @@
    "verdict": "covered",
    "claim": "decoding-shape-sensitive-not-semantic",
    "why": "The section heading states the shape-sensitive, category-insensitive result that this claim makes.",
-   "sha": "a2ece563"
+   "sha": "a2ece563",
+   "claim_sha": "72a4f6df"
   },
   {
    "uid": "results-048",
@@ -72,14 +74,16 @@
    "verdict": "gap",
    "claim": null,
    "why": "No claim carries this null: the tree states the IPS foveal effect and the FEF/LO non-significance, but never that peripheral decoding was unrelated to activity in any ROI.",
-   "sha": "5c4df3c3"
+   "sha": "5c4df3c3",
+   "tree": "f5b9ef57"
   },
   {
    "uid": "results-078",
    "verdict": "gap",
    "claim": null,
    "why": "The tree has no claim ruling out global brain fluctuations or signal-to-noise as explanations of the parametric modulation effects.",
-   "sha": "424097a9"
+   "sha": "424097a9",
+   "tree": "f5b9ef57"
   },
   {
    "uid": "results-080",
@@ -107,7 +111,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "The control-condition null for peripheral decoding across FEF, IPS and LO is reported nowhere in the claim tree.",
-   "sha": "dc5e84b3"
+   "sha": "dc5e84b3",
+   "tree": "f5b9ef57"
   },
   {
    "uid": "captions-020",
@@ -149,7 +154,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "This caption is one of the only places the control-condition peripheral-decoding null across all three ROIs is reported, and no claim states it.",
-   "sha": "dc5e84b3"
+   "sha": "dc5e84b3",
+   "tree": "f5b9ef57"
   }
  ]
 }

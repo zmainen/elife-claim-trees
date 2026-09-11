@@ -2,7 +2,7 @@
  "paper": "ejdrup-2026-dopamine",
  "adjudicated": "2026-09-11",
  "by": "supplied:runs/ejdrup-2026-dopamine/adjudication.answer.json",
- "note": "Verdicts for spans the mechanical match could not resolve. covered = a claim does account for it; gap = a real hole; not-an-assertion = the span states no result of its own. Each verdict carries `sha`, the fingerprint of the sentence it was made about; a verdict whose fingerprint no longer matches is discarded by `coverage` rather than reattached to text nobody judged.",
+ "note": "Verdicts for spans the mechanical match could not resolve. covered = a claim does account for it; gap = a real hole; not-an-assertion = the span states no result of its own. Every verdict carries `sha`, the fingerprint of the sentence it judged. A `gap` also carries `tree`, the fingerprint of which claims existed when it was judged, and a `covered` carries `claim_sha`, the wording of the claim it named — because a gap is a statement about the tree, and closing one is exactly the edit that used to leave the verdict standing over nothing. `coverage` discards a verdict whose fingerprints no longer match rather than applying a judgement nobody made about what is there now.",
  "spans": [
   {
    "uid": "results-002",
@@ -16,21 +16,24 @@
    "verdict": "gap",
    "claim": null,
    "why": "No claim records what the volume-averaged DA concentration in DS looks like during pacemaker activity, only how the spatial distribution is structured.",
-   "sha": "73dc1567"
+   "sha": "73dc1567",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-025",
    "verdict": "gap",
    "claim": null,
    "why": "The simulated mean response to a single synchronous release event is a result no claim in the tree states.",
-   "sha": "49c14cfa"
+   "sha": "49c14cfa",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-027",
    "verdict": "gap",
    "claim": null,
    "why": "The model's predicted FSCV signal for a single release event is not recorded by any claim; the tree's FSCV claim covers only the 10/30/60 Hz May and Wightman replication.",
-   "sha": "dcc76b5c"
+   "sha": "dcc76b5c",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-035",
@@ -58,7 +61,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "The convergence of concentration percentiles with simulation diameter is a validation result no claim in the tree captures.",
-   "sha": "39978f41"
+   "sha": "39978f41",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-040",
@@ -72,21 +76,24 @@
    "verdict": "gap",
    "claim": null,
    "why": "The effect of voxel size on the concentration profile is a discretisation result the claim tree never states.",
-   "sha": "f43dfe58"
+   "sha": "f43dfe58",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-044",
    "verdict": "gap",
    "claim": null,
    "why": "The absolute error introduced by coarser voxels is a validation result absent from the claim tree.",
-   "sha": "83a53dba"
+   "sha": "83a53dba",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-046",
    "verdict": "gap",
    "claim": null,
    "why": "The percentage error introduced by coarser voxels is a validation result absent from the claim tree.",
-   "sha": "99ac2965"
+   "sha": "99ac2965",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-047",
@@ -100,14 +107,16 @@
    "verdict": "gap",
    "claim": null,
    "why": "No claim records that the model reproduces slice FSCV responses to direct stimulation once the recording kinetics are corrected for; the tree's FSCV claim covers only the May and Wightman frequency series.",
-   "sha": "9afe8f0e"
+   "sha": "9afe8f0e",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-073",
    "verdict": "gap",
    "claim": null,
    "why": "That spatially averaged simulation output looks like a tonic DA level — the reconciliation with fibre photometry — is asserted here but stated by no claim.",
-   "sha": "b3b01d89"
+   "sha": "b3b01d89",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-075",
@@ -121,21 +130,24 @@
    "verdict": "gap",
    "claim": null,
    "why": "Beyond the parameter table, this span carries the finding that a 50 um simulation diameter already reproduces larger simulations, which no claim records.",
-   "sha": "8099986d"
+   "sha": "8099986d",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-078",
    "verdict": "gap",
    "claim": null,
    "why": "The finding that 1 um voxels deviate by under 2% across most percentiles, justifying the chosen grain, is recorded by no claim.",
-   "sha": "c942e328"
+   "sha": "c942e328",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-085",
    "verdict": "covered",
    "claim": "low-burst-no-spillover-high-burst-does",
    "why": "This is the frequency dependence of DA spread that the burst-spillover claim states, here shown via peak concentration and supra-100 nM volume.",
-   "sha": "9debc8fe"
+   "sha": "9debc8fe",
+   "claim_sha": "a31e67a9"
   },
   {
    "uid": "results-091",
@@ -149,70 +161,80 @@
    "verdict": "gap",
    "claim": null,
    "why": "Besides setting the D2R parameters, this asserts that the sensor-based kinetic fit can be extrapolated to endogenous receptors because it matches an independent binding study — a validation claim the tree does not make.",
-   "sha": "9882c19e"
+   "sha": "9882c19e",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-100",
    "verdict": "covered",
    "claim": "d2r-integrates-over-seconds",
    "why": "The claim states exactly this: slow D2R off-kinetics leave it unable to separate closely spaced bursts, while D1R resets between them.",
-   "sha": "fa437244"
+   "sha": "fa437244",
+   "claim_sha": "8aa07e4c"
   },
   {
    "uid": "results-102",
    "verdict": "covered",
    "claim": "d2r-insensitive-to-brief-pauses",
    "why": "The claim already records that the pause insensitivity holds across an order of magnitude of D2R affinity, 2 to 20 nM.",
-   "sha": "8c635883"
+   "sha": "8c635883",
+   "claim_sha": "d85fbcb7"
   },
   {
    "uid": "results-106",
    "verdict": "gap",
    "claim": null,
    "why": "The literature summary that VS dopaminergic density is about 90% of DS is the basis for the VS terminal density used later, yet no claim records it; the tree's literature claims cover only the Vmax ratio.",
-   "sha": "2c3b8355"
+   "sha": "2c3b8355",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-107",
    "verdict": "covered",
    "claim": "interprets-cragg-rice-vmax-ratio",
    "why": "The claim records the prior literature establishing roughly threefold lower DAT uptake capacity in VS than DS.",
-   "sha": "8b171d02"
+   "sha": "8b171d02",
+   "claim_sha": "677a5093"
   },
   {
    "uid": "results-110",
    "verdict": "covered",
    "claim": "ds-vs-vmax-ratio-assumed",
    "why": "The claim records these exact regional parameter choices and flags the 3:1 Vmax ratio as assumed from the literature rather than measured here.",
-   "sha": "2632f31c"
+   "sha": "2632f31c",
+   "claim_sha": "8573cd46"
   },
   {
    "uid": "results-133",
    "verdict": "gap",
    "claim": null,
    "why": "How peak receptor occupancy falls off with distance from the bursting region is a result no claim in the tree states.",
-   "sha": "6704ed98"
+   "sha": "6704ed98",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-143",
    "verdict": "gap",
    "claim": null,
    "why": "The effect of a one-second pause in VS is unclaimed; the pause claim in the tree concerns the dorsal striatum only.",
-   "sha": "f2458c5d"
+   "sha": "f2458c5d",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-155",
    "verdict": "gap",
    "claim": null,
    "why": "No claim states that VS shows a larger relative rise in receptor occupancy far from the bursting region than DS does.",
-   "sha": "d5698565"
+   "sha": "d5698565",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-157",
    "verdict": "covered",
    "claim": "vmax-modulation-larger-impact-in-vs",
    "why": "This section heading states the finding the claim records, that DA in VS is far more sensitive to changes in uptake capacity than DA in DS.",
-   "sha": "2728df12"
+   "sha": "2728df12",
+   "claim_sha": "857b857b"
   },
   {
    "uid": "results-159",
@@ -268,7 +290,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "The focality ratio between regions under the release-probability sweep is displayed here but no claim states how focality itself behaves.",
-   "sha": "d0eca602"
+   "sha": "d0eca602",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-192",
@@ -289,21 +312,24 @@
    "verdict": "gap",
    "claim": null,
    "why": "The Km sweep is unclaimed: the tree's parameter-sweep claim covers active fraction, quantal size, release probability, firing rate and Vmax, but not DAT affinity.",
-   "sha": "284bca8b"
+   "sha": "284bca8b",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-195",
    "verdict": "gap",
    "claim": null,
    "why": "How the regional difference in phasic and tonic DA varies with Km is a result no claim records.",
-   "sha": "af15790b"
+   "sha": "af15790b",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-196",
    "verdict": "gap",
    "claim": null,
    "why": "That the Vmax effect is unchanged across quantal sizes is a robustness result no claim in the tree states.",
-   "sha": "0f9db62c"
+   "sha": "0f9db62c",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-197",
@@ -317,7 +343,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "That the Vmax effect is unchanged across release probabilities is a robustness result no claim in the tree states.",
-   "sha": "f4bc2e05"
+   "sha": "f4bc2e05",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-200",
@@ -331,14 +358,16 @@
    "verdict": "gap",
    "claim": null,
    "why": "The regression between release rate and autocorrelation decay from the reanalysed photometry data is a result no claim records.",
-   "sha": "0dc9df10"
+   "sha": "0dc9df10",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-203",
    "verdict": "gap",
    "claim": null,
    "why": "The inference that release and uptake vary partially independently across animals is asserted here but appears in no claim.",
-   "sha": "73c6be72"
+   "sha": "73c6be72",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-205",
@@ -359,49 +388,56 @@
    "verdict": "covered",
    "claim": "vmax-only-parameter-driving-regional-difference",
    "why": "The claim states that release probability and firing rate, like the other release parameters, shift both regions alike without altering the regional contrast.",
-   "sha": "9e8daf29"
+   "sha": "9e8daf29",
+   "claim_sha": "ec904f68"
   },
   {
    "uid": "results-213",
    "verdict": "gap",
    "claim": null,
    "why": "The linear rise in DA with increasing Km, the model's stand-in for competitive DAT inhibition, is recorded by no claim.",
-   "sha": "6e83e8cc"
+   "sha": "6e83e8cc",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-216",
    "verdict": "gap",
    "claim": null,
    "why": "The convergence on a twofold DS-VS difference and its agreement with earlier FSCV reports is a result no claim states.",
-   "sha": "33ad2438"
+   "sha": "33ad2438",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-220",
    "verdict": "gap",
    "claim": null,
    "why": "That the impact of Vmax in VS is independent of quantal size and release probability is a robustness result absent from the claim tree.",
-   "sha": "e8263595"
+   "sha": "e8263595",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-223",
    "verdict": "gap",
    "claim": null,
    "why": "The reanalysis showing natural between-animal variation in release-uptake balance, offered as an explanation of differing tonic DA, is claimed nowhere in the tree.",
-   "sha": "2257ee71"
+   "sha": "2257ee71",
+   "tree": "cdd79884"
   },
   {
    "uid": "results-228",
    "verdict": "covered",
    "claim": "hypothesis-nanoclustering-regulates-vmax",
    "why": "This is the nanoclustering hypothesis as the claim states it: dense DAT clusters locally deplete DA because uptake outpaces diffusion.",
-   "sha": "5cf0c520"
+   "sha": "5cf0c520",
+   "claim_sha": "80880897"
   },
   {
    "uid": "results-229",
    "verdict": "covered",
    "claim": "hypothesis-nanoclustering-regulates-vmax",
    "why": "The claim contains this step of the argument, that concentration-dependent uptake makes the depleted cluster surface less efficient.",
-   "sha": "bbcb34be"
+   "sha": "bbcb34be",
+   "claim_sha": "80880897"
   },
   {
    "uid": "results-248",
@@ -422,28 +458,32 @@
    "verdict": "covered",
    "claim": "dat-nanoclustering-slows-clearance",
    "why": "The claim states this local depletion, that DA at the cluster surface falls far below the bulk concentration.",
-   "sha": "1e05ae25"
+   "sha": "1e05ae25",
+   "claim_sha": "0407bf1d"
   },
   {
    "uid": "captions-021",
    "verdict": "gap",
    "claim": null,
    "why": "No claim records what the volume-averaged DA concentration in DS looks like during pacemaker activity, only how the spatial distribution is structured.",
-   "sha": "73dc1567"
+   "sha": "73dc1567",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-022",
    "verdict": "gap",
    "claim": null,
    "why": "The simulated mean response to a single synchronous release event is a result no claim in the tree states.",
-   "sha": "49c14cfa"
+   "sha": "49c14cfa",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-024",
    "verdict": "gap",
    "claim": null,
    "why": "The model's predicted FSCV signal for a single release event is not recorded by any claim; the tree's FSCV claim covers only the 10/30/60 Hz May and Wightman replication.",
-   "sha": "dcc76b5c"
+   "sha": "dcc76b5c",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-032",
@@ -471,7 +511,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "The convergence of concentration percentiles with simulation diameter is a validation result no claim in the tree captures.",
-   "sha": "39978f41"
+   "sha": "39978f41",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-037",
@@ -485,21 +526,24 @@
    "verdict": "gap",
    "claim": null,
    "why": "The effect of voxel size on the concentration profile is a discretisation result the claim tree never states.",
-   "sha": "f43dfe58"
+   "sha": "f43dfe58",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-041",
    "verdict": "gap",
    "claim": null,
    "why": "The absolute error introduced by coarser voxels is a validation result absent from the claim tree.",
-   "sha": "83a53dba"
+   "sha": "83a53dba",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-043",
    "verdict": "gap",
    "claim": null,
    "why": "The percentage error introduced by coarser voxels is a validation result absent from the claim tree.",
-   "sha": "99ac2965"
+   "sha": "99ac2965",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-044",
@@ -513,63 +557,72 @@
    "verdict": "covered",
    "claim": "vs-maintains-pervasive-tonic-da",
    "why": "These side-by-side steady-state snapshots are the regional contrast the claim states, diffuse coverage in VS against hotspots in DS.",
-   "sha": "844c0e2e"
+   "sha": "844c0e2e",
+   "claim_sha": "a2c39426"
   },
   {
    "uid": "captions-047",
    "verdict": "covered",
    "claim": "vs-maintains-pervasive-tonic-da",
    "why": "The temporal cross-section shows the same DS-VS contrast in tonic coverage that the claim records.",
-   "sha": "c6d76297"
+   "sha": "c6d76297",
+   "claim_sha": "a2c39426"
   },
   {
    "uid": "captions-049",
    "verdict": "covered",
    "claim": "vs-maintains-pervasive-tonic-da",
    "why": "The concentration density distributions are how the claim's diffuse-versus-segregated contrast is quantified.",
-   "sha": "47fd09cb"
+   "sha": "47fd09cb",
+   "claim_sha": "a2c39426"
   },
   {
    "uid": "captions-052",
    "verdict": "covered",
    "claim": "vs-lowest-percentiles-above-10nm",
    "why": "This is the percentile panel on which the claim that even the lowest VS percentiles exceed 10 nM rests.",
-   "sha": "af0cf54c"
+   "sha": "af0cf54c",
+   "claim_sha": "d899df57"
   },
   {
    "uid": "captions-054",
    "verdict": "covered",
    "claim": "fscv-matches-may-wightman-1989",
    "why": "The first half is the May and Wightman replication the claim states; the burst-spillover half is covered by low-burst-no-spillover-high-burst-does.",
-   "sha": "47733277"
+   "sha": "47733277",
+   "claim_sha": "d954d483"
   },
   {
    "uid": "captions-060",
    "verdict": "gap",
    "claim": null,
    "why": "The VS DA time course near a release site through pacemaker and burst firing is displayed here, but the tree's claim for this panel concerns only D2R occupancy levels.",
-   "sha": "4f6ac021"
+   "sha": "4f6ac021",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-063",
    "verdict": "gap",
    "claim": null,
    "why": "How peak receptor occupancy falls off with distance from the bursting region is a result no claim in the tree states.",
-   "sha": "6704ed98"
+   "sha": "6704ed98",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-073",
    "verdict": "gap",
    "claim": null,
    "why": "The effect of a one-second pause in VS is unclaimed; the pause claim in the tree concerns the dorsal striatum only.",
-   "sha": "f2458c5d"
+   "sha": "f2458c5d",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-082",
    "verdict": "covered",
    "claim": "vmax-only-parameter-driving-regional-difference",
    "why": "The claim records that quantal size shifts both regions alike, which is what this peak-to-tonic ratio across quantal sizes shows.",
-   "sha": "5f345181"
+   "sha": "5f345181",
+   "claim_sha": "ec904f68"
   },
   {
    "uid": "captions-084",
@@ -604,7 +657,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "The focality ratio between regions under the release-probability sweep is displayed here but no claim states how focality itself behaves.",
-   "sha": "d0eca602"
+   "sha": "d0eca602",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-101",
@@ -625,21 +679,24 @@
    "verdict": "gap",
    "claim": null,
    "why": "The Km sweep is unclaimed: the tree's parameter-sweep claim covers active fraction, quantal size, release probability, firing rate and Vmax, but not DAT affinity.",
-   "sha": "284bca8b"
+   "sha": "284bca8b",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-104",
    "verdict": "gap",
    "claim": null,
    "why": "How the regional difference in phasic and tonic DA varies with Km is a result no claim records.",
-   "sha": "af15790b"
+   "sha": "af15790b",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-105",
    "verdict": "gap",
    "claim": null,
    "why": "That the Vmax effect is unchanged across quantal sizes is a robustness result no claim in the tree states.",
-   "sha": "0f9db62c"
+   "sha": "0f9db62c",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-106",
@@ -653,7 +710,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "That the Vmax effect is unchanged across release probabilities is a robustness result no claim in the tree states.",
-   "sha": "f4bc2e05"
+   "sha": "f4bc2e05",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-109",
@@ -667,14 +725,16 @@
    "verdict": "gap",
    "claim": null,
    "why": "The regression between release rate and autocorrelation decay from the reanalysed photometry data is a result no claim records.",
-   "sha": "0dc9df10"
+   "sha": "0dc9df10",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-112",
    "verdict": "gap",
    "claim": null,
    "why": "The inference that release and uptake vary partially independently across animals is asserted here but appears in no claim.",
-   "sha": "73c6be72"
+   "sha": "73c6be72",
+   "tree": "cdd79884"
   },
   {
    "uid": "captions-114",
@@ -709,35 +769,40 @@
    "verdict": "covered",
    "claim": "dat-nanoclustering-slows-clearance",
    "why": "The cross-section shows the DA depletion around clustered transporters that the claim states.",
-   "sha": "d10b3320"
+   "sha": "d10b3320",
+   "claim_sha": "0407bf1d"
   },
   {
    "uid": "captions-125",
    "verdict": "covered",
    "claim": "dat-nanoclustering-slows-clearance",
    "why": "Surface DA concentration across cluster sizes is the depletion effect the claim records.",
-   "sha": "e38d3f6e"
+   "sha": "e38d3f6e",
+   "claim_sha": "0407bf1d"
   },
   {
    "uid": "captions-126",
    "verdict": "covered",
    "claim": "dat-nanoclustering-slows-clearance",
    "why": "The shift in steady-state DA on moving from unclustered to clustered DAT is the reduced effective uptake the claim describes.",
-   "sha": "a8fd281e"
+   "sha": "a8fd281e",
+   "claim_sha": "0407bf1d"
   },
   {
    "uid": "captions-127",
    "verdict": "covered",
    "claim": "dat-nanoclustering-slows-clearance",
    "why": "This is the clearance comparison on which the claim's roughly 400 ms versus 200 ms result rests.",
-   "sha": "d24b7e61"
+   "sha": "d24b7e61",
+   "claim_sha": "0407bf1d"
   },
   {
    "uid": "captions-128",
    "verdict": "covered",
    "claim": "dat-nanoclustering-slows-clearance",
    "why": "The claim states this local depletion, that DA at the cluster surface falls far below the bulk concentration.",
-   "sha": "1e05ae25"
+   "sha": "1e05ae25",
+   "claim_sha": "0407bf1d"
   },
   {
    "uid": "tables-001",

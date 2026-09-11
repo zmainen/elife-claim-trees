@@ -2,14 +2,15 @@
  "paper": "rozak-2026-neurovascular-dl",
  "adjudicated": "2026-09-11",
  "by": "supplied:runs/rozak-2026-neurovascular-dl/adjudication.answer.json",
- "note": "Verdicts for spans the mechanical match could not resolve. covered = a claim does account for it; gap = a real hole; not-an-assertion = the span states no result of its own. Each verdict carries `sha`, the fingerprint of the sentence it was made about; a verdict whose fingerprint no longer matches is discarded by `coverage` rather than reattached to text nobody judged.",
+ "note": "Verdicts for spans the mechanical match could not resolve. covered = a claim does account for it; gap = a real hole; not-an-assertion = the span states no result of its own. Every verdict carries `sha`, the fingerprint of the sentence it judged. A `gap` also carries `tree`, the fingerprint of which claims existed when it was judged, and a `covered` carries `claim_sha`, the wording of the claim it named — because a gap is a statement about the tree, and closing one is exactly the edit that used to leave the verdict standing over nothing. `coverage` discards a verdict whose fingerprints no longer match rather than applying a judgement nobody made about what is there now.",
  "spans": [
   {
    "uid": "results-010",
    "verdict": "covered",
    "claim": "novas3d-outperforms-ilastik",
    "why": "These are the segmentation metrics on which the claim asserts the deep-learning pipeline beats the ilastik baseline for both channels.",
-   "sha": "ce79aded"
+   "sha": "ce79aded",
+   "claim_sha": "b075a399"
   },
   {
    "uid": "results-014",
@@ -51,7 +52,8 @@
    "verdict": "covered",
    "claim": "radius-estimation-r2-0p68",
    "why": "This is the R-squared of 0.68 against simulated radii across more than 100,000 simulations that the claim states.",
-   "sha": "f408b219"
+   "sha": "f408b219",
+   "claim_sha": "6c7f9242"
   },
   {
    "uid": "results-032",
@@ -65,7 +67,8 @@
    "verdict": "covered",
    "claim": "radius-estimation-r2-0p68",
    "why": "The claim that the estimator recovers known simulated radii is what this correspondence plot displays.",
-   "sha": "8eb0f985"
+   "sha": "8eb0f985",
+   "claim_sha": "6c7f9242"
   },
   {
    "uid": "results-035",
@@ -79,14 +82,16 @@
    "verdict": "covered",
    "claim": "radius-estimation-r2-0p68",
    "why": "The claim's assertion that the estimate stays stable under added Gaussian noise is exactly what this panel shows.",
-   "sha": "5b23492d"
+   "sha": "5b23492d",
+   "claim_sha": "6c7f9242"
   },
   {
    "uid": "results-043",
    "verdict": "gap",
    "claim": null,
    "why": "No claim covers the microsphere phantom validation - that averaging more orthogonal planes and spokes converges the diameter estimate onto the manufacturer's 7.32 um specification; the radius claim rests on simulations only.",
-   "sha": "54175fa6"
+   "sha": "54175fa6",
+   "tree": "518d9a43"
   },
   {
    "uid": "results-044",
@@ -100,21 +105,24 @@
    "verdict": "covered",
    "claim": "baseline-intra-vessel-radius-varies-24pct",
    "why": "The claim about baseline variability in vessel radius accounts for this display of per-segment baseline standard deviations.",
-   "sha": "31e76704"
+   "sha": "31e76704",
+   "claim_sha": "f8534936"
   },
   {
    "uid": "results-051",
    "verdict": "covered",
    "claim": "vessel-radius-heterogeneity-stimulation",
    "why": "The claim that radius adjustments during stimulation vary within vessels accounts for this segment-wise and vertex-wise comparison.",
-   "sha": "423d6eeb"
+   "sha": "423d6eeb",
+   "claim_sha": "58e01cc1"
   },
   {
    "uid": "results-052",
    "verdict": "covered",
    "claim": "dilations-nearer-neurons-than-constrictions",
    "why": "The claim relates the direction of the radius change to distance from the nearest labelled pyramidal neuron, which is the relation shown here.",
-   "sha": "8b07612f"
+   "sha": "8b07612f",
+   "claim_sha": "aecfb536"
   },
   {
    "uid": "results-057",
@@ -128,42 +136,48 @@
    "verdict": "covered",
    "claim": "baseline-intra-vessel-radius-varies-24pct",
    "why": "The claim about baseline variability in vessel radius is the quantity this table panel tabulates.",
-   "sha": "b9ea6caf"
+   "sha": "b9ea6caf",
+   "claim_sha": "f8534936"
   },
   {
    "uid": "results-060",
    "verdict": "covered",
    "claim": "vessel-radius-heterogeneity-stimulation",
    "why": "The stimulation-evoked radius changes tabulated here are the ones the claim quantifies.",
-   "sha": "5caf258c"
+   "sha": "5caf258c",
+   "claim_sha": "58e01cc1"
   },
   {
    "uid": "results-061",
    "verdict": "covered",
    "claim": "vessel-radius-heterogeneity-stimulation",
    "why": "Within-vessel heterogeneity of the radius change is precisely what the claim asserts.",
-   "sha": "80309f9f"
+   "sha": "80309f9f",
+   "claim_sha": "58e01cc1"
   },
   {
    "uid": "results-062",
    "verdict": "covered",
    "claim": "dilations-nearer-neurons-than-constrictions",
    "why": "The claim states the vertex-to-nearest-neuron distances for dilating and constricting vessels that this panel tabulates.",
-   "sha": "e60f9123"
+   "sha": "e60f9123",
+   "claim_sha": "aecfb536"
   },
   {
    "uid": "results-067",
    "verdict": "covered",
    "claim": "artery-dilates-venule-unchanged-at-low-power",
    "why": "The claim reports the radius responses of the sample artery, capillary and venule whose before-and-after centreline profiles this panel shows.",
-   "sha": "ce13bb87"
+   "sha": "ce13bb87",
+   "claim_sha": "b8e6bc99"
   },
   {
    "uid": "results-068",
    "verdict": "covered",
    "claim": "artery-dilates-venule-unchanged-at-low-power",
    "why": "These vertex-wise changes for the three sample vessels are the responses the claim quantifies.",
-   "sha": "df9059ba"
+   "sha": "df9059ba",
+   "claim_sha": "b8e6bc99"
   },
   {
    "uid": "results-069",
@@ -191,28 +205,32 @@
    "verdict": "gap",
    "claim": null,
    "why": "The control claim compares only dilation magnitudes between blue and green light; the distribution of constriction magnitudes shown alongside them is stated by no claim.",
-   "sha": "8c546b48"
+   "sha": "8c546b48",
+   "tree": "518d9a43"
   },
   {
    "uid": "results-085",
    "verdict": "covered",
    "claim": "dilations-nearer-neurons-than-constrictions",
    "why": "The claim states how capillary radius changes are distributed relative to the closest pyramidal neurons, which is what this panel displays.",
-   "sha": "c61b0b32"
+   "sha": "c61b0b32",
+   "claim_sha": "aecfb536"
   },
   {
    "uid": "results-087",
    "verdict": "covered",
    "claim": "constrictions-deeper-than-dilations",
    "why": "The claim asserts that constrictors sit deeper and dilators nearer the surface, exactly the tendency this panel reports.",
-   "sha": "650b2397"
+   "sha": "650b2397",
+   "claim_sha": "5a8b09df"
   },
   {
    "uid": "results-094",
    "verdict": "gap",
    "claim": null,
    "why": "The tree's light-control claim covers dilations only; the constriction magnitudes under 458 nm and their excess over the 552 nm control are reported by no claim.",
-   "sha": "a320790a"
+   "sha": "a320790a",
+   "tree": "518d9a43"
   },
   {
    "uid": "results-102",
@@ -226,7 +244,8 @@
    "verdict": "covered",
    "claim": "capillary-efficiency-increases-4pct",
    "why": "The claim that capillary network efficiency rises during stimulation is this significant increase over the green-light control.",
-   "sha": "cb2d63bf"
+   "sha": "cb2d63bf",
+   "claim_sha": "bd339257"
   },
   {
    "uid": "captions-003",
@@ -240,7 +259,8 @@
    "verdict": "covered",
    "claim": "capillary-efficiency-increases-4pct",
    "why": "The claim that capillary network efficiency rises during stimulation is this significant increase over the green-light control.",
-   "sha": "cb2d63bf"
+   "sha": "cb2d63bf",
+   "claim_sha": "bd339257"
   },
   {
    "uid": "tables-001",
@@ -254,7 +274,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "These rows are the only place the phantom accuracy figures appear - the bead diameter estimate tightening from 7.54 plus or minus 0.68 um to 7.34 plus or minus 0.32 um as averaging increases - and no claim states them.",
-   "sha": "c36e0983"
+   "sha": "c36e0983",
+   "tree": "518d9a43"
   }
  ]
 }

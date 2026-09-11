@@ -391,7 +391,8 @@ def cmd_coverage(args: argparse.Namespace) -> int:
     spans = assess_spans(paper, claims, include_methods=args.include_methods)
     if args.mapping:
         from .coverage import apply_mapping
-        spans = apply_mapping(spans, json.loads(Path(args.mapping).read_text(encoding="utf-8")))
+        spans = apply_mapping(spans, json.loads(Path(args.mapping).read_text(encoding="utf-8")),
+                              claims)
 
     print(f"=== Coverage — {paper.paper_slug} ===")
     print(f"  claims read: {len(claims)}  from {claims_dir}\n")
@@ -459,7 +460,7 @@ def cmd_mark(args: argparse.Namespace) -> int:
     mapping = {}
     if args.mapping and Path(args.mapping).is_file():
         mapping = json.loads(Path(args.mapping).read_text(encoding="utf-8"))
-        rep = apply_mapping(rep, mapping)
+        rep = apply_mapping(rep, mapping, claims)
 
     # A span is assigned the UUID of a claim that accounts for it. Where several do, the
     # first is written — the mark records that the span is covered, and which claim leads;

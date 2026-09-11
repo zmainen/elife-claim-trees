@@ -957,6 +957,29 @@
         ]
       },
       {
+        "by_from": "model",
+        "command": "python3 scripts/gap_claims.py {paper} --answer runs/{paper}/gap-claim.answer.json",
+        "doc": "The edge back. Everything upstream of `marks` asks what this paper claims; `coverage` and `adjudication` then ask what it asserts that no claim represents, and until this layer existed the answer went into the marked document and stopped. The graph ended at the measurement, so a gap was something the corpus could report about itself and not something it could act on.\nNote what that cost, because it is the argument for this layer in one line: `external-review` asks \"what structure did the three readers systematically miss?\" \u2014 the same question \u2014 but it needs only `reconcile`, so it runs before the claim tree exists and answers from the candidates alone. The question was asked where it could only be guessed at, and not asked where it had been measured.\nThis layer drafts the claim each gap needs and writes it as a candidate. It never writes to `claims/`: promoting a draft is a judgement about what a paper asserts, and this corpus already carries the warning that no person has checked any of it. A layer that wrote claim files would put a model's drafting inside the artifact that warning is about. `--dump-prompt` and `--answer` are the pair every model-answered layer carries.\nPromoting a draft makes the verdict that recorded the gap stale on its own: a `gap` verdict carries the fingerprint of which claims existed when it was judged, and the ledger notices a claim file that appeared. Neither was true before; between them they turn a report into a loop.\n",
+        "id": "gap-claim",
+        "kind": "candidate",
+        "needs": [
+          "adjudication",
+          "claim-tree",
+          "claim-format"
+        ],
+        "produces": [
+          "runs/{paper}/gap-claim.output.json"
+        ],
+        "question": "What claim would close each gap?",
+        "reads": [
+          "extract/prompts/gap-claim.md",
+          "scripts/gap_claims.py"
+        ],
+        "views": [
+          "table"
+        ]
+      },
+      {
         "how": "Nothing runs here, and the layer is declared so that the absence is a column rather than an omission. The `replicates` relation is defined in the schema and used zero times: no claim in this corpus has been checked against an independent study.\nIt is a different question from `verification`, answered by different evidence. Verification re-runs the authors' own code on their own data and can tell you the record matches the run. Only replication can tell you the finding holds.\n",
         "id": "replication",
         "kind": "step",
@@ -1894,6 +1917,139 @@
           ],
           "ran": "2026-09-11T16:38:50Z",
           "v": 1
+        },
+        {
+          "by": "supplied:runs/artiushin-2026-spider-atlas/adjudication.answer.json",
+          "cmd": "python3 scripts/adjudicate.py artiushin-2026-spider-atlas --answer runs/artiushin-2026-spider-atlas/adjudication.answer.json",
+          "in": [
+            {
+              "path": "coverage/artiushin-2026-spider-atlas.json",
+              "sha": "1cdb9de89137"
+            },
+            {
+              "path": "extract/prompts/coverage-adjudicator.md",
+              "sha": "253bd2154639"
+            },
+            {
+              "path": "scripts/adjudicate.py",
+              "sha": "d2ba7cbb62fe"
+            }
+          ],
+          "in_sets": [],
+          "kind": "judgement",
+          "layer": "adjudication",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "out": [
+            {
+              "path": "mappings/artiushin-2026-spider-atlas.json",
+              "sha": "4622f281961f"
+            }
+          ],
+          "ran": "2026-09-11T19:16:28Z",
+          "v": 2
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli mark --paper artiushin-2026-spider-atlas --mapping ../mappings/artiushin-2026-spider-atlas.json -o ../marked/artiushin-2026-spider-atlas.marked.md",
+          "in": [
+            {
+              "path": "mappings/artiushin-2026-spider-atlas.json",
+              "sha": "4622f281961f"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/arcuate-body-four-sublayer-differential.md",
+              "sha": "5995ccda7cef"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/arcuate-body-layers-neurotransmitter-distinguished.md",
+              "sha": "29762ed832b8"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/atlas-observational-scope.md",
+              "sha": "1f227b7a0951"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/cheliceral-neuropil-serotonin-tdc2-dominant.md",
+              "sha": "730c0f938cb8"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/gad-antibody-peripheral-penetration-only.md",
+              "sha": "138b9abaa774"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/globuli-cells-cholinergic-gabaergic.md",
+              "sha": "09af45ee3764"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/hagstone-neuropil-serotonin-defined.md",
+              "sha": "8f7358bca33b"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/index.md",
+              "sha": "02ddf2b2eaab"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/leg-neuropil-serotonin-bilateral-innervation.md",
+              "sha": "55548b93a75a"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/leg-neuropils-consistent-innervation.md",
+              "sha": "204456fa423a"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/mushroom-bodies-present-asta-exclusive.md",
+              "sha": "c8303382bfff"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/opisthosomal-neuropil-tdc2-perimeter-ladder.md",
+              "sha": "1a78304d95dc"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/pedipalpal-neuropil-chat-tdc2-dominant.md",
+              "sha": "a1c45614515e"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/protocerebral-bridge-candidate-central-complex.md",
+              "sha": "6a1952245f3e"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/protocerebral-bridge-layered-transmitter-architecture.md",
+              "sha": "70bb2c8bcf0d"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/tonsillar-neuropil-novel-structure.md",
+              "sha": "2f0ee8b98deb"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/tonsillar-neuropil-serotonin-core-tdc2-shell.md",
+              "sha": "f6046312950e"
+            },
+            {
+              "path": "claims/artiushin-2026-spider-atlas/uloborus-synganglion-neurotransmitter-atlas.md",
+              "sha": "e179469bee19"
+            },
+            {
+              "path": "runs/artiushin-2026-spider-atlas/prepared.json",
+              "sha": "526525fb1275"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/artiushin-2026-spider-atlas/*.md",
+              "sha": "32c1c1c353a6"
+            }
+          ],
+          "kind": "step",
+          "layer": "marks",
+          "note": "marks from the re-validated verdicts",
+          "out": [
+            {
+              "path": "marked/artiushin-2026-spider-atlas.marked.md",
+              "sha": "e4ccf344209a"
+            }
+          ],
+          "ran": "2026-09-11T19:41:15Z",
+          "v": 2
         }
       ],
       "bouyeure-2026-fear-rsa": [
@@ -3043,6 +3199,191 @@
           ],
           "ran": "2026-09-11T16:38:50Z",
           "v": 1
+        },
+        {
+          "by": "supplied:runs/bouyeure-2026-fear-rsa/adjudication.answer.json",
+          "cmd": "python3 scripts/adjudicate.py bouyeure-2026-fear-rsa --answer runs/bouyeure-2026-fear-rsa/adjudication.answer.json",
+          "in": [
+            {
+              "path": "coverage/bouyeure-2026-fear-rsa.json",
+              "sha": "9a3479c13a72"
+            },
+            {
+              "path": "extract/prompts/coverage-adjudicator.md",
+              "sha": "253bd2154639"
+            },
+            {
+              "path": "scripts/adjudicate.py",
+              "sha": "d2ba7cbb62fe"
+            }
+          ],
+          "in_sets": [],
+          "kind": "judgement",
+          "layer": "adjudication",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "out": [
+            {
+              "path": "mappings/bouyeure-2026-fear-rsa.json",
+              "sha": "d9277fb86880"
+            }
+          ],
+          "ran": "2026-09-11T19:16:28Z",
+          "v": 2
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli mark --paper bouyeure-2026-fear-rsa --mapping ../mappings/bouyeure-2026-fear-rsa.json -o ../marked/bouyeure-2026-fear-rsa.marked.md",
+          "in": [
+            {
+              "path": "mappings/bouyeure-2026-fear-rsa.json",
+              "sha": "d9277fb86880"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/behavioral-learning-confirms-contingencies.md",
+              "sha": "7cf347209b93"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/context-specificity-increases-reversal.md",
+              "sha": "a4fb326898d2"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/context-specificity-predicts-acquisition-reinstatement-regional-dissociation.md",
+              "sha": "198c5d03ba69"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/context-specificity-predicts-reinstatement-new-context-mtg.md",
+              "sha": "251fa2bacee9"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/context-specificity-predicts-reversal-reinstatement-dmpfc.md",
+              "sha": "8f88b3c981fc"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/cs-plus-univariate-fear-network-acquisition.md",
+              "sha": "4827f474615b"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/cue-generalization-increases-acquisition.md",
+              "sha": "1eff3fb5a810"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/cue-generalization-limited-dacc-reversal-consistent.md",
+              "sha": "1c63620471d2"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/current-threat-activates-fear-network-reversal.md",
+              "sha": "949fd824c50b"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/dmpfc-reinstates-acquisition-traces-generalized.md",
+              "sha": "d9f30f8dd038"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/dual-strategy-reversal-generalize-plus-specify.md",
+              "sha": "cef2404c99bc"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/generalized-pattern-cs-minus-plus-reversal.md",
+              "sha": "b39be42c3cf9"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/hypothesis-context-specificity-supports-renewal.md",
+              "sha": "f26c8c3c3a9d"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/hypothesis-dual-strategy-reversal.md",
+              "sha": "97908bc0a7b1"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/hypothesis-fear-network-generalizes-threat-cues.md",
+              "sha": "990382fa4bf4"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/ifg-reinstates-reversal-traces-item-specific.md",
+              "sha": "1c39c172bf67"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/index.md",
+              "sha": "7ce1609e906e"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/item-stability-persists-test-phases.md",
+              "sha": "398a876c5816"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/item-stability-precuneus-pfc-reversal.md",
+              "sha": "47c7220a3e17"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/lss-unreinforced-trials-only.md",
+              "sha": "7289b2408874"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/no-bold-differences-test-phases.md",
+              "sha": "fdbe68eade96"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/no-item-stability-difference-acquisition.md",
+              "sha": "51f0e5e416cd"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/pfc-context-specificity-predicts-renewal.md",
+              "sha": "0b708c454eb8"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/prediction-context-specificity-increases-during-reversal.md",
+              "sha": "d8bc44a63e5d"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/prediction-cs-minus-plus-generalizes-reversal.md",
+              "sha": "c07eb7d9f011"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/prediction-cue-generalization-fear-network-acquisition.md",
+              "sha": "90b21b606b18"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/prediction-item-stability-changing-cues-reversal.md",
+              "sha": "6e9201c43668"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/prediction-pfc-context-specificity-tracks-renewal.md",
+              "sha": "10a078a182c2"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/prior-threat-activates-fear-network-weakly.md",
+              "sha": "e6cfa0c2e3d1"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/rsa-roi-derived-from-searchlight.md",
+              "sha": "400e166d5f76"
+            },
+            {
+              "path": "claims/bouyeure-2026-fear-rsa/trace-conditioning-hippocampus-engaged.md",
+              "sha": "d8275e874b86"
+            },
+            {
+              "path": "runs/bouyeure-2026-fear-rsa/prepared.json",
+              "sha": "91de66f407c1"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/bouyeure-2026-fear-rsa/*.md",
+              "sha": "61f6e1b75974"
+            }
+          ],
+          "kind": "step",
+          "layer": "marks",
+          "note": "marks from the re-validated verdicts",
+          "out": [
+            {
+              "path": "marked/bouyeure-2026-fear-rsa.marked.md",
+              "sha": "3033d7c7117a"
+            }
+          ],
+          "ran": "2026-09-11T19:41:15Z",
+          "v": 2
         }
       ],
       "ejdrup-2026-dopamine": [
@@ -4197,6 +4538,171 @@
           ],
           "ran": "2026-09-11T16:40:38Z",
           "v": 1
+        },
+        {
+          "by": "supplied:runs/ejdrup-2026-dopamine/adjudication.answer.json",
+          "cmd": "python3 scripts/adjudicate.py ejdrup-2026-dopamine --answer runs/ejdrup-2026-dopamine/adjudication.answer.json",
+          "in": [
+            {
+              "path": "coverage/ejdrup-2026-dopamine.json",
+              "sha": "6cb357513a64"
+            },
+            {
+              "path": "extract/prompts/coverage-adjudicator.md",
+              "sha": "253bd2154639"
+            },
+            {
+              "path": "scripts/adjudicate.py",
+              "sha": "d2ba7cbb62fe"
+            }
+          ],
+          "in_sets": [],
+          "kind": "judgement",
+          "layer": "adjudication",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "out": [
+            {
+              "path": "mappings/ejdrup-2026-dopamine.json",
+              "sha": "25c3e43fc6b0"
+            }
+          ],
+          "ran": "2026-09-11T19:16:28Z",
+          "v": 2
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli mark --paper ejdrup-2026-dopamine --mapping ../mappings/ejdrup-2026-dopamine.json -o ../marked/ejdrup-2026-dopamine.marked.md",
+          "in": [
+            {
+              "path": "mappings/ejdrup-2026-dopamine.json",
+              "sha": "25c3e43fc6b0"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/d1r-tracks-da-50ms-delay.md",
+              "sha": "028094aff4ae"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/d2r-initialization-unjustified.md",
+              "sha": "c47edfe7913d"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/d2r-insensitive-to-brief-pauses.md",
+              "sha": "f6e68cec04ca"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/d2r-integrates-over-seconds.md",
+              "sha": "d966a0592599"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/d2r-occupancy-higher-in-vs.md",
+              "sha": "ca941bd82f18"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/dat-clustering-greater-in-vs.md",
+              "sha": "0d90e869ac15"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/dat-immunostaining-dorsoventral-gradient.md",
+              "sha": "c236bdbd9a39"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/dat-nanoclustering-slows-clearance.md",
+              "sha": "7e1cedb8ed67"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/ds-lacks-pervasive-tonic-da.md",
+              "sha": "853c4888d72a"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/ds-vs-vmax-ratio-assumed.md",
+              "sha": "460032f8f27f"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/fscv-matches-may-wightman-1989.md",
+              "sha": "d55534a395ef"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/hypothesis-d1-d2-temporal-distinction.md",
+              "sha": "ee28d88deec4"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/hypothesis-nanoclustering-regulates-vmax.md",
+              "sha": "612567b9f2a1"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/hypothesis-vmax-explains-regional-difference.md",
+              "sha": "2f7e13081e39"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/index.md",
+              "sha": "8729b0d4c244"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/interprets-cragg-rice-vmax-ratio.md",
+              "sha": "62c1d9f5b7da"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/interprets-may-wightman-1989-fscv.md",
+              "sha": "18a04d7c5be5"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/low-burst-no-spillover-high-burst-does.md",
+              "sha": "93783e84d413"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/nanoclustering-constant-vmax-constraint.md",
+              "sha": "db34034ea007"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/nanoclustering-model-varicosity-scale.md",
+              "sha": "50e646931e1f"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vmat2-gradient-absent.md",
+              "sha": "0b43a4a80bce"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vmax-modulation-larger-impact-in-vs.md",
+              "sha": "6fd319598379"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vmax-only-parameter-driving-regional-difference.md",
+              "sha": "29a5f654a538"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vs-low-active-fraction-resembles-ds-distribution.md",
+              "sha": "c41415917ee2"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vs-lowest-percentiles-above-10nm.md",
+              "sha": "d559f9d192cd"
+            },
+            {
+              "path": "claims/ejdrup-2026-dopamine/vs-maintains-pervasive-tonic-da.md",
+              "sha": "d4415247b21d"
+            },
+            {
+              "path": "runs/ejdrup-2026-dopamine/prepared.json",
+              "sha": "8ecb5d81df75"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/ejdrup-2026-dopamine/*.md",
+              "sha": "ce7b4b5ed8f1"
+            }
+          ],
+          "kind": "step",
+          "layer": "marks",
+          "note": "marks from the re-validated verdicts",
+          "out": [
+            {
+              "path": "marked/ejdrup-2026-dopamine.marked.md",
+              "sha": "ab03f8380141"
+            }
+          ],
+          "ran": "2026-09-11T19:41:16Z",
+          "v": 2
         }
       ],
       "gadeke-2026-guilt-insula": [
@@ -6213,6 +6719,203 @@
           "v": 2
         },
         {
+          "by": "supplied:runs/gadeke-2026-guilt-insula/adjudication.answer.json",
+          "cmd": "python3 scripts/adjudicate.py gadeke-2026-guilt-insula --answer runs/gadeke-2026-guilt-insula/adjudication.answer.json",
+          "in": [
+            {
+              "path": "coverage/gadeke-2026-guilt-insula.json",
+              "sha": "ef7ac1e643f5"
+            },
+            {
+              "path": "extract/prompts/coverage-adjudicator.md",
+              "sha": "253bd2154639"
+            },
+            {
+              "path": "scripts/adjudicate.py",
+              "sha": "d2ba7cbb62fe"
+            }
+          ],
+          "in_sets": [],
+          "kind": "judgement",
+          "layer": "adjudication",
+          "note": "re-adjudicated against the current claim tree; the 2026-09-09 verdicts were hand-written against a tree that no longer exists",
+          "out": [
+            {
+              "path": "mappings/gadeke-2026-guilt-insula.json",
+              "sha": "6166dfdbaffc"
+            }
+          ],
+          "ran": "2026-09-11T19:22:13Z",
+          "v": 2
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli mark --paper gadeke-2026-guilt-insula --mapping ../mappings/gadeke-2026-guilt-insula.json -o ../marked/gadeke-2026-guilt-insula.marked.md",
+          "in": [
+            {
+              "path": "mappings/gadeke-2026-guilt-insula.json",
+              "sha": "6166dfdbaffc"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/agency-reduces-happiness.md",
+              "sha": "e98636069b74"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+              "sha": "8c6406fa475d"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+              "sha": "a5b3d60f86dc"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+              "sha": "8a6938c4883f"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+              "sha": "179a0b7d1872"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+              "sha": "dba084d76dc8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+              "sha": "816b1318ed59"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/guilt-effect-independent-of-own-outcome.md",
+              "sha": "119495e275f1"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/guilt-reduces-happiness-after-partner-loss.md",
+              "sha": "a5e899d83bd7"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/guilt-signature-no-individual-difference.md",
+              "sha": "7794af2b14b6"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/happiness-correlates-partner-reward.md",
+              "sha": "db04e59a4851"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/hypothesis-insula-tracks-interpersonal-guilt.md",
+              "sha": "84b0b34c9c84"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/hypothesis-responsibility-weights-partner-rpes.md",
+              "sha": "e49fbe3fd84e"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/hypothesis-sts-mentalizes-partner-state-under-responsibility.md",
+              "sha": "462f496d8863"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/index.md",
+              "sha": "3f34d01a022b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/insula-guilt-replicates-yu-koban-signature.md",
+              "sha": "da4014725ba8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/insula-ifg-connectivity-guilt.md",
+              "sha": "0ac9a61a5e30"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/insula-tracks-guilt-effect.md",
+              "sha": "04e6bc5a1969"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/interprets-yu-koban-guilt-signature.md",
+              "sha": "a5966dcd739b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/lottery-choice-increases-with-ev.md",
+              "sha": "3dde0c233ecd"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/partner-algorithm-deception-assumption.md",
+              "sha": "5c0e234a9219"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/precuneus-tpj-mpfc-social-decisions.md",
+              "sha": "51e821e7d1b0"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/prediction-behavioral-guilt-effect.md",
+              "sha": "a40d2b4aee19"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/prediction-insula-tracks-guilt.md",
+              "sha": "6c26fda838a1"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/prediction-responsibility-model-wins-comparison.md",
+              "sha": "15cfbcb8b2dc"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/prediction-sts-tracks-partner-rpe-under-responsibility.md",
+              "sha": "72c16ae7c62a"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-modulates-guilt-computational.md",
+              "sha": "27a22ad2bede"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/risk-premiums-null-social-solo.md",
+              "sha": "7f88ea303be4"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/scope-two-study-design.md",
+              "sha": "a27e8ca1579c"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/social-prpe-weight-positive.md",
+              "sha": "43f490ece0d1"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/solo-vs-social-choice-difference.md",
+              "sha": "669054c3a9da"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/sts-tracks-partner-reward-prediction-errors.md",
+              "sha": "a02be824579d"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/ventral-striatum-tracks-computational-reward.md",
+              "sha": "a8f22060dbf7"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/ventral-striatum-tracks-risky-choices.md",
+              "sha": "04af3148a665"
+            },
+            {
+              "path": "runs/gadeke-2026-guilt-insula/prepared.json",
+              "sha": "5512285faceb"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/gadeke-2026-guilt-insula/*.md",
+              "sha": "1a91a77cbf05"
+            }
+          ],
+          "kind": "step",
+          "layer": "marks",
+          "note": "marks from the re-validated verdicts",
+          "out": [
+            {
+              "path": "marked/gadeke-2026-guilt-insula.marked.md",
+              "sha": "9cb9b1a35d43"
+            }
+          ],
+          "ran": "2026-09-11T19:41:16Z",
+          "v": 3
+        },
+        {
           "by": "scripts/pipeline.py run",
           "cmd": "cd extract && python3 -m elife_extract.cli write --paper gadeke-2026-guilt-insula --replace",
           "in": [
@@ -7922,6 +8625,175 @@
           ],
           "ran": "2026-09-11T16:38:51Z",
           "v": 1
+        },
+        {
+          "by": "supplied:runs/headley-2026-inhibitory-rhythms/adjudication.answer.json",
+          "cmd": "python3 scripts/adjudicate.py headley-2026-inhibitory-rhythms --answer runs/headley-2026-inhibitory-rhythms/adjudication.answer.json",
+          "in": [
+            {
+              "path": "coverage/headley-2026-inhibitory-rhythms.json",
+              "sha": "7b86962e7616"
+            },
+            {
+              "path": "extract/prompts/coverage-adjudicator.md",
+              "sha": "253bd2154639"
+            },
+            {
+              "path": "scripts/adjudicate.py",
+              "sha": "d2ba7cbb62fe"
+            }
+          ],
+          "in_sets": [],
+          "kind": "judgement",
+          "layer": "adjudication",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "out": [
+            {
+              "path": "mappings/headley-2026-inhibitory-rhythms.json",
+              "sha": "af9a5b20d778"
+            }
+          ],
+          "ran": "2026-09-11T19:16:28Z",
+          "v": 2
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli mark --paper headley-2026-inhibitory-rhythms --mapping ../mappings/headley-2026-inhibitory-rhythms.json -o ../marked/headley-2026-inhibitory-rhythms.marked.md",
+          "in": [
+            {
+              "path": "mappings/headley-2026-inhibitory-rhythms.json",
+              "sha": "af9a5b20d778"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/beta-bidirectional-dendritic-control.md",
+              "sha": "2ca9ce88a2be"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/beta-gates-distal-apical-inputs.md",
+              "sha": "d70f89175681"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/beta-optimal-distal-dendritic-entrainment.md",
+              "sha": "33d5a37fa565"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/burst-effects-emerge-first-cycles.md",
+              "sha": "86d0b3f29f2c"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/ca-spikes-couple-20ms-before-ap.md",
+              "sha": "ad007bb91674"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/distal-inhib-drops-firing-02hz.md",
+              "sha": "5bb6e80847d7"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/ei-lag-sensitivity-firing-rate.md",
+              "sha": "24d243271e60"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/gamma-gates-proximal-basal-inputs.md",
+              "sha": "6c8e27a03a69"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/gamma-optimal-perisomatic-ap-modulation.md",
+              "sha": "5a4b2a9a3bad"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/gamma-perisomatic-no-dendritic-spike-change.md",
+              "sha": "ec17558231dc"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/hypothesis-distinct-compartmental-roles.md",
+              "sha": "c45af0b495f9"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/hypothesis-frequency-compartment-matching.md",
+              "sha": "dd6b84c7a079"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/index.md",
+              "sha": "6283093f0cc8"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/interprets-pv-gamma-sst-beta-associations.md",
+              "sha": "7934f4359cc8"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/l5-model-single-cell-scope.md",
+              "sha": "0db428c71f9b"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/na-spikes-couple-2to3ms-before-ap.md",
+              "sha": "f1952652919e"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/naturalistic-drive-parameterization.md",
+              "sha": "d13ac3435622"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/nmda-spikes-couple-25ms-before-ap.md",
+              "sha": "befaed136bb5"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/perisomatic-inhib-drops-firing-07hz.md",
+              "sha": "b480f9a2e164"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/perisomatic-inhib-subtractive-divisive.md",
+              "sha": "337cac7bf793"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-beta-optimal-distal.md",
+              "sha": "1a4918c57437"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-distal-dendritic-spike-mechanism.md",
+              "sha": "8712ff62fed5"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-gamma-optimal-perisomatic.md",
+              "sha": "e7cbe51a55c9"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-orthogonal-input-gating.md",
+              "sha": "b59493c7362e"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-perisomatic-input-output-shaping.md",
+              "sha": "ca906ba3234f"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-perisomatic-threshold-mechanism.md",
+              "sha": "f386e8b6a80d"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/pv-gamma-sst-beta-correspondence.md",
+              "sha": "f523d97f3903"
+            },
+            {
+              "path": "runs/headley-2026-inhibitory-rhythms/prepared.json",
+              "sha": "868d6c1e056b"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/headley-2026-inhibitory-rhythms/*.md",
+              "sha": "738b104ad14a"
+            }
+          ],
+          "kind": "step",
+          "layer": "marks",
+          "note": "marks from the re-validated verdicts",
+          "out": [
+            {
+              "path": "marked/headley-2026-inhibitory-rhythms.marked.md",
+              "sha": "ef082c580b81"
+            }
+          ],
+          "ran": "2026-09-11T19:41:16Z",
+          "v": 2
         }
       ],
       "kammer-2026-foveal-feedback": [
@@ -8888,6 +9760,294 @@
           ],
           "ran": "2026-09-11T16:38:51Z",
           "v": 1
+        },
+        {
+          "by": "supplied:runs/kammer-2026-foveal-feedback/adjudication.answer.json",
+          "cmd": "python3 scripts/adjudicate.py kammer-2026-foveal-feedback --answer runs/kammer-2026-foveal-feedback/adjudication.answer.json",
+          "in": [
+            {
+              "path": "coverage/kammer-2026-foveal-feedback.json",
+              "sha": "2d9c697dd8e7"
+            },
+            {
+              "path": "extract/prompts/coverage-adjudicator.md",
+              "sha": "253bd2154639"
+            },
+            {
+              "path": "scripts/adjudicate.py",
+              "sha": "d2ba7cbb62fe"
+            }
+          ],
+          "in_sets": [],
+          "kind": "judgement",
+          "layer": "adjudication",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "out": [
+            {
+              "path": "mappings/kammer-2026-foveal-feedback.json",
+              "sha": "7707b98ffec9"
+            }
+          ],
+          "ran": "2026-09-11T19:16:35Z",
+          "v": 2
+        },
+        {
+          "by": "supplied:runs/kammer-2026-foveal-feedback/gap-claim.answer.json",
+          "cmd": "python3 scripts/gap_claims.py kammer-2026-foveal-feedback --answer runs/kammer-2026-foveal-feedback/gap-claim.answer.json",
+          "in": [
+            {
+              "path": "mappings/kammer-2026-foveal-feedback.json",
+              "sha": "7707b98ffec9"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/cross-decoding-experimental-to-control.md",
+              "sha": "fc98e064764c"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/decoding-shape-sensitive-not-semantic.md",
+              "sha": "9cbce21143c7"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/fef-lo-nonsignificant-after-correction.md",
+              "sha": "8fa603abc4bd"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/foveal-feedback-below-direct-stimulation.md",
+              "sha": "b98f5cf05b5f"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/foveal-v1-decodes-peripheral-saccade-target.md",
+              "sha": "a3b7f46d01aa"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/hypothesis-feedback-carries-shape-not-category.md",
+              "sha": "263c511316a3"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/hypothesis-feedback-not-spillover.md",
+              "sha": "94649467ee36"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/hypothesis-shared-representational-format.md",
+              "sha": "c53b2afbd0a1"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/index.md",
+              "sha": "5bc5b6323776"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/interprets-williams-2008-peripheral-spillover.md",
+              "sha": "1b66bc80e869"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/ips-candidate-driver-foveal-feedback.md",
+              "sha": "7edfe0c6a788"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/ips-foveal-effect-reverses-in-control.md",
+              "sha": "4adc974fc410"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/lo-shows-reversed-specificity.md",
+              "sha": "120333953b6f"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/parametric-modulation-exploratory-not-preregistered.md",
+              "sha": "404ba33a5690"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/prediction-cross-decoding-generalizes.md",
+              "sha": "f2015c67107b"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/prediction-lo-inverse-pattern.md",
+              "sha": "5cc6e6588be2"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/prediction-u-shape-eccentricity.md",
+              "sha": "37d537a17cc2"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/prediction-v1-category-drops-shape-preserved.md",
+              "sha": "d33f31c02307"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/preregistered-design-validates-mvpa.md",
+              "sha": "2a0c57efc0a1"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/preregistration-submitted-after-manuscript.md",
+              "sha": "b4a1aef0d6ca"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/target-excluded-fovea-in-99pct-saccades.md",
+              "sha": "4b66ebb5a1ac"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/u-shaped-eccentricity-rejects-spillover.md",
+              "sha": "78792b9e49a5"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/v1-category-decoding-drops-in-feedback.md",
+              "sha": "5fd46c51dc91"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/v2-v3-generalize-shape-not-category.md",
+              "sha": "981816499d7a"
+            },
+            {
+              "path": "extract/prompts/gap-claim.md",
+              "sha": "bee526014336"
+            },
+            {
+              "path": "scripts/gap_claims.py",
+              "sha": "c979d4eaa255"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/kammer-2026-foveal-feedback/*.md",
+              "sha": "4c0fc4c0eb31"
+            }
+          ],
+          "kind": "candidate",
+          "layer": "gap-claim",
+          "note": "first run of the layer; drafts answered by Claude Opus 5 through --dump-prompt",
+          "out": [
+            {
+              "path": "runs/kammer-2026-foveal-feedback/gap-claim.output.json",
+              "sha": "59f3a48e0b36"
+            }
+          ],
+          "ran": "2026-09-11T19:40:58Z",
+          "v": 1
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli mark --paper kammer-2026-foveal-feedback --mapping ../mappings/kammer-2026-foveal-feedback.json -o ../marked/kammer-2026-foveal-feedback.marked.md",
+          "in": [
+            {
+              "path": "mappings/kammer-2026-foveal-feedback.json",
+              "sha": "7707b98ffec9"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/cross-decoding-experimental-to-control.md",
+              "sha": "fc98e064764c"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/decoding-shape-sensitive-not-semantic.md",
+              "sha": "9cbce21143c7"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/fef-lo-nonsignificant-after-correction.md",
+              "sha": "8fa603abc4bd"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/foveal-feedback-below-direct-stimulation.md",
+              "sha": "b98f5cf05b5f"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/foveal-v1-decodes-peripheral-saccade-target.md",
+              "sha": "a3b7f46d01aa"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/hypothesis-feedback-carries-shape-not-category.md",
+              "sha": "263c511316a3"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/hypothesis-feedback-not-spillover.md",
+              "sha": "94649467ee36"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/hypothesis-shared-representational-format.md",
+              "sha": "c53b2afbd0a1"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/index.md",
+              "sha": "5bc5b6323776"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/interprets-williams-2008-peripheral-spillover.md",
+              "sha": "1b66bc80e869"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/ips-candidate-driver-foveal-feedback.md",
+              "sha": "7edfe0c6a788"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/ips-foveal-effect-reverses-in-control.md",
+              "sha": "4adc974fc410"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/lo-shows-reversed-specificity.md",
+              "sha": "120333953b6f"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/parametric-modulation-exploratory-not-preregistered.md",
+              "sha": "404ba33a5690"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/prediction-cross-decoding-generalizes.md",
+              "sha": "f2015c67107b"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/prediction-lo-inverse-pattern.md",
+              "sha": "5cc6e6588be2"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/prediction-u-shape-eccentricity.md",
+              "sha": "37d537a17cc2"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/prediction-v1-category-drops-shape-preserved.md",
+              "sha": "d33f31c02307"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/preregistered-design-validates-mvpa.md",
+              "sha": "2a0c57efc0a1"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/preregistration-submitted-after-manuscript.md",
+              "sha": "b4a1aef0d6ca"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/target-excluded-fovea-in-99pct-saccades.md",
+              "sha": "4b66ebb5a1ac"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/u-shaped-eccentricity-rejects-spillover.md",
+              "sha": "78792b9e49a5"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/v1-category-decoding-drops-in-feedback.md",
+              "sha": "5fd46c51dc91"
+            },
+            {
+              "path": "claims/kammer-2026-foveal-feedback/v2-v3-generalize-shape-not-category.md",
+              "sha": "981816499d7a"
+            },
+            {
+              "path": "runs/kammer-2026-foveal-feedback/prepared.json",
+              "sha": "eae9be87d11c"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/kammer-2026-foveal-feedback/*.md",
+              "sha": "4c0fc4c0eb31"
+            }
+          ],
+          "kind": "step",
+          "layer": "marks",
+          "note": "marks from the re-validated verdicts",
+          "out": [
+            {
+              "path": "marked/kammer-2026-foveal-feedback.marked.md",
+              "sha": "4136dce3a827"
+            }
+          ],
+          "ran": "2026-09-11T19:41:16Z",
+          "v": 2
         }
       ],
       "kolb-2026-igabasnfr2": [
@@ -9949,6 +11109,155 @@
           ],
           "ran": "2026-09-11T16:38:51Z",
           "v": 1
+        },
+        {
+          "by": "supplied:runs/kolb-2026-igabasnfr2/adjudication.answer.json",
+          "cmd": "python3 scripts/adjudicate.py kolb-2026-igabasnfr2 --answer runs/kolb-2026-igabasnfr2/adjudication.answer.json",
+          "in": [
+            {
+              "path": "coverage/kolb-2026-igabasnfr2.json",
+              "sha": "37da16f28c91"
+            },
+            {
+              "path": "extract/prompts/coverage-adjudicator.md",
+              "sha": "253bd2154639"
+            },
+            {
+              "path": "scripts/adjudicate.py",
+              "sha": "d2ba7cbb62fe"
+            }
+          ],
+          "in_sets": [],
+          "kind": "judgement",
+          "layer": "adjudication",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "out": [
+            {
+              "path": "mappings/kolb-2026-igabasnfr2.json",
+              "sha": "c251d159ec1e"
+            }
+          ],
+          "ran": "2026-09-11T19:16:28Z",
+          "v": 2
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli mark --paper kolb-2026-igabasnfr2 --mapping ../mappings/kolb-2026-igabasnfr2.json -o ../marked/kolb-2026-igabasnfr2.marked.md",
+          "in": [
+            {
+              "path": "mappings/kolb-2026-igabasnfr2.json",
+              "sha": "c251d159ec1e"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/alt-signal-from-cross-reactivity.md",
+              "sha": "b6d06a35a688"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/crystal-structure-pdb-9d57.md",
+              "sha": "060b9e322951"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/hypothesis-improved-sensor-enables-new-biology.md",
+              "sha": "75ee3414ffb8"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/hypothesis-saturation-mutagenesis-yields-improved-sensor.md",
+              "sha": "5cdc860dd41b"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-13fold-expression-increase.md",
+              "sha": "5a392c5b7ece"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-2p-compatible.md",
+              "sha": "15f7cd961cac"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-cpgfp-rigid-on-gaba-binding.md",
+              "sha": "e61798acf380"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-fourfold-sensitivity-gain.md",
+              "sha": "17d86a7e925e"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-gaba-selective-specificity.md",
+              "sha": "0b85eb6ddc5b"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-invivo-barrel-cortex.md",
+              "sha": "0e286408b143"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-kinetics-rise-decay.md",
+              "sha": "873f30627c9d"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-oncell-affinity-sevenfold.md",
+              "sha": "f9c8ac31f575"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-retina-direction-selectivity.md",
+              "sha": "caea596f52f3"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-single-bouton-hippocampus.md",
+              "sha": "a9769ed9570f"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2-single-exponential-kinetics.md",
+              "sha": "4165633f9b91"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/igabasnfr2n-negative-going-variant.md",
+              "sha": "9202aacc7551"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/index.md",
+              "sha": "dbe75dc0771b"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/mutagenesis-3947-variants-screened.md",
+              "sha": "d57fd56e1580"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/prediction-improved-sensor-enables-new-measurements.md",
+              "sha": "fecadcd52665"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/prediction-screen-yields-multiple-improved-variants.md",
+              "sha": "03a9b06b9b7a"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/scope-sensor-engineering-paper.md",
+              "sha": "f42cf6813a78"
+            },
+            {
+              "path": "claims/kolb-2026-igabasnfr2/screening-scope-wet-lab-only.md",
+              "sha": "12411db42f77"
+            },
+            {
+              "path": "runs/kolb-2026-igabasnfr2/prepared.json",
+              "sha": "bb83d96797dc"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/kolb-2026-igabasnfr2/*.md",
+              "sha": "eb82f9c79a95"
+            }
+          ],
+          "kind": "step",
+          "layer": "marks",
+          "note": "marks from the re-validated verdicts",
+          "out": [
+            {
+              "path": "marked/kolb-2026-igabasnfr2.marked.md",
+              "sha": "939c82409531"
+            }
+          ],
+          "ran": "2026-09-11T19:41:17Z",
+          "v": 2
         }
       ],
       "rozak-2026-neurovascular-dl": [
@@ -11079,6 +12388,167 @@
           ],
           "ran": "2026-09-11T16:40:38Z",
           "v": 1
+        },
+        {
+          "by": "supplied:runs/rozak-2026-neurovascular-dl/adjudication.answer.json",
+          "cmd": "python3 scripts/adjudicate.py rozak-2026-neurovascular-dl --answer runs/rozak-2026-neurovascular-dl/adjudication.answer.json",
+          "in": [
+            {
+              "path": "coverage/rozak-2026-neurovascular-dl.json",
+              "sha": "a180c4aa7504"
+            },
+            {
+              "path": "extract/prompts/coverage-adjudicator.md",
+              "sha": "253bd2154639"
+            },
+            {
+              "path": "scripts/adjudicate.py",
+              "sha": "d2ba7cbb62fe"
+            }
+          ],
+          "in_sets": [],
+          "kind": "judgement",
+          "layer": "adjudication",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "out": [
+            {
+              "path": "mappings/rozak-2026-neurovascular-dl.json",
+              "sha": "2539fba04299"
+            }
+          ],
+          "ran": "2026-09-11T19:16:29Z",
+          "v": 2
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli mark --paper rozak-2026-neurovascular-dl --mapping ../mappings/rozak-2026-neurovascular-dl.json -o ../marked/rozak-2026-neurovascular-dl.marked.md",
+          "in": [
+            {
+              "path": "mappings/rozak-2026-neurovascular-dl.json",
+              "sha": "2539fba04299"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/alt-point-measurement-estimates-vessel-volume.md",
+              "sha": "6b56db7b2a28"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/artery-dilates-venule-unchanged-at-low-power.md",
+              "sha": "4b6cd90ac252"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/baseline-intra-vessel-radius-varies-24pct.md",
+              "sha": "b6fe66d612be"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/blue-light-dilations-exceed-green-control.md",
+              "sha": "8c6f180a7a9f"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/capillary-efficiency-increases-4pct.md",
+              "sha": "095b51327a8c"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/constrictions-deeper-than-dilations.md",
+              "sha": "8f0e5a22fff5"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/dilations-nearer-neurons-than-constrictions.md",
+              "sha": "645ef45525ef"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/dl-model-scope-single-pipeline.md",
+              "sha": "db3c42c8310c"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/hypothesis-dl-pipeline-enables-network-nvc.md",
+              "sha": "90ecd551457e"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/hypothesis-network-level-nvc-coordination.md",
+              "sha": "05defc607c3f"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/index.md",
+              "sha": "c2ce89e8eca8"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/network-assortativity-increases-stimulation.md",
+              "sha": "ed69621c5982"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/novas3d-generalizes-qualitatively-ood.md",
+              "sha": "68a2699b415e"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/novas3d-outperforms-ilastik.md",
+              "sha": "b5af0835068b"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/novas3d-single-preparation-scope.md",
+              "sha": "b6f07b2579dc"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/prediction-pipeline-outperforms-baselines.md",
+              "sha": "4c07608e223c"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/prediction-pipeline-reveals-network-coordination.md",
+              "sha": "87c729fcfeb8"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/radius-estimation-r2-0p68.md",
+              "sha": "0a03a22ceacc"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/registration-doubles-vessel-count.md",
+              "sha": "de890a559b1b"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/responder-threshold-2sd-untested.md",
+              "sha": "110a27c77aad"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/scope-pipeline-and-application-paper.md",
+              "sha": "d2450f8147aa"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/synthesis-individual-vessel-measurements-insufficient.md",
+              "sha": "2660dcdd734a"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/unetr-outperforms-ilastik-hd95.md",
+              "sha": "53851ac672ec"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/vessel-radius-heterogeneity-stimulation.md",
+              "sha": "a8387d922105"
+            },
+            {
+              "path": "claims/rozak-2026-neurovascular-dl/wt-controls-no-blue-green-difference.md",
+              "sha": "57f382548aac"
+            },
+            {
+              "path": "runs/rozak-2026-neurovascular-dl/prepared.json",
+              "sha": "dc3c4581bec8"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/rozak-2026-neurovascular-dl/*.md",
+              "sha": "c015d12f33a5"
+            }
+          ],
+          "kind": "step",
+          "layer": "marks",
+          "note": "marks from the re-validated verdicts",
+          "out": [
+            {
+              "path": "marked/rozak-2026-neurovascular-dl.marked.md",
+              "sha": "560965fa3787"
+            }
+          ],
+          "ran": "2026-09-11T19:41:17Z",
+          "v": 2
         }
       ],
       "scheller-2026-self-prioritization": [
@@ -12060,6 +13530,163 @@
           ],
           "ran": "2026-09-11T16:40:38Z",
           "v": 1
+        },
+        {
+          "by": "supplied:runs/scheller-2026-self-prioritization/adjudication.answer.json",
+          "cmd": "python3 scripts/adjudicate.py scheller-2026-self-prioritization --answer runs/scheller-2026-self-prioritization/adjudication.answer.json",
+          "in": [
+            {
+              "path": "coverage/scheller-2026-self-prioritization.json",
+              "sha": "a775384e6ccb"
+            },
+            {
+              "path": "extract/prompts/coverage-adjudicator.md",
+              "sha": "253bd2154639"
+            },
+            {
+              "path": "scripts/adjudicate.py",
+              "sha": "d2ba7cbb62fe"
+            }
+          ],
+          "in_sets": [],
+          "kind": "judgement",
+          "layer": "adjudication",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "out": [
+            {
+              "path": "mappings/scheller-2026-self-prioritization.json",
+              "sha": "ed8984eefdb0"
+            }
+          ],
+          "ran": "2026-09-11T19:16:29Z",
+          "v": 2
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli mark --paper scheller-2026-self-prioritization --mapping ../mappings/scheller-2026-self-prioritization.json -o ../marked/scheller-2026-self-prioritization.marked.md",
+          "in": [
+            {
+              "path": "mappings/scheller-2026-self-prioritization.json",
+              "sha": "ed8984eefdb0"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/decisional-dimension-tradeoff.md",
+              "sha": "7497dbb33dad"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/hypothesis-capacity-mechanism-not-weights.md",
+              "sha": "b682cf916623"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/hypothesis-self-association-alters-attentional-selection.md",
+              "sha": "c3461bb15afa"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/hypothesis-social-perceptual-independent-mechanisms.md",
+              "sha": "c5c1d86cd72f"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/index.md",
+              "sha": "0ea94a153be1"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/interprets-bundesen-tva-framework.md",
+              "sha": "9b8ba08bacf6"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/other-association-advantage-social-condition.md",
+              "sha": "9f23e63697bd"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/perceptual-salience-6hz-advantage.md",
+              "sha": "2e4012e049fe"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/prediction-additive-effects-other-associated.md",
+              "sha": "c813d90e1e73"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/prediction-capacity-model-outperforms-weights-only.md",
+              "sha": "518436e57b45"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/prediction-self-advantage-attenuated-social-decision.md",
+              "sha": "83af5e4be8fe"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/prediction-self-advantage-perceptual-decision.md",
+              "sha": "91eba9003868"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/processing-capacity-rises-perceptual-self.md",
+              "sha": "cb3732b1324b"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/scope-toj-tva-paradigm.md",
+              "sha": "c6f8a90115ad"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/self-prioritization-absent-social-decision.md",
+              "sha": "d42bf8d241e3"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/self-prioritization-automatic-early.md",
+              "sha": "767c7d857f47"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/self-prioritization-perceptual-decision-automatic.md",
+              "sha": "838a97799ce5"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/self-salience-dominates-other-associated.md",
+              "sha": "5cc77a138d05"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/self-salience-reduces-perceptual-benefit.md",
+              "sha": "42675fbb8797"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/self-social-additive-perceptual.md",
+              "sha": "fd380785d5a3"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/social-perceptual-salience-independent-streams.md",
+              "sha": "b1540c246a84"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/spe-matching-correlates-social-decision.md",
+              "sha": "f47da762556c"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/spe-robust-matching-both-experiments.md",
+              "sha": "0b9ccf2fc7a3"
+            },
+            {
+              "path": "claims/scheller-2026-self-prioritization/tva-capacity-model-wins.md",
+              "sha": "7e7ed689a3c1"
+            },
+            {
+              "path": "runs/scheller-2026-self-prioritization/prepared.json",
+              "sha": "0c3193b1c36c"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/scheller-2026-self-prioritization/*.md",
+              "sha": "cf807de65704"
+            }
+          ],
+          "kind": "step",
+          "layer": "marks",
+          "note": "marks from the re-validated verdicts",
+          "out": [
+            {
+              "path": "marked/scheller-2026-self-prioritization.marked.md",
+              "sha": "4f627aa07b63"
+            }
+          ],
+          "ran": "2026-09-11T19:41:17Z",
+          "v": 2
         }
       ],
       "wengert-2026-kcnc1": [
@@ -13280,6 +14907,517 @@
           ],
           "ran": "2026-09-11T16:38:52Z",
           "v": 1
+        },
+        {
+          "by": "supplied:runs/wengert-2026-kcnc1/adjudication.answer.json",
+          "cmd": "python3 scripts/adjudicate.py wengert-2026-kcnc1 --answer runs/wengert-2026-kcnc1/adjudication.answer.json",
+          "in": [
+            {
+              "path": "coverage/wengert-2026-kcnc1.json",
+              "sha": "e4446cacf1e0"
+            },
+            {
+              "path": "extract/prompts/coverage-adjudicator.md",
+              "sha": "253bd2154639"
+            },
+            {
+              "path": "scripts/adjudicate.py",
+              "sha": "d2ba7cbb62fe"
+            }
+          ],
+          "in_sets": [],
+          "kind": "judgement",
+          "layer": "adjudication",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "out": [
+            {
+              "path": "mappings/wengert-2026-kcnc1.json",
+              "sha": "73f8e6f9d8b2"
+            }
+          ],
+          "ran": "2026-09-11T19:16:29Z",
+          "v": 2
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli coverage --paper wengert-2026-kcnc1 --json ../coverage/wengert-2026-kcnc1.json",
+          "in": [
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-kv31-membrane-trafficking-impaired.md",
+              "sha": "d349268b1e6a"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-mice-die-before-122d.md",
+              "sha": "7d3003d1fe41"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-spatial-learning-working-memory-impaired.md",
+              "sha": "fffe966afbde"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-weight-reduced-milestones-normal.md",
+              "sha": "a253b795fc66"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/alt-inhibitory-dysfunction-present-juvenile.md",
+              "sha": "cbcc9effd32c"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/excitatory-neurons-unaffected-adult.md",
+              "sha": "71a838cec9a0"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/excitatory-neurons-unaffected-juvenile.md",
+              "sha": "648883d2c4f8"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/hypothesis-a421v-causes-kv31-lof.md",
+              "sha": "5830ed285d4a"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/hypothesis-pv-dysfunction-drives-encephalopathy.md",
+              "sha": "a9235da72203"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/hypothesis-pv-in-selective-vulnerability.md",
+              "sha": "7fc0142fc121"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/in-vivo-hypersynchronous-discharges-mutant-only.md",
+              "sha": "ed4afbddcc38"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/in-vivo-pv-minus-transient-frequency-increased.md",
+              "sha": "5f29bfc94e07"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/index.md",
+              "sha": "981c7c7dbcff"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/inhibitory-dysfunction-progresses-to-adulthood.md",
+              "sha": "78c9f52d3004"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/kcnc1-wet-lab-primary-claims.md",
+              "sha": "8a2cab99c326"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/layer-v-pv-ins-subtle-impairment.md",
+              "sha": "6c4635e308d8"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-cognitive-deficits.md",
+              "sha": "b758e64501f0"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-excitatory-neurons-spared.md",
+              "sha": "4c0615d32804"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-impairment-grades-with-kv31-dependence.md",
+              "sha": "fd4d4a86fa67"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-kv31-surface-expression-reduced.md",
+              "sha": "d2c89e53c470"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-network-hyperexcitability-in-vivo.md",
+              "sha": "83fe32c6ed65"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-progressive-synaptic-failure.md",
+              "sha": "113c3681d112"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-pv-in-firing-impaired.md",
+              "sha": "6fdc0b4324d9"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-pv-in-k-current-reduced.md",
+              "sha": "26b3b12c9c18"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-seizures-and-sudep.md",
+              "sha": "f4b289b8eaac"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-in-ap-waveform-altered-downstroke-apd50.md",
+              "sha": "014a2ef9d320"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-in-inhibitory-synapse-altered-adult.md",
+              "sha": "80205bf2bd42"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-in-inhibitory-synapse-intact-juvenile.md",
+              "sha": "cec6ffdd8837"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-ins-impaired-maximal-firing.md",
+              "sha": "883228184bb9"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-ins-reduced-k-current-density.md",
+              "sha": "ccccecae37e4"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/rtn-neurons-impaired-excitability.md",
+              "sha": "e8f9f4aee952"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/scope-a421v-knockin-mouse.md",
+              "sha": "933381e5963b"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/spontaneous-seizures-and-sudep-kcnc1.md",
+              "sha": "c403568e5be9"
+            },
+            {
+              "path": "runs/wengert-2026-kcnc1/prepared.json",
+              "sha": "730e2fafe69c"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/wengert-2026-kcnc1/*.md",
+              "sha": "89d6963a8158"
+            }
+          ],
+          "kind": "step",
+          "layer": "coverage",
+          "note": "re-run to record input-set membership",
+          "out": [
+            {
+              "path": "coverage/wengert-2026-kcnc1.json",
+              "sha": "e4446cacf1e0"
+            }
+          ],
+          "ran": "2026-09-11T19:38:22Z",
+          "v": 2
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli coverage --paper wengert-2026-kcnc1 --json ../coverage/wengert-2026-kcnc1.json",
+          "in": [
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-kv31-membrane-trafficking-impaired.md",
+              "sha": "d349268b1e6a"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-mice-die-before-122d.md",
+              "sha": "7d3003d1fe41"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-spatial-learning-working-memory-impaired.md",
+              "sha": "fffe966afbde"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-weight-reduced-milestones-normal.md",
+              "sha": "a253b795fc66"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/alt-inhibitory-dysfunction-present-juvenile.md",
+              "sha": "cbcc9effd32c"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/excitatory-neurons-unaffected-adult.md",
+              "sha": "71a838cec9a0"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/excitatory-neurons-unaffected-juvenile.md",
+              "sha": "648883d2c4f8"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/hypothesis-a421v-causes-kv31-lof.md",
+              "sha": "5830ed285d4a"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/hypothesis-pv-dysfunction-drives-encephalopathy.md",
+              "sha": "a9235da72203"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/hypothesis-pv-in-selective-vulnerability.md",
+              "sha": "7fc0142fc121"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/in-vivo-hypersynchronous-discharges-mutant-only.md",
+              "sha": "ed4afbddcc38"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/in-vivo-pv-minus-transient-frequency-increased.md",
+              "sha": "5f29bfc94e07"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/index.md",
+              "sha": "981c7c7dbcff"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/inhibitory-dysfunction-progresses-to-adulthood.md",
+              "sha": "78c9f52d3004"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/kcnc1-wet-lab-primary-claims.md",
+              "sha": "8a2cab99c326"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/layer-v-pv-ins-subtle-impairment.md",
+              "sha": "6c4635e308d8"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-cognitive-deficits.md",
+              "sha": "b758e64501f0"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-excitatory-neurons-spared.md",
+              "sha": "4c0615d32804"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-impairment-grades-with-kv31-dependence.md",
+              "sha": "fd4d4a86fa67"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-kv31-surface-expression-reduced.md",
+              "sha": "d2c89e53c470"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-network-hyperexcitability-in-vivo.md",
+              "sha": "83fe32c6ed65"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-progressive-synaptic-failure.md",
+              "sha": "113c3681d112"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-pv-in-firing-impaired.md",
+              "sha": "6fdc0b4324d9"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-pv-in-k-current-reduced.md",
+              "sha": "26b3b12c9c18"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-seizures-and-sudep.md",
+              "sha": "f4b289b8eaac"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-in-ap-waveform-altered-downstroke-apd50.md",
+              "sha": "014a2ef9d320"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-in-inhibitory-synapse-altered-adult.md",
+              "sha": "80205bf2bd42"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-in-inhibitory-synapse-intact-juvenile.md",
+              "sha": "cec6ffdd8837"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-ins-impaired-maximal-firing.md",
+              "sha": "883228184bb9"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-ins-reduced-k-current-density.md",
+              "sha": "ccccecae37e4"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/rtn-neurons-impaired-excitability.md",
+              "sha": "e8f9f4aee952"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/scope-a421v-knockin-mouse.md",
+              "sha": "933381e5963b"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/spontaneous-seizures-and-sudep-kcnc1.md",
+              "sha": "c403568e5be9"
+            },
+            {
+              "path": "runs/wengert-2026-kcnc1/prepared.json",
+              "sha": "730e2fafe69c"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/wengert-2026-kcnc1/*.md",
+              "sha": "89d6963a8158"
+            }
+          ],
+          "kind": "step",
+          "layer": "coverage",
+          "note": "re-run to record input-set membership",
+          "out": [
+            {
+              "path": "coverage/wengert-2026-kcnc1.json",
+              "sha": "e4446cacf1e0"
+            }
+          ],
+          "ran": "2026-09-11T19:39:37Z",
+          "v": 3
+        },
+        {
+          "by": "scripts/pipeline.py run",
+          "cmd": "cd extract && python3 -m elife_extract.cli mark --paper wengert-2026-kcnc1 --mapping ../mappings/wengert-2026-kcnc1.json -o ../marked/wengert-2026-kcnc1.marked.md",
+          "in": [
+            {
+              "path": "mappings/wengert-2026-kcnc1.json",
+              "sha": "73f8e6f9d8b2"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-kv31-membrane-trafficking-impaired.md",
+              "sha": "d349268b1e6a"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-mice-die-before-122d.md",
+              "sha": "7d3003d1fe41"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-spatial-learning-working-memory-impaired.md",
+              "sha": "fffe966afbde"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/a421v-weight-reduced-milestones-normal.md",
+              "sha": "a253b795fc66"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/alt-inhibitory-dysfunction-present-juvenile.md",
+              "sha": "cbcc9effd32c"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/excitatory-neurons-unaffected-adult.md",
+              "sha": "71a838cec9a0"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/excitatory-neurons-unaffected-juvenile.md",
+              "sha": "648883d2c4f8"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/hypothesis-a421v-causes-kv31-lof.md",
+              "sha": "5830ed285d4a"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/hypothesis-pv-dysfunction-drives-encephalopathy.md",
+              "sha": "a9235da72203"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/hypothesis-pv-in-selective-vulnerability.md",
+              "sha": "7fc0142fc121"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/in-vivo-hypersynchronous-discharges-mutant-only.md",
+              "sha": "ed4afbddcc38"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/in-vivo-pv-minus-transient-frequency-increased.md",
+              "sha": "5f29bfc94e07"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/index.md",
+              "sha": "981c7c7dbcff"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/inhibitory-dysfunction-progresses-to-adulthood.md",
+              "sha": "78c9f52d3004"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/kcnc1-wet-lab-primary-claims.md",
+              "sha": "8a2cab99c326"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/layer-v-pv-ins-subtle-impairment.md",
+              "sha": "6c4635e308d8"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-cognitive-deficits.md",
+              "sha": "b758e64501f0"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-excitatory-neurons-spared.md",
+              "sha": "4c0615d32804"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-impairment-grades-with-kv31-dependence.md",
+              "sha": "fd4d4a86fa67"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-kv31-surface-expression-reduced.md",
+              "sha": "d2c89e53c470"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-network-hyperexcitability-in-vivo.md",
+              "sha": "83fe32c6ed65"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-progressive-synaptic-failure.md",
+              "sha": "113c3681d112"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-pv-in-firing-impaired.md",
+              "sha": "6fdc0b4324d9"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-pv-in-k-current-reduced.md",
+              "sha": "26b3b12c9c18"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/prediction-seizures-and-sudep.md",
+              "sha": "f4b289b8eaac"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-in-ap-waveform-altered-downstroke-apd50.md",
+              "sha": "014a2ef9d320"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-in-inhibitory-synapse-altered-adult.md",
+              "sha": "80205bf2bd42"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-in-inhibitory-synapse-intact-juvenile.md",
+              "sha": "cec6ffdd8837"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-ins-impaired-maximal-firing.md",
+              "sha": "883228184bb9"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/pv-ins-reduced-k-current-density.md",
+              "sha": "ccccecae37e4"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/rtn-neurons-impaired-excitability.md",
+              "sha": "e8f9f4aee952"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/scope-a421v-knockin-mouse.md",
+              "sha": "933381e5963b"
+            },
+            {
+              "path": "claims/wengert-2026-kcnc1/spontaneous-seizures-and-sudep-kcnc1.md",
+              "sha": "c403568e5be9"
+            },
+            {
+              "path": "runs/wengert-2026-kcnc1/prepared.json",
+              "sha": "730e2fafe69c"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/wengert-2026-kcnc1/*.md",
+              "sha": "89d6963a8158"
+            }
+          ],
+          "kind": "step",
+          "layer": "marks",
+          "note": "marks from the re-validated verdicts",
+          "out": [
+            {
+              "path": "marked/wengert-2026-kcnc1.marked.md",
+              "sha": "20da15718e3b"
+            }
+          ],
+          "ran": "2026-09-11T19:41:17Z",
+          "v": 2
         }
       ]
     },
@@ -13294,18 +15432,20 @@
           "v": 1
         },
         "adjudication": {
+          "appeared": [],
           "blocked_by": [
             "coverage"
           ],
           "by": "supplied:runs/artiushin-2026-spider-atlas/adjudication.answer.json",
           "lost": [],
           "moved": [],
-          "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
-          "ran": "2026-09-11T16:38:39Z",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "ran": "2026-09-11T19:16:28Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "article": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -13338,6 +15478,7 @@
           "v": 1
         },
         "coverage": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -13374,6 +15515,7 @@
           ]
         },
         "formats-report": {
+          "appeared": [],
           "blocked_by": [
             "mira-export"
           ],
@@ -13385,7 +15527,11 @@
           "state": "blocked",
           "v": 3
         },
+        "gap-claim": {
+          "state": "absent"
+        },
         "marks": {
+          "appeared": [],
           "blocked_by": [
             "adjudication",
             "prepare"
@@ -13393,12 +15539,13 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "marks from the adjudicated verdicts",
-          "ran": "2026-09-11T16:38:50Z",
+          "note": "marks from the re-validated verdicts",
+          "ran": "2026-09-11T19:41:15Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "mira-export": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -13424,6 +15571,7 @@
           "v": 1
         },
         "plain-claim": {
+          "appeared": [],
           "by": "supplied:runs/artiushin-2026-spider-atlas/plain-claim.answer.json",
           "lost": [],
           "moved": [],
@@ -13437,6 +15585,7 @@
           "state": "open"
         },
         "prepare": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -13497,18 +15646,20 @@
           "v": 1
         },
         "adjudication": {
+          "appeared": [],
           "blocked_by": [
             "coverage"
           ],
           "by": "supplied:runs/bouyeure-2026-fear-rsa/adjudication.answer.json",
           "lost": [],
           "moved": [],
-          "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
-          "ran": "2026-09-11T16:38:39Z",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "ran": "2026-09-11T19:16:28Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "article": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -13541,6 +15692,7 @@
           "v": 1
         },
         "coverage": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -13577,6 +15729,7 @@
           ]
         },
         "formats-report": {
+          "appeared": [],
           "blocked_by": [
             "mira-export"
           ],
@@ -13588,7 +15741,11 @@
           "state": "blocked",
           "v": 3
         },
+        "gap-claim": {
+          "state": "absent"
+        },
         "marks": {
+          "appeared": [],
           "blocked_by": [
             "adjudication",
             "prepare"
@@ -13596,12 +15753,13 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "marks from the adjudicated verdicts",
-          "ran": "2026-09-11T16:38:50Z",
+          "note": "marks from the re-validated verdicts",
+          "ran": "2026-09-11T19:41:15Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "mira-export": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -13627,6 +15785,7 @@
           "v": 1
         },
         "plain-claim": {
+          "appeared": [],
           "by": "supplied:runs/bouyeure-2026-fear-rsa/plain-claim.answer.json",
           "lost": [],
           "moved": [],
@@ -13640,6 +15799,7 @@
           "state": "open"
         },
         "prepare": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -13705,18 +15865,20 @@
           "v": 1
         },
         "adjudication": {
+          "appeared": [],
           "blocked_by": [
             "coverage"
           ],
           "by": "supplied:runs/ejdrup-2026-dopamine/adjudication.answer.json",
           "lost": [],
           "moved": [],
-          "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
-          "ran": "2026-09-11T16:38:40Z",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "ran": "2026-09-11T19:16:28Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "article": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -13749,6 +15911,7 @@
           "v": 1
         },
         "coverage": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -13785,6 +15948,7 @@
           ]
         },
         "formats-report": {
+          "appeared": [],
           "blocked_by": [
             "mira-export"
           ],
@@ -13796,7 +15960,11 @@
           "state": "blocked",
           "v": 3
         },
+        "gap-claim": {
+          "state": "absent"
+        },
         "marks": {
+          "appeared": [],
           "blocked_by": [
             "adjudication",
             "prepare"
@@ -13804,12 +15972,13 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "marks from the adjudicated verdicts",
-          "ran": "2026-09-11T16:40:38Z",
+          "note": "marks from the re-validated verdicts",
+          "ran": "2026-09-11T19:41:16Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "mira-export": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -13835,6 +16004,7 @@
           "v": 1
         },
         "plain-claim": {
+          "appeared": [],
           "by": "supplied:runs/ejdrup-2026-dopamine/plain-claim.answer.json",
           "lost": [],
           "moved": [],
@@ -13848,6 +16018,7 @@
           "state": "open"
         },
         "prepare": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -13870,6 +16041,7 @@
           ]
         },
         "reference-check": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
@@ -13919,14 +16091,20 @@
           "v": 1
         },
         "adjudication": {
-          "backfilled": true,
-          "by": null,
-          "note": "backfilled from the artifact on disk",
-          "ran": "2026-09-09T11:55:22Z",
-          "state": "unrecorded",
-          "v": 1
+          "appeared": [],
+          "blocked_by": [
+            "coverage"
+          ],
+          "by": "supplied:runs/gadeke-2026-guilt-insula/adjudication.answer.json",
+          "lost": [],
+          "moved": [],
+          "note": "re-adjudicated against the current claim tree; the 2026-09-09 verdicts were hand-written against a tree that no longer exists",
+          "ran": "2026-09-11T19:22:13Z",
+          "state": "blocked",
+          "v": 2
         },
         "article": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -13938,6 +16116,7 @@
           "v": 1
         },
         "caption-reader": {
+          "appeared": [],
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
           "moved": [
@@ -13956,6 +16135,7 @@
           "state": "current"
         },
         "claim-tree": {
+          "appeared": [],
           "blocked_by": [
             "reconcile",
             "external-review",
@@ -13970,6 +16150,7 @@
           "v": 2
         },
         "coverage": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -14022,6 +16203,7 @@
           "v": 1
         },
         "edge-inference": {
+          "appeared": [],
           "blocked_by": [
             "reconcile"
           ],
@@ -14038,6 +16220,7 @@
           "state": "open"
         },
         "external-review": {
+          "appeared": [],
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
           "moved": [
@@ -14051,6 +16234,7 @@
           "v": 2
         },
         "formats-report": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -14063,7 +16247,13 @@
           "state": "stale",
           "v": 3
         },
+        "gap-claim": {
+          "state": "absent"
+        },
         "marks": {
+          "appeared": [
+            "claims/gadeke-2026-guilt-insula/*.md"
+          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -14103,12 +16293,13 @@
             "claims/gadeke-2026-guilt-insula/ventral-striatum-tracks-risky-choices.md",
             "runs/gadeke-2026-guilt-insula/prepared.json"
           ],
-          "note": "re-run under the ledger",
-          "ran": "2026-09-11T16:34:58Z",
+          "note": "marks from the re-validated verdicts",
+          "ran": "2026-09-11T19:41:16Z",
           "state": "stale",
-          "v": 2
+          "v": 3
         },
         "mira-export": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -14168,6 +16359,7 @@
           "v": 1
         },
         "plain-claim": {
+          "appeared": [],
           "by": "supplied:runs/gadeke-2026-guilt-insula/plain-claim.answer.json",
           "lost": [],
           "moved": [
@@ -14216,6 +16408,7 @@
           "state": "open"
         },
         "prepare": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
@@ -14225,6 +16418,7 @@
           "v": 2
         },
         "questions": {
+          "appeared": [],
           "by": "claude-opus-4.8 (subagent, via --answer)",
           "lost": [],
           "moved": [
@@ -14236,6 +16430,7 @@
           "v": 2
         },
         "reconcile": {
+          "appeared": [],
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
           "moved": [
@@ -14258,6 +16453,7 @@
           "state": "absent"
         },
         "results-reader": {
+          "appeared": [],
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
           "moved": [
@@ -14280,6 +16476,7 @@
           "v": 1
         },
         "structure-reader": {
+          "appeared": [],
           "by": "claude-opus-5 (subagent, via --answer)",
           "lost": [],
           "moved": [
@@ -14318,18 +16515,20 @@
           "v": 1
         },
         "adjudication": {
+          "appeared": [],
           "blocked_by": [
             "coverage"
           ],
           "by": "supplied:runs/headley-2026-inhibitory-rhythms/adjudication.answer.json",
           "lost": [],
           "moved": [],
-          "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
-          "ran": "2026-09-11T16:38:40Z",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "ran": "2026-09-11T19:16:28Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "article": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -14362,6 +16561,7 @@
           "v": 1
         },
         "coverage": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -14398,6 +16598,7 @@
           ]
         },
         "formats-report": {
+          "appeared": [],
           "blocked_by": [
             "mira-export"
           ],
@@ -14409,7 +16610,11 @@
           "state": "blocked",
           "v": 3
         },
+        "gap-claim": {
+          "state": "absent"
+        },
         "marks": {
+          "appeared": [],
           "blocked_by": [
             "adjudication",
             "prepare"
@@ -14417,12 +16622,13 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "marks from the adjudicated verdicts",
-          "ran": "2026-09-11T16:38:51Z",
+          "note": "marks from the re-validated verdicts",
+          "ran": "2026-09-11T19:41:16Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "mira-export": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -14448,6 +16654,7 @@
           "v": 1
         },
         "plain-claim": {
+          "appeared": [],
           "by": "supplied:runs/headley-2026-inhibitory-rhythms/plain-claim.answer.json",
           "lost": [],
           "moved": [],
@@ -14461,6 +16668,7 @@
           "state": "open"
         },
         "prepare": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -14526,18 +16734,20 @@
           "v": 1
         },
         "adjudication": {
+          "appeared": [],
           "blocked_by": [
             "coverage"
           ],
           "by": "supplied:runs/kammer-2026-foveal-feedback/adjudication.answer.json",
           "lost": [],
           "moved": [],
-          "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
-          "ran": "2026-09-11T16:38:40Z",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "ran": "2026-09-11T19:16:35Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "article": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -14570,6 +16780,7 @@
           "v": 1
         },
         "coverage": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -14606,6 +16817,7 @@
           ]
         },
         "formats-report": {
+          "appeared": [],
           "blocked_by": [
             "mira-export"
           ],
@@ -14617,7 +16829,21 @@
           "state": "blocked",
           "v": 3
         },
+        "gap-claim": {
+          "appeared": [],
+          "blocked_by": [
+            "adjudication"
+          ],
+          "by": "supplied:runs/kammer-2026-foveal-feedback/gap-claim.answer.json",
+          "lost": [],
+          "moved": [],
+          "note": "first run of the layer; drafts answered by Claude Opus 5 through --dump-prompt",
+          "ran": "2026-09-11T19:40:58Z",
+          "state": "blocked",
+          "v": 1
+        },
         "marks": {
+          "appeared": [],
           "blocked_by": [
             "adjudication",
             "prepare"
@@ -14625,12 +16851,13 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "marks from the adjudicated verdicts",
-          "ran": "2026-09-11T16:38:51Z",
+          "note": "marks from the re-validated verdicts",
+          "ran": "2026-09-11T19:41:16Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "mira-export": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -14656,6 +16883,7 @@
           "v": 1
         },
         "plain-claim": {
+          "appeared": [],
           "by": "supplied:runs/kammer-2026-foveal-feedback/plain-claim.answer.json",
           "lost": [],
           "moved": [],
@@ -14669,6 +16897,7 @@
           "state": "open"
         },
         "prepare": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -14729,18 +16958,20 @@
           "v": 1
         },
         "adjudication": {
+          "appeared": [],
           "blocked_by": [
             "coverage"
           ],
           "by": "supplied:runs/kolb-2026-igabasnfr2/adjudication.answer.json",
           "lost": [],
           "moved": [],
-          "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
-          "ran": "2026-09-11T16:38:40Z",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "ran": "2026-09-11T19:16:28Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "article": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -14773,6 +17004,7 @@
           "v": 1
         },
         "coverage": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -14809,6 +17041,7 @@
           ]
         },
         "formats-report": {
+          "appeared": [],
           "blocked_by": [
             "mira-export"
           ],
@@ -14820,7 +17053,11 @@
           "state": "blocked",
           "v": 3
         },
+        "gap-claim": {
+          "state": "absent"
+        },
         "marks": {
+          "appeared": [],
           "blocked_by": [
             "adjudication",
             "prepare"
@@ -14828,12 +17065,13 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "marks from the adjudicated verdicts",
-          "ran": "2026-09-11T16:38:51Z",
+          "note": "marks from the re-validated verdicts",
+          "ran": "2026-09-11T19:41:17Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "mira-export": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -14853,6 +17091,7 @@
           "v": 1
         },
         "plain-claim": {
+          "appeared": [],
           "by": "supplied:runs/kolb-2026-igabasnfr2/plain-claim.answer.json",
           "lost": [],
           "moved": [],
@@ -14866,6 +17105,7 @@
           "state": "open"
         },
         "prepare": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -14936,18 +17176,20 @@
           "v": 1
         },
         "adjudication": {
+          "appeared": [],
           "blocked_by": [
             "coverage"
           ],
           "by": "supplied:runs/rozak-2026-neurovascular-dl/adjudication.answer.json",
           "lost": [],
           "moved": [],
-          "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
-          "ran": "2026-09-11T16:38:40Z",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "ran": "2026-09-11T19:16:29Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "article": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -14980,6 +17222,7 @@
           "v": 1
         },
         "coverage": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -15016,6 +17259,7 @@
           ]
         },
         "formats-report": {
+          "appeared": [],
           "blocked_by": [
             "mira-export"
           ],
@@ -15027,7 +17271,11 @@
           "state": "blocked",
           "v": 3
         },
+        "gap-claim": {
+          "state": "absent"
+        },
         "marks": {
+          "appeared": [],
           "blocked_by": [
             "adjudication",
             "prepare"
@@ -15035,12 +17283,13 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "marks from the adjudicated verdicts",
-          "ran": "2026-09-11T16:40:38Z",
+          "note": "marks from the re-validated verdicts",
+          "ran": "2026-09-11T19:41:17Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "mira-export": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -15060,6 +17309,7 @@
           "v": 1
         },
         "plain-claim": {
+          "appeared": [],
           "by": "supplied:runs/rozak-2026-neurovascular-dl/plain-claim.answer.json",
           "lost": [],
           "moved": [],
@@ -15073,6 +17323,7 @@
           "state": "open"
         },
         "prepare": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -15138,18 +17389,20 @@
           "v": 1
         },
         "adjudication": {
+          "appeared": [],
           "blocked_by": [
             "coverage"
           ],
           "by": "supplied:runs/scheller-2026-self-prioritization/adjudication.answer.json",
           "lost": [],
           "moved": [],
-          "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
-          "ran": "2026-09-11T16:38:40Z",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "ran": "2026-09-11T19:16:29Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "article": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -15182,6 +17435,7 @@
           "v": 1
         },
         "coverage": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -15218,6 +17472,7 @@
           ]
         },
         "formats-report": {
+          "appeared": [],
           "blocked_by": [
             "mira-export"
           ],
@@ -15229,7 +17484,11 @@
           "state": "blocked",
           "v": 3
         },
+        "gap-claim": {
+          "state": "absent"
+        },
         "marks": {
+          "appeared": [],
           "blocked_by": [
             "adjudication",
             "prepare"
@@ -15237,12 +17496,13 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "marks from the adjudicated verdicts",
-          "ran": "2026-09-11T16:40:38Z",
+          "note": "marks from the re-validated verdicts",
+          "ran": "2026-09-11T19:41:17Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "mira-export": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -15268,6 +17528,7 @@
           "v": 1
         },
         "plain-claim": {
+          "appeared": [],
           "by": "supplied:runs/scheller-2026-self-prioritization/plain-claim.answer.json",
           "lost": [],
           "moved": [],
@@ -15281,6 +17542,7 @@
           "state": "open"
         },
         "prepare": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -15346,18 +17608,20 @@
           "v": 1
         },
         "adjudication": {
+          "appeared": [],
           "blocked_by": [
             "coverage"
           ],
           "by": "supplied:runs/wengert-2026-kcnc1/adjudication.answer.json",
           "lost": [],
           "moved": [],
-          "note": "verdicts answered by Claude Opus 5 through --dump-prompt",
-          "ran": "2026-09-11T16:38:41Z",
+          "note": "re-validated against the current tree; verdicts now carry the tree fingerprint",
+          "ran": "2026-09-11T19:16:29Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "article": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
@@ -15390,16 +17654,17 @@
           "v": 1
         },
         "coverage": {
+          "appeared": [],
           "blocked_by": [
             "prepare"
           ],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "coverage for the nine papers that had none",
-          "ran": "2026-09-11T16:29:28Z",
+          "note": "re-run to record input-set membership",
+          "ran": "2026-09-11T19:39:37Z",
           "state": "blocked",
-          "v": 1
+          "v": 3
         },
         "dg-export": {
           "backfilled": true,
@@ -15426,6 +17691,7 @@
           ]
         },
         "formats-report": {
+          "appeared": [],
           "blocked_by": [
             "mira-export"
           ],
@@ -15437,7 +17703,11 @@
           "state": "blocked",
           "v": 3
         },
+        "gap-claim": {
+          "state": "absent"
+        },
         "marks": {
+          "appeared": [],
           "blocked_by": [
             "adjudication",
             "prepare"
@@ -15445,12 +17715,13 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [],
-          "note": "marks from the adjudicated verdicts",
-          "ran": "2026-09-11T16:38:52Z",
+          "note": "marks from the re-validated verdicts",
+          "ran": "2026-09-11T19:41:17Z",
           "state": "blocked",
-          "v": 1
+          "v": 2
         },
         "mira-export": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
@@ -15470,6 +17741,7 @@
           "v": 1
         },
         "plain-claim": {
+          "appeared": [],
           "by": "supplied:runs/wengert-2026-kcnc1/plain-claim.answer.json",
           "lost": [],
           "moved": [],
@@ -15483,6 +17755,7 @@
           "state": "open"
         },
         "prepare": {
+          "appeared": [],
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [

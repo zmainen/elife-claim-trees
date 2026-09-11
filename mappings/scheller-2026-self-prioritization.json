@@ -2,7 +2,7 @@
  "paper": "scheller-2026-self-prioritization",
  "adjudicated": "2026-09-11",
  "by": "supplied:runs/scheller-2026-self-prioritization/adjudication.answer.json",
- "note": "Verdicts for spans the mechanical match could not resolve. covered = a claim does account for it; gap = a real hole; not-an-assertion = the span states no result of its own. Each verdict carries `sha`, the fingerprint of the sentence it was made about; a verdict whose fingerprint no longer matches is discarded by `coverage` rather than reattached to text nobody judged.",
+ "note": "Verdicts for spans the mechanical match could not resolve. covered = a claim does account for it; gap = a real hole; not-an-assertion = the span states no result of its own. Every verdict carries `sha`, the fingerprint of the sentence it judged. A `gap` also carries `tree`, the fingerprint of which claims existed when it was judged, and a `covered` carries `claim_sha`, the wording of the claim it named — because a gap is a statement about the tree, and closing one is exactly the edit that used to leave the verdict standing over nothing. `coverage` discards a verdict whose fingerprints no longer match rather than applying a judgement nobody made about what is there now.",
  "spans": [
   {
    "uid": "results-016",
@@ -16,7 +16,8 @@
    "verdict": "covered",
    "claim": "tva-capacity-model-wins",
    "why": "This is the conclusion of the model comparison: social salience changed absolute processing capacity, not only the relative attentional weights.",
-   "sha": "e22a68d6"
+   "sha": "e22a68d6",
+   "claim_sha": "61428125"
   },
   {
    "uid": "results-052",
@@ -72,14 +73,16 @@
    "verdict": "covered",
    "claim": "self-salience-dominates-other-associated",
    "why": "The claim states this same result for self-associated shapes: social salience is the stronger predictor with perceptual salience contributing as well.",
-   "sha": "df47122f"
+   "sha": "df47122f",
+   "claim_sha": "4036d96e"
   },
   {
    "uid": "results-152",
    "verdict": "gap",
    "claim": null,
    "why": "This table is the only place the inclusion Bayes factors for the social-salience coefficient (BF=2.83) and for the perceptual-by-social interaction (BF=1.42, inconclusive) are reported, and no claim carries either.",
-   "sha": "b83f17ef"
+   "sha": "b83f17ef",
+   "tree": "f6e2d25c"
   },
   {
    "uid": "captions-001",
@@ -121,7 +124,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "This single-participant illustration of fewer 'probe first' responses when the self-associated probe required a social identity report is a result at the individual level that no claim in the tree accounts for.",
-   "sha": "8af7327e"
+   "sha": "8af7327e",
+   "tree": "f6e2d25c"
   },
   {
    "uid": "captions-067",
@@ -149,7 +153,8 @@
    "verdict": "gap",
    "claim": null,
    "why": "Table 2 is the only place the inclusion Bayes factors for the social-salience coefficient (BF=2.83) and for the perceptual-by-social interaction (BF=1.42, inconclusive) are reported, and no claim carries either.",
-   "sha": "b83f17ef"
+   "sha": "b83f17ef",
+   "tree": "f6e2d25c"
   }
  ]
 }
