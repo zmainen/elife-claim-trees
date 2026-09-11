@@ -56,8 +56,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (path: string) => `${base}${path}/`;
 
 // Simple: are ALL claims verified?
-const verifiedCount = paperData.claims.filter((c: any) => c.status.startsWith('verified')).length;
-const allVerified = verifiedCount === paperData.claimCount && paperData.claimCount > 0;
+// Counted, not graded. `reran` is how many of this paper's claims we re-ran and the numbers
+// matched; it is a fact about our effort, and there is no honest one-word summary of a
+// paper's reproduction state, so the paper-level badge is gone.
+const reran = paperData.claims.filter((c: any) => c.status.startsWith('verified')).length;
 
 const stageLabel: Record<string, string> = {
   published: '',
@@ -114,9 +116,7 @@ const tabs = [
     <div class="mb-8">
       <div class="flex items-start gap-4 mb-1">
         <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100 leading-snug flex-1 m-0">{paperData.title}</h1>
-        {allVerified && (
-          <span class="flex-shrink-0 all-verified-badge">✓ All claims verified</span>
-        )}
+        
       </div>
       <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
         {paperData.authors.join(', ')} · {(paperData as any).journal}
@@ -170,11 +170,13 @@ const tabs = [
       <p class="paper-summary paper-summary-fallback">{paperSummaryFallback}</p>
     )}
 
-    <!-- Claim count + verified count -->
+    <!-- Claim count, and how many of them we re-ran -->
     <div class="mb-6 flex items-center gap-3">
       <span class="text-sm text-gray-500 dark:text-gray-400">{paperData.claimCount} claims</span>
-      {verifiedCount > 0 && !allVerified && (
-        <span class="text-sm text-green-700 dark:text-green-400 font-medium">{verifiedCount} verified</span>
+      {reran > 0 && (
+        <span class="text-sm text-slate-600 dark:text-slate-400">
+          {reran} re-run from deposited code
+        </span>
       )}
     </div>
 
@@ -324,17 +326,6 @@ const tabs = [
     vertical-align: baseline;
   }
 
-  .all-verified-badge {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--ok-fg);
-    background: var(--ok-bg);
-    border: 1px solid var(--ok-border);
-    padding: 3px 10px;
-    border-radius: 4px;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-  }
 
   /* Alphabetical claim index at the bottom of the Claims tab */
   .alpha-index-details > summary {
