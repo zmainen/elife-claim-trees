@@ -189,6 +189,50 @@ ROLE_CONFUSABLE = [
      ("headley-2026-inhibitory-rhythms", "pv-gamma-sst-beta-correspondence")),
 ]
 
+# ── What is not a claim ──────────────────────────────────────────────────
+# The `methodological` definition drew the line — procedure is a claim only when a result turns
+# on it — but the recorded Opus structure reader returned procedure anyway, because the line had
+# no examples (docs/design/2026-09-11-parts.md). `WARRANTS` are the positive side: procedure a
+# result does turn on, quoted through `_quote` so each resolves to a real methodological claim.
+# `NOT_CLAIMS` are the negative side: sentences the reader returned (the six from Gädeke's v3
+# structure output, plus one from the earlier DeepSeek run) that no result turns on, each with
+# the one thing it merely records.
+WARRANTS = [
+    ("kammer-2026-foveal-feedback", "preregistered-design-validates-mvpa"),
+    ("gadeke-2026-guilt-insula", "model-based-glm-entered-best-fitting-computational"),
+    ("gadeke-2026-guilt-insula", "momentary-happiness-modelled-five-computational"),
+    ("gadeke-2026-guilt-insula", "parameter-recovery-procedure-synthetic-data-generated"),
+]
+
+NOT_CLAIMS = [
+    ("Happiness ratings were Z-scored per participant to remove the influence of differing "
+     "rating variability across participants.",
+     "a normalisation — no result reads differently for it"),
+    ("Risk attitude was quantified as a risk premium — the EVdiff value yielding 50% risky "
+     "choices from a fitted logistic regression — and compared between Solo and Social "
+     "conditions with paired t-tests in both studies.",
+     "a definition of a measure — the finding is that the premium did not differ, not that it "
+     "was defined this way"),
+    ("Two gPPI seed-to-voxel connectivity analyses used functionally defined seeds: the left "
+     "insula cluster more sensitive to Risky versus Safe outcomes (GLM3) and the left STS "
+     "cluster responding more to social_pRPE than partner_pRPE (GLM4), with identical seeds "
+     "across participants.",
+     "a seed choice — the connectivity result is the claim, not which seeds produced it"),
+    ("All reported clusters survive a whole-brain family-wise-error-corrected threshold of "
+     "p < 0.05 with a cluster-forming voxel-wise threshold of p < 0.001 (or a smaller volume "
+     "where explicitly mentioned).",
+     "a threshold applied to every result alike — a scope condition folded into the paper's "
+     "scope claim, not a finding"),
+    ("The fMRI data of four Study 2 participants were excluded from the fMRI analysis for "
+     "excessive head motion (>3 mm or >3°).",
+     "an exclusion count — a component of the paper's scope claim, not a claim of its own"),
+    ("The Study 2 sample size of 44 was fixed a priori by a G*Power analysis based on Study 1's "
+     "effect size (Cohen's d = 0.56), with alpha = 0.05 and power = 0.95.",
+     "a power analysis fixing the sample — a component of the paper's scope claim"),
+    ("The experiment was implemented in MATLAB using Psychtoolbox.",
+     "a software choice — no result would mean anything different in another toolbox"),
+]
+
 # ── Claim types ──────────────────────────────────────────────────────────
 # The epistemic character of the proposition, independent of the role it plays. Seven values:
 # the five in docs/claim-format.md and the two the corpus uses for its deductive layer, which
@@ -224,4 +268,46 @@ READER_CONFIDENCE = [
     ("high", "asserted directly in the text the reader was given, with a quotable sentence"),
     ("tentative", "read between the lines, summarised across sentences, or ambiguous in the "
                   "source; say why in `notes`"),
+]
+
+# ── Same, part, or different ─────────────────────────────────────────────
+# The reconciler's three-way test, shown on real pairs. Each triple is two candidate sentences
+# and the verdict, with one line of why. All are drawn from the Gädeke pairs the recorded Opus
+# run wrongly kept apart (docs/design/2026-09-11-parts.md); the sentences are quoted literally
+# from the claim files, so a triple is an example of what the reconciler actually receives.
+# `contract.py` renders these; they are strings, not slugs, because the reconciler compares
+# sentences, not files.
+SAME_CLAIM = [
+    ("same",
+     "In both studies, participants felt worse after low lottery outcomes for the partner when "
+     "those outcomes followed their own choice rather than the partner's, which the authors "
+     "interpret as interpersonal guilt.",
+     "When the partner received the low lottery outcome, participant happiness was lower when "
+     "the participant rather than the partner had chosen the lottery — a significant "
+     "partner-outcome × decision-maker interaction (Study 1: t(1180) = 3.52, p = 0.0004, "
+     "β = 0.37; Study 2: t(937) = 2.85, p = 0.0045, β = 0.33) — operationalizing interpersonal "
+     "guilt.",
+     "The same partner-outcome × decision-maker interaction on the same happiness data, cited "
+     "once as a cross-study synthesis and once as the result that computes it: merge, keep the "
+     "wording with the coefficients."),
+    ("part",
+     "One cluster in the left STS responded more to partner reward prediction errors resulting "
+     "from participant rather than partner choices (pFWE = 0.022, T = 4.70, d = 0.53, "
+     "100 voxels, peak MNI [−52 –32 0]).",
+     "The left superior temporal sulcus cluster responded to model-based regressors coding "
+     "participant reward prediction resulting from participant and partner choices across both "
+     "sessions of the experiment.",
+     "The first states one directional contrast — participant-caused above partner-caused — of "
+     "the broader responsiveness the second states as a whole: keep both, the first `part_of` "
+     "the second."),
+    ("different",
+     "During receipt of lottery versus safe outcomes (across all conditions), clusters were "
+     "more active in the bilateral anterior insula, dmPFC, right STS, bilateral ventral "
+     "striatum, right dorsolateral prefrontal cortex, and bilateral inferior parietal lobe.",
+     "The bilateral ventral striatum was more active when participants chose the risky rather "
+     "than the safe option (Cohen's d = 0.72 left, 0.85 right), irrespective of Social or Solo "
+     "condition, replicating previous findings.",
+     "Both light up the ventral striatum, but by different computations — one the "
+     "lottery-versus-safe outcome-receipt contrast, the other the risky-versus-safe choice "
+     "contrast: keep both, no relation between them here."),
 ]
