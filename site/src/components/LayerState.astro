@@ -1,0 +1,116 @@
+---
+// A layer's state across the corpus, and how to run it where it has not.
+//
+// The same block on every layer page, bespoke or generic: which papers have been through this
+// layer, at what version, and — for those that have not — the command that would fill the
+// cell, taken from the declaration so the page and the runner cannot diverge.
+import { papers, cell, titleOf, STATE_LABEL, type LayerDecl } from '../lib/pipeline';
+
+interface Props { layer: LayerDecl }
+const { layer } = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const url = (p: string) => `${base}${p}/`;
+const rows = layer.scope === 'corpus'
+  ? []
+  : papers.map(p => ({ paper: p, c: cell(p, layer.id)! })).filter(r => r.c);
+const counts: Record<string, number> = {};
+for (const r of rows) counts[r.c.state] = (counts[r.c.state] ?? 0) + 1;
+
+const TONE: Record<string, string> = {
+  current: 'text-emerald-700 dark:text-emerald-400',
+  stale:   'text-amber-700 dark:text-amber-400',
+  blocked: 'text-orange-700 dark:text-orange-400',
+  absent:  'text-gray-400 dark:text-gray-600',
+  'n/a':   'text-gray-400 dark:text-gray-600',
+  open:    'text-blue-700 dark:text-blue-400',
+  unrecorded: 'text-gray-500 dark:text-gray-400',
+};
+---
+
+{rows.length > 0 && (
+  <section class="mb-10">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Across the corpus</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+      {Object.entries(counts).map(([s, n]) => `${n} ${STATE_LABEL[s as keyof typeof STATE_LABEL]}`).join(' · ')}
+    </p>
+    <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="text-left text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-200 dark:border-gray-700">
+            <th class="py-2.5 px-4 font-medium">Paper</th>
+            <th class="py-2.5 px-3 font-medium">State</th>
+            <th class="py-2.5 px-3 font-medium">Version</th>
+            <th class="py-2.5 px-3 font-medium">Last run</th>
+            <th class="py-2.5 px-4 font-medium">Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(({ paper, c }) => (
+            <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0">
+              <td class="py-2.5 px-4">
+                <a href={url(`/papers/${paper}`)} class="text-gray-800 dark:text-gray-200 no-underline hover:text-amber-700 dark:hover:text-amber-400">
+                  {titleOf(paper).slice(0, 52)}{titleOf(paper).length > 52 ? '…' : ''}
+                </a>
+                {c.note && <span class="block text-xs text-gray-500 dark:text-gray-400 leading-snug">{c.note}</span>}
+              </td>
+              <td class={`py-2.5 px-3 font-mono text-xs whitespace-nowrap ${TONE[c.state]}`}>{STATE_LABEL[c.state]}</td>
+              <td class="py-2.5 px-3 font-mono text-xs text-gray-500 dark:text-gray-400 tabular-nums">{c.v ? `v${c.v}` : '—'}</td>
+              <td class="py-2.5 px-3 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">{c.ran?.slice(0, 10) ?? '—'}</td>
+              <td class="py-2.5 px-4">
+                <a href={c.dataHref} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">json</a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+)}
+
+<section class="mb-10">
+  <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Inputs and outputs</h2>
+  <dl class="text-sm space-y-3 m-0">
+    {(layer.reads ?? []).length > 0 && (
+      <div>
+        <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Reads, besides its dependencies</dt>
+        <dd class="m-0 font-mono text-xs text-gray-700 dark:text-gray-300">{(layer.reads ?? []).join(' · ')}</dd>
+      </div>
+    )}
+    {(layer.produces ?? []).length > 0 && (
+      <div>
+        <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Produces</dt>
+        <dd class="m-0 font-mono text-xs text-gray-700 dark:text-gray-300">{(layer.produces ?? []).join(' · ')}</dd>
+      </div>
+    )}
+    {(layer.views ?? []).length > 0 && (
+      <div>
+        <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Views</dt>
+        <dd class="m-0 text-gray-700 dark:text-gray-300">{(layer.views ?? []).join(', ')}</dd>
+      </div>
+    )}
+  </dl>
+</section>
+
+{layer.command && (
+  <section class="mb-10">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Running it</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+      The command comes from the declaration, so this text and what actually runs cannot
+      diverge. <code>pipeline.py run</code> also runs the unmet dependencies first.
+    </p>
+    <pre class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs text-gray-700 dark:text-gray-300 overflow-x-auto m-0"><code>python3 scripts/pipeline.py run &lt;paper&gt; {layer.id}</code></pre>
+  </section>
+)}
+
+{layer.requires_human && (
+  <section class="mb-10 border border-amber-300 dark:border-amber-700/60 rounded-lg p-5">
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 m-0 mb-2">Not runnable</h2>
+    <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+      This layer requires a person, so it has no command and cannot be filled by re-running
+      anything. It is declared and empty for every paper in the corpus, which is what
+      <em> no human has checked this corpus</em> looks like when it is a fact about the data
+      rather than a sentence in a preface.
+    </p>
+  </section>
+)}
