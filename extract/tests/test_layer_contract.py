@@ -61,6 +61,25 @@ def _paper() -> PreparedPaper:
     )
 
 
+def _read_paper() -> PreparedPaper:
+    """A paper with real sentences in every reader section and one figure, so the slice the
+    results reader gets can be inspected — the inventory line, the Introduction, the Discussion,
+    and the span id in front of each sentence."""
+    from elife_extract.prepare import FigureCaption
+    return PreparedPaper(
+        doi=DOI, article_id="105391", paper_slug=SLUG, title="A paper", authors=["G"],
+        abstract="Guilt tracks insula activity. We show it here.",
+        introduction_text="We asked whether responsibility drives guilt. Prior work found a link.",
+        results_text="Participants chose the safe option. Insula activity rose in the guilt condition.",
+        discussion_text="These findings suggest a guilt signal. This extends earlier reports.",
+        captions_text="Figure 2. Choices. (A) safe choices.",
+        methods_text="We recruited forty participants for the task.",
+        extraction_path="jats",
+        figure_captions=[FigureCaption(figure_num="2", text="Figure 2. Behavioural choices. Panel A shows safe choices.",
+                                       panels=["a", "b"], element_id="fig2")],
+    )
+
+
 def _candidate() -> CandidateClaim:
     return CandidateClaim(claim="The insula responds to guilt.", panel="fig1a",
                           claim_type="empirical", role="empirical",
@@ -440,6 +459,86 @@ def test_reconciled_claim_evidence_verified_has_one_entry_per_reader():
     assert set(ev.keys()) == {"results", "caption"}
     assert ev["results"] is True
     assert ev["caption"] is False
+
+
+# ── Prepare reads the whole paper: spans, inventory, span-cited evidence ──
+
+
+def test_spans_are_numbered_per_section_in_coverage_uid_format():
+    """prepared.json spans match the ids coverage's segmenter produces (`results-026`)."""
+    from elife_extract.prepare import _build_spans
+    from elife_extract.segment import segment
+
+    paper = _read_paper()
+    spans = _build_spans(paper)
+    # Every uid is `<section>-<3 digits>`, numbered from 001 within its section.
+    for s in spans:
+        assert re.fullmatch(r"[a-z]+-\d{3}", s["uid"]), s["uid"]
+    intro = [s["uid"] for s in spans if s["section"] == "introduction"]
+    assert intro[:2] == ["introduction-001", "introduction-002"]
+    # The spans prepare records and the ones coverage segments are the same function's output.
+    assert [(s["uid"], s["section"], s["text"]) for s in spans] == \
+        [(s.uid, s.section, s.text) for s in segment(paper, include_methods=True)]
+
+
+def test_results_reader_slice_carries_introduction_discussion_and_the_inventory():
+    """The results reader now reads all four prose sections and sees the panels that exist."""
+    from elife_extract.agents import slice_for_agent
+
+    sliced = slice_for_agent("results", _read_paper())
+    assert "We asked whether responsibility drives guilt." in sliced   # Introduction
+    assert "These findings suggest a guilt signal." in sliced          # Discussion
+    # One inventory line for the figure, its panel ids and the caption head.
+    assert "fig2: fig2a, fig2b — Behavioural choices." in sliced
+
+
+def test_a_rendered_slice_line_begins_with_its_span_id():
+    """Each sentence is prefixed with the id the reader cites in `span`."""
+    from elife_extract.agents import slice_for_agent
+
+    sliced = slice_for_agent("results", _read_paper())
+    body = [ln for ln in sliced.splitlines() if ln.startswith("[")]
+    assert body, "no span-prefixed lines rendered"
+    assert re.match(r"^\[[a-z]+-\d{3}\] \S", body[0]), body[0]
+
+
+def test_evidence_check_accepts_a_quote_against_the_cited_span():
+    """A quote verbatim from the cited span verifies, and records that it matched the span."""
+    from elife_extract.agents import _spans_by_uid, raw_slice_for_agent, verify_evidence
+
+    paper = _read_paper()
+    spans = _spans_by_uid(paper)
+    # results-002 is the second Results sentence.
+    quote = "Insula activity rose in the guilt condition."
+    ok, against = verify_evidence(quote, "results-002", spans,
+                                  raw_slice_for_agent("results", paper))
+    assert ok and against == "span"
+    # No span cited, but the quote is still in the raw slice: verified against the slice.
+    ok2, against2 = verify_evidence(quote, None, spans, raw_slice_for_agent("results", paper))
+    assert ok2 and against2 == "slice"
+    # A fabricated quote verifies against neither.
+    ok3, against3 = verify_evidence("totally invented sentence", "results-002", spans,
+                                    raw_slice_for_agent("results", paper))
+    assert not ok3 and against3 is None
+
+
+def test_prepared_json_round_trips_spans_introduction_and_discussion():
+    """asdict → prepared.json → read_prepared keeps the new fields; old files still load."""
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = _cfg(Path(tmp))
+        paper = _read_paper()
+        from elife_extract.prepare import _build_spans
+        paper.spans = _build_spans(paper)
+        layers._write_json(layers.run_file(SLUG, "prepared.json", cfg), asdict(paper))
+        back = layers.read_prepared(SLUG, cfg)
+        assert back.introduction_text == paper.introduction_text
+        assert back.discussion_text == paper.discussion_text
+        assert back.spans and back.spans[0]["uid"].startswith("abstract-")
+
+        # A prepared.json written before this change — no spans/introduction/discussion — loads.
+        layers._write_json(layers.run_file(SLUG, "prepared.json", cfg), asdict(_paper()))
+        old = layers.read_prepared(SLUG, cfg)
+        assert old.introduction_text == "" and old.discussion_text == "" and old.spans == []
 
 
 # ── Standalone runner (no pytest required) ────────────────────────────────

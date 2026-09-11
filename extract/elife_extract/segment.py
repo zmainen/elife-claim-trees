@@ -337,7 +337,9 @@ def segment(paper: PreparedPaper, *, include_methods: bool = True) -> list[Span]
     """
     sections: list[tuple[str, str]] = [
         ("abstract", paper.abstract),
+        ("introduction", paper.introduction_text),
         ("results", paper.results_text),
+        ("discussion", paper.discussion_text),
         ("captions", paper.captions_text),
         ("tables", paper.tables_text),
     ]

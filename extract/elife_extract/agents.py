@@ -66,22 +66,70 @@ def evidence_found(quote: str, text: str) -> bool:
     return q in normalise(text)
 
 
+def _spans_by_uid(paper: PreparedPaper) -> dict[str, str]:
+    """Every span's text keyed by its uid — the ids a reader cites in `span`."""
+    from .segment import segment
+    return {s.uid: s.text for s in segment(paper, include_methods=True)}
+
+
+def verify_evidence(quote: str, span: str | None, spans: dict[str, str],
+                    slice_text: str) -> tuple[bool, str | None]:
+    """Check a quote against its cited span first, then the whole slice; say which matched.
+
+    A quote checked against the one sentence it names is a real hallucination test: the span
+    is a single sentence with no bracketed id, so a verbatim quote either is in it or is not.
+    The slice fallback keeps the earlier meaning for a reader that cited no span (its slice
+    carries no ids) and for a quote of two sentences that no single span holds.
+    """
+    if span and span in spans and evidence_found(quote, spans[span]):
+        return True, "span"
+    if evidence_found(quote, slice_text):
+        return True, "slice"
+    return False, None
+
+
 # ── Slice mapping: which slice each agent reads ─────────────────────────
+
+# The four prose sections the results reader reads, in reading order. Its slice is these
+# sections cut into the numbered spans coverage uses, each sentence shown with its id in front
+# so the reader can cite the span its evidence came from.
+_RESULTS_SECTIONS = ("abstract", "introduction", "results", "discussion")
+
+
+def _render_spans(paper: PreparedPaper, sections: tuple[str, ...]) -> str:
+    """The given sections as `[uid] sentence` lines, in the segmenter's order."""
+    from .segment import segment
+    keep = set(sections)
+    lines = [f"[{s.uid}] {s.text}" for s in segment(paper, include_methods=True)
+             if s.section in keep]
+    return "\n".join(lines)
 
 
 def slice_for_agent(agent: AgentName, paper: PreparedPaper) -> str:
     """Return the paper slice this agent reads.
 
-    The caption-reader gets tables as well as figures: a table is a float that
-    reports results panel-by-panel, and its numbers appear nowhere else in the
-    text. The structure-reader gets appendices and the supplementary inventory,
-    since supplementary methods and materials are structural claims about how
-    the work was done.
+    The results-reader now gets the abstract, the Introduction, the Results and the Discussion —
+    where the hypothesis, the questions and the literature-context premises are stated — with a
+    panel inventory in front of it and every sentence numbered by its span id. The caption-reader
+    gets figures and tables as before, plus the inventory: a table is a float that reports
+    results panel-by-panel and its numbers appear nowhere else. The structure-reader is
+    unchanged — methods, appendices and the supplementary inventory, which are structural claims
+    about how the work was done.
     """
     if agent == "results":
-        return f"# Abstract\n\n{paper.abstract}\n\n# Results\n\n{paper.results_text}"
+        inventory = paper.panel_inventory()
+        body = _render_spans(paper, _RESULTS_SECTIONS)
+        parts = []
+        if inventory:
+            parts.append(f"# Panel inventory\n\n{inventory}")
+        parts.append(f"# Paper (abstract, introduction, results, discussion)\n\n{body}")
+        return "\n\n".join(parts)
     if agent == "caption":
-        parts = [f"# Figure captions\n\n{paper.captions_text}"]
+        inventory = paper.panel_inventory()
+        parts = []
+        if inventory:
+            parts.append(f"# Panel inventory\n\n{inventory}")
+        parts.append(f"# Figure captions\n\n{paper.captions_text}")
         if paper.tables_text:
             parts.append(f"# Tables\n\n{paper.tables_text}")
         return "\n\n".join(parts)
@@ -93,6 +141,25 @@ def slice_for_agent(agent: AgentName, paper: PreparedPaper) -> str:
             parts.append(f"# Supplementary material\n\n{paper.supplementary_text}")
         return "\n\n".join(parts)
     raise ValueError(f"unknown agent: {agent!r}")
+
+
+def raw_slice_for_agent(agent: AgentName, paper: PreparedPaper) -> str:
+    """The raw text of an agent's sections, without span ids or the inventory.
+
+    Evidence is quoted verbatim from the prose, not from the id-prefixed rendering the model
+    reads, so the slice a quote is checked against must be the raw text — a quote spanning two
+    sentences would otherwise fail on the `[uid]` sitting between them.
+    """
+    if agent == "results":
+        blocks = [paper.abstract, paper.introduction_text, paper.results_text,
+                  paper.discussion_text]
+    elif agent == "caption":
+        blocks = [paper.captions_text, paper.tables_text]
+    elif agent == "structure":
+        blocks = [paper.methods_text, paper.appendix_text, paper.supplementary_text]
+    else:
+        raise ValueError(f"unknown agent: {agent!r}")
+    return "\n\n".join(b for b in blocks if b)
 
 
 # ── Prompt loading ──────────────────────────────────────────────────────
@@ -396,11 +463,15 @@ def reader_from_raw(agent: AgentName, paper_slug: str, model: str,
     """
     claims = [CandidateClaim(**c) for c in _as_claim_list(parse_json_response(raw), agent)]
     if paper is not None:
-        text = slice_for_agent(agent, paper)
+        spans = _spans_by_uid(paper)
+        text = raw_slice_for_agent(agent, paper)
         for c in claims:
-            c.evidence_verified = evidence_found(c.evidence, text)
+            c.evidence_verified, c.evidence_verified_against = verify_evidence(
+                c.evidence, c.span, spans, text)
         verified = sum(1 for c in claims if c.evidence_verified)
-        logger.info("agent=%s evidence verified %d/%d", agent, verified, len(claims))
+        by_span = sum(1 for c in claims if c.evidence_verified_against == "span")
+        logger.info("agent=%s evidence verified %d/%d (%d against the cited span)",
+                    agent, verified, len(claims), by_span)
     return AgentExtraction(agent=agent, paper_slug=paper_slug, model=model, claims=claims)
 
 

@@ -107,6 +107,15 @@ class PreparedPaper:
     tables: list["TableCaption"] = field(default_factory=list)
     appendix_text: str = ""
     supplementary_text: str = ""
+    # The Introduction states the organising hypothesis and the questions; the Discussion states
+    # the interpretation and the literature-context premises. Both were parsed and thrown away
+    # until now, so no reader saw them. Defaults keep every committed prepared.json loadable.
+    introduction_text: str = ""
+    discussion_text: str = ""
+    # The paper cut into the numbered spans coverage segments, so a reader can cite the id in
+    # front of a sentence and coverage can match a claim to a span rather than re-finding it by
+    # string. One dict per span: {uid, section, text}. Filled by prepare via the segmenter.
+    spans: list[dict] = field(default_factory=list)
 
     @property
     def tables_text(self) -> str:
@@ -120,6 +129,20 @@ class PreparedPaper:
             ids.extend(fc.panel_ids())
         ids.extend(t.panel_id() for t in self.tables)
         return ids
+
+    def panel_inventory(self) -> str:
+        """One line per figure and table: its id, its panel ids, and the caption's first sentence.
+
+        The results reader reads the sentences that say what each panel is for but was given no
+        list of the panels that exist, so it left most claims unanchored and could not tell a
+        real panel from one it imagined. This is that list, in the ids the paper already carries.
+        """
+        lines: list[str] = []
+        for fc in self.figure_captions:
+            lines.append(f"{fc.base_id()}: {', '.join(fc.panel_ids())} — {_caption_head(fc.text)}")
+        for t in self.tables:
+            lines.append(f"{t.panel_id()}: {t.panel_id()} — {_caption_head(t.text)}")
+        return "\n".join(lines)
 
 
 @dataclass
@@ -168,6 +191,25 @@ class TableCaption:
     def panel_id(self) -> str:
         """The table's identifier — the document's own where it has one."""
         return self.element_id or f"table{self.table_num.lower()}"
+
+
+# The label a caption opens with ("Figure 2.", "Table 1.", "Appendix 1—table 4.") is not part
+# of the sentence that says what the float shows, so it is stripped before the first sentence.
+_CAPTION_LABEL_RE = re.compile(r"^\s*(?:Figure|Fig\.?|Table|Appendix)[^.]*\.\s*", re.IGNORECASE)
+
+
+def _caption_head(text: str, limit: int = 160) -> str:
+    """The first sentence of a caption, minus its "Figure N." label — the inventory line."""
+    t = _CAPTION_LABEL_RE.sub("", " ".join(text.split()), count=1)
+    m = re.search(r"(.+?[.!?])(?:\s|$)", t)
+    return (m.group(1) if m else t)[:limit].strip()
+
+
+def _build_spans(paper: "PreparedPaper") -> list[dict]:
+    """The paper's spans, in the shape prepared.json records — the segmenter coverage uses."""
+    from .segment import segment  # deferred: segment imports PreparedPaper from here
+    return [{"uid": s.uid, "section": s.section, "text": s.text}
+            for s in segment(paper, include_methods=True)]
 
 
 # ── DOI / article-ID handling ────────────────────────────────────────────
@@ -465,14 +507,16 @@ def parse_jats(xml_path: Path, doi: str, paper_slug_override: str | None = None)
 
     abstract_el = root.find(".//article-meta/abstract")
     abstract = _text(abstract_el)
+    introduction_text = _section_text(root, "intro")
     results_text = _section_text(root, "results")
+    discussion_text = _section_text(root, "discussion")
     methods_text = _section_text(root, "methods")
     captions = _extract_jats_figures(root)
     tables = _extract_jats_tables(root)
     appendix = _extract_appendices(root)
     supplementary = _extract_supplementary(root)
 
-    return PreparedPaper(
+    paper = PreparedPaper(
         doi=doi,
         article_id=article_id,
         paper_slug=slug,
@@ -485,10 +529,14 @@ def parse_jats(xml_path: Path, doi: str, paper_slug_override: str | None = None)
         tables=tables,
         appendix_text=appendix,
         supplementary_text=supplementary,
+        introduction_text=introduction_text,
+        discussion_text=discussion_text,
         extraction_path="jats",
         extraction_path_note=f"JATS-XML from {ELIFE_CDN_XML_URL.format(article_id=article_id)}",
         figure_captions=captions,
     )
+    paper.spans = _build_spans(paper)
+    return paper
 
 
 # ── PDF text extraction ──────────────────────────────────────────────────
@@ -748,7 +796,9 @@ def prepare(
     title, authors, year = guess_metadata(full_text)
     slug = paper_slug_override or derive_slug(authors, year, title)
 
-    return PreparedPaper(
+    # The section slicer already detects Introduction and Discussion; the two branches were
+    # simply never read out.
+    paper = PreparedPaper(
         doi=doi or "",
         article_id=article_id or "",
         paper_slug=slug,
@@ -758,7 +808,11 @@ def prepare(
         results_text=sections.get("results", ""),
         captions_text=captions_text_block(captions),
         methods_text=sections.get("methods", ""),
+        introduction_text=sections.get("introduction", ""),
+        discussion_text=sections.get("discussion", ""),
         extraction_path="pdf",
         extraction_path_note=source_note,
         figure_captions=captions,
     )
+    paper.spans = _build_spans(paper)
+    return paper

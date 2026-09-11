@@ -60,11 +60,17 @@ class CandidateClaim(BaseModel):
         "A verbatim quote from the text you were given, at most two sentences, that grounds "
         "the claim. It is checked against the source."))
     confidence: AgentConfidence = Field(..., description="high or tentative; see the vocabulary.")
+    span: str | None = Field(None, description=(
+        "The id of the span the evidence quote comes from, exactly as it is bracketed before "
+        "the sentence in your slice (results-026). null when the sentence shows no id."))
     notes: str | None = Field(None, description=(
         "Hedges, alternative readings, or what made this tentative. null when there is nothing "
         "to say."))
     evidence_verified: bool | None = Field(None, description=(
         "Filled by the runner. Leave null."))
+    evidence_verified_against: Literal["span", "slice"] | None = Field(None, description=(
+        "Filled by the runner: whether the quote matched the cited span or only the wider "
+        "slice. Leave null."))
 
 
 class AgentExtraction(BaseModel):
@@ -97,8 +103,12 @@ class ReconciledClaim(BaseModel):
         "claim the review pass added."))
     evidence_by_agent: dict[AgentName, str] = Field(default_factory=dict, description=(
         "For each reader in sources, the verbatim quote it gave."))
+    span_by_agent: dict[AgentName, str] = Field(default_factory=dict, description=(
+        "For each reader in sources that cited one, the span id its evidence quote came from."))
     evidence_verified: dict[str, bool] = Field(default_factory=dict, description=(
         "Filled by the runner. Leave null."))
+    evidence_verified_against: dict[str, str] = Field(default_factory=dict, description=(
+        "Filled by the runner: per reader, `span` or `slice`. Leave null."))
     notes: str | None = Field(None, description=(
         "What the readers disagreed about, or why a single-source claim deserves a second "
         "look. A review pass prefixes its notes with [reviewer]."))
