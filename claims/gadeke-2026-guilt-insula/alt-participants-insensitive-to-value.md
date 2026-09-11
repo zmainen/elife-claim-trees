@@ -8,7 +8,7 @@ claim: >
   or affect.
 claim-type: interpretive
 role: hypothesis
-addresses: q2
+addresses: q1
 concepts:
   - task engagement
   - expected value

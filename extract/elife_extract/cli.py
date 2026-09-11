@@ -218,7 +218,7 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
 def cmd_write(args: argparse.Namespace) -> int:
     """Layer `claim-tree` — the claim files, from the best draft and the inferred edges."""
     from .layers import best_draft, read_edges
-    from .write import write_claim_files, write_oxa_document
+    from .write import archive_dir, carry_over, write_claim_files, write_oxa_document
 
     cfg = _cfg(args)
     draft, source = best_draft(args.paper, cfg)
@@ -229,12 +229,17 @@ def cmd_write(args: argparse.Namespace) -> int:
     print(f"  edges  = {len(edges)} from the edge-inference layer"
           if edges else "  edges  = none — the edge-inference layer has not run")
 
+    # A replacement archives the current tree before it writes, so know now whether there was
+    # one to archive: the carry-over below runs only when a version was actually set aside.
+    paper_dir = cfg.corpus_dir / draft.paper_slug
+    replacing = args.replace and paper_dir.exists() and any(paper_dir.iterdir())
+
     try:
         if args.format == "oxa":
             path = write_oxa_document(draft, cfg)
             print(f"  written: {path}")
             return 0
-        written = write_claim_files(draft, cfg, edges=edges)
+        written = write_claim_files(draft, cfg, edges=edges, replace=args.replace)
     except FileExistsError as e:
         print(f"error: {e}", file=sys.stderr)
         return 7
@@ -243,6 +248,18 @@ def cmd_write(args: argparse.Namespace) -> int:
         return 8
 
     print(f"  wrote {len(written)} file(s) into {cfg.corpus_dir / draft.paper_slug}")
+
+    # Carry forward what the induction chain does not produce and the replaced version held:
+    # the `alt-` claims, the `rules-out` edges that named them, and the reproduction records.
+    # Done here so a single `write --replace` leaves the final tree — and the ledger entry the
+    # runner takes afterwards hashes it whole, carry-over included.
+    if replacing:
+        arch = archive_dir(cfg, draft.paper_slug)
+        s = carry_over(cfg, draft.paper_slug, arch)
+        print(f"  archived previous version to {arch.relative_to(cfg.root)}")
+        print(f"  carried: {len(s['alt_claims'])} alt- claim(s), {len(s['rules_out'])} "
+              f"rules-out edge(s), {len(s['reproductions'])} reproduction record(s)"
+              + (f"; {len(s['unplaced'])} unplaced" if s["unplaced"] else ""))
     return 0
 
 
@@ -824,6 +841,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_write.add_argument("--paper", required=True, help="Paper slug.")
     p_write.add_argument("--format", choices=["yaml", "oxa"], default="yaml",
                          help="yaml (per-claim markdown, default) or oxa (one JSON Document).")
+    p_write.add_argument("--replace", action="store_true",
+                         help="Replace an existing tree: move it to runs/<paper>/claim-tree.v<N>/ "
+                              "first, then write the new one and carry forward its alt- claims, "
+                              "rules-out edges and reproduction records. Without this, a non-empty "
+                              "directory is refused.")
     _add_common_args(p_write)
     p_write.set_defaults(func=cmd_write)
 

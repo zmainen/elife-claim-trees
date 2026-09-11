@@ -15,8 +15,10 @@ which has heuristic-quality metadata).
 
 from __future__ import annotations
 
+import json
 import logging
 import re
+import shutil
 import uuid
 from datetime import date
 from pathlib import Path
@@ -33,6 +35,70 @@ from .oxa import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+# ── Editing a claim file's frontmatter in place ──────────────────────────
+# The claim files are hand-edited and machine-written both, so a re-dump of the whole
+# frontmatter would reorder and reflow keys nobody touched. These edit it as text: drop the
+# key if it is already there and write the new value, leaving every other line untouched. The
+# questions layer and the carry-over both write keys back into an existing tree this way; the
+# pattern is verify_refs.py's DOI write-back, minus the full re-serialisation.
+
+
+def _read_frontmatter(path: Path) -> dict:
+    """One claim file's YAML frontmatter, tolerating the empty-list-at-column-0 quirk."""
+    m = re.match(r"^---\n(.*?)\n---", path.read_text(encoding="utf-8"), re.S)
+    if not m:
+        return {}
+    body = re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2", m.group(1), flags=re.M)
+    try:
+        return yaml.safe_load(body) or {}
+    except yaml.YAMLError:
+        return {}
+
+
+def _split_frontmatter(text: str) -> tuple[str, list[str], str] | None:
+    """(opening `---\\n`, frontmatter lines, rest) or None if there is no frontmatter."""
+    m = re.match(r"(?s)^(---\n)(.*?)(\n---\n.*)$", text)
+    if not m:
+        return None
+    return m.group(1), m.group(2).split("\n"), m.group(3)
+
+
+def _drop_key(lines: list[str], key: str) -> list[str]:
+    """Remove a top-level `key:` and any block that hangs under it (indented or list lines)."""
+    out, i = [], 0
+    while i < len(lines):
+        if re.match(rf"^{re.escape(key)}\s*:", lines[i]):
+            i += 1
+            while i < len(lines) and lines[i][:1] in (" ", "\t", "-"):
+                i += 1
+            continue
+        out.append(lines[i])
+        i += 1
+    return out
+
+
+def _write_key(path: Path, key: str, block: str, *, after: str | None = None) -> None:
+    """Set a top-level frontmatter key to `block`, in place, without reordering other keys.
+
+    `block` is the whole rendered value including the `key:` line. Inserted after the `after:`
+    key when given and present, else appended to the end of the frontmatter.
+    """
+    parts = _split_frontmatter(path.read_text(encoding="utf-8"))
+    if parts is None:
+        return
+    opening, lines, rest = parts
+    lines = _drop_key(lines, key)
+    new = block.split("\n")
+    at = len(lines)
+    if after:
+        for i, l in enumerate(lines):
+            if re.match(rf"^{re.escape(after)}\s*:", l):
+                at = i + 1
+                break
+    lines[at:at] = new
+    path.write_text(opening + "\n".join(lines) + rest, encoding="utf-8")
 
 
 # ── Slug derivation for individual claims ────────────────────────────────
@@ -354,13 +420,64 @@ def resolve_edges(draft: DraftClaimTable, slugs: list[str], cfg: Config) -> list
     return []
 
 
+# ── replacing a version, and keeping the one replaced ────────────────────
+
+
+def current_claim_tree_version(cfg: Config, paper_slug: str) -> int:
+    """The `claim-tree` version the ledger records for this paper, or 1 if none.
+
+    A run of the layer is by definition the *next* version; the tree on disk is the *current*
+    one, so it is archived under the version it holds now. The ledger is the authority — read
+    it directly rather than importing scripts/pipeline.py, which is not on this package's path.
+    """
+    p = cfg.root / "runs" / paper_slug / "ledger.jsonl"
+    if not p.is_file():
+        return 1
+    versions = []
+    for line in p.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            e = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if e.get("layer") == "claim-tree":
+            versions.append(e.get("v", 0))
+    return max(versions) if versions else 1
+
+
+def archive_dir(cfg: Config, paper_slug: str) -> Path:
+    """Where the current tree is moved when it is replaced: runs/<paper>/claim-tree.v<N>/."""
+    return cfg.root / "runs" / paper_slug / f"claim-tree.v{current_claim_tree_version(cfg, paper_slug)}"
+
+
+def _archive_tree(paper_dir: Path, dest: Path) -> None:
+    """Move a paper's claim files aside so every version's bytes stay addressable.
+
+    A move, not a copy: what is left in `claims/` must be only the new tree, and the old bytes
+    must survive somewhere a run can point at. `dest` is emptied first, so replacing twice in
+    one session does not fold two versions together.
+    """
+    if dest.exists():
+        shutil.rmtree(dest)
+    dest.mkdir(parents=True, exist_ok=True)
+    for f in sorted(paper_dir.iterdir()):
+        shutil.move(str(f), str(dest / f.name))
+    paper_dir.rmdir()
+
+
 def write_claim_files(draft: DraftClaimTable, cfg: Config,
-                      edges: list[dict] | None = None) -> list[Path]:
+                      edges: list[dict] | None = None, *,
+                      replace: bool = False) -> list[Path]:
     """Emit claim files into <corpus_dir>/<paper_slug>/.
 
     Returns the list of paths written (the index plus one per claim).
-    Refuses to overwrite existing files; use --force in a future pass
-    to allow reruns. For now, the analyst can rm the directory first.
+
+    Refuses to overwrite a non-empty directory: the claim files are edited afterwards by hand
+    and by later layers, and a silent overwrite would discard work no ledger records. `replace`
+    is the sanctioned way through — it moves the current tree to runs/<paper>/claim-tree.v<N>/
+    first, so the version being replaced stays addressable as files, then writes the new one.
 
     `edges` comes from the edge-inference layer, which has already run and written them.
     Passing None re-derives them, which is a second paid call for an answer already on
@@ -371,10 +488,12 @@ def write_claim_files(draft: DraftClaimTable, cfg: Config,
 
     paper_dir = cfg.corpus_dir / draft.paper_slug
     if paper_dir.exists() and any(paper_dir.iterdir()):
-        raise FileExistsError(
-            f"refusing to overwrite non-empty {paper_dir}. "
-            "Move or delete it before re-running write."
-        )
+        if not replace:
+            raise FileExistsError(
+                f"refusing to overwrite non-empty {paper_dir}. "
+                "Pass --replace to archive it to runs/<paper>/claim-tree.v<N>/ and write anew."
+            )
+        _archive_tree(paper_dir, archive_dir(cfg, draft.paper_slug))
     paper_dir.mkdir(parents=True, exist_ok=True)
 
     slugs = _unique_slugs(draft.claims)
@@ -404,3 +523,117 @@ def write_claim_files(draft: DraftClaimTable, cfg: Config,
     written.append(index_path)
 
     return written
+
+
+# ── carrying a version's other-layer content across a replacement ─────────
+# The induction chain writes claims, panels, evidence and edges. It does not produce the
+# `stance` layer's rejected alternatives, or the `verification` layer's reproduction records —
+# those were added to the previous version by other layers and by hand, and a straight replace
+# would drop them. This carries them onto the new tree: the `alt-` files whole, the eliminative
+# edges that named them re-aimed at the new claim that took each source's place, and each
+# reproduction record copied onto the paired claim with a note that it was made against a
+# differently worded one. The `questions` layer's `addresses:` links are not carried — they name
+# slugs the new tree does not have, so that layer is re-run against the new tree instead.
+
+
+def _find_pairs(cfg: Config, paper_slug: str) -> Path | None:
+    """The slug map from the previous version to the new one: the paper's latest match pairs.
+
+    Replacing a version needs to know which new claim took each old claim's place, and the
+    evaluation harness already computed exactly that — one `{committed, rerun}` pair per old
+    slug it could align. Pick the highest-versioned `match.v<N>.pairs.json`, which is the map
+    for the re-run this write is landing. Absent for a paper never evaluated, in which case the
+    edges and records that need a mapping are recorded unplaced rather than guessed at.
+    """
+    d = cfg.root / "runs" / paper_slug / "evaluation"
+    if not d.is_dir():
+        return None
+    cands = sorted(d.glob("match.v*.pairs.json"),
+                   key=lambda p: int(re.search(r"\.v(\d+)\.", p.name).group(1))
+                   if re.search(r"\.v(\d+)\.", p.name) else 0)
+    return cands[-1] if cands else None
+
+
+def carry_over(cfg: Config, paper_slug: str, archive: Path,
+               pairs_path: Path | None = None) -> dict:
+    """Carry `alt-` claims, their `rules-out` edges, and reproduction records forward.
+
+    `archive` is the tree just moved aside (the version being replaced); the new tree is in
+    `cfg.corpus_dir/<paper>`. Returns a summary and writes it to `archive/carried.json`, which
+    records what landed where and what could not be placed — an unmapped source is written down,
+    not guessed. A no-op that still writes the summary when the archive holds nothing to carry.
+    """
+    new_dir = cfg.corpus_dir / paper_slug
+    pairs_path = pairs_path or _find_pairs(cfg, paper_slug)
+    v1_to_v2: dict[str, str] = {}
+    if pairs_path and pairs_path.is_file():
+        for p in json.loads(pairs_path.read_text(encoding="utf-8")):
+            if p.get("committed") and p.get("rerun"):
+                v1_to_v2[p["committed"]] = p["rerun"]
+
+    summary: dict = {
+        "paper": paper_slug,
+        "archived_from": str(archive.relative_to(cfg.root)),
+        "pairs": str(pairs_path.relative_to(cfg.root)) if pairs_path else None,
+        "alt_claims": [], "rules_out": [], "reproductions": [], "unplaced": [],
+    }
+
+    def target_file(v1_slug: str, kind: str):
+        """The new-tree file that took v1_slug's place, or None with an `unplaced` note logged."""
+        v2 = v1_to_v2.get(v1_slug)
+        if not v2:
+            summary["unplaced"].append({"kind": kind, "from": v1_slug, "why": "no pair in the match map"})
+            return None
+        f = new_dir / f"{v2}.md"
+        if not f.is_file():
+            summary["unplaced"].append({"kind": kind, "from": v1_slug, "to": v2,
+                                        "why": "paired claim not in the new tree"})
+            return None
+        return f
+
+    # 1. The rejected alternatives, whole. They keep their own `alt-` slug — the new tree has no
+    #    claim for them, so there is nothing to map and nothing to collide with.
+    for f in sorted(archive.glob("alt-*.md")):
+        shutil.copy2(f, new_dir / f.name)
+        summary["alt_claims"].append(f.stem)
+
+    # 2. Every `rules-out` edge that named one of those alternatives, re-aimed at the new claim
+    #    that took its source's place. Unioned with any the edge-inference layer already wrote,
+    #    so re-aiming adds an edge rather than replacing the file's own.
+    for f in sorted(archive.glob("*.md")):
+        if f.name == "index.md" or f.name.startswith("alt-"):
+            continue
+        alts = [t for t in (_read_frontmatter(f).get("rules-out") or [])
+                if isinstance(t, str) and t.startswith("alt-")]
+        if not alts:
+            continue
+        tf = target_file(f.stem, "rules-out")
+        if tf is None:
+            continue
+        have = [t for t in (_read_frontmatter(tf).get("rules-out") or []) if isinstance(t, str)]
+        merged = have + [a for a in alts if a not in have]
+        block = yaml.safe_dump({"rules-out": merged}, sort_keys=False, allow_unicode=True,
+                               default_flow_style=False, width=100).rstrip("\n")
+        _write_key(tf, "rules-out", block, after="epistemic")
+        summary["rules_out"].append({"alternatives": alts, "from": f.stem, "to": tf.stem})
+
+    # 3. Every reproduction record, onto the paired claim, each block stamped `carried_from` so
+    #    the record says it was made against a claim worded differently in the previous version.
+    for f in sorted(archive.glob("*.md")):
+        if f.name == "index.md":
+            continue
+        reps = _read_frontmatter(f).get("reproductions") or []
+        if not reps:
+            continue
+        tf = target_file(f.stem, "reproductions")
+        if tf is None:
+            continue
+        stamped = [{"carried_from": f.stem, **r} if isinstance(r, dict) else r for r in reps]
+        block = yaml.safe_dump({"reproductions": stamped}, sort_keys=False, allow_unicode=True,
+                               default_flow_style=False, width=100).rstrip("\n")
+        _write_key(tf, "reproductions", block)
+        summary["reproductions"].append({"from": f.stem, "to": tf.stem, "records": len(reps)})
+
+    (archive / "carried.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n",
+                                          encoding="utf-8")
+    return summary

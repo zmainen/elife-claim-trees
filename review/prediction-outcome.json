@@ -2,10 +2,10 @@
   "layer": "prediction-outcome",
   "rule_version": 2,
   "papers": 12,
-  "predictions": 46,
+  "predictions": 47,
   "buckets": {
     "recorded": 8,
-    "unrecorded": 27,
+    "unrecorded": 28,
     "untested": 5,
     "abstain:conjunction": 1,
     "abstain:convention": 5
@@ -22,7 +22,7 @@
       "tests only": 5
     },
     "gadeke-2026-guilt-insula": {
-      "tests only": 4
+      "tests only": 5
     },
     "headley-2026-inhibitory-rhythms": {
       "tests only": 6
@@ -109,44 +109,59 @@
     },
     {
       "paper": "gadeke-2026-guilt-insula",
-      "prediction": "prediction-behavioral-guilt-effect",
+      "prediction": "anterior-insula-tracks-guilt-insula",
       "bucket": "unrecorded",
-      "claim": "If interpersonal guilt is a real affective phenomenon contingent on responsibility, then in a within-subject lottery paradigm where the same partner outcomes occur under Social and Partner conditions, momentary happiness should drop more after negative partner outcomes in Social trials (participant chose) than in Partner trials (partner chose). This is operationalised as a positive interaction term between partnerWon (low partner outcome) and subjDecided (Social condition) in a mixed-effects regression of happiness on outcomes and responsibility.",
+      "claim": "If the anterior insula tracks guilt, then insula BOLD should be higher in the Social than the Partner condition and show a significant Social-by-low-outcome interaction.",
       "tests": [
-        "guilt-reduces-happiness-after-partner-loss"
+        "insula-rois-responded-more-low",
+        "mass-univariate-voxel-wise-analysis-found-small"
       ],
       "confirms": [],
       "conjuncts": []
     },
     {
       "paper": "gadeke-2026-guilt-insula",
-      "prediction": "prediction-insula-tracks-guilt",
+      "prediction": "connectivity-between-guilt-responsibility-related-outcome-ph",
       "bucket": "unrecorded",
-      "claim": "If anterior insula encodes interpersonal guilt, then in the trial-level GLM, anterior insula BOLD should be elevated in the Social vs Partner contrast specifically after negative partner outcomes — i.e., the (condition × partner-outcome) interaction should yield a significant positive cluster in the anterior insula, detectable with small-volume FWE correction (SVC) over an a priori anterior-insula ROI derived from prior literature. The signal should not be present for the same contrast after positive partner outcomes (specificity).",
+      "claim": "If connectivity between the guilt- and responsibility-related outcome-phase regions (left insula, left STS) and prefrontal cortex depends on whether participants decide for themselves alone or also for their partner and on the type of choice, then a seed-to-voxel psychophysiological-interaction analysis seeded in these regions should reveal prefrontal clusters showing a significant Condition-by-Choice interaction.",
       "tests": [
-        "insula-tracks-guilt-effect"
+        "functional-connectivity-between-left-anterior",
+        "left-ifg-cluster-showed-opposite"
       ],
       "confirms": [],
       "conjuncts": []
     },
     {
       "paper": "gadeke-2026-guilt-insula",
-      "prediction": "prediction-responsibility-model-wins-comparison",
+      "prediction": "neural-substrate-tracks-participant-responsibility-2",
       "bucket": "unrecorded",
-      "claim": "If happiness incorporates partner reward prediction errors with a responsibility-weighted rule, then a computational model of happiness that includes a social_pRPE regressor (partner RPE × subject-decided indicator) should fit participant happiness ratings better than nested alternatives that omit the responsibility interaction. Formally: the Responsibility model (and Responsibility Redux model) should achieve lower cross-validated error than baseline (own-reward-only) and additive social-utility models in both Study 1 and Study 2; and the fitted social_pRPE weight should be significantly greater than zero.",
+      "claim": "If a neural substrate tracks the participant's responsibility for the partner's outcomes, then within regions sensitive to the outcomes of risky choices, BOLD should respond more strongly to the partner's reward prediction errors resulting from the participant's own choices than from the partner's choices.",
       "tests": [
-        "responsibility-modulates-guilt-computational"
+        "left-superior-temporal-sulcus-cluster",
+        "one-cluster-left-sts-responded"
       ],
       "confirms": [],
       "conjuncts": []
     },
     {
       "paper": "gadeke-2026-guilt-insula",
-      "prediction": "prediction-sts-tracks-partner-rpe-under-responsibility",
+      "prediction": "responsibility-outcomes-generates-guilt-participant",
       "bucket": "unrecorded",
-      "claim": "If superior temporal sulcus represents the partner's affective experience selectively under responsibility, then in a model-based GLM with trial-by-trial partner RPE regressors split by who-chose, the parametric modulator for partner RPE in Social trials (subject-decided) should yield a significant cluster in left STS, while the parametric modulator for partner RPE in Partner trials (partner-decided) should not. This conditional engagement, rather than a main effect of partner RPE, is the diagnostic prediction.",
+      "claim": "If responsibility for outcomes generates guilt, then participant happiness should decrease more after low lottery outcomes for the partner when the participant rather than the partner chose the lottery.",
       "tests": [
-        "sts-tracks-partner-reward-prediction-errors"
+        "when-partner-received-low-lottery"
+      ],
+      "confirms": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "gadeke-2026-guilt-insula",
+      "prediction": "responsibility-partner-outcomes-influences-participant",
+      "bucket": "unrecorded",
+      "claim": "If responsibility for the partner's outcomes influences the participant's momentary happiness, then a computational model that includes the partner's reward prediction errors arising from the participant's own choices (social_pRPE) should explain the happiness data better than models omitting them, and social_pRPE weights should be reliably greater than zero.",
+      "tests": [
+        "partner-reward-prediction-errors-resulting",
+        "responsibility-redux-model-incorporating-expected"
       ],
       "confirms": [],
       "conjuncts": []

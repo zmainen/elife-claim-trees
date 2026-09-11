@@ -252,6 +252,38 @@ def test_claim_tree_reads_edges_rather_than_re_inferring_them():
             resolver.assert_not_called()
 
 
+def test_write_replace_archives_the_current_tree_then_writes():
+    """--replace moves the current tree to runs/<paper>/claim-tree.v<N>/ before writing anew.
+
+    Without it a non-empty directory is refused: the version being replaced must stay
+    addressable as files, since the ledger keeps only its content hash.
+    """
+    from elife_extract import write as write_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = _cfg(Path(tmp))
+        paper_dir = cfg.corpus_dir / SLUG
+
+        write_mod.write_claim_files(_draft(2), cfg, edges=[])
+        first = sorted(p.name for p in paper_dir.glob("*.md"))
+        assert "index.md" in first
+
+        # A plain second write is refused rather than clobbering unrecorded work.
+        try:
+            write_mod.write_claim_files(_draft(3), cfg, edges=[])
+        except FileExistsError:
+            pass
+        else:
+            assert False, "a non-empty directory was overwritten without --replace"
+
+        # --replace archives the current tree (v1, no ledger) and writes the new one.
+        write_mod.write_claim_files(_draft(3), cfg, edges=[], replace=True)
+        archive = cfg.root / "runs" / SLUG / "claim-tree.v1"
+        assert archive.is_dir(), "the replaced version was not archived"
+        assert sorted(p.name for p in archive.glob("*.md")) == first
+        claims_now = [p for p in paper_dir.glob("*.md") if p.name != "index.md"]
+        assert len(claims_now) == 3 and (paper_dir / "index.md").is_file()
+
+
 def test_read_edges_tolerates_the_bare_array_the_first_runs_wrote():
     """Gädeke's committed edge output is a bare JSON list, written before the layer existed."""
     with tempfile.TemporaryDirectory() as tmp:
