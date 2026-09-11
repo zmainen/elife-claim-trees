@@ -79,6 +79,10 @@ ROLES = [
      "reads": "the claim graph — every claim's role, sentence and edges",
      "returns": "the paper in three paragraphs: hypotheses, claims and inferences",
      "agent_key": None},
+    {"id": "synthesis", "stage": "measure",
+     "reads": "the claim graph alone — no abstract, no prose",
+     "returns": "the argument restated from the graph, traced back to the claims and edges",
+     "agent_key": None},
 ]
 
 
@@ -97,7 +101,7 @@ LAYER_OF = {"results-reader": "results-reader", "caption-reader": "caption-reade
             "structure-reader": "structure-reader", "reconciler": "reconcile",
             "external-reviewer": "external-review", "edge-inference": "edge-inference",
             "coverage-adjudicator": "adjudication", "questions": "questions",
-            "parts": "parts", "summaries": "summaries"}
+            "parts": "parts", "summaries": "summaries", "synthesis": "synthesis"}
 
 
 def declared_reads():

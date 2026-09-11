@@ -316,6 +316,21 @@ def cmd_summaries(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_synthesis(args: argparse.Namespace) -> int:
+    """Layer `synthesis` — the paper's argument restated from the claim graph alone."""
+    from .layers import synthesis_layer, synthesis_request
+
+    cfg = _cfg(args)
+    if _dump(args, lambda: synthesis_request(args.paper, cfg), "synthesis"):
+        return 0
+    path, payload = synthesis_layer(args.paper, cfg, answer=args.answer)
+    print(f"=== synthesis — {args.paper} ===")
+    print(f"  model     = {payload['model']}")
+    print(f"  synthesis = {len(payload['synthesis'])}c across {len(payload['traceback'])} traced sentence(s)")
+    print(f"  written: {path}")
+    return 0
+
+
 def cmd_verify_refs(args: argparse.Namespace) -> int:
     """Layer `reference-check` — do the cited references resolve, and to what?"""
     import json
@@ -899,6 +914,23 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common_args(p_sum)
     _add_model_args(p_sum)
     p_sum.set_defaults(func=cmd_summaries)
+
+    # ── synthesis ──────────────────────────────────────────────────────────
+    p_syn = sub.add_parser(
+        "synthesis", help="Layer `synthesis` — the argument restated from the graph alone.",
+        description=(
+            "Restate the paper's argument from the claim graph alone — no abstract, no prose — "
+            "with a per-sentence traceback naming the claims and edges each sentence was built "
+            "from. Given the tree's claims and edges, return `synthesis` and `traceback`; it "
+            "writes site/src/data/synthesis-v3/<paper>.json. `--dump-prompt` writes the exact "
+            "request, `--answer` feeds a reply back — traceback slugs not in the tree are dropped."
+        ),
+    )
+    p_syn.add_argument("--paper", required=True, help="Paper slug.")
+    _add_answerable_args(p_syn, "the traceback is validated against this tree.")
+    _add_common_args(p_syn)
+    _add_model_args(p_syn)
+    p_syn.set_defaults(func=cmd_synthesis)
 
     # ── write (claim-tree) ───────────────────────────────────────────────
     p_write = sub.add_parser(

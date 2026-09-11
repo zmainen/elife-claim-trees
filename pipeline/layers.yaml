@@ -579,10 +579,18 @@ layers:
 
       It is the closest thing in the pipeline to a test of whether the graph was worth building: if
       the tree carries the argument, a restatement from it should be recognisable as the same paper.
+
+      `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through
+      the same validation — a traceback slug not in this tree is dropped — so a model with no
+      backend here can still answer it. The prompt reasons about the claims by role, so it reads
+      the contract's vocabulary too.
     added: "2026-09-11"
     needs: [claim-tree, abstract-map]
+    reads: [extract/prompts/synthesis.md, extract/prompts/contract/vocabulary.md]
     produces: ["site/src/data/synthesis-v3/{paper}.json"]
     views: [document, comparison]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli synthesis --paper {paper}"
 
   # The paper in three paragraphs, written from its claim graph. It is the block at the top
   # of every paper page and probably the most-read thing the corpus produces, and no layer

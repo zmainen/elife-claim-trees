@@ -660,3 +660,58 @@ def summaries_layer(paper: str, cfg: Config, *,
     entry = {**_validate_summary(parse_json_response(raw)), "model": model}
     path = _write_summary(paper, entry, cfg)
     return path, {"paper_slug": paper, **entry}
+
+
+# ── synthesis ──────────────────────────────────────────────────────────────
+# The paper's argument, restated from the claim graph alone and traced back to the nodes it was
+# built from. Given the graph and nothing else, so a restatement that reads as the same paper is
+# evidence the graph carries it. The output is the flat v3 shape the site reads.
+
+
+def synthesis_request(paper: str, cfg: Config) -> tuple[str, str]:
+    from .prompts import prompt
+    return prompt("synthesis", cfg), _graph_for_prose(paper, cfg)
+
+
+def _validate_synthesis(raw: dict, paper: str, cfg: Config) -> dict:
+    """Coerce a model answer into `{synthesis, traceback}`, dropping unresolvable references.
+
+    The synthesis prose is kept as written (its paragraph breaks matter). Each traceback entry
+    keeps only the claim slugs this paper actually holds; an edge is kept as the string it came
+    as. An entry with no sentence is dropped.
+    """
+    if not isinstance(raw, dict):
+        raise ValueError("synthesis answer must be a JSON object with `synthesis` and `traceback`")
+    synthesis = str(raw.get("synthesis") or "").strip()
+    if not synthesis:
+        raise ValueError("synthesis needs a non-empty `synthesis`")
+    known = _known_slugs(paper, cfg)
+    traceback = []
+    for e in (raw.get("traceback") or []):
+        if not isinstance(e, dict) or not e.get("sentence"):
+            continue
+        traceback.append({
+            "sentence": " ".join(str(e["sentence"]).split()),
+            "claims": [s for s in (e.get("claims") or []) if s in known],
+            "edges": [x for x in (e.get("edges") or []) if isinstance(x, str)],
+        })
+    return {"synthesis": synthesis, "traceback": traceback}
+
+
+def synthesis_layer(paper: str, cfg: Config, *,
+                    answer: str | None = None) -> tuple[Path, dict]:
+    """Write the restatement and its traceback to site/src/data/synthesis-v3/<paper>.json."""
+    from .agents import parse_json_response, stream_text
+
+    system, user = synthesis_request(paper, cfg)
+    if answer is not None:
+        p, model = answer_file(answer, cfg)
+        raw = p.read_text(encoding="utf-8")
+    else:
+        model = cfg.model_reconcile
+        raw = stream_text(cfg, model=model, system=system, user=user, label="synthesis")
+
+    data = _validate_synthesis(parse_json_response(raw), paper, cfg)
+    payload = {"paperSlug": paper, "version": 3, **data, "model": model}
+    path = _write_json(site_data_file(cfg, "synthesis-v3", f"{paper}.json"), payload)
+    return path, payload
