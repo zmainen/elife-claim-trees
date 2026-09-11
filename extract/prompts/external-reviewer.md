@@ -125,7 +125,6 @@ Return a **complete revised draft claim table** as JSON, matching this schema:
   "paper_slug": "<slug>",
   "paper_doi": "<doi>",
   "paper_title": "<title>",
-  "extraction_path": "pdf",
   "per_agent_counts": {"results": ..., "caption": ..., "structure": ...},
   "claims": [
     {

@@ -129,6 +129,8 @@ def reconcile_layer(paper: str, cfg: Config) -> tuple[Path, DraftClaimTable]:
         read_reader("caption", paper, cfg),
         read_reader("structure", paper, cfg),
         cfg, paper_doi=prepared.doi, paper_title=prepared.title,
+        extraction_path=prepared.extraction_path,
+        extraction_path_note=prepared.extraction_path_note,
     )
     draft.model = cfg.model_reconcile
     path = _write_json(run_file(paper, "reconciler.output.json", cfg),

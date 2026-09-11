@@ -65,6 +65,8 @@ def reconcile(
     cfg: Config,
     paper_doi: str,
     paper_title: str | None = None,
+    extraction_path: str | None = None,
+    extraction_path_note: str | None = None,
 ) -> DraftClaimTable:
     """Reconcile three extractions into a draft claim table via Opus.
 
@@ -135,4 +137,13 @@ def reconcile(
             "reconcile_strategy": cfg.reconcile_strategy,
         },
     )
+    # How the paper was read is a fact the pipeline already holds, so it is set here rather
+    # than read back out of the model's reply. It was previously neither: the prompt's output
+    # example hardcoded "pdf", so the model dutifully echoed it, and the schema's default
+    # supplied the same answer when it did not. A language model should not be the transport
+    # for provenance the caller can state.
+    if extraction_path is not None:
+        parsed["extraction_path"] = extraction_path
+        parsed["extraction_path_note"] = extraction_path_note
+
     return DraftClaimTable(**parsed)
