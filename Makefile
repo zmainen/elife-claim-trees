@@ -24,7 +24,7 @@ SITE   := site
 
 .DEFAULT_GOAL := help
 
-.PHONY: help data mira-exports validate build preview check contract report fresh deps
+.PHONY: help data validate build preview check contract report fresh deps
 
 help:  ## Show this help
 	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -37,34 +37,36 @@ $(SITE)/node_modules: $(SITE)/package-lock.json
 
 deps: $(SITE)/node_modules  ## Install the site's node modules
 
-# The generators that are safe to run on every build, in dependency order.
+# Every generator, in dependency order.
 #
-# exports/ is deliberately NOT here, and that is a known hole rather than an oversight.
-# export_mira.py stamps date.today() into every record's `created` and `modified`, so
-# regenerating changes all 30 export files on any day but the one they were last written.
-# Wiring it in would make `make fresh` fail every morning for a reason unconnected to the
-# corpus, and a gate that cries wolf daily is worse than no gate.
+# exports/ used to be excluded, because export_mira.py stamped date.today() into every
+# record's `created` and `modified` and so rewrote all 30 export files on any day but the one
+# they were last written. That defeated the thing it fed: corpus_facts hashes those files for
+# pipeline state, so running the exporter flipped every paper's mira-export cell from
+# `current` to `stale` with the three export paths under `moved`. The dates now come from the
+# claims' own `priority` fields, so the export is a function of its inputs and running it
+# twice is a no-op — which is what lets it live here instead of in a target run by hand.
 #
-# It is worse than cosmetic: corpus_facts hashes those files for pipeline state, so running
-# the exporter flips every paper's mira-export cell from `current` to `stale` with the three
-# export paths listed as `moved`. A timestamp carrying no information defeats the staleness
-# model it feeds. `make exports` runs them by hand until the exporter is deterministic.
-data: $(SITE)/node_modules  ## Regenerate the artifacts that are safe to rebuild every time
+# Order is dependency order, and four edges in it are real:
+#   prediction_outcome writes review/prediction-outcome.json, which corpus_facts reads
+#   export_mira        writes the .mira.jsonld files formats_report and validate_mira read
+#   formats_report     writes the .formats.json files corpus_facts reads
+#   validate_mira      writes site/src/data/mira-validation.json, which corpus_facts reads
+# corpus_facts therefore runs after all four, not second.
+#
+# Still NOT regenerated here: exports/{paper}.oxa.json and exports/{paper}.dg.jsonld, which
+# come from extract/scripts/migrate_to_oxa.py and export_discourse_graphs.py, run per paper.
+# formats_report reads both, so after a claim change its report is computed partly from stale
+# inputs. The pipeline state flags oxa and dg as stale, so it surfaces rather than hiding.
+data: $(SITE)/node_modules  ## Regenerate every artifact the site is built from
 	$(PYTHON) scripts/prediction_outcome.py --write
+	$(PYTHON) scripts/export_mira.py --all
+	$(PYTHON) scripts/formats_report.py --all
+	$(MAKE) validate PYTHON=$(PYTHON)
 	$(PYTHON) scripts/corpus_facts.py
 	$(PYTHON) scripts/agents_report.py
 	$(PYTHON) scripts/review_queue.py
 	cd $(SITE) && CORPUS=$(CORPUS) node scripts/build-data.js
-
-# Named for what it actually rebuilds. It does NOT regenerate exports/{paper}.oxa.json or
-# exports/{paper}.dg.jsonld — those come from extract/scripts/migrate_to_oxa.py and
-# export_discourse_graphs.py, run per paper — and formats_report reads both. So after a claim
-# change this leaves the formats report computed partly from stale inputs. The pipeline state
-# flags oxa and dg as stale, so it surfaces; calling the target `exports` implied otherwise.
-mira-exports:  ## Rebuild the MIRA exports and formats report, and validate. Not part of `data`.
-	$(PYTHON) scripts/export_mira.py --all
-	$(PYTHON) scripts/formats_report.py --all
-	$(MAKE) validate PYTHON=$(PYTHON)
 
 validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 	@command -v pyshacl >/dev/null 2>&1 || { \
@@ -112,14 +114,14 @@ preview: build  ## Build and serve locally
 # yet produces no diff at all, so a new review topic or a new export could appear, be
 # untracked, and the gate would still call the tree clean.
 #
-# The pathspec covers every directory `data` writes. site/public matters and is easy to miss:
-# build-data.js copies the exports and design notes the site serves for download, so leaving
-# it out means the published files can disagree with the exports they were copied from —
-# exactly the drift build-data.js says in its own comments that it exists to prevent.
-# exports/ is excluded because `data` does not write it — see the note above. site/public is
-# included because build-data.js copies the served exports and design notes there, and a stale
-# copy means the files the site offers for download disagree with the ones they came from.
-GENERATED := site/src/data site/public review
+# The pathspec covers every directory `data` writes. Two of them are easy to miss:
+# exports/, now that the exporter is deterministic enough to run on every build — without it,
+# editing a claim's relations leaves exports/ and everything downstream describing the old
+# claim while the gate stays green; and site/public, because build-data.js copies the exports
+# and design notes the site serves for download there, so leaving it out means the published
+# files can disagree with the exports they were copied from — exactly the drift build-data.js
+# says in its own comments that it exists to prevent.
+GENERATED := site/src/data site/public review exports
 fresh: data  ## Fail if regenerating changed anything that was committed
 	@if [ -n "$$(git status --porcelain -- $(GENERATED))" ]; then \
 	  echo ""; \
@@ -127,8 +129,6 @@ fresh: data  ## Fail if regenerating changed anything that was committed
 	  git status --porcelain -- $(GENERATED); \
 	  echo ""; \
 	  echo "Run 'make data' and commit the result."; \
-	  echo 'If corpus-facts.json flipped a cell to `stale` with export paths under'; \
-	  echo '`moved`, the cause is exports/ — run "make mira-exports" first.'; \
 	  exit 1; \
 	fi
 	@echo "Generated data matches the corpus."
