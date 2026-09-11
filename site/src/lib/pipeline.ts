@@ -152,6 +152,41 @@ export function fill_of(paper: string): { done: number; total: number } {
   };
 }
 
+/** Layers that need this one. The graph runs both ways: a layer page wants to say what it
+ *  feeds as well as what it rests on, since that is what a change here would disturb. */
+export function dependents(layerId: string): LayerDecl[] {
+  return layers.filter(l => (l.needs ?? []).includes(layerId));
+}
+
+/** Longest path from a root, which is the column a node belongs in when the graph is drawn.
+ *  Longest rather than shortest: a node must sit to the right of everything it needs, and
+ *  the shortest path would place it left of a longer dependency. */
+export function depth(layerId: string, seen = new Set<string>()): number {
+  const l = byId[layerId];
+  if (!l || seen.has(layerId)) return 0;
+  seen.add(layerId);
+  const needs = l.needs ?? [];
+  return needs.length ? 1 + Math.max(...needs.map(n => depth(n, new Set(seen)))) : 0;
+}
+
+/** The graph as columns, for drawing. */
+export function columns(scope?: 'paper' | 'corpus'): LayerDecl[][] {
+  const ls = scope ? layers.filter(l => l.scope === scope) : layers;
+  const out: LayerDecl[][] = [];
+  for (const l of ls) {
+    const d = depth(l.id);
+    (out[d] ??= []).push(l);
+  }
+  return out.map(c => c ?? []);
+}
+
+/** Every recorded run across the corpus, newest first — the site-wide changelog. */
+export function allHistory(): (Version & { paper: string; layer: string })[] {
+  return papers
+    .flatMap(p => (LEDGER[p] ?? []).map(e => ({ ...e, paper: p })))
+    .sort((a, b) => (b.ran ?? '').localeCompare(a.ran ?? ''));
+}
+
 export const STATE_LABEL: Record<CellState, string> = {
   current: 'current',
   stale: 'stale',

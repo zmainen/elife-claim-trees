@@ -1,0 +1,209 @@
+---
+// One layer, in general.
+//
+// The same question asked of every paper: what it is, what it rests on, what it feeds, and
+// where it has and has not been run. A paper's own instance of it lives on the paper page;
+// this is the corpus altitude of the same cell.
+import Layout from '../../layouts/Layout.astro';
+import {
+  layers, byId, groups, papers, cell, dependents, titleOf, STATE_LABEL,
+} from '../../lib/pipeline';
+
+export function getStaticPaths() {
+  return layers.map(l => ({ params: { layer: l.id }, props: { layer: l } }));
+}
+
+const { layer } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const url = (p: string) => `${base}${p}/`;
+
+const isCorpus = layer.scope === 'corpus';
+const rows = isCorpus ? [] : papers.map(p => ({ paper: p, c: cell(p, layer.id)! })).filter(r => r.c);
+const feeds = dependents(layer.id);
+const needs = (layer.needs ?? []).map(n => byId[n]).filter(Boolean);
+const counts: Record<string, number> = {};
+for (const r of rows) counts[r.c.state] = (counts[r.c.state] ?? 0) + 1;
+
+const TONE: Record<string, string> = {
+  current: 'text-emerald-700 dark:text-emerald-400',
+  stale:   'text-amber-700 dark:text-amber-400',
+  blocked: 'text-orange-700 dark:text-orange-400',
+  absent:  'text-gray-400 dark:text-gray-600',
+  'n/a':   'text-gray-400 dark:text-gray-600',
+  open:    'text-blue-700 dark:text-blue-400',
+  unrecorded: 'text-gray-500 dark:text-gray-400',
+};
+
+const KIND_NOTE: Record<string, string> = {
+  step: 'Mechanical: re-runnable from its declared inputs.',
+  candidate: 'One of several parallel outputs, kept rather than collapsed — agreement between them is the informative case.',
+  judgement: 'A decision, stored rather than recomputed, because recomputing it destroys the record of who decided.',
+  feature: 'A capability that revises existing artifacts. It runs once, and then it is part of the schema.',
+  question: 'A decision about meaning, and then the propagation of it through everything downstream.',
+};
+---
+
+<Layout title={`${layer.title} — pipeline`} description={layer.question}>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+
+    <nav class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+      <a href={url('/pipeline')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">Pipeline</a>
+      <span class="mx-2">/</span><span class="font-mono">{layer.id}</span>
+    </nav>
+
+    <header class="mb-9">
+      <div class="flex flex-wrap items-baseline gap-3 mb-2">
+        <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0">{layer.title}</h1>
+        <span class="font-mono text-xs text-gray-500 dark:text-gray-400">{layer.kind} · {layer.scope}</span>
+        {layer.open && <span class="text-xs font-mono uppercase tracking-wider text-blue-700 dark:text-blue-400">undecided</span>}
+        {layer.requires_human && <span class="text-xs font-mono uppercase tracking-wider text-amber-700 dark:text-amber-400">needs a person</span>}
+      </div>
+      <p class="text-lg text-gray-700 dark:text-gray-300 italic m-0 mb-3 leading-snug">{layer.question}</p>
+      <p class="text-sm text-gray-600 dark:text-gray-400 m-0">{KIND_NOTE[layer.kind]}</p>
+      {layer.group && groups[layer.group] && (
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 m-0">
+          Part of <strong class="text-gray-700 dark:text-gray-300">{groups[layer.group].title}</strong> — {groups[layer.group].question}
+        </p>
+      )}
+      {layer.issue && (
+        <p class="text-sm mt-3 m-0">
+          <a href={`https://github.com/zmainen/elife-claim-trees/issues/${layer.issue}`} target="_blank"
+             class="text-amber-700 dark:text-amber-400 no-underline hover:underline">Issue #{layer.issue}</a>
+          <span class="text-gray-500 dark:text-gray-400"> — the decision is taken there; the propagation is taken here.</span>
+        </p>
+      )}
+    </header>
+
+    <!-- ── position in the graph ─────────────────────────────────── -->
+    <div class="grid sm:grid-cols-2 gap-5 mb-10">
+      <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <h2 class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 m-0 mb-2.5">Rests on</h2>
+        {needs.length === 0
+          ? <p class="text-sm text-gray-500 dark:text-gray-400 m-0">Nothing — this is a root.</p>
+          : <ul class="list-none p-0 m-0 space-y-1">
+              {needs.map(n => (
+                <li><a href={url(`/pipeline/${n.id}`)} class="font-mono text-sm text-amber-700 dark:text-amber-400 no-underline hover:underline">{n.id}</a>
+                  <span class="text-xs text-gray-500 dark:text-gray-400"> · {n.kind}</span></li>
+              ))}
+            </ul>}
+      </div>
+      <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <h2 class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 m-0 mb-2.5">
+          Feeds {feeds.length > 0 && <span class="normal-case tracking-normal">— a change here disturbs these</span>}
+        </h2>
+        {feeds.length === 0
+          ? <p class="text-sm text-gray-500 dark:text-gray-400 m-0">Nothing — this is a leaf.</p>
+          : <ul class="list-none p-0 m-0 space-y-1">
+              {feeds.map(n => (
+                <li><a href={url(`/pipeline/${n.id}`)} class="font-mono text-sm text-amber-700 dark:text-amber-400 no-underline hover:underline">{n.id}</a>
+                  <span class="text-xs text-gray-500 dark:text-gray-400"> · {n.kind}</span></li>
+              ))}
+            </ul>}
+      </div>
+    </div>
+
+    {layer.reviews && (
+      <div class="border-l-2 border-amber-400 dark:border-amber-600 pl-4 mb-10">
+        <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+          This layer reviews <a href={url(`/pipeline/${layer.reviews}`)} class="font-mono text-amber-700 dark:text-amber-400 no-underline hover:underline">{layer.reviews}</a>,
+          and a review targets the version it read. When {layer.reviews} produces a new version this
+          one goes stale rather than carrying an approval earned against different text.
+        </p>
+      </div>
+    )}
+
+    <!-- ── state across the corpus ───────────────────────────────── -->
+    {!isCorpus && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Across the corpus</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          {Object.entries(counts).map(([s, n]) => `${n} ${STATE_LABEL[s as keyof typeof STATE_LABEL]}`).join(' · ')}
+        </p>
+        <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+          <table class="w-full text-sm border-collapse">
+            <thead>
+              <tr class="text-left text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-200 dark:border-gray-700">
+                <th class="py-2.5 px-4 font-medium">Paper</th>
+                <th class="py-2.5 px-3 font-medium">State</th>
+                <th class="py-2.5 px-3 font-medium">Version</th>
+                <th class="py-2.5 px-3 font-medium">Last run</th>
+                <th class="py-2.5 px-4 font-medium">Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(({ paper, c }) => (
+                <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0">
+                  <td class="py-2.5 px-4">
+                    <a href={url(`/papers/${paper}`)} class="text-gray-800 dark:text-gray-200 no-underline hover:text-amber-700 dark:hover:text-amber-400">
+                      {titleOf(paper).slice(0, 52)}{titleOf(paper).length > 52 ? '…' : ''}
+                    </a>
+                    {c.note && <span class="block text-xs text-gray-500 dark:text-gray-400 leading-snug">{c.note}</span>}
+                  </td>
+                  <td class={`py-2.5 px-3 font-mono text-xs whitespace-nowrap ${TONE[c.state]}`}>{STATE_LABEL[c.state]}</td>
+                  <td class="py-2.5 px-3 font-mono text-xs text-gray-500 dark:text-gray-400 tabular-nums">{c.v ? `v${c.v}` : '—'}</td>
+                  <td class="py-2.5 px-3 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">{c.ran?.slice(0, 10) ?? '—'}</td>
+                  <td class="py-2.5 px-4">
+                    <a href={c.dataHref} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">json</a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+
+    <!-- ── what it reads and writes ──────────────────────────────── -->
+    <section class="mb-10">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Inputs and outputs</h2>
+      <dl class="text-sm space-y-3 m-0">
+        {(layer.reads ?? []).length > 0 && (
+          <div>
+            <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Reads, besides its dependencies</dt>
+            <dd class="m-0 font-mono text-xs text-gray-700 dark:text-gray-300">{(layer.reads ?? []).join(' · ')}</dd>
+          </div>
+        )}
+        {(layer.produces ?? []).length > 0 && (
+          <div>
+            <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Produces</dt>
+            <dd class="m-0 font-mono text-xs text-gray-700 dark:text-gray-300">{(layer.produces ?? []).join(' · ')}</dd>
+          </div>
+        )}
+        {(layer.views ?? []).length > 0 && (
+          <div>
+            <dt class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Views</dt>
+            <dd class="m-0 text-gray-700 dark:text-gray-300">{(layer.views ?? []).join(', ')}</dd>
+          </div>
+        )}
+      </dl>
+    </section>
+
+    {layer.command && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Running it</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+          The command comes from the declaration, so this text and what actually runs cannot
+          diverge. <code>pipeline.py run</code> also runs the unmet dependencies first.
+        </p>
+        <pre class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs text-gray-700 dark:text-gray-300 overflow-x-auto m-0"><code>python3 scripts/pipeline.py run &lt;paper&gt; {layer.id}</code></pre>
+      </section>
+    )}
+
+    {layer.requires_human && (
+      <section class="mb-10 border border-amber-300 dark:border-amber-700/60 rounded-lg p-5">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 m-0 mb-2">Not runnable</h2>
+        <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+          This layer requires a person, so it has no command and cannot be filled by re-running
+          anything. It is declared and empty for every paper in the corpus, which is what
+          <em> no human has checked this corpus</em> looks like when it is a fact about the data
+          rather than a sentence in a preface.
+        </p>
+      </section>
+    )}
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm">
+      <a href={url('/pipeline')} class="text-gray-500 dark:text-gray-400 no-underline hover:text-gray-700 dark:hover:text-gray-300">← all layers</a>
+    </footer>
+
+  </div>
+</Layout>
