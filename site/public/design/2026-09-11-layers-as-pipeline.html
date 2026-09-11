@@ -1,0 +1,476 @@
+<title>Claim Trees Site Structure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground:#f4f4f2; --surface:#fbfbfa; --surface-2:#ecedea;
+    --ink:#1b1d1c; --ink-2:#4a4e4b; --ink-3:#767b77;
+    --rule:#d9dbd6; --rule-firm:#b9bcb6;
+    --accent:#8a5a12; --accent-soft:#f0e6d4;
+    --current:#2f6f46; --current-bg:#e3efe6;
+    --stale:#9a6b0f;  --stale-bg:#f7ecd6;
+    --absent:#9aa09b; --absent-bg:#eceeeb;
+    --alarm:#963722;  --alarm-bg:#f6e3de;
+    --move:#3d5a80;   --move-bg:#e0e7ef;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#121413; --surface:#1a1d1b; --surface-2:#232725;
+      --ink:#e9ebe8; --ink-2:#b3b8b3; --ink-3:#838883;
+      --rule:#2e332f; --rule-firm:#454b46;
+      --accent:#d9a35c; --accent-soft:#34291a;
+      --current:#6fbc8c; --current-bg:#1c2c22;
+      --stale:#d8ab52;  --stale-bg:#2e2618;
+      --absent:#5f655f; --absent-bg:#1f2321;
+      --alarm:#e08b74;  --alarm-bg:#2f1e19;
+      --move:#8fb0d4;   --move-bg:#1b242e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#121413; --surface:#1a1d1b; --surface-2:#232725;
+    --ink:#e9ebe8; --ink-2:#b3b8b3; --ink-3:#838883;
+    --rule:#2e332f; --rule-firm:#454b46;
+    --accent:#d9a35c; --accent-soft:#34291a;
+    --current:#6fbc8c; --current-bg:#1c2c22;
+    --stale:#d8ab52;  --stale-bg:#2e2618;
+    --absent:#5f655f; --absent-bg:#1f2321;
+    --alarm:#e08b74;  --alarm-bg:#2f1e19;
+    --move:#8fb0d4;   --move-bg:#1b242e;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    font-size: 15.5px; line-height: 1.62; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px 96px; }
+
+  header.mast { padding: 60px 0 32px; border-bottom: 2px solid var(--ink); margin-bottom: 44px; }
+  .kicker { font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.14em;
+            text-transform:uppercase; color:var(--accent); margin:0 0 16px; }
+  h1 { font-family:"IBM Plex Serif",Georgia,serif; font-weight:600;
+       font-size:clamp(2rem,4.4vw,2.95rem); line-height:1.08; letter-spacing:-.018em;
+       text-wrap:balance; margin:0 0 18px; }
+  .standfirst { font-size:18px; line-height:1.55; color:var(--ink-2); max-width:62ch; margin:0; }
+  .standfirst strong { color:var(--ink); font-weight:600; }
+
+  .status { display:flex; flex-wrap:wrap; gap:8px 26px; margin-top:24px;
+            font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); }
+  .status b { color:var(--ink-2); font-weight:500; letter-spacing:.06em; text-transform:uppercase;
+              margin-right:6px; font-family:"IBM Plex Mono",monospace; }
+
+  section { margin: 0 0 58px; }
+  h2 { font-family:"IBM Plex Serif",Georgia,serif; font-size:25px; font-weight:600;
+       letter-spacing:-.012em; margin:0 0 6px; text-wrap:balance; }
+  .sec-note { color:var(--ink-3); font-size:14.5px; margin:0 0 26px; max-width:64ch; }
+  p { margin:0 0 14px; max-width:70ch; }
+  p:last-child { margin-bottom:0; }
+  code { font-family:"IBM Plex Mono",monospace; font-size:.86em;
+         background:var(--surface-2); padding:.1em .38em; border-radius:2px; }
+  b, strong { color:var(--ink); font-weight:600; }
+
+  .principle { border-left:3px solid var(--accent); padding:4px 0 4px 22px; margin:0 0 24px; }
+  .principle p { font-size:17px; line-height:1.5; color:var(--ink); max-width:60ch; }
+
+  /* ── state chips ─────────────────────────────────────── */
+  .chip { display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10px;
+          letter-spacing:.06em; text-transform:uppercase; padding:2px 7px; border-radius:2px;
+          white-space:nowrap; }
+  .c-current{background:var(--current-bg);color:var(--current);}
+  .c-stale  {background:var(--stale-bg);color:var(--stale);}
+  .c-absent {background:var(--absent-bg);color:var(--absent);}
+  .c-na     {background:var(--surface-2);color:var(--ink-3);}
+  .c-q      {background:var(--move-bg);color:var(--move);}
+
+  /* ── pipeline diagram ────────────────────────────────── */
+  .pipe { display:grid; grid-template-columns:repeat(5,1fr); gap:0 14px;
+          border:1px solid var(--rule); background:var(--surface); padding:18px 16px; overflow-x:auto; }
+  .pipe-col { display:flex; flex-direction:column; gap:10px; min-width:150px; }
+  .pipe-head { font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.1em;
+               text-transform:uppercase; color:var(--ink-3); padding-bottom:7px;
+               border-bottom:1px solid var(--rule); margin-bottom:2px; }
+  .node { border:1px solid var(--rule-firm); background:var(--ground); padding:8px 10px;
+          font-size:12.5px; line-height:1.35; position:relative; }
+  .node .n-name { font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink); display:block; }
+  .node .n-kind { font-size:10.5px; color:var(--ink-3); }
+  .node.corpus { border-style:dashed; border-color:var(--accent); }
+  .node.out { background:var(--surface-2); border-color:var(--ink-3); }
+  .node.leaf { border-left:3px solid var(--rule-firm); }
+  .legend { display:flex; flex-wrap:wrap; gap:16px; margin-top:14px; font-size:12.5px; color:var(--ink-3); }
+  .legend span { display:flex; align-items:center; gap:7px; }
+  .swatch { width:22px; height:12px; border:1px solid var(--rule-firm); background:var(--ground); }
+  .swatch.corpus { border-style:dashed; border-color:var(--accent); }
+  .swatch.out { background:var(--surface-2); border-color:var(--ink-3); }
+
+  /* ── tables ──────────────────────────────────────────── */
+  .tablewrap { overflow-x:auto; border:1px solid var(--rule); }
+  table.grid { width:100%; border-collapse:collapse; font-size:14px; background:var(--surface); }
+  table.grid th { font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.1em;
+                  text-transform:uppercase; font-weight:500; color:var(--ink-3); text-align:left;
+                  padding:11px 13px; border-bottom:1px solid var(--rule-firm); white-space:nowrap; }
+  table.grid td { padding:11px 13px; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--ink-2); }
+  table.grid tr:last-child td { border-bottom:0; }
+  table.grid td.mono, table.grid td:first-child {
+    font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink); white-space:nowrap; }
+  table.grid td.wrap { white-space:normal; font-family:inherit; font-size:14px; color:var(--ink-2); }
+
+  /* ── matrix ──────────────────────────────────────────── */
+  table.matrix { width:100%; border-collapse:collapse; font-size:12.5px; background:var(--surface); }
+  table.matrix th { font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.07em;
+                    text-transform:uppercase; font-weight:500; color:var(--ink-3);
+                    padding:7px 4px; border-bottom:1px solid var(--rule-firm); text-align:center; }
+  table.matrix th:first-child { text-align:left; padding-left:13px; }
+  table.matrix td { padding:6px 4px; text-align:center; border-bottom:1px solid var(--rule); }
+  table.matrix td:first-child { text-align:left; padding-left:13px;
+    font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink); white-space:nowrap; }
+  .m { display:inline-block; width:15px; height:15px; border-radius:2px; line-height:15px;
+       font-size:10px; font-family:"IBM Plex Mono",monospace; }
+  .m-c { background:var(--current); }
+  .m-s { background:var(--stale); }
+  .m-a { background:var(--absent-bg); border:1px solid var(--rule-firm); }
+  .m-n { background:var(--surface-2); border:1px solid var(--rule-firm); color:var(--ink-3); }
+
+  /* ── ledger sample ───────────────────────────────────── */
+  pre.code { font-family:"IBM Plex Mono",monospace; font-size:12px; line-height:1.6;
+             background:var(--surface); border:1px solid var(--rule); padding:15px 16px;
+             overflow-x:auto; margin:0; color:var(--ink-2); }
+  pre.code .k { color:var(--accent); }
+  pre.code .s { color:var(--current); }
+
+  .cols2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  @media (max-width:820px){ .cols2 { grid-template-columns:1fr; } .pipe { grid-template-columns:repeat(5,minmax(150px,1fr)); } }
+
+  .card { border:1px solid var(--rule); background:var(--surface); padding:16px 18px; }
+  .card h3 { font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.12em;
+             text-transform:uppercase; color:var(--ink-3); margin:0 0 10px; }
+  .card p { font-size:14px; }
+
+  ol.steps { counter-reset:s; list-style:none; padding:0; margin:0;
+             display:flex; flex-direction:column; gap:14px; }
+  ol.steps li { counter-increment:s; display:grid; grid-template-columns:30px 1fr; gap:14px;
+                font-size:14.5px; color:var(--ink-2); }
+  ol.steps li::before { content:counter(s); font-family:"IBM Plex Mono",monospace; font-size:12px;
+    color:var(--accent); border:1px solid var(--accent); width:24px; height:24px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; }
+
+  .assume { border:1px solid var(--move); background:var(--move-bg); padding:14px 16px; font-size:14px; color:var(--ink-2); }
+  .assume .q { font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--move);
+               letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:5px; }
+  footer.end { border-top:1px solid var(--rule); padding-top:22px; color:var(--ink-3); font-size:13.5px; }
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="kicker">Design note · 11 Sep 2026 · accepted, not yet implemented</p>
+  <h1>The site is a pipeline with a jagged edge, not a corpus with some gaps.</h1>
+  <p class="standfirst">A layer is not one of five fixed stages. It is <strong>a node in a versioned processing graph</strong> — a step, a revision, a feature, an open question, a candidate output — that runs against a paper and produces a new version of it. Layers stay visible as work proceeds rather than collapsing into a current state. The site's job is to show that graph, in general and applied to every paper, and to say honestly which cells are current, stale, absent, or impossible.</p>
+  <div class="status">
+    <span><b>Status</b> accepted; implemented through step 6</span>
+    <span><b>Plan</b> <a href="https://github.com/zmainen/elife-claim-trees/issues/23">#23</a> — this note is its design</span>
+    <span><b>Frames</b> <a href="https://github.com/zmainen/elife-claim-trees/issues/18">#18</a> · <a href="https://github.com/zmainen/elife-claim-trees/issues/19">#19</a> · <a href="https://github.com/zmainen/elife-claim-trees/issues/20">#20</a></span>
+    <span><b>Declared in</b> <code>pipeline/layers.yaml</code></span>
+    <span><b>Depends on</b> <code>runs/README.md</code> · <code>verification/*/provenance.json</code> · <code>mappings/*.json</code></span>
+  </div>
+</header>
+
+<!-- ─────────────────────────────────────────────────── -->
+<section>
+  <h2>Two separations</h2>
+  <div class="principle">
+    <p><b>General from particular.</b> Methods, formats, docs, agents, schema and standards describe the machinery and show no paper's output. A paper's pages show that paper's output and explain no machinery.</p>
+  </div>
+  <div class="principle">
+    <p><b>Layer from view.</b> A layer is a unit of work with inputs, outputs and dependencies. A view — graph, list, table, marked document, comparison — is a way of looking at one. Views are shared vocabulary: a new layer usually reuses existing views, occasionally earns a new one.</p>
+  </div>
+  <p>Everything else follows. <code>/extract</code> is a layer's output for one paper, not a page. <code>/agents</code> is the general half of the induction layer. <code>/standards</code> is reference material about external formats, sitting outside the pipeline and connected to the layers that target them. An <b>Introduction</b> sits outside both, for the reader arriving cold.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────── -->
+<section>
+  <h2>The pipeline</h2>
+  <p class="sec-note">Left to right by dependency. Dashed borders are corpus-scope layers — schema and vocabulary decisions that apply to every paper and, when they change, make every dependent paper-instance stale. Filled boxes are artifacts rather than steps.</p>
+
+  <div class="pipe">
+    <div class="pipe-col">
+      <div class="pipe-head">Source</div>
+      <div class="node out"><span class="n-name">paper</span><span class="n-kind">JATS or PDF, cached</span></div>
+      <div class="node corpus"><span class="n-name">claim-format</span><span class="n-kind">corpus · schema</span></div>
+      <div class="node corpus"><span class="n-name">relation-vocab</span><span class="n-kind">corpus · question · #19 #20</span></div>
+    </div>
+    <div class="pipe-col">
+      <div class="pipe-head">Induction</div>
+      <div class="node"><span class="n-name">results-reader</span><span class="n-kind">step · candidate</span></div>
+      <div class="node"><span class="n-name">caption-reader</span><span class="n-kind">step · candidate</span></div>
+      <div class="node"><span class="n-name">structure-reader</span><span class="n-kind">step · candidate</span></div>
+      <div class="node"><span class="n-name">reconciler</span><span class="n-kind">step</span></div>
+      <div class="node"><span class="n-name">edge-inference</span><span class="n-kind">step</span></div>
+    </div>
+    <div class="pipe-col">
+      <div class="pipe-head">Tree</div>
+      <div class="node out"><span class="n-name">claim tree</span><span class="n-kind">artifact · versioned</span></div>
+      <div class="node"><span class="n-name">stance / alternatives</span><span class="n-kind">feature · revises tree</span></div>
+      <div class="node"><span class="n-name">relation re-typing</span><span class="n-kind">revision · from #19</span></div>
+    </div>
+    <div class="pipe-col">
+      <div class="pipe-head">Measures</div>
+      <div class="node"><span class="n-name">abstract↔claims</span><span class="n-kind">step · leaf</span></div>
+      <div class="node"><span class="n-name">verification</span><span class="n-kind">step</span></div>
+      <div class="node"><span class="n-name">coverage spans</span><span class="n-kind">step</span></div>
+      <div class="node"><span class="n-name">adjudication</span><span class="n-kind">step · judgement</span></div>
+      <div class="node out leaf"><span class="n-name">marked paper</span><span class="n-kind">artifact · leaf</span></div>
+    </div>
+    <div class="pipe-col">
+      <div class="pipe-head">Interchange</div>
+      <div class="node"><span class="n-name">mira export</span><span class="n-kind">step · branch</span></div>
+      <div class="node"><span class="n-name">oxa export</span><span class="n-kind">step · branch</span></div>
+      <div class="node"><span class="n-name">dg export</span><span class="n-kind">step · from oxa</span></div>
+      <div class="node out leaf"><span class="n-name">formats report</span><span class="n-kind">artifact · leaf</span></div>
+      <div class="node out leaf"><span class="n-name">gap report</span><span class="n-kind">artifact · leaf</span></div>
+    </div>
+  </div>
+  <div class="legend">
+    <span><i class="swatch"></i> paper-scope layer</span>
+    <span><i class="swatch corpus"></i> corpus-scope layer</span>
+    <span><i class="swatch out"></i> artifact</span>
+  </div>
+
+  <p style="margin-top:20px">The shape matters more than the contents. <b>Induction fans in</b> — three candidates reconciled to one. <b>Interchange fans out</b> — one tree into three encodings that never rejoin. <b>Coverage is the only layer that reads the paper again</b> after induction, which is why it is the one that can find what everything else missed. And the two corpus-scope nodes on the left have edges into almost everything on the right, which is why a schema decision is never a small change.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────── -->
+<section>
+  <h2>Five kinds of layer</h2>
+  <p class="sec-note">The kind is not decoration: it determines whether a layer can be re-run mechanically, and what its output supersedes.</p>
+  <div class="tablewrap">
+    <table class="grid">
+      <thead><tr><th>Kind</th><th>Produces</th><th>Re-runnable</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>step</td><td class="wrap">An artifact from declared inputs</td><td class="wrap">Yes, mechanically</td><td class="wrap">coverage spans, MIRA export</td></tr>
+        <tr><td>candidate</td><td class="wrap">One of several parallel outputs, kept rather than collapsed</td><td class="wrap">Yes — and worth re-running with a different model</td><td class="wrap">each of the three readers; a prompt variant</td></tr>
+        <tr><td>judgement</td><td class="wrap">A decision stored so it can be disputed</td><td class="wrap">No — recomputing destroys the record</td><td class="wrap">coverage adjudication, review gate</td></tr>
+        <tr><td>feature</td><td class="wrap">A new capability that revises existing artifacts</td><td class="wrap">Once, then it is part of the schema</td><td class="wrap">stance and alternatives</td></tr>
+        <tr><td>question</td><td class="wrap">A decision about meaning, then a re-typing of what it governs</td><td class="wrap">The decision no; the propagation yes</td><td class="wrap">#19 <code>dissociates-with</code>, #20 <code>epistemic</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:20px"><b>#19 is the case that proves the model.</b> "Is <code>dissociates-with</code> an opposition?" has a general half — the definition, the decision, the declaration in the exporter — and a per-paper half: which of this paper's relations are affected, and what changed when the answer landed. It is a layer with 65 instances across 10 papers, it sits upstream of every export, and when it resolves, every export downstream of it is stale. Exactly like a processing step. That is why it belongs in the same structure as one, and why a new paper arriving later gets the same question asked of it automatically.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────── -->
+<section>
+  <h2>State, not presence</h2>
+  <p class="sec-note">A cell is not a tick. The interesting states are the two the site cannot currently express — stale, and impossible — and the jagged edge is the normal condition, not a defect to hide.</p>
+  <div class="cols2" style="margin-bottom:26px">
+    <div class="card">
+      <h3>The five states</h3>
+      <p><span class="chip c-current">current</span> ran, and every declared input still hashes to what the run recorded.</p>
+      <p><span class="chip c-stale">stale</span> ran, but an input changed since. The output is still there and no longer trustworthy.</p>
+      <p><span class="chip c-absent">absent</span> never run. The site shows what would run it, and what that depends on.</p>
+      <p><span class="chip c-na">n/a</span> declared impossible, with a reason. Artiushin's verification is image inspection; Kammer's needs a specialist fMRI pipeline.</p>
+      <p style="margin-bottom:0"><span class="chip c-q">open</span> a question-layer with no decision yet. Downstream is provisional by definition.</p>
+    </div>
+    <div class="card">
+      <h3>Propagation</h3>
+      <p>Staleness flows along dependency edges. Re-type a relation and every export is stale; regenerate the exports and the formats report is stale; change a prompt and every run that used it is stale.</p>
+      <p>This is the rule that would have caught the three drifts found this week: Gädeke's OXA measuring 89 of 93 relations after the stance work, the standards page publishing 57% after the exporter changed, and a verification banner describing a run superseded by the audit.</p>
+      <p style="margin-bottom:0">None of those were noticed by anyone looking at the page. All three were computable.</p>
+    </div>
+  </div>
+
+  <div class="tablewrap">
+    <table class="matrix">
+      <thead><tr><th>Paper</th><th>induct</th><th>tree</th><th>abs↔cl</th><th>verify</th><th>spans</th><th>adjud</th><th>marked</th><th>stance</th><th>mira</th><th>oxa</th><th>dg</th><th>formats</th></tr></thead>
+      <tbody>
+        <tr><td>Gädeke</td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td></tr>
+        <tr><td>Kolb</td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td></tr>
+        <tr><td>Wengert</td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td></tr>
+        <tr><td>Rozak</td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-n">·</i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td></tr>
+        <tr><td>Headley</td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td></tr>
+        <tr><td>Ejdrup</td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td></tr>
+        <tr><td>Scheller</td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td></tr>
+        <tr><td>Bouyeure</td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td></tr>
+        <tr><td>Artiushin</td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-n">·</i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td></tr>
+        <tr><td>Kammer</td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-n">·</i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-a"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td><td><i class="m m-c"></i></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="legend" style="margin-top:12px">
+    <span><i class="m m-c"></i> current</span><span><i class="m m-s"></i> stale</span>
+    <span><i class="m m-a"></i> absent</span><span><i class="m m-n">·</i> not applicable</span>
+  </div>
+  <p style="margin-top:18px">Drawn from the artifacts on disk today. It is mostly honest already — what it cannot yet say is <span class="chip c-stale">stale</span>, and every drift we found this week would have shown as an amber column.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────── -->
+<section>
+  <h2>Where versions come from</h2>
+  <p class="sec-note">This was the open question. The answer is not a hand-written changelog and not <code>git log</code> — it is the run record, which three parts of the repository already keep independently and none of them share.</p>
+
+  <div class="cols2" style="margin-bottom:24px">
+    <div class="card">
+      <h3>Already built, three times</h3>
+      <p><code>runs/&lt;paper&gt;/manifest.json</code> — per role: prompt path, <b>prompt hash</b>, model, output, output hash. Its README already states the rule: "if the hash of a prompt file no longer matches what a run recorded, that run was produced by a different prompt than the one now in the tree."</p>
+      <p><code>verification/&lt;paper&gt;/provenance.json</code> — argv, interpreter, data commit, every file opened with a hash, exit code.</p>
+      <p><code>mappings/&lt;paper&gt;.json</code> — a <code>sha</code> per verdict, discarded rather than applied when the sentence it judged has changed.</p>
+      <p style="margin-bottom:0">Plus byte-stable exports, where <code>git diff</code> is the staleness check. Four mechanisms, one problem, no shared vocabulary.</p>
+    </div>
+    <div class="card">
+      <h3>One ledger instead</h3>
+      <p>Every layer run appends a record. Inputs and outputs by path and hash; the declared dependency edges come from the layer definition, not from the record.</p>
+      <p><b>Version history</b> is the ledger sorted by date. <b>Staleness</b> is re-hashing the inputs. <b>Propagation</b> is a walk over the dependency graph. <b>The changelog line</b> is the one hand-written field, written at the moment of the change by whoever ran the layer rather than reconstructed from a diff months later.</p>
+      <p style="margin-bottom:0">Git stays the audit trail underneath. The ledger is the index into it.</p>
+    </div>
+  </div>
+
+<pre class="code"><span class="k">runs/gadeke-2026-guilt-insula/ledger.jsonl</span>
+{"layer":<span class="s">"stance"</span>, "v":3, "ran":"2026-09-10T18:22Z", "kind":"feature",
+ "note":"Six alternatives authored from the controls' closing clauses; false contradiction replaced with qualifies.",
+ "in": [{"path":"claims/gadeke.../*.md","sha":"a41c…"}, {"path":"docs/claim-format.md","sha":"9be0…"}],
+ "out":[{"path":"claims/gadeke.../alt-*.md","sha":"77d2…"}],
+ "by": "claude-opus-5"}
+{"layer":<span class="s">"mira-export"</span>, "v":7, "ran":"2026-09-11T08:04Z", "kind":"step",
+ "note":"Regenerated after stance; 6 nodes gain haak:stance.",
+ "in": [{"path":"claims/gadeke.../*.md","sha":"a41c…"}, {"path":"scripts/export_mira.py","sha":"5f31…"}],
+ "out":[{"path":"exports/gadeke….mira.jsonld","sha":"c0a8…"}],
+ "by": "scripts/export_mira.py"}</pre>
+  <p style="margin-top:18px">The second record's first input is the first record's output hash. That single fact is what makes the whole graph checkable: change the claims and <code>a41c…</code> no longer matches, so the export is stale, so the formats report that consumed it is stale, and the site can say so without anyone remembering to.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────── -->
+<section>
+  <h2>One addressable cell</h2>
+  <p class="sec-note">The matrix is not a picture of the corpus. It is a view over the ledger, and every cell in it is a row that can be fetched, rendered, compared or run.</p>
+
+  <div class="principle">
+    <p>A cell is <b>(paper, layer, version)</b>. A <b>view</b> is how you look at it. Everything the site does is one of four verbs on that tuple: <b>render</b> it, <b>fetch</b> it, <b>compare</b> two of them, or <b>run</b> the layer that produces one.</p>
+  </div>
+
+  <div class="tablewrap" style="margin-bottom:22px">
+    <table class="grid">
+      <thead><tr><th>Verb</th><th>Call</th><th>Gives</th></tr></thead>
+      <tbody>
+        <tr><td>render</td><td class="mono">/papers/&lt;paper&gt;/&lt;layer&gt;[@v]/&lt;view&gt;</td><td class="wrap">The page. <code>@v</code> omitted means current; the view defaults to the layer's own.</td></tr>
+        <tr><td>fetch</td><td class="mono">/data/&lt;paper&gt;/&lt;layer&gt;[@v].json</td><td class="wrap">The same cell as data, pre-rendered in a static build. This is what makes a candidate exportable rather than merely visible.</td></tr>
+        <tr><td>compare</td><td class="mono">/compare?a=…&amp;b=…</td><td class="wrap">Two cells side by side: two versions of one layer, or two layers of one paper — <code>mira</code> against <code>oxa</code>, draft against final, v2 against v3.</td></tr>
+        <tr><td>run</td><td class="mono">POST /_run {paper, layer}</td><td class="wrap"><b>Dev mode only.</b> Runs the layer and its unmet dependencies, appends to the ledger. The published build shows the same command as copy-and-run text.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>A layer page is then a query with the paper unbound, and a paper page a query with the layer unbound. <b>The matrix is the query with both unbound</b> — which is why it is worth building as a real view over the ledger rather than as a table someone maintains. Useful queries fall out of it: every stale cell, every paper missing coverage, every instance of one question across ten papers, everything a given prompt version produced.</p>
+
+  <p>Two consequences worth stating. <b>Candidates become first-class for free</b> — a second prompt variant is a version like any other, addressable, fetchable and comparable against the one that shipped, instead of being overwritten by it. And <b>a cell that cannot be rendered can still be described</b>: absent cells carry the command and the dependency chain, so the jagged edge is navigable rather than blank.</p>
+</section>
+
+<section>
+  <h2>Views are a shared vocabulary</h2>
+  <p class="sec-note">Six views cover every layer we have. A new layer picks from them; earning a new view should be rare and deliberate.</p>
+  <div class="tablewrap">
+    <table class="grid">
+      <thead><tr><th>View</th><th>Shows</th><th>Used by</th></tr></thead>
+      <tbody>
+        <tr><td>graph</td><td class="wrap">Shape — the deductive spine, what hangs off what</td><td class="wrap">tree, stance, verification status over the tree, relation re-typing</td></tr>
+        <tr><td>list</td><td class="wrap">The text. The only form in which every claim can be read</td><td class="wrap">every layer</td></tr>
+        <tr><td>table</td><td class="wrap">Columns you sort and scan</td><td class="wrap">verification, coverage gaps, formats, candidates</td></tr>
+        <tr><td>document</td><td class="wrap">The paper itself, marked in place</td><td class="wrap">coverage, abstract↔claims</td></tr>
+        <tr><td>comparison</td><td class="wrap">Two encodings of one thing, side by side</td><td class="wrap">formats, draft ⇄ final, reproduced ⇄ published, before ⇄ after a revision</td></tr>
+        <tr><td>overlap</td><td class="wrap">Set relations between parallel candidates</td><td class="wrap">the three readers; prompt variants</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:18px"><b>Comparison is the view the pipeline model makes newly important.</b> If a layer produces a new version, the interesting thing is rarely the new state alone — it is the diff. What did the stance layer change? What did re-typing 65 relations change? A revision layer with no before-and-after view is just a silent edit.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────── -->
+<section>
+  <h2>Pages</h2>
+  <div class="tablewrap">
+    <table class="grid">
+      <thead><tr><th>Surface</th><th>Scope</th><th>Holds</th></tr></thead>
+      <tbody>
+        <tr><td>/ (introduction)</td><td class="mono">outside</td><td class="wrap">What this is, why panel-level claims, what the prototype shows and does not. For the reader arriving cold — including eLife.</td></tr>
+        <tr><td>/pipeline</td><td class="mono">general</td><td class="wrap">The graph above. Every layer's definition, kind, dependencies, views, and the command that runs it. The corpus matrix under it.</td></tr>
+        <tr><td>/pipeline/&lt;layer&gt;</td><td class="mono">general</td><td class="wrap">One layer in general: what it asks, what it produces, its state across all ten papers, and what it found corpus-wide.</td></tr>
+        <tr><td>/papers</td><td class="mono">particular</td><td class="wrap">Ten papers with their fill state visible — the jagged edge as the index's main information.</td></tr>
+        <tr><td>/papers/&lt;paper&gt;</td><td class="mono">particular</td><td class="wrap">This paper's instance of the pipeline. Layer navigation, each layer's own structure and views, provenance on every generated thing, and its version history from the ledger.</td></tr>
+        <tr><td>/standards</td><td class="mono">reference</td><td class="wrap">What we assume and know about MIRA, OXA, CiTO, Discourse Graphs and our own schema. Outside the pipeline, linked from the layers that target each format.</td></tr>
+        <tr><td>/docs</td><td class="mono">reference</td><td class="wrap">The CLI and the machinery. Already correct; unchanged.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:18px">Note what disappears: <code>/extract</code>, <code>/agents</code>, <code>/layers</code>, <code>/formats</code>, <code>/formats/mira</code> and <code>/findings</code> are all either a layer in general or a layer applied to a paper. None of their content is lost; all of it moves to the altitude it belongs at.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────── -->
+<section>
+  <h2>Order of work</h2>
+  <p class="sec-note">Deliberately: the model and its data before any page is moved. Rearranging pages first would just relocate the drift.</p>
+  <ol class="steps">
+    <li><b>Declare the layers.</b> One file — id, title, question, kind, scope, depends_on, produces, views, command. The pipeline graph and every page below read from it.</li>
+    <li><b>Write the ledger.</b> Backfill from what exists: <code>runs/</code>, <code>verification/</code>, <code>mappings/</code>, and the export files. Every layer's runner appends to it from then on.</li>
+    <li><b>Compute state.</b> Hash inputs, compare to the ledger, walk the graph. Output goes into <code>corpus-facts.json</code> beside the layer detection already there.</li>
+    <li><b>Build /pipeline</b> — the graph, the per-layer pages, the matrix with all five states. This subsumes /layers and both /formats pages.</li>
+    <li><b>Rebuild the paper page</b> around layer navigation, with views and provenance, absorbing /extract and the Gädeke half of /agents.</li>
+    <li><b>Strip the general pages</b> of per-paper content: /agents, /standards.</li>
+    <li><b>Add dev-mode run</b> and the compare view, once cells are addressable.</li>
+    <li><b>Write the introduction</b> last, when there is a settled thing to introduce.</li>
+  </ol>
+  <div class="assume" style="margin-top:22px">
+    <span class="q">Revised 11 Sep, after five steps</span>
+    The plan first said <b>build at a parallel prefix and swap when it is better</b>. That is the
+    mechanism this rebuild exists to reverse: every step adds a surface and defers the removal to
+    a step that keeps receding. Five steps in, the nav had gone from eight items to ten and no
+    route had been deleted. The rule is now <b>no new route without deleting one</b>, and the
+    target is four nav items and roughly six routes. A deletion still waits for its replacement
+    to exist — that is a sequencing constraint, not a deferral.
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────── -->
+
+
+<section>
+  <h2>Decided</h2>
+  <p class="sec-note">Answers to the five questions the last draft left open, recorded here so the implementation does not have to re-ask them.</p>
+  <div class="tablewrap">
+    <table class="grid">
+      <thead><tr><th>Question</th><th>Decision</th><th>Implication</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>A · running</td>
+          <td class="wrap"><b>Local dev mode</b> runs layers; the published build shows copy-and-run.</td>
+          <td class="wrap">Two behaviours from one cell definition. The command string is in the layer declaration either way.</td>
+        </tr>
+        <tr>
+          <td>B · grouping</td>
+          <td class="wrap"><b>Groups are real.</b> Induction groups five runs.</td>
+          <td class="wrap">A group is a layer with children, not a display convention — the same shape will be wanted for binding related questions into one parent, as sub-issues.</td>
+        </tr>
+        <tr>
+          <td>C · candidates</td>
+          <td class="wrap"><b>First class</b>, exportable and comparable.</td>
+          <td class="wrap">Drives the addressing above: a candidate is a version, reachable by the same call as any other.</td>
+        </tr>
+        <tr>
+          <td>D · naming</td>
+          <td class="wrap"><b>versions / views / layers.</b></td>
+          <td class="wrap">A layer runs and produces a version; a view renders one. "Step" stays informal, for a layer whose kind is mechanical.</td>
+        </tr>
+        <tr>
+          <td>E · questions</td>
+          <td class="wrap"><b>#19 becomes a layer</b> after the issue is examined.</td>
+          <td class="wrap">The reading happens in the issue; the decision and its propagation become a declared layer with per-paper state, so a new paper gets the question asked of it automatically.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer class="end">
+  Counts and states read from the running site, <code>site/src/data/corpus-facts.json</code>, <code>runs/</code>, <code>verification/</code> and <code>mappings/</code> on 11 Sep 2026. Supersedes the earlier six-tab mockup, whose audit of what is currently mixed together still holds.
+</footer>
+
+</div>
