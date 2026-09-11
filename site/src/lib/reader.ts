@@ -274,9 +274,20 @@ export function readerData(paperSlug: string) {
     }
     const full = (c.claim ?? '').trim();
     const short = (c.shortClaim ?? c.displayClaim ?? '').trim();
+    // The two grains: the whole this claim is a part of, and the parts that hang off it. A
+    // part is shown folded beneath its whole, and the default list shows wholes alone, so the
+    // page can carry both without opening on the fine grain. Parts sort by slug, the order the
+    // numbering letters them in.
+    const partOf: string | null = (c['part-of'] ?? [])[0] ?? null;
+    const parts: string[] = paper.claims
+      .filter((o: any) => (o['part-of'] ?? []).includes(c.slug))
+      .map((o: any) => o.slug)
+      .sort((a: string, b: string) => a.localeCompare(b));
     return {
       slug: c.slug,
       number: c.number ?? null,
+      partOf,
+      parts,
       kind: kindOf(c.role, c.stance ?? 'asserts'),
       role: c.role,
       stance: c.stance ?? 'asserts',

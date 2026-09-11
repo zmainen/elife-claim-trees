@@ -67,7 +67,13 @@ def corpora():
 
 
 def scan(slugs):
+    # A claim tree has two grains. `claims` is the coarse grain — the wholes, what a reader of
+    # the argument follows; `parts` is the fine grain — the components a `part-of` edge hangs
+    # off a whole. Roles and relations are counted over both, because a part carries a role and
+    # its own edges; only the head count is split, so "31 claims, 12 parts" is honest where
+    # "43 claims" is not. See docs/design/2026-09-11-parts.md.
     claims = 0
+    parts = 0
     rels = Counter()
     roles = Counter()
     repro = Counter()
@@ -87,7 +93,10 @@ def scan(slugs):
             fm = frontmatter(os.path.join(d, fn))
             if not fm or not fm.get("slug"):
                 continue
-            claims += 1
+            if fm.get("part-of"):
+                parts += 1
+            else:
+                claims += 1
             role = fm.get("role") or fm.get("claim-type") or "empirical"
             roles[role] += 1
             for r in relations(fm):
@@ -109,7 +118,7 @@ def scan(slugs):
             cur = max(recs, key=lambda r: str(r.get("date", "")), default=None)
             if cur:
                 repro[cur.get("status", "—")] += 1
-    return claims, rels, roles, repro, eligible, with_record, lc, lc_top, lc_assert
+    return claims, parts, rels, roles, repro, eligible, with_record, lc, lc_top, lc_assert
 
 
 def mira_facts(site):
@@ -362,7 +371,7 @@ def main():
     a = ap.parse_args()
 
     site, examples = corpora()
-    claims, rels, roles, repro, eligible, with_record, lc, lc_top, lc_assert = scan(site)
+    claims, parts, rels, roles, repro, eligible, with_record, lc, lc_top, lc_assert = scan(site)
     ex_claims, *_ = scan(examples)
 
     verify_scripts = sum(
@@ -371,6 +380,7 @@ def main():
     facts = {
         "papers": len(site),
         "claims": claims,
+        "parts": parts,
         "relations": sum(rels.values()),
         "relation_types_used": len(rels),
         "relation_types_defined": len(EDGE_KEYS),
@@ -414,7 +424,7 @@ def main():
         fh.write("\n")
 
     print(f"corpus facts → {os.path.relpath(OUT, ROOT)}")
-    print(f"  {facts['papers']} papers · {facts['claims']} claims · "
+    print(f"  {facts['papers']} papers · {facts['claims']} claims · {facts['parts']} parts · "
           f"{facts['relations']} typed relations "
           f"({facts['relation_types_used']} of {facts['relation_types_defined']} types used)")
     # "133/133 have a record" is true and reads as success. A record can say `blocked` or

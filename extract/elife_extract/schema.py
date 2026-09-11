@@ -112,6 +112,11 @@ class ReconciledClaim(BaseModel):
     notes: str | None = Field(None, description=(
         "What the readers disagreed about, or why a single-source claim deserves a second "
         "look. A review pass prefixes its notes with [reviewer]."))
+    part_of: str | None = Field(None, description=(
+        "The exact `claim` sentence of another claim in this same table that this one is a "
+        "component of — one comparison, condition, measure or study of a proposition that "
+        "claim states whole. Keep both; the writer resolves the sentence to the whole's slug "
+        "and writes `part-of`. null when this claim is not a part of another."))
 
 
 class DraftClaimTable(BaseModel):

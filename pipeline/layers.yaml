@@ -411,7 +411,7 @@ layers:
       reproduction records the induction chain does not itself produce.
     added: "2026-03"
     found: >
-      Across {{papers}} papers the corpus holds {{claims}} claims and {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.
+      Across {{papers}} papers the corpus holds {{claims}} claims and {{parts}} parts, carrying {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.
     needs: [reconcile, external-review, edge-inference, claim-format]
     produces: ["claims/{paper}/*.md"]
     views: [graph, list, table]
@@ -468,6 +468,39 @@ layers:
     views: [table]
     by_from: model
     command: "cd extract && python3 -m elife_extract.cli questions --paper {paper}"
+
+  # A claim tree has two grains. The coarse grain is the argument a reader follows; the fine
+  # grain is every comparison, condition, measure and study the prose states on the way. A
+  # `part-of` edge says one claim is a component of another — the whole is weakened but not
+  # falsified by the part alone — and the page shows wholes by default with parts folded
+  # beneath. `write.py` records this at reconciliation for a fresh tree; this layer is the
+  # retrofit for trees induced before `part-of` existed. A `feature`, like `questions` and
+  # `stance`: it revises a tree rather than making a new kind of thing.
+  - id: parts
+    kind: feature
+    scope: paper
+    title: Parts
+    question: Which claims are components of other claims, and which whole does each belong to?
+    how: >
+      Reads the tree, not the paper — each claim's slug, role, panel, sentence and existing edges
+      — and returns the `part-of` edges it holds: every claim that states one comparison,
+      condition, measure or study of a proposition another claim states whole. The graph
+      half-says composition already, since a part usually carries a `supports` or `tests` edge
+      into its whole, but support is evidence and composition is not, so the definition decides,
+      not the edge. It then writes `part-of:` into each part's claim file, editing the frontmatter
+      in place.
+
+      `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back
+      through the same validation — an unknown slug, a self-edge, a second whole for one part, or
+      an edge that would close a cycle is dropped rather than written — so a model with no backend
+      here can still answer it.
+    added: "2026-09-11"
+    needs: [claim-tree, relation-vocab]
+    reads: [extract/prompts/parts.md, extract/prompts/contract/vocabulary.md]
+    produces: ["runs/{paper}/parts.output.json"]
+    views: [table, graph]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli parts --paper {paper}"
 
   # Resolves the literature-context claims against CrossRef and writes the DOIs it confirms
   # back into the claim files. A `feature` for the same reason `stance` is one: it revises

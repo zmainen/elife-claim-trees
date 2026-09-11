@@ -282,6 +282,23 @@ def cmd_questions(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_parts(args: argparse.Namespace) -> int:
+    """Layer `parts` — which claims are components of other claims."""
+    from .layers import parts_layer, parts_request
+
+    cfg = _cfg(args)
+    if _dump(args, lambda: parts_request(args.paper, cfg), "parts"):
+        return 0
+    path, payload = parts_layer(args.paper, cfg, answer=args.answer)
+    print(f"=== parts — {args.paper} ===")
+    print(f"  model = {payload['model']}")
+    print(f"  parts = {len(payload['parts'])}")
+    for e in payload["parts"]:
+        print(f"    {e['part']} → {e['whole']}")
+    print(f"  written: {path}")
+    return 0
+
+
 def cmd_verify_refs(args: argparse.Namespace) -> int:
     """Layer `reference-check` — do the cited references resolve, and to what?"""
     import json
@@ -827,6 +844,26 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common_args(p_q)
     _add_model_args(p_q)
     p_q.set_defaults(func=cmd_questions)
+
+    # ── parts ──────────────────────────────────────────────────────────────
+    p_parts = sub.add_parser(
+        "parts", help="Layer `parts` — which claims are components of other claims.",
+        description=(
+            "A claim tree has two grains. Given the tree's claims — slug, role, panel, sentence "
+            "and their edges — return the `part-of` edges it holds: each claim that is a "
+            "component of another under the definition, and the whole it belongs to. It writes "
+            "`part-of:` into each part's claim file. A retrofit for trees induced before "
+            "`part-of` was first-class; `write.py` records it at reconciliation for fresh ones. "
+            "`--dump-prompt` writes the exact request, `--answer` feeds a reply back through the "
+            "same validation — an unknown slug, a self-edge, a cycle or a second whole is "
+            "dropped, not written."
+        ),
+    )
+    p_parts.add_argument("--paper", required=True, help="Paper slug.")
+    _add_answerable_args(p_parts, "the parts are validated against this tree.")
+    _add_common_args(p_parts)
+    _add_model_args(p_parts)
+    p_parts.set_defaults(func=cmd_parts)
 
     # ── write (claim-tree) ───────────────────────────────────────────────
     p_write = sub.add_parser(
