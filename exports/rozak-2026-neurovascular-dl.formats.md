@@ -27,7 +27,7 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 - `haak:requires` (10) — a claim depends on another holding
 - `haak:enables-method` (9) — a result makes a downstream method possible
 - `haak:entails` (4) — a hypothesis entails its prediction — the deductive step
-- `haak:derived-from` (4) — a prediction derived from its hypothesis
+- `haak:derived-from` (4) — a prediction derived from its hypothesis (inverse of entails)
 
 Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.
 

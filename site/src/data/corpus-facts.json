@@ -157,6 +157,9 @@
       "verified_results": 3
     }
   },
+  "literature_context_claims": 6,
+  "literature_context_doi_in_assertions": 0,
+  "literature_context_doi_top_level": 6,
   "method_example_claims": 66,
   "method_example_papers": 2,
   "method_examples": [
@@ -164,12 +167,12 @@
     "meijer-2025-serotonin-orthogonal"
   ],
   "mira": {
-    "carried": 916,
+    "carried": 917,
     "inverse_only": 48,
     "lost": 3,
     "our_violations": 0,
     "pinned_schema_commit": "483f0b21480c0f4ced9c1519fc0f6df2b8617cfe",
-    "relations": 919,
+    "relations": 920,
     "synthesised_questions": 33,
     "upstream_violations": 165,
     "verification_records": 197
@@ -241,12 +244,36 @@
         "relation": "interprets"
       },
       {
+        "declared_under": "mira:opposes",
+        "description": "The source claim stands against the destination claim.",
+        "domain": "mira:Claim",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "opposes"
+      },
+      {
+        "declared_under": "mira:supports",
+        "description": "The source claim predicts the destination result; inverse of confirms.",
+        "domain": "mira:Claim",
+        "inverse_of": null,
+        "range": "mira:Evidence",
+        "relation": "predicts"
+      },
+      {
         "declared_under": null,
         "description": "The source narrows the destination claim's applicability.",
         "domain": "mira:Claim",
         "inverse_of": null,
         "range": "mira:Claim",
         "relation": "qualifies"
+      },
+      {
+        "declared_under": "mira:opposes",
+        "description": "The source evidence is incompatible with the destination claim.",
+        "domain": "mira:Evidence",
+        "inverse_of": null,
+        "range": "mira:Claim",
+        "relation": "refutes"
       },
       {
         "declared_under": "mira:supports",
@@ -678,6 +705,9 @@
           "mappings/{paper}.json"
         ],
         "question": "Of the spans the matcher could not resolve, which are real gaps?",
+        "reads": [
+          "extract/prompts/coverage-adjudicator.md"
+        ],
         "reviews": "coverage",
         "scope": "paper",
         "title": "Coverage adjudication",
@@ -8998,10 +9028,15 @@
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/artiushin-2026-spider-atlas.mira.jsonld",
+            "exports/artiushin-2026-spider-atlas.mira-extended.jsonld",
+            "exports/artiushin-2026-spider-atlas.gap-report.md",
+            "scripts/formats_report.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:37:36Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "marks": {
@@ -9014,10 +9049,12 @@
         "mira-export": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T15:50:03Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -9149,10 +9186,15 @@
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/bouyeure-2026-fear-rsa.mira.jsonld",
+            "exports/bouyeure-2026-fear-rsa.mira-extended.jsonld",
+            "exports/bouyeure-2026-fear-rsa.gap-report.md",
+            "scripts/formats_report.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:37:36Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "marks": {
@@ -9165,10 +9207,12 @@
         "mira-export": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T15:50:03Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -9306,10 +9350,15 @@
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/ejdrup-2026-dopamine.mira.jsonld",
+            "exports/ejdrup-2026-dopamine.mira-extended.jsonld",
+            "exports/ejdrup-2026-dopamine.gap-report.md",
+            "scripts/formats_report.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T15:50:03Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "marks": {
@@ -9322,10 +9371,12 @@
         "mira-export": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T15:50:03Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -9476,10 +9527,13 @@
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/gadeke-2026-guilt-insula.gap-report.md",
+            "scripts/formats_report.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-11T08:07:29Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "marks": {
@@ -9494,10 +9548,12 @@
         "mira-export": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-11T08:07:29Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "oxa-export": {
@@ -9648,10 +9704,15 @@
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/headley-2026-inhibitory-rhythms.mira.jsonld",
+            "exports/headley-2026-inhibitory-rhythms.mira-extended.jsonld",
+            "exports/headley-2026-inhibitory-rhythms.gap-report.md",
+            "scripts/formats_report.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:20:18Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "marks": {
@@ -9664,10 +9725,12 @@
         "mira-export": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T15:50:03Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -9805,10 +9868,15 @@
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/kammer-2026-foveal-feedback.mira.jsonld",
+            "exports/kammer-2026-foveal-feedback.mira-extended.jsonld",
+            "exports/kammer-2026-foveal-feedback.gap-report.md",
+            "scripts/formats_report.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:37:36Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "marks": {
@@ -9821,10 +9889,12 @@
         "mira-export": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T15:50:03Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -9959,10 +10029,15 @@
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/kolb-2026-igabasnfr2.mira.jsonld",
+            "exports/kolb-2026-igabasnfr2.mira-extended.jsonld",
+            "exports/kolb-2026-igabasnfr2.gap-report.md",
+            "scripts/formats_report.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:37:36Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "marks": {
@@ -9975,10 +10050,12 @@
         "mira-export": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:11:33Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "oxa-export": {
@@ -10119,10 +10196,15 @@
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/rozak-2026-neurovascular-dl.mira.jsonld",
+            "exports/rozak-2026-neurovascular-dl.mira-extended.jsonld",
+            "exports/rozak-2026-neurovascular-dl.gap-report.md",
+            "scripts/formats_report.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:37:36Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "marks": {
@@ -10135,10 +10217,12 @@
         "mira-export": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:11:33Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "oxa-export": {
@@ -10270,10 +10354,15 @@
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/scheller-2026-self-prioritization.mira.jsonld",
+            "exports/scheller-2026-self-prioritization.mira-extended.jsonld",
+            "exports/scheller-2026-self-prioritization.gap-report.md",
+            "scripts/formats_report.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:54:11Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "marks": {
@@ -10286,10 +10375,12 @@
         "mira-export": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T15:50:03Z",
-          "state": "current",
+          "state": "stale",
           "unrecorded_upstream": [
             "stance"
           ],
@@ -10427,10 +10518,15 @@
         "formats-report": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "exports/wengert-2026-kcnc1.mira.jsonld",
+            "exports/wengert-2026-kcnc1.mira-extended.jsonld",
+            "exports/wengert-2026-kcnc1.gap-report.md",
+            "scripts/formats_report.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:54:11Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "marks": {
@@ -10443,10 +10539,12 @@
         "mira-export": {
           "by": "unrecorded",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "scripts/export_mira.py"
+          ],
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T17:11:33Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "oxa-export": {
@@ -10514,13 +10612,18 @@
   },
   "relation_counts": {
     "confirms": 69,
+    "contradicts": 0,
     "derived-from": 48,
     "dissociates-with": 65,
     "enables-method": 75,
     "entails": 54,
     "extends": 29,
     "interprets": 37,
+    "opposes": 0,
+    "predicts": 0,
     "qualifies": 1,
+    "refutes": 1,
+    "replicates": 0,
     "requires": 99,
     "rules-out": 18,
     "scopes": 170,
@@ -10528,9 +10631,9 @@
     "tests": 73,
     "validates": 49
   },
-  "relation_types_defined": 17,
-  "relation_types_used": 14,
-  "relations": 919,
+  "relation_types_defined": 19,
+  "relation_types_used": 15,
+  "relations": 920,
   "reproduction_status": {
     "blocked": 52,
     "partial": 16,

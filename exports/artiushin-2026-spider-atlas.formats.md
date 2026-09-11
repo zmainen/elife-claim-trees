@@ -23,7 +23,7 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 - `haak:scopes` (15) — a scope constraint governs another claim's validity
 - `haak:enables-method` (14) — a result makes a downstream method possible
 - `haak:requires` (2) — a claim depends on another holding
-- `haak:derived-from` (2) — a prediction derived from its hypothesis
+- `haak:derived-from` (2) — a prediction derived from its hypothesis (inverse of entails)
 - `haak:interprets` (2) — one claim interprets another
 
 Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.

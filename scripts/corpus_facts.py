@@ -34,15 +34,12 @@ try:
 except ImportError:
     sys.exit("PyYAML required:  pip install pyyaml")
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from relations import EDGE_KEYS, relations  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CLAIMS = os.path.join(ROOT, "claims")
 OUT = os.path.join(ROOT, "site", "src", "data", "corpus-facts.json")
-
-SUPPORTS = {"tests", "confirms", "validates", "supports", "extends", "replicates"}
-OPPOSES = {"contradicts", "opposes", "dissociates-with", "rules-out"}
-GAPS = {"entails", "derived-from", "interprets", "enables-method", "scopes",
-        "requires", "qualifies"}
-EDGE_KEYS = SUPPORTS | OPPOSES | GAPS
 
 ELIGIBLE_ROLES = {"empirical", "control"}
 
@@ -69,22 +66,17 @@ def corpora():
     return sorted(site), sorted(examples)
 
 
-def relations(c):
-    for k in sorted(EDGE_KEYS):
-        for t in (c.get(k) or []):
-            if isinstance(t, str):
-                yield k
-    for item in (c.get("belongings") or []):
-        if isinstance(item, dict) and item.get("relation"):
-            yield item["relation"]
-
-
 def scan(slugs):
     claims = 0
     rels = Counter()
     roles = Counter()
     repro = Counter()
     eligible = with_record = 0
+    # Where the cited DOI of a literature-context claim actually sits. The schema says
+    # top-level `doi:`; a second reference checker read `assertions[0].doi` instead and so
+    # confirmed nothing, falling through to a fuzzy title search for every claim in the
+    # corpus. Counted rather than asserted, so the claim that it is 100% stays checkable.
+    lc = lc_top = lc_assert = 0
     for s in slugs:
         d = os.path.join(CLAIMS, s)
         if not os.path.isdir(d):
@@ -100,6 +92,15 @@ def scan(slugs):
             roles[role] += 1
             for r in relations(fm):
                 rels[r] += 1
+            if role == "literature-context":
+                lc += 1
+                doi = fm.get("doi")
+                ass = (fm.get("assertions") or [{}])
+                ass = ass[0].get("doi") if ass and isinstance(ass[0], dict) else None
+                if isinstance(doi, str) and doi.startswith("10."):
+                    lc_top += 1
+                elif isinstance(ass, str) and ass.startswith("10."):
+                    lc_assert += 1
             recs = [r for r in (fm.get("reproductions") or []) if isinstance(r, dict)]
             if role in ELIGIBLE_ROLES:
                 eligible += 1
@@ -108,7 +109,7 @@ def scan(slugs):
             cur = max(recs, key=lambda r: str(r.get("date", "")), default=None)
             if cur:
                 repro[cur.get("status", "—")] += 1
-    return claims, rels, roles, repro, eligible, with_record
+    return claims, rels, roles, repro, eligible, with_record, lc, lc_top, lc_assert
 
 
 def mira_facts(site):
@@ -314,8 +315,8 @@ def main():
     a = ap.parse_args()
 
     site, examples = corpora()
-    claims, rels, roles, repro, eligible, with_record = scan(site)
-    ex_claims, _, _, _, _, _ = scan(examples)
+    claims, rels, roles, repro, eligible, with_record, lc, lc_top, lc_assert = scan(site)
+    ex_claims, *_ = scan(examples)
 
     verify_scripts = sum(
         1 for s in site if os.path.isfile(os.path.join(ROOT, "verification", s, "verify.py")))
@@ -327,8 +328,15 @@ def main():
         "relation_types_used": len(rels),
         "relation_types_defined": len(EDGE_KEYS),
         "roles_used": len(roles),
+        "literature_context_claims": lc,
+        "literature_context_doi_top_level": lc_top,
+        "literature_context_doi_in_assertions": lc_assert,
         "role_counts": dict(roles.most_common()),
-        "relation_counts": dict(rels.most_common()),
+        # Every defined relation, including the ones at zero. A page documenting the
+        # vocabulary has to name all 17; leaving the unused ones out of the map meant any
+        # page that showed them had to type "0" beside a column generated from this file.
+        "relation_counts": {k: rels.get(k, 0)
+                            for k in sorted(EDGE_KEYS, key=lambda k: (-rels.get(k, 0), k))},
         "largest_role": roles.most_common(1)[0][0] if roles else None,
         "largest_role_n": roles.most_common(1)[0][1] if roles else 0,
         "verify_scripts": verify_scripts,

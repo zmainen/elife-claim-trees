@@ -1,8 +1,8 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `meijer-2025-serotonin-additive-r1` · **Generated:** 2026-09-10
+**Paper:** `meijer-2025-serotonin-additive-r1` · **Generated:** 2026-09-11
 
-41 claims, 82 typed relations between them.
+41 claims, 86 typed relations between them.
 
 ## Claims by role
 
@@ -17,14 +17,14 @@
 
 ## Relations dropped
 
-**68 of 82 relations (83%) have no MIRA predicate and are absent from the strict export.**
+**68 of 86 relations (79%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
 | `requires` | 30 | a claim depends on another holding |
 | `scopes` | 17 | a scope constraint governs another claim's validity |
-| `derived-from` | 9 | prediction derived from its hypothesis (inverse of entails) |
-| `entails` | 6 | hypothesis entails its prediction — the deductive step |
+| `derived-from` | 9 | a prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 6 | a hypothesis entails its prediction — the deductive step |
 | `interprets` | 4 | one claim interprets another |
 | `enables-method` | 2 | a result makes a downstream method possible |
 

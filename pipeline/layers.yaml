@@ -79,7 +79,7 @@ layers:
     title: Relation semantics
     question: What does each relation assert, and which are oppositions?
     needs: [claim-format]
-    reads: [scripts/check_relations.py, exports/claim-relations.ttl]
+    reads: [scripts/relations.py, scripts/check_relations.py, exports/claim-relations.ttl]
     views: [table, comparison]
     issue: 19
     open: true                 # no decision yet; everything downstream is provisional
@@ -295,6 +295,7 @@ layers:
     title: Coverage adjudication
     question: Of the spans the matcher could not resolve, which are real gaps?
     needs: [coverage]
+    reads: [extract/prompts/coverage-adjudicator.md]
     produces: ["mappings/{paper}.json"]
     views: [table]
     reviews: coverage
