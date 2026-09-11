@@ -63,7 +63,7 @@ Beyond those, nothing. Every relation in this paper reaches the export, either a
 
 Verification — that a claim was checked, by what code, against what deposited data, with what result beside the published value. None of the three has a node for it.
 
-This paper's records: 7 unattempted, 7 blocked, 5 verified.
+This paper's records: 12 verified, 3 partial, 2 blocked, 2 unattempted.
 
 ---
 

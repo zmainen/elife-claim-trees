@@ -148,7 +148,15 @@ function computeFigureUrl(paperSlug, panel) {
 function normalizeStatus(reproductions) {
   if (!reproductions || reproductions.length === 0) return 'unknown';
   // Take the most recent reproduction
-  const last = reproductions[reproductions.length - 1];
+  // The current record is the newest by date, not the last in the array. Every other
+  // consumer (corpus_facts.py, check_reproductions.py, audit_verifications.py) picks by
+  // date; this picked by position, so a record prepended to the list was ignored and the
+  // site kept showing superseded statuses while the corpus had moved on.
+  // Compare the date's value, not its printed form. YAML parses `date: 2026-09-11` into a
+  // Date, and String(Date) begins with the weekday — so "Fri Sep 11" sorted before
+  // "Mon Mar 30" alphabetically and the older record won.
+  const when = r => { const t = new Date(r?.date ?? 0).getTime(); return Number.isNaN(t) ? 0 : t; };
+  const last = [...reproductions].sort((a, b) => when(a) - when(b)).at(-1);
   return last.status || 'unknown';
 }
 

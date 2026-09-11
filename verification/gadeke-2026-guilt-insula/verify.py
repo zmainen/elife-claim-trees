@@ -106,10 +106,53 @@ def print_table():
 
 # ── Data acquisition ───────────────────────────────────────────────────────────
 
+# Files that must be present for the checks below to mean anything. A cached clone that is
+# missing them produces a page of WARNs that look like "the deposit does not have this",
+# which is a claim about the authors' data rather than about a broken cache. /tmp/gadeke was
+# found in exactly that state: the behavioural CSVs present, every group statistical map gone.
+REQUIRED = [
+    "Code/csv/Behav - Choices_singleTrialData.csv",
+    "fMRIresults/outcome/guiltEffect_0p05FWE_SVC_aIns.nii",
+    "fMRIresults/decision/social>solo_0p05FWE_clust.nii",
+    "fMRIresults/model-based/CR+EV_0p001u_k70_0p05FWE.nii",
+]
+
+
+def _unpack_archives():
+    """Extract deposited archives beside themselves.
+
+    The per-participant guilt-effect maps ship as `guiltEffectEachPartic.nii.zip`. Nothing in
+    this script unzipped it: the two checks that need it passed only because a cached clone
+    happened to have been unpacked by hand, and reported "4D map not found in repo" on a clean
+    one — which reads as a gap in the deposit rather than a gap in this script.
+    """
+    import zipfile
+    for root, _dirs, files in os.walk(REPO_DIR):
+        for f in files:
+            if not f.endswith(".zip"):
+                continue
+            src = os.path.join(root, f)
+            if os.path.exists(src[:-4]):
+                continue
+            try:
+                with zipfile.ZipFile(src) as z:
+                    z.extractall(root)
+                print(f"[data] Unpacked {os.path.relpath(src, REPO_DIR)}")
+            except Exception as e:                                    # noqa: BLE001
+                print(f"[data] Could not unpack {f}: {e}")
+
+
 def clone_repo():
     if os.path.isdir(REPO_DIR):
-        print(f"[data] Repo already present at {REPO_DIR}")
-    else:
+        missing = [f for f in REQUIRED if not os.path.exists(os.path.join(REPO_DIR, f))]
+        if missing:
+            import shutil
+            print(f"[data] Cached clone at {REPO_DIR} is missing "
+                  f"{len(missing)} required file(s), e.g. {missing[0]} — re-cloning.")
+            shutil.rmtree(REPO_DIR, ignore_errors=True)
+        else:
+            print(f"[data] Repo already present at {REPO_DIR}")
+    if not os.path.isdir(REPO_DIR):
         print(f"[data] Cloning {REPO_URL} → {REPO_DIR} ...")
         result = subprocess.run(
             ["git", "clone", "--depth=1", REPO_URL, REPO_DIR],
@@ -119,6 +162,7 @@ def clone_repo():
             print(f"[ERROR] git clone failed:\n{result.stderr}")
             sys.exit(2)
         print("[data] Clone complete.")
+    _unpack_archives()
 
 # ── Claim 1: lottery-choice-increases-with-ev ──────────────────────────────────
 
@@ -401,6 +445,332 @@ def verify_yu_koban():
 
 # ── Figure generation ──────────────────────────────────────────────────────────
 
+# ── Group-level statistical maps ──────────────────────────────────────────────
+#
+# Five claims were recorded `blocked`, each with a note saying the pre-computed NIfTI results
+# were in the deposit. They were: `blocked` asserts a re-run was attempted and could not settle
+# the claim, and no re-run had been attempted. Re-running the GLM would need the raw OpenNeuro
+# data and SPM; checking the deposited group maps needs neither, and is what the authors
+# deposited them for.
+#
+# What each check can and cannot do is stated per claim. Where the paper gives explicit peak
+# coordinates and cluster sizes, those are compared directly. Where it names anatomy without
+# coordinates, the structural prediction the claim makes — bilateral, left-lateralised, three
+# clusters — is what gets tested, and the peaks found are recorded so a reader can judge the
+# anatomy themselves rather than take this script's word for it.
+
+
+def _clusters(path, min_vox=1):
+    """Suprathreshold clusters in a thresholded map, largest first.
+
+    Returns [(n_voxels, [x, y, z] MNI of peak, peak value)].
+    """
+    import nibabel as nib
+    from scipy import ndimage
+
+    img = nib.load(used(path, "deposited group statistical map"))
+    data = np.nan_to_num(img.get_fdata())
+    lab, n = ndimage.label(data > 0)
+    if n == 0:
+        return []
+    sizes = ndimage.sum(data > 0, lab, range(1, n + 1))
+    out = []
+    for i in np.argsort(sizes)[::-1]:
+        if sizes[i] < min_vox:
+            continue
+        mask = lab == i + 1
+        idx = np.unravel_index(np.argmax(np.where(mask, data, -np.inf)), data.shape)
+        mni = (img.affine @ np.array([*idx, 1]))[:3].round(0).astype(int).tolist()
+        out.append((int(sizes[i]), mni, round(float(data[idx]), 2)))
+    return out
+
+
+def _map(*parts):
+    return os.path.join(REPO_DIR, "fMRIresults", *parts)
+
+
+def verify_vs_computational_reward():
+    """Bilateral VS for model-based reward. Paper gives both peaks and both cluster sizes."""
+    slug = "ventral-striatum-tracks-computational-reward"
+    paper = "L 110vox [-14 8 -8] T=5.63 · R 80vox [10 10 -4] T=5.46"
+    try:
+        cl = _clusters(_map("model-based", "CR+EV_0p001u_k70_0p05FWE.nii"), min_vox=50)
+        if len(cl) < 2:
+            row(slug, paper, f"only {len(cl)} cluster(s) in the deposited map", "FAIL")
+            return 0
+        got = " · ".join(f"{n}vox {mni} T={t}" for n, mni, t in cl[:2])
+        # Every figure the claim states is checkable here, so all four are checked.
+        want = [(110, [-14, 8, -8], 5.63), (80, [10, 10, -4], 5.46)]
+        ok = all(
+            n == wn and mni == wm and abs(t - wt) < 0.05
+            for (n, mni, t), (wn, wm, wt) in zip(cl[:2], want))
+        row(slug, paper, got, "PASS" if ok else "FAIL")
+        print(f"  {slug}: {got} → {'PASS' if ok else 'FAIL'}")
+        return 1 if ok else 0
+    except Exception as e:                                            # noqa: BLE001
+        row(slug, paper, f"ERROR: {e}", "FAIL")
+        return 0
+
+
+def verify_vs_risky_choices():
+    """Bilateral VS for risky>safe. The claim names no coordinates, so bilaterality is the
+    testable part: one cluster in each hemisphere."""
+    slug = "ventral-striatum-tracks-risky-choices"
+    paper = "bilateral VS, risky>safe (d=0.72 / 0.85)"
+    try:
+        cl = _clusters(_map("decision", "risky>safe_0p05FWE_clust.nii"), min_vox=50)
+        got = " · ".join(f"{n}vox {mni} T={t}" for n, mni, t in cl[:2])
+        bilateral = (len(cl) >= 2
+                     and any(m[0] > 0 for _, m, _ in cl[:2])
+                     and any(m[0] < 0 for _, m, _ in cl[:2])
+                     # ventral striatum sits low and anterior
+                     and all(abs(m[0]) < 25 and -15 < m[2] < 10 for _, m, _ in cl[:2]))
+        row(slug, paper, got or "no clusters", "PASS" if bilateral else "WARN")
+        print(f"  {slug}: {got} → {'PASS' if bilateral else 'WARN'}")
+        return 1 if bilateral else 0
+    except Exception as e:                                            # noqa: BLE001
+        row(slug, paper, f"ERROR: {e}", "FAIL")
+        return 0
+
+
+def verify_social_decision_network():
+    """Precuneus, left TPJ and mPFC for Social>Solo. The claim names three regions and no
+    coordinates, so what is tested is three clusters in those three positions: one posterior
+    midline, one left lateral posterior, one anterior medial."""
+    slug = "precuneus-tpj-mpfc-social-decisions"
+    paper = "3 clusters: precuneus, left TPJ, mPFC"
+    try:
+        cl = _clusters(_map("decision", "social>solo_0p05FWE_clust.nii"), min_vox=50)
+        got = " · ".join(f"{n}vox {mni} T={t}" for n, mni, t in cl[:3])
+        peaks = [m for _, m, _ in cl[:3]]
+        precuneus = any(abs(x) < 15 and y < -45 and z > 20 for x, y, z in peaks)
+        tpj = any(x < -25 and y < -40 for x, y, z in peaks)
+        mpfc = any(y > 35 for x, y, z in peaks)
+        ok = len(cl) >= 3 and precuneus and tpj and mpfc
+        row(slug, paper, got or "no clusters", "PASS" if ok else "WARN")
+        print(f"  {slug}: {got} → {'PASS' if ok else 'WARN'}")
+        return 1 if ok else 0
+    except Exception as e:                                            # noqa: BLE001
+        row(slug, paper, f"ERROR: {e}", "FAIL")
+        return 0
+
+
+def verify_sts_partner_rpe():
+    """Left STS for social>partner pRPE. Testable part: a left-lateralised temporal cluster."""
+    slug = "sts-tracks-partner-reward-prediction-errors"
+    paper = "left STS, pRPEsocial > pRPEpartner"
+    try:
+        cl = _clusters(_map("model-based", "pRPEsocial>pRPEpartner_0p001u_k70.nii"), min_vox=50)
+        got = " · ".join(f"{n}vox {mni} T={t}" for n, mni, t in cl[:2])
+        ok = bool(cl) and cl[0][1][0] < -30 and -60 < cl[0][1][1] < -10 and abs(cl[0][1][2]) < 25
+        row(slug, paper, got or "no clusters", "PASS" if ok else "WARN")
+        print(f"  {slug}: {got} → {'PASS' if ok else 'WARN'}")
+        return 1 if ok else 0
+    except Exception as e:                                            # noqa: BLE001
+        row(slug, paper, f"ERROR: {e}", "FAIL")
+        return 0
+
+
+def verify_insula_ifg_ppi():
+    """Insula-seeded gPPI. Testable part: a cluster in inferior frontal gyrus territory."""
+    slug = "insula-ifg-connectivity-guilt"
+    paper = "aIns seed, condition-dependent IFG coupling"
+    try:
+        cl = _clusters(_map("PPI", "aIns_seed",
+                            "Risky>SafeXSolo>Social_0p001u_k30_2IFGs.nii"), min_vox=20)
+        got = " · ".join(f"{n}vox {mni} T={t}" for n, mni, t in cl[:2])
+        ok = any(abs(x) > 30 and y > 0 and z > 5 for _, (x, y, z), _ in cl[:2])
+        row(slug, paper, got or "no clusters", "PASS" if ok else "WARN")
+        print(f"  {slug}: {got} → {'PASS' if ok else 'WARN'}")
+        return 1 if ok else 0
+    except Exception as e:                                            # noqa: BLE001
+        row(slug, paper, f"ERROR: {e}", "FAIL")
+        return 0
+
+
+def verify_signature_no_individual_difference():
+    """Per-participant Yu/Koban dot products against behavioural guilt effect.
+
+    Paper: Spearman rho = -0.058, p = 0.725 — explicitly a null. Both inputs are already
+    downloaded by verify_yu_koban(); this claim was recorded `unattempted` regardless.
+    """
+    slug = "guilt-signature-no-individual-difference"
+    paper = "Spearman rho=-0.058, p=0.725"
+    try:
+        import nibabel as nib
+        from scipy.stats import spearmanr
+
+        four_d = _map("outcome", "guiltEffectEachPartic.nii")
+        mask_p = os.path.join(REPO_DIR, "Code", "bin",
+                              "Yu_guilt_SVM_sxpo_sxpx_EmotionForwardmask.nii")
+        if not (os.path.exists(four_d) and os.path.exists(mask_p)):
+            row(slug, paper, "4D map or Yu/Koban mask not found", "WARN")
+            return 0
+
+        img = nib.load(used(four_d, "per-participant guilt-effect maps"))
+        mask_img = nib.load(used(mask_p, "Yu & Koban guilt signature"))
+        data = np.nan_to_num(img.get_fdata())
+
+        # The signature is resampled onto the spatial geometry of the 4D image, not onto the
+        # 4D image itself — passing a 4-tuple shape is what raised "shapes (4,4) and (5,5) not
+        # aligned" when this file was first audited.
+        from nibabel.processing import resample_from_to
+        mask = np.nan_to_num(
+            resample_from_to(mask_img, (data.shape[:3], img.affine), order=1).get_fdata())
+
+        dots = np.array([float(np.sum(data[..., i] * mask)) for i in range(data.shape[3])])
+
+        # Two guilt-effect tables ship in the deposit and the prefixes are not what they look
+        # like: `Behav - BehavGuiltEffect.csv` has 40 rows, matching the 40 volumes and the
+        # scanned cohort, while `fMRI - BehavGuiltEffect.csv` has 48. The rest of this script
+        # reads the `Behav -` files for the fMRI study too. Switching to the `fMRI -` table on
+        # the strength of its name pairs each brain with a different person's behaviour; it
+        # flipped the sign of rho and returned a plausible null, which nothing would flag.
+        # The count guard below is what makes that mistake loud instead of silent.
+        beh = pd.read_csv(used(os.path.join(REPO_DIR, "Code", "csv",
+                                            "Behav - BehavGuiltEffect.csv"),
+                               "guilt effect per scanned participant"))
+        if len(beh) != data.shape[3]:
+            row(slug, paper,
+                f"cohort mismatch: {data.shape[3]} volumes vs {len(beh)} rows — not correlated",
+                "WARN")
+            return 0
+
+        rho, p = spearmanr(dots, beh["guiltEffect"].values)
+        got = f"rho={rho:.3f}, p={p:.3f}, n={len(beh)}"
+        # The claim asserts a null, so the substantive part reproduces when the correlation is
+        # not significant. The reported rho is checked too: a null that lands on a different
+        # coefficient is a partial reproduction, not a clean one.
+        null_holds = p > 0.05
+        close = abs(rho - (-0.058)) < 0.10
+        status = "PASS" if (null_holds and close) else ("WARN" if null_holds else "FAIL")
+        if null_holds and not close:
+            got += (" — null reproduces, coefficient differs from the reported -0.058. "
+                    "Volume i is assumed to be row i: the deposit ships no participant "
+                    "order for the 4D map, so the pairing cannot be confirmed from it.")
+        row(slug, paper, got, status)
+        print(f"  {slug}: {got} → {status}")
+        return 1 if status == "PASS" else 0
+    except Exception as e:                                            # noqa: BLE001
+        row(slug, paper, f"ERROR: {e}", "FAIL")
+        return 0
+
+
+# ── Behavioural claims from the deposited per-trial data ──────────────────────
+#
+# Four claims were recorded `unattempted` while the CSVs that settle them were already being
+# downloaded by this script. Where the deposited file is the same data the paper analysed, the
+# reproduced statistics land on the reported ones; where it is a subset, or where a column's
+# coding is not documented, that is said rather than papered over.
+
+
+def _csv(name, note):
+    return pd.read_csv(used(os.path.join(REPO_DIR, "Code", "csv", name), note))
+
+
+def verify_social_prpe_weight():
+    """Weight on partner RPEs from participants' own choices is above zero.
+    Paper, Study 1: Z=2.85, p=0.004."""
+    slug = "social-prpe-weight-positive"
+    paper = "Z=2.85, p=0.004 (social_pRPE > 0)"
+    try:
+        from scipy.stats import wilcoxon
+        p = _csv("Behav - Responsibility - fittedParameters.csv",
+                 "per-participant fits of the Responsibility model")
+        w = wilcoxon(p["social_pRPE"])
+        pos = int((p["social_pRPE"] > 0).sum())
+        got = (f"median={p['social_pRPE'].median():.3f}, wilcoxon p={w.pvalue:.4f}, "
+               f"{pos}/{len(p)} above zero")
+        ok = w.pvalue < 0.05 and p["social_pRPE"].median() > 0
+        row(slug, paper, got, "PASS" if ok else "FAIL")
+        print(f"  {slug}: {got} → {'PASS' if ok else 'FAIL'}")
+        return 1 if ok else 0
+    except Exception as e:                                            # noqa: BLE001
+        row(slug, paper, f"ERROR: {e}", "FAIL")
+        return 0
+
+
+def verify_guilt_effect_independent_of_own_outcome():
+    """The guilt effect holds whether or not the participant won.
+    Paper: high own outcome t(39)=-3.58 p<0.001; low own outcome t(39)=-3.39 p=0.002."""
+    slug = "guilt-effect-independent-of-own-outcome"
+    paper = "own-win t(39)=-3.58 p<0.001 · own-loss t(39)=-3.39 p=0.002"
+    try:
+        from scipy.stats import ttest_rel
+        h = _csv("Behav - Happiness_singleTrialData_socialRiskyChoicesOnly.csv",
+                 "per-trial happiness on social risky choices")
+        parts = []
+        ok = True
+        for won, label in ((1, "own-win"), (0, "own-loss")):
+            sub = h[(h["subjectWon"] == won) & (h["partnerWon"] == 0)]
+            g = sub.groupby(["subject", "subjDecided"]).happiness.mean().unstack().dropna()
+            tt = ttest_rel(g[1], g[0])
+            parts.append(f"{label} t({len(g)-1})={tt.statistic:.2f} p={tt.pvalue:.4f}")
+            # The claim is that the effect is present at both levels: negative and significant.
+            ok = ok and tt.statistic < 0 and tt.pvalue < 0.05
+        got = " · ".join(parts)
+        row(slug, paper, got, "PASS" if ok else "FAIL")
+        print(f"  {slug}: {got} → {'PASS' if ok else 'FAIL'}")
+        return 1 if ok else 0
+    except Exception as e:                                            # noqa: BLE001
+        row(slug, paper, f"ERROR: {e}", "FAIL")
+        return 0
+
+
+def verify_agency_reduces_happiness():
+    """Deciding reduces happiness regardless of outcome. Paper, Study 1: t(3600)=-3.92,
+    p<0.0001, beta=-0.14.
+
+    The deposited per-trial happiness file covers social risky choices only, so this tests
+    the claim's direction on a subset of the trials the paper modelled, not its statistics.
+    """
+    slug = "agency-reduces-happiness"
+    paper = "t(3600)=-3.92, p<0.0001, beta=-0.14"
+    try:
+        from scipy.stats import ttest_rel
+        h = _csv("Behav - Happiness_singleTrialData_socialRiskyChoicesOnly.csv",
+                 "per-trial happiness on social risky choices")
+        g = h.groupby(["subject", "subjDecided"]).happiness.mean().unstack().dropna()
+        tt = ttest_rel(g[1], g[0])
+        got = (f"decided={g[1].mean():.3f} vs not={g[0].mean():.3f}, "
+               f"t({len(g)-1})={tt.statistic:.2f} p={tt.pvalue:.4f} "
+               f"— direction reproduces on the deposited subset (social risky choices, "
+               f"{len(h)} trials); the paper's model covers ~3600")
+        ok = tt.statistic < 0 and tt.pvalue < 0.05
+        row(slug, paper, got, "WARN" if ok else "FAIL")
+        print(f"  {slug}: t={tt.statistic:.2f} p={tt.pvalue:.4f} → {'WARN' if ok else 'FAIL'}")
+        return 0
+    except Exception as e:                                            # noqa: BLE001
+        row(slug, paper, f"ERROR: {e}", "FAIL")
+        return 0
+
+
+def verify_solo_vs_social_choice():
+    """Lottery choice differs between Solo and Social. Paper, Study 1: t(4796)=2.54, p=0.011,
+    described as weak and not replicated in Study 2.
+
+    `condition` is coded 0/1 in the deposit with no key, so which level is Solo cannot be
+    determined from the data. The magnitudes are reported and the verdict withheld.
+    """
+    slug = "solo-vs-social-choice-difference"
+    paper = "t(4796)=2.54, p=0.011 (weak, not replicated in Study 2)"
+    try:
+        from scipy.stats import ttest_rel
+        c = _csv("Behav - Choices_singleTrialData.csv", "per-trial lottery choices")
+        r = c.groupby(["subject", "condition"]).chooseRisky.mean().unstack()
+        tt = ttest_rel(r[0], r[1])
+        got = (f"cond0={r[0].mean():.3f} vs cond1={r[1].mean():.3f}, "
+               f"t({len(r)-1})={tt.statistic:.2f} p={tt.pvalue:.3f} per participant "
+               f"— the deposit does not document which level is Solo, and a per-participant "
+               f"test has far less power than the paper's trial-level model")
+        row(slug, paper, got, "WARN")
+        print(f"  {slug}: t={tt.statistic:.2f} p={tt.pvalue:.3f} → WARN (condition coding undocumented)")
+        return 0
+    except Exception as e:                                            # noqa: BLE001
+        row(slug, paper, f"ERROR: {e}", "FAIL")
+        return 0
+
+
 def generate_figures():
     here = os.path.dirname(os.path.abspath(__file__))
     fig_script = os.path.join(here, "figures", "generate_figures.py")
@@ -508,6 +878,16 @@ def main():
         "guilt-reduces-happiness-after-partner-loss": verify_guilt_happiness,
         "insula-tracks-guilt-effect": verify_insula_peak,
         "insula-guilt-replicates-yu-koban-signature": verify_yu_koban,
+        "guilt-signature-no-individual-difference": verify_signature_no_individual_difference,
+        "ventral-striatum-tracks-computational-reward": verify_vs_computational_reward,
+        "ventral-striatum-tracks-risky-choices": verify_vs_risky_choices,
+        "precuneus-tpj-mpfc-social-decisions": verify_social_decision_network,
+        "sts-tracks-partner-reward-prediction-errors": verify_sts_partner_rpe,
+        "insula-ifg-connectivity-guilt": verify_insula_ifg_ppi,
+        "social-prpe-weight-positive": verify_social_prpe_weight,
+        "guilt-effect-independent-of-own-outcome": verify_guilt_effect_independent_of_own_outcome,
+        "agency-reduces-happiness": verify_agency_reduces_happiness,
+        "solo-vs-social-choice-difference": verify_solo_vs_social_choice,
     }
 
     if args.claim:

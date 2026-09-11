@@ -40,6 +40,17 @@ assertions:
 
 reproductions:
   - agent: mainen-z
+    date: 2026-09-11
+    status: partial
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    script_execution: executed
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_file: Code/csv/Behav - Happiness_singleTrialData_socialRiskyChoicesOnly.csv
+    paper_value: "t(3600)=-3.92, p<0.0001, beta=-0.14"
+    reproduced_value: "decided=-0.048 vs not=0.122, t(39)=-2.60 p=0.0131 — direction reproduces on the deposited subset (social risky choices, 1216 trials); the paper's model covers ~3600"
+    notes: >
+      Re-checked 2026-09-11 against the deposited per-trial data, observed by verification/audit_run.py. Paper: t(3600)=-3.92, p<0.0001, beta=-0.14. Reproduced: decided=-0.048 vs not=0.122, t(39)=-2.60 p=0.0131 — direction reproduces on the deposited subset (social risky choices, 1216 trials); the paper's model covers ~3600. Recorded `unattempted` until this run, while the CSV that settles it was already being downloaded by the same script.
+  - agent: mainen-z
     date: 2026-03-30
     status: unattempted
     notes: ~

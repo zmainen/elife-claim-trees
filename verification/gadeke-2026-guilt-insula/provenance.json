@@ -3,7 +3,7 @@
   "script": "verification/gadeke-2026-guilt-insula/verify.py",
   "argv": [],
   "observed_by": "verification/audit_run.py",
-  "recorded": "2026-09-10T16:12:33+00:00",
+  "recorded": "2026-09-11T07:04:52+00:00",
   "interpreter": {
     "executable": "/Users/zach/anaconda/bin/python3",
     "version": "3.10.18"
@@ -51,6 +51,66 @@
       "paper_value": "sign test p<0.05",
       "reproduced_value": "sign p=0.008, wilcoxon p=0.021 (n_pos=28/40)",
       "status": "PASS"
+    },
+    {
+      "claim": "guilt-signature-no-individual-difference",
+      "paper_value": "Spearman rho=-0.058, p=0.725",
+      "reproduced_value": "rho=0.088, p=0.588, n=40 \u2014 null reproduces, coefficient differs from the reported -0.058. Volume i is assumed to be row i: the deposit ships no participant order for the 4D map, so the pairing cannot be confirmed from it.",
+      "status": "WARN"
+    },
+    {
+      "claim": "ventral-striatum-tracks-computational-reward",
+      "paper_value": "L 110vox [-14 8 -8] T=5.63 \u00b7 R 80vox [10 10 -4] T=5.46",
+      "reproduced_value": "110vox [-14, 8, -8] T=5.63 \u00b7 80vox [10, 10, -4] T=5.46",
+      "status": "PASS"
+    },
+    {
+      "claim": "ventral-striatum-tracks-risky-choices",
+      "paper_value": "bilateral VS, risky>safe (d=0.72 / 0.85)",
+      "reproduced_value": "401vox [10, 12, -4] T=7.18 \u00b7 390vox [-10, 8, -6] T=6.12",
+      "status": "PASS"
+    },
+    {
+      "claim": "precuneus-tpj-mpfc-social-decisions",
+      "paper_value": "3 clusters: precuneus, left TPJ, mPFC",
+      "reproduced_value": "758vox [0, -62, 38] T=5.72 \u00b7 216vox [-34, -58, 26] T=4.5 \u00b7 135vox [4, 52, 22] T=3.97",
+      "status": "PASS"
+    },
+    {
+      "claim": "sts-tracks-partner-reward-prediction-errors",
+      "paper_value": "left STS, pRPEsocial > pRPEpartner",
+      "reproduced_value": "99vox [-52, -32, 0] T=4.7",
+      "status": "PASS"
+    },
+    {
+      "claim": "insula-ifg-connectivity-guilt",
+      "paper_value": "aIns seed, condition-dependent IFG coupling",
+      "reproduced_value": "113vox [46, 16, 22] T=4.34 \u00b7 38vox [-38, -2, 26] T=4.08",
+      "status": "PASS"
+    },
+    {
+      "claim": "social-prpe-weight-positive",
+      "paper_value": "Z=2.85, p=0.004 (social_pRPE > 0)",
+      "reproduced_value": "median=0.197, wilcoxon p=0.0037, 27/40 above zero",
+      "status": "PASS"
+    },
+    {
+      "claim": "guilt-effect-independent-of-own-outcome",
+      "paper_value": "own-win t(39)=-3.58 p<0.001 \u00b7 own-loss t(39)=-3.39 p=0.002",
+      "reproduced_value": "own-win t(39)=-3.57 p=0.0010 \u00b7 own-loss t(36)=-3.59 p=0.0010",
+      "status": "PASS"
+    },
+    {
+      "claim": "agency-reduces-happiness",
+      "paper_value": "t(3600)=-3.92, p<0.0001, beta=-0.14",
+      "reproduced_value": "decided=-0.048 vs not=0.122, t(39)=-2.60 p=0.0131 \u2014 direction reproduces on the deposited subset (social risky choices, 1216 trials); the paper's model covers ~3600",
+      "status": "WARN"
+    },
+    {
+      "claim": "solo-vs-social-choice-difference",
+      "paper_value": "t(4796)=2.54, p=0.011 (weak, not replicated in Study 2)",
+      "reproduced_value": "cond0=0.518 vs cond1=0.536, t(39)=-1.06 p=0.297 per participant \u2014 the deposit does not document which level is Solo, and a per-participant test has far less power than the paper's trial-level model",
+      "status": "WARN"
     }
   ],
   "opened": [
@@ -250,6 +310,31 @@
       "sha256_12": "480fefb8b841"
     },
     {
+      "path": "/tmp/gadeke/fMRIresults/PPI/aIns_seed/Risky>SafeXSolo>Social_0p001u_k30_2IFGs.nii",
+      "bytes": 2371932,
+      "sha256_12": "b5b496f55fde"
+    },
+    {
+      "path": "/tmp/gadeke/fMRIresults/decision/risky>safe_0p05FWE_clust.nii",
+      "bytes": 2371932,
+      "sha256_12": "ef9c3c71a571"
+    },
+    {
+      "path": "/tmp/gadeke/fMRIresults/decision/social>solo_0p05FWE_clust.nii",
+      "bytes": 2371932,
+      "sha256_12": "addcd0b114f5"
+    },
+    {
+      "path": "/tmp/gadeke/fMRIresults/model-based/CR+EV_0p001u_k70_0p05FWE.nii",
+      "bytes": 2371932,
+      "sha256_12": "74e36477a538"
+    },
+    {
+      "path": "/tmp/gadeke/fMRIresults/model-based/pRPEsocial>pRPEpartner_0p001u_k70.nii",
+      "bytes": 2371932,
+      "sha256_12": "4e477e28d761"
+    },
+    {
       "path": "/tmp/gadeke/fMRIresults/outcome/guiltEffectEachPartic.nii",
       "bytes": 47431952,
       "sha256_12": "97c16779d9e4"
@@ -268,6 +353,6 @@
       "error": "FileNotFoundError: [Errno 2] No such file or directory: '/Users/zach/Projects/mainenlab/elife-claim-trees/verification/gadeke-2026-guilt-insula/5'"
     }
   ],
-  "stdout_tail": "FAST MODE \u2014 estimated time: ~3 min\n============================================================\n[data] Repo already present at /tmp/gadeke\n  lottery-choice-increases-with-ev: (0.0s)\n  happiness-correlates-partner-reward: (0.1s)\n  guilt-reduces-happiness-after-partner-loss: (0.0s)\n  insula-tracks-guilt-effect: paper=[-28, 24, -4], reproduced=[-28, 24, -4] \u2192 PASS (0.0s)\n  insula-guilt-replicates-yu-koban-signature: sign p=0.008 \u2192 PASS (0.1s)\n\n[figures] Running /Users/zach/Projects/mainenlab/elife-claim-trees/verification/gadeke-2026-guilt-insula/figures/generate_figures.py ...\nGenerating Gadeke 2026 figure panels...\n[figures] WARNING: exited 1\nTraceback (most recent call last):\n  File \"/Users/zach/Projects/mainenlab/elife-claim-trees/verification/gadeke-2026-guilt-insula/figures/generate_figures.py\", line 172, in <module>\n    fig_lottery_choice_ev()\n  File \"/Users/zach/Projects/mainenlab/elife-claim-trees/verification/gadeke-2026-guilt-insula/figures/generate_figures.py\", line 26, in fig_lottery_choice_ev\n    df = pd.read_csv(os.path.join(CSV_DIR, \"fMRI - Choices_singleTrialData.csv\"))\n  File \"/Users/zach/anaconda/lib/python3.10/site-\n\n============================================================\nSUMMARY\n\n--------------------------------------------------------+------------------------+------------------------+-------\nCLAIM SLUG                                              | PAPER VALUE            | REPRODUCED             | STATUS\n--------------------------------------------------------+------------------------+------------------------+-------\nlottery-choice-increases-with-ev [fMRI]                 | \u03b2>0, p<0.05            | \u03b2=0.032, p=9.55e-68, n=2400 | PASS  \nhappiness-correlates-partner-reward [fMRI R\u00b2]           | 0.185                  | 0.184                  | PASS  \nhappiness-correlates-partner-reward [Behav R\u00b2]          | 0.147                  | 0.145                  | PASS  \nguilt-reduces-happiness-after-partner-loss [fMRI \u03b2]     | 0.33                   | 0.34                   | PASS  \nguilt-reduces-happiness-after-partner-loss [Behav \u03b2]    | 0.39                   | 0.40                   | PASS  \ninsula-tracks-guilt-effect                              | peak MNI [-28, 24, -4] | peak MNI [-28, 24, -4] | PASS  \ninsula-guilt-replicates-yu-koban-signature              | sign test p<0.05       | sign p=0.008, wilcoxon p=0.021 (n_pos=28/40) | PASS  \n--------------------------------------------------------+------------------------+------------------------+-------\n\n[prov] 77 file(s) opened, 7 result(s) \u2192 /Users/zach/Projects/mainenlab/elife-claim-trees/verification/gadeke-2026-guilt-insula/provenance.json\n7/7 claims verified (0 WARN, 0 FAIL)\n",
+  "stdout_tail": "enerate_figures.py\", line 172, in <module>\n    fig_lottery_choice_ev()\n  File \"/Users/zach/Projects/mainenlab/elife-claim-trees/verification/gadeke-2026-guilt-insula/figures/generate_figures.py\", line 26, in fig_lottery_choice_ev\n    df = pd.read_csv(os.path.join(CSV_DIR, \"fMRI - Choices_singleTrialData.csv\"))\n  File \"/Users/zach/anaconda/lib/python3.10/site-\n\n============================================================\nSUMMARY\n\n--------------------------------------------------------+------------------------+------------------------+-------\nCLAIM SLUG                                              | PAPER VALUE            | REPRODUCED             | STATUS\n--------------------------------------------------------+------------------------+------------------------+-------\nlottery-choice-increases-with-ev [fMRI]                 | \u03b2>0, p<0.05            | \u03b2=0.032, p=9.55e-68, n=2400 | PASS  \nhappiness-correlates-partner-reward [fMRI R\u00b2]           | 0.185                  | 0.184                  | PASS  \nhappiness-correlates-partner-reward [Behav R\u00b2]          | 0.147                  | 0.145                  | PASS  \nguilt-reduces-happiness-after-partner-loss [fMRI \u03b2]     | 0.33                   | 0.34                   | PASS  \nguilt-reduces-happiness-after-partner-loss [Behav \u03b2]    | 0.39                   | 0.40                   | PASS  \ninsula-tracks-guilt-effect                              | peak MNI [-28, 24, -4] | peak MNI [-28, 24, -4] | PASS  \ninsula-guilt-replicates-yu-koban-signature              | sign test p<0.05       | sign p=0.008, wilcoxon p=0.021 (n_pos=28/40) | PASS  \nguilt-signature-no-individual-difference                | Spearman rho=-0.058, p=0.725 | rho=0.088, p=0.588, n=40 \u2014 null reproduces, coefficient differs from the reported -0.058. Volume i is assumed to be row i: the deposit ships no participant order for the 4D map, so the pairing cannot be confirmed from it. | WARN  \nventral-striatum-tracks-computational-reward            | L 110vox [-14 8 -8] T=5.63 \u00b7 R 80vox [10 10 -4] T=5.46 | 110vox [-14, 8, -8] T=5.63 \u00b7 80vox [10, 10, -4] T=5.46 | PASS  \nventral-striatum-tracks-risky-choices                   | bilateral VS, risky>safe (d=0.72 / 0.85) | 401vox [10, 12, -4] T=7.18 \u00b7 390vox [-10, 8, -6] T=6.12 | PASS  \nprecuneus-tpj-mpfc-social-decisions                     | 3 clusters: precuneus, left TPJ, mPFC | 758vox [0, -62, 38] T=5.72 \u00b7 216vox [-34, -58, 26] T=4.5 \u00b7 135vox [4, 52, 22] T=3.97 | PASS  \nsts-tracks-partner-reward-prediction-errors             | left STS, pRPEsocial > pRPEpartner | 99vox [-52, -32, 0] T=4.7 | PASS  \ninsula-ifg-connectivity-guilt                           | aIns seed, condition-dependent IFG coupling | 113vox [46, 16, 22] T=4.34 \u00b7 38vox [-38, -2, 26] T=4.08 | PASS  \nsocial-prpe-weight-positive                             | Z=2.85, p=0.004 (social_pRPE > 0) | median=0.197, wilcoxon p=0.0037, 27/40 above zero | PASS  \nguilt-effect-independent-of-own-outcome                 | own-win t(39)=-3.58 p<0.001 \u00b7 own-loss t(39)=-3.39 p=0.002 | own-win t(39)=-3.57 p=0.0010 \u00b7 own-loss t(36)=-3.59 p=0.0010 | PASS  \nagency-reduces-happiness                                | t(3600)=-3.92, p<0.0001, beta=-0.14 | decided=-0.048 vs not=0.122, t(39)=-2.60 p=0.0131 \u2014 direction reproduces on the deposited subset (social risky choices, 1216 trials); the paper's model covers ~3600 | WARN  \nsolo-vs-social-choice-difference                        | t(4796)=2.54, p=0.011 (weak, not replicated in Study 2) | cond0=0.518 vs cond1=0.536, t(39)=-1.06 p=0.297 per participant \u2014 the deposit does not document which level is Solo, and a per-participant test has far less power than the paper's trial-level model | WARN  \n--------------------------------------------------------+------------------------+------------------------+-------\n\n[prov] 89 file(s) opened, 17 result(s) \u2192 /Users/zach/Projects/mainenlab/elife-claim-trees/verification/gadeke-2026-guilt-insula/provenance.json\n14/17 claims verified (3 WARN, 0 FAIL)\n",
   "data_commit": "11854fe"
 }

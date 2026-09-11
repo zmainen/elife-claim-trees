@@ -41,6 +41,17 @@ assertions:
 
 reproductions:
   - agent: mainen-z
+    date: 2026-09-11
+    status: partial
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    script_execution: executed
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_file: fMRIresults/outcome/guiltEffectEachPartic.nii
+    paper_value: "Spearman rho=-0.058, p=0.725"
+    reproduced_value: "rho=0.088, p=0.588, n=40 — null reproduces, coefficient differs from the reported -0.058. Volume i is assumed to be row i: the deposit ships no participant order for the 4D map, so"
+    notes: >
+      Re-checked 2026-09-11 against the deposited group statistical map, observed by verification/audit_run.py. Paper: Spearman rho=-0.058, p=0.725. Reproduced: rho=0.088, p=0.588, n=40 — null reproduces, coefficient differs from the reported -0.058. Volume i is assumed to be row i: the deposit ships no participant order for the 4D map, so the pairing cannot be confirmed from it.. The substantive claim — no correlation between the neural signature and individual behavioural guilt — reproduces; the coefficient does not match the reported value, and the deposit ships no participant order for the 4D map, so volume-to-row pairing is assumed rather than confirmed.
+  - agent: mainen-z
     date: 2026-03-30
     status: unattempted
     notes: ~

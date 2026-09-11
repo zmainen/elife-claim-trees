@@ -36,6 +36,17 @@ assertions:
 
 reproductions:
   - agent: mainen-z
+    date: 2026-09-11
+    status: verified
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    script_execution: executed
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_file: fMRIresults/PPI/aIns_seed/Risky>SafeXSolo>Social_0p001u_k30_2IFGs.nii
+    paper_value: "aIns seed, condition-dependent IFG coupling"
+    reproduced_value: "113vox [46, 16, 22] T=4.34 · 38vox [-38, -2, 26] T=4.08"
+    notes: >
+      Re-checked 2026-09-11 against the deposited group statistical map, observed by verification/audit_run.py. Paper: aIns seed, condition-dependent IFG coupling. Reproduced: 113vox [46, 16, 22] T=4.34 · 38vox [-38, -2, 26] T=4.08. Recorded `blocked` until this run, which was inaccurate: `blocked` asserts a re-run was attempted and could not settle the claim, and no re-run had been attempted. The deposited map makes this checkable without re-running the GLM.
+  - agent: mainen-z
     date: 2026-03-30
     status: blocked
     blocked_by: compute-infeasible

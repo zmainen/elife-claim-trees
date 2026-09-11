@@ -44,6 +44,17 @@ assertions:
 
 reproductions:
   - agent: mainen-z
+    date: 2026-09-11
+    status: verified
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    script_execution: executed
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_file: Code/csv/Behav - Happiness_singleTrialData_socialRiskyChoicesOnly.csv
+    paper_value: "own-win t(39)=-3.58 p<0.001 · own-loss t(39)=-3.39 p=0.002"
+    reproduced_value: "own-win t(39)=-3.57 p=0.0010 · own-loss t(36)=-3.59 p=0.0010"
+    notes: >
+      Re-checked 2026-09-11 against the deposited per-trial data, observed by verification/audit_run.py. Paper: own-win t(39)=-3.58 p<0.001 · own-loss t(39)=-3.39 p=0.002. Reproduced: own-win t(39)=-3.57 p=0.0010 · own-loss t(36)=-3.59 p=0.0010. Recorded `unattempted` until this run, while the CSV that settles it was already being downloaded by the same script.
+  - agent: mainen-z
     date: 2026-03-30
     status: unattempted
     notes: ~

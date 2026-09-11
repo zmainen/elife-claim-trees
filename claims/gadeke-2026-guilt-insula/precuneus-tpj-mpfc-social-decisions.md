@@ -38,6 +38,17 @@ assertions:
 
 reproductions:
   - agent: mainen-z
+    date: 2026-09-11
+    status: verified
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    script_execution: executed
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_file: fMRIresults/decision/social>solo_0p05FWE_clust.nii
+    paper_value: "3 clusters: precuneus, left TPJ, mPFC"
+    reproduced_value: "758vox [0, -62, 38] T=5.72 · 216vox [-34, -58, 26] T=4.5 · 135vox [4, 52, 22] T=3.97"
+    notes: >
+      Re-checked 2026-09-11 against the deposited group statistical map, observed by verification/audit_run.py. Paper: 3 clusters: precuneus, left TPJ, mPFC. Reproduced: 758vox [0, -62, 38] T=5.72 · 216vox [-34, -58, 26] T=4.5 · 135vox [4, 52, 22] T=3.97. Recorded `blocked` until this run, which was inaccurate: `blocked` asserts a re-run was attempted and could not settle the claim, and no re-run had been attempted. The deposited map makes this checkable without re-running the GLM.
+  - agent: mainen-z
     date: 2026-03-30
     status: blocked
     blocked_by: compute-infeasible

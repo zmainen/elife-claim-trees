@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `gadeke-2026-guilt-insula` · **Generated:** 2026-09-10
+**Paper:** `gadeke-2026-guilt-insula` · **Generated:** 2026-09-11
 
 33 claims, 93 typed relations between them.
 
@@ -36,7 +36,7 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Verification records dropped
 
-**24 verification records across 19 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `haak:VerificationRecord`.
+**34 verification records across 19 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `haak:VerificationRecord`.
 
 ## Questions synthesized
 

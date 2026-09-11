@@ -32,6 +32,17 @@ assertions:
 
 reproductions:
   - agent: mainen-z
+    date: 2026-09-11
+    status: partial
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    script_execution: executed
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_file: Code/csv/Behav - Choices_singleTrialData.csv
+    paper_value: "t(4796)=2.54, p=0.011 (weak, not replicated in Study 2)"
+    reproduced_value: "cond0=0.518 vs cond1=0.536, t(39)=-1.06 p=0.297 per participant — the deposit does not document which level is Solo, and a per-participant test has far less power than the paper's trial-level model"
+    notes: >
+      Re-checked 2026-09-11 against the deposited per-trial data, observed by verification/audit_run.py. Paper: t(4796)=2.54, p=0.011 (weak, not replicated in Study 2). Reproduced: cond0=0.518 vs cond1=0.536, t(39)=-1.06 p=0.297 per participant — the deposit does not document which level is Solo, and a per-participant test has far less power than the paper's trial-level model. Recorded `unattempted` until this run, while the CSV that settles it was already being downloaded by the same script.
+  - agent: mainen-z
     date: 2026-03-30
     status: unattempted
     notes: >

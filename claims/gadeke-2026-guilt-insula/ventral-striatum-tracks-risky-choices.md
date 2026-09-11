@@ -39,6 +39,17 @@ assertions:
 
 reproductions:
   - agent: mainen-z
+    date: 2026-09-11
+    status: verified
+    script: verification/gadeke-2026-guilt-insula/verify.py
+    script_execution: executed
+    data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+    data_file: fMRIresults/decision/risky>safe_0p05FWE_clust.nii
+    paper_value: "bilateral VS, risky>safe (d=0.72 / 0.85)"
+    reproduced_value: "401vox [10, 12, -4] T=7.18 · 390vox [-10, 8, -6] T=6.12"
+    notes: >
+      Re-checked 2026-09-11 against the deposited group statistical map, observed by verification/audit_run.py. Paper: bilateral VS, risky>safe (d=0.72 / 0.85). Reproduced: 401vox [10, 12, -4] T=7.18 · 390vox [-10, 8, -6] T=6.12. Recorded `blocked` until this run, which was inaccurate: `blocked` asserts a re-run was attempted and could not settle the claim, and no re-run had been attempted. The deposited map makes this checkable without re-running the GLM.
+  - agent: mainen-z
     date: 2026-03-30
     status: blocked
     blocked_by: compute-infeasible
