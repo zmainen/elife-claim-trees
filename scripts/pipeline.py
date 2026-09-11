@@ -19,6 +19,8 @@ appends to one ledger in one shape, so staleness and propagation are computed on
     python3 scripts/pipeline.py backfill         write ledgers from what already exists
     python3 scripts/pipeline.py state            the paper x layer matrix
     python3 scripts/pipeline.py state --json     the same, for the site
+    python3 scripts/pipeline.py run   <paper> <layer>   run it, and its unmet dependencies
+    python3 scripts/pipeline.py approve <paper> <layer> --by NAME   record that someone read it
 
 Usage as a library: `load()`, `state()`.
 """
@@ -175,6 +177,27 @@ def _latest(entries: list[dict], layer_id: str) -> dict | None:
     return max(runs, key=lambda e: (e.get("v", 0), e.get("ran", "")))
 
 
+def _by_from_output(layer: dict, outs: list[str]) -> str | None:
+    """Who answered, read out of what the layer produced.
+
+    From outside the command the runner can only record that it invoked something, which is
+    how every entry came to say `scripts/pipeline.py run` while the interesting fact — which
+    model wrote these claims — lived in a hand-kept manifest.json beside it. A layer that a
+    model answers declares `by_from`, and the answer travels in its own output.
+    """
+    key = layer.get("by_from")
+    if not key or not outs:
+        return None
+    p = os.path.join(ROOT, outs[0])
+    if not os.path.isfile(p):
+        return None
+    try:
+        with open(p, encoding="utf-8") as fh:
+            return json.load(fh).get(key) or None
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
 def record(paper: str, layer: dict, by_id: dict, *, note: str, by: str,
            doi: str | None = None) -> dict:
     """Build a run record for a layer that has just run, hashing what it read and wrote."""
@@ -182,6 +205,7 @@ def record(paper: str, layer: dict, by_id: dict, *, note: str, by: str,
     prev = _latest(entries, layer["id"])
     ins = inputs_of(layer, by_id, paper, doi)
     outs = expand(layer.get("produces"), paper, doi)
+    by = _by_from_output(layer, outs) or by
     return {
         "layer": layer["id"],
         "v": (prev["v"] + 1) if prev else 1,
@@ -513,6 +537,46 @@ def cmd_run(args) -> int:
     return 0
 
 
+def cmd_approve(args) -> int:
+    """Record that a person read one version of one layer and approved it.
+
+    The counterpart to `run`, and the half that was missing: `approve()` and the reporting
+    in `state()` were both written, and nothing could call them, so approvals.jsonl could
+    only be written by hand and every cell in the corpus reads unapproved.
+
+    Approval names a version. It defaults to the version currently on the ledger, because
+    approving a version that is not the one on disk is almost always a mistake — but it can
+    be named explicitly, since reading v2 and recording it after v3 has run is a coherent
+    thing to have done.
+    """
+    decl = load()
+    if args.layer not in decl["by_id"]:
+        print(f"error: no layer {args.layer!r}", file=sys.stderr)
+        return 2
+    if args.paper not in papers():
+        print(f"error: no paper {args.paper!r}", file=sys.stderr)
+        return 2
+
+    run = _latest(read_ledger(args.paper), args.layer)
+    if not run:
+        print(f"error: {args.layer} has never run for {args.paper} — "
+              f"there is no version to approve", file=sys.stderr)
+        return 3
+
+    v = args.v if args.v is not None else run["v"]
+    if v > run["v"]:
+        print(f"error: {args.layer} is at v{run['v']}; cannot approve v{v}", file=sys.stderr)
+        return 3
+
+    rec = approve(args.paper, args.layer, v, by=args.by, note=args.note or "")
+    current = " (the current version)" if v == run["v"] else \
+              f" (superseded — the ledger is at v{run['v']})"
+    print(f"{args.paper}/{args.layer} v{v} approved by {rec['by']}{current}")
+    if rec["note"]:
+        print(f"  {rec['note']}")
+    return 0
+
+
 def _doi_of(paper: str) -> str | None:
     """The paper's DOI, from its claim-tree index."""
     p = os.path.join(ROOT, "claims", paper, "index.md")
@@ -542,6 +606,13 @@ def main() -> int:
     r.add_argument("--dry-run", action="store_true", help="print the commands, run nothing")
     r.add_argument("--note", help="the changelog line for the ledger entry")
     r.set_defaults(fn=cmd_run)
+    a = sub.add_parser("approve", help="record that a person approved one version of a layer")
+    a.add_argument("paper")
+    a.add_argument("layer")
+    a.add_argument("--by", required=True, help="who read it")
+    a.add_argument("--v", type=int, help="which version (default: the one on the ledger)")
+    a.add_argument("--note", help="what they checked")
+    a.set_defaults(fn=cmd_approve)
     args = ap.parse_args()
     return args.fn(args)
 

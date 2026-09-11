@@ -20,6 +20,9 @@
 #   produces    paths this writes. `{paper}` is substituted per paper.
 #   views       how a version of this layer can be looked at
 #   command     what runs it. `{paper}` and `{doi}` substituted. Absent means no runner exists.
+#   by_from     a key in the first produced file holding who answered — the model, for a layer
+#               a model answers. The runner reads it into the ledger's `by`, because from
+#               outside the command all it could otherwise record is that it invoked something.
 #   added       when this layer entered the corpus. A layer is a revision as much as a step.
 #   found       what it found, corpus-wide. `{{token}}` is filled from corpus-facts.json at
 #               build, and an unknown token fails the build — the same convention docs/method.md
@@ -40,6 +43,11 @@
 #   longer exists. Approvals live in runs/<paper>/approvals.jsonl, apply to any layer, and are
 #   empty for every cell in this corpus, which is what "no human has checked this" is when it
 #   is a fact about the data rather than a sentence in a preface.
+#
+#   `scripts/pipeline.py approve <paper> <layer> --by NAME` is what writes one. Until it
+#   existed the file had no writer at all, and the CLI's `--review-mode interactive` gate ran
+#   before the write — so what a curator approved was a draft table, while the version that
+#   reached the corpus was whatever the write step then made of it, which nobody had seen.
 
 version: 1
 
@@ -91,15 +99,32 @@ layers:
   # `candidate` rather than `step` because keeping them apart is the point — agreement
   # between them is the informative case, and collapsing them loses it.
 
+  # What the readers read. A layer because otherwise their only declared input is a prompt,
+  # and the paper itself — which eLife revises — would not be hashed by anything. The fetch
+  # is cached, so running this per reader costs one file read.
+  - id: prepare
+    group: induction
+    kind: step
+    scope: paper
+    title: Prepared paper
+    question: What text did the readers actually read?
+    reads: [extract/elife_extract/prepare.py]
+    produces: ["runs/{paper}/prepared.json"]
+    views: [document]
+    command: "cd extract && python3 -m elife_extract.cli prepare --paper {paper} --doi {doi}"
+
   - id: results-reader
     group: induction
     kind: candidate
     scope: paper
     title: Results reader
     question: What does the Results section assert?
+    needs: [prepare]
     reads: [extract/prompts/results-reader.md]
     produces: ["runs/{paper}/results-reader.output.json"]
     views: [list, table]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli results-reader --paper {paper}"
 
   - id: caption-reader
     group: induction
@@ -107,9 +132,12 @@ layers:
     scope: paper
     title: Caption reader
     question: What do the figure captions assert?
+    needs: [prepare]
     reads: [extract/prompts/caption-reader.md]
     produces: ["runs/{paper}/caption-reader.output.json"]
     views: [list, table]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli caption-reader --paper {paper}"
 
   - id: structure-reader
     group: induction
@@ -117,9 +145,12 @@ layers:
     scope: paper
     title: Structure reader
     question: What is the paper's argument structure?
+    needs: [prepare]
     reads: [extract/prompts/structure-reader.md]
     produces: ["runs/{paper}/structure-reader.output.json"]
     views: [list, table]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli structure-reader --paper {paper}"
 
   - id: reconcile
     group: induction
@@ -131,6 +162,27 @@ layers:
     reads: [extract/prompts/reconciler.md]
     produces: ["runs/{paper}/reconciler.output.json"]
     views: [table, overlap]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli reconcile --paper {paper}"
+
+  # Was `--review-mode external`, a flag. It is not review in this file's sense: it changes
+  # the artifact, and it runs before the version it would have approved exists. It is a step
+  # that took the name of the curator's seat in the eight-step methodology. Declared, it
+  # earns what the flag could not — edit the reviewer prompt and every tree built on it is
+  # stale, computed rather than remembered.
+  - id: external-review
+    group: induction
+    kind: step
+    scope: paper
+    title: External review
+    question: What structure did the three readers systematically miss?
+    added: "2026-09-11"
+    needs: [reconcile]
+    reads: [extract/prompts/external-reviewer.md]
+    produces: ["runs/{paper}/external-review.output.json"]
+    views: [table, comparison]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli external-review --paper {paper}"
 
   - id: edge-inference
     group: induction
@@ -139,8 +191,11 @@ layers:
     title: Edge inference
     question: Which claims depend on which?
     needs: [reconcile, relation-vocab]
+    reads: [extract/prompts/edge-inference.md]
     produces: ["runs/{paper}/edge-inference.output.json"]
     views: [graph, table]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli edge-inference --paper {paper}"
 
   # ── the tree, and what revises it ──────────────────────────────────────────
 
@@ -152,10 +207,10 @@ layers:
     added: "2026-03"
     found: >
       Across {{papers}} papers the corpus holds {{claims}} claims and {{relations}} typed relations, using {{relation_types_used}} of the {{relation_types_defined}} defined relation types. The commonest role is `{{largest_role}}` at {{largest_role_n}} claims.
-    needs: [reconcile, edge-inference, claim-format]
+    needs: [reconcile, external-review, edge-inference, claim-format]
     produces: ["claims/{paper}/*.md"]
     views: [graph, list, table]
-    command: "cd extract && python3 -m elife_extract.cli write --draft out/draft-{paper}.json --corpus-dir ../claims"
+    command: "cd extract && python3 -m elife_extract.cli write --paper {paper}"
 
   - id: stance
     kind: feature
@@ -168,6 +223,31 @@ layers:
     needs: [claim-tree, claim-format]
     produces: ["claims/{paper}/alt-*.md"]
     views: [graph, list]
+
+  # Resolves the literature-context claims against CrossRef and writes the DOIs it confirms
+  # back into the claim files. A `feature` for the same reason `stance` is one: it revises
+  # artifacts that already exist rather than producing a new kind of thing.
+  #
+  # It also closes a gap. Two implementations of this existed — scripts/verify-references.py,
+  # which wrote docs/reference-verification.json, and the CLI's verify_refs, which printed to
+  # the terminal and kept nothing. The count the site quoted came from the first; the second
+  # is what anyone actually ran. Both edited the same claim files. Now the layer produces the
+  # record, and the report is a version like any other.
+  #
+  # The confirmed DOIs still land in the claim files — that is what the layer is for — but the
+  # report is what it `produces`. Declaring the claim files too would make this cell read
+  # `unrecorded` for every paper before it had ever run, because the files are already there.
+  - id: reference-check
+    kind: feature
+    scope: paper
+    title: Reference check
+    question: Do the cited references resolve, and to what?
+    added: "2026-09-11"
+    needs: [claim-tree]
+    reads: [extract/elife_extract/verify_refs.py]
+    produces: ["runs/{paper}/reference-check.output.json"]
+    views: [table]
+    command: "cd extract && python3 -m elife_extract.cli verify-refs --paper {paper}"
 
   - id: abstract-map
     kind: step
