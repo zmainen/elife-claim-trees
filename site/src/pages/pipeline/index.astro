@@ -8,7 +8,7 @@ import PipelineExplorer from '../../components/PipelineExplorer';
 import { corpusExplorer } from '../../lib/explorer';
 import {
   layers, groups, papers, cells, titleOf, fill_of, inState, byId,
-  corpusLayers, paperLayers, STATE_LABEL, allHistory, resolve, approvedCells, shortOf,
+  corpusLayers, paperLayers, STATE_LABEL, allHistory, approvedCells, shortOf,
 } from '../../lib/pipeline';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -19,10 +19,6 @@ const stale = inState('stale', 'blocked');
 const absent = inState('absent');
 const open = corpusLayers.filter(l => l.open);
 const recent = allHistory().filter(h => !h.backfilled).slice(0, 6);
-// Findings belong to the layer that produced them and carry the date it was added, so a
-// returning reader sees what is new rather than a page that has quietly changed.
-const found = layers.filter(l => l.found)
-  .sort((a, b) => (a.added ?? '').localeCompare(b.added ?? ''));
 
 // One tone per state, as classes rather than inline styles so both themes are declared.
 const TONE: Record<string, string> = {
@@ -46,31 +42,28 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
     <header class="mb-10 max-w-3xl">
       <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">Pipeline</h1>
       <p class="text-gray-600 dark:text-gray-400 m-0 leading-relaxed">
-        A layer is a question asked of a paper. It reads declared inputs, produces a version, and
-        every run is recorded with the content hash of what it read — so whether a result is still
-        current is asked of the files rather than of anyone's memory. This page is that graph across
-        all {papers.length} papers; each layer's own page asks it of one.
+        A layer is a question asked of a paper — what does it claim, which claims does its
+        abstract carry, what did re-running its code produce. Each answer is a version, and
+        each run records the content hash of everything it read, so an answer that has fallen
+        behind its inputs says so.
+      </p>
+      <p class="text-gray-600 dark:text-gray-400 mt-3 m-0 leading-relaxed">
+        {papers.length} papers, {paperLayers.length} layers each. {counts.current ?? 0} of the
+        {totalCells} answers are current. None has been read and approved by a person.
       </p>
       <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 m-0">
-        How the whole thing works is in <a href={url('/pipeline/method')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">the methodology</a>,
-        why it is shaped this way in <a href={`${base}/design/2026-09-11-layers-as-pipeline.html`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">the design note</a>,
-        and each layer explains itself on its own page.
-        Generated from <code>pipeline/layers.yaml</code> and <code>runs/&lt;paper&gt;/ledger.jsonl</code>.
-        Every cell is fetchable at <code>/data/&lt;paper&gt;/&lt;layer&gt;.json</code>.
+        <a href={url('/pipeline/method')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">How a paper is taken apart</a>,
+        and <a href={`${base}/design/2026-09-11-layers-as-pipeline.html`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">why the pipeline is shaped this way</a>.
       </p>
     </header>
 
     <!-- ── the graph ─────────────────────────────────────────────── -->
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">The layers</h2>
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl">
-      Ordered left to right by dependency. <strong class="font-medium text-gray-600 dark:text-gray-300">Columns</strong>
-      lists them by depth, which is the quickest way to see the whole set;
-      <strong class="font-medium text-gray-600 dark:text-gray-300">graph</strong> draws the
-      dependencies themselves, so hovering a layer lights everything a change to it would
-      disturb — staleness travels along exactly those edges. Dashed borders are corpus-scope:
-      schema and vocabulary decisions that belong to no single paper and, when they change,
-      unsettle every cell beneath them. Clicking a layer opens it here rather than moving you
-      to another page.
+      Every layer rests on the ones to its left, and a change travels the other way: revise the
+      claim format and every tree beneath it is out of date. Dashed borders mark the decisions
+      that belong to no single paper — what a relation asserts, what counts as a claim — which
+      is why altering one unsettles the whole corpus at once.
     </p>
 
     <PipelineExplorer client:load data={explorer} base={base} height={470} />
@@ -80,9 +73,8 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
     <!-- ── the matrix ────────────────────────────────────────────── -->
     <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Which papers have which layer</h2>
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
-      A jagged edge is the normal condition, not a defect. A blank means the layer has not been run
-      for that paper — not that it was run and found nothing. A column heading or a cell opens that
-      layer in the panel above, without losing your place in the grid.
+      A blank is a layer that has not been run for that paper, not a layer that ran and found
+      nothing. No two papers have been through the same set.
     </p>
 
     <div class="overflow-x-auto mb-4">
@@ -151,8 +143,7 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
         Approval is an operation on a version, not a layer of its own: a person reads what a
         layer produced and approves <em>that output</em>. The approval names the version it was
         granted to, so running the layer again does not carry it forward. Every cell above can
-        be current — its inputs unchanged since it ran — and unread by anyone. That is the
-        state of this corpus, and it is a count rather than a caveat.
+        be current — its inputs unchanged since it ran — and unread by anyone.
       </p>
     </section>
 
@@ -203,43 +194,23 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
       </section>
     </div>
 
-    <!-- ── what each layer found ─────────────────────────────────── -->
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">What each layer found</h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
-        A finding belongs to the layer that produced it and carries the date that layer was added.
-        Every figure is filled from <code>corpus-facts.json</code> at build; an unknown one fails
-        the build rather than rendering as a placeholder nobody notices.
-      </p>
-      <div class="space-y-5">
-        {found.map(l => (
-          <section class="border-l-2 border-gray-200 dark:border-gray-700 pl-4">
-            <p class="font-mono text-xs text-amber-700 dark:text-amber-400 m-0 mb-1">
-              <a href={url(`/pipeline/${l.id}`)} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">{l.id}</a>
-              {l.added ? ` · ${l.added}` : ''}
-            </p>
-            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed m-0 max-w-3xl"
-               set:html={resolve(l.found!).replace(/`([^`]+)`/g, '<code class="text-xs">$1</code>')}></p>
-          </section>
-        ))}
-      </div>
-    </section>
-
     <!-- ── what has run lately ───────────────────────────────────── -->
     {recent.length > 0 && (
       <section class="mb-12">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">Recently run</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-          From the ledger, excluding entries backfilled from artifacts that predate it.
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl">
+          The last answers the corpus produced, newest first. Each opens the cell it filled.
         </p>
         <ul class="list-none p-0 m-0 space-y-2.5">
           {recent.map(h => (
             <li class="text-sm border-l-2 border-gray-200 dark:border-gray-700 pl-3">
-              <span class="font-mono text-xs text-gray-500 dark:text-gray-400">
-                {h.ran?.slice(0, 10)} · {(h as any).paper} ·
-                <a href={url(`/pipeline/${(h as any).layer}`)} class="text-amber-700 dark:text-amber-400 no-underline hover:underline"> {(h as any).layer}</a>
-                {' '}v{h.v}
-              </span>
+              {/* The entry is a cell — one paper, one layer, one version — so it links to the
+                  cell rather than to the layer in general. What ran is what changed. */}
+              <a href={url(`/papers/${(h as any).paper}/${(h as any).layer}`)}
+                 class="font-mono text-xs text-gray-500 dark:text-gray-400 no-underline hover:text-amber-700 dark:hover:text-amber-400">
+                {h.ran?.slice(0, 10)} · <span class="text-gray-700 dark:text-gray-300">{shortOf((h as any).paper)}</span> ·
+                <span class="text-amber-700 dark:text-amber-400">{(h as any).layer}</span> v{h.v}
+              </a>
               {h.note && <span class="block text-gray-700 dark:text-gray-300 leading-snug">{h.note}</span>}
             </li>
           ))}
@@ -251,6 +222,10 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
       {layers.length} layers · {Object.keys(groups).length} groups ·
       {' '}{absent.length} cells not yet run ·
       <a href={`${base}/data/index.json`} class="text-amber-700 dark:text-amber-400 no-underline hover:underline"> the whole matrix as JSON</a>
+      <span class="block mt-1.5 text-xs">
+        Declared in <code>pipeline/layers.yaml</code>, recorded in <code>runs/&lt;paper&gt;/ledger.jsonl</code>,
+        each cell at <code>/data/&lt;paper&gt;/&lt;layer&gt;.json</code>.
+      </span>
     </footer>
 
   </div>
