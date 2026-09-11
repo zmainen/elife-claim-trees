@@ -6,15 +6,18 @@ is the primary defense against LLM hallucination of references and the
 linking infrastructure for cross-paper claim graphs.
 
 Pipeline:
-  1. Scan <corpus_dir>/<paper_slug>/*.md for `role: literature-context` claims.
-  2. For each claim:
-     a. If the claim's assertions[0].doi is already a real DOI, just confirm it
+  1. Confirm the paper's own DOI from its index.md.
+  2. Scan <corpus_dir>/<paper_slug>/*.md for `role: literature-context` claims.
+  3. For each claim:
+     a. If the claim's top-level `doi:` is already a real DOI, just confirm it
         resolves via CrossRef (anti-hallucination check). No write-back needed.
+        `assertions[0].doi` is consulted only as a legacy fallback; no claim in
+        the corpus uses it.
      b. Else, extract reference hints from the slug + claim + body and query
         CrossRef. Use the highest-scoring match (above a confidence threshold)
         as the resolution.
      c. Write the verified DOI back to the claim's frontmatter (unless --dry-run).
-  3. Return a results list summarizing per-claim status: confirmed / found /
+  4. Return a results list summarizing per-claim status: confirmed / found /
      not-found / no-hint / unresolvable.
 
 Resolution rate measured at panel-claim-unification.md Phase 5: ~97% on
@@ -23,10 +26,14 @@ The bibliography extraction step is the prerequisite for reliable
 verification at scale; for now we use the slug+claim+body hints, which
 are good enough for an analyst-reviewed first pass.
 
-Mirrors the canonical script at
-~/Projects/mainenlab/elife-claim-trees/scripts/verify-references.py.
-Adapted to use httpx (vs urllib), corpus-dir + paper-slug conventions
-(vs hardcoded paths), and the elife_extract config plumbing.
+This is the `reference-check` layer, and the only implementation. It replaced
+scripts/verify-references.py, which read the cited DOI from `assertions[0].doi`
+— a field no claim in this corpus uses, against a schema that puts it at
+top-level `doi:` — so every literature-context verdict it recorded came from a
+fuzzy title search rather than from the DOI sitting in the file. One of those
+reached the committed report as `status: found`, titled "NEEDLE TINS", for a
+claim whose own file already carried the right DOI. Its paper-level DOI check,
+which nothing else did, is `verify_paper_doi` below.
 """
 
 from __future__ import annotations
@@ -151,7 +158,7 @@ def _format_title(item: dict) -> str:
 def extract_reference_hints(slug: str, claim_text: str, body_text: str) -> list[str]:
     """Pull author/year/journal hints from a literature-context claim.
 
-    Mirrors the heuristic in scripts/verify-references.py. Returns hints
+    Returns hints
     in decreasing order of expected CrossRef precision.
     """
     hints: list[str] = []
@@ -282,7 +289,7 @@ def verify_claim(
     existing_doi = fm.get("doi")
     if not (existing_doi and isinstance(existing_doi, str) and existing_doi.startswith("10.")):
         # Legacy fallback: check assertions[0].doi (some older claim files
-        # may have the cited DOI there per the canonical verify-references.py)
+        # may have the cited DOI there)
         assertions = fm.get("assertions") or []
         if assertions and isinstance(assertions[0], dict):
             ass_doi = assertions[0].get("doi")
@@ -348,6 +355,32 @@ def verify_claim(
 # ── Top-level walk ──────────────────────────────────────────────────────
 
 
+def verify_paper_doi(paper_dir: Path) -> VerifyResult | None:
+    """Resolve the paper's own DOI from its index.
+
+    A paper's DOI is a reference like any other, and it is the one every claim in the tree
+    inherits. Ported from scripts/verify-references.py, which was the only thing that checked
+    it and which read cited DOIs from `assertions[0].doi` — a field no claim in this corpus
+    uses, so its every literature-context verdict came from a fuzzy title search instead. One
+    of those reached the committed report as `status: found` with the title "NEEDLE TINS".
+    """
+    idx = paper_dir / "index.md"
+    if not idx.is_file():
+        return None
+    fm, _, _ = _read_claim_file(idx)
+    doi = fm.get("doi")
+    slug = paper_dir.name
+    if not doi or not isinstance(doi, str) or not doi.startswith("10."):
+        return VerifyResult(paper_slug=slug, claim_slug="index", status="no-hint",
+                            note="the paper's index declares no DOI")
+    match = crossref_resolve_doi(doi)
+    if not match:
+        return VerifyResult(paper_slug=slug, claim_slug="index", status="unresolvable",
+                            doi=doi, note="the paper's own DOI did not resolve via CrossRef")
+    return VerifyResult(paper_slug=slug, claim_slug="index", status="confirmed",
+                        doi=doi, title=match.title, authors=match.authors)
+
+
 def verify_refs(
     paper_slug: str | None,
     cfg: Config,
@@ -372,6 +405,10 @@ def verify_refs(
             logger.warning("paper directory not found: %s", paper_dir)
             continue
         slug = paper_dir.name
+        paper_doi = verify_paper_doi(paper_dir)
+        if paper_doi:
+            results.append(paper_doi)
+            _print_result(paper_doi, dry_run)
         for claim_path in sorted(paper_dir.glob("*.md")):
             if claim_path.name == "index.md":
                 continue

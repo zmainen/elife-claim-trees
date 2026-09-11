@@ -21,8 +21,8 @@
 | Relation | Dropped | What is lost |
 |---|---:|---|
 | `scopes` | 29 | a scope constraint governs another claim's validity |
-| `derived-from` | 5 | prediction derived from its hypothesis (inverse of entails) |
-| `entails` | 5 | hypothesis entails its prediction — the deductive step |
+| `derived-from` | 5 | a prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 5 | a hypothesis entails its prediction — the deductive step |
 | `interprets` | 5 | one claim interprets another |
 | `requires` | 4 | a claim depends on another holding |
 | `enables-method` | 2 | a result makes a downstream method possible |

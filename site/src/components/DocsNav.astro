@@ -1,0 +1,75 @@
+---
+// The docs sidebar — nine entries, written here because there are nine.
+//
+// This replaced a 39-item Starlight sidebar over a section describing a system that had
+// changed underneath it. The list is short enough to read, which is the point: a reader can
+// see the whole of /docs at once and tell what it does not cover.
+export interface Props { current: string }
+const { current } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const GROUPS: { label: string; items: { slug: string; label: string }[] }[] = [
+  {
+    label: 'Start',
+    items: [
+      { slug: 'index', label: 'Overview' },
+      { slug: 'install', label: 'Install and configure' },
+      { slug: 'first-paper', label: 'One paper end to end' },
+    ],
+  },
+  {
+    label: 'The tools',
+    items: [
+      { slug: 'runner', label: 'The runner' },
+      { slug: 'layers', label: 'The layer runners' },
+      { slug: 'batch', label: 'Batch operation' },
+      { slug: 'evaluate', label: 'Measuring a prompt change' },
+    ],
+  },
+  {
+    label: 'Reference',
+    items: [
+      { slug: 'config', label: 'Configuration' },
+      { slug: 'prompts', label: 'The prompts' },
+      { slug: 'contributing', label: 'For contributors' },
+    ],
+  },
+];
+
+const href = (slug: string) => `${base}/docs/${slug === 'index' ? '' : slug + '/'}`;
+---
+
+<nav class="docs-nav text-sm" aria-label="Documentation">
+  {GROUPS.map(g => (
+    <div class="mb-5">
+      <div class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
+        {g.label}
+      </div>
+      <ul class="list-none p-0 m-0 space-y-1">
+        {g.items.map(it => (
+          <li>
+            <a href={href(it.slug)}
+               aria-current={it.slug === current ? 'page' : undefined}
+               class={`block no-underline leading-snug py-0.5 ${
+                 it.slug === current
+                   ? 'text-amber-700 dark:text-amber-400 font-medium'
+                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+               }`}>{it.label}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+
+  <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+    <div class="text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
+      Not here
+    </div>
+    <ul class="list-none p-0 m-0 space-y-1 text-gray-500 dark:text-gray-400">
+      <li><a href={`${base}/pipeline/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">The layer model</a></li>
+      <li><a href={`${base}/pipeline/method/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">The methodology</a></li>
+      <li><a href={`${base}/pipeline/vocabulary/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">Roles and relations</a></li>
+      <li><a href={`${base}/papers/`} class="no-underline hover:text-gray-900 dark:hover:text-gray-200">The claim graphs</a></li>
+    </ul>
+  </div>
+</nav>

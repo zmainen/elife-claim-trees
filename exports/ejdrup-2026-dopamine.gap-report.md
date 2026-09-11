@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `ejdrup-2026-dopamine` · **Generated:** 2026-09-10
+**Paper:** `ejdrup-2026-dopamine` · **Generated:** 2026-09-11
 
 25 claims, 95 typed relations between them.
 
@@ -20,7 +20,7 @@
 | Relation | Dropped | What is lost |
 |---|---:|---|
 | `requires` | 20 | a claim depends on another holding |
-| `entails` | 11 | hypothesis entails its prediction — the deductive step |
+| `entails` | 11 | a hypothesis entails its prediction — the deductive step |
 | `scopes` | 8 | a scope constraint governs another claim's validity |
 | `interprets` | 2 | one claim interprets another |
 

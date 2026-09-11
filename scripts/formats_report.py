@@ -41,18 +41,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CLAIMS = os.path.join(ROOT, "claims")
 EXPORTS = os.path.join(ROOT, "exports")
 
-SUPPORTS = {"tests", "confirms", "validates", "supports", "extends", "replicates"}
-OPPOSES = {"contradicts", "opposes", "dissociates-with", "rules-out"}
-GAPS = {
-    "entails": "a hypothesis entails its prediction — the deductive step",
-    "derived-from": "a prediction derived from its hypothesis",
-    "interprets": "one claim interprets another",
-    "enables-method": "a result makes a downstream method possible",
-    "scopes": "a scope constraint governs another claim's validity",
-    "requires": "a claim depends on another holding",
-    "qualifies": "a claim narrows another's applicability",
-}
-EDGE_KEYS = SUPPORTS | OPPOSES | set(GAPS)
+from relations import EDGE_KEYS, GAPS, OPPOSES, SUPPORTS  # noqa: E402
 
 
 def frontmatter(path):

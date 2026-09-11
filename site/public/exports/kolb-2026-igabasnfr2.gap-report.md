@@ -1,6 +1,6 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `kolb-2026-igabasnfr2` · **Generated:** 2026-09-10
+**Paper:** `kolb-2026-igabasnfr2` · **Generated:** 2026-09-11
 
 21 claims, 90 typed relations between them.
 
@@ -22,8 +22,8 @@
 |---|---:|---|
 | `scopes` | 27 | a scope constraint governs another claim's validity |
 | `enables-method` | 7 | a result makes a downstream method possible |
-| `entails` | 5 | hypothesis entails its prediction — the deductive step |
-| `derived-from` | 3 | prediction derived from its hypothesis (inverse of entails) |
+| `entails` | 5 | a hypothesis entails its prediction — the deductive step |
+| `derived-from` | 3 | a prediction derived from its hypothesis (inverse of entails) |
 | `requires` | 3 | a claim depends on another holding |
 | `interprets` | 1 | one claim interprets another |
 
