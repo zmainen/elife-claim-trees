@@ -1,0 +1,111 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import StandardsTabs from '../../components/StandardsTabs.astro';
+import { byId as stdById, DEPTH_NOTE } from '../../lib/standards';
+import facts from '../../data/corpus-facts.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const url = (p: string) => `${base}${p}/`;
+const f = facts as any;
+const std = stdById['oxa'];
+---
+
+<Layout title="OXA — standards" description={std.blurb}>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+
+    <StandardsTabs current="oxa" />
+
+    <header class="mb-9 max-w-2xl">
+      <div class="flex flex-wrap items-baseline gap-3 mb-2">
+        <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0">OXA</h1>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-500"
+              title={DEPTH_NOTE[std.depth]}>{std.depth}</span>
+      </div>
+      <p class="text-gray-600 dark:text-gray-400 m-0 leading-relaxed">The document format behind Curvenote, Stencila and eLife. This tab is a proposal to it rather than a reading of it: a <code>Claim</code> block node that OXA does not yet have.</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 m-0">Draft in <code>docs/schema-mapping/oxa-claim-schema.md</code> · we emit <code>.oxa.json</code> per paper</p>
+    </header>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What it requires</h2>
+    <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-10 max-w-2xl">
+      <p class="m-0">
+        OXA represents a scientific document as typed JSON nodes — <code>Heading</code>,
+        <code>Paragraph</code>, <code>Figure</code>, <code>Code</code>, <code>Cite</code> — each
+        block-level, addressable, and carrying children. Citations are typed through CiTO by
+        RFC0005, which is the pattern the Claim node follows.
+      </p>
+      <p class="m-0">
+        There is no node for a proposition. A figure is representable; what the figure argues
+        is not.
+      </p>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">What we propose</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+      A <code>Claim</code> block node — the same kind of element as a Heading or a Code block —
+      with three additions. This is a proposal to the format, not a reading of it.
+    </p>
+    <div class="space-y-5 mb-8">
+      <div class="border-l-2 border-amber-300 dark:border-amber-700 pl-4">
+        <h3 class="font-semibold text-gray-900 dark:text-gray-100 m-0 mb-1 text-[15px]">A role</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 m-0 leading-relaxed">
+          Nine values describing the claim's function in the argument, extending Stencila's
+          existing Claim types — which cover theorems and proofs — into empirical science.
+        </p>
+      </div>
+      <div class="border-l-2 border-amber-300 dark:border-amber-700 pl-4">
+        <h3 class="font-semibold text-gray-900 dark:text-gray-100 m-0 mb-1 text-[15px]">A panel anchor</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 m-0 leading-relaxed">
+          Which figure panel the claim is grounded in. One panel, one computation, one result.
+        </p>
+      </div>
+      <div class="border-l-2 border-amber-300 dark:border-amber-700 pl-4">
+        <h3 class="font-semibold text-gray-900 dark:text-gray-100 m-0 mb-1 text-[15px]">Typed edges to other claims</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 m-0 leading-relaxed">
+          Following RFC0005's pattern for citations: each edge carries a relation type from
+          CiTO, or one of our subproperty extensions where CiTO has none.
+        </p>
+      </div>
+    </div>
+
+    <pre class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-xs text-gray-700 dark:text-gray-300 overflow-x-auto mb-10"><code>{`{
+  "type": "Claim",
+  "identifier": "hypothesis-distinct-compartmental-roles",
+  "role": "hypothesis",
+  "children": [{ "type": "Text", "value": "Perisomatic and distal dendritic
+      inhibition serve distinct computational roles." }],
+  "relations": [
+    { "xref": "prediction-distal-dendritic-spike-mechanism",
+      "relationType": "claimrel:entails" }
+  ]
+}`}</code></pre>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">Does it validate</h2>
+    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-5 mb-10 max-w-2xl">
+      <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+        <strong>Not yet, and it cannot.</strong> The node type does not exist in OXA, so there
+        is no schema to validate against — the exports are what we would emit if the proposal
+        were accepted. Every paper has one, and they round-trip through the Discourse Graphs
+        exporter, which is the only check available.
+      </p>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What it cannot carry</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-10 max-w-2xl">
+      Verification and stance, as with every target here. Neither is in the proposal, because
+      proposing three additions has a chance and proposing five has less — but both are gaps
+      this corpus can motivate with evidence.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What we would ask its authors</h2>
+    <ul class="space-y-2 text-gray-700 dark:text-gray-300 leading-relaxed list-disc pl-5 max-w-2xl">
+      <li>Is a block-level <code>Claim</code> the right shape, or should a claim be an annotation over existing blocks?</li>
+      <li>Should the role vocabulary extend Stencila's Claim types, or sit beside them?</li>
+      <li>Is RFC0005's citation pattern the intended precedent for typed edges between blocks?</li>
+    </ul>
+
+    <footer class="pt-6 mt-10 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+      Full draft in <code>docs/schema-mapping/oxa-claim-schema.md</code>.
+    </footer>
+
+  </div>
+</Layout>

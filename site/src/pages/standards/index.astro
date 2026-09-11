@@ -1,0 +1,120 @@
+---
+// Why this section exists.
+//
+// The argument — that none of these standards can represent an individual claim — used to be
+// the whole page, with the formats appended as a download list. It is better as the section's
+// introduction: it is the reason the tabs are here, not their content. Each tab then states
+// what one format requires and how a claim tree maps onto it, and the reader can look things
+// up rather than read an essay.
+import Layout from '../../layouts/Layout.astro';
+import StandardsTabs from '../../components/StandardsTabs.astro';
+import { STANDARDS, RUBRICS, DEPTH_NOTE } from '../../lib/standards';
+import facts from '../../data/corpus-facts.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const url = (p: string) => `${base}${p}/`;
+const f = facts as any;
+
+const DEPTH_TONE: Record<string, string> = {
+  reference: 'text-emerald-700 dark:text-emerald-400',
+  proposal: 'text-amber-700 dark:text-amber-400',
+  sketch: 'text-gray-400 dark:text-gray-500',
+};
+---
+
+<Layout title="Standards" description="How a claim tree is expressed in MIRA, OXA, CiTO and Discourse Graphs — what each requires, what it carries, and what it cannot.">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+
+    <StandardsTabs />
+
+    <header class="mb-10 max-w-2xl">
+      <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-3">
+        A Claim node for scientific documents
+      </h1>
+      <p class="text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+        The open publishing ecosystem is converging on a shared set of standards, and none of
+        them can represent the individual claims a paper makes. This section states what each
+        one requires, how a claim tree maps onto it, and what the mapping costs — so that the
+        people who maintain these schemas can see what we believe about them and correct us.
+      </p>
+    </header>
+
+    <!-- ── the gap ───────────────────────────────────────────────── -->
+    <section class="mb-12 max-w-2xl">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">The gap</h2>
+      <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+        <p class="m-0">
+          <strong>OXA</strong> defines headings, paragraphs, images, code blocks and citations —
+          but not the propositions those elements are arguing for. <strong>CiTO</strong> types
+          the relationships between <em>papers</em> — but not between the claims <em>within</em>
+          one. <strong>Discourse Graphs</strong> defines Claim and Evidence nodes — but as a
+          note-taking ontology, not as elements embedded in a published document.
+          <strong>MIRA</strong> comes closest, with Claim, Evidence, Question and Study as
+          first-class nodes.
+        </p>
+        <p class="m-0">
+          What is missing is a <strong>Claim node</strong>: a typed, addressable element inside
+          a scientific document carrying a proposition, a role in the argument, an anchor to a
+          figure panel, and typed edges to other claims. This corpus is {f.claims} of them
+          across {f.papers} papers, with {f.relations} typed relations, which is the evidence
+          that the thing is constructible.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── how to read a tab ─────────────────────────────────────── -->
+    <section class="mb-12">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">How to read a tab</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+        Every format answers the same six questions in the same order. Where one has no answer,
+        its page says so rather than filling the space.
+      </p>
+      <ol class="list-none p-0 m-0 grid sm:grid-cols-2 gap-x-8 gap-y-2 max-w-2xl">
+        {RUBRICS.map((r, i) => (
+          <li class="flex gap-3 text-sm text-gray-700 dark:text-gray-300 items-baseline">
+            <span class="font-mono text-xs text-gray-400 dark:text-gray-500 tabular-nums">{i + 1}</span>
+            <span>{r}</span>
+          </li>
+        ))}
+      </ol>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mt-5 max-w-2xl leading-relaxed">
+        The fourth is the one worth having. An export that nobody has validated is a claim about
+        a schema rather than a use of it, and the split between violations that are ours and
+        violations that are the schema&rsquo;s is the whole finding.
+      </p>
+    </section>
+
+    <!-- ── the formats ───────────────────────────────────────────── -->
+    <section class="mb-12">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">The formats</h2>
+      <div class="space-y-2">
+        {STANDARDS.map(s => (
+          <a href={url(`/standards/${s.id}`)}
+             class="flex items-baseline justify-between gap-5 p-4 border border-gray-200 dark:border-gray-700 rounded-lg no-underline hover:border-gray-400 dark:hover:border-gray-500 group">
+            <span class="min-w-0">
+              <span class="block text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-amber-700 dark:group-hover:text-amber-400">
+                {s.name}{s.full ? <span class="font-normal text-gray-500 dark:text-gray-400"> — {s.full}</span> : null}
+              </span>
+              <span class="block text-sm text-gray-600 dark:text-gray-400 leading-snug mt-0.5">{s.blurb}</span>
+            </span>
+            <span class={`font-mono text-[10px] uppercase tracking-wider whitespace-nowrap ${DEPTH_TONE[s.depth]}`}
+                  title={DEPTH_NOTE[s.depth]}>{s.depth}</span>
+          </a>
+        ))}
+      </div>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-4 max-w-2xl leading-relaxed">
+        The depth marker is honest rather than decorative. <strong>reference</strong> means the
+        schema has been read and the exports validated against it; <strong>proposal</strong>
+        means we are asking for a change rather than reading one; <strong>sketch</strong> means
+        the mapping exists in code and has not been written up.
+      </p>
+    </section>
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+      What each format carried for a given paper, measured from the generated exports, is on
+      that paper&rsquo;s
+      {' '}<a href={url('/pipeline/formats-report')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">formats report</a>.
+    </footer>
+
+  </div>
+</Layout>

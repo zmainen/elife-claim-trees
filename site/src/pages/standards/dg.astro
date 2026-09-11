@@ -1,0 +1,98 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import StandardsTabs from '../../components/StandardsTabs.astro';
+import { byId as stdById, DEPTH_NOTE } from '../../lib/standards';
+import facts from '../../data/corpus-facts.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const url = (p: string) => `${base}${p}/`;
+const f = facts as any;
+const std = stdById['dg'];
+---
+
+<Layout title="Discourse Graphs — standards" description={std.blurb}>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+
+    <StandardsTabs current="dg" />
+
+    <header class="mb-9 max-w-2xl">
+      <div class="flex flex-wrap items-baseline gap-3 mb-2">
+        <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0">Discourse Graphs</h1>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-500"
+              title={DEPTH_NOTE[std.depth]}>{std.depth}</span>
+      </div>
+      <p class="text-gray-600 dark:text-gray-400 m-0 leading-relaxed">Questions, Claims, Evidence and Sources, with formal OWL semantics. We emit it for every paper and have never written the mapping down.</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 m-0">No mapping document · exporter at <code>extract/scripts/export_discourse_graphs.py</code></p>
+    </header>
+
+    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-5 mb-10 max-w-2xl">
+      <p class="text-sm text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+        <strong>The thinnest tab here.</strong> We emit Discourse Graphs JSON-LD for every
+        paper, and the mapping that produces it has never been written down — it exists only in
+        <code>export_discourse_graphs.py</code>. What follows is read off that code, which is
+        not the same as having read the ontology and decided.
+      </p>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What it requires</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-8 max-w-2xl">
+      Four node types — Question, Claim, Evidence, Source — with formal OWL semantics and a
+      JSON-LD serialisation. It was designed for knowledge built by hand from reading, which is
+      why a Question is central: a discourse graph starts from what somebody wanted to know.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">How a claim tree maps onto it</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">Read from the exporter.</p>
+    <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg mb-4">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="text-left text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-200 dark:border-gray-700">
+            <th class="py-2.5 px-4 font-medium">Our role</th><th class="py-2.5 px-4 font-medium">DG type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[['hypothesis, prediction, synthesis, interpretation', 'dg:Claim'],
+            ['empirical, control', 'dg:Evidence'],
+            ['scope, methodological', 'dg:Evidence, qualified'],
+            ['literature-context', 'dg:Source']].map(([a, b]) => (
+            <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0">
+              <td class="py-2.5 px-4 font-mono text-xs text-gray-700 dark:text-gray-300">{a}</td>
+              <td class="py-2.5 px-4 font-mono text-xs text-gray-900 dark:text-gray-100">{b}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-10 max-w-2xl leading-relaxed">
+      Relations map to <code>dg:supports</code> and <code>dg:opposedBy</code> where they can;
+      the rest carry a CiTO or <code>claimrel:</code> IRI as a typed annotation. Stance travels
+      as <code>haak:stance</code>, in our own namespace — Discourse Graphs has no term for the
+      posture a paper takes toward a proposition, and minting one under <code>dg:</code> would
+      assert a term the ontology does not define.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">Does it validate</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-10 max-w-2xl">
+      Not attempted. The ontology has formal OWL semantics, so it could be — this is a gap in
+      our effort rather than in the format.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What it cannot carry</h2>
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-10 max-w-2xl">
+      Verification, as everywhere. And the Question-centred model fits a graph built by someone
+      reading with a question in mind; a graph induced from a finished paper has to manufacture
+      the question, which is the same objection that applies to MIRA.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What we would ask its authors</h2>
+    <ul class="space-y-2 text-gray-700 dark:text-gray-300 leading-relaxed list-disc pl-5 max-w-2xl">
+      <li>Is there an intended encoding for a relation the ontology does not name, short of minting a term?</li>
+      <li>For a graph induced from a published paper rather than built while reading, is a synthesised Question acceptable if flagged as derived?</li>
+    </ul>
+
+    <footer class="pt-6 mt-10 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+      No mapping document exists. The exporter is <code>extract/scripts/export_discourse_graphs.py</code>.
+    </footer>
+
+  </div>
+</Layout>

@@ -1,0 +1,145 @@
+---
+// The claim format — the thing the other four tabs map from.
+//
+// Descriptive, not argumentative: it states the schema as it stands. The proposal that a
+// Claim node belongs in OXA is the section's introduction, where it is an argument rather
+// than a reference entry.
+import Layout from '../../layouts/Layout.astro';
+import StandardsTabs from '../../components/StandardsTabs.astro';
+import { byId as stdById } from '../../lib/standards';
+import facts from '../../data/corpus-facts.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const url = (p: string) => `${base}${p}/`;
+const f = facts as any;
+const std = stdById['ours'];
+const counts: Record<string, number> = f.relation_counts;
+const used = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+const unused = ['refutes', 'predicts', 'replicates'].filter(r => !counts[r]);
+// Computed here, not inline: a generic like Record<string, number> inside JSX parses as a tag.
+const reproRecords = (Object.values(f.reproduction_status) as number[]).reduce((a, b) => a + b, 0);
+
+const ROLES: [string, string][] = [
+  ['hypothesis', 'A proposition the paper sets out to test.'],
+  ['prediction', 'What the hypothesis entails, if it holds.'],
+  ['empirical', 'A result the paper reports, anchored to a panel.'],
+  ['control', 'A result whose work is to eliminate an alternative.'],
+  ['scope', 'A boundary condition on where another claim holds.'],
+  ['methodological', 'A capability that makes a downstream result interpretable.'],
+  ['synthesis', 'A claim assembled from several others.'],
+  ['interpretation', 'A reading of a result through a theoretical lens.'],
+  ['literature-context', 'A claim from another paper, cited by DOI.'],
+];
+---
+
+<Layout title="Ours — standards" description="The claim format: what a claim is, and what may be said about one.">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+
+    <StandardsTabs current="ours" />
+
+    <header class="mb-9 max-w-2xl">
+      <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mb-2">The claim format</h1>
+      <p class="text-gray-600 dark:text-gray-400 m-0 leading-relaxed">
+        {std.blurb} A plain-text file per claim, human-readable and version-controllable, with
+        the relations in its frontmatter. Everything on the other four tabs is a mapping out of
+        this.
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 m-0">
+        Full specification in <code>docs/claim-format.md</code> ·
+        <a href={url('/docs/methodology/schema')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">the schema reference</a>
+      </p>
+    </header>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">What a claim carries</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+      A UUID that survives renaming, one declarative sentence, a role, an anchor to the panel
+      that produced it, typed relations to other claims, and — separately — what each paper
+      asserting it does with it.
+    </p>
+    <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg mb-10">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="text-left text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-200 dark:border-gray-700">
+            <th class="py-2.5 px-4 font-medium">Field</th><th class="py-2.5 px-4 font-medium">Carries</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[
+            ['uuid', 'Durable identity. A slug is derived from the text and changes when the text does; the UUID does not, so exports and marks key on it.'],
+            ['claim', 'One declarative sentence stating what was shown.'],
+            ['role', 'What the claim does in the paper’s argument. Nine values, below.'],
+            ['panel', 'The figure panel or analysis block that produced it.'],
+            ['epistemic', 'The analyst’s assessment of support strength. Currently carries two vocabularies at once.'],
+            ['assertions', 'One block per paper asserting the claim, carrying that paper’s stance toward it: asserts, entertains, rejects, attributes.'],
+            ['reproductions', 'One block per attempt to re-run it: which script, against which data, what came out beside the published value.'],
+            ['relations', 'Typed edges to other claims, as frontmatter keys.'],
+          ].map(([k, v]) => (
+            <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0">
+              <td class="py-2.5 px-4 font-mono text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap align-top">{k}</td>
+              <td class="py-2.5 px-4 text-gray-600 dark:text-gray-400 leading-snug">{v}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Nine roles</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+      Functional, not contentful: the same proposition can be <code>empirical</code> in one
+      paper and <code>control</code> in another. The role is what the claim <em>does</em> here.
+    </p>
+    <div class="grid sm:grid-cols-2 gap-x-8 gap-y-2.5 mb-10">
+      {ROLES.map(([r, d]) => (
+        <div class="text-sm">
+          <span class="font-mono text-xs text-amber-700 dark:text-amber-400">{r}</span>
+          <span class="block text-gray-600 dark:text-gray-400 leading-snug">{d}</span>
+        </div>
+      ))}
+    </div>
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+      Relations <span class="font-mono text-sm text-gray-400 dark:text-gray-500">{f.relation_types_used} of {f.relation_types_defined} in use</span>
+    </h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+      Counted from the corpus, not declared here. A relation type defined and never used is
+      shown as such — the vocabulary should be reconciled against what the corpus does.
+    </p>
+    <div class="flex flex-wrap gap-x-5 gap-y-1.5 mb-4">
+      {used.map(([r, n]) => (
+        <span class="text-sm">
+          <code class="text-xs text-gray-800 dark:text-gray-200">{r}</code>
+          <span class="font-mono text-xs text-gray-400 dark:text-gray-500 tabular-nums ml-1">{n}</span>
+        </span>
+      ))}
+    </div>
+    {unused.length > 0 && (
+      <p class="text-sm text-gray-600 dark:text-gray-400 mb-10 max-w-2xl leading-relaxed">
+        Defined and never used: {unused.map(r => <code class="text-xs">{r}</code>)}
+        {' '}— which is a fact about the vocabulary worth settling rather than leaving.
+        <a href="https://github.com/zmainen/elife-claim-trees/issues/20" target="_blank"
+           class="text-amber-700 dark:text-amber-400 no-underline hover:underline ml-1">#20</a>
+      </p>
+    )}
+
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What it carries that no target does</h2>
+    <div class="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed mb-10 max-w-2xl">
+      <p class="m-0">
+        <strong>Verification.</strong> That a claim was re-run, by what code, against what
+        deposited data, with what value beside the published one. This corpus holds
+        {' '}{reproRecords} such records. None of the four targets has a node type for one.
+      </p>
+      <p class="m-0">
+        <strong>Stance.</strong> That a paper <em>considered and rejected</em> a proposition.
+        An alternative exported without it reads as something the paper asserts — which is the
+        inversion of its meaning.
+      </p>
+    </div>
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+      The argument for putting this in a published document is the
+      {' '}<a href={url('/standards')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">section introduction</a>;
+      the proposal to OXA specifically is the <a href={url('/standards/oxa')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">OXA tab</a>.
+    </footer>
+
+  </div>
+</Layout>
