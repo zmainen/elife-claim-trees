@@ -120,6 +120,9 @@ Run [references/checks.md](../references/checks.md). Then say plainly, in the ha
 
 An extraction that reports none of this has not been checked, it has been asserted.
 
+If what you hand over is for a person to read rather than for a corpus to hold, build it as an
+overlay on the paper's own text — see [references/presentation.md](../references/presentation.md).
+
 ## Failure modes
 
 **Quantitative hallucination.** A number that is plausible, absent from the paper, and

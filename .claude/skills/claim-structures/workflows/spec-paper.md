@@ -98,5 +98,6 @@ kills it or the scope claim that concedes it. When a result changes, the claim s
 and everything that `requires` it is flagged for re-reading. When a figure is cut, the claims it
 carried are visibly orphaned rather than quietly lost.
 
-The version of the tree that ships alongside the paper is what lets a reader check the argument
-rather than reconstruct it — which is the thing the corpus this skill comes from exists to test.
+The version of the tree that ships alongside the paper is an overlay on the paper, not a
+replacement for it ([references/presentation.md](../references/presentation.md)) — and it is what
+lets a reader check the argument rather than reconstruct it — which is the thing the corpus this skill comes from exists to test.
