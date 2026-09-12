@@ -366,8 +366,8 @@ layers:
       on this output where it exists and on the reconciled draft where it does not.
     added: "2026-09-11"
     needs: [reconcile]
-    reads: [extract/prompts/external-reviewer.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-draft.md]
-    produces: ["runs/{paper}/external-review.output.json"]
+    reads: [extract/prompts/external-reviewer.md, extract/prompts/contract/vocabulary.md, extract/prompts/contract/schema-draft.md, extract/prompts/contract/schema-review-patch.md]
+    produces: ["runs/{paper}/external-review.output.json", "runs/{paper}/external-review.patch.json"]
     views: [table, comparison]
     by_from: model
     command: "cd extract && python3 -m elife_extract.cli external-review --paper {paper}"

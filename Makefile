@@ -83,6 +83,11 @@ validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 check:  ## Gates that are clean on main. A failure here is this change's fault.
 	$(PYTHON) scripts/check_relations.py
 	cd extract && $(PYTHON) -m elife_extract.cli contract
+	# PR #95 deleted a name from edges.py and left a reference — the package failed to import
+	# on main while `make check` stayed green because contract reaches it through deferred paths.
+	cd extract && $(PYTHON) -c "import elife_extract.cli, elife_extract.edges, elife_extract.layers, elife_extract.write"
+	cd extract && $(PYTHON) tests/test_layer_contract.py
+	cd extract && $(PYTHON) tests/test_prompt_contract.py
 	$(PYTHON) scripts/audit_layers.py
 
 contract:  ## Regenerate the prompt contract from vocabulary.py, relations.py and schema.py

@@ -174,7 +174,7 @@ def test_each_reader_writes_its_declared_path():
         _seed_prepared(root, cfg)
         decl = _declaration()
         for agent in ("results", "caption", "structure"):
-            with mock.patch.object(agents_mod, "run_agent", return_value=_extraction(agent)):
+            with mock.patch.object(agents_mod, "run_agent", return_value=(_extraction(agent), {})):
                 path, extraction = layers.reader_layer(agent, SLUG, cfg)
             declared = decl[f"{agent}-reader"]["produces"][0].replace("{paper}", SLUG)
             assert path == root / declared
@@ -196,7 +196,7 @@ def test_reconcile_reads_the_three_readers_from_disk():
 
         def fake_reconcile(results, caption, structure, cfg, **kw):
             seen["agents"] = [results.agent, caption.agent, structure.agent]
-            return _draft()
+            return _draft(), {}
 
         with mock.patch.object(reconcile_mod, "reconcile", fake_reconcile):
             path, draft = layers.reconcile_layer(SLUG, cfg)

@@ -50,8 +50,8 @@ import logging
 import re
 from pathlib import Path
 
-from .agents import stream_text
-from .config import Config
+from .agents import _edge_output_schema, stream_text
+from .config import Config, token_budget
 from .schema import DraftClaimTable, ReconciledClaim
 
 logger = logging.getLogger(__name__)
@@ -359,32 +359,40 @@ def edges_from_raw(raw: str, claims: list, slugs: list[str], *,
 
 
 def infer_edges(draft: DraftClaimTable, slugs: list[str], cfg: Config, *,
-                per_arc: bool = False) -> list[dict]:
+                per_arc: bool = False) -> tuple[list[dict], dict]:
     """Ask the configured backend for typed relations between the claims.
 
-    `per_arc` splits the work into one call per hypothesis arc and merges the replies through
-    the same validation — the merge is concatenation before validation, which de-duplicates.
+    Returns (edges, usage_dict). `per_arc` splits the work into one call per hypothesis arc
+    and merges the replies — the merge is concatenation before validation, which de-duplicates.
+    Usage is accumulated across all arc calls.
     """
     # Budget the call to what the output can actually be. An edge is a small JSON object — two
     # claim numbers, a relation name and a one-sentence why, ~80 tokens — and a paper has at most
-    # a few edges per claim. Taking the package default of 32768 asks for far more than this call
-    # can emit, which buys nothing and costs real failures: providers that reserve the requested
-    # budget against a credit balance reject the request outright. That is how edge inference once
-    # died on a live Gädeke run — HTTP 402 — and lost the spine while every other stage succeeded.
-    budget = max(8192, min(32768, 500 * max(len(slugs), 1)))
+    # a few edges per claim. token_budget("edge-inference") scales at 60 t/claim and is clamped
+    # to [4096, 32768], preventing the HTTP 402 reservation failures that killed a live Gädeke run.
+    budget = token_budget("edge-inference", len(slugs))
 
+    edge_schema = _edge_output_schema()
     if per_arc:
         raws: list[str] = []
+        combined_usage: dict = {
+            "input_tokens": 0, "output_tokens": 0,
+            "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
+        }
         for members in arcs(draft.claims):
             system, user = build_edge_request(draft, slugs, cfg, include=set(members))
-            raws.append(stream_text(cfg, model=cfg.model_reconcile, system=system, user=user,
-                                    max_tokens=budget, label="edge-inference[arc]"))
-        return edges_from_raw("\n".join(raws), draft.claims, slugs, source="model:per-arc")
+            arc_raw, arc_usage = stream_text(
+                cfg, model=cfg.model_reconcile, system=system, user=user,
+                max_tokens=budget, label="edge-inference[arc]", output_schema=edge_schema)
+            raws.append(arc_raw)
+            for k in combined_usage:
+                combined_usage[k] += arc_usage.get(k, 0)
+        return edges_from_raw("\n".join(raws), draft.claims, slugs, source="model:per-arc"), combined_usage
 
     system, user = build_edge_request(draft, slugs, cfg)
-    raw = stream_text(cfg, model=cfg.model_reconcile, system=system, user=user,
-                      max_tokens=budget, label="edge-inference")
-    return edges_from_raw(raw, draft.claims, slugs, source="model")
+    raw, usage = stream_text(cfg, model=cfg.model_reconcile, system=system, user=user,
+                             max_tokens=budget, label="edge-inference", output_schema=edge_schema)
+    return edges_from_raw(raw, draft.claims, slugs, source="model"), usage
 
 
 def _validate_edges(parsed: list, claims: list, slugs: list[str], *, source: str) -> list[dict]:

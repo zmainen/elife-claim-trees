@@ -32,6 +32,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXPORTS = os.path.join(ROOT, "exports")
@@ -50,18 +51,56 @@ UPSTREAM = re.compile(
     r"(?=[^]]*Literal\(\"RelationDef\"\))[^]]*\]")
 
 
+MIRA_CONTEXT_URL = "https://purl.org/mira-science/mira.jsonld"
+
+
+def offline(path, tmpdir):
+    """The export with its remote @context replaced by the vendored copy.
+
+    vendor/ exists so that validation is reproducible offline and gives the same answer next
+    year as today. It holds the shapes, the ontology and the context — and the context was the
+    one nobody used. Every export names the context by its canonical URL, correctly, because a
+    consumer has to be able to resolve it; but the JSON-LD parser then dereferences that URL
+    on every validation, twelve times a run, and purl.org rate-limited a local `make data`
+    with a 429 that failed the whole target.
+
+    The published file is not touched. This is a copy, made for the validator, with the one
+    string swapped for the object vendor/mira.jsonld already holds. Nothing else about the
+    graph changes: the same terms, from the same pinned commit, resolved from disk.
+    """
+    doc = json.loads(open(path, encoding="utf-8").read())
+    vendored = json.loads(open(os.path.join(VENDOR, "mira.jsonld"), encoding="utf-8").read())
+    local = vendored["@context"]
+
+    ctx = doc.get("@context")
+    if isinstance(ctx, str):
+        doc["@context"] = local if ctx == MIRA_CONTEXT_URL else ctx
+    elif isinstance(ctx, list):
+        doc["@context"] = [local if c == MIRA_CONTEXT_URL else c for c in ctx]
+
+    out = os.path.join(tmpdir, os.path.basename(path))
+    with open(out, "w", encoding="utf-8") as fh:
+        json.dump(doc, fh)
+    return out
+
+
 def shacl(path):
     """Returns (conforms, [violation blocks]). Raises if pyshacl cannot run."""
     if not os.path.isdir(VENDOR):
         sys.exit(f"vendor/ missing. Fetch MIRA's shapes at {PINNED} -- see "
                  f"docs/schema-mapping/mira-guide.md")
+    with tempfile.TemporaryDirectory() as tmp:
+        return _shacl(offline(path, tmp), path)
+
+
+def _shacl(path, original):
     p = subprocess.run(
         ["pyshacl", "-s", os.path.join(VENDOR, "mira.shacl"), "-sf", "turtle",
          "-e", os.path.join(VENDOR, "mira.ttl"), "-df", "json-ld", path],
         capture_output=True, text=True)
     out = p.stdout + p.stderr
     if "Conforms:" not in out:
-        sys.exit(f"pyshacl failed on {os.path.relpath(path, ROOT)}:\n{out.strip()}")
+        sys.exit(f"pyshacl failed on {os.path.relpath(original, ROOT)}:\n{out.strip()}")
     return "Conforms: True" in out, out.split("Constraint Violation")[1:]
 
 

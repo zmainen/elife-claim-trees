@@ -26,23 +26,26 @@ them concurrently when cost/latency budgets demand it.
 
 from __future__ import annotations
 
+import copy
 import json
 import logging
 import re
 import time
+from typing import TYPE_CHECKING
 
-from anthropic import Anthropic, AnthropicVertex
-
-from .config import Config, LITELLM_PREFIX
+from .config import Config, LITELLM_PREFIX, token_budget
 from .prepare import PreparedPaper
 from .schema import AgentExtraction, AgentName, CandidateClaim
+
+if TYPE_CHECKING:                      # for the annotations only; never imported at runtime
+    from anthropic import Anthropic, AnthropicVertex
 
 logger = logging.getLogger(__name__)
 
 
 # ── Evidence verification ────────────────────────────────────────────────
 
-_CURLY_QUOTES = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"'})
+_CURLY_QUOTES = str.maketrans({"'": "‘", "’": "'", "“": '"', "”": '"'})
 _DASHES = str.maketrans({"–": "-", "—": "-", "―": "-"})
 
 
@@ -181,6 +184,10 @@ _JSON_FENCE_CLOSE = re.compile(r"\n?```\s*$")
 def parse_json_response(raw: str) -> list[dict] | dict:
     """Parse a JSON response from the model, tolerating markdown fences.
 
+    Used for --answer (free text) paths and as a fallback when structured output
+    is unavailable or returns unexpected content. The structured output path
+    bypasses the need for the salvage logic because the provider enforces valid JSON.
+
     Models sometimes wrap JSON output in ```json ... ``` despite explicit
     instructions not to. Strip leading and trailing fences independently
     (some models close with ``` while others get truncated before they
@@ -284,14 +291,104 @@ def _as_claim_list(parsed, agent: str) -> list:
     )
 
 
+# ── Schema helpers for provider-enforced structured outputs ─────────────
+
+
+def _filter_schema(schema: dict) -> dict:
+    """Remove 'Filled by the runner' fields from a JSON schema (root + all $defs).
+
+    The provider enforces the schema the model sees; fields the runner fills must
+    not appear in it, or the model will invent values for them that the runner
+    then overwrites anyway.
+    """
+    schema = copy.deepcopy(schema)
+    for container in [schema] + list(schema.get("$defs", {}).values()):
+        bad = {k for k, v in container.get("properties", {}).items()
+               if isinstance(v, dict) and v.get("description", "").startswith("Filled by the runner")}
+        if bad:
+            for k in bad:
+                container.get("properties", {}).pop(k, None)
+            if "required" in container:
+                container["required"] = [r for r in container["required"] if r not in bad]
+    return schema
+
+
+def _reader_output_schema() -> dict:
+    """JSON schema for a reader agent's output: {claims: [CandidateClaim, ...]}.
+
+    The object wrapper is required because most structured-output providers
+    (Anthropic, OpenAI) expect a top-level object. _as_claim_list already
+    handles the 'claims' key unwrap, so the rest of the parse path is unchanged.
+    """
+    claim_schema = _filter_schema(CandidateClaim.model_json_schema())
+    defs = claim_schema.pop("$defs", {})
+    claim_schema.pop("title", None)
+    result: dict = {
+        "type": "object",
+        "properties": {"claims": {"type": "array", "items": claim_schema}},
+        "required": ["claims"],
+    }
+    if defs:
+        result["$defs"] = defs
+    return result
+
+
+def _draft_table_schema() -> dict:
+    """JSON schema for the reconciler/reviewer output: filtered DraftClaimTable."""
+    from .schema import DraftClaimTable
+    return _filter_schema(DraftClaimTable.model_json_schema())
+
+
+def _edge_output_schema() -> dict:
+    """JSON schema for the edge-inference output: {edges: [{source, target, relation, why}]}.
+
+    _parse_edges already extracts the inner array from an object wrapper by locating the first
+    '[' and the last ']', so this wrapper does not require changes to the parsing path.
+    """
+    return {
+        "type": "object",
+        "properties": {
+            "edges": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "source": {"type": "string",
+                                   "description": "The source claim's 1-based index number."},
+                        "target": {"type": "string",
+                                   "description": "The target claim's 1-based index number."},
+                        "relation": {"type": "string",
+                                     "description": "The relation name from the vocabulary."},
+                        "why": {"type": "string",
+                                "description": "One sentence explaining the edge."},
+                    },
+                    "required": ["source", "target", "relation", "why"],
+                },
+            }
+        },
+        "required": ["edges"],
+    }
+
+
 # ── Anthropic client (cached per session) ───────────────────────────────
 
 
-_client_cache: Anthropic | AnthropicVertex | None = None
+_client_cache: "Anthropic | AnthropicVertex | None" = None
 
 
-def get_client(cfg: Config) -> Anthropic | AnthropicVertex:
+def get_client(cfg: Config) -> "Anthropic | AnthropicVertex":
+    """The SDK is imported here rather than at module scope.
+
+    `__init__.py` imports this module to export `call`, so a module-scope
+    `from anthropic import ...` made the SDK a hard dependency of importing the package at
+    all — including for `elife-extract contract`, which renders a prompt from the vocabulary
+    and calls no model. CI installs requirements.txt, which does not carry the SDK, so every
+    check that shells into the package has failed since the call paths were merged into one.
+
+    A backend client is needed when a call is made, and only then.
+    """
     global _client_cache
+    from anthropic import Anthropic, AnthropicVertex      # noqa: PLC0415
     if _client_cache is None:
         if cfg.backend == "anthropic" and cfg.anthropic_api_key:
             _client_cache = Anthropic(api_key=cfg.anthropic_api_key)
@@ -308,6 +405,38 @@ def reset_client():
     _client_cache = None
 
 
+# Labels that warrant high inference effort (complex synthesis or graph tasks).
+_HIGH_EFFORT_LABELS: frozenset[str] = frozenset(
+    {"reconciler", "external-reviewer", "parts"}
+)
+
+
+def _effort_for(label: str | None) -> str:
+    """Map a call label to an effort level for output_config.
+
+    High: reconciler, external-reviewer, edge-inference*, parts.
+    Medium: readers and everything else.
+    """
+    if label and (label in _HIGH_EFFORT_LABELS or label.startswith("edge-inference")):
+        return "high"
+    return "medium"
+
+
+def _supports_adaptive_thinking(model: str) -> bool:
+    """True for Claude 4.6+ and 5+ models that use thinking: {type: adaptive}.
+
+    budget_tokens is rejected with HTTP 400 on these models; adaptive is the
+    correct form. Pre-4.6 models still use budget_tokens.
+    """
+    import re
+    m = re.search(r"(\d+)-(\d+)", model)
+    if m:
+        return (int(m.group(1)), int(m.group(2))) >= (4, 6)
+    # bare major version, e.g. "claude-opus-5"
+    m = re.search(r"-(\d+)$", model)
+    return bool(m and int(m.group(1)) >= 5)
+
+
 def stream_text(
     cfg: Config,
     *,
@@ -316,8 +445,17 @@ def stream_text(
     user: str,
     max_tokens: int = 32768,
     label: str | None = None,
-) -> str:
-    """One model call on whichever backend is configured; returns the text.
+    output_schema: dict | None = None,
+) -> tuple[str, dict]:
+    """One model call on whichever backend is configured; returns (text, usage).
+
+    When `output_schema` is given the provider enforces the reply is valid JSON
+    matching that schema (Anthropic: output_config.format; litellm: response_format).
+    Without it the free-text salvage parser in parse_json_response handles fences
+    and bracket mismatches. The log line names which path each reply took.
+
+    The second return value is a usage dict with keys input_tokens, output_tokens,
+    cache_read_input_tokens, cache_creation_input_tokens (all int, zero when unknown).
 
     Every model call in the package goes through here, so adding a provider
     is a config entry rather than a new code path. "vertex" and "anthropic"
@@ -328,18 +466,56 @@ def stream_text(
     tag = label or model
     chunks: list[str] = []
     progress = _Progress(tag, t0)
+    usage: dict = {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+    }
 
     if cfg.backend in ("vertex", "anthropic"):
         client = get_client(cfg)
-        with client.messages.stream(
+        # Prompt caching: wrap the system prompt in a content block so the provider
+        # can cache it across calls with the same system prompt.
+        system_blocks = [{"type": "text", "text": system,
+                          "cache_control": {"type": "ephemeral"}}]
+        stream_kwargs: dict = dict(
             model=model,
             max_tokens=max_tokens,
-            system=system,
+            system=system_blocks,
             messages=[{"role": "user", "content": user}],
-        ) as stream:
+        )
+        # Adaptive thinking for 4.6+ models. budget_tokens is rejected on these.
+        if _supports_adaptive_thinking(model):
+            stream_kwargs["thinking"] = {"type": "adaptive"}
+        # Effort and structured output live in output_config.
+        out_cfg: dict = {"effort": _effort_for(label)}
+        if output_schema is not None:
+            out_cfg["format"] = {
+                "type": "json",
+                "json_schema": {"name": label or "output", "schema": output_schema},
+            }
+            logger.info("  %s: sending %dc to %s (%s), structured output active",
+                        tag, len(system) + len(user), model, cfg.backend)
+        else:
+            logger.info("  %s: sending %dc to %s (%s), free-text (salvage parser active)",
+                        tag, len(system) + len(user), model, cfg.backend)
+        stream_kwargs["output_config"] = out_cfg
+        with client.messages.stream(**stream_kwargs) as stream:
             for text in stream.text_stream:
                 chunks.append(text)
                 progress.tick(len(text))
+            final = stream.get_final_message()
+        u = final.usage
+        usage = {
+            "input_tokens": getattr(u, "input_tokens", 0) or 0,
+            "output_tokens": getattr(u, "output_tokens", 0) or 0,
+            "cache_read_input_tokens": getattr(u, "cache_read_input_tokens", 0) or 0,
+            "cache_creation_input_tokens": getattr(u, "cache_creation_input_tokens", 0) or 0,
+        }
+        logger.info("  %s: usage in=%d out=%d cache_read=%d cache_create=%d",
+                    tag, usage["input_tokens"], usage["output_tokens"],
+                    usage["cache_read_input_tokens"], usage["cache_creation_input_tokens"])
     else:
         import litellm
 
@@ -356,22 +532,40 @@ def stream_text(
             "max_tokens": max_tokens,
             "stream": True,
         }
+        if output_schema is not None:
+            # json_schema is supported by OpenAI-compatible and Gemini backends.
+            # Providers that don't support it fall back to json_object (best effort).
+            kwargs["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": label or "output",
+                    "schema": output_schema,
+                    "strict": True,
+                },
+            }
+            logger.info("  %s: sending %dc to %s (%s), structured output active",
+                        tag, len(system) + len(user), kwargs["model"], cfg.backend)
+        else:
+            logger.info("  %s: sending %dc to %s (%s), free-text (salvage parser active)",
+                        tag, len(system) + len(user), kwargs["model"], cfg.backend)
         if cfg.backend == "vertex_ai":
             # Gemini on Vertex AI: credentials from environment, project/location explicit.
             kwargs["vertex_project"] = cfg.vertex_project
             kwargs["vertex_location"] = cfg.vertex_region
         elif cfg.api_key:
             kwargs["api_key"] = cfg.api_key
-        logger.info("  %s: sending %dc to %s (%s), awaiting first byte…",
-                    tag, len(system) + len(user), kwargs["model"], cfg.backend)
+        last_chunk_usage = None
         for chunk in litellm.completion(**kwargs):
             try:
                 delta = chunk.choices[0].delta.content
             except (AttributeError, IndexError):
-                continue
+                delta = None
             if delta:
                 chunks.append(delta)
                 progress.tick(len(delta))
+            # Some providers include usage in the final streaming chunk.
+            if getattr(chunk, "usage", None):
+                last_chunk_usage = chunk.usage
 
         # Not every provider honours stream=True for every model. Rather than
         # return an empty string and fail later in JSON parsing, retry once
@@ -382,10 +576,20 @@ def stream_text(
             kwargs["stream"] = False
             resp = litellm.completion(**kwargs)
             chunks.append(resp.choices[0].message.content or "")
+            if getattr(resp, "usage", None):
+                last_chunk_usage = resp.usage
+
+        if last_chunk_usage is not None:
+            usage = {
+                "input_tokens": getattr(last_chunk_usage, "prompt_tokens", 0) or 0,
+                "output_tokens": getattr(last_chunk_usage, "completion_tokens", 0) or 0,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0,
+            }
 
     raw = "".join(chunks)
     progress.done(len(raw))
-    return raw
+    return raw, usage
 
 
 class _Progress:
@@ -485,10 +689,10 @@ def run_agent(
     cfg: Config,
     *,
     max_retries: int = 2,
-) -> AgentExtraction:
+) -> tuple[AgentExtraction, dict]:
     """Run one extraction agent against the paper's slice for that role.
 
-    Returns the validated AgentExtraction. Raises on unrecoverable error.
+    Returns (AgentExtraction, usage_dict). Raises on unrecoverable error.
     Retries with exponential backoff on rate limits (429).
     """
     model = model_for(agent, cfg)
@@ -502,23 +706,25 @@ def run_agent(
         )
         return AgentExtraction(
             agent=agent, paper_slug=paper.paper_slug, model=model, claims=[]
-        )
+        ), {}
 
+    schema = _reader_output_schema()
     raw = None
+    usage: dict = {}
     for attempt in range(max_retries + 1):
         try:
             logger.info("agent=%s model=%s slice=%dc (streaming)", agent, model, len(paper_slice))
             # Streaming is required by the SDK for max_tokens that may run
             # >10 minutes; we use it unconditionally for safety. The result
             # is identical to a non-streaming call once collected.
-            raw = stream_text(
+            raw, usage = stream_text(
                 cfg,
                 model=model,
                 system=system_prompt,
                 user=paper_slice,
-                max_tokens=32768,  # 30+ claims with verbatim quotes routinely
-                                   # exceed 10k tokens; budget for headroom
+                max_tokens=token_budget("reader", cfg.max_claims or 30),
                 label=f"{agent}-reader",
+                output_schema=schema,
             )
             break
         except Exception as e:
@@ -532,7 +738,7 @@ def run_agent(
 
     assert raw is not None
     try:
-        return reader_from_raw(agent, paper.paper_slug, model, raw, paper)
+        return reader_from_raw(agent, paper.paper_slug, model, raw, paper), usage
     except Exception as parse_err:
         # Keep the raw reply before re-raising: a reply that failed to parse is the only
         # evidence of what went wrong, and it is gone the moment this returns.

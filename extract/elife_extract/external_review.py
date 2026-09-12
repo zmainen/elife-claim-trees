@@ -1,17 +1,17 @@
 """External review pass — Step 4.5, between reconciliation and write.
 
 A single Opus call that takes the reconciled draft and the paper's context,
-and returns a revised draft addressing the structural-inference biases the
-three Sonnet extraction agents systematically miss:
+and returns a *patch* — targeted edits and new claims — that the runner applies
+to produce the revised draft.
 
   Bias 1: prediction-role under-coverage
   Bias 2: hypothesis-role under-coverage
   Bias 3: multi-panel claims collapsed
   Bias 4: synthesis vs interpretation confusion
 
-Substitutes for the human analyst at Step 5 when `--review-mode=external`
-is set. The methodology was written assuming a curator-in-the-loop; this
-module is what makes the CLI usable in environments without one.
+The patch format (edits + additions) is cheaper to emit and easier to audit
+than a full replacement table: the reviewer names each change explicitly, so
+a diff between the reconciled draft and the reviewed draft is meaningful.
 
 Cost: ~$1-2 per paper (one Opus call with paper context + draft).
 Latency: 1-2 minutes.
@@ -19,13 +19,13 @@ Latency: 1-2 minutes.
 
 from __future__ import annotations
 
-import json
+import copy
 import logging
 
 from .agents import parse_json_response, stream_text
-from .config import Config
+from .config import Config, token_budget
 from .prepare import PreparedPaper
-from .schema import DraftClaimTable
+from .schema import DraftClaimTable, ReconciledClaim, ReviewPatch
 
 logger = logging.getLogger(__name__)
 
@@ -88,52 +88,94 @@ def build_review_request(paper: PreparedPaper, draft: DraftClaimTable,
     """The exact (system, user) the reviewer would send."""
     return load_reviewer_prompt(cfg), (
         f"{_format_paper_context(paper)}\n\n"
-        f"## Reconciled draft claim table (your input to revise)\n\n"
+        f"## Reconciled draft claim table (your input to patch)\n\n"
         f"```json\n{draft.model_dump_json(indent=2)}\n```\n\n"
-        f"Return the revised JSON claim table per your instructions. "
+        f"Return the patch JSON per your instructions. "
         f"JSON only — no surrounding prose."
     )
 
 
-def review_from_raw(raw: str, draft: DraftClaimTable) -> DraftClaimTable:
-    """Validate a raw reviewer answer into a revised DraftClaimTable.
+def _review_output_schema() -> dict:
+    """JSON schema for ReviewPatch, filtered to exclude runner-filled fields."""
+    from .agents import _filter_schema
+    raw = ReviewPatch.model_json_schema()
+    return _filter_schema(raw)
 
-    Every route in goes through here, so the fields the draft owns — how the paper was read,
-    the per-agent counts — survive whoever answered.
-    """
+
+def patch_from_raw(raw: str) -> ReviewPatch:
+    """Parse and validate a raw reviewer answer into a ReviewPatch."""
     parsed = parse_json_response(raw)
     if not isinstance(parsed, dict):
         raise ValueError(
             f"external reviewer returned non-dict JSON: {type(parsed).__name__}"
         )
+    return ReviewPatch(**parsed)
 
-    # Preserve fields the reviewer may have dropped
-    parsed.setdefault("paper_doi", draft.paper_doi)
-    parsed.setdefault("paper_title", draft.paper_title)
-    parsed.setdefault("paper_slug", draft.paper_slug)
-    # Assigned, not setdefault: how the paper was read is the draft's to state, and a
-    # reviewer that invented a value would overwrite it. The prompt no longer shows one,
-    # but the guarantee should not depend on the prompt.
-    parsed["extraction_path"] = draft.extraction_path
-    parsed["extraction_path_note"] = draft.extraction_path_note
-    parsed.setdefault("per_agent_counts", dict(draft.per_agent_counts))
-    parsed.setdefault("config_snapshot", dict(draft.config_snapshot))
 
-    # Stamp the snapshot with the review pass
-    parsed["config_snapshot"]["external_review"] = True
+def apply_patch(draft: DraftClaimTable, patch: ReviewPatch) -> DraftClaimTable:
+    """Apply a ReviewPatch to a DraftClaimTable, returning a revised copy.
 
-    return DraftClaimTable(**parsed)
+    - edits: update named fields of the matched claim (matched by `claim` sentence).
+    - additions: append new claims to the end of the list.
+    - Claims with no matching edit are returned unchanged.
+    - A claim sentence in `edits` that does not match any draft claim is logged
+      as a warning and skipped (the reviewer may have paraphrased).
+    """
+    # Index by claim sentence for O(1) lookup
+    claim_index: dict[str, int] = {c.claim: i for i, c in enumerate(draft.claims)}
+
+    # Deep copy so we don't mutate the caller's draft
+    revised_claims = [copy.deepcopy(c) for c in draft.claims]
+
+    for edit in patch.edits:
+        idx = claim_index.get(edit.claim)
+        if idx is None:
+            logger.warning(
+                "external reviewer edit: claim sentence not found in draft — skipped: %.80s",
+                edit.claim,
+            )
+            continue
+        claim = revised_claims[idx]
+        if edit.role is not None:
+            claim.role = edit.role
+        if edit.claim_type is not None:
+            claim.claim_type = edit.claim_type
+        if edit.panel is not None:
+            claim.panel = edit.panel
+        if edit.notes is not None:
+            claim.notes = edit.notes
+
+    for addition in patch.additions:
+        revised_claims.append(copy.deepcopy(addition))
+
+    # Build revised DraftClaimTable preserving all provenance fields
+    revised_data = draft.model_dump()
+    revised_data["claims"] = [c.model_dump() for c in revised_claims]
+    revised_data.setdefault("config_snapshot", {})
+    revised_data["config_snapshot"]["external_review"] = True
+    return DraftClaimTable(**revised_data)
+
+
+def review_from_raw(raw: str, draft: DraftClaimTable) -> tuple[DraftClaimTable, ReviewPatch]:
+    """Validate a raw reviewer answer and apply it to produce a revised DraftClaimTable.
+
+    Returns both the revised table and the raw patch, so the caller can write both.
+    """
+    patch = patch_from_raw(raw)
+    revised = apply_patch(draft, patch)
+    return revised, patch
+
 
 def external_review(
     paper: PreparedPaper,
     draft: DraftClaimTable,
     cfg: Config,
-) -> DraftClaimTable:
+) -> tuple[DraftClaimTable, ReviewPatch, dict]:
     """Run the external Opus reviewer pass on a reconciled draft.
 
-    Returns a revised DraftClaimTable. Preserves the original draft on
-    the caller side (caller is responsible for saving the original
-    separately if it wants both).
+    Returns (revised DraftClaimTable, raw ReviewPatch, usage dict).
+    Preserves the original draft on the caller side (caller is responsible for
+    saving the original separately if it wants both).
     """
     system_prompt, user_message = build_review_request(paper, draft, cfg)
 
@@ -141,13 +183,15 @@ def external_review(
         "external review: paper=%s claims=%d via %s",
         paper.paper_slug, len(draft.claims), cfg.model_reconcile,
     )
-    raw = stream_text(
+    raw, usage = stream_text(
         cfg,
         model=cfg.model_reconcile,  # same model class as reconciliation
         system=system_prompt,
         user=user_message,
-        max_tokens=32768,
+        max_tokens=token_budget("external-reviewer", len(draft.claims)),
         label="external-reviewer",
+        output_schema=_review_output_schema(),
     )
 
-    return review_from_raw(raw, draft)
+    revised, patch = review_from_raw(raw, draft)
+    return revised, patch, usage
