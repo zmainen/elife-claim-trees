@@ -38,6 +38,7 @@ import shutil
 import subprocess
 import sys
 from collections import OrderedDict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 try:
@@ -577,6 +578,38 @@ def cmd_state(args) -> int:
     return 0
 
 
+def _wanted_waves(wanted: list, by_id: dict) -> list:
+    """Partition *wanted* (topological order) into depth-based waves.
+
+    Layers in the same wave have no dependency relationship with each other within the
+    wanted set, so they can run concurrently. The partition is: depth 0 has no
+    predecessors in wanted; depth k has only depth-(k-1)-or-lower predecessors.
+
+    The resulting list of lists preserves the overall topological order: all layers in
+    wave k complete before wave k+1 starts.
+    """
+    wanted_set = set(wanted)
+    depths: dict[str, int] = {}
+
+    def depth_of(lid):
+        if lid in depths:
+            return depths[lid]
+        d = max(
+            (depth_of(dep) + 1 for dep in (by_id[lid].get("needs") or []) if dep in wanted_set),
+            default=0,
+        )
+        depths[lid] = d
+        return d
+
+    for lid in wanted:
+        depth_of(lid)
+
+    if not depths:
+        return []
+    max_d = max(depths.values())
+    return [[lid for lid in wanted if depths[lid] == d] for d in range(max_d + 1)]
+
+
 def cmd_run(args) -> int:
     """Run a layer for one paper, and its unmet dependencies first.
 
@@ -628,25 +661,31 @@ def cmd_run(args) -> int:
 
     doi = _doi_of(args.paper)
     ran = 0
-    for lid in wanted:
+    jobs = getattr(args, "jobs", 1)
+
+    def _prepare_one(lid):
+        """Check skip conditions and build the shell command for one layer.
+
+        Returns a dict with keys:
+          skip:   True if the layer should not run (or None for fatal skips)
+          fatal:  True if the skip is a caller error (return code 3)
+          cmd:    the shell command string (None when skip=True)
+          answered_kept: path of the kept answer file (None when not --answer)
+        """
         layer = by_id[lid]
         if layer.get("scope") == "corpus":
-            continue
+            return {"skip": True, "fatal": False, "cmd": None, "answered_kept": None}
         cur = st.get(lid, {}).get("state")
         if lid != args.layer and cur == CURRENT:
-            continue
+            return {"skip": True, "fatal": False, "cmd": None, "answered_kept": None}
         if layer.get("requires_human"):
             print(f"  {lid}: requires a person — not runnable from here")
-            if lid == args.layer:
-                return 3
-            continue
+            return {"skip": True, "fatal": lid == args.layer, "cmd": None, "answered_kept": None}
         cmd = layer.get("command")
         if not cmd:
             print(f"  {lid}: no runner declared — skipping"
                   f"{' (this is the layer you asked for)' if lid == args.layer else ''}")
-            if lid == args.layer:
-                return 3
-            continue
+            return {"skip": True, "fatal": lid == args.layer, "cmd": None, "answered_kept": None}
 
         cmd = cmd.replace("{paper}", args.paper).replace("{doi}", doi or "")
         # An answer made somewhere other than the configured backend — a subagent, a person —
@@ -655,6 +694,7 @@ def cmd_run(args) -> int:
         # hand, which recorded nothing, and the first end-to-end run of the chain had to live
         # in experiments/ because the ledger could not hold it.
         answered = args.answer if lid == args.layer and args.answer else None
+        answered_kept = None
         if answered:
             # The raw reply is kept beside the output, before validation and under the
             # version it will get: a verdict whose prompt and output are not both recorded
@@ -662,36 +702,77 @@ def cmd_run(args) -> int:
             # is handed the kept copy, so the output's `model` field names a path in the
             # repository rather than wherever the reply happened to be written.
             prev = _latest(read_ledger(args.paper), lid)
-            kept = os.path.join("runs", args.paper,
-                                f"{lid}.answer.v{(prev['v'] + 1) if prev else 1}.json")
-            os.makedirs(os.path.dirname(os.path.join(ROOT, kept)), exist_ok=True)
-            shutil.copyfile(answered, os.path.join(ROOT, kept))
-            cmd += f" --answer {shlex.quote(kept)}"
+            answered_kept = os.path.join(
+                "runs", args.paper,
+                f"{lid}.answer.v{(prev['v'] + 1) if prev else 1}.json",
+            )
+            os.makedirs(os.path.dirname(os.path.join(ROOT, answered_kept)), exist_ok=True)
+            shutil.copyfile(answered, os.path.join(ROOT, answered_kept))
+            cmd += f" --answer {shlex.quote(answered_kept)}"
         print(f"  {lid}: {cmd}")
-        if args.dry_run:
+        return {"skip": False, "fatal": False, "cmd": cmd, "answered_kept": answered_kept}
+
+    def _run_one(lid, prep):
+        """Run a prepared layer's command. Returns (rc, lid)."""
+        rc = subprocess.run(prep["cmd"], shell=True, cwd=ROOT).returncode
+        return rc, lid
+
+    for wave in _wanted_waves(wanted, by_id):
+        # Prepare every layer in this wave (skip checks, build cmds).
+        preps = {lid: _prepare_one(lid) for lid in wave}
+
+        # Check for fatal skips before launching anything.
+        for lid in wave:
+            if preps[lid]["fatal"]:
+                return 3
+
+        # Collect the runnable layers (not skipped, not dry-run).
+        runnable = [lid for lid in wave if not preps[lid]["skip"]]
+        if args.dry_run or not runnable:
             continue
-        rc = subprocess.run(cmd, shell=True, cwd=ROOT).returncode
-        if rc != 0:
-            print(f"  {lid}: exited {rc}", file=sys.stderr)
-            return rc
-        rec = record(args.paper, layer, by_id,
-                     note=args.note or "ran via scripts/pipeline.py",
-                     by="scripts/pipeline.py run", doi=doi)
-        # The command is the record. Deriving `by` from its first token gave "cd" for every
-        # layer whose command starts by changing directory.
-        rec["cmd"] = cmd
-        if answered:
-            rec["answer"] = {"path": kept, "sha": digest(kept)}
-            # The output can only say the answer was supplied; who supplied it is known to
-            # whoever ran this, and is the fact the ledger exists to keep.
-            if args.by:
-                rec["by"] = args.by
-        append(args.paper, rec)
-        # Keep this version's bytes addressable for the site's two-version comparison. Only
-        # single files under runs/; claims/ archives itself into claim-tree.v<N>/.
-        for kept in keep_versions(rec):
-            print(f"  {lid}: kept {kept}")
-        ran += 1
+
+        # Run the wave — concurrently when jobs > 1 and the wave has multiple layers.
+        results: dict[str, int] = {}  # lid -> returncode
+        if jobs > 1 and len(runnable) > 1:
+            with ThreadPoolExecutor(max_workers=min(jobs, len(runnable))) as pool:
+                futures = {pool.submit(_run_one, lid, preps[lid]): lid for lid in runnable}
+                for fut in as_completed(futures):
+                    rc, lid = fut.result()
+                    results[lid] = rc
+        else:
+            for lid in runnable:
+                rc, _ = _run_one(lid, preps[lid])
+                results[lid] = rc
+
+        # Write ledger entries in deterministic (wanted) order after all subprocesses finish.
+        # This ensures no interleaving even when the wave ran in parallel.
+        for lid in wave:
+            if lid not in results:
+                continue
+            rc = results[lid]
+            if rc != 0:
+                print(f"  {lid}: exited {rc}", file=sys.stderr)
+                return rc
+            layer = by_id[lid]
+            rec = record(args.paper, layer, by_id,
+                         note=args.note or "ran via scripts/pipeline.py",
+                         by="scripts/pipeline.py run", doi=doi)
+            # The command is the record. Deriving `by` from its first token gave "cd" for
+            # every layer whose command starts by changing directory.
+            rec["cmd"] = preps[lid]["cmd"]
+            answered_kept = preps[lid]["answered_kept"]
+            if answered_kept:
+                rec["answer"] = {"path": answered_kept, "sha": digest(answered_kept)}
+                # The output can only say the answer was supplied; who supplied it is known
+                # to whoever ran this, and is the fact the ledger exists to keep.
+                if args.by:
+                    rec["by"] = args.by
+            append(args.paper, rec)
+            # Keep this version's bytes addressable for the site's two-version comparison.
+            # Only single files under runs/; claims/ archives itself into claim-tree.v<N>/.
+            for kept in keep_versions(rec):
+                print(f"  {lid}: kept {kept}")
+            ran += 1
 
     print(f"\n{ran} layer(s) run" + (" (dry run)" if args.dry_run else ""))
     return 0
@@ -764,6 +845,8 @@ def main() -> int:
     r.add_argument("layer")
     r.add_argument("--no-deps", action="store_true", help="run only the named layer")
     r.add_argument("--dry-run", action="store_true", help="print the commands, run nothing")
+    r.add_argument("--jobs", type=int, default=3, metavar="N",
+                   help="max concurrent layer commands within a wave (default: 3)")
     r.add_argument("--note", help="the changelog line for the ledger entry")
     r.add_argument("--answer", metavar="FILE",
                    help="record this file as the named layer's answer instead of calling a "
