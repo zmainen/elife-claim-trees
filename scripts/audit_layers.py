@@ -155,18 +155,26 @@ def main() -> int:
                 upstream(d, seen)
         return seen
 
-    pairs = [("external-review", "coverage",
+    # `answered_by` names a layer that asks the same question in the right place. Where one
+    # exists the ordering is still odd and no longer costs anything, so the audit says so and
+    # stops counting it: a finding that cannot be cleared is one people learn to scroll past.
+    pairs = [("external-review", "coverage", None,
               "asks what the readers missed; coverage measures it, downstream"),
-             ("edge-inference", "claim-tree",
+             ("edge-inference", "claim-tree", "edge-review",
               "decides relations from the candidates; a claim written later can never get one")]
     n = 0
-    for asker, measurer, why in pairs:
-        if asker in by_id and measurer in by_id and measurer not in upstream(asker):
+    for asker, measurer, answered_by, why in pairs:
+        if asker not in by_id or measurer not in by_id or measurer in upstream(asker):
+            continue
+        if answered_by and answered_by in by_id and measurer in upstream(answered_by):
             print(f"   {asker:18} {why}")
-            findings.append((asker, f"ordered before {measurer}"))
-            n += 1
+            print(f"   {'':18} answered downstream by `{answered_by}`")
+            continue
+        print(f"   {asker:18} {why}")
+        findings.append((asker, f"ordered before {measurer}"))
+        n += 1
     if not n:
-        print("   none")
+        print("   none outstanding")
 
     # ── 4. what the site publishes that `make data` cannot regenerate ────────────────────
     print("\n── Site data no build step regenerates ───────────────────────────────────")
