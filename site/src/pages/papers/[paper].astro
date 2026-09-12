@@ -84,7 +84,12 @@ const stage = stageLabel[(paperData as any).stage] || '';
       <details class="rec">
         <summary>The claim graph <span>{data.counts.claims} claims, and what rests on what</span></summary>
         <div class="rec-body">
-          <p>Solid edges are <code>requires</code>, dashed are <code>supports</code>. Clicking a node opens its card.</p>
+          <p>
+            Rows are what a claim does in the paper, so the deductive spine — a hypothesis, the
+            prediction it entails, the result that tests it — reads down the page. Clicking a node
+            opens its card and lights its ancestors and descendants. The format switch redraws the
+            graph as a reader of core MIRA sees it.
+          </p>
           <div class="dag"><ClaimDAG client:visible claims={paperData.claims} paperSlug={paperSlug} /></div>
         </div>
       </details>
@@ -185,5 +190,5 @@ const stage = stageLabel[(paperData as any).stage] || '';
   .rec-body { padding: 0.25rem 0 1.5rem; }
   .rec-body p { font-size: 13px; color: var(--card-muted); max-width: 64ch; margin: 0 0 0.9rem; line-height: 1.55; }
   .rec-body p a { color: var(--claim-strong); }
-  .dag { border: 1px solid var(--card-border); border-radius: 6px; overflow: hidden; height: 620px; }
+  .dag { border: 1px solid var(--card-border); border-radius: 6px; overflow: hidden; height: 760px; }
 </style>
