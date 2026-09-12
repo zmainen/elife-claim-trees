@@ -24,7 +24,7 @@ SITE   := site
 
 .DEFAULT_GOAL := help
 
-.PHONY: help data validate build preview check contract report fresh deps
+.PHONY: help data validate build preview check contract report fresh deps publishable
 
 help:  ## Show this help
 	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -82,6 +82,9 @@ validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 # supports, and check_reproductions surfaces the corpus-wide status spread. Those are real
 # and they predate this file. Gating on them would make every pull request red for reasons
 # the pull request did not cause, so they run for their numbers and do not block.
+publishable:  ## What the site is about to publish that the ledger says is out of date
+	$(PYTHON) scripts/publishable.py
+
 check:  ## Gates that are clean on main. A failure here is this change's fault.
 	$(PYTHON) scripts/check_relations.py
 	cd extract && $(PYTHON) -m elife_extract.cli contract
@@ -113,6 +116,7 @@ report:  ## Standing corpus measurements. Expected to be non-zero; informational
 	exit $$s
 
 build: data  ## Regenerate data, then build the site
+	$(PYTHON) scripts/publishable.py
 	cd $(SITE) && CORPUS=$(CORPUS) npx astro build
 
 preview: build  ## Build and serve locally

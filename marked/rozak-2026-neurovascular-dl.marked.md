@@ -22,6 +22,43 @@ Interrogating individual vessels is thus not sufficient to predict how the blood
 Our pipeline, enables tracking of the microvascular network geometry over time, relating caliber adjustments to vessel wall-associated cells’ state, and mapping network-level flow distribution impairments in experimental models of disease.
 
 
+## introduction
+
+Introduction To support healthy brain functioning, the cerebrovascular network undergoes continual adjustments in vessel calibers ( Iadecola, 2017 ; Kisler et al., 2017 ; Kenney et al., 2016 ).
+
+Neurovascular coupling refers to the change in blood flow following changes in the level of neuronal activity: under physiological conditions, a generous buffer of nutrients is granted to activated parenchyma via the capillary network ( Iadecola, 2017 ; Phillips et al., 2016 ).
+
+This buffer is maintained through finely tuned regulation of flow through changes in the vessel caliber, mediated via contractile cells in the vessel walls.
+
+In the absence of such tuning, pockets of tissue could experience inadequate access to metabolites ( Secomb et al., 2000 ).
+
+Alterations in smooth muscle cells, pericytes, and astrocytes may lead to compromises in vessels’ dilatory capacity and thus deficits in neurovascular coupling ( Hartmann et al., 2021 ; Hall et al., 2014 ; Mester et al., 2021 ; Adams et al., 2018 ).
+
+In various brain pathologies, including Alzheimer’s disease, stroke, and trauma, regional blood flow regulation gets impaired through vessel loss and/or dysfunction of the vessels’ dilatory capacity, resulting in regions of ischemia/hypoxia ( Carroll et al., 2020 ; Yang et al., 2022 ).
+
+Previous studies have examined either individual vessels or the tissue level responses, with little attention having been paid to the vascular network, though network dysfunction frequently is associated with accelerated disease progression and long-term symptomatology ( Kenney et al., 2016 ; Mayer et al., 2011 ; Park et al., 2009 ; Petkus et al., 2016 ; Ramos-Cejudo et al., 2018 ; Franzmeier et al., 2019 ; Rabi, 2019 ; Boehme et al., 2021 ; Koliatsos and Rao, 2020 ; Ware et al., 2020 ).
+
+While there is copious data on the functioning of individual vessels, interrogation of the microvascular network remains a challenge, in terms of both data acquisition and analysis ( Hartmann et al., 2021 ; Hall et al., 2014 ; Hill et al., 2015 ; Lindvere et al., 2010 ; O’Herron et al., 2022 ).
+
+To date, studies on the brain vasculature have been done by sparsely imaging individual blood vessels at the cellular scale ( Hartmann et al., 2021 ; Hall et al., 2014 ; Hill et al., 2015 ; Alarcon-Martinez et al., 2020 ; Sakadžić et al., 2011 ; Guo et al., 2023 ; Giblin et al., 2023 ; McDowell et al., 2021 ; Kim et al., 2023 ; Mester et al., 2019 ; Kim et al., 2012 ; Kleinfeld et al., 1998 ), thereby severely undersampling the microvascular network; or by evaluating the averaged flow over many vessels at the mesoscopic scale, thus failing to discern the flow through individual vessels.
+
+A critical gap in the field is the characterization of flow across hundreds of individual vessels, while imaging the network structure that links them together to determine how the vascular response is coordinated across the network.
+
+This gap is particularly significant as studies investigating blood flow across several vessels at a time (imaged by varying the line acquisition pattern Hartmann et al., 2021 ; Alarcon-Martinez et al., 2020 ) have shown highly heterogeneous responses among capillaries.
+
+Neuronal function impairments arise wherever local metabolite supply becomes inadequate, notwithstanding the physiological level of flow across the network as a whole, making mapping of vessel changes across the network of particular importance.
+
+To address the limitations of previous work, we developed a novel deep learning (DL)-based pipeline for mapping changes to the geometry of the brain vascular network following neuronal activation, from a time series of volumetric two-photon fluorescence microscopy (2PFM) data.
+
+Neuronal activation was elicited by photostimulation of pyramidal neurons expressing Channelrhodopsin-2 (ChR2; Boyden et al., 2005 ) in the Thy1-ChR2-YFP mouse model ( Arenkiel et al., 2007 ).
+
+Our DL pipeline enabled automatic and accurate segmentation, registration, and network analysis of large 2PFM datasets across time.
+
+We applied our pipeline in a dataset of 17 Thy1-ChR2-YFP mice to map photostimulation-induced changes across the microvascular network - at the level of individual vessels and at the level of vertices spaced every micrometer along the vessels - in relation to the distance to the closest pyramidal neurons expressing the optogenetic actuator and across the cortical depth.
+
+Our findings demonstrate the utility of our pipeline for studying in situ microvascular morphology and function to address various neuroscientific hypotheses.
+
+
 ## results
 
 Results Application of our computational pipeline resulted in robust segmentation of the vasculature and neurons from 4D in situ 2PFM images and rendering of the microvasculature as a graph.
@@ -247,6 +284,205 @@ The efficiency increased only at the strongest blue photostimulation, that is on
 The distribution of changes to the efficiency was highly skewed (with a coefficient of skewness of –1.06 for green illumination, 2.92 for lower intensity blue photostimulation, and 4.87 for higher intensity blue photostimulation).
 
 The median increase in the efficiency induced by the higher intensity blue photostimulation, of 4% (IQR: –8% to 38%), was significantly higher than the median –6% (IQR=−9–4%) efficiency change following the control green illumination.
+
+
+## discussion
+
+Discussion Recent studies have demonstrated temporal propagation and coordination in cerebrovascular responses to neuronal activation, whereby arteries dilated after capillary exposure to increased potassium ion concentration ( Dabertrand et al., 2021 ); opposing geometric changes have been reported by some studies in capillaries connected by intercapillary tunneling nanotubes ( Alarcon-Martinez et al., 2020 ).
+
+However, how the effects of these and other mechanisms influence in situ reactivity of the 3D brain capillary network remains unknown.
+
+Here, we developed a pipeline for extracting graphs of brain microvascular networks from in situ 2PFM and examining coordination within and across capillaries.
+
+Capillary networks and their geometrical changes were imaged via 2PFM during periods of baseline alternated with photostimulation of ChR2 in pyramidal neurons of transgenic mice, and the microvascular mesh was evaluated every 1–1.73 μm.
+
+The vascular morphology was then analyzed vertex- and vessel-wise across the entire network.
+
+All vessels exhibited significant heterogeneity in caliber changes along their length.
+
+Neuronal activation induced both dilations and constrictions of vessels, and the incidence of constrictions increased with increasing cortical depth.
+
+As the stimulation power increased, the tendency for vessels to change their radius by an amount similar to their neighbors increased.
+
+Only the highest photostimulation intensity elicited an increase in the network efficiency.
+
+Our findings reveal an intricate level of coordination among brain microvessels and provide a computational analysis platform for interrogating a host of hypotheses on cerebral microvascular reactivity.
+
+Vascular segmentation and network extraction Intensity thresholding-based image processing pipelines have been used to examine vascular networks and quantify vascular morphology, but they have not gained widespread use due to difficulties in adapting them to highly heterogeneous levels of noise across samples ( Steinman et al., 2017 ; Tsai et al., 2009 ; Rennie et al., 2011 ; Lindvere et al., 2013 ).
+
+Deep learning-based methods for analyzing vascular morphology from 3D microscopy images have become prevalent as they provide robust segmentation results over a wide range of signal-to-noise ratios.
+
+Recent work has demonstrated steady improvements in segmentation models’ performance with respect to similarity-based metrics (i.e. Dice scores; Damseh et al., 2018 ; Goodarzi Ardakani et al., 2022 ; Livne et al., 2019 ; Mookiah et al., 2021 ; Tetteh et al., 2020 ; Poon et al., 2023 ), although surface-based metrics may be better predictors of how amenable segmentation outputs will be to subsequent morphological analysis of the microvascular network.
+
+Our final UNETR model was selected based on a combination of performance metrics including mean surface distance, Hausdorff 95% distance, and rater evaluation, to maximize the smoothness of the surface of generated segmentation masks and reduce false positive branch points during centerline extraction; thereby leading to higher fidelity rendering of microvascular networks.
+
+Graph generation was greatly facilitated by computing the union of the vascular segmentation masks across all time points as it enabled tracing of capillaries that had stalls at the individual time points (since the accompanying loss of the fluorescent label otherwise resulted in graph discontinuities).
+
+We tested the ability of the pipeline to detect changes to simulated changes to images and the pipeline’s sensitivity to perturbations to extracted vascular morphology.
+
+Using resizing, we confirmed that the boundary detection algorithm was able to detect prescribed changes ( Figure 5 ).⟦>zach claim=9639b9cb-4a39-4046-ba35-db6f8f88dfbb: @{Using resizing, we confirmed that the boundary detection algorithm was able to detect prescribed changes ( Figure 5 ).} radius-estimation-r2-0p68⟧
+
+The average radius estimates for vessels were then shown to vary by 0.64 ± 3.44% upon changes in centerline position, demonstrating that the radius estimates have a low sensitivity to small (2–3 μm) perturbations in centerline placement.
+
+Visual examples of vessels repeatedly dilating or constricting are shown in Appendix 1—figures 7 and 8 .⟦>zach claim=083ef4c3-9e93-4927-9867-3c785b2c03c0: @{Visual examples of vessels repeatedly dilating or constricting are shown in Appendix 1—figures 7 and 8 .} baseline-intra-vessel-radius-varies-24pct⟧
+
+Network morphological properties at baseline were in line with prior work.
+
+The vascular length density measured from fixed tissue ranged from 0.44 to 1.10 m/mm 3 ( Tsai et al., 2009 ; Todorov et al., 2020 ; Boero et al., 1999 ; Lugo-Hernandez et al., 2017 ; Zhang et al., 2018a ; Miettinen et al., 2021 ).
+
+Our reported vascular density in the forelimb region of the primary somatosensory cortex was 0.40±0.22 m/mm 3 , with the low end of the range value expected due to fluorescence absorption by hemoglobin in the large pial vessels leading to signal dropout (or shadowing) in the underlying tissue.
+
+Our reported average capillary radius of 2.19±1.66 μm was also in line with other studies, where the mean capillary radius ranged from 1.75 to 2.2 μm as measured with confocal microscopy or 2PFM ( Hall et al., 2014 ; Tsai et al., 2009 ).
+
+Next in situ changes to vessel calibers upon neuronal activation Caliber changes at individual vertices along vessel centerlines exhibited significant heterogeneity.
+
+Such heterogeneity is expected due to non-uniformly distributed alpha smooth muscle actin-containing cells along vessel walls, as well as differential activations leading to heterogeneous metabolic demand within the tissue ( Iadecola, 2017 ; Hartmann et al., 2021 ; Kovacs-Oller et al., 2020 ; Abdelazim et al., 2022 ; Quelhas et al., 2020 ; Wang et al., 2015 ).
+
+Many previous studies assumed vessel caliber changes to be uniform, compromising the accuracy of the estimates.
+
+As expected, the control 552 nm stimulation led to minimal changes in vessel calibers.
+
+To probe for off-target effects, non-transgenic mice were also tested with the same optical setup and photostimulation, with no changes to vascular diameters observed at any of the photostimulation powers utilized ( Appendix 1—figure 9 ).⟦>zach claim=ad12a413-e736-4cb5-908f-e331c3a21478: @{To probe for off-target effects, non-transgenic mice were also tested with the same optical setup and photostimulation, with no changes to vascular diameters observed at any of the photostimulation powers utilized ( Appendix 1—figure 9 ).} capillary-efficiency-increases-4pct⟧
+
+In transgenic mice, we detected an average capillary dilation in significantly responding vessels of 70 ± 83% with low-intensity 458 nm stimulation, and 67 ± 61% with higher intensity 458 nm stimulation.
+
+Across photostimulation conditions, the capillary dilations ranged from 2% to 805%.
+
+These caliber changes were higher than those previously reported, which varied from 2% to 20% depending on the capillary branch order ( Hartmann et al., 2021 ; Hall et al., 2014 ; O’Herron et al., 2022 ; Del Franco et al., 2022 ; Stefanovic et al., 2008 ).
+
+Far less data are available on constrictions.
+
+In the current work, constrictions averaged 47 ± 20% for lower-intensity blue light stimulation and 47 ± 17% for higher-intensity blue light stimulation, with a constriction range of 5% to 97% of the baseline radius.
+
+These are higher than the previously reported constrictions of 20% ( Hartmann et al., 2021 ; O’Herron et al., 2022 ), likely due to our identifying as responding vessels only those whose caliber changed by at least twice their baseline caliber variation.
+
+It is also worth noting that vessels’ response directions were consistent on repeated trials.
+
+Of the vessels whose radius change exceeded twice the baseline variability across time, 31.7% dilated on some trials while constricting on others; 41.1% dilated on each trial; and 27.2% constricted on each trial.
+
+(Note that some trials use 1.1 vs 4.3 mW/mm 2 and some have opposite scanning directions). 458 nm photostimulation resulted in a mix of constrictions and dilations with 44.1% of significantly responding vessels within 10 μm of a labelled pyramidal neuron constricting and 55.1% dilating, while 53.3% of vessels further than 30 μm constricted and 46.7% dilated.
+
+The cutoff distances from the closest labeled neuron were based on estimates of cerebral metabolic rate of oxygen consumption that showed a steep gradient in oxygen consumption with distance from arteries, CMRO2 being halved by 30 μm away ( Mächler et al., 2022 ).
+
+The stronger blue light stimulation led to an increased rate of constrictions, double that of the low-powered blue light stimulation.
+
+For larger vessels, both 458 nm stimulation powers led to a similar dilation level that diminished with increasing distance from labeled pyramidal neurons.
+
+This tendency for vessels close to neurons to dilate and further away ones to constrict would be expected in flow redirection into regions of high level of neuronal activity.
+
+Stimulation power dependence in blood flow changes has previously been reported in optogenetic mouse models with diffuse stimulation via LED probes, and following transcranial alternating current stimulation ( Lee et al., 2021 ; Turner et al., 2021 ).
+
+However, neither of the previously employed methods was able to discern the spatial relationship between the vascular caliber changes, or relate these changes to the distribution of the stimulated neurons.
+
+As the blue light stimulation power increased, the mean depth of both constricting and dilating vessels increased, likely resulting from higher intensity light reaching pyramidal neurons deeper in the tissue ( Johnson et al., 2021 ; Al Juboori et al., 2013 ).
+
+The blue light would be expected to excite a lower number of neurons farther from the cortical surface at lower powers.
+
+Our results underscore that the hemodynamic response following targeted neuronal activation is not uniformly distributed across the microvascular network: accurate neurovascular coupling assessment thus requires network-based analysis.
+
+Vascular network reactivity To study the microvascular network response as a whole, we examined the assortativity between capillary radius changes and network efficiency changes following optogenetic stimulation.
+
+These two graph theory metrics were selected as they both leverage the knowledge of the vascular network structure.
+
+Assortativity sheds light on how the vascular network coordinates its responses, while efficiency provides insight into the extent to which those changes facilitate flow through the network.
+
+The assortativity revealed that as the stimulation power increased, the tendency of vessels to match their changes to those of their neighbors increased.
+
+Previously characterized assortative mechanisms include endothelial cell cation conduction via Kir2.1 channels to synchronize vascular responses ( Dabertrand et al., 2021 ), and spatial adjacency of pericytes on in vitro retinal preparation leading to assortative changes in neighboring capillaries ( Kovacs-Oller et al., 2020 ).
+
+Disassortative (causing opposite changes) mechanisms of capillary coordination have also previously been observed in situ and may result from intercapillary nanotubules’ signaling causing connected pericytes to undergo opposing changes ( Alarcon-Martinez et al., 2020 ).
+
+While not ruling out the presence of disassortative control mechanisms, our results suggest that assortative mechanisms dominate capillary responses to neuronal activation in the somatosensory cortex.
+
+The network efficiency here can be thought of as paralleling mean transit time, i.e., the time it takes blood to traverse the capillary network from the arteries to the veins.
+
+In situ studies of mean transit time have revealed a high heterogeneity of plasma traversal of the capillary bed during stimulation, with stimulation reducing plasma transit times by 11% to 20% from its resting levels ( Stefanovic et al., 2008 ; Gutiérrez-Jiménez et al., 2016 ), and simulations suggesting that capillary network geometry and locations of caliber changes exert a substantial influence on these responses ( Lücker et al., 2018 ).
+
+The efficiency of the vascular network here increased significantly only with the strongest 458 nm stimulation.
+
+Small dilatations may thus not increase flow in the cortex.
+
+The differences in efficiency are likely due to the patterns of localized dilations and constrictions within the vascular network.
+
+Efficiency calculations are sensitive to bottlenecks when traversing meshes and certain locations constricting or dilating can have profound impacts on the shortest paths between nodes and the path’s resistivity.
+
+The highest-powered 458 nm stimulation increasing efficiency may have resulted from increased assortativity causing dilation in key locations within the microvascular network, leading to a significant reduction in shortest path resistivity.
+
+Comparison with commercial and open-source vascular analysis pipelines To compare our results with those achievable on these data with other pipelines for segmentation and graph network extraction, we compared segmentation results qualitatively with Imaris version 9.2.1 (Bitplane) and vascular graph extraction with VesselVio ( Bumgarner and Nelson, 2022 ).
+
+For the Imaris comparison, three small volumes were annotated by hand to label vessels.
+
+Example slices of the segmentation results are shown in Appendix 1—figure 10 .⟦>zach claim=gap: @{Example slices of the segmentation results are shown in Appendix 1—figure 10 .}⟧
+
+Imaris tended to either over- or under-segment vessels, disregard fine details of the vascular boundaries, and produce jagged edges in the vascular segmentation masks.
+
+In addition to these issues with segmentation mask quality, manual segmentation of a single volume took days for a rater to annotate.
+
+To compare to VesselVio, binary segmentation masks (one before and one after photostimulation) generated with our deep learning models were loaded into VesselVio for graph extraction, as VesselVio does not have its own method for generating segmentation masks.
+
+This also facilitates a direct comparison of the benefits of our graph extraction pipeline to VesselVio.
+
+Visualizations of the two graphs are shown in Appendix 1—figure 11 .⟦>zach claim=gap: @{Visualizations of the two graphs are shown in Appendix 1—figure 11 .}⟧
+
+Vesselvio produced many hairs at both time points, and the total number of segments varied considerably between the two sequential stacks: while the baseline scan resulted in 546 vessel segments, the second scan had 642 vessel segments.
+
+These discrepancies are difficult to resolve in post-processing and preclude a direct comparison of individual vessel segments across time.
+
+As the segmentation masks we used in graph extraction derive from the union of multiple time points, we could better trace the vasculature and identify more connections in our extracted graph.
+
+Furthermore, VesselVio relies on the distance transform of the user-supplied segmentation mask to estimate vascular radii; consequently, these estimates are highly susceptible to variations in the input segmentation masks.
+
+We repeatedly saw slight variations between boundary placements of all of the models we utilized (ilastik, UNet, and UNETR) and those produced by raters.
+
+Our pipeline mitigates this segmentation method bias by using intensity gradient-based boundary detection from centerlines in the image (as opposed to using the distance transform of the segmentation mask, as in VesselVio).
+
+Pipeline limitations and adaptability The segmentation model was trained only on vascular and neuronal labels, limiting its generalizability to segmenting alternative cells in the current state.
+
+However, it can easily be fine-tuned or retrained to label other brain cells (e.g. pericytes, astrocytes, or endothelial cells).
+
+Our vascular segmentation model generalized well to C57BL/6J mouse and Fischer rat data, as well as to Thy1-ChR2 light-sheet fluorescence microscopy images gathered on an UltraMicroscope Blaze lightsheet fluorescence microscope (Miltenyi Biotech) ( Appendix 1—figures 12 and 13 and Supplementary file 3, table 3 ).⟦>zach claim=gap: @{Our vascular segmentation model generalized well to C57BL/6J mouse and Fischer rat data, as well as to Thy1-ChR2 light-sheet fluorescence microscopy images gathered on an UltraMicroscope Blaze lightsheet fluorescence microscope (Miltenyi Biotech) ( Appendix 1—figures 12 and 13 and Supplementary file 3, table 3 ).}⟧
+
+However, the segmentation model performed poorly when significant bleeding occurred in the cranial window, compromising the vascular contrast.
+
+Our imaging protocol, in turn, was challenged by the desire to resolve individual vessel responses yet capture the entire network within the span of the microvascular response to stimulation: we prioritized network assessment and thereby compromised our temporal sampling (every 42 s), so that our ensuing classification of vessels as dilators or constrictors was based on their caliber at this, rather delayed timepoint.
+
+Accordingly, we are unable to comment on finer temporal scale network behavior or the kinetics of the microvascular network response; but the present analysis pipeline can readily be applied to 2PFM data obtained with finer temporal (e.g. via a Piezo objective positioner) or spatial resolution, and/or different size fields of view.
+
+The temporal evolution of the response in individual vessels, however, has been reported on using line scanning acquisitions to measure red blood cell velocity and flux and in some cases vessels ( Hartmann et al., 2021 ; Adams et al., 2018 ; O’Herron et al., 2022 ; Mester et al., 2019 ; Kleinfeld et al., 1998 ; Stefanovic et al., 2008 ).
+
+It is worth noting that the cases where vascular responses are drawn out following optogenetic stimulation use raster scanning over small regions of interest, and that optogenetic stimulations utilizing fiber optic probes shining light over large areas led to fast vascular responses.
+
+Our study utilized raster scanning over small regions of interest.
+
+Nevertheless, long-drawn-out vascular responses following optogenetic stimulation remain controversial and still need further study at higher temporal sampling, which our pipeline can readily adapt to, to be demonstrated conclusively.
+
+Additionally, alternative definitions of responding vessels may be useful depending on the end goal of a study (e.g. selecting a threshold for the radius change based on a percentage change from the baseline level: Appendix 1—figure 14 for capillary changes above 10% of the baseline radius).⟦>zach claim=gap: @{Additionally, alternative definitions of responding vessels may be useful depending on the end goal of a study (e.g. selecting a threshold for the radius change based on a percentage change from the baseline level: Appendix 1—figure 14 for capillary changes above 10% of the baseline radius).}⟧
+
+Finally, microvascular networks in different brain areas may show distinct spatiotemporal profiles of response to neuronal activation.
+
+Future work is required to test the generalizability of present findings across different brain regions.
+
+Conclusion We developed a novel deep learning-based computational pipeline for analysis of a time series of 3D 2PFM images and investigation of spatial patterns in microvascular network reactivity to neuronal activation.
+
+The microvascular network was represented as a graph, allowing for the evaluation of network geometry changes over time.
+
+We tracked the size of blood vessels throughout the network and related vessel radius changes to the distance from the stimulated neurons and the cortical depth.
+
+Neuronal activation induced both dilatations and constrictions of capillaries, and the magnitude of these responses increased with increased photostimulation levels while showing significant heterogeneity within and between vessels.
+
+In the analysis presented, vertex-wise measurements were aggregated for vessel-wise analysis, resulting in highly robust estimates of vessels’ calibers and allowing ready comparisons to literature.
+
+Notwithstanding, the pipeline also affords vertex-wise analysis and thus registration of microvascular reactivity with other local morphological features, at an unprecedented spatial scale.
+
+With increasing distance of the vessel from the most proximal activated neuron, dilatation magnitude decreased and the incidence of constrictions increased.
+
+At the highest stimulation level investigated, the incidence of vessel constrictions also increased with cortical depth.
+
+With increasing activation levels, capillaries displayed diameter changes that were similar to their immediate neighbors, while vascular network efficiency increased only under the strongest stimulation.
+
+Our computational analysis pipeline permits probing microvascular network reactivity and sheds light on the heterogeneity and coordination of vessel caliber changes across the microvascular network.
+
+The pipeline will be made available to the research community to propel future studies of neurovascular coupling and network reactivity.
 
 
 ## captions

@@ -20,6 +20,39 @@ Receptor binding simulations show that D1 receptor occupancy follows extracellul
 Summarised, our model distills recent experimental observations into a computational framework that challenges prevailing paradigms of striatal DA signalling.
 
 
+## introduction
+
+Introduction Striatal dopamine (DA) release is essential for regulating reward-related learning, incentive motivation, and motor function ( Berke, 2018 ; Klaus et al., 2019 ).
+
+DA exerts these roles over a broad range of time scales, yet DA primarily operates as a volume transmitter that targets metabotropic receptors located within a micrometre range from the sites of release ( Agnati et al., 1995 ; Borroto-Escuela et al., 2018 ; Cragg and Rice, 2004 ; Gonon et al., 2000 ; Sulzer et al., 2016 ).
+
+The temporal and spatial dynamics of DA release in the striatum, however, remain a highly contested topic.
+
+Classically, DA release has been divided into tonic release, driven by pacemaker-like spontaneous firing, and phasic release from coordinated bursts of firing across neurons ( Niv et al., 2007 ; Schultz, 2007 ; Sulzer et al., 2016 ).
+
+However, this sharp distinction in release modes, as well as the existence of a basal DA level, has recently been challenged ( Berke, 2018 ; Ejdrup et al., 2023 ; Jørgensen et al., 2023 ; Liu et al., 2021 ; Sippy and Tritsch, 2023 ).
+
+The picture is further complicated by major regional differences across striatal subdomains.
+
+These include differences in Ca 2+ -channel and nicotinic acetylcholine receptor (nAChR) expression profiles on DA terminals, as well as differential regulation and expression of the DA transporter (DAT; Brown et al., 2011 ; Cardozo and Bean, 1995 ; Kearney et al., 2023 ; Richards and Zahniser, 2009 ; Threlfell et al., 2010 ).
+
+In addition, we and others have found remarkable differences in extracellular DA release dynamics between the dorsal (DS) and ventral striatum (VS; Jørgensen et al., 2023 ; Mohebi et al., 2024 ; Salinas et al., 2023 ).
+
+Fibre photometry recordings in the DS in mice using the DA sensor dLight1.3b during self-paced exploratory activity showed a rapidly fluctuating signal, whereas we observed up to minutes-long DA dynamics in VS that correlated with behavioural output ( Jørgensen et al., 2023 ).
+
+Concurrent measurements of extracellular DA by microdialysis and fibre photometry have furthermore corroborated the lack of tonic levels of DA in DS while supporting its presence in VS ( Ejdrup et al., 2023 ; Jørgensen et al., 2023 ).
+
+Despite these reported differences in striatal DA dynamics, electrophysiological recordings suggest that DA neurons from the primary innervators of DS, substantia nigra par compacta (SNc) and VS, ventral tegmental area (VTA), have remarkably similar firing patterns at rest ( Dodson et al., 2016 ).
+
+We therefore set out to better understand the fundamental principles governing extracellular DA dynamics by constructing a new computational model of the striatal DA system.
+
+Extracellular DA dynamics have been modelled before; either one-dimensionally or with a primary focus on single release events or post-synaptic receptor binding ( Beyene et al., 2017 ; Dreyer et al., 2010 ; Dreyer and Hounsgaard, 2013 ; Dreyer et al., 2016 ; Venton et al., 2003 ; Wiencke et al., 2020 ).
+
+Here, we present a three-dimensional model of tens of thousands of release sites, focused on larger-scale signalling and based on experimentally observed biological parameters.
+
+The model faithfully replicates experimentally observed results as well as the difference in DA dynamics between DS and VS. Importantly, it offers compelling evidence that these differences do not primarily reflect different release phenomena but rather arise from differential expression and possibly nanoscale localisation of the DAT.
+
+
 ## results
 
 Results Construction of a model of DA dynamics in the striatum We constructed a novel model of DA release using experimentally determined parameters from DS, including release, uptake, and cytoarchitecture ( Doucet et al., 1986 ; Dreyer et al., 2010 ; Dreyer and Hounsgaard, 2013 ; Liu et al., 2021 ; Olson et al., 1972 ; Sulzer et al., 2016 ).
@@ -583,6 +616,115 @@ DA terminals were identified by vesicular monoamine transporter 2 (VMAT2) expres
 To quantify this, we applied the clustering algorithm Density-Based Spatial Clustering of Applications with Noise (DBSCAN) ( Figure 4L ).
 
 This confirmed a regional difference with more DAT localised clusters when using DBSCAN to identify clusters with scanning diameter of 80 nm in VS compared to DS ( Figure 4L and M ), and we observed a similar regional difference across the range of cluster sizes typically reported (20–200 nm; Figure 4N ; Lycas et al., 2022 ; Rahbek-Clemmensen et al., 2017 ) supporting the conclusion that DAT nanoclustering is more prevalent in VS than DS.
+
+
+## discussion
+
+Discussion We developed a three-dimensional, finite-difference computational model to investigate spatiotemporal DA dynamics of striatal subregions in detail.
+
+Leveraging prior experimental information on regional differences in dopaminergic innervation density and DAT uptake capacity, our model predicts important differences in dopaminergic dynamics between DS and VS. Strikingly, our simulations suggest that large areas of the DS are effectively devoid of a basal level of DA at pacemaker activity, whereas VS maintain a more homogenous tonic-like basal DA concentration with only small changes in uptake activity powerfully regulating the extracellular DA tone.
+
+Furthermore, we modelled receptor binding kinetics and found that D1R binding faithfully followed recently described rapid DA dynamics of the striatum ( Ejdrup et al., 2023 ; Jørgensen et al., 2023 ; Markowitz et al., 2023 ), while D2R, with an off-rate of ~5 s, appeared better suited for detecting background tone and integrating prolonged activity ( Howe et al., 2013 ; Jørgensen et al., 2023 ).
+
+Collectively, these observations have important implications for our understanding of striatal function in behaviour, including decoding of inputs from the prefrontal cortex (PFC) and limbic system as well as the influential phasic-tonic model of dopaminergic signalling ( Grace et al., 2007 ; Niv et al., 2007 ; Schultz, 2007 ).
+
+It has been assumed for long that there are tonic levels of DA in the striatum ( Niv et al., 2007 ; Schultz, 2007 ; Sulzer et al., 2016 ), although the phenomenon has no clear definition ( Berke, 2018 ).
+
+Our simulation of DA dynamics in DS during pacemaker activity showed no evidence for a homogenous extracellular distribution.
+
+Rather, elevated [DA] was transiently present around release sites during pacemaker activity, with the remaining space mostly depleted of DA.
+
+The absence of a general tonic DA level in DS predicted by our model directly supports the notion that DA release sites in DS establish distinct and only partially overlapping DA domains rather than diffuse, tonic DA levels (see Liu et al., 2021 ).
+
+This conclusion aligns with recent data where we found that DA concentrations measured by microdialysis correlate with the average of rapid activity recorded with fibre photometry rather than a baseline DA tone ( Ejdrup et al., 2023 ).
+
+Earlier modelling work by Wickens and colleagues predicted pacemaker activity would generate a tonic, uniform concentration ( Arbuthnott and Wickens, 2007 ).
+
+But our modelling suggested this is prevented by the significant DA uptake capacity of the DS, as measured by more recent reuptake studies (see Appendix 2—table 2 ).⟦>zach claim=gap: @{But our modelling suggested this is prevented by the significant DA uptake capacity of the DS, as measured by more recent reuptake studies (see Appendix 2—table 2 ).}⟧
+
+In contrast to the DS, our model predicted VS to hold a considerable basal level of DA even in spaces without an immediately adjacent release site.
+
+This is conceivably what most refer to as tonic DA.
+
+In this study, we quantified tonic DA as the median concentration of the entire space (50 th percentile), which appeared significantly higher in VS than DS because of the lower VS uptake capacity.
+
+Importantly, this matches the results of our direct in vivo comparison of DS and VS in freely moving mice ( Jørgensen et al., 2023 ), as well as supporting a spatial gradient of time horizons in the striatum previously predicted in a separate work by Wickens et al., 2007 and measured in vivo by Mohebi et al., 2024 .
+
+To challenge our model predictions, we performed our simulations across a wide range of parameters.
+
+Only changes to V max for uptake generated differential responses in the two regions.
+
+With release and uptake parameters at values from the literature, VS was at a critical point where minor changes to uptake significantly impacted the tonic levels without any major effect on peak concentrations.
+
+Contrary to our observations, some previous microdialysis experiments have suggested higher basal DA levels in the DS compared to VS ( Kuczenski and Segal, 1992 ; Shen et al., 2004 ) and have reported two to four times higher [DA] in DS compared to VS ( Kuczenski and Segal, 1992 ; Shen et al., 2004 ).
+
+However, there are disparate observations in the literature (e.g. Carboni et al., 2001 reported 20% higher [DA] in VS Carboni et al., 2001 ).
+
+Moreover, it is important to note that regional comparisons in microdialysis might be confounded by the considerably higher uptake rate in DS.
+
+This will increase the extraction fraction and possibly lead to a significant overestimation of the extracellular concentration as compared to a region with lower uptake rate, such as the VS ( Chefer et al., 2009 ).
+
+Our three-dimensional simulations highlight DAT-mediated reuptake as a key mechanism governing striatal DA dynamics and as a key mediator of regional-specific DA dynamics.
+
+A physiologically relevant way to regulate uptake capacity is moving DAT to and from the plasma membrane.
+
+Indeed, DAT is subject to such regulation and some of these mechanisms may even be exclusive to the ventral region, including protein kinase C-induced DAT internalisation and Vav2 regulation of DAT surface expression ( Fagan et al., 2020 ; Zhu et al., 2015 ).
+
+Chemogenetic G q -coupled DREADD activation of DA neurons also results in differential DAT trafficking in the two regions ( Fagan et al., 2020 ; Kearney et al., 2023 ).
+
+The findings position DAT regulation as an excellent candidate for changing tonic DA levels in VS, which has been proposed to selectively attenuate afferent drive from the PFC through D2R activation ( Grace et al., 2007 ).
+
+Recent studies of D2R-expressing spiny projection neurons (SPNs) in the VS also suggest that the receptor is not fully saturated under basal firing ( Lee et al., 2020 ), matching both our simulations of receptor binding and the notion that tonic DA can be manipulated to alter D2R activation.
+
+If changing uptake capacity is to have a behavioural relevance on a fast timescale, a mechanism to regulate DAT function faster than internalisation must exist.
+
+Importantly, the transporter does not only move to and from the surface, but also laterally in the plasma membrane.
+
+We have reported that DAT forms nanoclusters in the plasma membrane that dynamically reshape based on excitatory and inhibitory input ( Lycas et al., 2022 ; Rahbek-Clemmensen et al., 2017 ).
+
+Moreover, we have previously shown that cocaine, which both competitively inhibits DAT and reorganises the transporter nanodomains ( Lycas et al., 2022 ), changes the DA signal of the DS to dynamics akin to the VS ( Jørgensen et al., 2023 ).
+
+Importantly, our simulations showed that nanoclustering may be an effective way to sequester DAT in a dense domain where uptake overpowers diffusion and, as a result, brings down effective uptake speed through local DA depletion.
+
+This is in line with evidence that these DAT nanoclusters are enriched in phosphatidylinositol-4,5-bisphosphate (PIP2), and that metabolism of PIP2 decreases uptake rate of DAT ( Lycas et al., 2022 ; Carvelli et al., 2002 ).
+
+We also found that the nanoclustering phenomenon was considerably more prevalent in VS than in DS.
+
+Taken together, these data point to DAT nanoclustering as a way to shape both the spatiotemporal profile of DA release as well as the tonic levels of DA in the striatum – particularly in the VS. Our incorporation of receptor binding was inspired by important previous modelling work ( Dreyer et al., 2010 ; Dreyer and Hounsgaard, 2013 ; Hunger et al., 2020 ).
+
+However, earlier models by Dreyer & colleagues assumed instantaneous equilibrium between extracellular DA and receptor occupation, which disregards differences in kinetics of the DA receptors that greatly impact transmission dynamics.
+
+While later work by Hunger and colleagues introduced more complex receptor modelling, they based their kinetics parameters on early pharmacological studies, whose values likely would prevent DA receptors from decoding signal below the order of minutes ( Burt et al., 1976 ; Maeno, 1982 ; Nishikori et al., 1980 ; Sano et al., 1979 ).
+
+Instead, we based our receptor kinetics on newer pharmacological experiments in live cells ( Ågren et al., 2021 ) and properties of the recently developed DA receptor-based biosensors ( Labouesse and Patriarchi, 2021 ), whose receptor values match well despite different methodological approaches.
+
+The biosensors are mutated receptors whose kinetics may not be identical to the endogenous receptors, but only the intracellular domains are altered, with no apparent changes of the binding site ( Labouesse and Patriarchi, 2021 ).
+
+Indeed, these biosensors exhibit kinetics that are well aligned with both modelled and experimentally reported extracellular DA dynamics using non-biosensor-based methods ( Atcherley et al., 2015 ; Gonon et al., 2000 ; Venton et al., 2002 ).
+
+We believe accordingly that our updated parameters are more accurate portrayals of in vivo conditions; however, as shown throughout the study, the affinity values greatly affect the results.
+
+Therefore, we find it important that our model will be available to the research community, allowing others to test their own estimates of receptor kinetics and assess their impact on the model’s behaviour.
+
+The presented simulations suggested that receptor binding was largely invariant to single release events during pacemaker activity, while bursts of activity rapidly changed occupancy.
+
+Both D1R and D2R immediately responded to burst onset; however, while D1R occupancy rapidly declined to zero within approximately 50 ms, the slow D2R kinetics resulted in an occupancy decline over ~5 s, returning to the baseline maintained by tonic firing.
+
+This means that D1R is better suited to discriminate inputs in rapid succession and allow for postsynaptic decoding of the fast-paced in vivo dynamics described particularly for DS ( Ejdrup et al., 2023 ; Jørgensen et al., 2023 ; Markowitz et al., 2023 ).
+
+By contrast, our analysis shows that D2Rs integrate DA signals over several seconds.
+
+As D1R occupancy is negligible during pacemaker activity and D2R kinetics are too slow to pick up rapid changes in DA concentration, our simulations moreover suggest pauses in firing of less than 1 s are not an effective way of signalling for the striatal dopaminergic system.
+
+Notably, this finding was apparent even when the D2 affinity was increased an order of magnitude.
+
+This challenges the effectiveness of proposed negative reward prediction errors, as even a long pause in firing would have a limited effect on D2 receptor occupation and downstream signalling.
+
+This may explain why DA drops during reward omissions are not nearly as prominent as positive signals ( Farrell et al., 2022 ; Greenstreet et al., 2025 ).
+
+In conclusion, we have developed a three-dimensional model for DA release dynamics and receptor binding that integrates a wealth of experimentally determined parameters and generates responses to electrical and pharmacological input that fits robustly with literature observations.
+
+The model offers an important theoretical framework and a predictive tool that can serve as the basis for future experimental endeavours and help guide the interpretation of new as well as older empirical findings on DA signalling dynamics under both physiological conditions and in disease.
 
 
 ## captions

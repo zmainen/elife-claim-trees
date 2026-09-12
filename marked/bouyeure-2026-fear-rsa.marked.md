@@ -28,6 +28,149 @@ Furthermore, additional exploratory analyses showed that the degree of this cont
 Our findings reveal that the brain uses a flexible combination of generalized and specific representations to adapt to a changing world, shedding new light on the mechanisms that support cognitive flexibility and the treatment of anxiety disorders via exposure therapy.
 
 
+## introduction
+
+Introduction Fear acquisition describes the process by which a previously neutral cue, the conditioned stimulus (CS), becomes associated with an aversive, unconditioned stimulus (US), and eventually comes to evoke fear on its own.
+
+It is typically a rapid and robust process that may create long-lasting fear memories that can persist after the threats have passed.
+
+This persistence can be evolutionarily advantageous, since it may be adaptive to respond to a false alarm rather than miss a potential threat.
+
+However, failing to suppress a fear response in the absence of actual danger can be maladaptive and has been proposed as a key etiological factor in conditions, such as anxiety disorders and post-traumatic stress disorder ( Milad and Quirk, 2012 ).
+
+While fear acquisition is rapid and robust, the suppression of fear responses in the absence of the US – i.e., fear extinction – is strongly context-dependent and more flexible ( Maren et al., 2013 ; Milad and Quirk, 2012 ; Liu et al., 2024 ).
+
+This is demonstrated by the phenomena of spontaneous recovery, renewal, and reinstatement, all of which show that the original fear memory can resurface under certain conditions ( Bouton, 2002 ).
+
+Specifically, fear renewal reflects a return of fear responses after a change in context, showing that extinction does not erase the original fear memory trace but inhibits it selectively within the extinction context ( Greco and Liberzon, 2016 ).
+
+Learning and extinction do not occur only in relation to fear but also during reinforcement learning and reversal, reflecting sensitivity to contingency changes more generally ( Schiller et al., 2008 ; Wisniewski et al., 2023 ).
+
+In these cases, the context dependency of extinction may support cognitive flexibility since appropriate actions can be selected according to situational demands ( Schiller and Delgado, 2010 ; Chaby et al., 2019 ; Xin et al., 2024 ).
+
+Contrastingly, the context specificity of extinction learning may be detrimental during treatments of anxiety disorders if therapy-induced fear reductions do not generalize beyond the therapeutic setting ( Maren et al., 2013 ).
+
+Much of our fundamental understanding of the formation of fear memory traces and their suppression during extinction learning has been derived from optogenetic studies in rodents, which describe the formation and modification of fear engrams with valence and context representations in the amygdala and hippocampus, respectively ( Liu et al., 2015 ; Josselyn et al., 2015 ; Redondo et al., 2014 ).
+
+These studies further show that extinction learning depends on plasticity of hippocampal context representations ( Redondo et al., 2014 ) as well as on prefrontal cortex engrams ( Ramanathan et al., 2018 ; Gu et al., 2022 ; Lissek and Tegenthoff, 2024 ).
+
+In humans, neuroimaging studies have reported activation of a canonical ‘fear network’ during acquisition (with prominent roles of the dorsal anterior cingulate cortex and insula, and a more inconsistent role of the amygdala; Fullana et al., 2016 ), and recruitment of the hippocampus and ventromedial prefrontal cortex during extinction ( Fullana et al., 2016 ; Maren et al., 2013 ).
+
+Taken together, these findings putatively reflect context dependency and safety learning, respectively ( Maren et al., 2013 ).
+
+Indeed, meta-analyses have shown that despite some moderate overlap, the brain regions involved in extinction learning differ substantially from those involved in fear acquisition ( Maren et al., 2013 ).
+
+Moreover, reversal – involving a change in contingencies rather than the mere absence of a US – particularly engages regions involved in prediction error detection and cognitive flexibility, such as the dorsomedial and lateral prefrontal cortex ( Wisniewski et al., 2023 ; Xin et al., 2024 ).
+
+This points towards the inhibition of previously threatening stimuli via executive control during reversal, a process not typically observed in standard extinction paradigms.
+
+While mass-univariate functional magnetic resonance imaging (fMRI) activation studies have been instrumental in identifying the brain regions involved in fear learning and extinction, they are insensitive to the patterns of neural activity that underlie the stimulus-specific representations of threat cues and contexts.
+
+Contrastingly, multivariate pattern analysis methods, such as representational similarity analysis (RSA; Kriegeskorte et al., 2008 ), have emerged as a powerful tool to investigate the content and structure of these representations (e.g. Hennings et al., 2022 ).
+
+This approach allows us to characterize the ‘representational geometry’ of a set of items – i.e., the structure of similarities and dissimilarities between their associated neural activity patterns.
+
+This geometry reveals how the brain organizes information, for instance, by clustering items that are conceptually similar while separating those that are distinct.
+
+This method has provided important novel insights into the representational signatures that support the formation, stabilization, and possible subsequent refinement and modification of memory traces ( Rissman and Wagner, 2012 ; Heinen et al., 2024 ).
+
+This has informed our understanding of the basic mechanisms of learning and memory, while also contributing to more mechanistic theories of memory distortions in mental disorders.
+
+For example, Visser et al., 2011 ; Visser et al., 2013 demonstrated that trial-by-trial similarities of blood oxygen level-dependent (BOLD) patterns increase during associative learning in regions of the fear network, such as the anterior cingulate cortex (ACC), ventromedial prefrontal cortex (vmPFC), or superior frontal cortex.
+
+Similar representational signatures of ‘cue generalization’ – i.e., increasing levels of similarity among the memory traces of different items associated with the same valence – were observed in the amygdala related to memories of a stressful episode ( Bierbrauer et al., 2021 ), as well as in sensory regions and areas of the salience network for aversive trauma-analogue stimuli ( Kobelt et al., 2024 ).
+
+Furthermore, RSA can be used to study how specific neural patterns are reactivated during memory, a mechanism also referred to as ‘encoding-retrieval similarity’ (e.g. Kobelt et al., 2024 ).
+
+For example, Hennings et al., 2022 observed a selective reactivation of fear versus extinction memories in the medial PFC and hippocampus depending on encoding context.
+
+Furthermore, we can measure the consistency of a neural pattern for a given item across multiple presentations.
+
+This metric, which we refer to as ‘item stability,’ quantifies how consistently a specific stimulus (e.g. the image of a kettle) is represented in the brain across multiple repetitions of the same item.
+
+Notably, higher item stability has been linked to successful episodic memory encoding ( Xue, 2018 ; Xue et al., 2010 ).
+
+Finally, the difference between item stability and item generalization, commonly referred to as ‘specificity’ ( Xue et al., 2010 ; Xue et al., 2013 ; Zheng et al., 2018 ; Sommer et al., 2022 ), quantifies the amount of item-specific information in a representation.
+
+This representational property could be particularly fruitful as a means to study the influence of fear reversal or extinction on context representations, which, despite some notable exceptions (e.g. Hennings et al., 2020 ), have been less systematically investigated than cue representations across different learning stages.
+
+Here, we aimed to systematically investigate how the neural representations of cues and contexts change across different phases of learning.
+
+The phases include acquisition, reversal, and two consecutive test phases with new contexts and previous contexts, respectively, in which all cues are extinguished.
+
+We presented the CS cues in each phase in multiple different contexts that changed between phases, which allowed us to study the role of context specificity by comparing the similarity between same vs. different contexts in each phase (see Figure 1 ).⟦>zach claim=d903f2eb-e683-43c7-8feb-1bc1ee72597b: @{We presented the CS cues in each phase in multiple different contexts that changed between phases, which allowed us to study the role of context specificity by comparing the similarity between same vs. different contexts in each phase (see Figure 1 ).} trace-conditioning-hippocampus-engaged⟧
+
+For clarity, we use the term ‘test’ interchangeably with ‘test phase’ throughout the manuscript.
+
+Figure 1. Overview of the paradigm and analysis approach.⟦>zach claim=d903f2eb-e683-43c7-8feb-1bc1ee72597b: @{Figure 1. Overview of the paradigm and analysis approach.} trace-conditioning-hippocampus-engaged⟧
+
+(A) Example structure of a trial.⟦>zach claim=gap: @{(A) Example structure of a trial.}⟧
+
+Each trial comprises the presentation of a context video, cue, and unconditioned stimulus (US) expectancy rating.
+
+Electric shocks (US) are administered in reinforced trials during acquisition (following CS++ and CS+- cues) and reversal (following CS++ and CS-+ cues), with reinforcement rates of 50%.
+
+( B ) Paradigm structure with four different experimental phases (rows) and four different cue types (columns).⟦>zach claim=gap: @{( B ) Paradigm structure with four different experimental phases (rows) and four different cue types (columns).}⟧
+
+Each cue type consists of two possible items.
+
+( C ) Conditioned stimulus (CS) items (left) and context videos (right).⟦>zach claim=gap: @{( C ) Conditioned stimulus (CS) items (left) and context videos (right).}⟧
+
+Each color indicates a set of four thematically related context videos.
+
+Different sets are used across phases (see Table in B).
+
+( D ) Representational Similarity Matrices (RSMs) for each experimental phase, shown here from the dorsal anterior cingulate cortex (ACC) for illustrative purposes.⟦>zach claim=gap: @{( D ) Representational Similarity Matrices (RSMs) for each experimental phase, shown here from the dorsal anterior cingulate cortex (ACC) for illustrative purposes.}⟧
+
+Lightning images represent reinforced cue types in the different learning phases.
+
+Representations of threatening cues are more similar to each other (warmer colors), reflecting cue generalization.
+
+( E ) Top: Cue generalization mask for the representational similarity analysis (RSA) matrices estimated within each searchlight.⟦>zach claim=gap: @{( E ) Top: Cue generalization mask for the representational similarity analysis (RSA) matrices estimated within each searchlight.}⟧
+
+The mask is superimposed on the RSMs (shown in C ) to compute the average similarity between the different cues of each CS type (different colors).
+
+Average cue generalization values are then compared between CS types.
+
+Bottom: Item stability mask estimated within each searchlight.
+
+The mask is superimposed on the RSMs to compute the average similarity across trials of each cue, separately for each CS type (different colors).
+
+Average item stability values are then compared between CS types.
+
+We hypothesized that the representational geometry of CS cues changes across learning phases, reflecting the inhibition of fear memories during reversal, as well as the formation of novel memories of cues with updated contingencies.
+
+More specifically, we expected cue generalization effects in regions of the fear network, item stability in areas related to episodic memory, and context-specific representations in the hippocampus and PFC.
+
+Finally, we hypothesized that increased context specificity during reversal would influence the reinstatement of fear memory traces during the test phases.
+
+To test our hypotheses regarding the representational geometry of threat and safety, we used a multi-day fMRI paradigm that dissociates cue-specific learning from contextual modulation.
+
+The task was presented through a narrative (‘Nina the Unlucky Backpacker’) to provide an ecologically valid framework for fear acquisition and reversal.
+
+We employed a trace conditioning design, using a temporal gap between stimulus and reinforcement to specifically engage hippocampus-dependent memory systems.
+
+In each trial, participants viewed a Context (2 s video of a natural scene) followed by a CS (1 s image of a household appliance) embedded within that scene.
+
+Throughout the task, participants provided real-time US expectancy ratings, allowing us to correlate neural representational changes with behavioral indices of learning.
+
+The experiment was divided into four phases across two days to capture the evolution of memory traces (see Figure 1 for a detailed schema).⟦>zach claim=d903f2eb-e683-43c7-8feb-1bc1ee72597b: @{The experiment was divided into four phases across two days to capture the evolution of memory traces (see Figure 1 for a detailed schema).} trace-conditioning-hippocampus-engaged⟧
+
+Day 1 (Acquisition and Reversal): We first established fear associations (Acquisition) and subsequently altered them (Reversal).
+
+This created four distinct functional cue types: stable threat (CS++), extinguished threat (CS+-), newly acquired threat (CS-+), and stable safety (CS--).
+
+Day 2 (Test phases).
+
+To assess the context-dependency of these memories, we conducted two test phases under extinction (no US delivery): In the ‘Test new ’ phase, CS cues were presented in novel natural scenes; in the ‘Test old ’ phase, cues were returned to their original acquisition or reversal contexts, while the US remained absent.
+
+By presenting each CS across multiple different contexts and repetitions within each phase, we were able to apply RSA methods to quantify item stability (consistency of a cue’s representation across repetition), cue generalization (similarity between cues of the same valence), and context specificity (the difference between context stability and context generalization, quantifying the amount of context-specific information for each phase).
+
+The following Results section details how these representational metrics evolved as Nina (and the participants) learned to navigate changing threats across different environments.
+
+For a full description of the stimulus sets, counterbalancing procedures, and the statistical procedures, please refer to the Methods section at the end of the manuscript.
+
+
 ## results
 
 Results Behavioral results We first examined the trial-wise US expectancy ratings across experimental phases.
@@ -255,6 +398,145 @@ Together, these results indicate more specific context representations during re
 They suggest a possible mechanism for the previously observed impact of extinction contexts on fear renewal, because higher levels of context specificity during reversal favored the reinstatement of threat memory traces in areas of the fear network (ACC and dmPFC; Figure 5Di left and Figure 5Dii ).
 
 These effects were not observed in the precuneus ( Figure 5Di right) and for reinstatement during new contexts ( Figure 5Diii ).
+
+
+## discussion
+
+Discussion The present study investigated the dynamic changes in neural representations of cues and contexts during acquisition, reversal, test in new contexts (test new ), and test in previous acquisition/reversal contexts (test old ).
+
+Our main findings demonstrate distinct representational properties of CS cues and contexts during these different phases, suggesting that representational geometries reflect the fate of memory traces.
+
+We found that (1) cue generalization and item stability play complementary roles during initial fear learning and reversal, by being associated with threatening-vs-safe cues and changing-vs-consistent cues, respectively; (2) during test new and test old , differences of cue generalization between CS types disappear, while some differences of item stability remain; (3) context representations become more specific following contingency changes during reversal learning, and (4) the context specificity during reversal predicts the reinstatement of fear memories during subsequent tests, providing a mechanistic basis for clinically relevant phenomena, such as renewal.
+
+These results offer new insights into the regional distributions, representational geometries, and functional relevance of cues and contexts across distinct stages of fear learning, opening new avenues of understanding fear-guided behavior.
+
+Complementary representational properties during initial fear learning Our results demonstrate how different representational properties of CS cues are associated with distinct aspects of fear learning: cue generalization with the threatening vs. safe nature of the CS, and item stability with the changing vs. consistent nature of the CS.
+
+Consistent with previous studies ( Visser et al., 2011 ; Visser et al., 2013 ), we found that cue generalization was greater for CS + than for CS- cues during fear acquisition in regions of the fear network (e.g. ACC) and salience network.
+
+This suggests that fear acquisition leads to the formation of a higher-order association between different reinforced cues, but less so between unreinforced ones.
+
+This category-level learning could allow for efficient threat detection and generalization — an adaptive behavior in potentially dangerous environments.
+
+Moreover, previous studies showed that the role of cue generalization in the coding of threat extends beyond fear conditioning, as shown by Dunsmoor et al., 2015 who found enhanced memory consolidation of items sharing conceptual similarity with threat-associated stimuli.
+
+In stark contrast, item stability of CS cues, i.e., their within-stimulus similarity across repetitions, did not differ between CS + and CS- cues during fear acquisition.
+
+This indicates that while acquisition induces a category-level representation for reinforced cues, it does not differentially modify the item-level representations of CS + compared to CS- cues.
+
+Contrastingly, item stability was particularly sensitive to changes in CS valence between experimental phases, suggesting that it plays a crucial role in tracking and updating the specific threat associations of individual stimuli.
+
+Indeed, in fear reversal, cue generalization remained greater for reinforced compared to unreinforced cues (CS--), mirroring the pattern observed during acquisition.
+
+However, item stability specifically increased for cues that changed valence between acquisition and reversal (CS-+ and CS+-).
+
+This finding suggests that when the contingencies change, the participants might focus more on the individual properties of cues to interpret the new contingencies, leading them to fine-tune their representations.
+
+Indeed, item stability has been linked to successful memory encoding and retrieval in several studies ( Xue et al., 2010 ; Zheng et al., 2018 ).
+
+Neural correlates of item stability have been reported in regions of the episodic memory network, such as the IFG and precuneus ( Xue et al., 2010 ), where we found a significant effect of item stability during reversal.
+
+Therefore, item stability might be more akin to an episodic-like type of learning, while cue generalization might be more reflective of category-level learning ( Visser et al., 2013 ).
+
+Furthermore, our use of a trace conditioning paradigm, which is known to engage the hippocampus more than delay conditioning does, may have facilitated the detection of item-specific, episodic-like memory traces and their interaction with context.
+
+This strengthens the relevance of our findings for understanding the interplay between aversive learning and the mechanisms of episodic memory.
+
+Previous findings by Visser et al., 2011 ; Visser et al., 2013 demonstrate distinct learning curves for item stability between CS + and CS- cues from trial to trial.
+
+This discrepancy could be caused by methodological differences, as our study focused on session-wise differences of item stability for each cue type and not on trial-by-trial differences.
+
+In line with our conclusions, however, Visser et al., 2013 found that item stability was increased for subsequently remembered cues, while cue generalization was associated with the later behavioral expression of fear memory.
+
+Overall, the increased item stability during reversal of the items that change contingency could reflect a process of stabilizing the new valence at the item level.
+
+This is because the change of contingency may lead to the temporary representation of individual items as ‘categories’ themselves, without being formed yet into generalized representations encompassing multiple different items sharing the same valence.
+
+This dual representational signature may allow for both efficient threat detection (via category representations) and flexible updating of individual stimulus associations (via item-specific representations).
+
+Dissolution of cue generalization and item stability in the absence of US During the test phases, we did not observe any differences in cue generalization between cue types.
+
+However, some differences in item stability remained during test new (higher for CS+- vs. CS ++in the MTG) and test old (higher for CS ++ vs. CS-- in the inferior temporal cortex) ( Figure 3C–D ).⟦>zach claim=500caa5d-b636-4776-98fe-422b618f8e02: @{However, some differences in item stability remained during test new (higher for CS+- vs. CS ++in the MTG) and test old (higher for CS ++ vs. CS-- in the inferior temporal cortex) ( Figure 3C–D ).} item-stability-persists-test-phases⟧
+
+These findings suggest that the disappearance of threat during the test phases may involve two concurrent processes: (1) An unlearning of generalized threat representations, evidenced by the absence of cue generalization differences during the test phases; and (2) a partial unlearning of item-level representations, particularly for cues with changing contingencies, reflected in diminished item stability.
+
+Interestingly, these effects occurred during the test phases rather than during reversal, suggesting that they are driven by the absence of the US rather than by the contingency change.
+
+During the reversal, the continued presence of the US, albeit with a different contingency, may still benefit from generalized representations at the item and category levels.
+
+Contrastingly, the complete absence of the US during the test phases may promote a differentiation of CS representations, as the need for generalization diminishes.
+
+This finding highlights the importance of the specific reinforcement history of cues on the dynamics of fear representations.
+
+Reinstatement of item representations during the test is weaker for fear extinction Our results showed a differentiation of fear memories during the test phases, both at the item and category level.
+
+Interestingly, representations from the first test phase were less reinstated during the second test phase (despite the fact that both test phases occurred during the second experimental day), compared with acquisition and reversal traces formed on the first experimental day ( Figure 4E ).⟦>zach claim=gap: @{Interestingly, representations from the first test phase were less reinstated during the second test phase (despite the fact that both test phases occurred during the second experimental day), compared with acquisition and reversal traces formed on the first experimental day ( Figure 4E ).}⟧
+
+This may be explained by the greater differentiation of cue representations during test new ; the more differentiated the representations, the less likely they are to be subsequently reinstated.
+
+The weaker reinstatement of memories from a phase without any US, compared to memories from acquisition and reversal phases with US, may contribute to the challenges of preventing relapse in anxiety disorders ( Vervliet et al., 2013 ).
+
+If extinction learning results in less stable and less generalizable safety representations, individuals may remain vulnerable to the return of fear once they return to previous contexts ( Boschen et al., 2009 ).
+
+Increased specificity of context representations following contingency changes Our analysis of context representations revealed an increased specificity of context encoding during reversal compared to initial acquisition.
+
+This suggests that the brain may allocate more resources to the representation of contextual details when contingencies are changing, by potentially facilitating the adaptive updating of contingencies against a more stable contextual backdrop.
+
+The dorsomedial PFC, including the superior frontal gyrus and ACC, have emerged from our analyses as key regions exhibiting higher context specificity in reversal learning.
+
+Given their roles in attentional control ( Dosenbach et al., 2007 ) and conflict monitoring ( Stevens et al., 2011 ), the dmPFC’s involvement may reflect increased attentional and control demands induced by changing contingencies.
+
+Computationally, the more precise contextual encoding in these regions during reversal could serve to disambiguate cues of changing contingencies, supporting the formation of new context-dependent associations ( Xu and Südhof, 2013 ).
+
+Our findings extend prior work on the importance of the hippocampus and mPFC in representing context during fear learning and extinction ( Maren et al., 2013 ), as these regions could dynamically adjust their representational specificity in response to a change in environmental demands.
+
+Context specificity is associated with reinstatement of fear memory traces The amount of reinstatement during the test old was related to the increase in context specificity from acquisition to reversal.
+
+We quantified this increase in specificity in the dmPFC cluster identified in the previous analysis and correlated it with two measures of reinstatement: (1) item reinstatement, reflecting the similarity of individual cue representations between phases; and (2) generalized reinstatement, capturing the similarity of cue representations among their CS categories.
+
+For regions involved in threat processing, such as the ACC/SFG, higher context specificity predicted stronger generalized reinstatement of representations of previously threatening cues (CS+-) from acquisition to test.
+
+This suggests that for these cues, the more distinct the contextual encoding during reversal, the more strongly the original fear memory trace resurfaced, likely reflecting a return of fear ( Figure 5D ).⟦>zach claim=gap: @{This suggests that for these cues, the more distinct the contextual encoding during reversal, the more strongly the original fear memory trace resurfaced, likely reflecting a return of fear ( Figure 5D ).}⟧
+
+Contrastingly, for areas implicated in cue-specific processing that could reflect more episodic-like learning, such as the precuneus ( Cavanna and Trimble, 2006 ), context specificity was associated with enhanced generalized reinstatement for cues with consistent meanings across phases (e.g. CS+- cues from reversal to test).
+
+Regarding item reinstatement, the dmPFC behaved similarly to the ACC/SFG, with stronger item reinstatement of previously threatening cues (CS-+ from reversal to test), while the MTG showed a pattern similar to the precuneus, with stronger item reinstatement for cues with consistent meanings across phases.
+
+These findings highlight the region-, phase-, and cue-specific effects of contexts on the reinstatement of cue representations.
+
+In threat-responsive regions, context specificity may promote the resurgence of generalized threat representations, in line with notions of renewal and spontaneous recovery of fear ( Maren et al., 2013 ).
+
+Conversely, in episodic learning regions, contextual encoding may support the reactivation of representations when meanings are maintained, reflecting memory stability.
+
+Together, these results suggest a critical role of context representations in modulating the balance between generalization and specificity of fear memories over time.
+
+Limitations and future directions While our study provides novel insights into the changes of neural representations across the different stages of fear learning, reversal, and test, several limitations should be noted.
+
+First, our sample size was relatively small, and future studies with larger samples will be needed to replicate and extend our findings.
+
+Second, while we examined the spatial patterns of neural activity using RSA, we did not assess potential changes in the temporal dynamics of these patterns.
+
+Several studies have highlighted the importance of considering temporal information in understanding the neural mechanisms of fear learning ( Visser et al., 2013 ; Sperl et al., 2021 ).
+
+Integrating spatial and temporal pattern analysis in future studies could provide a more comprehensive overview of how fear representations evolve over time.
+
+Moreover, further examining the role of context manipulation, by using more classical approaches where only one context is presented per phase, could extend and generalize our current findings.
+
+Finally, applying our approach to clinical populations could yield important insights into the neural mechanisms underlying the overgeneralization of fear and the impaired contextual regulation of fear responses in psychiatric disorders.
+
+Conclusion Our study reveals the changes in neural representations of conditioned stimuli and contexts across fear learning phases.
+
+Cue generalization and item stability play complementary roles in fear acquisition, reversal, and test, by capturing the formation of threat-related categories and updating the contingency of individual stimulus representations, respectively.
+
+Phases devoid of US cues lead to a differentiation (or dissolution) of both category- and item-level representations.
+
+Context specificity in the prefrontal cortex modulates the persistence of fear memories, with region-specific reinstatement effects.
+
+These findings provide insights into the representational dynamics underlying fear learning and extinction, demonstrating the interplay between cue- and context-based representations in shaping the formation, updating, and reinstatement of fear memories.
+
+Understanding these mechanisms might help optimize interventions targeting pathological fear in anxiety disorders.
+
+Future research should extend these findings to clinical populations and investigate the identified representational properties as biomarkers for assessing the effectiveness of extinction-based therapies.
 
 
 ## captions

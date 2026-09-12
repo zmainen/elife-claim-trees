@@ -16,6 +16,33 @@ Aligned to this volume, we examined the expression patterns of neuronal populati
 These structures provide targets for future functional studies, and taken together, could represent a spider equivalent of the central complex, contributing to behaviors such as web-building.
 
 
+## introduction
+
+Introduction Brain atlases are essential tools for neuroscience in model organisms – ranging from neuropil annotations ( Jundi and Heinze, 2020 ), to neuronal subtype and transcriptional expression pattern atlases ( Zhang et al., 2023 ), to ultrastructural connectivity maps ( Cook et al., 2019 ; Chua et al., 2023 ; Dorkenwald et al., 2024 ; Yim et al., 2024 ; Cook et al., 2025 ; Verasztó et al., 2025 ; White et al., 1986 ; Winding et al., 2023 ).
+
+In recent years, three-dimensional atlases of major neuropil structures have also been created for non-canonical arthropod study species ( Brenneis, 2022 ), including a number of insects ( Adden et al., 2020 ; Althaus et al., 2022 ; Dreyer et al., 2010 ) and spiders ( Steinhoff et al., 2017 ; Steinhoff et al., 2024 ).
+
+The hackled-orb weaver spider, Uloborus diversus ( Eberhard, 1972 ), is an emerging model system for the study of orb-web building in spiders ( Corver et al., 2021 ; Miller et al., 2022 ), whose central nervous system has yet to be investigated.
+
+To date, the majority of studies of the spider central nervous system have been performed in one de facto model species, Cupiennius salei , a cursorial spider which hunts without building webs for prey capture ( Babu and Barth, 1984 ).
+
+While isolated anatomical treatments exist for orb weavers and other web-based spiders ( Long, 2021 ; Hwang et al., 2015 ; Long, 2016 ; Moon and Tillinghast, 2013 ; Park et al., 2013 ; Rivera‐Quiroz and Miller, 2022 ; Becherer and Schmid, 1999 ; Steinhoff et al., 2024 ; Wegerhoff and Breidbach, 1995 ; Weltzien and Barth, 1991 ), the preponderance of C. salei literature is even starker when considering examinations beyond general neuronal stains, where C. salei is essentially the only spider species in which the expression pattern of more than a single neurotransmitter has been broadly mapped ( Becherer and Schmid, 1999 ; Fabian-Fine et al., 1999 ; Fabian-Fine et al., 2015 ; Fabian-Fine et al., 2017 ; Loesel et al., 2011 ; Schmid and Becherer, 1996 ; Schmid and Duncker, 1993 ; Senior et al., 2020 ; Seyfarth et al., 1990 ; Seyfarth et al., 1993 ; Tarr et al., 2019 ).
+
+Furthermore, the current understanding of spider brain anatomy is substantially based on tissue slice analysis, which can provide exceptional detail and avoid damaging superficial brain structures, but has the disadvantage of being often limited in completeness by the planes which authors chose to exhibit.
+
+Given that the substantial behavioral adaptation of web-building may be reflected in the presence of necessary brain structures and distinct underlying neuronal circuitry, an important step in understanding the basis of this behavior is to have a detailed, foundational architecture of a nervous system which generates it.
+
+We created a three-dimensional immunofluorescence atlas of major neurotransmitter and neuromodulator populations for U. diversus , using whole-mounted synganglia.
+
+Using immunostaining against the presynaptic marker, synapsin, we assembled a standard, full volume of the U. diversus synganglion onto which specific neurosignaling molecule expression patterns were aligned.
+
+These include markers for classical neurotransmitters (GABA and acetylcholine), neuromodulators (dopamine, serotonin, and octopamine/tyramine), and several neuropeptides (allatostatin A, proctolin, CCAP, and FMRFamide).
+
+These volumes provide comprehensive and comparable detail throughout the synganglion, in both undifferentiated and established regions – such as the arcuate body, whose layers become distinguishable through the use of neurosignaling molecule co-stains.
+
+We further identify several previously undescribed neuropils in the supraesophageal ganglion, and the neuronal subtype populations whose specific expression demarcates them.
+
+
 ## results
 
 Results The central nervous system of spiders is distinctive among arthropods for its compressed nature.
@@ -733,6 +760,201 @@ In the dorsal arcuate body, the immunoreactivity is primarily in the posterior s
 Relative to other examined spiders, the punctate pattern in the anterior sublayer is weakly present.
 
 The arcuate body layering pattern of FMRFamide immunoreactivity is similar to that of CCAP.
+
+
+## discussion
+
+Discussion Almost the entirety of spider central nervous system literature has been studied from tissue slices, with few examples of whole mounts ( Auletta et al., 2020 ; Breidbach et al., 1995 ; Schmid and Duncker, 1993 ; Steinhoff et al., 2017 ; Steinhoff et al., 2024 ).
+
+Our ability to observe novel structures and make comparisons between innervation patterns was aided by whole-mount preparation and averaged brain alignment, which allowed us to compare the relative expression of targets within the same reference volume.
+
+Furthermore, imaging and alignment of many neurosignaling molecule stains in a single species were clarifying for the identification of novel structures, as a subset of stains crystallized putative boundaries.
+
+While a dozen or so species have been studied for the expression patterning of individual neurosignaling molecules ( Auletta et al., 2020 ; Breidbach et al., 1995 ; Hwang et al., 2015 ; Moon and Tillinghast, 2013 ; Schmid and Becherer, 1999 ; Steinhoff et al., 2017 ; Strausfeld et al., 2006 ), the wandering spider, C. salei , is essentially the only species prior to the current work to have been the subject of sustained efforts to amass such neuroanatomical descriptions for most of the canonical neurotransmitters and neuromodulators.
+
+Given the utility of specific stains for understanding of neuropil structures ( Figure 13 , Figure 13—video 1 ), tracts, and other features, this atlas provides a rich source for comparative anatomy in an orb-weaving spider, U. diversus , while also extending knowledge of a number of different neurosignaling pathways for spiders at large.⟦>zach claim=gap: @{Given the utility of specific stains for understanding of neuropil structures ( Figure 13 , Figure 13—video 1 ), tracts, and other features, this atlas provides a rich source for comparative anatomy in an orb-weaving spider, U. diversus , while also extending knowledge of a number of different neurosignaling pathways for spiders at large.}⟧
+
+Figure 13. Summary of U . diversus neuropils.⟦>zach claim=gap: @{Figure 13. Summary of U . diversus neuropils.}⟧
+
+( A ) Posterior oblique, dorsal, and anterior oblique views of 3D renderings of the standard U. diversus brain with annotations of major established and novel neuropils throughout the subesophageal and supraesophageal masses.⟦>zach claim=gap: @{( A ) Posterior oblique, dorsal, and anterior oblique views of 3D renderings of the standard U. diversus brain with annotations of major established and novel neuropils throughout the subesophageal and supraesophageal masses.}⟧
+
+( B ) 3D renderings of the standard U. diversus brain with annotations of potential central complex constituents in shades of green (protocerebral bridge, arcuate body ventral and dorsal lobes, tonsillar neuropil), also showing the mushroom body (purple).⟦>zach claim=gap: @{( B ) 3D renderings of the standard U. diversus brain with annotations of potential central complex constituents in shades of green (protocerebral bridge, arcuate body ventral and dorsal lobes, tonsillar neuropil), also showing the mushroom body (purple).}⟧
+
+( C ) 3D neuropil renderings from neuropils of the central complex as found in the insects Rhyparabia maderae , Scarabaeus lamarcki , and Manduca sexta (images from https://insectbraindb.org/app/ ).⟦>zach claim=gap: @{( C ) 3D neuropil renderings from neuropils of the central complex as found in the insects Rhyparabia maderae , Scarabaeus lamarcki , and Manduca sexta (images from https://insectbraindb.org/app/ ).}⟧
+
+Compass abbreviations: A = anterior, P = posterior, D = dorsal, V = ventral, L = left, R = right.
+
+Figure 13—video 1. 3D rendering of all identified brain regions.⟦>zach claim=gap: @{Figure 13—video 1. 3D rendering of all identified brain regions.}⟧
+
+Subesophageal features Explorations of neurosignaling population innervation in the subesophageal mass have generally been less detailed than within the supraesophageal.
+
+Certain neuropeptides were either only briefly shown to be immunoreactive (such as allatostatin A, Steinhoff et al., 2017 or proctolin, Groome et al., 1991 ) or slices for those particular stains were not provided from the subesophageal ganglion, leaving it ambiguous as to whether immunoreactivity is present there (e.g. CCAP, Loesel et al., 2011 ).
+
+We find that all neuropeptidergic antisera, as well as the others examined in this study, have robust expression throughout the subesophageal mass.
+
+One observation that does not appear to be previously noted is that there is a roughly equal anterior/posterior division in the leg neuromeres.
+
+Whereas some immunostains reveal equal innervation of the halves (α-TH), others show divergent patterns (α-TDC2), or predominant expression in only one compartment (α-AstA).
+
+Based on select examples where the origin of innervation is discernible, the posterior and anterior compartments of the LNs may be supplied by neurites from different tracts within the interior of the subesophageal ganglion.
+
+The anatomical differences noted here may be due to different functional roles of these neurons in the LNs.
+
+For example, mechanosensory neurons in the leg receive input from octopaminergic and tyraminergic efferents, which increase the gain in mechanosensory touch responses ( Sukumar et al., 2018 ; Widmer et al., 2005 ).
+
+The OpN is a section of the subesophageal ganglion which has received relatively less attention.
+
+The preeminent reference for major tracts within the spider synganglion is the treatment in C. salei ( Babu and Barth, 1984 ), but despite a detailed annotation throughout the synganglion, the trajectories within the opisthosomal ganglion were not diagrammed.
+
+A more recent expansion of this anatomical knowledge to further cursorial as well as web-based species of spiders ( Steinhoff et al., 2024 ) likewise did not comment on the OpN.
+
+A depiction from Hanström, 1928 shows that longitudinal tracts run parallel to the midline, as well as more laterally, and that there are crossing branches between them, forming a ladder-like architecture.
+
+This bears a resemblance to the pattern revealed by specific antisera in U. diversus , confirming the central tracts, perimeter defining tracts, as well as crossing fibers within the opisthosomal ganglion – though whether they cross completely from midline to periphery was not apparent.
+
+In certain preparations, we observed a ladder structure as well as a ring-like central structure with neurites projecting like spokes.
+
+Further studies revealing the sources and destinations of these tracts will benefit understanding this intermediary neuropil at the transition between prosoma and opisthosoma.
+
+Mushroom bodies As evident from synapsin volumes, the mushroom bodies of U. diversus are the most salient feature in the central supraesophageal ganglion.
+
+The U. diversus MBs have a complete appearance, exhibiting an attached haft region similar to visually dependent spiders ( Steinhoff et al., 2024 ), and to which we find evidence suggesting innervation, albeit from an unknown origin.
+
+Historically, the MBs have at times been referred to as the third-order visual neuropil and have been discussed in the context of the visual pathways, which form the subject of a substantial portion of the spider nervous system literature ( Hill, 1975 ; Rivera‐Quiroz and Miller, 2022 ; Steinhoff et al., 2017 ; Steinhoff et al., 2024 ; Strausfeld et al., 1993 ; Strausfeld and Barth, 1993 ).
+
+The optic neuropils of U. diversus are diminutive, which is consistent with hunting through mechanosensation on a web.
+
+While we employed several neurotransmitter stains which have identified upstream optic pathway elements (e.g. medulla, lamellae) in other species, these first and second-order structures were not evident even in preparations where the labile tissue of the secondary pathway was intact.
+
+The diminished nature of the optic pathways, but simultaneous presence of a distinct MB structure in U . diversus, raises an incongruence concerning the role of the MB.
+
+A growing literature is suggestive of a deeper complexity, as examples of both cursorial and web-based spiders can be found which either have or lack MBs ( Long, 2016 ; Long, 2021 ; Steinhoff et al., 2024 ).
+
+The fact that such synaptically dense structures persist in spider species whose visual capacities seem all but irrelevant to their lifestyle indicates the sensory input to the mushroom bodies may differ between species.
+
+Mushroom body-like neuropils appear broadly among arthropods, suggesting a deep evolutionary origin despite variation in their form ( Wolff and Strausfeld, 2015 ).
+
+The mushroom bodies of insects, as most granularly understood in Drosophila melanogaster , were originally considered to be olfactory integration centers, and while remaining the most apparent input, subsequent studies have shown this center to also process multiple sensory modalities and influence behaviors not directly related to olfaction ( Aso et al., 2014 ).
+
+Evolutionary pressures on certain species may also force a ‘modality switch’, as evidenced by the whirligig beetle, Dineutus sublineatus , which has lost antennal lobes and instead has mushroom bodies supplied by the optic lobe, displaying a transition from olfactory to visual processing ( Lin and Strausfeld, 2012 ).
+
+An alternative hypothesis would be that mushroom bodies in web-building species may integrate other sensory information, such as mechanosensation, relevant for web activities – which may also necessitate learning and memory processes, a well-established function of the MBs of insects such as Drosophila ( Modi et al., 2020 ).
+
+Closer identification and annotation of the innervation patterns of non-visual sensory streams leading to the MBs would strengthen such a viewpoint.
+
+While surprisingly, we did not observe co-expression for most of the neurosignaling immunostains within the MB, an exception was AstA immunoreactivity.
+
+AstA innervation of the MB has been reported in multiple insect species, although the extent of innervation throughout the MB components is variable ( Heuer et al., 2012 ).
+
+Similarly to the general case in insects, AstA expression in U. diversus mushroom bodies appears to be supplied by extrinsic neurons, rather than the spider equivalent of the Kenyon cells, which would be found dorsal to the MB heads, and are not clearly immunoreactive.
+
+AstA function has so far been best understood in the context of peripheral and endocrine effects, but would likely act as a neuromodulator in the central nervous system ( Heuer et al., 2012 ).
+
+Arcuate body The arcuate body, being unmistakable and consistently present among species, is perhaps the best detailed structure in the spider brain, particularly in regard to innervation by neurotransmitter subtype populations.
+
+By aligning volumes to a common reference, the present methodology allowed for disambiguation of the layers innervated by specific signaling molecules and understanding of where these patterns overlap.
+
+In U. diversus , we confirmed two broad lobular divisions, which each contain an additional two major layers, supporting a number of structural motifs.
+
+Generalizing for the arcuate body innervation patterns in U. diversus of specific neuronal populations, as compared to C. salei and a few other species, one can conclude that there is a great degree of similarity in the relative arrangement of the gross layers, and even in certain fine structural details.
+
+This conclusion, extending to even the clustering of neurons giving rise to the layering patterns, has also been made in a study of CCAP immunoreactivity in the arcuate body of multiple arachnids ( Breidbach et al., 1995 ).
+
+In comparative studies, the arcuate body has been found to compose a roughly proportionate percentage of the brain across the species examined, including web-builders and visually based hunters ( Napiórkowska and Kobak, 2018 ; Weltzien and Barth, 1991 ), although this does not preclude potential differences in the density of synapses in this area.
+
+It is thus assuredly involved in various spider behaviors, and it will be illuminating to unravel how this conserved circuitry is harnessed for different ethological needs.
+
+The arcuate body lobes have been previously compared to the two nested neuropils known generally in insects as the upper and lower central bodies (fan-shaped body and ellipsoid body, respectively, in Drosophila ) ( Homberg, 2008 ; Loesel et al., 2011 ; Strausfeld et al., 2006 ) and the architecture of U. diversus supports these observations, showing obvious layering intersected by perpendicular neurites and columnar-like patterns.
+
+To advance this argument, one might further compare the arcuate body layering of individual neurosignaling populations to the broader literature available for insect central complex, and indeed, commonalities are visible, such as GABAergic innervation primarily in only one of the two compartments of the central bodies ( Homberg et al., 2018 ), multiple bands of serotonergic immunoreactivity in both compartments ( Homberg et al., 2023 ), and the most prominent layer of dopaminergic signal being adjacent to the boundary between the two central bodies ( Timm et al., 2021 ).
+
+Nevertheless, if attention is focused on differences, many distinctions could also be noted: FMRFamide ( Kaiser et al., 2022 ) and proctolin innervation ( Kahsai and Winther, 2011 ) of the central bodies of insects is more limited than the wide and multi-layered innervation in spiders, tyrosine hydroxylase immunoreactivity is also often in both central complex constituents ( Timm et al., 2021 ), to name a few.
+
+Recent comparative work in a large number of dicondylian insects using antibodies against GABAergic ( Homberg et al., 2018 ), dopaminergic ( Timm et al., 2021 ), and serotonergic ( Homberg et al., 2023 ) populations is instructive for appreciating the variation in central body innervation which can be seen even between members of a clade.
+
+While immunostaining reliably describes signal in the central bodies and further attributes it to conserved neuronal types, there is additional diversity across taxa in whether both upper and lower central bodies are innervated, as well as the form of ramification within the sublayers.
+
+Immunoreactivity in the PCB and noduli appears to be more sporadic, reported in a minority of the examined species.
+
+Considering this variation, it seems prudent to be cautious in drawing parallels between layering patterns of specific neurosignaling molecules across a much wider evolutionary expanse, particularly when at present our knowledge of arcuate body patterning comes largely from only two species, C. salei and this study of U. diversus .
+
+Furthermore, for most of the antisera we used, we were unable to reliably trace the source of neuropil innervation to particular somata due to limited signal in processes, even in cases where the somata are clearly labeled.
+
+Given that more stringent arguments for homology appeal to the numbers, locations, and morphologies of supplying neurons, future studies would benefit from resolving these relationships to bolster the comparative argument.
+
+Novel neuropils Structures which are conspicuous in our orb-building model spider but potentially not in hitherto studied cursorial species may be indicative of areas which are important for web-building.
+
+Nevertheless, it is not currently clear whether similar neuropils are absent in other species, or if they were simply not apparent by prior techniques.
+
+Apart from the mushroom bodies and arcuate body, neuropil structures within the interior of the protocerebrum have not been well distinguished.
+
+Multiple works refer to a ‘central’ or ‘protocerebral neuropil’ seemingly in regard to the undifferentiated mass of the protocerebrum as a whole.
+
+The image volume produced by aligning whole-mounted synganglia immunostained against synapsin and other targets instead reveals an intricacy of structures, beyond those described here.
+
+Two of the most conspicuous neuropils found in the dorsal supraesophageal mass are the PCB and the tonsillar neuropils.
+
+Our description and multi-target staining of the PCB provides the clearest demonstration of such a structure in the spider to date.
+
+The use of this name has a precedent within the spider literature ( Seyfarth et al., 1993 ), although whether the referent structure in C. salei is the same as in our model species will require additional clarification.
+
+Whether or not the authors chose this name in order to draw a parallel to the insect PCB is likewise ambiguous.
+
+A more promising candidate for this structure in past work is the ‘posterior bridge’, marked for T. spinipalpis and M. muscosa , seen adjacent to the arcuate body on the lateral–posterior edge of the central protocerebrum in acetylthiocholine iodide staining ( Meyer and Idel, 1977 ).
+
+The PCB is a core constituent of the insect central complex ( Heinze, 2024 ), but demonstrations in non-insect arthropods are scarcer.
+
+Examples have been found in crustaceans, such as the crayfish Cherax destructor ( Utting et al., 2000 ), shore crab H. sanguineus ( Kotsyuba and Dyachuk, 2021 ) as well as rock slater Ligia occidentalis and sidestriped shrimp Pandalopsis dispar , the latter of which shows widely arching, layered structure, stopping short of the midline ( Loesel et al., 2002 ).
+
+We find such an anterior midline structure in U. diversus , possessing layers as revealed by antisera to neurotransmitter populations, and having a thinning (to absent) midline crossing, reminiscent of disjointed PCBs in certain insects including cockroaches and moths ( https://insectbraindb.org/ ).
+
+A columnar pattern is not as of now forthcoming in the U. diversus PCB, which may be a consequence of density, as columnar structures can be difficult to see by immunohistochemistry ( Heinze, 2024 ), demonstrated by the fact that the PCB is no more evidently columnar in cockroach than in the sidestriped shrimp when visualized with the same antisera to tachykinin-related peptide ( Loesel et al., 2002 ).
+
+A final undescribed neuropil which was apparent in the supraesophageal was the centrally located, tonsillar neuropil.
+
+Based on the ovoid form, paired appearance close to the midline, and close proximity to the unpaired midline neuropil(s) (arcuate body – ABv and Abd), the tonsillar neuropil bears a general resemblance to the noduli, a smaller constituent of the central complex of pterygote insects ( Heinze, 2024 ).
+
+Among arthropods other than hexapods (including certain species of springtails; Kollmann et al., 2011 ), noduli have only thus far been found in stomatopods, where they were speculated to contribute to remarkable agility of the mantis shrimp ( Thoen et al., 2017 ).
+
+Interestingly, as we have found serotonergic innervation to prominently define the tonsillar neuropil, 5-HT staining was also used to highlight domains within the noduli of mantis shrimp ( Thoen et al., 2017 ), although the degree to which serotonergic innervation is present in insect noduli appears to be species-dependent ( Homberg et al., 2023 ).
+
+Unlike the arcuate body and PCB, neither a columnar nor layered architecture is apparent in the tonsillar neuropil, although specific neurosignaling molecule stains concentrate in certain domains, including a potential core and shell, as well as an anterior/posterior division.
+
+Noduli in insects also contain compartments, and the presence of layering is species-dependent ( Heinze, 2024 ).
+
+A spider central complex?
+
+Based on gross morphology, it is tempting to speculate that these novel neuropils, when considered along with each individual lobe of the arcuate body, may form an equivalent to a central complex in U. diversus ( Figure 13 ).⟦>zach claim=gap: @{Based on gross morphology, it is tempting to speculate that these novel neuropils, when considered along with each individual lobe of the arcuate body, may form an equivalent to a central complex in U. diversus ( Figure 13 ).}⟧
+
+The central complex of insects is innervated and interconnected by tangential, columnar, and pontine neurons, forming a consistently identifiable relationship between neuropils across species ( Pfeiffer, 2023 ).
+
+Apart from the crayfish ( Utting et al., 2000 ), where neurons supplying the PCB also appear to innervate the central body, knowledge of intra-complex connectivity is lacking in non-insect arthropods.
+
+A detailed study of the Onychophoran (velvet worm, sister to arthropods) brain revealed several brain structures that appeared anatomically similar to those observed in arthropods ( Martin et al., 2022 ).
+
+However, whether these ganglia are functionally homologous is a matter of debate.
+
+While the Onychophoran central body is more readily homologized to the arcuate body of Chelicerates, the homology of these structures to insect central bodies is not settled with arguments advanced for both views ( Strausfeld et al., 2006 ; Doeffinger et al., 2010 ).
+
+The frontal body (which has gross similarities to the insect PCB) appears to lack columnar organization and lacks an obvious connection to the central body.
+
+No noduli were observed in the Onychophoran brain.
+
+The anatomy of this structure may be coincidental, or convergently evolved to execute functions relevant to the PCB.
+
+Given that many of the antisera used in this study do not consistently trace neurites, the connectivity patterns between the neuropils of U. diversus supraesophageal mass require clarification.
+
+Future investigations employing techniques capable of isolating the ramification patterns of individual neurons within the context of the present neuropils in U. diversus will be essential to defining whether these currently disparate structures are truly members of a complex, and to what extent the connectivity is comparable to better studied arthropods.
+
+As a unit, the modules of the central complex integrate a variety of information including present orientation with respect to a salient environmental feature, memory of a heading goal, and speed – which can accomplish tasks such as path integration, migration, and other goal-directed movements relevant to particular species ( Honkanen et al., 2019 ).
+
+While occurring in a much more spatially constrained context, these informational components could likewise be vital for organizing movements during the process of web-building, as well as maintaining a conception of the 360-degree web space as the spider strikes out to capture prey and subsequently return to the resting position at the hub.
+
+In such a scenario for U. diversus and other orb weavers, updates to present heading would likely be provided by mechanosensation, rather than optic flow, which has been shown to contribute even in insects which otherwise predominantly employ vision ( Turner-Evans et al., 2017 ).
+
+The columnar segments of the central bodies maintain a representation of the flies' orientation within the environment in regard to a given feature ( Seelig and Jayaraman, 2015 ).
+
+Although the exact number of columnar elements in the spider arcuate body lobes has not been established, they are numerous (with some suggestions in the thousands; Homberg, 2008 ), which could support a much more refined representation of the animal’s radial self-made realm, underlying the often-stunning speed and precision with which the spider builds and navigates.
 
 
 ## captions

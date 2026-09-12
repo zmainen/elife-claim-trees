@@ -1,0 +1,154 @@
+{
+ "synthesis": "Gädeke et al. advance three linked hypotheses: that responsibility for a social choice yielding a low outcome for a partner produces interpersonal guilt, felt as a larger drop in the decision-maker's momentary happiness; that the anterior insula is its substrate; and that a further substrate tracks responsibility for the partner's outcomes. A fourth holds that connectivity between these outcome-phase regions and prefrontal cortex shifts with who decides and what is chosen.\n\nThe guilt hypothesis entails a behavioural prediction — happiness should fall more after low partner outcomes when the participant chose — and a computational one, that a model crediting the partner's reward prediction errors from the participant's own choices should fit happiness better. The insula hypothesis entails higher insula BOLD in the Social than the Partner condition, the responsibility hypothesis that partner reward prediction errors are represented more strongly when they follow the participant's own choice, and the connectivity hypothesis a prefrontal cluster with a condition-by-choice interaction.\n\nThe authors first rule out the paradigm's failure modes: choices tracked expected value, ruling out inattentive responding; risk premiums did not differ between Solo and Social, ruling out a social shift in risk attitude; and ventral-striatum responses recovered known effects, ruling out an invalid imaging pipeline and an untrustworthy model-based GLM. The one risk-preference difference that did appear, slightly higher risk aversion in the Social condition of the first study, rests on a control showing risk aversion did not differ between gain and loss trials.\n\nThe behavioural prediction is confirmed: happiness fell more after low partner outcomes when the participant had chosen, testing the guilt prediction and supporting the cross-study finding of interpersonal guilt. The effect held whether or not the participant received the low outcome, eliminating self-directed disappointment, and the separable cost of merely being the decision-maker eliminates general agency aversion. The computational prediction is met in turn: the weight on the partner's reward prediction errors from the participant's own choices was reliably positive, and the Responsibility model fit happiness better than its rivals. That weight is qualified: the participant's own reward prediction errors moved happiness more than either of the partner's, making responsibility one term in momentary happiness rather than its main driver. Neurally, a small left anterior insula cluster responded more to low partner outcomes following the participant's own choices, and overlap with a published guilt signature supports the insula as substrate — though that signature did not track individual differences in behavioural guilt. A left superior temporal sulcus cluster tracked the partner's reward prediction errors specifically when they followed the participant's choices, and insula–inferior-frontal-gyrus connectivity varied with condition and choice, though a smaller left-hemisphere cluster with the same pattern did not survive correction.\n\nThe argument is scoped to two samples of healthy adults with the fMRI results from the scanner replication, and to a lottery in which the partner's choices were simulated by an expected-value-maximising algorithm.",
+ "traceback": [
+  {
+   "sentence": "Gädeke et al. advance three linked hypotheses: that responsibility for a social choice yielding a low outcome for a partner produces interpersonal guilt, felt as a larger drop in the decision-maker's momentary happiness; that the anterior insula is its substrate; and that a further substrate tracks responsibility for the partner's outcomes.",
+   "claims": [
+    "responsibility-social-choice-yields-low",
+    "anterior-insula-neural-substrate-guilt",
+    "neural-substrate-tracks-participant-responsibility"
+   ],
+   "edges": []
+  },
+  {
+   "sentence": "A fourth holds that connectivity between these outcome-phase regions and prefrontal cortex shifts with who decides and what is chosen.",
+   "claims": [
+    "functional-connectivity-between-guilt-responsibility-related"
+   ],
+   "edges": []
+  },
+  {
+   "sentence": "The guilt hypothesis entails a behavioural prediction — happiness should fall more after low partner outcomes when the participant chose — and a computational one, that a model crediting the partner's reward prediction errors from the participant's own choices should fit happiness better.",
+   "claims": [
+    "responsibility-outcomes-generates-guilt-participant",
+    "responsibility-partner-outcomes-influences-participant"
+   ],
+   "edges": [
+    "responsibility-social-choice-yields-low --entails--> responsibility-outcomes-generates-guilt-participant",
+    "responsibility-social-choice-yields-low --entails--> responsibility-partner-outcomes-influences-participant"
+   ]
+  },
+  {
+   "sentence": "The insula hypothesis entails higher insula BOLD in the Social than the Partner condition, the responsibility hypothesis that partner reward prediction errors are represented more strongly when they follow the participant's own choice, and the connectivity hypothesis a prefrontal cluster with a condition-by-choice interaction.",
+   "claims": [
+    "anterior-insula-tracks-guilt-insula",
+    "neural-substrate-tracks-participant-responsibility-2",
+    "connectivity-between-guilt-responsibility-related-outcome-ph"
+   ],
+   "edges": [
+    "anterior-insula-neural-substrate-guilt --entails--> anterior-insula-tracks-guilt-insula",
+    "neural-substrate-tracks-participant-responsibility --entails--> neural-substrate-tracks-participant-responsibility-2",
+    "functional-connectivity-between-guilt-responsibility-related --entails--> connectivity-between-guilt-responsibility-related-outcome-ph"
+   ]
+  },
+  {
+   "sentence": "The authors first rule out the paradigm's failure modes: choices tracked expected value, ruling out inattentive responding; risk premiums did not differ between Solo and Social, ruling out a social shift in risk attitude; and ventral-striatum responses recovered known effects, ruling out an invalid imaging pipeline and an untrustworthy model-based GLM.",
+   "claims": [
+    "participants-probability-choosing-risky-option",
+    "risk-premiums-not-differ-between",
+    "bilateral-ventral-striatum-more-active",
+    "manipulation-check-bilateral-ventral-striatum"
+   ],
+   "edges": [
+    "participants-probability-choosing-risky-option --rules-out--> alt-participants-insensitive-to-value",
+    "risk-premiums-not-differ-between --rules-out--> alt-social-context-shifts-risk-attitude",
+    "bilateral-ventral-striatum-more-active --rules-out--> alt-imaging-contrast-invalid",
+    "manipulation-check-bilateral-ventral-striatum --rules-out--> alt-model-based-glm-invalid"
+   ]
+  },
+  {
+   "sentence": "The one risk-preference difference that did appear, slightly higher risk aversion in the Social condition of the first study, rests on a control showing risk aversion did not differ between gain and loss trials.",
+   "claims": [
+    "participants-slightly-more-risk-averse",
+    "risk-aversion-parameter-not-differ-between"
+   ],
+   "edges": [
+    "risk-aversion-parameter-not-differ-between --validates--> participants-slightly-more-risk-averse"
+   ]
+  },
+  {
+   "sentence": "The behavioural prediction is confirmed: happiness fell more after low partner outcomes when the participant had chosen, testing the guilt prediction and supporting the cross-study finding of interpersonal guilt.",
+   "claims": [
+    "when-partner-received-low-lottery",
+    "both-studies-participants-felt-worse"
+   ],
+   "edges": [
+    "when-partner-received-low-lottery --tests--> responsibility-outcomes-generates-guilt-participant",
+    "when-partner-received-low-lottery --supports--> responsibility-social-choice-yields-low"
+   ]
+  },
+  {
+   "sentence": "The effect held whether or not the participant received the low outcome, eliminating self-directed disappointment, and the separable cost of merely being the decision-maker eliminates general agency aversion.",
+   "claims": [
+    "guilt-effect-occurred-whether-participant",
+    "participant-happiness-lower-when-participant"
+   ],
+   "edges": [
+    "guilt-effect-occurred-whether-participant --rules-out--> alt-guilt-effect-driven-by-own-outcome",
+    "participant-happiness-lower-when-participant --rules-out--> alt-agency-aversion-not-guilt"
+   ]
+  },
+  {
+   "sentence": "The computational prediction is met in turn: the weight on the partner's reward prediction errors from the participant's own choices was reliably positive, and the Responsibility model fit happiness better than its rivals.",
+   "claims": [
+    "partner-reward-prediction-errors-resulting",
+    "likelihood-ratio-test-showed-responsibility"
+   ],
+   "edges": [
+    "partner-reward-prediction-errors-resulting --tests--> responsibility-partner-outcomes-influences-participant",
+    "likelihood-ratio-test-showed-responsibility --tests--> responsibility-partner-outcomes-influences-participant"
+   ]
+  },
+  {
+   "sentence": "That weight is qualified: the participant's own reward prediction errors moved happiness more than either of the partner's, making responsibility one term in momentary happiness rather than its main driver.",
+   "claims": [
+    "participants-own-reward-prediction-errors"
+   ],
+   "edges": [
+    "participants-own-reward-prediction-errors --qualifies--> partner-reward-prediction-errors-resulting"
+   ]
+  },
+  {
+   "sentence": "Neurally, a small left anterior insula cluster responded more to low partner outcomes following the participant's own choices, and overlap with a published guilt signature supports the insula as substrate — though that signature did not track individual differences in behavioural guilt.",
+   "claims": [
+    "mass-univariate-voxel-wise-analysis-found-small",
+    "insula-rois-responded-more-low",
+    "dot-products-between-individual-neural",
+    "individual-grbs-dot-product-values-not"
+   ],
+   "edges": [
+    "mass-univariate-voxel-wise-analysis-found-small --tests--> anterior-insula-tracks-guilt-insula",
+    "mass-univariate-voxel-wise-analysis-found-small --supports--> anterior-insula-neural-substrate-guilt",
+    "dot-products-between-individual-neural --validates--> insula-rois-responded-more-low",
+    "individual-grbs-dot-product-values-not --qualifies--> dot-products-between-individual-neural"
+   ]
+  },
+  {
+   "sentence": "A left superior temporal sulcus cluster tracked the partner's reward prediction errors specifically when they followed the participant's choices, and insula–inferior-frontal-gyrus connectivity varied with condition and choice, though a smaller left-hemisphere cluster with the same pattern did not survive correction.",
+   "claims": [
+    "one-cluster-left-sts-responded",
+    "functional-connectivity-between-left-anterior",
+    "left-ifg-insula-connectivity-subthreshold"
+   ],
+   "edges": [
+    "one-cluster-left-sts-responded --tests--> neural-substrate-tracks-participant-responsibility-2",
+    "functional-connectivity-between-left-anterior --tests--> connectivity-between-guilt-responsibility-related-outcome-ph",
+    "left-ifg-insula-connectivity-subthreshold --tests--> connectivity-between-guilt-responsibility-related-outcome-ph"
+   ]
+  },
+  {
+   "sentence": "The argument is scoped to two samples of healthy adults with the fMRI results from the scanner replication, and to a lottery in which the partner's choices were simulated by an expected-value-maximising algorithm.",
+   "claims": [
+    "findings-rest-two-samples-healthy",
+    "study-reproduced-study-design-inside",
+    "hold-partner-behaviour-constant-across",
+    "each-trial-participants-chose-between"
+   ],
+   "edges": [
+    "findings-rest-two-samples-healthy --scopes--> insula-rois-responded-more-low",
+    "study-reproduced-study-design-inside --scopes--> insula-rois-responded-more-low",
+    "hold-partner-behaviour-constant-across --enables-method--> when-partner-received-low-lottery"
+   ]
+  }
+ ]
+}
