@@ -13,7 +13,8 @@ import LayerComparison from '../../../components/LayerComparison.astro';
 import AbstractAlignment from '../../../components/AbstractAlignment.astro';
 import ArgumentFromGraph from '../../../components/ArgumentFromGraph.astro';
 import { getCollection, render } from 'astro:content';
-import { paperLayers, byId, cell, STATE_LABEL } from '../../../lib/pipeline';
+import { paperLayers, byId, cell, STATE_LABEL, SCHEME_LABEL, SCHEME_NOTE,
+         ADJUDICATION_LABEL, adjudicationText } from '../../../lib/pipeline';
 import { artifacts, isDirectory } from '../../../lib/artifacts';
 import { layerVersions, evaluation } from '../../../lib/layer-source';
 import corpus from '../../../data/claims.json';
@@ -112,6 +113,24 @@ const TONE: Record<string, string> = {
   open: 'text-blue-700 dark:text-blue-400 border-blue-400',
   unrecorded: 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700',
 };
+
+// The three facts, each its own chip. Mechanism is the state above; scheme is the layer's
+// declaration, provisional where a corpus decision it needs is still open; adjudication is
+// whether a person has read this version. A cell used to fold all three into the one state
+// word — see docs/design/2026-09-12-kinds-of-decision.md.
+const provisional = c.scheme?.provisionalOn?.length && layer.scope !== 'corpus'
+  ? c.scheme.provisionalOn : null;
+const SCHEME_TONE: Record<string, string> = {
+  accepted: 'text-emerald-700 dark:text-emerald-400 border-emerald-500',
+  proposed: 'text-amber-700 dark:text-amber-400 border-dashed border-amber-500',
+  open: 'text-blue-700 dark:text-blue-400 border-blue-400',
+};
+const ADJ_TONE: Record<string, string> = {
+  approved: 'text-emerald-700 dark:text-emerald-400 border-emerald-500',
+  partial: 'text-amber-700 dark:text-amber-400 border-amber-500',
+  superseded: 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700',
+  unread: 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700',
+};
 ---
 
 <Layout title={`${layer.title} — ${paper.slug}`} description={`${layer.question} — for ${paper.title}`}>
@@ -125,10 +144,24 @@ const TONE: Record<string, string> = {
     </nav>
 
     <header class="mb-8">
-      <div class="flex flex-wrap items-baseline gap-3 mb-2">
-        <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0">{layer.title}</h1>
-        <span class={`font-mono text-xs px-2 py-0.5 rounded border ${TONE[c.state]}`}>
+      <div class="flex flex-wrap items-baseline gap-2 mb-2">
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0 mr-1">{layer.title}</h1>
+        {/* Mechanism — the cell's colour elsewhere, its own chip here. */}
+        <span class={`font-mono text-xs px-2 py-0.5 rounded border ${TONE[c.state]}`}
+              title={`mechanism — ${STATE_LABEL[c.state]}`}>
           {STATE_LABEL[c.state]}{c.v ? ` · v${c.v}` : ''}
+        </span>
+        {/* Scheme — the declaration, provisional where a corpus decision it needs is open. */}
+        {c.scheme && (
+          <span class={`font-mono text-xs px-2 py-0.5 rounded border ${SCHEME_TONE[c.scheme.state]}`}
+                title={`scheme — ${SCHEME_NOTE[c.scheme.state]}`}>
+            {provisional ? 'provisional' : SCHEME_LABEL[c.scheme.state]}
+          </span>
+        )}
+        {/* Adjudication — whether a person has read this version. */}
+        <span class={`font-mono text-xs px-2 py-0.5 rounded border ${ADJ_TONE[c.adjudication.kind]}`}
+              title="adjudication — whether a person has read this version">
+          {adjudicationText(c.adjudication)}
         </span>
       </div>
       <p class="text-gray-700 dark:text-gray-300 italic m-0 mb-2 leading-snug">{layer.question}</p>
@@ -140,6 +173,19 @@ const TONE: Record<string, string> = {
         <a href={c.dataHref} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">json</a>
       </p>
     </header>
+
+    {provisional && (
+      <div class="border border-blue-300 dark:border-blue-800 rounded-lg p-4 mb-8">
+        <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 m-0 mb-1.5">Provisional</h2>
+        <p class="text-sm text-gray-700 dark:text-gray-300 m-0">
+          This layer needs a corpus-scope decision that no one has accepted, so what it
+          produces would change if the decision changed. It waits on
+          {provisional.map((d: string, i: number) => (
+            <span>{i > 0 ? ', ' : ' '}<a href={url(`/pipeline/${d}`)} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{d}</a></span>
+          ))}.
+        </p>
+      </div>
+    )}
 
     <div class={`border rounded-lg p-4 mb-8 ${c.approved?.applies
         ? 'border-emerald-400 dark:border-emerald-700' : 'border-gray-200 dark:border-gray-700'}`}>
@@ -155,6 +201,12 @@ const TONE: Record<string, string> = {
         <p class="text-sm text-gray-700 dark:text-gray-300 m-0">
           v{c.approved.v} was approved by {c.approved.by}, and this layer has run since. An
           approval names the version it was given to; it does not follow the layer forward.
+        </p>
+      ) : c.adjudication.kind === 'partial' ? (
+        <p class="text-sm text-gray-700 dark:text-gray-300 m-0">
+          A reading is under way — {adjudicationText(c.adjudication)} — and has not been
+          approved. A partial reading is a legitimate state; the counts come from the
+          version's verdict file.
         </p>
       ) : (
         <p class="text-sm text-gray-700 dark:text-gray-300 m-0">

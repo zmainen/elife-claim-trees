@@ -331,6 +331,13 @@ def pipeline_state():
             "layers": decl["layers"],
             "groups": decl.get("groups") or {},
             "state": pipeline.state(decl),
+            # The scheme fact: per layer, whether its declaration is accepted, proposed or
+            # open, and which corpus-scope decisions a tree built now is still provisional on.
+            # Read here rather than in the site so the badge is fed the way every other one is.
+            "declarations": pipeline.declaration_state(decl),
+            # The adjudication fact: per paper, the verdict-file reading of each claim-tree
+            # version — how many claims and edges a reader considered, of how many.
+            "verdicts": _verdict_counts(),
             # The ledger itself, not only the latest state. A version history is the list of
             # runs, so the site can show one without a separate changelog to keep in step.
             "ledger": {p: pipeline.read_ledger(p) for p in pipeline.papers()},
@@ -338,6 +345,36 @@ def pipeline_state():
     except Exception as e:                                            # noqa: BLE001
         print(f"  warning: pipeline state unavailable — {e}")
         return None
+
+
+def _verdict_counts():
+    """Per paper, per claim-tree version, the reading recorded in its verdict file.
+
+    `runs/<paper>/claim-tree.v<N>.verdicts.jsonl` is what #110's tooling writes; the count of
+    verdicts a reader `considered`, of the total the skeleton pre-filled, is the "k of n" the
+    adjudication fact needs. Empty where no reading has begun, which is every paper today.
+    """
+    sys.path.insert(0, os.path.join(ROOT, "extract"))
+    from elife_extract import verdicts as vd
+    out = {}
+    for paper in sorted(os.listdir(os.path.join(ROOT, "runs"))
+                        if os.path.isdir(os.path.join(ROOT, "runs")) else []):
+        rd = os.path.join(ROOT, "runs", paper)
+        if not os.path.isdir(rd):
+            continue
+        vers = {}
+        for fn in sorted(os.listdir(rd)):
+            m = re.match(r"claim-tree\.v(\d+)\.verdicts\.jsonl$", fn)
+            if not m:
+                continue
+            res = vd.resolve(vd.load(os.path.join(rd, fn)))
+            vers[m.group(1)] = {
+                "considered": len(res.claims_considered()) + len(res.edges_considered()),
+                "total": len(res.claims) + len(res.edges),
+            }
+        if vers:
+            out[paper] = vers
+    return out
 
 
 def prediction_outcomes():

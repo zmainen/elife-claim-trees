@@ -22,8 +22,9 @@ appends to one ledger in one shape, so staleness and propagation are computed on
     python3 scripts/pipeline.py run   <paper> <layer>   run it, and its unmet dependencies
     python3 scripts/pipeline.py run   <paper> <layer> --answer FILE   record an answer made elsewhere
     python3 scripts/pipeline.py approve <paper> <layer> --by NAME   record that someone read it
+    python3 scripts/pipeline.py approve --declaration <layer> --by NAME   rule on what it means
 
-Usage as a library: `load()`, `state()`.
+Usage as a library: `load()`, `state()`, `declaration_state()`.
 """
 
 from __future__ import annotations
@@ -368,6 +369,116 @@ def approve(paper: str, layer_id: str, v: int, *, by: str, note: str = "") -> di
     with open(p, "a", encoding="utf-8") as fh:
         fh.write(json.dumps(rec, sort_keys=True) + "\n")
     return rec
+
+
+# ── the scheme: a declaration, and the ruling on it ─────────────────────────────
+#
+# An adjudication is an operation on a *version* of one paper's output. A scheme ruling is the
+# other kind of decision (docs/design/2026-09-12-kinds-of-decision.md): a person accepts what a
+# layer *means*, for every paper, once. What is accepted is the declaration — the layers.yaml
+# entry plus the files that define its meaning: the prompt task file, and for a corpus-scope
+# vocabulary scripts/relations.py and the like — which is exactly what `reads` already names and
+# staleness already hashes. So a declaration version reuses `digest` rather than inventing a
+# second hash, and moves when the entry or one of those files does. The ruling lives in one
+# corpus-level ledger, in the same shape as a per-paper approval.
+
+ACCEPTED, PROPOSED = "accepted", "proposed"
+
+
+def corpus_approvals_path() -> str:
+    return os.path.join(ROOT, "runs", "approvals.jsonl")
+
+
+def read_corpus_approvals() -> list[dict]:
+    """Scheme rulings: a person's approval of a declaration version, corpus-wide."""
+    p = corpus_approvals_path()
+    if not os.path.isfile(p):
+        return []
+    out = []
+    with open(p, encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if line:
+                out.append(json.loads(line))
+    return out
+
+
+def declaration_version(layer: dict) -> str:
+    """The hash of a layer's declaration: its entry, plus the files that define its meaning.
+
+    Those files are the layer's `reads` — the prompt task, the contract, the relation
+    vocabulary — the same paths a run hashes to go stale, so a ruling made under one wording is
+    a ruling under that wording and no other.
+    """
+    h = hashlib.sha256()
+    h.update(json.dumps(layer, sort_keys=True, default=str).encode("utf-8"))
+    for r in (layer.get("reads") or []):
+        h.update(f"{r}:{digest(r)}".encode("utf-8"))
+    return h.hexdigest()[:12]
+
+
+def approve_declaration(layer_id: str, version: str, *, by: str, note: str = "") -> dict:
+    """Record that a person accepted one version of one layer's declaration."""
+    rec = {"declaration": layer_id, "version": version, "by": by, "note": note,
+           "when": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    p = corpus_approvals_path()
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    with open(p, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(rec, sort_keys=True) + "\n")
+    return rec
+
+
+def declaration_state(decl: dict | None = None) -> dict:
+    """Per layer, the scheme its declaration is in.
+
+    `accepted` when a ruling names the current declaration version; `proposed` when the
+    declaration has moved past the accepted one, or the entry itself says `status: proposed`
+    and nothing is accepted; `open` otherwise. `provisional_on` lists the corpus-scope
+    declarations a layer needs that are not accepted — a tree built while `relation-vocab` is
+    open is provisional on its own cell, and this is what says which decision it waits on.
+    """
+    decl = decl or load()
+    by_id = decl["by_id"]
+    latest: dict[str, dict] = {}
+    for a in read_corpus_approvals():
+        lid = a.get("declaration")
+        if not lid:
+            continue
+        if lid not in latest or a.get("when", "") >= latest[lid].get("when", ""):
+            latest[lid] = a
+
+    out: dict[str, dict] = {}
+    for lid, layer in by_id.items():
+        ver = declaration_version(layer)
+        ok = latest.get(lid)
+        if ok and ok.get("version") == ver:
+            out[lid] = {"scheme": ACCEPTED, "version": ver,
+                        "approved": {"version": ver, "by": ok.get("by"),
+                                     "when": ok.get("when"), "note": ok.get("note")}}
+        elif ok:
+            out[lid] = {"scheme": PROPOSED, "version": ver,
+                        "approved": {"version": ok.get("version"), "by": ok.get("by"),
+                                     "when": ok.get("when"), "note": ok.get("note"),
+                                     "superseded": True}}
+        elif layer.get("status") == PROPOSED:
+            out[lid] = {"scheme": PROPOSED, "version": ver}
+        else:
+            out[lid] = {"scheme": OPEN, "version": ver}
+
+    def corpus_deps(lid: str, seen: set[str] | None = None) -> set[str]:
+        seen = seen if seen is not None else set()
+        for d in by_id[lid].get("needs") or []:
+            if d not in seen:
+                seen.add(d)
+                corpus_deps(d, seen)
+        return seen
+
+    for lid in by_id:
+        waits = sorted(d for d in corpus_deps(lid)
+                       if by_id[d].get("scope") == "corpus" and out[d]["scheme"] != ACCEPTED)
+        if waits:
+            out[lid]["provisional_on"] = waits
+    return out
 
 
 def state(decl: dict | None = None, slugs: list[str] | None = None) -> dict:
@@ -827,7 +938,16 @@ def cmd_approve(args) -> int:
     approving a version that is not the one on disk is almost always a mistake — but it can
     be named explicitly, since reading v2 and recording it after v3 has run is a coherent
     thing to have done.
+
+    With `--declaration` it is the other kind of decision: a scheme ruling on what a layer
+    means, recorded against the declaration's version in the corpus-level ledger.
     """
+    if args.declaration:
+        return cmd_approve_declaration(args)
+    if not args.paper or not args.layer:
+        print("error: approve needs <paper> <layer>, or --declaration <layer>",
+              file=sys.stderr)
+        return 2
     decl = load()
     if args.layer not in decl["by_id"]:
         print(f"error: no layer {args.layer!r}", file=sys.stderr)
@@ -851,6 +971,25 @@ def cmd_approve(args) -> int:
     current = " (the current version)" if v == run["v"] else \
               f" (superseded — the ledger is at v{run['v']})"
     print(f"{args.paper}/{args.layer} v{v} approved by {rec['by']}{current}")
+    if rec["note"]:
+        print(f"  {rec['note']}")
+    return 0
+
+
+def cmd_approve_declaration(args) -> int:
+    """Record a scheme ruling: a person accepts what a layer means, for every paper."""
+    decl = load()
+    lid = args.declaration
+    if lid not in decl["by_id"]:
+        print(f"error: no layer {lid!r}", file=sys.stderr)
+        return 2
+    ver = declaration_version(decl["by_id"][lid])
+    was = declaration_state(decl)[lid]
+    if was["scheme"] == ACCEPTED:
+        print(f"{lid}: declaration {ver} is already accepted by {was['approved']['by']} — "
+              f"recording another ruling on the same version")
+    rec = approve_declaration(lid, ver, by=args.by, note=args.note or "")
+    print(f"{lid} declaration {ver} accepted by {rec['by']}")
     if rec["note"]:
         print(f"  {rec['note']}")
     return 0
@@ -893,10 +1032,12 @@ def main() -> int:
     r.add_argument("--profile", help="model profile to pass through to each layer command "
                    "(frontier, standard, open, subagent). The ledger's `by` records it.")
     r.set_defaults(fn=cmd_run)
-    a = sub.add_parser("approve", help="record that a person approved one version of a layer")
-    a.add_argument("paper")
-    a.add_argument("layer")
-    a.add_argument("--by", required=True, help="who read it")
+    a = sub.add_parser("approve", help="approve one paper's output, or a layer's declaration")
+    a.add_argument("paper", nargs="?", help="the paper (omit with --declaration)")
+    a.add_argument("layer", nargs="?", help="the layer (omit with --declaration)")
+    a.add_argument("--declaration", metavar="LAYER",
+                   help="record a scheme ruling on this layer's declaration instead")
+    a.add_argument("--by", required=True, help="who decided")
     a.add_argument("--v", type=int, help="which version (default: the one on the ledger)")
     a.add_argument("--note", help="what they checked")
     a.set_defaults(fn=cmd_approve)
