@@ -15,6 +15,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import corpus from '../data/claims.json';
 import paperSummaries from '../data/paper-summaries.json';
+import corpusFacts from '../data/corpus-facts.json';
 
 const articles = import.meta.glob('../data/article/*.json', { eager: true }) as Record<string, { default: any }>;
 const plainClaims = import.meta.glob('../data/plain-claims/*.json', { eager: true }) as Record<string, { default: any }>;
@@ -255,6 +256,34 @@ function pieces(text: string, ranges: Ranged[]): Piece[] {
  *  is only a real choice if what they mean travels with them to the card. The tree's other
  *  roles — hypothesis, prediction, synthesis — are not here because they describe a paper's
  *  argument and are assigned when the tree is built, not when a missing result is written down. */
+/** The nine roles a claim tree assigns, each with its meaning inline — the vocabulary a reader
+ *  chooses from when they correct a claim's role in the adjudication surface. The definitions
+ *  are extract/elife_extract/vocabulary.py's, trimmed to a sentence a reader can weigh at the
+ *  card. Kept beside DRAFT_ROLES because both answer the same question: a role select is a real
+ *  choice only if what each name means travels with it. */
+export const TREE_ROLES: [string, string][] = [
+  ['hypothesis', 'The proposition the paper sets out to test — the answer it commits to for one research question. Carries no measurement of its own.'],
+  ['prediction', 'What should be observed if the hypothesis holds. Deduced, not measured; an empirical claim tests it.'],
+  ['empirical', 'A result the paper measured.'],
+  ['control', 'A measurement whose work is to eliminate an alternative or show a method works — validation, manipulation checks, most null results.'],
+  ['methodological', 'A statement about how the analysis was done, holding for the results that rest on it.'],
+  ['scope', 'A condition or limitation every other claim inherits — the sample, the design, what the study does and does not cover.'],
+  ['synthesis', 'A conclusion drawn across several of the paper\'s own results.'],
+  ['interpretation', 'A claim about what a result means, beyond what was measured.'],
+  ['literature-context', 'A claim the paper attributes to other work rather than showing itself.'],
+];
+
+/** The three disputes the whole-tree reading must settle (issue #82 § Verdicts), written out so
+ *  the surface can put the questions at the top of the tree rather than leaving them implicit. */
+export const RULING_QUESTIONS: { id: string; question: string }[] = [
+  { id: 'sts-mentalising-role',
+    question: 'Is the STS mentalising claim a hypothesis the paper tests, or an interpretation it offers of a result?' },
+  { id: 'partner-algorithm-role',
+    question: 'Is the partner-algorithm claim about the scope of the deception (what the partner actually did), or a methodological statement about how the task was run?' },
+  { id: 'procedure-under-scope',
+    question: 'Do the exclusions, the fixed sample size and the design belong under the scope claim as parts of it?' },
+];
+
 export const DRAFT_ROLES: [string, string][] = [
   ['empirical', 'A result the paper measured.'],
   ['control', 'A result whose purpose is to eliminate an alternative explanation or to show a method works. Most validation, manipulation checks and negative controls are this.'],
@@ -313,6 +342,31 @@ function draftsOf(paper: string) {
     whyGap: whyGap[c.uid] ?? '',
     decision: decided[c.uid] ?? null,
   }));
+}
+
+// ── the whole-tree adjudication (#82) ─────────────────────────────────────────
+
+/** The claim-tree version the committed tree is, from corpus-facts' pipeline state — the same
+ *  state the site already carries. A verdict file is bound to it, so the surface reads and writes
+ *  the version it is showing rather than guessing. */
+function claimTreeVersion(paper: string): number | null {
+  const cell = (corpusFacts as any)?.pipeline?.state?.[paper]?.['claim-tree'];
+  return cell && typeof cell.v === 'number' ? cell.v : null;
+}
+
+/** The verdict lines recorded for one version, raw and in file order. The client resolves the
+ *  latest per key; passing the whole history keeps the two surfaces reading the same file.
+ *  Under `astro dev` this is re-read on each request, so a verdict posted through the endpoint
+ *  shows on reload — the same freshness the gap-claim decisions have. */
+function verdictsOf(paper: string, version: number): any[] {
+  const path = join(process.cwd(), '..', 'runs', paper, `claim-tree.v${version}.verdicts.jsonl`);
+  if (!existsSync(path)) return [];
+  const out: any[] = [];
+  for (const line of readFileSync(path, 'utf8').split('\n')) {
+    if (!line.trim()) continue;
+    try { out.push(JSON.parse(line)); } catch { /* a half-written line is not a verdict */ }
+  }
+  return out;
 }
 
 // ── assembly ─────────────────────────────────────────────────────────────────
@@ -484,6 +538,29 @@ export function readerData(paperSlug: string) {
     dg: exportsOf('dg.jsonld'),
   };
 
+  // ---- the whole-tree adjudication payload (dev-only surface; #82)
+  // The edge universe is the directed relations the cards show — one per (claim, target,
+  // relation). It is what a reader can decide, and the denominator the progress count uses;
+  // for a tree whose relations are all in the card vocabulary it equals the file's edge count.
+  const adjVersion = claimTreeVersion(paperSlug);
+  const treeEdges: [string, string, string][] = [];
+  const edgeSeen = new Set<string>();
+  for (const c of claims) {
+    for (const o of c.out) {
+      const k = `${c.slug}|${o.slug}|${o.rel}`;
+      if (!edgeSeen.has(k)) { edgeSeen.add(k); treeEdges.push([c.slug, o.slug, o.rel]); }
+    }
+  }
+  const adjudication = adjVersion != null ? {
+    version: adjVersion,
+    records: verdictsOf(paperSlug, adjVersion),
+    edges: treeEdges,
+    claimCount: claims.length,
+    edgeCount: treeEdges.length,
+    roles: TREE_ROLES,
+    rulings: RULING_QUESTIONS,
+  } : null;
+
   const marked = placed.reduce((n, rs) => n + rs.filter(r => r.claims.length).length, 0);
   const gaps = placed.reduce((n, rs) => n + rs.filter(r => r.gap).length, 0);
   const rerun = claims.filter((c: any) => c.status === 'matches' || c.status === 'partly').length;
@@ -508,6 +585,7 @@ export function readerData(paperSlug: string) {
     claims,
     drafts: drafts.map(d => ({ ...d, inText: inText.has(d.uid) })),
     draftRoles: DRAFT_ROLES,
+    adjudication,
     counts: { claims: claims.length, rerun, marked, gaps, drafts: drafts.length, undecided },
     downloads,
     hasArticle: Boolean(article),

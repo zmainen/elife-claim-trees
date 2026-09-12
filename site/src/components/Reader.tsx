@@ -274,6 +274,293 @@ function DraftCard({ d, paper, base, roles, who, setWho, onDecided, onBack, onCl
   );
 }
 
+// ── adjudicating a whole tree: the verdict controls (#82) ─────────────────────
+//
+// This extends the gap-claim surface above rather than adding a third one. The same rail, the
+// same claim card, the same dev-only write endpoint and the same "reviewing as" name — but a
+// mode in which every claim card carries a verdict (keep / strike / merge / part-of, a role and
+// a panel), every relation carries one (ok / wrong direction / wrong relation / strike), and the
+// three rulings the tree cannot settle claim-by-claim sit at the top. Decisions land in
+// runs/<paper>/claim-tree.v<N>.verdicts.jsonl, bound to the version the page is showing.
+
+type Verdict = Record<string, any>;
+type Verdicts = { claims: Record<string, Verdict>; edges: Record<string, Verdict>; rulings: Record<string, Verdict> };
+
+const ekey = (s: string, t: string, r: string) => `${s}|${t}|${r}`;
+
+function resolveVerdicts(records: any[]): Verdicts {
+  const claims: Record<string, Verdict> = {};
+  const edges: Record<string, Verdict> = {};
+  const rulings: Record<string, Verdict> = {};
+  for (const r of records || []) {
+    if (r?.kind === 'claim' && r.slug) claims[r.slug] = r;                       // latest line wins
+    else if (r?.kind === 'edge' && r.source && r.target && r.relation) edges[ekey(r.source, r.target, r.relation)] = r;
+    else if (r?.kind === 'ruling' && r.question) rulings[r.question] = r;
+  }
+  return { claims, edges, rulings };
+}
+
+const CLAIM_VERDICTS: [string, string][] = [
+  ['keep', 'Keep'], ['strike', 'Strike'], ['merge-into', 'Merge into…'], ['part-of', 'Part of…'],
+];
+const EDGE_VERDICTS: [string, string][] = [
+  ['ok', 'OK'], ['wrong-direction', 'Wrong direction'], ['wrong-relation', 'Wrong relation…'], ['strike', 'Strike'],
+];
+// The relation vocabulary, raw key → the phrase the card prints (mirrors reader.ts OUT). Used by
+// the "wrong relation" and "missing relation" controls.
+const REL_VOCAB: [string, string][] = [
+  ['tests', 'Tests'], ['confirms', 'Confirms'], ['supports', 'Supports'], ['validates', 'Validates'],
+  ['rules-out', 'Rules out'], ['refutes', 'Refutes'], ['requires', 'Relies on'], ['derived-from', 'Follows from'],
+  ['entails', 'Leads to the prediction'], ['predicts', 'Predicts'], ['interprets', 'Interprets'],
+  ['dissociates-with', 'Contrasts with'], ['scopes', 'Applies to'], ['enables-method', 'Makes possible'],
+];
+
+/** Post one verdict line through the dev endpoint and return the record it stored (with
+ *  `considered: true` and its timestamp), or throw if the endpoint is not there. */
+async function postVerdict(base: string, paper: string, version: number, who: string, fields: Record<string, unknown>) {
+  const body = await postReview(base, { file: 'verdicts', paper, version, by: who, ...fields });
+  return (body as any)?.record ?? null;
+}
+
+/** The verdict standing on a claim, told apart from the skeleton's default by `considered`. */
+function claimBadge(v: Verdict | undefined): { label: string; considered: boolean } | null {
+  if (!v) return null;
+  let label = v.verdict as string;
+  if ((v.verdict === 'merge-into' || v.verdict === 'part-of') && v.target) label = `${v.verdict} ${v.target}`;
+  return { label, considered: !!v.considered };
+}
+
+/** The claim card's verdict controls: is this claim true to the paper, and if not, what to do
+ *  with it — plus the role and panel a reader may correct. */
+function ClaimVerdict({ base, paper, version, claim, roles, slugs, who, focusWho, standing, onPosted }: {
+  base: string; paper: string; version: number; claim: Claim;
+  roles: [string, string][]; slugs: { slug: string; plain: string }[];
+  who: string; focusWho: () => void; standing: Verdict | undefined;
+  onPosted: (rec: Verdict) => void;
+}) {
+  const [verdict, setVerdict] = useState<string>(standing?.verdict || 'keep');
+  const [target, setTarget] = useState<string>(standing?.target || '');
+  const [role, setRole] = useState<string>(standing?.role || claim.role);
+  const [panel, setPanel] = useState<string>(standing?.panel ?? (claim.panel || ''));
+  const [why, setWhy] = useState<string>(standing?.why ?? '');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+
+  const needsTarget = verdict === 'merge-into' || verdict === 'part-of';
+  const meaning = roles.find(([r]) => r === role)?.[1] ?? '';
+  const badge = claimBadge(standing);
+
+  const save = async () => {
+    if (!who.trim()) { setErr('Add your name in the rail first.'); focusWho(); return; }
+    if (needsTarget && !target) { setErr('Choose the claim to point at.'); return; }
+    setBusy(true); setErr('');
+    try {
+      const rec = await postVerdict(base, paper, version, who, {
+        kind: 'claim', slug: claim.slug, verdict,
+        ...(needsTarget ? { target } : {}),
+        role, panel: panel.trim(), why: why.trim(),
+      });
+      if (rec) onPosted(rec);
+    } catch (e: any) {
+      setErr(`${e.message} Run npm run dev to record verdicts.`);
+    } finally { setBusy(false); }
+  };
+
+  return (
+    <div className="rd-blk rd-adj">
+      <p className="rd-k rd-k-adj">Your verdict{badge && <span className={`rd-vbadge${badge.considered ? ' on' : ''}`}>{badge.considered ? badge.label : `default: ${badge.label}`}</span>}</p>
+      <div className="rd-vrow">
+        {CLAIM_VERDICTS.map(([v, lbl]) => (
+          <button key={v} className={`rd-vbtn${verdict === v ? ' on' : ''}`} onClick={() => setVerdict(v)}>{lbl}</button>
+        ))}
+      </div>
+      {needsTarget && (
+        <select className="rd-dsel" value={target} onChange={e => setTarget(e.target.value)} aria-label="Target claim">
+          <option value="">— choose a claim —</option>
+          {slugs.filter(s => s.slug !== claim.slug).map(s => (
+            <option key={s.slug} value={s.slug}>{s.slug}</option>
+          ))}
+        </select>
+      )}
+      <div className="rd-vgrid">
+        <label>Role
+          <select className="rd-dsel" value={role} onChange={e => setRole(e.target.value)}>
+            {roles.map(([r]) => <option key={r} value={r}>{r}</option>)}
+          </select>
+        </label>
+        <label>Panel
+          <input className="rd-dnoteinput" value={panel} placeholder="e.g. fig4e, or blank"
+            onChange={e => setPanel(e.target.value)} />
+        </label>
+      </div>
+      {meaning && <p className="rd-dmeaning">{meaning}</p>}
+      <input className="rd-dnoteinput" value={why} placeholder="Why, if it needs saying"
+        onChange={e => setWhy(e.target.value)} aria-label="Why" />
+      <div className="rd-dact">
+        <button className="rd-btn rd-btn-go" disabled={busy} onClick={save}>Record verdict</button>
+      </div>
+      {err && <p className="rd-warn">{err}</p>}
+    </div>
+  );
+}
+
+/** One relation's verdict: ok / wrong direction / wrong relation / strike. Replaces the
+ *  gap-claim `EdgeFlag` while adjudicating — the same quiet dispute, now a recorded verdict. */
+function EdgeVerdict({ base, paper, version, source, target, relation, label, who, focusWho, standing, onPosted }: {
+  base: string; paper: string; version: number; source: string; target: string; relation: string;
+  label: string; who: string; focusWho: () => void; standing: Verdict | undefined; onPosted: (rec: Verdict) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [corrected, setCorrected] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const current = standing?.considered ? (standing.verdict as string) : null;
+
+  const send = async (verdict: string, corr?: string) => {
+    if (!who.trim()) { setErr('Add your name in the rail first.'); focusWho(); return; }
+    setBusy(true); setErr('');
+    try {
+      const rec = await postVerdict(base, paper, version, who, {
+        kind: 'edge', source, target, relation, verdict, ...(corr ? { corrected: corr } : {}),
+      });
+      if (rec) onPosted(rec);
+      setOpen(false);
+    } catch (e: any) {
+      setErr(`${e.message} Run npm run dev to record verdicts.`);
+    } finally { setBusy(false); }
+  };
+
+  if (open) {
+    return (
+      <div className="rd-flagbox">
+        <p>What should “{label}” be? Choose the corrected relation, or leave it and just mark it wrong.</p>
+        <select className="rd-dsel" value={corrected} onChange={e => setCorrected(e.target.value)}>
+          <option value="">— corrected relation —</option>
+          {REL_VOCAB.filter(([k]) => k !== relation).map(([k, l]) => <option key={k} value={k}>{l} ({k})</option>)}
+        </select>
+        <div className="rd-flagact">
+          <button className="rd-btn" disabled={busy} onClick={() => send('wrong-relation', corrected)}>Record</button>
+          <button className="rd-btn rd-btn-q" onClick={() => { setOpen(false); setErr(''); }}>Cancel</button>
+        </div>
+        {err && <p className="rd-warn">{err}</p>}
+      </div>
+    );
+  }
+  return (
+    <span className="rd-evrow">
+      {EDGE_VERDICTS.map(([v, lbl]) => (
+        <button key={v} disabled={busy}
+          className={`rd-vbtn rd-vbtn-sm${current === v ? ' on' : ''}`}
+          onClick={() => (v === 'wrong-relation' ? setOpen(true) : send(v))}>{lbl}</button>
+      ))}
+      {current && <span className="rd-evstanding">{current}</span>}
+      {err && <span className="rd-warn">{err}</span>}
+    </span>
+  );
+}
+
+/** Add a relation the tree is missing: a person saying the graph should carry an edge it does
+ *  not. Recorded as a `missing` edge verdict. */
+function MissingRelation({ base, paper, version, source, slugs, who, focusWho, onPosted }: {
+  base: string; paper: string; version: number; source: string;
+  slugs: { slug: string; plain: string }[]; who: string; focusWho: () => void; onPosted: (rec: Verdict) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [relation, setRelation] = useState('supports');
+  const [target, setTarget] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+
+  const send = async () => {
+    if (!who.trim()) { setErr('Add your name in the rail first.'); focusWho(); return; }
+    if (!target) { setErr('Choose the claim it should point at.'); return; }
+    setBusy(true); setErr('');
+    try {
+      const rec = await postVerdict(base, paper, version, who, {
+        kind: 'edge', source, target, relation, verdict: 'missing', corrected: relation,
+      });
+      if (rec) onPosted(rec);
+      setOpen(false); setTarget('');
+    } catch (e: any) {
+      setErr(`${e.message} Run npm run dev to record verdicts.`);
+    } finally { setBusy(false); }
+  };
+
+  if (!open) return <button className="rd-flag" onClick={() => setOpen(true)}>+ Missing relation</button>;
+  return (
+    <div className="rd-flagbox">
+      <p>A relation the graph should carry but does not.</p>
+      <div className="rd-vgrid">
+        <select className="rd-dsel" value={relation} onChange={e => setRelation(e.target.value)}>
+          {REL_VOCAB.map(([k, l]) => <option key={k} value={k}>{l} ({k})</option>)}
+        </select>
+        <select className="rd-dsel" value={target} onChange={e => setTarget(e.target.value)}>
+          <option value="">— target claim —</option>
+          {slugs.filter(s => s.slug !== source).map(s => <option key={s.slug} value={s.slug}>{s.slug}</option>)}
+        </select>
+      </div>
+      <div className="rd-flagact">
+        <button className="rd-btn" disabled={busy} onClick={send}>Add it</button>
+        <button className="rd-btn rd-btn-q" onClick={() => { setOpen(false); setErr(''); }}>Cancel</button>
+      </div>
+      {err && <p className="rd-warn">{err}</p>}
+    </div>
+  );
+}
+
+/** The three rulings the tree cannot settle claim-by-claim, written out, each with an answer. */
+function Rulings({ base, paper, version, questions, standing, who, focusWho, onPosted }: {
+  base: string; paper: string; version: number;
+  questions: { id: string; question: string }[]; standing: Record<string, Verdict>;
+  who: string; focusWho: () => void; onPosted: (rec: Verdict) => void;
+}) {
+  return (
+    <div className="rd-rulings">
+      {questions.map(q => (
+        <Ruling key={q.id} base={base} paper={paper} version={version} q={q}
+          standing={standing[q.id]} who={who} focusWho={focusWho} onPosted={onPosted} />
+      ))}
+    </div>
+  );
+}
+
+function Ruling({ base, paper, version, q, standing, who, focusWho, onPosted }: {
+  base: string; paper: string; version: number; q: { id: string; question: string };
+  standing: Verdict | undefined; who: string; focusWho: () => void; onPosted: (rec: Verdict) => void;
+}) {
+  const [answer, setAnswer] = useState(standing?.answer ?? '');
+  const [why, setWhy] = useState(standing?.why ?? '');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const save = async () => {
+    if (!who.trim()) { setErr('Add your name in the rail first.'); focusWho(); return; }
+    if (!answer.trim()) { setErr('Answer the question first.'); return; }
+    setBusy(true); setErr('');
+    try {
+      const rec = await postVerdict(base, paper, version, who, {
+        kind: 'ruling', question: q.id, answer: answer.trim(), why: why.trim(),
+      });
+      if (rec) onPosted(rec);
+    } catch (e: any) {
+      setErr(`${e.message} Run npm run dev to record verdicts.`);
+    } finally { setBusy(false); }
+  };
+  return (
+    <div className="rd-ruling">
+      <p className="rd-rq">{q.question}</p>
+      <input className="rd-dnoteinput" value={answer} placeholder="Your answer"
+        onChange={e => setAnswer(e.target.value)} />
+      <input className="rd-dnoteinput" value={why} placeholder="Why, if it needs saying"
+        onChange={e => setWhy(e.target.value)} />
+      <div className="rd-dact">
+        <button className="rd-btn" disabled={busy} onClick={save}>{standing?.considered ? 'Update' : 'Record'}</button>
+        {standing?.considered && <span className="rd-evstanding">recorded</span>}
+      </div>
+      {err && <p className="rd-warn">{err}</p>}
+    </div>
+  );
+}
+
 export default function Reader({ data, base }: Props) {
   const C: Record<string, Claim> = useMemo(
     () => Object.fromEntries(data.claims.map((c: Claim) => [c.slug, c])), [data]);
@@ -313,6 +600,43 @@ export default function Reader({ data, base }: Props) {
   const decided = useCallback((uid: string, rec: Decision) => {
     setDrafts(ds => ds.map(d => (d.uid === uid ? { ...d, decision: rec } : d)));
   }, []);
+
+  // ── whole-tree adjudication (#82), a dev-only mode over the same rail ────────
+  const adjData = data.adjudication;
+  const canAdjudicate = import.meta.env.DEV && !!adjData;
+  const [adj, setAdj] = useState(false);
+  const [verdicts, setVerdicts] = useState<Verdicts>(() => resolveVerdicts(adjData?.records ?? []));
+  const slugList = useMemo(
+    () => data.claims.map((c: Claim) => ({ slug: c.slug, plain: c.plain })), [data]);
+  const focusWho = useCallback(() => document.getElementById('rd-who-rail')?.focus(), []);
+  const putClaimVerdict = useCallback((rec: Verdict) =>
+    setVerdicts(v => ({ ...v, claims: { ...v.claims, [rec.slug]: rec } })), []);
+  const putEdgeVerdict = useCallback((rec: Verdict) =>
+    setVerdicts(v => ({ ...v, edges: { ...v.edges, [ekey(rec.source, rec.target, rec.relation)]: rec } })), []);
+  const putRulingVerdict = useCallback((rec: Verdict) =>
+    setVerdicts(v => ({ ...v, rulings: { ...v.rulings, [rec.question]: rec } })), []);
+  const claimsDecided = Object.values(verdicts.claims).filter(v => v.considered).length;
+  const edgesDecided = Object.values(verdicts.edges).filter(v => v.considered).length;
+  const [finishMsg, setFinishMsg] = useState('');
+  const skeleton = useCallback(async () => {
+    if (!adjData) return;
+    if (!who.trim()) { setFinishMsg('Add your name in the rail first.'); focusWho(); return; }
+    try {
+      await postReview(base, { file: 'verdicts', op: 'skeleton', paper: data.slug,
+        version: adjData.version, by: who.trim(), claims: data.claims.map((c: Claim) => c.slug),
+        edges: adjData.edges });
+      setFinishMsg('Skeleton written — reload to edit it. Every claim is keep, every edge ok, none considered yet.');
+    } catch (e: any) { setFinishMsg(`${e.message} Run npm run dev to write the skeleton.`); }
+  }, [adjData, who, base, data, focusWho]);
+  const finish = useCallback(async () => {
+    if (!adjData) return;
+    if (!who.trim()) { setFinishMsg('Add your name in the rail first.'); focusWho(); return; }
+    try {
+      const body = await postReview(base, { file: 'verdicts', op: 'approve', paper: data.slug,
+        version: adjData.version, by: who.trim() });
+      setFinishMsg((body as any)?.output?.trim() || 'Recorded the approval.');
+    } catch (e: any) { setFinishMsg(`${e.message}`); }
+  }, [adjData, who, base, data.slug, focusWho]);
 
   // ── results, in the order the paper shows them ──────────────────────────────
   const results = useMemo(() => {
@@ -902,6 +1226,12 @@ export default function Reader({ data, base }: Props) {
           </p>
         )}
 
+        {adj && adjData && (
+          <ClaimVerdict key={`v-${c.slug}`} base={base} paper={data.slug} version={adjData.version}
+            claim={c} roles={adjData.roles} slugs={slugList} who={who} focusWho={focusWho}
+            standing={verdicts.claims[c.slug]} onPosted={putClaimVerdict} />
+        )}
+
         {c.status !== 'na' && (
           <div className="rd-blk">
             <p className="rd-k">Does it hold up?</p>
@@ -923,7 +1253,7 @@ export default function Reader({ data, base }: Props) {
           </div>
         )}
 
-        {groups.size > 0 && (
+        {(groups.size > 0 || (adj && adjData)) && (
           <div className="rd-blk">
             <p className="rd-k">How it connects</p>
             <ul className="rd-rel">
@@ -933,17 +1263,33 @@ export default function Reader({ data, base }: Props) {
                   <div>{g.claims.map(t => (
                     <div className="rd-relrow" key={t.slug}>
                       <button onClick={() => open(t.slug)}>{trimDot(t.plain)}<Dot c={t} /></button>
-                      <EdgeFlag base={base} paper={data.slug} claim={c.slug}
-                        rel={g.rel} label={label} target={t.slug} who={who} />
+                      {adj && adjData
+                        ? <EdgeVerdict key={`ev-${c.slug}-${t.slug}-${g.rel}`} base={base}
+                            paper={data.slug} version={adjData.version} source={c.slug} target={t.slug}
+                            relation={g.rel} label={label} who={who} focusWho={focusWho}
+                            standing={verdicts.edges[ekey(c.slug, t.slug, g.rel)]} onPosted={putEdgeVerdict} />
+                        : <EdgeFlag base={base} paper={data.slug} claim={c.slug}
+                            rel={g.rel} label={label} target={t.slug} who={who} />}
                     </div>
                   ))}</div>
                 </li>
               ))}
             </ul>
-            <p className="rd-dnote">
-              These relations were inferred, not written by the authors. Flagging one records that
-              a person disputes it; it does not change the graph.
-            </p>
+            {adj && adjData ? (
+              <>
+                <MissingRelation base={base} paper={data.slug} version={adjData.version}
+                  source={c.slug} slugs={slugList} who={who} focusWho={focusWho} onPosted={putEdgeVerdict} />
+                <p className="rd-dnote">
+                  Mark each relation ok or wrong, and add one the graph is missing. A verdict is a
+                  record; `apply` is what rewrites the graph, and that is the maintainer's call.
+                </p>
+              </>
+            ) : groups.size > 0 && (
+              <p className="rd-dnote">
+                These relations were inferred, not written by the authors. Flagging one records that
+                a person disputes it; it does not change the graph.
+              </p>
+            )}
           </div>
         )}
 
@@ -983,6 +1329,14 @@ export default function Reader({ data, base }: Props) {
             {v === 'paper' ? 'Paper' : v === 'findings' ? 'Findings' : 'Argument'}
           </button>
         ))}
+        {/* Dev-only, like #78's write path: adjudicating a whole tree needs the endpoint that
+            only `astro dev` serves. On the published site the button is not shown at all. */}
+        {canAdjudicate && (
+          <button className="rd-mode rd-mode-adj" aria-pressed={adj} onClick={() => setAdj(a => !a)}
+            title="Record a verdict on every claim and edge (needs the dev server)">
+            {adj ? 'Adjudicating' : 'Adjudicate'}
+          </button>
+        )}
       </nav>
 
       <div className="rd-grid">
@@ -991,7 +1345,33 @@ export default function Reader({ data, base }: Props) {
           {view === 'findings' && <FindingsView />}
           {view === 'argument' && <ArgumentView />}
         </div>
-        <aside ref={railRef} className={`rd-rail${active || draftUid ? ' open' : ''}`} aria-live="polite">
+        <aside ref={railRef} className={`rd-rail${active || draftUid || adj ? ' open' : ''}`} aria-live="polite">
+          {adj && adjData && (
+            <div className="rd-adjbar">
+              <p className="rd-k rd-k-adj">
+                Adjudicating claim-tree v{adjData.version}
+                <span>{claimsDecided}/{adjData.claimCount} claims · {edgesDecided}/{adjData.edgeCount} edges</span>
+              </p>
+              <p className="rd-railnote">
+                Open a claim to record its verdict; every relation on the card carries one too.
+                Nothing is in the corpus until you mark the reading finished. Verdicts land in
+                <code> runs/{data.slug}/claim-tree.v{adjData.version}.verdicts.jsonl</code>.
+              </p>
+              <div className="rd-dact">
+                {Object.keys(verdicts.claims).length === 0 && (
+                  <button className="rd-btn" onClick={skeleton}>Generate skeleton</button>
+                )}
+                <button className="rd-btn rd-btn-go" onClick={finish}>Mark reading finished</button>
+              </div>
+              {finishMsg && <pre className="rd-adjmsg">{finishMsg}</pre>}
+              <details className="rd-rulingswrap">
+                <summary>The three rulings the tree cannot settle claim-by-claim</summary>
+                <Rulings base={base} paper={data.slug} version={adjData.version}
+                  questions={adjData.rulings} standing={verdicts.rulings}
+                  who={who} focusWho={focusWho} onPosted={putRulingVerdict} />
+              </details>
+            </div>
+          )}
           {draftUid && D[draftUid]
             ? <DraftCard
                 key={draftUid} d={D[draftUid]} paper={data.slug} base={base}
@@ -1003,7 +1383,7 @@ export default function Reader({ data, base }: Props) {
             : active ? Card({ c: C[active] }) : RailList()}
           {/* Outside the two cards, because both of them are rebuilt on every render of this
               component and an input inside a rebuilt subtree loses focus as you type it. */}
-          {drafts.length > 0 && !draftUid && <Who id="rd-who-rail" who={who} setWho={setWho} />}
+          {(drafts.length > 0 || adj) && !draftUid && <Who id="rd-who-rail" who={who} setWho={setWho} />}
         </aside>
       </div>
 
@@ -1312,6 +1692,32 @@ export default function Reader({ data, base }: Props) {
           border-radius: 4px; padding: 0.5rem; margin: 0.5rem 0 0; overflow-x: auto; white-space: pre-wrap;
           overflow-wrap: anywhere; user-select: all;
         }
+
+        /* ── whole-tree adjudication (#82) ────────────────────────────── */
+        .rd-mode-adj { margin-left: auto; color: var(--draft-strong); }
+        .rd-mode-adj[aria-pressed="true"] { color: var(--draft-strong); }
+        .rd-adjbar { border: 1px solid var(--draft); background: var(--draft-wash); border-radius: 6px; padding: 0.8rem 0.9rem; margin-bottom: 1rem; }
+        .rd-k-adj { color: var(--draft-strong); display: flex; justify-content: space-between; align-items: baseline; gap: 0.6rem; }
+        .rd-k-adj span { font-weight: 500; font-size: 12px; color: var(--card-muted); letter-spacing: 0; text-transform: none; }
+        .rd-adjbar code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+        .rd-adjmsg { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; line-height: 1.45; color: var(--card-body); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 4px; padding: 0.5rem; margin: 0.6rem 0 0; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+        .rd-rulingswrap { margin-top: 0.7rem; }
+        .rd-rulingswrap > summary { font-size: 12.5px; color: var(--card-muted); cursor: pointer; }
+        .rd-rulingswrap > summary:hover { color: var(--card-head); }
+        .rd-ruling { margin-top: 0.7rem; padding-top: 0.6rem; border-top: 1px solid var(--card-border); }
+        .rd-rq { font-size: 12.5px; color: var(--card-body); line-height: 1.4; margin: 0 0 0.45rem; }
+        .rd-adj { border: 1px solid var(--draft); border-radius: 5px; padding: 0.7rem 0.75rem; background: var(--draft-wash); }
+        .rd-vbadge { font-weight: 500; font-size: 11px; color: var(--card-muted); text-transform: none; letter-spacing: 0; margin-left: 0.5rem; }
+        .rd-vbadge.on { color: var(--draft-strong); }
+        .rd-vrow { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.2rem 0 0.55rem; }
+        .rd-vbtn { font-size: 12px; color: var(--card-body); background: var(--card-bg); border: 1px solid var(--card-border-hover); border-radius: 5px; padding: 0.3rem 0.6rem; }
+        .rd-vbtn:hover:not(:disabled) { border-color: var(--draft); color: var(--draft-strong); }
+        .rd-vbtn.on { color: var(--draft-strong); border-color: var(--draft); background: var(--draft-wash); font-weight: 500; }
+        .rd-vbtn-sm { font-size: 11px; padding: 0.15rem 0.4rem; }
+        .rd-vgrid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.4rem; }
+        .rd-vgrid label { font-size: 11.5px; color: var(--card-muted); display: flex; flex-direction: column; gap: 0.2rem; flex: 1; min-width: 7rem; }
+        .rd-evrow { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; align-items: center; }
+        .rd-evstanding { font-size: 11px; color: var(--draft-strong); margin-left: 0.35rem; }
 
         /* ── drafts in the rail list ──────────────────────────────────── */
         .rd-drafts { margin-top: 1.6rem; border-top: 1px solid var(--card-border); padding-top: 0.9rem; }
