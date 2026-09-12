@@ -392,6 +392,38 @@ def reset_client():
     _client_cache = None
 
 
+# Labels that warrant high inference effort (complex synthesis or graph tasks).
+_HIGH_EFFORT_LABELS: frozenset[str] = frozenset(
+    {"reconciler", "external-reviewer", "parts"}
+)
+
+
+def _effort_for(label: str | None) -> str:
+    """Map a call label to an effort level for output_config.
+
+    High: reconciler, external-reviewer, edge-inference*, parts.
+    Medium: readers and everything else.
+    """
+    if label and (label in _HIGH_EFFORT_LABELS or label.startswith("edge-inference")):
+        return "high"
+    return "medium"
+
+
+def _supports_adaptive_thinking(model: str) -> bool:
+    """True for Claude 4.6+ and 5+ models that use thinking: {type: adaptive}.
+
+    budget_tokens is rejected with HTTP 400 on these models; adaptive is the
+    correct form. Pre-4.6 models still use budget_tokens.
+    """
+    import re
+    m = re.search(r"(\d+)-(\d+)", model)
+    if m:
+        return (int(m.group(1)), int(m.group(2))) >= (4, 6)
+    # bare major version, e.g. "claude-opus-5"
+    m = re.search(r"-(\d+)$", model)
+    return bool(m and int(m.group(1)) >= 5)
+
+
 def stream_text(
     cfg: Config,
     *,
@@ -401,13 +433,16 @@ def stream_text(
     max_tokens: int = 32768,
     label: str | None = None,
     output_schema: dict | None = None,
-) -> str:
-    """One model call on whichever backend is configured; returns the text.
+) -> tuple[str, dict]:
+    """One model call on whichever backend is configured; returns (text, usage).
 
     When `output_schema` is given the provider enforces the reply is valid JSON
     matching that schema (Anthropic: output_config.format; litellm: response_format).
     Without it the free-text salvage parser in parse_json_response handles fences
-    and bracket mismatches. The log line names which path each reply takes.
+    and bracket mismatches. The log line names which path each reply took.
+
+    The second return value is a usage dict with keys input_tokens, output_tokens,
+    cache_read_input_tokens, cache_creation_input_tokens (all int, zero when unknown).
 
     Every model call in the package goes through here, so adding a provider
     is a config entry rather than a new code path. "vertex" and "anthropic"
@@ -418,31 +453,56 @@ def stream_text(
     tag = label or model
     chunks: list[str] = []
     progress = _Progress(tag, t0)
+    usage: dict = {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+    }
 
     if cfg.backend in ("vertex", "anthropic"):
         client = get_client(cfg)
+        # Prompt caching: wrap the system prompt in a content block so the provider
+        # can cache it across calls with the same system prompt.
+        system_blocks = [{"type": "text", "text": system,
+                          "cache_control": {"type": "ephemeral"}}]
         stream_kwargs: dict = dict(
             model=model,
             max_tokens=max_tokens,
-            system=system,
+            system=system_blocks,
             messages=[{"role": "user", "content": user}],
         )
+        # Adaptive thinking for 4.6+ models. budget_tokens is rejected on these.
+        if _supports_adaptive_thinking(model):
+            stream_kwargs["thinking"] = {"type": "adaptive"}
+        # Effort and structured output live in output_config.
+        out_cfg: dict = {"effort": _effort_for(label)}
         if output_schema is not None:
-            stream_kwargs["output_config"] = {
-                "format": {
-                    "type": "json",
-                    "json_schema": {"name": label or "output", "schema": output_schema},
-                }
+            out_cfg["format"] = {
+                "type": "json",
+                "json_schema": {"name": label or "output", "schema": output_schema},
             }
             logger.info("  %s: sending %dc to %s (%s), structured output active",
                         tag, len(system) + len(user), model, cfg.backend)
         else:
             logger.info("  %s: sending %dc to %s (%s), free-text (salvage parser active)",
                         tag, len(system) + len(user), model, cfg.backend)
+        stream_kwargs["output_config"] = out_cfg
         with client.messages.stream(**stream_kwargs) as stream:
             for text in stream.text_stream:
                 chunks.append(text)
                 progress.tick(len(text))
+            final = stream.get_final_message()
+        u = final.usage
+        usage = {
+            "input_tokens": getattr(u, "input_tokens", 0) or 0,
+            "output_tokens": getattr(u, "output_tokens", 0) or 0,
+            "cache_read_input_tokens": getattr(u, "cache_read_input_tokens", 0) or 0,
+            "cache_creation_input_tokens": getattr(u, "cache_creation_input_tokens", 0) or 0,
+        }
+        logger.info("  %s: usage in=%d out=%d cache_read=%d cache_create=%d",
+                    tag, usage["input_tokens"], usage["output_tokens"],
+                    usage["cache_read_input_tokens"], usage["cache_creation_input_tokens"])
     else:
         import litellm
 
@@ -481,14 +541,18 @@ def stream_text(
             kwargs["vertex_location"] = cfg.vertex_region
         elif cfg.api_key:
             kwargs["api_key"] = cfg.api_key
+        last_chunk_usage = None
         for chunk in litellm.completion(**kwargs):
             try:
                 delta = chunk.choices[0].delta.content
             except (AttributeError, IndexError):
-                continue
+                delta = None
             if delta:
                 chunks.append(delta)
                 progress.tick(len(delta))
+            # Some providers include usage in the final streaming chunk.
+            if getattr(chunk, "usage", None):
+                last_chunk_usage = chunk.usage
 
         # Not every provider honours stream=True for every model. Rather than
         # return an empty string and fail later in JSON parsing, retry once
@@ -499,10 +563,20 @@ def stream_text(
             kwargs["stream"] = False
             resp = litellm.completion(**kwargs)
             chunks.append(resp.choices[0].message.content or "")
+            if getattr(resp, "usage", None):
+                last_chunk_usage = resp.usage
+
+        if last_chunk_usage is not None:
+            usage = {
+                "input_tokens": getattr(last_chunk_usage, "prompt_tokens", 0) or 0,
+                "output_tokens": getattr(last_chunk_usage, "completion_tokens", 0) or 0,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0,
+            }
 
     raw = "".join(chunks)
     progress.done(len(raw))
-    return raw
+    return raw, usage
 
 
 class _Progress:
@@ -602,10 +676,10 @@ def run_agent(
     cfg: Config,
     *,
     max_retries: int = 2,
-) -> AgentExtraction:
+) -> tuple[AgentExtraction, dict]:
     """Run one extraction agent against the paper's slice for that role.
 
-    Returns the validated AgentExtraction. Raises on unrecoverable error.
+    Returns (AgentExtraction, usage_dict). Raises on unrecoverable error.
     Retries with exponential backoff on rate limits (429).
     """
     model = model_for(agent, cfg)
@@ -619,17 +693,18 @@ def run_agent(
         )
         return AgentExtraction(
             agent=agent, paper_slug=paper.paper_slug, model=model, claims=[]
-        )
+        ), {}
 
     schema = _reader_output_schema()
     raw = None
+    usage: dict = {}
     for attempt in range(max_retries + 1):
         try:
             logger.info("agent=%s model=%s slice=%dc (streaming)", agent, model, len(paper_slice))
             # Streaming is required by the SDK for max_tokens that may run
             # >10 minutes; we use it unconditionally for safety. The result
             # is identical to a non-streaming call once collected.
-            raw = stream_text(
+            raw, usage = stream_text(
                 cfg,
                 model=model,
                 system=system_prompt,
@@ -650,7 +725,7 @@ def run_agent(
 
     assert raw is not None
     try:
-        return reader_from_raw(agent, paper.paper_slug, model, raw, paper)
+        return reader_from_raw(agent, paper.paper_slug, model, raw, paper), usage
     except Exception as parse_err:
         # Keep the raw reply before re-raising: a reply that failed to parse is the only
         # evidence of what went wrong, and it is gone the moment this returns.

@@ -207,7 +207,7 @@ def reconcile(
     extraction_path: str | None = None,
     extraction_path_note: str | None = None,
     paper: PreparedPaper | None = None,
-) -> DraftClaimTable:
+) -> tuple[DraftClaimTable, dict]:
     """Reconcile three extractions into a draft claim table via Opus.
 
     The reconciler sees all three lists at once. It returns a DraftClaimTable
@@ -231,7 +231,7 @@ def reconcile(
         len(structure.claims),
         cfg.model_reconcile,
     )
-    raw = stream_text(
+    raw, usage = stream_text(
         cfg,
         model=cfg.model_reconcile,
         system=system_prompt,
@@ -244,4 +244,4 @@ def reconcile(
         output_schema=_draft_table_schema(),
     )
     return draft_from_raw(raw, results, caption, structure, cfg, paper_doi,
-                          paper_title, extraction_path, extraction_path_note, paper)
+                          paper_title, extraction_path, extraction_path_note, paper), usage

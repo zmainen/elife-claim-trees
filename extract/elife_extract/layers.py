@@ -137,10 +137,13 @@ def reader_layer(agent: str, paper: str, cfg: Config, *,
     if answer is not None:
         p, label = answer_file(answer, cfg)
         extraction = reader_from_raw(agent, paper, label, p.read_text(encoding="utf-8"), prepared)
+        usage: dict = {}
     else:
-        extraction = run_agent(agent, prepared, cfg)
-    path = _write_json(run_file(paper, READER_OUTPUT[agent], cfg),
-                       json.loads(extraction.model_dump_json()))
+        extraction, usage = run_agent(agent, prepared, cfg)
+    payload = json.loads(extraction.model_dump_json())
+    if usage:
+        payload["usage"] = usage
+    path = _write_json(run_file(paper, READER_OUTPUT[agent], cfg), payload)
     return path, extraction
 
 
@@ -185,7 +188,7 @@ def reconcile_layer(paper: str, cfg: Config, *,
         path = _write_json(run_file(paper, "reconciler.output.json", cfg),
                            json.loads(draft.model_dump_json()))
         return path, draft
-    draft = reconcile(
+    draft, usage = reconcile(
         read_reader("results", paper, cfg),
         read_reader("caption", paper, cfg),
         read_reader("structure", paper, cfg),
@@ -195,8 +198,10 @@ def reconcile_layer(paper: str, cfg: Config, *,
         paper=prepared,
     )
     draft.model = cfg.model_reconcile
-    path = _write_json(run_file(paper, "reconciler.output.json", cfg),
-                       json.loads(draft.model_dump_json()))
+    payload = json.loads(draft.model_dump_json())
+    if usage:
+        payload["usage"] = usage
+    path = _write_json(run_file(paper, "reconciler.output.json", cfg), payload)
     return path, draft
 
 
@@ -222,11 +227,14 @@ def external_review_layer(paper: str, cfg: Config, *,
         p, label = answer_file(answer, cfg)
         revised = review_from_raw(p.read_text(encoding="utf-8"), draft)
         revised.model = label
+        rev_usage: dict = {}
     else:
-        revised = external_review(read_prepared(paper, cfg), draft, cfg)
+        revised, rev_usage = external_review(read_prepared(paper, cfg), draft, cfg)
         revised.model = cfg.model_reconcile
-    path = _write_json(run_file(paper, "external-review.output.json", cfg),
-                       json.loads(revised.model_dump_json()))
+    rev_payload = json.loads(revised.model_dump_json())
+    if rev_usage:
+        rev_payload["usage"] = rev_usage
+    path = _write_json(run_file(paper, "external-review.output.json", cfg), rev_payload)
     return path, revised
 
 
@@ -250,10 +258,11 @@ def edge_inference_layer(paper: str, cfg: Config) -> tuple[Path, list[dict]]:
     from .write import _unique_slugs
 
     draft, _ = best_draft(paper, cfg)
-    edges = infer_edges(draft, _unique_slugs(draft.claims), cfg)
-    path = _write_json(run_file(paper, "edge-inference.output.json", cfg), {
-        "paper_slug": paper, "model": cfg.model_reconcile, "edges": edges,
-    })
+    edges, edge_usage = infer_edges(draft, _unique_slugs(draft.claims), cfg)
+    edge_payload: dict = {"paper_slug": paper, "model": cfg.model_reconcile, "edges": edges}
+    if edge_usage:
+        edge_payload["usage"] = edge_usage
+    path = _write_json(run_file(paper, "edge-inference.output.json", cfg), edge_payload)
     return path, edges
 
 
@@ -348,12 +357,15 @@ def questions_layer(paper: str, cfg: Config, *,
     if answer is not None:
         p, model = answer_file(answer, cfg)
         raw = p.read_text(encoding="utf-8")
+        q_usage: dict = {}
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="questions", max_tokens=token_budget("questions"))
+        raw, q_usage = stream_text(cfg, model=model, system=system, user=user, label="questions", max_tokens=token_budget("questions"))
 
     data = _validate_questions(parse_json_response(raw), paper, cfg)
     payload = {"paper_slug": paper, "model": model, **data}
+    if q_usage:
+        payload["usage"] = q_usage
     path = _write_json(run_file(paper, "questions.output.json", cfg), payload)
     _apply_questions(paper, data, cfg)
     return path, payload
@@ -521,12 +533,15 @@ def parts_layer(paper: str, cfg: Config, *,
     if answer is not None:
         p, model = answer_file(answer, cfg)
         raw = p.read_text(encoding="utf-8")
+        parts_usage: dict = {}
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="parts", max_tokens=token_budget("parts"))
+        raw, parts_usage = stream_text(cfg, model=model, system=system, user=user, label="parts", max_tokens=token_budget("parts"))
 
     data = _validate_parts(parse_json_response(raw), paper, cfg)
     payload = {"paper_slug": paper, "model": model, **data}
+    if parts_usage:
+        payload["usage"] = parts_usage
     path = _write_json(run_file(paper, "parts.output.json", cfg), payload)
     _apply_parts(paper, data, cfg)
     return path, payload
@@ -752,13 +767,16 @@ def stance_layer(paper: str, cfg: Config, *,
     if answer is not None:
         p, model = answer_file(answer, cfg)
         raw = p.read_text(encoding="utf-8")
+        stance_usage: dict = {}
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="stance", max_tokens=token_budget("stance"))
+        raw, stance_usage = stream_text(cfg, model=model, system=system, user=user, label="stance", max_tokens=token_budget("stance"))
 
     data = _validate_stance(parse_json_response(raw), paper, cfg)
     edges = _apply_stance(paper, data, cfg)
     payload = {"paper_slug": paper, "model": model, **data, "edges": edges}
+    if stance_usage:
+        payload["usage"] = stance_usage
     path = _write_json(run_file(paper, "stance.output.json", cfg), payload)
     return path, payload
 
@@ -951,11 +969,14 @@ def summaries_layer(paper: str, cfg: Config, *,
     if answer is not None:
         p, model = answer_file(answer, cfg)
         raw = p.read_text(encoding="utf-8")
+        sum_usage: dict = {}
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="summaries", max_tokens=token_budget("summaries"))
+        raw, sum_usage = stream_text(cfg, model=model, system=system, user=user, label="summaries", max_tokens=token_budget("summaries"))
 
     entry = {**_validate_summary(parse_json_response(raw)), "model": model}
+    if sum_usage:
+        entry["usage"] = sum_usage
     path = _write_summary(paper, entry, cfg)
     return path, {"paper_slug": paper, **entry}
 
@@ -1005,12 +1026,15 @@ def synthesis_layer(paper: str, cfg: Config, *,
     if answer is not None:
         p, model = answer_file(answer, cfg)
         raw = p.read_text(encoding="utf-8")
+        syn_usage: dict = {}
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="synthesis", max_tokens=token_budget("synthesis"))
+        raw, syn_usage = stream_text(cfg, model=model, system=system, user=user, label="synthesis", max_tokens=token_budget("synthesis"))
 
     data = _validate_synthesis(parse_json_response(raw), paper, cfg)
     payload = {"paperSlug": paper, "version": 3, **data, "model": model}
+    if syn_usage:
+        payload["usage"] = syn_usage
     path = _write_json(site_data_file(cfg, "synthesis-v3", f"{paper}.json"), payload)
     return path, payload
 
@@ -1103,11 +1127,14 @@ def abstract_map_layer(paper: str, cfg: Config, *,
     if answer is not None:
         p, model = answer_file(answer, cfg)
         raw = p.read_text(encoding="utf-8")
+        amap_usage: dict = {}
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="abstract-map", max_tokens=token_budget("abstract-map"))
+        raw, amap_usage = stream_text(cfg, model=model, system=system, user=user, label="abstract-map", max_tokens=token_budget("abstract-map"))
 
     data = _validate_abstract_map(parse_json_response(raw), paper, cfg)
     payload = {"paperSlug": paper, **data, "model": model}
+    if amap_usage:
+        payload["usage"] = amap_usage
     path = _write_json(site_data_file(cfg, "abstract-mapping", f"{paper}.json"), payload)
     return path, payload

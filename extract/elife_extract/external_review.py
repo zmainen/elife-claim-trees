@@ -128,7 +128,7 @@ def external_review(
     paper: PreparedPaper,
     draft: DraftClaimTable,
     cfg: Config,
-) -> DraftClaimTable:
+) -> tuple[DraftClaimTable, dict]:
     """Run the external Opus reviewer pass on a reconciled draft.
 
     Returns a revised DraftClaimTable. Preserves the original draft on
@@ -141,7 +141,7 @@ def external_review(
         "external review: paper=%s claims=%d via %s",
         paper.paper_slug, len(draft.claims), cfg.model_reconcile,
     )
-    raw = stream_text(
+    raw, usage = stream_text(
         cfg,
         model=cfg.model_reconcile,  # same model class as reconciliation
         system=system_prompt,
@@ -151,4 +151,4 @@ def external_review(
         output_schema=_draft_table_schema(),
     )
 
-    return review_from_raw(raw, draft)
+    return review_from_raw(raw, draft), usage

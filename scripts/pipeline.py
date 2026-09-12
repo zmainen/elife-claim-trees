@@ -255,6 +255,27 @@ def _by_from_output(layer: dict, outs: list[str], paper: str | None = None) -> s
     return None
 
 
+def _usage_from_outputs(outs: list[str], root: str = ROOT) -> dict:
+    """Scan the layer's output JSON files for a top-level 'usage' dict; merge and return."""
+    merged: dict = {}
+    for path in outs:
+        if not path.endswith(".json") or "*" in path:
+            continue
+        full = os.path.join(root, path)
+        try:
+            with open(full, encoding="utf-8") as fh:
+                data = json.load(fh)
+        except Exception:
+            continue
+        usage = data.get("usage") if isinstance(data, dict) else None
+        if not isinstance(usage, dict):
+            continue
+        for key, val in usage.items():
+            if isinstance(val, (int, float)):
+                merged[key] = merged.get(key, 0) + val
+    return merged
+
+
 def record(paper: str, layer: dict, by_id: dict, *, note: str, by: str,
            doi: str | None = None) -> dict:
     """Build a run record for a layer that has just run, hashing what it read and wrote."""
@@ -263,7 +284,8 @@ def record(paper: str, layer: dict, by_id: dict, *, note: str, by: str,
     ins = inputs_of(layer, by_id, paper, doi)
     outs = expand(layer.get("produces"), paper, doi)
     by = _by_from_output(layer, outs, paper) or by
-    return {
+    usage = _usage_from_outputs(outs)
+    entry: dict = {
         "layer": layer["id"],
         "v": (prev["v"] + 1) if prev else 1,
         "ran": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -274,6 +296,9 @@ def record(paper: str, layer: dict, by_id: dict, *, note: str, by: str,
         "in_sets": input_sets(layer, by_id, paper, doi),
         "out": [{"path": r, "sha": digest(r)} for r in outs if digest(r)],
     }
+    if usage:
+        entry["usage"] = usage
+    return entry
 
 
 # ── state ─────────────────────────────────────────────────────────────────────
