@@ -19,13 +19,14 @@ from .contract import CONTRACT_DIR
 _VOCAB = f"{CONTRACT_DIR}/vocabulary.md"
 _CANDIDATE = f"{CONTRACT_DIR}/schema-candidate.md"
 _DRAFT = f"{CONTRACT_DIR}/schema-draft.md"
+_PATCH = f"{CONTRACT_DIR}/schema-review-patch.md"
 
 ROLES: dict[str, tuple[str, list[str]]] = {
     "results-reader": ("results-reader.md", [_VOCAB, _CANDIDATE]),
     "caption-reader": ("caption-reader.md", [_VOCAB, _CANDIDATE]),
     "structure-reader": ("structure-reader.md", [_VOCAB, _CANDIDATE]),
     "reconciler": ("reconciler.md", [_VOCAB, _DRAFT]),
-    "external-reviewer": ("external-reviewer.md", [_VOCAB, _DRAFT]),
+    "external-reviewer": ("external-reviewer.md", [_VOCAB, _DRAFT, _PATCH]),
     # Edge inference reads the vocabulary — where the relations, their directions and the
     # confusable pairs are defined — but not the claim schema: it returns edges, not claims.
     "edge-inference": ("edge-inference.md", [_VOCAB]),

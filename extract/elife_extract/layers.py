@@ -218,6 +218,10 @@ def external_review_layer(paper: str, cfg: Config, *,
 
     Was `--review-mode external`. It is a step, not review: it changes the artifact, and it
     runs before the version it would have approved exists.
+
+    The reviewer now returns a patch (edits + additions) rather than a full replacement
+    table. The runner applies the patch, writes external-review.output.json (the revised
+    DraftClaimTable) and external-review.patch.json (the raw patch for audit).
     """
     from .external_review import external_review, review_from_raw
 
@@ -225,16 +229,18 @@ def external_review_layer(paper: str, cfg: Config, *,
         run_file(paper, "reconciler.output.json", cfg), "external-review", "reconcile"))
     if answer is not None:
         p, label = answer_file(answer, cfg)
-        revised = review_from_raw(p.read_text(encoding="utf-8"), draft)
+        revised, patch = review_from_raw(p.read_text(encoding="utf-8"), draft)
         revised.model = label
         rev_usage: dict = {}
     else:
-        revised, rev_usage = external_review(read_prepared(paper, cfg), draft, cfg)
+        revised, patch, rev_usage = external_review(read_prepared(paper, cfg), draft, cfg)
         revised.model = cfg.model_reconcile
     rev_payload = json.loads(revised.model_dump_json())
     if rev_usage:
         rev_payload["usage"] = rev_usage
     path = _write_json(run_file(paper, "external-review.output.json", cfg), rev_payload)
+    _write_json(run_file(paper, "external-review.patch.json", cfg),
+                json.loads(patch.model_dump_json()))
     return path, revised
 
 

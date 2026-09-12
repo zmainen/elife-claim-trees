@@ -30,7 +30,7 @@ import yaml
 from . import schema, vocabulary
 
 CONTRACT_DIR = "contract"
-FILES = ("vocabulary.md", "schema-candidate.md", "schema-draft.md")
+FILES = ("vocabulary.md", "schema-candidate.md", "schema-draft.md", "schema-review-patch.md")
 
 
 # ── sources ──────────────────────────────────────────────────────────────
@@ -308,10 +308,53 @@ def render_schema_draft() -> str:
     return "\n".join(out)
 
 
+def render_schema_review_patch() -> str:
+    out = ["# What the external reviewer returns", "",
+           "Generated from `extract/elife_extract/schema.py` by `elife-extract contract --write`. "
+           "Do not edit.", "",
+           "A single JSON object with two keys — `edits` and `additions` — and nothing else: "
+           "no prose before or after, no code fence.", "",
+           "Top level:", ""]
+    out += _table(schema.ReviewPatch)
+    out += ["", "Each element of `edits` (targeted changes to existing claims):", ""]
+    out += _table(schema.ReviewEdit)
+    out += ["", "Each element of `additions` (new claims appended to the draft):", ""]
+    out += _table(schema.ReconciledClaim)
+    out += ["", "```json", json.dumps({
+        "edits": [
+            {
+                "claim": "Doubling distal dendritic inhibition reduces somatic firing from approximately "
+                         "5.5 Hz to approximately 0.2 Hz.",
+                "role": "empirical",
+                "notes": "[reviewer] role: empirical → control. This result rules out that somatic "
+                         "firing is driven by distal input rather than proximal.",
+            }
+        ],
+        "additions": [
+            {
+                "claim": "Distal inhibition more strongly reduces somatic firing than proximal inhibition.",
+                "panel": None,
+                "claim_type": "synthesis",
+                "role": "synthesis",
+                "addresses": None,
+                "confidence": "single-source",
+                "sources": ["reviewer"],
+                "evidence_by_agent": {
+                    "reviewer": "The contrast across fig4a (distal) and fig4b (proximal) is stated in "
+                                "the Discussion: distal inhibition is uniquely effective.",
+                },
+                "notes": "[reviewer] added: synthesis across panels.",
+            }
+        ],
+    }, indent=2), "```", ""]
+    return "\n".join(out)
+
+
 RENDER = {
     "vocabulary.md": render_vocabulary,
     "schema-candidate.md": lambda root=None: render_schema_candidate(),
     "schema-draft.md": lambda root=None: render_schema_draft(),
+    "schema-review-patch.md": lambda root=None: render_schema_review_patch(),
 }
 
 

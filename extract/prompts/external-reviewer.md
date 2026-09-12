@@ -42,18 +42,20 @@ structure that the paper establishes across slices or leaves implicit:
 
 ## What you may and may not do
 
-You may change a claim's `role`, its `claim_type` when the role change requires it, and its
-`panel`; add claims; and write `notes`. You may not delete a claim, merge two claims, or add a
+You may change a claim's `role`, its `claim_type` when the role change requires it, its
+`panel`, and its `notes`; and add claims. You may not delete a claim, merge two claims, or add a
 number or a panel that appears neither in the prose you were given nor in the draft. A claim
-you think should go is kept, with `[reviewer] doubtful: …` in its notes.
+you think should go is kept; add an edit for it with `notes` set to `"[reviewer] doubtful: …"`.
 
-Mark every change. A revised claim's `notes` begins `[reviewer] role: empirical → control.`
-with the reason. An added claim has `confidence: single-source`, `sources: ["reviewer"]`, an
-`evidence_by_agent.reviewer` entry saying what in the prose or the draft it was inferred from,
-and notes beginning `[reviewer] added:`. An unchanged claim is returned exactly as it was.
+Mark every change. A claim you edit needs only the fields you are changing — list them in the
+`edits` array keyed by the exact `claim` sentence. A revised claim's `notes` begins
+`[reviewer] role: empirical → control.` with the reason. An added claim in `additions` must
+carry `confidence: "single-source"`, `sources: ["reviewer"]`, an `evidence_by_agent.reviewer`
+entry saying what in the prose or the draft it was inferred from, and `notes` beginning
+`[reviewer] added:`. Claims you do not change are omitted from `edits` — do not list them.
 
 ## What to return
 
-The complete revised table as the JSON object described below, and nothing else: no prose
-before or after it, no code fence. The vocabulary that follows defines every value you may
-use.
+A patch object with two keys — `edits` and `additions` — and nothing else: no prose before or
+after it, no code fence. The runner applies the patch to the draft, so you need only state the
+changes. The schema that follows defines every value you may use.
