@@ -14,12 +14,12 @@ contexts:
 
 # ── the process and its records ─────────────────────────────────────────────
 process:
-  bpmn: Process. worker code → serviceTask; model → serviceTask with an agent implementation; human → userTask. BPMN has no notion of content-hashed inputs.
-  cwl: Workflow, for code steps only — CWL has no human or model task and no notion of a pending answer.
+  bpmn: Process. A step with a command → serviceTask; a step a player answers → userTask or a serviceTask with an agent implementation, depending on who plays. BPMN has no notion of content-hashed inputs.
+  cwl: Workflow, for command steps only — CWL has no task that waits for a player and no notion of a pending answer.
   docmaps: a DocMap is a manifest of steps with inputs, actions and outputs; our process is the template and a subject's ledger is one DocMap.
 step:
   bpmn: task
-  cwl: CommandLineTool (code steps)
+  cwl: CommandLineTool (command steps)
   docmaps: step (with `inputs`, `actions`, `assertions`)
 run:
   prov: Activity — `prov:used` each input, `prov:generated` the version, `prov:wasAssociatedWith` the answerer
@@ -29,10 +29,10 @@ version:
   prov: Entity, `prov:wasRevisionOf` the previous version, `prov:wasDerivedFrom` each input
   ro-crate: a Dataset; the version directory can carry ro-crate-metadata.json as-is
   docmaps: output
-worker:
-  prov: code/model → SoftwareAgent; human → Person
+answerer:
+  prov: a command → SoftwareAgent; a player → Agent, refined to Person or SoftwareAgent by what the run's `by` names
   bpmn: serviceTask / userTask
-  credit: human roles can carry a CRediT term (Investigation, Supervision, …) in `by`
+  credit: a person's role can carry a CRediT term (Investigation, Supervision, …) in `by`
 
 # ── the claim schema ────────────────────────────────────────────────────────
 types:
