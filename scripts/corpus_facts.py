@@ -44,14 +44,23 @@ OUT = os.path.join(ROOT, "site", "src", "data", "corpus-facts.json")
 ELIGIBLE_ROLES = {"empirical", "control"}
 
 
+def loadable(body):
+    """Frontmatter text YAML can parse: `key:` with `[]` or `{}` on the next line is not valid.
+
+    Thirteen claim files in the corpus carry that shape — every one written by a layer that
+    templated its frontmatter rather than dumping it — so anything that reads or rewrites a
+    claim file goes through here rather than discovering it one crash at a time.
+    """
+    return re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2", body, flags=re.M)
+
+
 def frontmatter(path):
     t = open(path, encoding="utf-8").read()
     m = re.match(r"^---\n(.*?)\n---", t, re.S)
     if not m:
         return None
-    body = re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2", m.group(1), flags=re.M)
     try:
-        return yaml.safe_load(body)
+        return yaml.safe_load(loadable(m.group(1)))
     except yaml.YAMLError:
         return None
 

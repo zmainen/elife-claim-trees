@@ -17,6 +17,8 @@ assertions:
   panel: null
   confidence: tentative
 reproductions: []
+qualifies:
+- partner-reward-prediction-errors-resulting
 ---
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->

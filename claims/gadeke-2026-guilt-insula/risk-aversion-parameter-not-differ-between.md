@@ -17,6 +17,8 @@ assertions:
   panel: null
   confidence: tentative
 reproductions: []
+validates:
+- participants-slightly-more-risk-averse
 ---
 
 **Notes from extraction:** Null result justifying pooling across gain and loss trials.
