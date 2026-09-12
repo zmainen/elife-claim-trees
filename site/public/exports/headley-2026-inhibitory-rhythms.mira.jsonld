@@ -33,7 +33,7 @@
       "label": "Claim",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:type/Evidence",
@@ -44,7 +44,7 @@
       "label": "Evidence",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:type/Protocol",
@@ -55,7 +55,7 @@
       "label": "Protocol",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/derived_from",
@@ -70,7 +70,7 @@
       "label": "derived-from",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z",
+      "modified": "2026-09-12T00:00:00.000Z",
       "inverseOf": "haak:reldef/entails"
     },
     {
@@ -90,7 +90,7 @@
       },
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/dissociates_with",
@@ -106,7 +106,7 @@
       "label": "dissociates-with",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/dissociates_with/def",
@@ -125,7 +125,7 @@
       },
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/entails",
@@ -140,7 +140,7 @@
       "label": "entails",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/entails/def",
@@ -159,7 +159,7 @@
       },
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/interprets",
@@ -174,7 +174,7 @@
       "label": "interprets",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/interprets/def",
@@ -193,7 +193,7 @@
       },
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/requires",
@@ -208,7 +208,7 @@
       "label": "requires",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/requires/def",
@@ -227,7 +227,42 @@
       },
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out",
+      "@type": "AbstractRelationDef",
+      "subClassOf": [
+        "mira:opposes",
+        {
+          "@type": "owl:Restriction",
+          "onProperty": "rdf:predicate",
+          "hasValue": "haak:reldef/rules_out"
+        }
+      ],
+      "label": "rules-out",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-03-30T00:00:00.000Z",
+      "modified": "2026-09-12T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:reldef/rules_out/def",
+      "@type": "RelationDef",
+      "domain": "haak:type/Evidence",
+      "range": "haak:type/Claim",
+      "subClassOf": [
+        "haak:reldef/rules_out",
+        "dgb:RelationInstance"
+      ],
+      "label": "rules-out",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The source evidence eliminates the destination claim as viable."
+      },
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-03-30T00:00:00.000Z",
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/supports",
@@ -243,7 +278,7 @@
       "label": "supports",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/supports/def",
@@ -262,7 +297,7 @@
       },
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/tests",
@@ -277,7 +312,7 @@
       "label": "tests",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:reldef/tests/def",
@@ -296,7 +331,34 @@
       },
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
+    },
+    {
+      "@id": "urn:uuid:e66e555b-a3fe-4926-9dcf-5ea380f4d083#question",
+      "@type": "mira:Question",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that distal dendritic inhibition reduces somatic firing by directly raising the action-potential threshold — the same subtractive mechanism as perisomatic inhibition — rather than by suppressing dendritic Ca²⁺ and NMDA spikes?"
+      }
+    },
+    {
+      "@id": "urn:uuid:17131701-4c3c-4898-bde5-336452f1697c#question",
+      "@type": "mira:Question",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that perisomatic and distal dendritic inhibition act through a single shared mechanism, so perisomatic inhibition also controls dendritic Ca²⁺ and NMDA spiking, rather than the perisomatic-gamma and distal-beta streams being functionally orthogonal?"
+      }
+    },
+    {
+      "@id": "urn:uuid:de55d932-ac73-4506-9917-6b56019b32af#question",
+      "@type": "mira:Question",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Is it the case that the phase-dependent modulation of dendritic spike probability and action-potential timing by beta and gamma bursts requires a slow buildup or evolving entrainment of an underlying process across many oscillatory cycles?"
+      }
     },
     {
       "@id": "urn:uuid:eb2cf2aa-aba7-4b26-9ba2-c3589add004d#question",
@@ -314,6 +376,45 @@
         "@type": "Item",
         "format": "text/plain",
         "content": "Is it the case that the optimal frequency of rhythmic inhibition for modulating a given dendritic computation is determined by matching the rhythm's cycle period to the intrinsic timescale of the spike process at the target compartment: fast (gamma) for perisomatic Na+/AP processes, slow (beta) for distal Ca²⁺/NMDA dendritic spike processes?"
+      }
+    },
+    {
+      "@id": "urn:uuid:e66e555b-a3fe-4926-9dcf-5ea380f4d083",
+      "@type": "mira:Claim",
+      "title": "alt-distal-inhibition-raises-somatic-threshold",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Distal dendritic inhibition reduces somatic firing by directly raising the action-potential threshold — the same subtractive mechanism as perisomatic inhibition — rather than by suppressing dendritic Ca²⁺ and NMDA spikes."
+      },
+      "mira:addresses": {
+        "@id": "urn:uuid:e66e555b-a3fe-4926-9dcf-5ea380f4d083#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:17131701-4c3c-4898-bde5-336452f1697c",
+      "@type": "mira:Claim",
+      "title": "alt-perisomatic-and-distal-share-mechanism",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "Perisomatic and distal dendritic inhibition act through a single shared mechanism, so perisomatic inhibition also controls dendritic Ca²⁺ and NMDA spiking, rather than the perisomatic-gamma and distal-beta streams being functionally orthogonal."
+      },
+      "mira:addresses": {
+        "@id": "urn:uuid:17131701-4c3c-4898-bde5-336452f1697c#question"
+      }
+    },
+    {
+      "@id": "urn:uuid:de55d932-ac73-4506-9917-6b56019b32af",
+      "@type": "mira:Claim",
+      "title": "alt-phase-modulation-requires-buildup",
+      "description": {
+        "@type": "Item",
+        "format": "text/plain",
+        "content": "The phase-dependent modulation of dendritic spike probability and action-potential timing by beta and gamma bursts requires a slow buildup or evolving entrainment of an underlying process across many oscillatory cycles."
+      },
+      "mira:addresses": {
+        "@id": "urn:uuid:de55d932-ac73-4506-9917-6b56019b32af#question"
       }
     },
     {
@@ -746,7 +847,7 @@
       "title": "[[beta-bidirectional-dendritic-control]] -requires-> [[beta-optimal-distal-dendritic-entrainment]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/2",
@@ -758,7 +859,7 @@
       "title": "[[beta-bidirectional-dendritic-control]] -requires-> [[ca-spikes-couple-20ms-before-ap]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/3",
@@ -770,7 +871,7 @@
       "title": "[[beta-bidirectional-dendritic-control]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/4",
@@ -782,7 +883,7 @@
       "title": "[[beta-bidirectional-dendritic-control]] -supports-> [[beta-gates-distal-apical-inputs]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/5",
@@ -794,7 +895,7 @@
       "title": "[[beta-gates-distal-apical-inputs]] -dissociates-with-> [[gamma-gates-proximal-basal-inputs]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/6",
@@ -806,7 +907,7 @@
       "title": "[[beta-gates-distal-apical-inputs]] -tests-> [[prediction-orthogonal-input-gating]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/7",
@@ -818,7 +919,7 @@
       "title": "[[beta-gates-distal-apical-inputs]] -requires-> [[beta-bidirectional-dendritic-control]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/8",
@@ -830,7 +931,7 @@
       "title": "[[beta-gates-distal-apical-inputs]] -requires-> [[beta-optimal-distal-dendritic-entrainment]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/9",
@@ -842,7 +943,7 @@
       "title": "[[beta-gates-distal-apical-inputs]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/10",
@@ -854,7 +955,7 @@
       "title": "[[beta-gates-distal-apical-inputs]] -supports-> [[pv-gamma-sst-beta-correspondence]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/11",
@@ -866,7 +967,7 @@
       "title": "[[beta-gates-distal-apical-inputs]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/12",
@@ -878,7 +979,7 @@
       "title": "[[beta-optimal-distal-dendritic-entrainment]] -tests-> [[prediction-beta-optimal-distal]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/13",
@@ -890,7 +991,7 @@
       "title": "[[beta-optimal-distal-dendritic-entrainment]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/14",
@@ -902,7 +1003,7 @@
       "title": "[[beta-optimal-distal-dendritic-entrainment]] -supports-> [[beta-bidirectional-dendritic-control]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/15",
@@ -914,7 +1015,7 @@
       "title": "[[beta-optimal-distal-dendritic-entrainment]] -supports-> [[beta-gates-distal-apical-inputs]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/16",
@@ -926,7 +1027,7 @@
       "title": "[[beta-optimal-distal-dendritic-entrainment]] -supports-> [[pv-gamma-sst-beta-correspondence]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/17",
@@ -938,10 +1039,22 @@
       "title": "[[beta-optimal-distal-dendritic-entrainment]] -supports-> [[hypothesis-frequency-compartment-matching]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
       "@id": "haak:edge/headley-2026-inhibitory-rhythms/18",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:34c1a5fd-714f-4cde-ba8b-1c230af108db",
+      "destination": "urn:uuid:de55d932-ac73-4506-9917-6b56019b32af",
+      "title": "[[burst-effects-emerge-first-cycles]] -rules-out-> [[alt-phase-modulation-requires-buildup]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-03-30T00:00:00.000Z",
+      "modified": "2026-09-12T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/19",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -950,10 +1063,10 @@
       "title": "[[burst-effects-emerge-first-cycles]] -requires-> [[beta-bidirectional-dendritic-control]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/19",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/20",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -962,10 +1075,10 @@
       "title": "[[burst-effects-emerge-first-cycles]] -requires-> [[gamma-optimal-perisomatic-ap-modulation]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/20",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/21",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -974,10 +1087,10 @@
       "title": "[[burst-effects-emerge-first-cycles]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/21",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/22",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -986,10 +1099,10 @@
       "title": "[[ca-spikes-couple-20ms-before-ap]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/22",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/23",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -998,10 +1111,10 @@
       "title": "[[ca-spikes-couple-20ms-before-ap]] -supports-> [[beta-bidirectional-dendritic-control]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/23",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/24",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1010,10 +1123,10 @@
       "title": "[[ca-spikes-couple-20ms-before-ap]] -supports-> [[beta-gates-distal-apical-inputs]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/24",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/25",
       "@type": [
         "haak:reldef/dissociates_with"
       ],
@@ -1022,10 +1135,22 @@
       "title": "[[distal-inhib-drops-firing-02hz]] -dissociates-with-> [[perisomatic-inhib-drops-firing-07hz]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/25",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/26",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:26819b09-5b20-4c90-b9f3-8bdd29a2a57c",
+      "destination": "urn:uuid:e66e555b-a3fe-4926-9dcf-5ea380f4d083",
+      "title": "[[distal-inhib-drops-firing-02hz]] -rules-out-> [[alt-distal-inhibition-raises-somatic-threshold]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-03-30T00:00:00.000Z",
+      "modified": "2026-09-12T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/27",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1034,10 +1159,10 @@
       "title": "[[distal-inhib-drops-firing-02hz]] -tests-> [[prediction-distal-dendritic-spike-mechanism]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/26",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/28",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1046,10 +1171,10 @@
       "title": "[[distal-inhib-drops-firing-02hz]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/27",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/29",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1058,10 +1183,10 @@
       "title": "[[distal-inhib-drops-firing-02hz]] -requires-> [[naturalistic-drive-parameterization]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/28",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/30",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1070,10 +1195,10 @@
       "title": "[[distal-inhib-drops-firing-02hz]] -supports-> [[beta-bidirectional-dendritic-control]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/29",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/31",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1082,10 +1207,10 @@
       "title": "[[distal-inhib-drops-firing-02hz]] -supports-> [[beta-gates-distal-apical-inputs]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/30",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/32",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1094,10 +1219,10 @@
       "title": "[[distal-inhib-drops-firing-02hz]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/31",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/33",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1106,10 +1231,10 @@
       "title": "[[ei-lag-sensitivity-firing-rate]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/32",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/34",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1118,10 +1243,10 @@
       "title": "[[ei-lag-sensitivity-firing-rate]] -requires-> [[naturalistic-drive-parameterization]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/33",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/35",
       "@type": [
         "haak:reldef/dissociates_with"
       ],
@@ -1130,10 +1255,10 @@
       "title": "[[gamma-gates-proximal-basal-inputs]] -dissociates-with-> [[beta-gates-distal-apical-inputs]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/34",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/36",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1142,10 +1267,10 @@
       "title": "[[gamma-gates-proximal-basal-inputs]] -tests-> [[prediction-orthogonal-input-gating]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/35",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/37",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1154,10 +1279,10 @@
       "title": "[[gamma-gates-proximal-basal-inputs]] -requires-> [[gamma-optimal-perisomatic-ap-modulation]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/36",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/38",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1166,10 +1291,10 @@
       "title": "[[gamma-gates-proximal-basal-inputs]] -requires-> [[gamma-perisomatic-no-dendritic-spike-change]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/37",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/39",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1178,10 +1303,10 @@
       "title": "[[gamma-gates-proximal-basal-inputs]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/38",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/40",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1190,10 +1315,10 @@
       "title": "[[gamma-gates-proximal-basal-inputs]] -supports-> [[pv-gamma-sst-beta-correspondence]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/39",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/41",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1202,10 +1327,10 @@
       "title": "[[gamma-gates-proximal-basal-inputs]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/40",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/42",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1214,10 +1339,10 @@
       "title": "[[gamma-optimal-perisomatic-ap-modulation]] -tests-> [[prediction-gamma-optimal-perisomatic]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/41",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/43",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1226,10 +1351,10 @@
       "title": "[[gamma-optimal-perisomatic-ap-modulation]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/42",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/44",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1238,10 +1363,10 @@
       "title": "[[gamma-optimal-perisomatic-ap-modulation]] -supports-> [[gamma-perisomatic-no-dendritic-spike-change]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/43",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/45",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1250,10 +1375,10 @@
       "title": "[[gamma-optimal-perisomatic-ap-modulation]] -supports-> [[gamma-gates-proximal-basal-inputs]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/44",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/46",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1262,10 +1387,10 @@
       "title": "[[gamma-optimal-perisomatic-ap-modulation]] -supports-> [[pv-gamma-sst-beta-correspondence]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/45",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/47",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1274,10 +1399,22 @@
       "title": "[[gamma-optimal-perisomatic-ap-modulation]] -supports-> [[hypothesis-frequency-compartment-matching]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/46",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/48",
+      "@type": [
+        "haak:reldef/rules_out"
+      ],
+      "source": "urn:uuid:b7b55f60-7438-47fd-a42a-431bcbaf696b",
+      "destination": "urn:uuid:17131701-4c3c-4898-bde5-336452f1697c",
+      "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -rules-out-> [[alt-perisomatic-and-distal-share-mechanism]]",
+      "creator": "haak:agent/elife-claim-trees",
+      "created": "2026-03-30T00:00:00.000Z",
+      "modified": "2026-09-12T00:00:00.000Z"
+    },
+    {
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/49",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1286,10 +1423,10 @@
       "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -tests-> [[prediction-perisomatic-threshold-mechanism]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/47",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/50",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1298,10 +1435,10 @@
       "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -requires-> [[perisomatic-inhib-drops-firing-07hz]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/48",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/51",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1310,10 +1447,10 @@
       "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -requires-> [[gamma-optimal-perisomatic-ap-modulation]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/49",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/52",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1322,10 +1459,10 @@
       "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/50",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/53",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1334,10 +1471,10 @@
       "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -supports-> [[pv-gamma-sst-beta-correspondence]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/51",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/54",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1346,10 +1483,10 @@
       "title": "[[gamma-perisomatic-no-dendritic-spike-change]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/52",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/55",
       "@type": [
         "haak:reldef/entails"
       ],
@@ -1358,10 +1495,10 @@
       "title": "[[hypothesis-distinct-compartmental-roles]] -entails-> [[prediction-perisomatic-threshold-mechanism]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/53",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/56",
       "@type": [
         "haak:reldef/entails"
       ],
@@ -1370,10 +1507,10 @@
       "title": "[[hypothesis-distinct-compartmental-roles]] -entails-> [[prediction-distal-dendritic-spike-mechanism]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/54",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/57",
       "@type": [
         "haak:reldef/entails"
       ],
@@ -1382,10 +1519,10 @@
       "title": "[[hypothesis-distinct-compartmental-roles]] -entails-> [[prediction-perisomatic-input-output-shaping]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/55",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/58",
       "@type": [
         "haak:reldef/entails"
       ],
@@ -1394,10 +1531,10 @@
       "title": "[[hypothesis-distinct-compartmental-roles]] -entails-> [[prediction-orthogonal-input-gating]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/56",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/59",
       "@type": [
         "haak:reldef/entails"
       ],
@@ -1406,10 +1543,10 @@
       "title": "[[hypothesis-frequency-compartment-matching]] -entails-> [[prediction-beta-optimal-distal]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/57",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/60",
       "@type": [
         "haak:reldef/entails"
       ],
@@ -1418,10 +1555,10 @@
       "title": "[[hypothesis-frequency-compartment-matching]] -entails-> [[prediction-gamma-optimal-perisomatic]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/58",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/61",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1430,10 +1567,10 @@
       "title": "[[na-spikes-couple-2to3ms-before-ap]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/59",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/62",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1442,10 +1579,10 @@
       "title": "[[na-spikes-couple-2to3ms-before-ap]] -supports-> [[distal-inhib-drops-firing-02hz]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/60",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/63",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1454,10 +1591,10 @@
       "title": "[[nmda-spikes-couple-25ms-before-ap]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/61",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/64",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1466,10 +1603,10 @@
       "title": "[[nmda-spikes-couple-25ms-before-ap]] -supports-> [[beta-optimal-distal-dendritic-entrainment]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/62",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/65",
       "@type": [
         "haak:reldef/dissociates_with"
       ],
@@ -1478,10 +1615,10 @@
       "title": "[[perisomatic-inhib-drops-firing-07hz]] -dissociates-with-> [[distal-inhib-drops-firing-02hz]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/63",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/66",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1490,10 +1627,10 @@
       "title": "[[perisomatic-inhib-drops-firing-07hz]] -tests-> [[prediction-perisomatic-threshold-mechanism]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/64",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/67",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1502,10 +1639,10 @@
       "title": "[[perisomatic-inhib-drops-firing-07hz]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/65",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/68",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1514,10 +1651,10 @@
       "title": "[[perisomatic-inhib-drops-firing-07hz]] -requires-> [[naturalistic-drive-parameterization]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/66",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/69",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1526,10 +1663,10 @@
       "title": "[[perisomatic-inhib-drops-firing-07hz]] -supports-> [[perisomatic-inhib-subtractive-divisive]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/67",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/70",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1538,10 +1675,10 @@
       "title": "[[perisomatic-inhib-drops-firing-07hz]] -supports-> [[gamma-perisomatic-no-dendritic-spike-change]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/68",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/71",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1550,10 +1687,10 @@
       "title": "[[perisomatic-inhib-drops-firing-07hz]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/69",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/72",
       "@type": [
         "haak:reldef/tests"
       ],
@@ -1562,10 +1699,10 @@
       "title": "[[perisomatic-inhib-subtractive-divisive]] -tests-> [[prediction-perisomatic-input-output-shaping]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/70",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/73",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1574,10 +1711,10 @@
       "title": "[[perisomatic-inhib-subtractive-divisive]] -requires-> [[perisomatic-inhib-drops-firing-07hz]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/71",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/74",
       "@type": [
         "haak:reldef/requires"
       ],
@@ -1586,10 +1723,10 @@
       "title": "[[perisomatic-inhib-subtractive-divisive]] -requires-> [[l5-model-single-cell-scope]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/72",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/75",
       "@type": [
         "haak:reldef/supports"
       ],
@@ -1598,10 +1735,10 @@
       "title": "[[perisomatic-inhib-subtractive-divisive]] -supports-> [[hypothesis-distinct-compartmental-roles]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/73",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/76",
       "@type": [
         "haak:reldef/interprets"
       ],
@@ -1610,10 +1747,10 @@
       "title": "[[pv-gamma-sst-beta-correspondence]] -interprets-> [[beta-optimal-distal-dendritic-entrainment]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/74",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/77",
       "@type": [
         "haak:reldef/interprets"
       ],
@@ -1622,10 +1759,10 @@
       "title": "[[pv-gamma-sst-beta-correspondence]] -interprets-> [[gamma-optimal-perisomatic-ap-modulation]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/75",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/78",
       "@type": [
         "haak:reldef/interprets"
       ],
@@ -1634,10 +1771,10 @@
       "title": "[[pv-gamma-sst-beta-correspondence]] -interprets-> [[beta-gates-distal-apical-inputs]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/76",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/79",
       "@type": [
         "haak:reldef/interprets"
       ],
@@ -1646,10 +1783,10 @@
       "title": "[[pv-gamma-sst-beta-correspondence]] -interprets-> [[gamma-gates-proximal-basal-inputs]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/headley-2026-inhibitory-rhythms/77",
+      "@id": "haak:edge/headley-2026-inhibitory-rhythms/80",
       "@type": [
         "haak:reldef/interprets"
       ],
@@ -1658,7 +1795,7 @@
       "title": "[[pv-gamma-sst-beta-correspondence]] -interprets-> [[interprets-pv-gamma-sst-beta-associations]]",
       "creator": "haak:agent/elife-claim-trees",
       "created": "2026-03-30T00:00:00.000Z",
-      "modified": "2026-04-20T00:00:00.000Z"
+      "modified": "2026-09-12T00:00:00.000Z"
     }
   ]
 }

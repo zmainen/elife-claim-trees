@@ -20,6 +20,8 @@ concepts:
   - phase-dependent modulation
 priority: 2026-03-30
 epistemic: moderate
+rules-out:
+- alt-phase-modulation-requires-buildup
 
 belongings:
   - relation: requires
