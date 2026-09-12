@@ -772,8 +772,12 @@ def cmd_score(args: argparse.Namespace) -> int:
     ref_dir = Path(args.reference).expanduser().resolve()
     cli_dir = Path(args.candidate).expanduser().resolve()
     pairs_path = Path(args.pairs).expanduser().resolve()
+    gold_path = Path(args.gold).expanduser().resolve() if getattr(args, "gold", None) else None
 
-    for p, label in [(ref_dir, "reference"), (cli_dir, "candidate"), (pairs_path, "pairs")]:
+    checks = [(ref_dir, "reference"), (cli_dir, "candidate"), (pairs_path, "pairs")]
+    if gold_path is not None:
+        checks.append((gold_path, "gold"))
+    for p, label in checks:
         if not p.exists():
             print(f"error: {label} not found: {p}", file=sys.stderr)
             return 2
@@ -801,6 +805,21 @@ def cmd_score(args: argparse.Namespace) -> int:
     if getattr(args, "note", None):
         card.note = args.note
     print_score_report(card, ref_dir=ref_dir)
+
+    # If a verdict file is named, score against the adjudicated gold too, and report it beside
+    # the matcher numbers so the two can be read together.
+    if gold_path is not None:
+        from .evaluate import score_against_gold, print_gold_report
+        try:
+            gold = score_against_gold(
+                ref_dir=ref_dir, cli_dir=cli_dir, pairs_path=pairs_path,
+                verdicts_path=gold_path,
+                paper_slug=getattr(args, "paper", None) or ref_dir.name,
+            )
+        except Exception as e:
+            print(f"error scoring against gold: {e}", file=sys.stderr)
+            return 1
+        print_gold_report(gold)
 
     # A scorecard the evaluation layer can gather. It lives under runs/<paper>/evaluation/ in
     # the scorer's own format, so evaluation_report.py reads it back without a second schema.
@@ -1317,6 +1336,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_score.add_argument("--pairs", required=True,
                          help="Pairs file mapping reference claims to candidate claims.")
     p_score.add_argument("--paper", help="Paper slug (default: reference directory name).")
+    p_score.add_argument("--gold", help=(
+        "A verdict file (runs/<paper>/claim-tree.v<N>.verdicts.jsonl). When given, the "
+        "candidate is also scored against the adjudicated reference: recovery over kept claims, "
+        "struck claims counting against precision, corrected roles/panels/edges. Reported "
+        "beside the matcher numbers."))
     p_score.add_argument("--profile", default=None,
                          help="A label for what produced the candidate — a profile name "
                               "(frontier/standard/open/subagent) or an experiment name (e.g. "

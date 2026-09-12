@@ -91,6 +91,8 @@ check:  ## Gates that are clean on main. A failure here is this change's fault.
 	cd extract && $(PYTHON) tests/test_layer_contract.py
 	cd extract && $(PYTHON) tests/test_prompt_contract.py
 	cd extract && $(PYTHON) tests/test_profiles.py
+	cd extract && $(PYTHON) tests/test_evaluate_precision_and_edges.py
+	cd extract && $(PYTHON) tests/test_verdicts.py
 	$(PYTHON) scripts/audit_layers.py
 
 contract:  ## Regenerate the prompt contract from vocabulary.py, relations.py and schema.py

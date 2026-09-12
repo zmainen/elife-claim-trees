@@ -35,6 +35,135 @@ const ROLES = ['empirical', 'control', 'interpretation', 'scope', 'literature-co
 
 const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
 
+// ── whole-tree adjudication (#82) ─────────────────────────────────────────────
+//
+// A second reading the gap-claim surface does not cover: a person going through a whole claim
+// tree and recording a verdict on every claim and every edge, bound to the version they read.
+// It lands in its own append-only file, one per version, beside the tree:
+//
+//     runs/<paper>/claim-tree.v<N>.verdicts.jsonl
+//
+// The vocabulary mirrors extract/elife_extract/verdicts.py; a value outside it is refused here,
+// where the caller can still be told why, rather than written and read back as a typo.
+
+const CLAIM_VERDICTS = ['keep', 'strike', 'merge-into', 'part-of'];
+const CLAIM_VERDICTS_WITH_TARGET = ['merge-into', 'part-of'];
+const EDGE_VERDICTS = ['ok', 'wrong-direction', 'wrong-relation', 'strike', 'missing'];
+// The nine roles a claim tree assigns (vocabulary.py). A reader may correct one to any of them.
+const TREE_ROLES = ['hypothesis', 'prediction', 'empirical', 'control', 'methodological',
+  'scope', 'synthesis', 'interpretation', 'literature-context'];
+const PAPER_RE = /^[a-z0-9][a-z0-9-]*$/;
+
+const verdictFile = async (paper: string, version: number) => {
+  const path = await import('node:path');
+  return path.resolve(process.cwd(), '..', 'runs', paper, `claim-tree.v${version}.verdicts.jsonl`);
+};
+
+async function handleVerdict(body: Record<string, any>, by: string, when: string): Promise<Response> {
+  const paper = str(body.paper);
+  const version = Number(body.version);
+  if (!paper || !PAPER_RE.test(paper)) return DENIED('a verdict needs a valid paper slug');
+  if (!Number.isInteger(version) || version < 1) return DENIED('a verdict is bound to a tree version');
+
+  const { appendFile, writeFile, mkdir, access } = await import('node:fs/promises');
+  const path = await import('node:path');
+  const file = await verdictFile(paper, version);
+  await mkdir(path.dirname(file), { recursive: true });
+
+  const op = str(body.op) || 'append';
+
+  // Pre-fill every claim `keep` and every edge `ok`, all `considered: false`, so the reading is
+  // editing rather than authoring. Refuses to clobber a file that already has verdicts unless
+  // asked, because that file may already be a reading.
+  if (op === 'skeleton') {
+    const claims: string[] = Array.isArray(body.claims) ? body.claims.map(str).filter(Boolean) : [];
+    const edges: any[] = Array.isArray(body.edges) ? body.edges : [];
+    let exists = true;
+    try { await access(file); } catch { exists = false; }
+    if (exists && !body.force) {
+      return DENIED('a verdict file already exists for this version; pass force to replace it');
+    }
+    const lines = [
+      ...claims.map(slug => ({ kind: 'claim', slug, verdict: 'keep', considered: false, by, when })),
+      ...edges.map((e: any) => ({
+        kind: 'edge', source: str(e[0]), target: str(e[1]), relation: str(e[2]),
+        verdict: 'ok', considered: false, by, when,
+      })),
+    ];
+    await writeFile(file, lines.map(l => JSON.stringify(l)).join('\n') + '\n', 'utf8');
+    return new Response(JSON.stringify({ ok: true, wrote: lines.length }, null, 2) + '\n',
+      { headers: { 'content-type': 'application/json' } });
+  }
+
+  // Mark the reading finished: record the approval through the same code path as
+  // `pipeline.py approve` — scripts/verdicts.py, which validates the file first.
+  if (op === 'approve') {
+    const { execFile } = await import('node:child_process');
+    const { promisify } = await import('node:util');
+    const run = promisify(execFile);
+    try {
+      const { stdout } = await run('python3',
+        ['scripts/verdicts.py', 'approve', paper, '--by', by],
+        { cwd: path.resolve(process.cwd(), '..') });
+      return new Response(JSON.stringify({ ok: true, approved: true, output: stdout }, null, 2) + '\n',
+        { headers: { 'content-type': 'application/json' } });
+    } catch (e: any) {
+      return DENIED(`approve failed: ${e?.stderr || e?.message || e}`, 500);
+    }
+  }
+
+  // A single verdict line. `considered: true` is what tells a reader's decision apart from the
+  // skeleton's default; the surface sends it on every posted verdict.
+  const kind = str(body.kind);
+  let record: Record<string, unknown>;
+  if (kind === 'claim') {
+    const slug = str(body.slug), verdict = str(body.verdict);
+    if (!slug) return DENIED('a claim verdict needs a slug');
+    if (!CLAIM_VERDICTS.includes(verdict)) return DENIED(`verdict is one of ${CLAIM_VERDICTS.join(', ')}`);
+    const target = str(body.target);
+    if (CLAIM_VERDICTS_WITH_TARGET.includes(verdict) && !target) {
+      return DENIED(`a ${verdict} verdict needs a target claim`);
+    }
+    const role = str(body.role);
+    if (role && !TREE_ROLES.includes(role)) return DENIED(`role is one of ${TREE_ROLES.join(', ')}`);
+    record = {
+      kind: 'claim', slug, verdict,
+      ...(target ? { target } : {}), ...(role ? { role } : {}),
+      ...(str(body.panel) ? { panel: str(body.panel) } : {}),
+      ...(str(body.why) ? { why: str(body.why) } : {}),
+      considered: true, by, when,
+    };
+  } else if (kind === 'edge') {
+    const source = str(body.source), target = str(body.target), relation = str(body.relation);
+    const verdict = str(body.verdict);
+    if (!source || !target || !relation) return DENIED('an edge verdict needs source, target and relation');
+    if (!EDGE_VERDICTS.includes(verdict)) return DENIED(`verdict is one of ${EDGE_VERDICTS.join(', ')}`);
+    record = {
+      kind: 'edge', source, target, relation, verdict,
+      ...(str(body.corrected) ? { corrected: str(body.corrected) } : {}),
+      considered: true, by, when,
+    };
+  } else if (kind === 'ruling') {
+    const question = str(body.question), answer = str(body.answer);
+    if (!question || !answer) return DENIED('a ruling needs a question and an answer');
+    record = {
+      kind: 'ruling', question, answer,
+      ...(str(body.why) ? { why: str(body.why) } : {}),
+      considered: true, by, when,
+    };
+  } else {
+    return DENIED('a verdict is one of kind claim, edge or ruling');
+  }
+
+  try {
+    await appendFile(file, JSON.stringify(record) + '\n', 'utf8');
+  } catch (e: any) {
+    return DENIED(`could not append to the verdict file: ${e?.message ?? e}`, 500);
+  }
+  return new Response(JSON.stringify({ ok: true, record }, null, 2) + '\n',
+    { headers: { 'content-type': 'application/json' } });
+}
+
 export const POST: APIRoute = async ({ request }) => {
   if (!import.meta.env.DEV) {
     return DENIED('recording a decision is a dev-mode capability; the published site is static', 404);
@@ -53,6 +182,12 @@ export const POST: APIRoute = async ({ request }) => {
   const by = str(body.by);
   if (!by) return DENIED('a decision needs a name: the record says who made it');
   const decided_at = str(body.decided_at) || new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+
+  // Whole-tree adjudication (#82) lands in its own per-version verdict file; the gap-claim
+  // decision path below is unchanged.
+  if (body.file === 'verdicts') {
+    return handleVerdict(body, by, decided_at);
+  }
 
   let record: Record<string, unknown>;
   if (body.type === 'edge') {

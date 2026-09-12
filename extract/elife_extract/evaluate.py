@@ -58,6 +58,7 @@ from pathlib import Path
 
 import yaml
 
+from . import verdicts as vd
 from .agents import stream_text
 from .config import Config
 
@@ -1024,6 +1025,238 @@ def print_score_report(card: PaperScorecard, ref_dir: Path | None = None) -> Non
             for key, count in sorted(disagreements.items(), key=lambda x: -x[1]):
                 ref_role, cli_role = key.split("→", 1)
                 print(f"    {ref_role:<18} → {cli_role:<18} ({count})")
+
+
+# ── Scoring against an adjudicated gold (verdict file) ────────────────────
+#
+# The matcher-based scorecard above measures agreement between two model drafts: how much of
+# a reference tree a candidate recovers, how many of its claims land on a reference claim.
+# It has no notion of a *wrong* reference claim, because until a person read one no claim was
+# wrong. A verdict file is that reading. Scored against it:
+#
+#   - recovery counts only KEPT claims as the reference; a struck claim is not something a
+#     candidate should reproduce, so it leaves the denominator;
+#   - a struck claim the candidate DOES reproduce counts against precision, as the false
+#     positive it now is;
+#   - a merge-into pair is one reference claim, not two;
+#   - role accuracy is against the corrected role, panel against the corrected panel;
+#   - edge recovery is against the corrected edge set, with `missing` edges included.
+#
+# Reported beside the matcher numbers, so the two can be read together the first time a tree
+# is scored against something a person actually adjudicated.
+
+
+@dataclass
+class GoldScorecard:
+    paper_slug: str
+    n_ref_all: int          # every claim in the tree the verdicts were made on
+    n_kept: int             # kept reference claims (struck removed, merges folded)
+    n_struck: int
+    n_merges: int
+    n_parts: int            # part-of verdicts, informational
+    n_recovered: int
+    n_cli: int
+    n_cli_matched: int      # candidate claims landing on a KEPT reference claim
+    n_struck_reproduced: int  # candidate claims that only match struck reference claims
+    n_role_match: int
+    n_panel_match: int
+    n_ref_edges_on_matched: int
+    n_edge_recovered: int
+    n_missing_edges: int    # edges the reading added that the tree did not carry
+
+    @property
+    def recovery_pct(self) -> float:
+        return self.n_recovered / self.n_kept * 100 if self.n_kept else 0.0
+
+    @property
+    def precision_pct(self) -> float:
+        return self.n_cli_matched / self.n_cli * 100 if self.n_cli else 0.0
+
+    @property
+    def role_pct(self) -> float:
+        return self.n_role_match / self.n_recovered * 100 if self.n_recovered else 0.0
+
+    @property
+    def panel_pct(self) -> float:
+        return self.n_panel_match / self.n_recovered * 100 if self.n_recovered else 0.0
+
+    @property
+    def edge_recovery_pct(self) -> float:
+        return (self.n_edge_recovered / self.n_ref_edges_on_matched * 100
+                if self.n_ref_edges_on_matched else 0.0)
+
+
+def _canonicalize(slug: str, merged: dict[str, str]) -> str:
+    """Follow merge-into to the claim that stands, guarding a mistaken cycle."""
+    seen = {slug}
+    while slug in merged:
+        slug = merged[slug]
+        if slug in seen:
+            break
+        seen.add(slug)
+    return slug
+
+
+def _corrected_edges(
+    ref_edges: list[tuple[str, str, str]],
+    edge_verdicts: dict[tuple[str, str, str], dict],
+) -> tuple[set[tuple[str, str, str]], int]:
+    """The reference edge set after the reading, and how many edges it added.
+
+    An edge with no verdict is kept (the skeleton marks every edge `ok`, so an unmarked one is
+    a reader who never disagreed). `strike` drops it, `wrong-relation` and `wrong-direction`
+    rewrite it, `missing` adds an edge the tree did not carry.
+    """
+    # part-of is a claim verdict, not a relation edge; keep it out of the edge tally.
+    corrected: set[tuple[str, str, str]] = set()
+    added = 0
+    ref_set = {(s, t, r) for s, t, r in ref_edges if r != "part-of"}
+    for s, t, r in ref_set:
+        v = edge_verdicts.get((s, t, r))
+        verdict = v.get("verdict") if v else "ok"
+        if verdict == "strike":
+            continue
+        if verdict == "wrong-relation":
+            corrected.add((s, t, (v.get("corrected") or r)))
+        elif verdict == "wrong-direction":
+            corrected.add((t, s, (v.get("corrected") or r)))
+        else:  # ok, missing-on-existing, or anything unrecognised: keep the edge
+            corrected.add((s, t, r))
+    for (s, t, r), v in edge_verdicts.items():
+        if v.get("verdict") == "missing" and (s, t, r) not in ref_set:
+            corrected.add((s, t, (v.get("corrected") or r)))
+            added += 1
+    return corrected, added
+
+
+def score_against_gold(
+    ref_dir: Path,
+    cli_dir: Path,
+    pairs_path: Path,
+    verdicts_path: Path,
+    paper_slug: str | None = None,
+) -> GoldScorecard:
+    """Score a candidate tree against an adjudicated reference (a verdict file)."""
+    ref_claims = load_claims(ref_dir, "ref")
+    cli_claims = load_claims(cli_dir, "cli")
+    if not ref_claims:
+        raise ValueError(f"no reference claims found in {ref_dir}")
+    if not cli_claims:
+        raise ValueError(f"no CLI claims found in {cli_dir}")
+
+    res = vd.resolve(vd.load(verdicts_path))
+    ref_by_slug = {c.slug: c for c in ref_claims}
+    cli_by_slug = {c.slug: c for c in cli_claims}
+    ref_slugs = set(ref_by_slug)
+
+    struck = res.struck & ref_slugs
+    merged = {s: t for s, t in res.merged.items() if s in ref_slugs and t in ref_slugs}
+    parts = {s for s in res.part_of if s in ref_slugs}
+
+    def corrected_role(slug: str) -> str:
+        r = res.claims.get(slug, {})
+        return (r.get("role") or (ref_by_slug[slug].role if slug in ref_by_slug else "")) or ""
+
+    def corrected_panel(slug: str) -> str:
+        r = res.claims.get(slug, {})
+        return (r.get("panel") or (ref_by_slug[slug].panel if slug in ref_by_slug else "")) or ""
+
+    # The kept reference claims: struck removed, merged folded into their target.
+    canon = {s: _canonicalize(s, merged) for s in ref_slugs}
+    kept = {canon[s] for s in ref_slugs if s not in struck and canon[s] not in struck}
+
+    # Matches, ref slug → cli slug over the pairs the matcher (or a pairs file) produced.
+    matches = _normalize_pairs(json.loads(pairs_path.read_text(encoding="utf-8")))
+    ref_to_cli: dict[str, str] = {}
+    for m in matches:
+        rs, cs = m.get("ref_slug"), m.get("cli_slug")
+        if m.get("match_quality") in ("exact", "partial") and rs in ref_slugs and cs in cli_by_slug:
+            ref_to_cli[rs] = cs
+
+    # Recovery: a kept (canonical) claim is recovered when itself or a slug merged into it has a
+    # matched candidate.
+    recovered_cli: dict[str, str] = {}   # canonical kept slug → the cli claim that recovered it
+    for rs, cs in ref_to_cli.items():
+        c = canon[rs]
+        if c in kept and c not in recovered_cli:
+            recovered_cli[c] = cs
+    n_recovered = len(recovered_cli)
+
+    # Precision: candidate claims landing on a kept reference claim count; those landing only on
+    # struck claims are the false positives the reading exposes.
+    cli_matched_kept: set[str] = set()
+    cli_matched_struck: set[str] = set()
+    for rs, cs in ref_to_cli.items():
+        (cli_matched_kept if canon[rs] in kept else cli_matched_struck).add(cs)
+    n_struck_reproduced = len(cli_matched_struck - cli_matched_kept)
+
+    # Role and panel accuracy, over recovered pairs, against the corrected values.
+    n_role = n_panel = 0
+    for c, cs in recovered_cli.items():
+        cli_c = cli_by_slug.get(cs)
+        if not cli_c:
+            continue
+        if (cli_c.role or "") == corrected_role(c):
+            n_role += 1
+        if (cli_c.panel or "") == corrected_panel(c):
+            n_panel += 1
+
+    # Edges: the corrected reference edge set, restricted to matched pairs, remapped to cli.
+    corrected, n_missing = _corrected_edges(load_edges(ref_dir), res.edges)
+    # A ref endpoint reaches a cli slug through its canonical claim's recovering match.
+    ref_endpoint_to_cli = {c: cs for c, cs in recovered_cli.items()}
+    ref_edges_on_matched = {
+        (s, t, r) for s, t, r in corrected
+        if canon.get(s, s) in ref_endpoint_to_cli and canon.get(t, t) in ref_endpoint_to_cli
+    }
+    ref_mapped = {
+        (ref_endpoint_to_cli[canon.get(s, s)], ref_endpoint_to_cli[canon.get(t, t)], r)
+        for s, t, r in ref_edges_on_matched
+    }
+    cli_edges = {(s, t, r) for s, t, r in load_edges(cli_dir) if r != "part-of"}
+    n_edge_rec = len(ref_mapped & cli_edges)
+
+    return GoldScorecard(
+        paper_slug=paper_slug or ref_dir.name,
+        n_ref_all=len(ref_claims),
+        n_kept=len(kept),
+        n_struck=len(struck),
+        n_merges=len(merged),
+        n_parts=len(parts),
+        n_recovered=n_recovered,
+        n_cli=len(cli_claims),
+        n_cli_matched=len(cli_matched_kept),
+        n_struck_reproduced=n_struck_reproduced,
+        n_role_match=n_role,
+        n_panel_match=n_panel,
+        n_ref_edges_on_matched=len(ref_edges_on_matched),
+        n_edge_recovered=n_edge_rec,
+        n_missing_edges=n_missing,
+    )
+
+
+def print_gold_report(card: GoldScorecard) -> None:
+    """Print the gold scorecard, in the same shape as the matcher report beside it."""
+    p = card
+    print("\n  ── against the adjudicated gold ─────────────────────────────")
+    print(f"  reference   verdicts: {p.n_kept} kept  ({p.n_struck} struck, "
+          f"{p.n_merges} merged, {p.n_parts} parts) of {p.n_ref_all}")
+    print(f"  candidate   {p.n_cli} claims")
+    print()
+    if p.n_kept:
+        print(f"  RECOVERY  {p.n_recovered}/{p.n_kept} = {p.recovery_pct:.0f}%  (kept claims only)")
+    if p.n_cli:
+        print(f"  PRECISION {p.n_cli_matched}/{p.n_cli} = {p.precision_pct:.0f}%"
+              + (f"  ({p.n_struck_reproduced} reproduced a struck claim)"
+                 if p.n_struck_reproduced else ""))
+    if p.n_recovered:
+        print(f"  ROLE      {p.n_role_match}/{p.n_recovered} = {p.role_pct:.0f}%  (vs corrected role)")
+        print(f"  PANEL     {p.n_panel_match}/{p.n_recovered} = {p.panel_pct:.0f}%  (vs corrected panel)")
+    if p.n_ref_edges_on_matched:
+        print(f"  EDGES     {p.n_edge_recovered}/{p.n_ref_edges_on_matched} corrected edges recovered"
+              f"  ({p.edge_recovery_pct:.0f}%)"
+              + (f"  |  {p.n_missing_edges} edge(s) the reading added" if p.n_missing_edges else ""))
+    print()
 
 
 # ── Aggregate report ────────────────────────────────────────────────────
