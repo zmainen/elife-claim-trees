@@ -51,7 +51,7 @@ import re
 from pathlib import Path
 
 from .agents import _edge_output_schema, stream_text
-from .config import Config
+from .config import Config, token_budget
 from .schema import DraftClaimTable, ReconciledClaim
 
 logger = logging.getLogger(__name__)
@@ -367,11 +367,9 @@ def infer_edges(draft: DraftClaimTable, slugs: list[str], cfg: Config, *,
     """
     # Budget the call to what the output can actually be. An edge is a small JSON object — two
     # claim numbers, a relation name and a one-sentence why, ~80 tokens — and a paper has at most
-    # a few edges per claim. Taking the package default of 32768 asks for far more than this call
-    # can emit, which buys nothing and costs real failures: providers that reserve the requested
-    # budget against a credit balance reject the request outright. That is how edge inference once
-    # died on a live Gädeke run — HTTP 402 — and lost the spine while every other stage succeeded.
-    budget = max(8192, min(32768, 500 * max(len(slugs), 1)))
+    # a few edges per claim. token_budget("edge-inference") scales at 60 t/claim and is clamped
+    # to [4096, 32768], preventing the HTTP 402 reservation failures that killed a live Gädeke run.
+    budget = token_budget("edge-inference", len(slugs))
 
     edge_schema = _edge_output_schema()
     if per_arc:

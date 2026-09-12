@@ -34,7 +34,7 @@ import time
 
 from anthropic import Anthropic, AnthropicVertex
 
-from .config import Config, LITELLM_PREFIX
+from .config import Config, LITELLM_PREFIX, token_budget
 from .prepare import PreparedPaper
 from .schema import AgentExtraction, AgentName, CandidateClaim
 
@@ -634,8 +634,7 @@ def run_agent(
                 model=model,
                 system=system_prompt,
                 user=paper_slice,
-                max_tokens=32768,  # 30+ claims with verbatim quotes routinely
-                                   # exceed 10k tokens; budget for headroom
+                max_tokens=token_budget("reader", cfg.max_claims or 30),
                 label=f"{agent}-reader",
                 output_schema=schema,
             )

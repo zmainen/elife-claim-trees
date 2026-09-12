@@ -22,7 +22,7 @@ import re
 from dataclasses import asdict
 from pathlib import Path
 
-from .config import Config
+from .config import Config, token_budget
 from .prepare import FigureCaption, PreparedPaper, TableCaption, prepare
 from .schema import AgentExtraction, DraftClaimTable
 from .write import _read_frontmatter, _write_key
@@ -350,7 +350,7 @@ def questions_layer(paper: str, cfg: Config, *,
         raw = p.read_text(encoding="utf-8")
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="questions")
+        raw = stream_text(cfg, model=model, system=system, user=user, label="questions", max_tokens=token_budget("questions"))
 
     data = _validate_questions(parse_json_response(raw), paper, cfg)
     payload = {"paper_slug": paper, "model": model, **data}
@@ -523,7 +523,7 @@ def parts_layer(paper: str, cfg: Config, *,
         raw = p.read_text(encoding="utf-8")
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="parts")
+        raw = stream_text(cfg, model=model, system=system, user=user, label="parts", max_tokens=token_budget("parts"))
 
     data = _validate_parts(parse_json_response(raw), paper, cfg)
     payload = {"paper_slug": paper, "model": model, **data}
@@ -754,7 +754,7 @@ def stance_layer(paper: str, cfg: Config, *,
         raw = p.read_text(encoding="utf-8")
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="stance")
+        raw = stream_text(cfg, model=model, system=system, user=user, label="stance", max_tokens=token_budget("stance"))
 
     data = _validate_stance(parse_json_response(raw), paper, cfg)
     edges = _apply_stance(paper, data, cfg)
@@ -953,7 +953,7 @@ def summaries_layer(paper: str, cfg: Config, *,
         raw = p.read_text(encoding="utf-8")
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="summaries")
+        raw = stream_text(cfg, model=model, system=system, user=user, label="summaries", max_tokens=token_budget("summaries"))
 
     entry = {**_validate_summary(parse_json_response(raw)), "model": model}
     path = _write_summary(paper, entry, cfg)
@@ -1007,7 +1007,7 @@ def synthesis_layer(paper: str, cfg: Config, *,
         raw = p.read_text(encoding="utf-8")
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="synthesis")
+        raw = stream_text(cfg, model=model, system=system, user=user, label="synthesis", max_tokens=token_budget("synthesis"))
 
     data = _validate_synthesis(parse_json_response(raw), paper, cfg)
     payload = {"paperSlug": paper, "version": 3, **data, "model": model}
@@ -1105,7 +1105,7 @@ def abstract_map_layer(paper: str, cfg: Config, *,
         raw = p.read_text(encoding="utf-8")
     else:
         model = cfg.model_reconcile
-        raw = stream_text(cfg, model=model, system=system, user=user, label="abstract-map")
+        raw = stream_text(cfg, model=model, system=system, user=user, label="abstract-map", max_tokens=token_budget("abstract-map"))
 
     data = _validate_abstract_map(parse_json_response(raw), paper, cfg)
     payload = {"paperSlug": paper, **data, "model": model}

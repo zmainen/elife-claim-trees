@@ -23,7 +23,7 @@ import json
 import logging
 
 from .agents import _draft_table_schema, parse_json_response, stream_text
-from .config import Config
+from .config import Config, token_budget
 from .prepare import PreparedPaper
 from .schema import DraftClaimTable
 
@@ -146,7 +146,7 @@ def external_review(
         model=cfg.model_reconcile,  # same model class as reconciliation
         system=system_prompt,
         user=user_message,
-        max_tokens=32768,
+        max_tokens=token_budget("external-reviewer", len(draft.claims)),
         label="external-reviewer",
         output_schema=_draft_table_schema(),
     )

@@ -24,6 +24,7 @@ from .agents import (
     stream_text,
     verify_evidence,
 )
+from .config import token_budget
 from .config import Config
 from .prepare import PreparedPaper
 from .schema import AgentExtraction, DraftClaimTable, ReconciledClaim
@@ -235,7 +236,10 @@ def reconcile(
         model=cfg.model_reconcile,
         system=system_prompt,
         user=user_message,
-        max_tokens=32768,  # reconciliation output can be large; budget headroom
+        max_tokens=token_budget(
+            "reconciler",
+            len(results.claims) + len(caption.claims) + len(structure.claims),
+        ),
         label="reconciler",
         output_schema=_draft_table_schema(),
     )
