@@ -438,6 +438,12 @@ export function readerData(paperSlug: string) {
       method: c.method ?? null,
       dataset: c.dataset ?? null,
       check: checkOf(c),
+      // The re-run itself, where one was written. `script` is the path in the repo and
+      // `scriptSource` the text of it — 37 claims across the corpus carry both. A verdict a
+      // reader cannot audit is a verdict they have to take on trust, and this is the one
+      // place the page can hand them the actual check.
+      script: c.script ?? null,
+      scriptSource: c.scriptSource ?? null,
       out,
       in: inward,
     };

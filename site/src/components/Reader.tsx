@@ -16,6 +16,7 @@ type Claim = {
   statusLabel: string; plain: string; hasPlain: boolean; full: string;
   panel: string | null; panels: [string, string][]; method: string | null; dataset: string | null;
   check: { paper?: string; reproduced?: string; date?: string; how?: string } | null;
+  script: string | null; scriptSource: string | null;
   out: { rel: string; label: string; slug: string }[];
   in: { rel: string; label: string; slug: string }[];
 };
@@ -1241,7 +1242,21 @@ export default function Reader({ data, base }: Props) {
               <dl className="rd-cmp">
                 <dt>Paper says</dt><dd>{k.paper ?? '—'}</dd>
                 <dt>Our re-run</dt><dd>{k.reproduced ?? '—'}</dd>
+                {c.dataset && (
+                  <><dt>Data</dt><dd>{/^https?:/.test(c.dataset)
+                    ? <a href={c.dataset} target="_blank" rel="noopener">{c.dataset}</a>
+                    : c.dataset}</dd></>
+                )}
               </dl>
+            )}
+            {/* The check itself. A verdict a reader cannot audit is one they have to take on
+                trust; where a script was written, this is the script. Folded, because it is
+                the deepest thing on the card and not what most readers came for. */}
+            {c.scriptSource && (
+              <details className="rd-script">
+                <summary>The check we ran{c.script && <code>{c.script}</code>}</summary>
+                <pre>{c.scriptSource}</pre>
+              </details>
             )}
           </div>
         )}
@@ -1617,6 +1632,30 @@ export default function Reader({ data, base }: Props) {
         .rd-cmp { display: grid; grid-template-columns: 6em 1fr; gap: 0.15rem 0.7rem; font-size: 12.5px; margin: 0.4rem 0 0; }
         .rd-cmp dt { color: var(--card-muted); }
         .rd-cmp dd { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--card-head); overflow-wrap: anywhere; }
+        .rd-cmp dd a { color: var(--claim-strong); border-bottom: 1px solid var(--claim-line); }
+        /* The verification script, folded. The deepest thing on a claim card and the only
+           part of it a reader can check for themselves. */
+        .rd-script { margin: 0.6rem 0 0; }
+        .rd-script > summary {
+          list-style: none; cursor: pointer; font-size: 12px; color: var(--card-muted);
+          display: flex; align-items: baseline; gap: 0.45rem;
+        }
+        .rd-script > summary::-webkit-details-marker { display: none; }
+        .rd-script > summary::before {
+          content: ''; width: 5px; height: 5px; flex: none; transform: rotate(-45deg);
+          border-right: 1.5px solid var(--card-faint); border-bottom: 1.5px solid var(--card-faint);
+          transition: transform 0.15s;
+        }
+        .rd-script[open] > summary::before { transform: rotate(45deg); }
+        .rd-script > summary:hover { color: var(--claim-strong); }
+        .rd-script > summary code { font-size: 11px; color: var(--card-faint); }
+        .rd-script pre {
+          margin: 0.5rem 0 0; padding: 0.7rem 0.8rem; background: var(--card-sunk);
+          border: 1px solid var(--card-border); border-radius: 5px;
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px;
+          line-height: 1.6; color: var(--card-body); overflow-x: auto; white-space: pre;
+          max-height: 22rem; overflow-y: auto;
+        }
         .rd-rel { margin: 0.3rem 0 0; padding: 0; list-style: none; }
         .rd-rel li { display: grid; grid-template-columns: 7.5em 1fr; gap: 0 0.6rem; align-items: baseline; padding: 0.4rem 0; border-top: 1px solid var(--card-border); font-size: 13px; line-height: 1.4; }
         .rd-rel li:first-child { border-top: 0; }
