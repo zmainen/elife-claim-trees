@@ -16,10 +16,8 @@ import json
 import logging
 import os
 import queue
-import re
 import sys
 import threading
-import time
 import uuid
 from pathlib import Path
 
@@ -45,6 +43,39 @@ else:
 # Prompts directory — configurable via env var
 PROMPTS_DIR = Path(os.environ.get("ELIFE_PROMPTS_DIR", "")).resolve() if os.environ.get("ELIFE_PROMPTS_DIR") else None
 
+# Provider → model catalog (what shows up in the /providers dropdown).
+# Model IDs reflect the generation deployed at the time of writing; the
+# extraction pipeline accepts whatever the provider's API accepts.
+PROVIDER_MODELS = {
+    "anthropic": [
+        {"id": "claude-sonnet-4-6", "name": "Claude Sonnet 4.6 (balanced)", "tier": "fast"},
+        {"id": "claude-opus-4-8", "name": "Claude Opus 4.8 (best)", "tier": "best"},
+        {"id": "claude-haiku-4-5", "name": "Claude Haiku 4.5 (fast/cheap)", "tier": "cheap"},
+    ],
+    "openai": [
+        {"id": "gpt-4o", "name": "GPT-4o", "tier": "fast"},
+        {"id": "gpt-4o-mini", "name": "GPT-4o Mini", "tier": "cheap"},
+        {"id": "o3", "name": "o3", "tier": "best"},
+    ],
+    "google": [
+        {"id": "gemini-2.5-pro", "name": "Gemini 2.5 Pro (best)", "tier": "best"},
+        {"id": "gemini-2.5-flash", "name": "Gemini 2.5 Flash (fast)", "tier": "fast"},
+    ],
+    "openrouter": [
+        {"id": "anthropic/claude-sonnet-4", "name": "Claude Sonnet 4 (via OpenRouter)", "tier": "fast"},
+        {"id": "openai/gpt-4o", "name": "GPT-4o (via OpenRouter)", "tier": "fast"},
+        {"id": "google/gemini-2.5-pro", "name": "Gemini 2.5 Pro (via OpenRouter)", "tier": "best"},
+    ],
+    # Hosted demo path (server-paid Vertex). cr-mainen pins opus at 4-6 —
+    # 4-7/4-8 time out on that region. Requires a demo token / passkey auth.
+    "vertex": [
+        {"id": "gemini-2.5-flash", "name": "Gemini 2.5 Flash (fastest)", "tier": "fast"},
+        {"id": "gemini-2.5-pro", "name": "Gemini 2.5 Pro", "tier": "best"},
+        {"id": "claude-sonnet-4-6", "name": "Claude Sonnet 4.6 (Vertex)", "tier": "fast"},
+        {"id": "claude-opus-4-6", "name": "Claude Opus 4.6 (Vertex)", "tier": "best"},
+    ],
+}
+
 # Lazy imports — these pull in anthropic SDK etc.
 _pipeline_ready = False
 
@@ -53,11 +84,13 @@ def _ensure_pipeline():
     global _pipeline_ready
     if not _pipeline_ready:
         global prepare, run_agent, reconcile_step, external_review
-        global Config, reset_client, get_client
+        global infer_edges, apply_oxa_edges
+        global Config, reset_client
         from elife_extract.prepare import prepare
-        from elife_extract.agents import run_agent, reset_client, get_client
+        from elife_extract.agents import run_agent, reset_client
         from elife_extract.reconcile import reconcile as reconcile_step
         from elife_extract.external_review import external_review
+        from elife_extract.edges import infer_edges, apply_oxa_edges
         from elife_extract.config import Config
         _pipeline_ready = True
 
@@ -89,6 +122,7 @@ def _is_authorized(api_key: str, demo_token: str, request) -> bool:
         return True
     return False
 
+
 app = FastAPI(
     title="eLife Claim Trees — Extraction API",
     description="Extract structured claim graphs from eLife papers",
@@ -104,7 +138,6 @@ app.add_middleware(
 
 # Mount review endpoints
 from review import router as review_router
-from llm import PROVIDER_MODELS
 app.include_router(review_router)
 
 
@@ -173,244 +206,109 @@ def _build_oxa_claim(claim: dict) -> dict:
     return node
 
 
-def _run_agent_litellm(agent_name, paper, cfg, provider, api_key, model):
-    """Run an extraction agent via litellm (for non-Anthropic providers)."""
-    from elife_extract.agents import slice_for_agent, load_prompt, parse_json_response
-    from elife_extract.schema import AgentExtraction, CandidateClaim
-    from llm import call_llm
+def _backend_for(provider: str, model: str) -> str:
+    """Map (provider, model) to the package's backend string.
 
-    system_prompt = load_prompt(agent_name, cfg)
-    paper_slice = slice_for_agent(agent_name, paper)
-
-    if not paper_slice.strip() or len(paper_slice) < 200:
-        return AgentExtraction(agent=agent_name, paper_slug=paper.paper_slug, model=model, claims=[])
-
-    raw = call_llm(
-        provider=provider, api_key=api_key, model=model,
-        system=system_prompt, user_message=paper_slice, max_tokens=32768,
-    )
-    parsed = parse_json_response(raw)
-    if not isinstance(parsed, list):
-        raise ValueError(f"agent={agent_name} returned non-list JSON")
-    claims = [CandidateClaim(**c) for c in parsed]
-    return AgentExtraction(agent=agent_name, paper_slug=paper.paper_slug, model=model, claims=claims)
-
-
-def _reconcile_litellm(results_ext, caption_ext, structure_ext, cfg, provider, api_key, model, paper_doi, paper_title):
-    """Run reconciliation via litellm."""
-    from elife_extract.reconcile import load_reconciler_prompt, _format_agent_input
-    from elife_extract.agents import parse_json_response
-    from elife_extract.schema import DraftClaimTable, ReconciledClaim
-    from llm import call_llm
-
-    system_prompt = load_reconciler_prompt(cfg)
-    user_message = (
-        f"# Paper: {paper_title or 'unknown'}\nDOI: {paper_doi}\n"
-        f"Slug: {results_ext.paper_slug}\n\n"
-        f"{_format_agent_input(results_ext)}\n\n"
-        f"{_format_agent_input(caption_ext)}\n\n"
-        f"{_format_agent_input(structure_ext)}\n\n"
-        f"Reconcile these three agent outputs into a single confidence-tagged "
-        f"draft claim table per the schema in your instructions. Return JSON only."
-    )
-
-    raw = call_llm(
-        provider=provider, api_key=api_key, model=model,
-        system=system_prompt, user_message=user_message, max_tokens=32768,
-    )
-    parsed = parse_json_response(raw)
-    if isinstance(parsed, dict):
-        claims_list = parsed.get("claims", [])
-    elif isinstance(parsed, list):
-        claims_list = parsed
-    else:
-        raise ValueError(f"Reconciler returned unexpected type: {type(parsed)}")
-    claims = [ReconciledClaim(**c) for c in claims_list]
-    return DraftClaimTable(paper_slug=results_ext.paper_slug, paper_doi=paper_doi, paper_title=paper_title, claims=claims)
-
-
-def _external_review_litellm(paper, draft, cfg, provider, api_key, model):
-    """Run external review via litellm."""
-    from elife_extract.external_review import load_reviewer_prompt, _format_paper_context
-    from elife_extract.agents import parse_json_response
-    from elife_extract.schema import DraftClaimTable, ReconciledClaim
-    from llm import call_llm
-
-    system_prompt = load_reviewer_prompt(cfg)
-    paper_context = _format_paper_context(paper)
-    draft_json = draft.model_dump_json()
-    user_message = f"{paper_context}\n\n---\n\nDraft claim table:\n{draft_json}\n\nReview and revise. Return the full revised claim table as JSON."
-
-    raw = call_llm(
-        provider=provider, api_key=api_key, model=model,
-        system=system_prompt, user_message=user_message, max_tokens=32768,
-    )
-    parsed = parse_json_response(raw)
-    if isinstance(parsed, dict):
-        claims_list = parsed.get("claims", [])
-    elif isinstance(parsed, list):
-        claims_list = parsed
-    else:
-        claims_list = draft.claims
-    claims = [ReconciledClaim(**c) for c in claims_list]
-    return DraftClaimTable(paper_slug=draft.paper_slug, paper_doi=draft.paper_doi or "uploaded", paper_title=draft.paper_title, claims=claims, config_snapshot=draft.config_snapshot)
-
-
-def _run_agent_streaming(agent_name, paper, cfg, yield_fn):
-    """Run an extraction agent with streaming progress via yield_fn.
-
-    yield_fn(msg) emits an SSE event. Called every ~500 tokens with
-    a snippet of the output so far.
+    "vertex" carries both Anthropic Claude models (handled by AnthropicVertex
+    via the SDK) and Gemini models (handled by litellm's vertex_ai/ prefix).
+    Every other provider maps to itself.
     """
-    from elife_extract.agents import slice_for_agent, load_prompt, parse_json_response, get_client
-    from elife_extract.schema import AgentExtraction, CandidateClaim
-
-    model = {"results": cfg.model_results, "caption": cfg.model_caption, "structure": cfg.model_structure}[agent_name]
-    system_prompt = load_prompt(agent_name, cfg)
-    paper_slice = slice_for_agent(agent_name, paper)
-
-    if not paper_slice.strip() or len(paper_slice) < 200:
-        yield_fn(f"  skipped (slice too short: {len(paper_slice)} chars)")
-        return AgentExtraction(agent=agent_name, paper_slug=paper.paper_slug, model=model, claims=[])
-
-    client = get_client(cfg)
-    text_chunks = []
-    token_count = 0
-    last_report = 0
-    last_heartbeat = time.time()
-    full_text_so_far = ""
-
-    with client.messages.stream(
-        model=model, max_tokens=32768, system=system_prompt,
-        messages=[{"role": "user", "content": paper_slice}],
-    ) as stream:
-        for text in stream.text_stream:
-            text_chunks.append(text)
-            full_text_so_far += text
-            token_count += len(text.split())
-            now = time.time()
-            if token_count - last_report >= 100:
-                last_report = token_count
-                # Show the latest claim being generated
-                claim_matches = list(re.finditer(r'"claim":\s*"([^"]{10,})', full_text_so_far))
-                n_claims = len(claim_matches)
-                if claim_matches:
-                    latest = claim_matches[-1].group(1)[:70]
-                    yield_fn(f"  claim {n_claims}: {latest}...")
-                else:
-                    yield_fn(f"  generating... ({token_count} tokens)")
-                last_heartbeat = now
-            elif now - last_heartbeat >= 10:
-                yield_fn(f"  [{token_count} tokens, {int(now - last_heartbeat)}s since last update...]")
-                last_heartbeat = now
-
-    raw = full_text_so_far
-    yield_fn(f"  complete ({len(raw)} chars, ~{token_count} tokens)")
-
-    parsed = parse_json_response(raw)
-    if not isinstance(parsed, list):
-        raise ValueError(f"agent={agent_name} returned non-list JSON")
-    claims = [CandidateClaim(**c) for c in parsed]
-    return AgentExtraction(agent=agent_name, paper_slug=paper.paper_slug, model=model, claims=claims)
+    if provider == "vertex" and model.startswith("gemini"):
+        return "vertex_ai"
+    return provider  # "vertex", "anthropic", "openai", "google", "openrouter", …
 
 
-def _reconcile_streaming(results_ext, caption_ext, structure_ext, cfg, paper_doi, paper_title, yield_fn):
-    """Reconcile with streaming progress."""
-    from elife_extract.reconcile import load_reconciler_prompt, _format_agent_input
-    from elife_extract.agents import parse_json_response, get_client
-    from elife_extract.schema import DraftClaimTable, ReconciledClaim
+def _make_cfg(provider: str, api_key: str, model_extract: str, model_reconcile: str) -> "Config":
+    """Build a Config from per-request parameters.
 
-    system_prompt = load_reconciler_prompt(cfg)
-    user_message = (
-        f"# Paper: {paper_title or 'unknown'}\nDOI: {paper_doi}\n"
-        f"Slug: {results_ext.paper_slug}\n\n"
-        f"{_format_agent_input(results_ext)}\n\n"
-        f"{_format_agent_input(caption_ext)}\n\n"
-        f"{_format_agent_input(structure_ext)}\n\n"
-        f"Reconcile these three agent outputs into a single confidence-tagged draft claim table. Return JSON only."
-    )
-
-    client = get_client(cfg)
-    text_chunks = []
-    token_count = 0
-    last_report = 0
-    full_text_so_far = ""
-
-    with client.messages.stream(
-        model=cfg.model_reconcile, max_tokens=32768, system=system_prompt,
-        messages=[{"role": "user", "content": user_message}],
-    ) as stream:
-        for text in stream.text_stream:
-            text_chunks.append(text)
-            full_text_so_far += text
-            token_count += len(text.split())
-            if token_count - last_report >= 150:
-                last_report = token_count
-                claim_matches = list(re.finditer(r'"claim":\s*"([^"]{10,})', full_text_so_far))
-                if claim_matches:
-                    yield_fn(f"  merging claim {len(claim_matches)}: {claim_matches[-1].group(1)[:50]}...")
-                else:
-                    yield_fn(f"  processing... ({token_count} tokens)")
-
-    raw = full_text_so_far
-    yield_fn(f"  reconciliation complete (~{token_count} tokens)")
-
-    parsed = parse_json_response(raw)
-    if isinstance(parsed, dict):
-        claims_list = parsed.get("claims", [])
-    elif isinstance(parsed, list):
-        claims_list = parsed
+    The backend is chosen from (provider, model) so Gemini on Vertex goes
+    through litellm's vertex_ai/ path while Claude on Vertex goes through the
+    Anthropic SDK. For non-Vertex providers the extract and reconcile models
+    are always on the same backend, so one backend field covers both.
+    """
+    cfg = Config()
+    # Use the extract model to pick the backend (reconcile is usually same provider)
+    cfg.backend = _backend_for(provider, model_extract)
+    if provider == "anthropic":
+        cfg.anthropic_api_key = api_key or None
+        cfg.backend = "anthropic"
+    elif api_key:
+        cfg.api_key = api_key
+    cfg.model_results = model_extract
+    cfg.model_caption = model_extract
+    cfg.model_structure = model_extract
+    cfg.model_reconcile = model_reconcile
+    cfg.review_mode = "external"
+    # Prompts dir
+    if PROMPTS_DIR and PROMPTS_DIR.is_dir():
+        cfg.prompts_dir = PROMPTS_DIR
     else:
-        raise ValueError(f"Reconciler returned unexpected type: {type(parsed)}")
-    claims = [ReconciledClaim(**c) for c in claims_list]
-    return DraftClaimTable(paper_slug=results_ext.paper_slug, paper_doi=paper_doi, paper_title=paper_title, claims=claims)
+        for p in [
+            API_DIR.parent / "extract/prompts",
+            API_DIR / "prompts",
+            API_DIR.parent / "home/collabs/elife/claim-trees/extract/prompts",
+        ]:
+            if p.is_dir():
+                cfg.prompts_dir = p
+                break
+    cfg.output_dir = Path("/tmp/elife-extract-api")
+    cfg.output_dir.mkdir(parents=True, exist_ok=True)
+    return cfg
 
 
-def _external_review_streaming(paper, draft, cfg, yield_fn):
-    """External review with streaming progress."""
-    from elife_extract.external_review import load_reviewer_prompt, _format_paper_context
-    from elife_extract.agents import parse_json_response, get_client
-    from elife_extract.schema import DraftClaimTable, ReconciledClaim
+class _SSELogHandler(logging.Handler):
+    """Capture package heartbeat messages and forward them as SSE events.
 
-    system_prompt = load_reviewer_prompt(cfg)
-    paper_context = _format_paper_context(paper)
-    draft_json = draft.model_dump_json()
-    user_message = f"{paper_context}\n\n---\n\nDraft claim table:\n{draft_json}\n\nReview and revise. Return the full revised claim table as JSON."
+    The package's `_Progress` class logs timing and throughput to the
+    `elife_extract` logger.  Installing this handler on that logger during
+    a request lets the SSE generator relay those messages to the client
+    without re-implementing the progress logic.
+    """
 
-    client = get_client(cfg)
-    text_chunks = []
-    token_count = 0
-    last_report = 0
-    full_text_so_far = ""
+    def __init__(self, q: "queue.Queue[str]", step: str) -> None:
+        super().__init__()
+        self.q = q
+        self.step = step
 
-    with client.messages.stream(
-        model=cfg.model_reconcile, max_tokens=32768, system=system_prompt,
-        messages=[{"role": "user", "content": user_message}],
-    ) as stream:
-        for text in stream.text_stream:
-            text_chunks.append(text)
-            full_text_so_far += text
-            token_count += len(text.split())
-            if token_count - last_report >= 150:
-                last_report = token_count
-                claim_matches = list(re.finditer(r'"claim":\s*"([^"]{10,})', full_text_so_far))
-                if claim_matches:
-                    yield_fn(f"  merging claim {len(claim_matches)}: {claim_matches[-1].group(1)[:50]}...")
-                else:
-                    yield_fn(f"  processing... ({token_count} tokens)")
+    def emit(self, record: logging.LogRecord) -> None:
+        msg = record.getMessage()
+        self.q.put(f"data: {json.dumps({'step': self.step, 'message': msg})}\n\n")
 
-    raw = full_text_so_far
-    yield_fn(f"  review complete (~{token_count} tokens)")
 
-    parsed = parse_json_response(raw)
-    if isinstance(parsed, dict):
-        claims_list = parsed.get("claims", [])
-    elif isinstance(parsed, list):
-        claims_list = parsed
-    else:
-        claims_list = [c.model_dump() for c in draft.claims]
-    claims = [ReconciledClaim(**c) for c in claims_list]
-    return DraftClaimTable(paper_slug=draft.paper_slug, paper_doi=draft.paper_doi, paper_title=draft.paper_title, claims=claims, config_snapshot=draft.config_snapshot)
+def _run_with_sse(fn, q: "queue.Queue[str]", step: str):
+    """Generator: yields SSE strings while fn() runs in a thread; returns the result.
+
+    Package heartbeat messages are captured via a logging handler on the
+    `elife_extract` logger and forwarded to the SSE stream. The return value
+    is available to the caller via `result = yield from _run_with_sse(...)`,
+    which works because Python sub-generators surface their `return` value as
+    the expression value of `yield from`.
+    """
+    pkg_logger = logging.getLogger("elife_extract")
+    handler = _SSELogHandler(q, step)
+    pkg_logger.addHandler(handler)
+    result_holder: list = [None]
+    error_holder: list = [None]
+
+    def target():
+        try:
+            result_holder[0] = fn()
+        except Exception as exc:
+            error_holder[0] = exc
+        finally:
+            pkg_logger.removeHandler(handler)
+
+    t = threading.Thread(target=target)
+    t.start()
+    while t.is_alive():
+        t.join(timeout=0.5)
+        while not q.empty():
+            yield q.get()
+    while not q.empty():
+        yield q.get()
+    if error_holder[0]:
+        raise error_holder[0]
+    return result_holder[0]
 
 
 @app.get("/health")
@@ -425,37 +323,10 @@ async def extract(req: ExtractRequest, request: "Request"):
 
     def generate():
         try:
-            # Build config — check auth
-            cfg = Config()
-            if req.api_key:
-                cfg.anthropic_api_key = req.api_key
-                cfg.backend = "anthropic"
-            else:
-                if not _is_authorized(req.api_key, req.demo_token, request):
-                    raise ValueError("Not authorized — provide an API key, demo token, or connect from a whitelisted IP")
-                cfg.backend = "vertex"
-            cfg.model_results = req.model_extract
-            cfg.model_caption = req.model_extract
-            cfg.model_structure = req.model_extract
-            cfg.model_reconcile = req.model_reconcile
-            cfg.review_mode = "external"
-            # Find prompts dir
-            if PROMPTS_DIR and PROMPTS_DIR.is_dir():
-                cfg.prompts_dir = PROMPTS_DIR
-            else:
-                # Try relative to this file in HAAK repo layout
-                for p in [
-                    API_DIR.parent / "extract/prompts",
-                    API_DIR / "prompts",
-                    API_DIR.parent / "home/collabs/elife/claim-trees/extract/prompts",
-                ]:
-                    if p.is_dir():
-                        cfg.prompts_dir = p
-                        break
-            cfg.output_dir = Path("/tmp/elife-extract-api")
-            cfg.output_dir.mkdir(parents=True, exist_ok=True)
+            if not req.api_key and not _is_authorized(req.api_key, req.demo_token, request):
+                raise ValueError("Not authorized — provide an API key, demo token, or connect from a whitelisted IP")
 
-            # Reset client cache so we use the new API key
+            cfg = _make_cfg(req.provider, req.api_key, req.model_extract, req.model_reconcile)
             reset_client()
 
             # Step 1: Prepare
@@ -463,45 +334,40 @@ async def extract(req: ExtractRequest, request: "Request"):
             paper = prepare(req.doi, input_format="jats")
             yield f"data: {json.dumps({'step': 'prepare', 'message': f'Parsed: {paper.title}', 'slug': paper.paper_slug, 'figures': len(paper.figure_captions), 'panels': len(paper.panel_ids)})}\n\n"
 
-            # Use litellm for non-Anthropic models (including Gemini on Vertex)
-            is_gemini = req.model_extract.startswith("gemini")
-            use_litellm = req.provider not in ("anthropic", "vertex") or is_gemini
-            provider = "vertex" if (req.provider == "vertex" and is_gemini) else req.provider
-
-            # Steps 2-3: Three-agent extraction (one at a time with progress)
+            # Steps 2-3: Three-agent extraction
+            q: queue.Queue = queue.Queue()
+            extractions = []
             for i, (agent_name, agent_desc) in enumerate([
                 ("results", "Results-reader (reads abstract + results prose)"),
                 ("caption", "Caption-reader (reads figure captions panel by panel)"),
                 ("structure", "Structure-reader (reads methods + supplements)"),
             ], 1):
                 yield f"data: {json.dumps({'step': 'extract', 'message': f'Agent {i}/3: {agent_desc}...'})}\n\n"
-                if use_litellm:
-                    ext = _run_agent_litellm(agent_name, paper, cfg, provider, req.api_key, req.model_extract)
-                else:
-                    ext = run_agent(agent_name, paper, cfg)
+                ext = yield from _run_with_sse(
+                    lambda an=agent_name: run_agent(an, paper, cfg), q, "extract"
+                )
                 agent_short = agent_desc.split(" (")[0]
                 yield f"data: {json.dumps({'step': 'extract', 'message': f'Agent {i}/3: {agent_short} → {len(ext.claims)} claims'})}\n\n"
-                if i == 1: results_ext = ext
-                elif i == 2: caption_ext = ext
-                else: structure_ext = ext
+                extractions.append(ext)
 
-            n_candidates = len(results_ext.claims) + len(caption_ext.claims) + len(structure_ext.claims)
+            results_ext, caption_ext, structure_ext = extractions
+            n_candidates = sum(len(e.claims) for e in extractions)
             yield f"data: {json.dumps({'step': 'extract', 'message': f'Total: {n_candidates} candidate claims from 3 agents'})}\n\n"
 
             # Step 4: Reconciliation
-            yield f"data: {json.dumps({'step': 'reconcile', 'message': f'Reconciling — merging 3 agent outputs ({provider})...'})}\n\n"
-            if use_litellm:
-                draft = _reconcile_litellm(results_ext, caption_ext, structure_ext, cfg, provider, req.api_key, req.model_reconcile, paper.doi, paper.title)
-            else:
-                draft = reconcile_step(results_ext, caption_ext, structure_ext, cfg, paper_doi=paper.doi, paper_title=paper.title)
+            yield f"data: {json.dumps({'step': 'reconcile', 'message': f'Reconciling — merging 3 agent outputs ({req.provider})...'})}\n\n"
+            draft = yield from _run_with_sse(
+                lambda: reconcile_step(results_ext, caption_ext, structure_ext, cfg,
+                                       paper_doi=paper.doi, paper_title=paper.title),
+                q, "reconcile"
+            )
             yield f"data: {json.dumps({'step': 'reconcile', 'message': f'Reconciled to {len(draft.claims)} claims'})}\n\n"
 
             # Step 4.5: External review
             yield f"data: {json.dumps({'step': 'review', 'message': 'Running external reviewer...'})}\n\n"
-            if use_litellm:
-                reviewed = _external_review_litellm(paper, draft, cfg, provider, req.api_key, req.model_reconcile)
-            else:
-                reviewed = external_review(paper, draft, cfg)
+            reviewed = yield from _run_with_sse(
+                lambda: external_review(paper, draft, cfg), q, "review"
+            )
             yield f"data: {json.dumps({'step': 'review', 'message': f'Reviewed: {len(reviewed.claims)} claims after revision'})}\n\n"
 
             # Build OXA output
@@ -509,18 +375,16 @@ async def extract(req: ExtractRequest, request: "Request"):
 
             # Step 6: Infer edges between claims
             yield f"data: {json.dumps({'step': 'edges', 'message': f'Inferring relationships between {len(oxa_claims)} claims...'})}\n\n"
-            from infer_edges import infer_edges, apply_edges
-            if use_litellm:
-                from llm import call_llm as _call
-                def llm_fn(sys, usr, mdl):
-                    return _call(provider=provider, api_key=req.api_key, model=mdl, system=sys, user_message=usr)
-            else:
-                def llm_fn(sys, usr, mdl):
-                    client = get_client(cfg)
-                    resp = client.messages.create(model=mdl, max_tokens=8192, system=sys, messages=[{"role": "user", "content": usr}])
-                    return resp.content[0].text
-            edges = infer_edges(oxa_claims, call_llm_fn=llm_fn, model=cfg.model_reconcile)
-            oxa_claims = apply_edges(oxa_claims, edges)
+            slugs = [c.slug for c in reviewed.claims]
+            # Reconcile backend for edge inference: if extract and reconcile models differ in
+            # type (e.g. extract=gemini, reconcile=claude), clone cfg with reconcile backend.
+            edge_cfg = cfg
+            reconcile_backend = _backend_for(req.provider, req.model_reconcile)
+            if reconcile_backend != cfg.backend:
+                import dataclasses
+                edge_cfg = dataclasses.replace(cfg, backend=reconcile_backend)
+            edges = infer_edges(reviewed, slugs, edge_cfg)
+            oxa_claims = apply_oxa_edges(oxa_claims, edges)
             yield f"data: {json.dumps({'step': 'edges', 'message': f'Found {len(edges)} relationships between claims'})}\n\n"
 
             article = {
@@ -541,7 +405,6 @@ async def extract(req: ExtractRequest, request: "Request"):
             yield f"data: {json.dumps({'step': 'error', 'message': str(e)})}\n\n"
 
         finally:
-            # Discard the API key by resetting the client
             reset_client()
 
     return StreamingResponse(
@@ -574,33 +437,10 @@ async def extract_file(
 
     def generate():
         try:
-            # Build config
-            cfg = Config()
-            if api_key:
-                cfg.anthropic_api_key = api_key
-                cfg.backend = "anthropic"
-            else:
-                if not _is_authorized(api_key, demo_token, request):
-                    raise ValueError("Not authorized — provide an API key, demo token, or connect from a whitelisted IP")
-                cfg.backend = "vertex"
-            cfg.model_results = model_extract
-            cfg.model_caption = model_extract
-            cfg.model_structure = model_extract
-            cfg.model_reconcile = model_reconcile
-            cfg.review_mode = "external"
-            if PROMPTS_DIR and PROMPTS_DIR.is_dir():
-                cfg.prompts_dir = PROMPTS_DIR
-            else:
-                for p in [
-                    API_DIR.parent / "extract/prompts",
-                    API_DIR / "prompts",
-                    API_DIR.parent / "home/collabs/elife/claim-trees/extract/prompts",
-                ]:
-                    if p.is_dir():
-                        cfg.prompts_dir = p
-                        break
-            cfg.output_dir = Path("/tmp/elife-extract-api")
-            cfg.output_dir.mkdir(parents=True, exist_ok=True)
+            if not api_key and not _is_authorized(api_key, demo_token, request):
+                raise ValueError("Not authorized — provide an API key, demo token, or connect from a whitelisted IP")
+
+            cfg = _make_cfg(provider, api_key, model_extract, model_reconcile)
             reset_client()
 
             # Parse the file
@@ -633,13 +473,11 @@ async def extract_file(
                     figure_captions=captions,
                 )
             elif suffix in (".docx", ".doc"):
-                # Extract text from DOCX via python-docx
                 try:
                     import docx
                     doc = docx.Document(str(save_path))
                     full_text = "\n".join(p.text for p in doc.paragraphs)
                 except ImportError:
-                    # Fallback: try pandoc
                     import subprocess
                     result = subprocess.run(
                         ["pandoc", str(save_path), "-t", "plain"],
@@ -675,53 +513,17 @@ async def extract_file(
 
             yield f"data: {json.dumps({'step': 'prepare', 'message': f'Parsed: {paper.title or filename}', 'slug': paper.paper_slug, 'figures': len(paper.figure_captions), 'panels': len(paper.panel_ids)})}\n\n"
 
-            # Use litellm for non-Anthropic models (including Gemini on Vertex)
-            is_gemini = model_extract.startswith("gemini")
-            active_provider = provider  # capture from outer scope
-            use_litellm = active_provider not in ("anthropic", "vertex") or is_gemini
-            q = queue.Queue()
-
-            def emit(step, msg):
-                q.put(f"data: {json.dumps({'step': step, 'message': msg})}\n\n")
-
-            # Steps 2-3: Streaming extraction
-            agents_data = [
+            q: queue.Queue = queue.Queue()
+            extractions = []
+            for i, (agent_name, agent_short) in enumerate([
                 ("results", "Results-reader"),
                 ("caption", "Caption-reader"),
                 ("structure", "Structure-reader"),
-            ]
-            extractions = []
-            for i, (agent_name, agent_short) in enumerate(agents_data, 1):
+            ], 1):
                 yield f"data: {json.dumps({'step': 'extract', 'message': f'Agent {i}/3: {agent_short}...'})}\n\n"
-                if use_litellm:
-                    ext = _run_agent_litellm(agent_name, paper, cfg, active_provider, api_key, model_extract)
-                else:
-                    # Run in thread with streaming callbacks via queue
-                    result_holder = [None]
-                    error_holder = [None]
-                    def run_in_thread(an=agent_name):
-                        try:
-                            result_holder[0] = _run_agent_streaming(an, paper, cfg, lambda msg: emit('extract', msg))
-                        except Exception as e:
-                            error_holder[0] = e
-                    t = threading.Thread(target=run_in_thread)
-                    t.start()
-                    last_hb = time.time()
-                    while t.is_alive():
-                        t.join(timeout=1.0)
-                        got_msg = False
-                        while not q.empty():
-                            yield q.get()
-                            got_msg = True
-                            last_hb = time.time()
-                        if not got_msg and time.time() - last_hb >= 10:
-                            yield f"data: {json.dumps({'step': 'heartbeat', 'message': 'still working...'})}\n\n"
-                            last_hb = time.time()
-                    while not q.empty():
-                        yield q.get()
-                    if error_holder[0]:
-                        raise error_holder[0]
-                    ext = result_holder[0]
+                ext = yield from _run_with_sse(
+                    lambda an=agent_name: run_agent(an, paper, cfg), q, "extract"
+                )
                 yield f"data: {json.dumps({'step': 'extract', 'message': f'Agent {i}/3: {agent_short} → {len(ext.claims)} claims'})}\n\n"
                 extractions.append(ext)
 
@@ -729,54 +531,20 @@ async def extract_file(
             n_candidates = sum(len(e.claims) for e in extractions)
             yield f"data: {json.dumps({'step': 'extract', 'message': f'Total: {n_candidates} candidate claims from 3 agents'})}\n\n"
 
-            # Step 4: Streaming reconciliation
+            # Step 4: Reconciliation
             yield f"data: {json.dumps({'step': 'reconcile', 'message': 'Reconciling — merging 3 agent outputs...'})}\n\n"
-            if use_litellm:
-                draft = _reconcile_litellm(results_ext, caption_ext, structure_ext, cfg, active_provider, api_key, model_reconcile, paper.doi, paper.title)
-            else:
-                result_holder = [None]
-                error_holder = [None]
-                def run_reconcile():
-                    try:
-                        result_holder[0] = _reconcile_streaming(results_ext, caption_ext, structure_ext, cfg, paper.doi, paper.title, lambda msg: emit('reconcile', msg))
-                    except Exception as e:
-                        error_holder[0] = e
-                t = threading.Thread(target=run_reconcile)
-                t.start()
-                while t.is_alive():
-                    t.join(timeout=0.5)
-                    while not q.empty():
-                        yield q.get()
-                while not q.empty():
-                    yield q.get()
-                if error_holder[0]:
-                    raise error_holder[0]
-                draft = result_holder[0]
+            draft = yield from _run_with_sse(
+                lambda: reconcile_step(results_ext, caption_ext, structure_ext, cfg,
+                                       paper_doi=paper.doi, paper_title=paper.title),
+                q, "reconcile"
+            )
             yield f"data: {json.dumps({'step': 'reconcile', 'message': f'Reconciled to {len(draft.claims)} claims'})}\n\n"
 
-            # Step 4.5: Streaming external review
+            # Step 4.5: External review
             yield f"data: {json.dumps({'step': 'review', 'message': 'Running external reviewer...'})}\n\n"
-            if use_litellm:
-                reviewed = _external_review_litellm(paper, draft, cfg, active_provider, api_key, model_reconcile)
-            else:
-                result_holder = [None]
-                error_holder = [None]
-                def run_review():
-                    try:
-                        result_holder[0] = _external_review_streaming(paper, draft, cfg, lambda msg: emit('review', msg))
-                    except Exception as e:
-                        error_holder[0] = e
-                t = threading.Thread(target=run_review)
-                t.start()
-                while t.is_alive():
-                    t.join(timeout=0.5)
-                    while not q.empty():
-                        yield q.get()
-                while not q.empty():
-                    yield q.get()
-                if error_holder[0]:
-                    raise error_holder[0]
-                reviewed = result_holder[0]
+            reviewed = yield from _run_with_sse(
+                lambda: external_review(paper, draft, cfg), q, "review"
+            )
             yield f"data: {json.dumps({'step': 'review', 'message': f'Reviewed: {len(reviewed.claims)} claims'})}\n\n"
 
             # Build OXA output
@@ -784,18 +552,14 @@ async def extract_file(
 
             # Step 6: Infer edges
             yield f"data: {json.dumps({'step': 'edges', 'message': f'Inferring relationships between {len(oxa_claims)} claims...'})}\n\n"
-            from infer_edges import infer_edges, apply_edges
-            if use_litellm:
-                from llm import call_llm as _call
-                def llm_fn(sys, usr, mdl):
-                    return _call(provider=active_provider, api_key=api_key, model=mdl, system=sys, user_message=usr)
-            else:
-                def llm_fn(sys, usr, mdl):
-                    c = get_client(cfg)
-                    resp = c.messages.create(model=mdl, max_tokens=8192, system=sys, messages=[{"role": "user", "content": usr}])
-                    return resp.content[0].text
-            edges = infer_edges(oxa_claims, call_llm_fn=llm_fn, model=cfg.model_reconcile)
-            oxa_claims = apply_edges(oxa_claims, edges)
+            slugs = [c.slug for c in reviewed.claims]
+            edge_cfg = cfg
+            reconcile_backend = _backend_for(provider, model_reconcile)
+            if reconcile_backend != cfg.backend:
+                import dataclasses
+                edge_cfg = dataclasses.replace(cfg, backend=reconcile_backend)
+            edges = infer_edges(reviewed, slugs, edge_cfg)
+            oxa_claims = apply_oxa_edges(oxa_claims, edges)
             yield f"data: {json.dumps({'step': 'edges', 'message': f'Found {len(edges)} relationships'})}\n\n"
 
             article = {
@@ -816,7 +580,6 @@ async def extract_file(
             yield f"data: {json.dumps({'step': 'error', 'message': str(e)})}\n\n"
         finally:
             reset_client()
-            # Clean up uploaded file
             try:
                 save_path.unlink(missing_ok=True)
             except Exception:

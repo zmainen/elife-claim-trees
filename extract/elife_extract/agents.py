@@ -356,7 +356,11 @@ def stream_text(
             "max_tokens": max_tokens,
             "stream": True,
         }
-        if cfg.api_key:
+        if cfg.backend == "vertex_ai":
+            # Gemini on Vertex AI: credentials from environment, project/location explicit.
+            kwargs["vertex_project"] = cfg.vertex_project
+            kwargs["vertex_location"] = cfg.vertex_region
+        elif cfg.api_key:
             kwargs["api_key"] = cfg.api_key
         logger.info("  %s: sending %dc to %s (%s), awaiting first byte…",
                     tag, len(system) + len(user), kwargs["model"], cfg.backend)

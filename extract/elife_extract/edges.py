@@ -492,6 +492,34 @@ def _validate_edges(parsed: list, claims: list, slugs: list[str], *, source: str
     return edges
 
 
+# Reverse mapping for OXA output — corpus relation names back to CiTO/claimrel IRIs.
+_CORPUS_TO_CITO = {v: k for k, v in CITO_TO_CORPUS.items()}
+
+
+def apply_oxa_edges(oxa_claims: list[dict], edges: list[dict]) -> list[dict]:
+    """Apply corpus-format edges from `infer_edges` to OXA claim nodes.
+
+    `edges` is the list returned by `infer_edges` — each edge is
+    {"source": slug, "target": slug, "relation": corpus_name}.  The OXA
+    `relations` list uses CiTO/claimrel IRIs as `relationType`, so we
+    convert back on the way in.
+
+    Called by the API after `infer_edges`; the CLI's write step uses
+    `edges_for_slug` instead (which produces YAML frontmatter, not OXA JSON).
+    """
+    idx: dict[str, list[dict]] = {}
+    for e in edges:
+        rel_cito = _CORPUS_TO_CITO.get(e["relation"], e["relation"])
+        idx.setdefault(e["source"], []).append(
+            {"xref": e["target"], "relationType": rel_cito}
+        )
+    for c in oxa_claims:
+        cid = c.get("identifier", "")
+        if cid in idx:
+            c["relations"] = c.get("relations", []) + idx[cid]
+    return oxa_claims
+
+
 def edges_for_slug(edges: list[dict], slug: str) -> tuple[dict, list[dict]]:
     """Split one claim's outgoing edges into (top-level keys, belongings).
 
