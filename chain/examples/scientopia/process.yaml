@@ -1,0 +1,109 @@
+# Scientopia: the research → publishing → funding cycle as one process over one schema.
+#
+# Every artifact is a claim set. A proposal and a paper are compositions of claims; a review is
+# assessments about claims; a funding or editorial decision is a claim with a verdict about a
+# composition. Nothing here implements research or review — the point is the shape.
+#
+# A step reads $CHAIN_IN and writes $CHAIN_OUT. Instructions are files, staged into the request.
+
+name: scientopia
+subjects:
+  project: {ids: [alpha]}
+  process: {singleton: true}
+
+steps:
+  - id: question
+    subject: project
+    question: What is this project asking?
+    worker: human
+    instructions: instructions/question.md
+    emits: [question, scope]
+
+  - id: hypotheses
+    subject: project
+    question: What answers does the project bet on, and what would each predict?
+    worker: model
+    inputs: [question]
+    instructions: instructions/hypotheses.md
+    emits: [hypothesis, prediction]
+
+  - id: design
+    subject: project
+    question: What would be measured, how, and within what limits?
+    worker: model
+    inputs: [question, hypotheses]
+    instructions: instructions/design.md
+    emits: [method, scope]
+
+  - id: proposal
+    subject: project
+    question: "The proposal, composed."
+    worker: code
+    inputs: [question, hypotheses, design]
+    command: python3 -m chain.agents.compose "Question=question;Hypotheses and predictions=hypotheses;Design=design"
+
+  - id: proposal-review
+    subject: project
+    question: Is each part of the proposal sound?
+    worker: model
+    judges: proposal
+    inputs: [question, hypotheses, design]
+    instructions: instructions/proposal-review.md
+    verdicts: [sound, weak, unclear]
+
+  - id: funding
+    subject: project
+    question: Should this be funded?
+    worker: human
+    judges: proposal
+    inputs: [proposal-review, question, hypotheses, design]
+    instructions: instructions/funding.md
+    verdicts: [fund, decline]
+
+  - id: study
+    subject: project
+    question: What was found, and what does it mean for the predictions?
+    worker: model
+    inputs: [funding, hypotheses, design]
+    instructions: instructions/study.md
+    emits: [result, interpretation]
+
+  - id: paper
+    subject: project
+    question: "The paper, composed."
+    worker: code
+    inputs: [question, hypotheses, design, study]
+    command: python3 -m chain.agents.compose "Introduction=question,hypotheses;Methods=design;Results=study"
+
+  - id: peer-review
+    subject: project
+    question: Does the evidence support each claim the paper makes?
+    worker: model
+    judges: paper
+    inputs: [question, hypotheses, design, study]
+    instructions: instructions/peer-review.md
+    verdicts: [supported, weak, unsupported]
+
+  - id: editorial
+    subject: project
+    question: Publish, revise, or decline?
+    worker: human
+    judges: paper
+    inputs: [peer-review]
+    instructions: instructions/editorial.md
+    verdicts: [accept, revise, reject]
+
+  - id: publish
+    subject: project
+    question: "The published record: the article, its reviews, and the decision."
+    worker: code
+    inputs: [paper, peer-review, editorial]
+    command: python3 -m chain.agents.compose "Article=paper;Reviews=peer-review;Decision=editorial"
+
+  - id: scheme
+    subject: process
+    question: Should each of these steps exist, and is this what it should do?
+    worker: human
+    judges: process
+    instructions: instructions/scheme.md
+    verdicts: [accept, reject]
