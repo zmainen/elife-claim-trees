@@ -1,0 +1,173 @@
+---
+// The evaluation layer — the model sweep's scorecard.
+//
+// One row per (paper, profile): a re-extraction produced under a model profile, aligned to the
+// best reference the paper has and scored. Only the zero-cost paths run without a paid backend
+// — the `subagent` profile and the two experiments (the fourth reading, scaffolding vs model)
+// — so the paid profiles appear as "not run: no backend credit" rather than being omitted. The
+// page says what is missing.
+//
+// Reads review/evaluation.json from the repository root, the layer's own output, rather than a
+// copy under src/data: a second copy is a second answer waiting to drift from the first, which
+// is the failure the pipeline exists to close.
+import Layout from '../../layouts/Layout.astro';
+import LayerHeader from '../../components/LayerHeader.astro';
+import LayerDefinition from '../../components/LayerDefinition.astro';
+import LayerState from '../../components/LayerState.astro';
+import { byId } from '../../lib/pipeline';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+const layer = byId['evaluation'];
+const m = JSON.parse(readFileSync(
+  join(process.cwd(), '..', 'review', 'evaluation.json'), 'utf8'));
+
+const rows = m.rows as any[];
+const scored = rows.filter(r => r.status === 'scored');
+const canonical = m.profiles as string[];
+
+// Metric columns, in display order. Percentages render as "n%"; a null reads as "—".
+const METRICS: { key: string; label: string; hint: string }[] = [
+  { key: 'recovery', label: 'recovery', hint: 'reference claims the candidate recovered' },
+  { key: 'precision', label: 'precision', hint: 'candidate claims matched to a reference claim' },
+  { key: 'role', label: 'role', hint: 'matched pairs whose role agrees' },
+  { key: 'panel', label: 'panel', hint: 'matched pairs whose panel agrees' },
+  { key: 'edge_recovery', label: 'edges', hint: 'reference edges on matched pairs recovered' },
+];
+const pctCell = (v: number | null) => (v === null || v === undefined ? '—' : `${v}%`);
+
+// A stable order: canonical profiles first (scored or not), then experiments.
+const order = (r: any) => {
+  const i = canonical.indexOf(r.profile);
+  return i === -1 ? canonical.length + 1 : i;
+};
+const ordered = [...rows].sort((a, b) => order(a) - order(b) || a.profile.localeCompare(b.profile));
+
+const isExperiment = (r: any) => !canonical.includes(r.profile);
+---
+
+<Layout title="Evaluation — pipeline"
+        description="The model sweep's scorecard: how well each profile recovers a paper's claim tree.">
+  <div class="site-frame column py-12">
+    <LayerHeader layer={layer} />
+    <LayerDefinition layer={layer} />
+
+    <!-- What the table is, and what it is not. -->
+    <section class="mb-10 border border-blue-300 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 rounded-lg p-5">
+      <h2 class="text-[10px] font-mono uppercase tracking-wider text-blue-800 dark:text-blue-400 m-0 mb-2">
+        A measurement, scored against the committed tree
+      </h2>
+      <p class="text-[15px] text-gray-800 dark:text-gray-200 m-0 mb-3 leading-relaxed">
+        Each row re-reads one paper under one model profile and scores the result against the
+        best reference the paper has. No reference here has been approved by a person yet, so
+        every score is against the <strong>committed</strong> tree — a comparison between two
+        drafts, not a score against a reading someone has stood behind. The gold set (#82) is
+        what turns the second into the first.
+      </p>
+      <p class="text-[15px] text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+        Three of the four profiles need a paid backend and have not run — no backend had credit
+        when this was built. They are shown as <code>not run</code> rather than omitted, so the
+        table names what is missing. The <code>subagent</code> profile and the two experiments
+        below it cost nothing: every model-answered step is a dumped prompt answered by a Claude
+        Code subagent.
+      </p>
+    </section>
+
+    <!-- The sweep table. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">Gädeke, by profile</h2>
+    <div class="overflow-x-auto mb-4">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-gray-300 dark:border-gray-600">
+            <th class="text-left py-2 pr-3 font-mono text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400">Profile</th>
+            <th class="text-right py-2 px-2 font-mono text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400">claims</th>
+            {METRICS.map(mt => (
+              <th class="text-right py-2 px-2 font-mono text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400" title={mt.hint}>{mt.label}</th>
+            ))}
+            <th class="text-left py-2 pl-3 font-mono text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400">reference</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ordered.map(r => (
+            <tr class={`border-b border-gray-100 dark:border-gray-800 align-top ${isExperiment(r) ? 'bg-gray-50/60 dark:bg-gray-900/30' : ''}`}>
+              <td class="py-2.5 pr-3">
+                <code class="text-[12.5px] whitespace-nowrap">{r.profile}</code>
+                {isExperiment(r) && <span class="ml-2 text-[10px] font-mono uppercase tracking-wider text-blue-600 dark:text-blue-400">experiment</span>}
+              </td>
+              {r.status === 'scored' ? (
+                <>
+                  <td class="py-2.5 px-2 text-right font-mono tabular-nums text-gray-500 dark:text-gray-400">{r.n_cli}</td>
+                  {METRICS.map(mt => (
+                    <td class="py-2.5 px-2 text-right font-mono tabular-nums text-gray-900 dark:text-gray-100">{pctCell(r[mt.key])}</td>
+                  ))}
+                  <td class="py-2.5 pl-3 text-gray-600 dark:text-gray-400 text-[12px]">{r.reference}</td>
+                </>
+              ) : (
+                <td colspan={METRICS.length + 2} class="py-2.5 px-2 text-gray-400 dark:text-gray-500 italic text-[13px]">
+                  not run: {r.note}
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-10 max-w-2xl leading-relaxed">
+      <strong>recovery</strong> is the fraction of the reference's claims the candidate found;
+      <strong>precision</strong> the fraction of the candidate's claims that matched one; the
+      rest are agreement on matched pairs. A high-recovery, low-precision row over-produced —
+      it found the reference's claims and many more besides.
+    </p>
+
+    <!-- The notes: what each scored row actually is. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">What each scored row is</h2>
+    <div class="space-y-3 mb-10">
+      {scored.map(r => (
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div class="flex flex-wrap items-baseline gap-2 mb-1.5">
+            <code class="text-[12.5px] text-gray-900 dark:text-gray-100">{r.profile}</code>
+            <span class="text-[11px] text-gray-500 dark:text-gray-400 ml-auto font-mono">
+              {r.n_cli} claims · {pctCell(r.recovery)} recovery · {pctCell(r.precision)} precision
+            </span>
+          </div>
+          {r.note && <p class="text-[13.5px] text-gray-700 dark:text-gray-300 m-0 leading-snug">{r.note}</p>}
+        </div>
+      ))}
+    </div>
+
+    <!-- The two experiments the design note left open, stated plainly. -->
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">The two experiments</h2>
+    <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed mb-10 max-w-2xl">
+      <p>
+        <strong>The fourth reading.</strong> One whole-paper pass — abstract, introduction,
+        results, discussion, captions, tables, methods, the panel inventory and span ids in a
+        single call — recovered {scored.find((r:any)=>r.profile==='fourth-reading')?.recovery}% of
+        the committed tree at {scored.find((r:any)=>r.profile==='fourth-reading')?.precision}%
+        precision, higher on both than the three-reader chain's current committed tree. What it
+        missed was specific: the alternatives the paper rules out (which the tree carries as
+        <code>alt-</code> hypotheses, raised by the stance layer, not by any single reading) and
+        two prediction/test pairs it collapsed into single empirical claims. The partition buys
+        what a paper argues <em>against</em>; a whole-paper reader matches it on what a paper
+        argues <em>for</em>.
+      </p>
+      <p>
+        <strong>Scaffolding versus model.</strong> Holding the model fixed (both answered by the
+        same subagent), the frontier lean reader task and the standard reader task recovered the
+        same {scored.find((r:any)=>r.profile==='frontier-tasks')?.recovery}% of the reference —
+        but the standard task emitted {scored.find((r:any)=>r.profile==='standard-tasks')?.n_cli}
+        claims to the lean task's {scored.find((r:any)=>r.profile==='frontier-tasks')?.n_cli},
+        with precision {scored.find((r:any)=>r.profile==='standard-tasks')?.precision}% against
+        the lean task's {scored.find((r:any)=>r.profile==='frontier-tasks')?.precision}%. The
+        standard prompt's quantity guidance and signal-phrase tables buy over-splitting, not
+        recall — which is the argument for the lean frontier tasks.
+      </p>
+    </div>
+
+    <LayerState layer={layer} />
+
+    <footer class="pt-6 border-t border-gray-100 dark:border-gray-800 text-sm">
+      <a href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/pipeline/`}
+         class="text-gray-500 dark:text-gray-400 no-underline hover:text-gray-700 dark:hover:text-gray-300">← all layers</a>
+    </footer>
+  </div>
+</Layout>

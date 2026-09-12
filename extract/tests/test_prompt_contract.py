@@ -197,6 +197,25 @@ def test_variant_overrides_the_task_and_inherits_the_contract():
         assert "# The claim vocabulary" in text
 
 
+def test_committed_variants_compose_task_then_shared_contract():
+    """The `frontier` and `open` variant dirs override task files only (#85): each composes
+    the variant's task, then the same contract the default variant inherits, and a role the
+    variant does not override falls back to the default task."""
+    fr = prompts.prompt("results-reader", _cfg(variant="frontier"))
+    assert fr.startswith((PROMPTS / "frontier" / "results-reader.md").read_text().strip())
+    assert "# The claim vocabulary" in fr                       # contract inherited
+    # A quantity-guidance sentence the default task carries is gone from the lean task.
+    assert "typically yields" not in (PROMPTS / "frontier" / "results-reader.md").read_text()
+
+    op = prompts.prompt("caption-reader", _cfg(variant="open"))
+    assert op.startswith((PROMPTS / "open" / "caption-reader.md").read_text().strip())
+    assert "# The claim vocabulary" in op
+
+    # open overrides only the caption task, so its results reader is the default one.
+    op_results = prompts.prompt("results-reader", _cfg(variant="open"))
+    assert op_results.startswith((PROMPTS / "results-reader.md").read_text().strip())
+
+
 # ── confidence follows the source count ──────────────────────────────────
 
 

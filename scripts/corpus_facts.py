@@ -365,6 +365,32 @@ def prediction_outcomes():
     }
 
 
+def evaluation():
+    """The evaluation layer's numbers, read from the manifest it produces.
+
+    Read rather than recomputed, for the same reason prediction_outcomes() is: the manifest is
+    the layer's output, and scoring the trees a second time here would be a second answer to
+    the question `evaluate` already answers. Absent manifest means the layer has not run, and
+    the facts say so with zeroes that read as "nothing scored yet" rather than as findings.
+    """
+    path = os.path.join(ROOT, "review", "evaluation.json")
+    if not os.path.isfile(path):
+        return {"n_rows": 0, "n_scored": 0, "n_not_run": 0, "best_recovery": 0}
+    with open(path, encoding="utf-8") as fh:
+        d = json.load(fh)
+    return {
+        # Flat scalars the site's one-level {{token}} resolver reaches from `found` prose.
+        "n_papers": d.get("n_papers", 0),
+        "n_rows": d.get("n_rows", 0),
+        "n_scored": d.get("n_scored", 0),
+        "n_not_run": d.get("n_not_run", 0),
+        "best_recovery": d.get("best_recovery", 0),
+        # The rows themselves, for any page that renders the table without re-reading the file.
+        "rows": d.get("rows", []),
+        "profiles": d.get("profiles", []),
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--print", dest="show", action="store_true")
@@ -416,6 +442,7 @@ def main():
         # answer; this says *current / stale / absent / blocked*, which presence cannot.
         "pipeline": pipeline_state(),
         "prediction_outcome": prediction_outcomes(),
+        "evaluation": evaluation(),
     }
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)

@@ -3,6 +3,127 @@
   "dangling_rules_out": 9,
   "eligible_claims": 151,
   "eligible_with_record": 133,
+  "evaluation": {
+    "best_recovery": 82,
+    "n_not_run": 3,
+    "n_papers": 1,
+    "n_rows": 7,
+    "n_scored": 4,
+    "profiles": [
+      "frontier",
+      "standard",
+      "open",
+      "subagent"
+    ],
+    "rows": [
+      {
+        "note": "no backend credit",
+        "paper": "gadeke-2026-guilt-insula",
+        "profile": "frontier",
+        "status": "not run"
+      },
+      {
+        "note": "no backend credit",
+        "paper": "gadeke-2026-guilt-insula",
+        "profile": "standard",
+        "status": "not run"
+      },
+      {
+        "note": "no backend credit",
+        "paper": "gadeke-2026-guilt-insula",
+        "profile": "open",
+        "status": "not run"
+      },
+      {
+        "approved": false,
+        "cost_usd": null,
+        "edge_recovery": 6,
+        "error": null,
+        "evidence_quotes": null,
+        "evidence_verified": null,
+        "n_cli": 74,
+        "n_ref": 33,
+        "n_ref_edges": 78,
+        "note": "The three-reader chain answered by a Claude Opus/Sonnet subagent, as the current committed tree; #96 (v3) is still open, so this scores the current committed tree against the original v1 via the v3 alignment. Precision is against 74 claims that include the parts and alternatives added by later layers.",
+        "panel": 23,
+        "paper": "gadeke-2026-guilt-insula",
+        "parts": 10,
+        "precision": 35,
+        "profile": "subagent",
+        "recovery": 79,
+        "reference": "claim-tree v1 (committed)",
+        "role": 77,
+        "status": "scored",
+        "tokens": null
+      },
+      {
+        "approved": false,
+        "cost_usd": null,
+        "edge_recovery": 0,
+        "error": null,
+        "evidence_quotes": null,
+        "evidence_verified": null,
+        "n_cli": 34,
+        "n_ref": 33,
+        "n_ref_edges": 85,
+        "note": "Experiment: one whole-paper reading in a single pass, answered by a subagent. Not a declared layer.",
+        "panel": 41,
+        "paper": "gadeke-2026-guilt-insula",
+        "parts": 0,
+        "precision": 71,
+        "profile": "fourth-reading",
+        "recovery": 82,
+        "reference": "claim-tree v1 (committed)",
+        "role": 74,
+        "status": "scored",
+        "tokens": null
+      },
+      {
+        "approved": false,
+        "cost_usd": null,
+        "edge_recovery": 0,
+        "error": null,
+        "evidence_quotes": null,
+        "evidence_verified": null,
+        "n_cli": 26,
+        "n_ref": 33,
+        "n_ref_edges": 70,
+        "note": "frontier lean reader tasks, subagent-answered, on the results slice",
+        "panel": 40,
+        "paper": "gadeke-2026-guilt-insula",
+        "parts": 0,
+        "precision": 88,
+        "profile": "frontier-tasks",
+        "recovery": 76,
+        "reference": "claim-tree v1 (committed)",
+        "role": 84,
+        "status": "scored",
+        "tokens": null
+      },
+      {
+        "approved": false,
+        "cost_usd": null,
+        "edge_recovery": 0,
+        "error": null,
+        "evidence_quotes": null,
+        "evidence_verified": null,
+        "n_cli": 44,
+        "n_ref": 33,
+        "n_ref_edges": 70,
+        "note": "standard reader tasks (recorded run), subagent-answered, on the results slice",
+        "panel": 20,
+        "paper": "gadeke-2026-guilt-insula",
+        "parts": 0,
+        "precision": 52,
+        "profile": "standard-tasks",
+        "recovery": 76,
+        "reference": "claim-tree v1 (committed)",
+        "role": 80,
+        "status": "scored",
+        "tokens": null
+      }
+    ]
+  },
   "largest_role": "empirical",
   "largest_role_n": 125,
   "layers": {
@@ -498,6 +619,33 @@
         "scope": "corpus",
         "status": "proposed",
         "title": "Prediction outcomes",
+        "views": [
+          "table"
+        ]
+      },
+      {
+        "added": "2026-09-12",
+        "command": "python3 scripts/evaluation_report.py --write",
+        "doc": "/pipeline/evaluation/",
+        "found": "Of {{evaluation_n_rows}} profile \u00d7 paper rows, {{evaluation_n_scored}} were scored and {{evaluation_n_not_run}} could not run for want of a paid backend. The best recovery recorded so far is {{evaluation_best_recovery}}% of a paper's committed claims. No reference here has been approved, so every score is against a committed tree, not a tree a person has stood behind.\n",
+        "how": "For each paper the sweep has touched, `evaluate score` aligns a re-extraction \u2014 produced under one model profile \u2014 to the best reference the paper has, and writes a scorecard under `runs/<paper>/evaluation/`. This layer gathers every one of them into `review/evaluation.json`: profile \u00d7 paper \u00d7 metric \u2014 recovery, precision, role, panel, edge recovery, parts \u2014 with the reference it was scored against and whether that reference was approved.\nIt measures and does not judge. The reference is the committed tree unless a person has approved a version (none has yet, so every row here scores against the committed tree and says so). Only the `subagent` profile and the two experiments run without a paid backend; the other profiles appear as `not run: no backend credit`, so the table names what is missing rather than omitting it.\n",
+        "id": "evaluation",
+        "issue": 85,
+        "kind": "step",
+        "needs": [
+          "claim-tree"
+        ],
+        "open": true,
+        "produces": [
+          "review/evaluation.json"
+        ],
+        "question": "How well does each model profile recover a paper's claim tree?",
+        "reads": [
+          "scripts/evaluation_report.py",
+          "extract/elife_extract/evaluate.py"
+        ],
+        "scope": "corpus",
+        "title": "Evaluation",
         "views": [
           "table"
         ]
@@ -28247,6 +28395,10 @@
           "scope": "corpus",
           "state": "open"
         },
+        "evaluation": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "external-review": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -28461,6 +28613,10 @@
           ]
         },
         "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "evaluation": {
           "scope": "corpus",
           "state": "open"
         },
@@ -28683,6 +28839,10 @@
           ]
         },
         "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "evaluation": {
           "scope": "corpus",
           "state": "open"
         },
@@ -28930,6 +29090,10 @@
           "v": 5
         },
         "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "evaluation": {
           "scope": "corpus",
           "state": "open"
         },
@@ -29245,6 +29409,10 @@
           "scope": "corpus",
           "state": "open"
         },
+        "evaluation": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "external-review": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -29481,6 +29649,10 @@
           "scope": "corpus",
           "state": "open"
         },
+        "evaluation": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "external-review": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -29708,6 +29880,10 @@
           "scope": "corpus",
           "state": "open"
         },
+        "evaluation": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "external-review": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -29929,6 +30105,10 @@
           "scope": "corpus",
           "state": "open"
         },
+        "evaluation": {
+          "scope": "corpus",
+          "state": "open"
+        },
         "external-review": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -30142,6 +30322,10 @@
           ]
         },
         "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "evaluation": {
           "scope": "corpus",
           "state": "open"
         },
@@ -30364,6 +30548,10 @@
           ]
         },
         "epistemic-vocab": {
+          "scope": "corpus",
+          "state": "open"
+        },
+        "evaluation": {
           "scope": "corpus",
           "state": "open"
         },
