@@ -35,7 +35,7 @@ def test_the_funder_judged_every_proposal_and_the_journal_every_paper(cycle):
     assert j["aurora"]["by"] == "stub:aurora"
     pub = {d["step"]: d for d in st["juniper"]["paper"]["assessed"]}
     assert pub["decision"]["verdict"] == "accept" and pub["decision"]["player"] == "meridian"
-    assert pub["review"]["tally"] == {"supported": 8, "weak": 1, "unsupported": 1}   # per paper, not per wrapper
+    assert pub["review"]["tally"] == {"supported": 9, "weak": 1, "unsupported": 1}   # per paper, not per wrapper
     larch_study = json.loads((store.version_dir("larch", "study", 1) / "claims.json").read_text())
     assert [c["type"] for c in larch_study["claims"]] == ["scope"]   # declined: no study, said so
     published = json.loads((store.version_dir("meridian", "published", 1) / "claims.json").read_text())
