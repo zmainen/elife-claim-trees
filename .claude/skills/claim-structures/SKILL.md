@@ -93,6 +93,7 @@ that have to be eliminated to the measurements that eliminate them.
 | speccing or restructuring a paper you are writing | [workflows/spec-paper.md](workflows/spec-paper.md) |
 | designing an experiment or study before data exists | [workflows/design-experiment.md](workflows/design-experiment.md) |
 | checking a structure someone else built | [references/checks.md](references/checks.md) |
+| handing a structure to a person to read | [references/presentation.md](references/presentation.md) |
 
 ## Invariants
 
@@ -119,7 +120,10 @@ of them.
    Written afterwards, they become a discussion paragraph nobody traverses.
 7. **The graph is the argument.** Read the edges alone, with the claim sentences, and see
    whether the argument reconstructs. If it does not, the edges are wrong — not the reader.
-8. **Do not fabricate identifiers.** Generate UUIDs (`python3 -c "import uuid; print(uuid.uuid4())"`).
+8. **The structure is not the artifact.** When the deliverable is for a person, overlay the
+   claims onto their document — anchored to the spans they came from, in plain wording, with the
+   gaps shown — rather than pasting claim files into it.
+9. **Do not fabricate identifiers.** Generate UUIDs (`python3 -c "import uuid; print(uuid.uuid4())"`).
    Take panel ids from the source's own figure elements. Leave `doi: ~` unless the DOI is real.
 
 ## Stance, and why it is on the assertion
