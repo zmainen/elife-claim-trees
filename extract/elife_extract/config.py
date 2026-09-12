@@ -47,6 +47,9 @@ LITELLM_PREFIX = {
     "groq": "groq",
     "together": "together_ai",
     "deepseek": "deepseek",
+    # Gemini models served via Google Vertex AI (as opposed to direct Google AI API).
+    # Use backend="vertex_ai" when the model is Gemini but credentials are Vertex credentials.
+    "vertex_ai": "vertex_ai",
 }
 
 BACKEND_ENV_KEY = {
