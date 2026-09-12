@@ -2,11 +2,11 @@
 
 **Paper:** `gadeke-2026-guilt-insula` · **Claims registered:** 2026-09-10 – 2026-09-12
 
-68 claims, 84 typed relations between them.
+71 claims, 90 typed relations between them.
 
 ## Claims by role
 
-- **empirical** — 23
+- **empirical** — 26
 - **control** — 11
 - **hypothesis** — 10
 - **methodological** — 7
@@ -18,18 +18,18 @@
 
 ## Relations dropped
 
-**50 of 84 relations (60%) have no MIRA predicate and are absent from the strict export.**
+**54 of 90 relations (60%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
-| `part-of` | 13 | a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone |
+| `part-of` | 16 | a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone |
 | `requires` | 10 | a claim depends on another holding |
 | `scopes` | 9 | a scope constraint governs another claim's validity |
 | `derived-from` | 5 | a prediction derived from its hypothesis (inverse of entails) |
 | `entails` | 5 | a hypothesis entails its prediction — the deductive step |
 | `interprets` | 4 | one claim interprets another |
 | `enables-method` | 3 | a result makes a downstream method possible |
-| `qualifies` | 1 | a claim narrows another's applicability |
+| `qualifies` | 2 | a claim narrows another's applicability |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.
 

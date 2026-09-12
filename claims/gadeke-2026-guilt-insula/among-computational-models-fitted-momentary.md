@@ -16,6 +16,8 @@ assertions:
   panel: table1
   confidence: tentative
 reproductions: []
+part-of:
+- responsibility-redux-model-incorporating-expected
 ---
 
 **Notes from extraction:** Best-fitting model inferred from the lowest AIC values (Study 2 Responsibility Redux AIC –1195). Note the apparent tension: the results reader instead reported the (non-Redux) Responsibility model as the best fit by likelihood-ratio test and R²; which model is 'best' depends on the metric, and the two readers anchored different models to Table 1, so they are not merged.

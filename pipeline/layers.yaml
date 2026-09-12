@@ -893,6 +893,38 @@ layers:
       ledger notices a claim file that appeared. Neither was true before; between them they
       turn a report into a loop.
 
+  - id: edge-review
+    kind: step
+    question: What does a claim added after induction depend on and support?
+    needs: [claim-tree, relation-vocab]
+    reads: [extract/prompts/edge-inference.md, extract/prompts/contract/vocabulary.md,
+            scripts/edge_review.py]
+    produces: ["runs/{paper}/edge-review.output.json"]
+    by_from: model
+    views: [table]
+    command: "python3 scripts/edge_review.py {paper} --answer runs/{paper}/edge-review.answer.json"
+    doc: >
+      The relation question, asked of the claim set rather than of the candidates.
+
+      `edge-inference` needs only `reconcile`: it runs on the reconciled candidates, upstream of
+      the claim files, and `claim-tree` writes the edges it inferred. Nothing downstream of
+      `claim-tree` decided a relation, so a claim written afterwards had no path to one — not
+      later, not ever. That was an abstract complaint until the corpus began producing such
+      claims: a reviewer promoting a `gap-claim` draft adds a claim to a finished tree, and it
+      landed with no relation in a graph whose whole purpose is typed relations.
+
+      Same question, same contract. The system prompt is `edge-inference`'s, composed through
+      `prompts.prompt`, and every answer goes through `edges.edges_from_raw`, so the direction
+      rules and the corpus vocabulary hold exactly as they do there. What differs is the input:
+      the digest is the tree as it stands, and the edges kept are the ones touching a claim that
+      has no relation in either direction.
+
+      An orphan is defined in both directions on purpose. A rejected alternative asserts nothing
+      by design and is connected by the control that rules it out; counting only outgoing edges
+      called all six of Gädeke's alternatives orphans and would have invited a model to wire
+      them to something, which is the graph asserting what the paper denies. Six claims in the
+      corpus are orphans under the right definition, and thirty-four under the wrong one.
+
   - id: replication
     group: measures
     kind: step
