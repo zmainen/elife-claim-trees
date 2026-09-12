@@ -222,13 +222,18 @@ def _latest(entries: list[dict], layer_id: str) -> dict | None:
     return max(runs, key=lambda e: (e.get("v", 0), e.get("ran", "")))
 
 
-def _by_from_output(layer: dict, outs: list[str]) -> str | None:
+def _by_from_output(layer: dict, outs: list[str], paper: str | None = None) -> str | None:
     """Who answered, read out of what the layer produced.
 
     From outside the command the runner can only record that it invoked something, which is
     how every entry came to say `scripts/pipeline.py run` while the interesting fact — which
     model wrote these claims — lived in a hand-kept manifest.json beside it. A layer that a
     model answers declares `by_from`, and the answer travels in its own output.
+
+    A layer whose output is one file for the whole corpus — `summaries` writes every paper's
+    entry into one paper-summaries.json — has no top-level place for the model, so it records
+    it inside the paper's entry. When the top-level key is absent and the file is a dict keyed
+    by paper, fall back to that entry, so `by_from: model` finds it either way.
     """
     key = layer.get("by_from")
     if not key or not outs:
@@ -238,9 +243,15 @@ def _by_from_output(layer: dict, outs: list[str]) -> str | None:
         return None
     try:
         with open(p, encoding="utf-8") as fh:
-            return json.load(fh).get(key) or None
+            data = json.load(fh)
     except (json.JSONDecodeError, OSError):
         return None
+    if isinstance(data, dict):
+        if data.get(key):
+            return data[key]
+        if paper and isinstance(data.get(paper), dict):
+            return data[paper].get(key) or None
+    return None
 
 
 def record(paper: str, layer: dict, by_id: dict, *, note: str, by: str,
@@ -250,7 +261,7 @@ def record(paper: str, layer: dict, by_id: dict, *, note: str, by: str,
     prev = _latest(entries, layer["id"])
     ins = inputs_of(layer, by_id, paper, doi)
     outs = expand(layer.get("produces"), paper, doi)
-    by = _by_from_output(layer, outs) or by
+    by = _by_from_output(layer, outs, paper) or by
     return {
         "layer": layer["id"],
         "v": (prev["v"] + 1) if prev else 1,

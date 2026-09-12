@@ -432,6 +432,7 @@ def _tree_claims(paper: str, cfg: Config) -> list[dict]:
             if isinstance(item, dict) and item.get("relation") and item.get("target"):
                 edges.append((item["relation"], item["target"]))
         out.append({"slug": slug, "role": fm.get("role"),
+                    "epistemic": fm.get("epistemic"),
                     "panel": (fm.get("assertions") or [{}])[0].get("panel")
                     if fm.get("assertions") else None,
                     "claim": " ".join(str(fm.get("claim") or "").split()),
@@ -547,3 +548,268 @@ def _apply_parts(paper: str, data: dict, cfg: Config) -> None:
         block = yaml.safe_dump({"part-of": [e["whole"]]}, sort_keys=False,
                                allow_unicode=True, default_flow_style=False).rstrip("\n")
         _write_key(f, "part-of", block, after="epistemic")
+
+
+# ── the measures: prose written from the graph, on disk under site/src/data ──
+# summaries, synthesis and abstract-map were declared with outputs the site renders and no
+# runner or committed prompt, so their artifacts could not be regenerated and no version could
+# be recorded. Each is model-written prose over the same claim graph; each carries the
+# `--dump-prompt` / `--answer` seam every model-answered layer has, so a model with no backend
+# here can answer it and the ledger records who did.
+
+
+def site_data_file(cfg: Config, *parts: str) -> Path:
+    """A path under the site's committed data. The measures write here, not into runs/."""
+    return cfg.root / "site" / "src" / "data" / Path(*parts)
+
+
+def _known_slugs(paper: str, cfg: Config) -> set[str]:
+    return {c["slug"] for c in _tree_claims(paper, cfg)}
+
+
+def _graph_for_prose(paper: str, cfg: Config) -> str:
+    """The claim tree rendered for a layer that restates it: every claim, then every edge.
+
+    Slug, role (and the epistemic marker where it says more than the role), the panel and the
+    sentence, then the typed edges written `source --relation--> target` — the graph and nothing
+    from the paper, which is what lets the summary and the synthesis be a test of the graph.
+    """
+    claims = _tree_claims(paper, cfg)
+    lines = ["# Claims\n"]
+    for c in claims:
+        head = f"- `{c['slug']}` ({c['role'] or 'claim'}"
+        if c["epistemic"] and c["epistemic"] != c["role"]:
+            head += f", {c['epistemic']}"
+        if c["panel"]:
+            head += f", {c['panel']}"
+        lines.append(f"{head}): {c['claim']}")
+    edges = [(c["slug"], k, t) for c in claims for k, t in c["edges"]]
+    if edges:
+        lines.append("\n# Edges\n")
+        for s, k, t in edges:
+            lines.append(f"- {s} --{k}--> {t}")
+    return "\n".join(lines) + "\n"
+
+
+# ── summaries ────────────────────────────────────────────────────────────
+# The paper in three paragraphs, the block at the top of every paper page. `produces` names one
+# file for all papers, so the runner reads it, replaces the paper's entry, and writes it back:
+# editing one paper's summary restates the artifact every paper's cell reads, which is why they
+# go stale together. The model is recorded inside the paper's entry rather than at the top level
+# the shared file has no room for; `pipeline.py`'s by_from reader falls back to the per-paper
+# entry, so `by_from: model` still finds it.
+
+SUMMARIES_FILE = "paper-summaries.json"
+
+
+def summaries_request(paper: str, cfg: Config) -> tuple[str, str]:
+    from .prompts import prompt
+    return prompt("summaries", cfg), _graph_for_prose(paper, cfg)
+
+
+def _validate_summary(raw: dict) -> dict:
+    """Coerce a model answer into the three-paragraph entry, one of hypotheses/subject.
+
+    An atlas or descriptive paper returns `subject` in place of `hypotheses`; every other paper
+    returns `hypotheses`. Exactly one is kept, and `claims` and `inferences` must both be present
+    — a summary missing a paragraph is not written.
+    """
+    if not isinstance(raw, dict):
+        raise ValueError("summary answer must be a JSON object with hypotheses/subject, claims, inferences")
+    out: dict = {}
+    if raw.get("subject"):
+        out["subject"] = " ".join(str(raw["subject"]).split())
+    elif raw.get("hypotheses"):
+        out["hypotheses"] = " ".join(str(raw["hypotheses"]).split())
+    else:
+        raise ValueError("summary needs one of `hypotheses` or `subject`")
+    for k in ("claims", "inferences"):
+        if not raw.get(k):
+            raise ValueError(f"summary needs a non-empty `{k}` paragraph")
+        out[k] = " ".join(str(raw[k]).split())
+    return out
+
+
+def _write_summary(paper: str, entry: dict, cfg: Config) -> Path:
+    """Replace one paper's entry in the shared summaries file, leaving the others byte-for-byte.
+
+    Read, replace the key in place (assignment to an existing key keeps its position), write
+    back with the file's own formatting — indent 2, unicode kept, no trailing newline.
+    """
+    path = site_data_file(cfg, SUMMARIES_FILE)
+    data = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+    data[paper] = entry
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+def summaries_layer(paper: str, cfg: Config, *,
+                    answer: str | None = None) -> tuple[Path, dict]:
+    """Write the paper's three-paragraph summary into the shared paper-summaries.json."""
+    from .agents import parse_json_response, stream_text
+
+    system, user = summaries_request(paper, cfg)
+    if answer is not None:
+        p, model = answer_file(answer, cfg)
+        raw = p.read_text(encoding="utf-8")
+    else:
+        model = cfg.model_reconcile
+        raw = stream_text(cfg, model=model, system=system, user=user, label="summaries")
+
+    entry = {**_validate_summary(parse_json_response(raw)), "model": model}
+    path = _write_summary(paper, entry, cfg)
+    return path, {"paper_slug": paper, **entry}
+
+
+# ── synthesis ──────────────────────────────────────────────────────────────
+# The paper's argument, restated from the claim graph alone and traced back to the nodes it was
+# built from. Given the graph and nothing else, so a restatement that reads as the same paper is
+# evidence the graph carries it. The output is the flat v3 shape the site reads.
+
+
+def synthesis_request(paper: str, cfg: Config) -> tuple[str, str]:
+    from .prompts import prompt
+    return prompt("synthesis", cfg), _graph_for_prose(paper, cfg)
+
+
+def _validate_synthesis(raw: dict, paper: str, cfg: Config) -> dict:
+    """Coerce a model answer into `{synthesis, traceback}`, dropping unresolvable references.
+
+    The synthesis prose is kept as written (its paragraph breaks matter). Each traceback entry
+    keeps only the claim slugs this paper actually holds; an edge is kept as the string it came
+    as. An entry with no sentence is dropped.
+    """
+    if not isinstance(raw, dict):
+        raise ValueError("synthesis answer must be a JSON object with `synthesis` and `traceback`")
+    synthesis = str(raw.get("synthesis") or "").strip()
+    if not synthesis:
+        raise ValueError("synthesis needs a non-empty `synthesis`")
+    known = _known_slugs(paper, cfg)
+    traceback = []
+    for e in (raw.get("traceback") or []):
+        if not isinstance(e, dict) or not e.get("sentence"):
+            continue
+        traceback.append({
+            "sentence": " ".join(str(e["sentence"]).split()),
+            "claims": [s for s in (e.get("claims") or []) if s in known],
+            "edges": [x for x in (e.get("edges") or []) if isinstance(x, str)],
+        })
+    return {"synthesis": synthesis, "traceback": traceback}
+
+
+def synthesis_layer(paper: str, cfg: Config, *,
+                    answer: str | None = None) -> tuple[Path, dict]:
+    """Write the restatement and its traceback to site/src/data/synthesis-v3/<paper>.json."""
+    from .agents import parse_json_response, stream_text
+
+    system, user = synthesis_request(paper, cfg)
+    if answer is not None:
+        p, model = answer_file(answer, cfg)
+        raw = p.read_text(encoding="utf-8")
+    else:
+        model = cfg.model_reconcile
+        raw = stream_text(cfg, model=model, system=system, user=user, label="synthesis")
+
+    data = _validate_synthesis(parse_json_response(raw), paper, cfg)
+    payload = {"paperSlug": paper, "version": 3, **data, "model": model}
+    path = _write_json(site_data_file(cfg, "synthesis-v3", f"{paper}.json"), payload)
+    return path, payload
+
+
+# ── abstract-map ─────────────────────────────────────────────────────────
+# The abstract cut into sentences, each mapped to the claims it carries, and every claim the
+# abstract drops. The runner owns the sentence split, so the model annotates numbered sentences
+# and the text is re-attached by number; and it derives `orphanClaims` and `orphanSentences`
+# from the per-sentence mapping, so the two directions cannot disagree.
+
+
+def _abstract_sentences(paper: str, cfg: Config) -> tuple[str, list[str]]:
+    """The abstract as one whitespace-normalised string and the same string split into sentences."""
+    from .segment import split_sentences
+
+    text = " ".join(read_prepared(paper, cfg).abstract.split())
+    return text, split_sentences(text)
+
+
+def abstract_map_request(paper: str, cfg: Config) -> tuple[str, str]:
+    from .prompts import prompt
+
+    _text, sentences = _abstract_sentences(paper, cfg)
+    lines = ["# Abstract, by sentence\n"]
+    for i, s in enumerate(sentences, 1):
+        lines.append(f"[{i}] {s}")
+    lines.append("\n# Claims\n")
+    for c in _tree_claims(paper, cfg):
+        lines.append(f"- `{c['slug']}` ({c['role'] or 'claim'}): {c['claim']}")
+    return prompt("abstract-map", cfg), "\n".join(lines) + "\n"
+
+
+def _validate_abstract_map(raw: dict, paper: str, cfg: Config) -> dict:
+    """Coerce a model answer into the mapping, both directions enforced from one source.
+
+    The runner's own split is authoritative: each returned sentence is matched to its number and
+    its text re-attached, an unknown `type` becomes `background`, a `claim` sentence resolving to
+    no known slug becomes `unmappable`, and `kind` is confined to the three the site labels.
+    `orphanClaims` is every claim no sentence carried and `orphanSentences` every unmappable
+    sentence — derived here rather than trusted, so assigning a claim and calling it an orphan
+    cannot both happen.
+    """
+    if not isinstance(raw, dict):
+        raise ValueError("abstract-map answer must be a JSON object with `sentences`")
+    _text, sentences = _abstract_sentences(paper, cfg)
+    text_of = {i + 1: s for i, s in enumerate(sentences)}
+    known = _known_slugs(paper, cfg)
+
+    annotated: dict[int, dict] = {}
+    for e in (raw.get("sentences") or []):
+        if not isinstance(e, dict):
+            continue
+        try:
+            n = int(e.get("n"))
+        except (TypeError, ValueError):
+            continue
+        if n in text_of:
+            annotated[n] = e
+
+    out_sentences = []
+    for n in sorted(text_of):
+        e = annotated.get(n, {})
+        typ = e.get("type") if e.get("type") in ("claim", "background", "unmappable") else "background"
+        claims = [s for s in (e.get("claims") or []) if s in known] if typ == "claim" else []
+        if typ == "claim" and not claims:
+            typ = "unmappable"                          # named claims, none in this tree
+        item = {"n": n, "text": text_of[n], "type": typ, "claims": claims}
+        if typ == "claim":
+            item["kind"] = e.get("kind") if e.get("kind") in ("direct", "combined", "synthesis") else "direct"
+        note = " ".join(str(e.get("note") or "").split())
+        if note:
+            item["note"] = note
+        out_sentences.append(item)
+
+    used = {s for it in out_sentences for s in it["claims"]}
+    return {
+        "abstract": _text,
+        "sentences": out_sentences,
+        "orphanClaims": [c["slug"] for c in _tree_claims(paper, cfg) if c["slug"] not in used],
+        "orphanSentences": [it["n"] for it in out_sentences if it["type"] == "unmappable"],
+    }
+
+
+def abstract_map_layer(paper: str, cfg: Config, *,
+                       answer: str | None = None) -> tuple[Path, dict]:
+    """Write the abstract-to-claims mapping to site/src/data/abstract-mapping/<paper>.json."""
+    from .agents import parse_json_response, stream_text
+
+    system, user = abstract_map_request(paper, cfg)
+    if answer is not None:
+        p, model = answer_file(answer, cfg)
+        raw = p.read_text(encoding="utf-8")
+    else:
+        model = cfg.model_reconcile
+        raw = stream_text(cfg, model=model, system=system, user=user, label="abstract-map")
+
+    data = _validate_abstract_map(parse_json_response(raw), paper, cfg)
+    payload = {"paperSlug": paper, **data, "model": model}
+    path = _write_json(site_data_file(cfg, "abstract-mapping", f"{paper}.json"), payload)
+    return path, payload

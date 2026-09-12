@@ -575,9 +575,17 @@ layers:
 
       An abstract is the paper's own summary of itself, so the difference between the two lists is
       the difference between what a paper found and what it advertises.
-    needs: [claim-tree]
+
+      `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through
+      the same validation — an unknown slug or a sentence number the abstract does not have is
+      dropped, and the two directions are derived from one per-sentence mapping so they cannot
+      disagree — so a model with no backend here can still answer it.
+    needs: [claim-tree, prepare]
+    reads: [extract/prompts/abstract-map.md]
     produces: ["site/src/data/abstract-mapping/{paper}.json"]
     views: [document, comparison]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli abstract-map --paper {paper}"
 
   # ── measures ───────────────────────────────────────────────────────────────
 
@@ -602,10 +610,18 @@ layers:
 
       It is the closest thing in the pipeline to a test of whether the graph was worth building: if
       the tree carries the argument, a restatement from it should be recognisable as the same paper.
+
+      `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through
+      the same validation — a traceback slug not in this tree is dropped — so a model with no
+      backend here can still answer it. The prompt reasons about the claims by role, so it reads
+      the contract's vocabulary too.
     added: "2026-09-11"
     needs: [claim-tree, abstract-map]
+    reads: [extract/prompts/synthesis.md, extract/prompts/contract/vocabulary.md]
     produces: ["site/src/data/synthesis-v3/{paper}.json"]
     views: [document, comparison]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli synthesis --paper {paper}"
 
   # The paper in three paragraphs, written from its claim graph. It is the block at the top
   # of every paper page and probably the most-read thing the corpus produces, and no layer
@@ -621,9 +637,26 @@ layers:
     scope: paper
     title: Paper summary
     question: What does this paper argue, in three paragraphs?
+    how: >
+      Given the tree's claims — slug, role, panel, sentence and edges — and nothing from the
+      paper, it returns the three paragraphs the page opens with: `hypotheses` (the bets the
+      work makes good on), `claims` (what it establishes empirically) and `inferences` (what it
+      concludes). An atlas or descriptive paper returns `subject` in place of `hypotheses`. It
+      writes the paper's entry into the one shared paper-summaries.json, so editing any paper's
+      summary restates the artifact every paper's cell reads.
+
+      `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through
+      the same validation — one of `hypotheses`/`subject` and both other paragraphs, or nothing is
+      written — so a model with no backend here can still answer it. The prompt reasons about the
+      claims by role, so it reads the contract's vocabulary too. The model is recorded inside the
+      paper's entry, since the shared file has no top-level place for it, and `pipeline.py`'s
+      by_from reader falls back to that per-paper entry.
     needs: [claim-tree]
+    reads: [extract/prompts/summaries.md, extract/prompts/contract/vocabulary.md]
     produces: ["site/src/data/paper-summaries.json"]
     views: [document]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli summaries --paper {paper}"
 
   # The wording a reader meets first.
   #

@@ -142,7 +142,8 @@ def test_model_answered_layers_declare_where_to_find_the_model():
     """
     decl = _declaration()
     for lid in ("results-reader", "caption-reader", "structure-reader", "reconcile",
-                "external-review", "edge-inference", "questions", "parts"):
+                "external-review", "edge-inference", "questions", "parts",
+                "summaries", "synthesis", "abstract-map"):
         assert decl[lid].get("by_from") == "model", f"{lid} does not declare by_from"
 
 
@@ -336,7 +337,8 @@ def test_every_model_answered_layer_can_be_dumped_and_answered():
     """
     choices = cli.build_parser()._subparsers._group_actions[0].choices
     for name in ("results-reader", "caption-reader", "structure-reader",
-                 "reconcile", "external-review", "edge-inference", "questions", "parts"):
+                 "reconcile", "external-review", "edge-inference", "questions", "parts",
+                 "summaries", "synthesis", "abstract-map"):
         opts = {o for a in choices[name]._actions for o in a.option_strings}
         assert "--dump-prompt" in opts, f"{name} cannot be asked for its prompt"
         assert "--answer" in opts, f"{name} cannot be given an answer"
@@ -609,6 +611,51 @@ def test_parts_is_answerable_and_its_declared_command_exists():
     assert m and m.group(1) in choices, "parts' command names a subcommand the CLI does not have"
 
 
+# ── the measures: each lands on its declared site path and records who answered ──
+
+
+def test_the_measures_write_their_declared_paths_and_record_the_model():
+    """summaries, synthesis and abstract-map each land on the site path they declare and each
+    records who answered — summaries inside the paper's entry, since the file is one for the
+    whole corpus; the other two at the top level. A supplied answer goes through the same
+    validation the backend reply would, so an invented slug is dropped rather than written."""
+    decl = _declaration()
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = _cfg(Path(tmp))
+        root = cfg.root
+        _seed_tree(cfg, ["a", "b"])
+        _seed_prepared(root, cfg)
+        (root / "site" / "src" / "data").mkdir(parents=True, exist_ok=True)
+        (root / "site" / "src" / "data" / "paper-summaries.json").write_text("{}")
+
+        sum_ans = Path(tmp) / "sum.json"
+        sum_ans.write_text(json.dumps({"hypotheses": "H.", "claims": "C.", "inferences": "I."}))
+        path, _ = layers.summaries_layer(SLUG, cfg, answer=str(sum_ans))
+        assert path == root / decl["summaries"]["produces"][0].replace("{paper}", SLUG)
+        entry = json.loads(path.read_text())[SLUG]
+        assert entry["model"].startswith("supplied:"), "summaries did not record the model in the entry"
+        assert entry.get("hypotheses") and not entry.get("subject")
+
+        syn_ans = Path(tmp) / "syn.json"
+        syn_ans.write_text(json.dumps({"synthesis": "S.", "traceback": [
+            {"sentence": "S.", "claims": ["a", "ghost"], "edges": ["a --supports--> b"]}]}))
+        path, _ = layers.synthesis_layer(SLUG, cfg, answer=str(syn_ans))
+        assert path == root / decl["synthesis"]["produces"][0].replace("{paper}", SLUG)
+        out = json.loads(path.read_text())
+        assert out["model"].startswith("supplied:") and out["version"] == 3
+        assert out["traceback"][0]["claims"] == ["a"], "an invented traceback slug survived"
+
+        am_ans = Path(tmp) / "am.json"
+        am_ans.write_text(json.dumps({
+            "sentences": [{"n": 1, "type": "claim", "claims": ["a", "ghost"], "kind": "direct"}],
+            "orphanClaims": ["whatever"], "orphanSentences": [9]}))
+        path, _ = layers.abstract_map_layer(SLUG, cfg, answer=str(am_ans))
+        assert path == root / decl["abstract-map"]["produces"][0].replace("{paper}", SLUG)
+        out = json.loads(path.read_text())
+        assert out["model"].startswith("supplied:")
+        assert out["sentences"][0]["claims"] == ["a"], "an invented mapped slug survived"
+        # orphanClaims and orphanSentences are derived from the per-sentence mapping, not trusted.
+        assert out["orphanClaims"] == ["b"] and out["orphanSentences"] == []
 # ── edge inference: the direction checks, reciprocals, and the why ─────────
 # The claims are a minimal arc plus one entertained alternative, so every direction rule has a
 # claim that satisfies it and a claim that breaks it. Passed as dicts because a draft claim
