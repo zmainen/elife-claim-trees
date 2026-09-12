@@ -30,12 +30,14 @@ import json
 import logging
 import re
 import time
-
-from anthropic import Anthropic, AnthropicVertex
+from typing import TYPE_CHECKING
 
 from .config import Config, LITELLM_PREFIX
 from .prepare import PreparedPaper
 from .schema import AgentExtraction, AgentName, CandidateClaim
+
+if TYPE_CHECKING:                      # for the annotations only; never imported at runtime
+    from anthropic import Anthropic, AnthropicVertex
 
 logger = logging.getLogger(__name__)
 
@@ -287,11 +289,22 @@ def _as_claim_list(parsed, agent: str) -> list:
 # ── Anthropic client (cached per session) ───────────────────────────────
 
 
-_client_cache: Anthropic | AnthropicVertex | None = None
+_client_cache: "Anthropic | AnthropicVertex | None" = None
 
 
-def get_client(cfg: Config) -> Anthropic | AnthropicVertex:
+def get_client(cfg: Config) -> "Anthropic | AnthropicVertex":
+    """The SDK is imported here rather than at module scope.
+
+    `__init__.py` imports this module to export `call`, so a module-scope
+    `from anthropic import ...` made the SDK a hard dependency of importing the package at
+    all — including for `elife-extract contract`, which renders a prompt from the vocabulary
+    and calls no model. CI installs requirements.txt, which does not carry the SDK, so every
+    check that shells into the package has failed since the call paths were merged into one.
+
+    A backend client is needed when a call is made, and only then.
+    """
     global _client_cache
+    from anthropic import Anthropic, AnthropicVertex      # noqa: PLC0415
     if _client_cache is None:
         if cfg.backend == "anthropic" and cfg.anthropic_api_key:
             _client_cache = Anthropic(api_key=cfg.anthropic_api_key)
