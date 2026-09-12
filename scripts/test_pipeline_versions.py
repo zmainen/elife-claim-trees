@@ -54,6 +54,107 @@ def test_keep_versions_copies_runs_single_files():
         assert (root / "runs/p/reconciler.output.json").is_file()
 
 
+def _decl(root: Path):
+    """A tiny two-layer declaration under `root`, with its reads on disk, loaded with
+    pipeline pointed at `root` so digests and the corpus ledger resolve there."""
+    _touch(root, "scripts/relations.py", "EDGE_KEYS = ['supports']\n")
+    (root / "pipeline").mkdir(parents=True, exist_ok=True)
+    (root / "pipeline" / "layers.yaml").write_text(
+        "version: 1\n"
+        "layers:\n"
+        "  - id: claim-format\n"
+        "    kind: feature\n"
+        "    scope: corpus\n"
+        "    reads: []\n"
+        "  - id: relation-vocab\n"
+        "    kind: question\n"
+        "    scope: corpus\n"
+        "    needs: [claim-format]\n"
+        "    reads: [scripts/relations.py]\n"
+        "  - id: claim-tree\n"
+        "    kind: step\n"
+        "    scope: paper\n"
+        "    needs: [relation-vocab]\n"
+        "    produces: ['claims/{paper}/*.md']\n",
+        encoding="utf-8")
+    pipeline.ROOT = str(root)
+    return pipeline.load(str(root / "pipeline" / "layers.yaml"))
+
+
+def test_declaration_version_is_a_function_of_entry_and_reads():
+    old = pipeline.ROOT
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            decl = _decl(root)
+            rv = decl["by_id"]["relation-vocab"]
+            v1 = pipeline.declaration_version(rv)
+            assert v1 == pipeline.declaration_version(rv)          # deterministic
+            # A read file it names moves the version — the same machinery staleness uses.
+            _touch(root, "scripts/relations.py", "EDGE_KEYS = ['supports', 'tests']\n")
+            assert pipeline.declaration_version(rv) != v1
+    finally:
+        pipeline.ROOT = old
+
+
+def test_declaration_state_open_accepted_superseded():
+    old = pipeline.ROOT
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            decl = _decl(root)
+            rv = decl["by_id"]["relation-vocab"]
+
+            # Never approved → open, and claim-tree is provisional on the corpus decisions.
+            ds = pipeline.declaration_state(decl)
+            assert ds["relation-vocab"]["scheme"] == "open"
+            assert ds["claim-tree"].get("provisional_on") == ["claim-format", "relation-vocab"]
+
+            # Approve claim-format and the current relation-vocab version → accepted.
+            pipeline.approve_declaration("claim-format",
+                                         pipeline.declaration_version(decl["by_id"]["claim-format"]),
+                                         by="curator")
+            ver = pipeline.declaration_version(rv)
+            pipeline.approve_declaration("relation-vocab", ver, by="curator", note="ruled")
+            ds = pipeline.declaration_state(decl)
+            assert ds["relation-vocab"]["scheme"] == "accepted"
+            assert ds["relation-vocab"]["approved"]["by"] == "curator"
+            # claim-tree now waits on nothing — both corpus deps are accepted.
+            assert "provisional_on" not in ds["claim-tree"]
+
+            # Move the declaration past what was accepted → proposed, marked superseded.
+            _touch(root, "scripts/relations.py", "EDGE_KEYS = ['supports', 'opposes']\n")
+            ds = pipeline.declaration_state(decl)
+            assert ds["relation-vocab"]["scheme"] == "proposed"
+            assert ds["relation-vocab"]["approved"]["superseded"] is True
+            # And claim-tree is provisional again, on relation-vocab alone.
+            assert ds["claim-tree"].get("provisional_on") == ["relation-vocab"]
+
+            # The ruling is one line in the corpus-level ledger, in the approval shape.
+            recs = pipeline.read_corpus_approvals()
+            assert [r["declaration"] for r in recs] == ["claim-format", "relation-vocab"]
+            assert recs[1]["version"] == ver and recs[1]["note"] == "ruled"
+    finally:
+        pipeline.ROOT = old
+
+
+def test_status_proposed_reads_as_proposed_until_accepted():
+    old = pipeline.ROOT
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            decl = _decl(root)
+            decl["by_id"]["relation-vocab"]["status"] = "proposed"
+            ds = pipeline.declaration_state(decl)
+            assert ds["relation-vocab"]["scheme"] == "proposed"
+            pipeline.approve_declaration("relation-vocab",
+                                         pipeline.declaration_version(decl["by_id"]["relation-vocab"]),
+                                         by="curator")
+            assert pipeline.declaration_state(decl)["relation-vocab"]["scheme"] == "accepted"
+    finally:
+        pipeline.ROOT = old
+
+
 def test_keep_versions_ignores_non_runs_globs_and_missing():
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)

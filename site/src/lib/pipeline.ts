@@ -16,6 +16,35 @@ import corpus from '../data/claims.json';
 export type CellState =
   | 'current' | 'stale' | 'absent' | 'blocked' | 'n/a' | 'open' | 'unrecorded';
 
+/** The scheme fact: what a layer's declaration means, for every paper. `accepted` when a
+ *  person has ruled on the current declaration version; `proposed` when the declaration has
+ *  moved past what was accepted, or its entry says so and nothing is accepted; `open`
+ *  otherwise. Computed by pipeline.py, read from corpus-facts.json. */
+export type SchemeState = 'accepted' | 'proposed' | 'open';
+
+export interface Scheme {
+  state: SchemeState;
+  /** The declaration's version hash — its entry plus the files that define its meaning. */
+  version: string;
+  /** The ruling that stands, if any. `superseded` is set when it named an earlier version. */
+  approved?: { version: string; by?: string; when?: string; note?: string; superseded?: boolean };
+  /** Corpus-scope declarations this layer needs that are not accepted. A tree built while one
+   *  is open is provisional on its own cell — this is which decision it waits on. */
+  provisionalOn?: string[];
+}
+
+/** The adjudication fact: whether a person has read this cell's output. From the per-paper
+ *  approvals ledger and the verdict file the reading is recorded in. */
+export interface Adjudication {
+  kind: 'approved' | 'partial' | 'superseded' | 'unread';
+  v?: number;
+  by?: string;
+  when?: string;
+  /** For a partial reading: verdicts considered, of the total the skeleton pre-filled. */
+  considered?: number;
+  total?: number;
+}
+
 export interface LayerDecl {
   id: string;
   title: string;
@@ -79,6 +108,11 @@ export interface Cell {
   /** Approval is an operation on a version, not a layer. `applies` is false when the layer
    *  has run again since — the approval was granted to output that no longer exists. */
   approved?: { v: number; by?: string; when?: string; note?: string; applies: boolean };
+  /** The three facts a cell carries. `state` above is the mechanism; these are the other two.
+   *  Scheme is the layer's declaration status (plus what it is provisional on); adjudication
+   *  is whether a person has read this version. */
+  scheme?: Scheme;
+  adjudication: Adjudication;
   /** Addresses. */
   href: string;
   dataHref: string;
@@ -107,6 +141,34 @@ export const corpusLayers = layers.filter(l => l.scope === 'corpus');
 
 export const papers: string[] = Object.keys(P?.state ?? {}).sort();
 const LEDGER: Record<string, any[]> = P?.ledger ?? {};
+const DECLS: Record<string, any> = P?.declarations ?? {};
+const VERDICTS: Record<string, Record<string, { considered: number; total: number }>> =
+  P?.verdicts ?? {};
+
+/** A layer's scheme, or null when the declaration state was not computed. */
+export function scheme(layerId: string): Scheme | null {
+  const d = DECLS[layerId];
+  if (!d) return null;
+  return {
+    state: d.scheme, version: d.version, approved: d.approved,
+    provisionalOn: d.provisional_on?.length ? d.provisional_on : undefined,
+  };
+}
+
+/** The adjudication fact for a cell: what a person has read of this version. */
+function adjudicationOf(paper: string, layerId: string,
+                        v: number | undefined, approved: Cell['approved']): Adjudication {
+  const vinfo = v != null ? VERDICTS[paper]?.[String(v)] : undefined;
+  const partial = vinfo ? { considered: vinfo.considered, total: vinfo.total } : {};
+  if (approved?.applies) {
+    const incomplete = vinfo && vinfo.considered < vinfo.total;
+    return { kind: incomplete ? 'partial' : 'approved',
+             v: approved.v, by: approved.by, when: approved.when, ...partial };
+  }
+  if (approved) return { kind: 'superseded', v: approved.v, by: approved.by, when: approved.when };
+  if (vinfo && vinfo.considered > 0) return { kind: 'partial', v, ...partial };
+  return { kind: 'unread' };
+}
 
 /** A paper's version history: every run, newest first. This is the changelog — there is no
  *  second one to keep in step with it. */
@@ -161,6 +223,8 @@ export function cell(paper: string, layerId: string): Cell | null {
     backfilled: raw.backfilled,
     versions: history(paper, layerId),
     approved: raw.approved,
+    scheme: scheme(layerId) ?? undefined,
+    adjudication: adjudicationOf(paper, layerId, raw.v, raw.approved),
     produces: (layer.produces ?? []).map(p => fill(p, paper)),
     command: layer.command ? fill(layer.command, paper) : undefined,
     href: `${base}/papers/${paper}/${layerId}/`,
@@ -275,6 +339,16 @@ export function approvedCells(): Cell[] {
   return papers.flatMap(p => cells(p).filter(c => c.approved?.applies));
 }
 
+/** How many papers a person has read under this layer — the adjudication counter a layer page
+ *  carries beside its scheme badge. Counts approved and partial readings; superseded and
+ *  unread are not readings that still stand. */
+export function adjudicatedCount(layerId: string): number {
+  return papers.filter(p => {
+    const c = cell(p, layerId);
+    return c && (c.adjudication.kind === 'approved' || c.adjudication.kind === 'partial');
+  }).length;
+}
+
 /** What each declared view is, and where it is rendered.
  *
  *  `views` was a list of words printed on the page and implemented nowhere, which reads as a
@@ -318,3 +392,31 @@ export const STATE_NOTE: Record<CellState, string> = {
   open: 'The layer is a question nobody has answered yet.',
   unrecorded: 'The file exists; no run was observed, so nothing can say whether it is current.',
 };
+
+// ── the other two facts, in words ────────────────────────────────────────────
+// Mechanism is the cell's colour, above. Scheme is the layer's declaration; adjudication is
+// whether a person has read this version. Three facts, three vocabularies, told apart so a
+// single word cannot pretend to be all three — see docs/design/2026-09-12-kinds-of-decision.md.
+
+export const SCHEME_LABEL: Record<SchemeState, string> = {
+  accepted: 'accepted', proposed: 'proposed', open: 'open',
+};
+
+export const SCHEME_NOTE: Record<SchemeState, string> = {
+  accepted: 'A person ruled on what this layer means, for the declaration as it stands now.',
+  proposed: 'The rule exists and runs, but nothing has been accepted — or the declaration has moved since it was.',
+  open: 'What this layer means is undecided. Everything built under it is provisional.',
+};
+
+export const ADJUDICATION_LABEL: Record<Adjudication['kind'], string> = {
+  approved: 'approved', partial: 'partial', superseded: 'superseded', unread: 'unread',
+};
+
+/** The adjudication fact as one line — the "approved v3 by X", "partial, 4 of 30", the rest. */
+export function adjudicationText(a: Adjudication): string {
+  if (a.kind === 'approved') return `approved v${a.v}${a.by ? ` by ${a.by}` : ''}`;
+  if (a.kind === 'partial')
+    return a.considered != null ? `partial — ${a.considered} of ${a.total} considered` : 'partial reading';
+  if (a.kind === 'superseded') return `v${a.v} approved, then the layer ran again`;
+  return 'unread';
+}
