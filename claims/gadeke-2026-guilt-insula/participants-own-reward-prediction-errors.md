@@ -1,5 +1,5 @@
 ---
-uuid: 37c89e83-89ff-40e8-921a-a60eb5819e9f
+uuid: d2189d9d-2aea-4cff-bff6-d1ace9b9fa33
 slug: participants-own-reward-prediction-errors
 doi: null
 claim: 'Participants'' own reward prediction errors (sRPE) influenced happiness more than the partner''s
@@ -8,11 +8,9 @@ claim: 'Participants'' own reward prediction errors (sRPE) influenced happiness 
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
-belongings:
-- relation: requires
-  target: momentary-happiness-modelled-five-computational
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391

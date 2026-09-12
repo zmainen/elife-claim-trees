@@ -1,34 +1,35 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `gadeke-2026-guilt-insula` · **Claims registered:** 2026-09-10 – 2026-09-11
+**Paper:** `gadeke-2026-guilt-insula` · **Claims registered:** 2026-09-10 – 2026-09-12
 
-74 claims, 91 typed relations between them.
+68 claims, 84 typed relations between them.
 
 ## Claims by role
 
 - **empirical** — 23
-- **methodological** — 12
 - **control** — 11
 - **hypothesis** — 10
+- **methodological** — 7
 - **prediction** — 5
 - **interpretation** — 4
-- **scope** — 4
 - **literature-context** — 3
+- **scope** — 3
 - **synthesis** — 2
 
 ## Relations dropped
 
-**59 of 91 relations (65%) have no MIRA predicate and are absent from the strict export.**
+**50 of 84 relations (60%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
-| `requires` | 24 | a claim depends on another holding |
-| `part-of` | 10 | a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone |
-| `scopes` | 10 | a scope constraint governs another claim's validity |
+| `part-of` | 13 | a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone |
+| `requires` | 10 | a claim depends on another holding |
+| `scopes` | 9 | a scope constraint governs another claim's validity |
 | `derived-from` | 5 | a prediction derived from its hypothesis (inverse of entails) |
 | `entails` | 5 | a hypothesis entails its prediction — the deductive step |
 | `interprets` | 4 | one claim interprets another |
-| `enables-method` | 1 | a result makes a downstream method possible |
+| `enables-method` | 3 | a result makes a downstream method possible |
+| `qualifies` | 1 | a claim narrows another's applicability |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.
 

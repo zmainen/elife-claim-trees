@@ -1,5 +1,5 @@
 ---
-uuid: f44e7151-e31f-46b1-8173-f7fd5b9548e4
+uuid: 88e0fcd3-75df-4268-a111-f248d12f8851
 slug: pre-task-icebreaker-succeeded-establishing-positive
 doi: null
 claim: 'A pre-task icebreaker succeeded in establishing a positive attitude toward the partner: participants
@@ -8,8 +8,10 @@ claim: 'A pre-task icebreaker succeeded in establishing a positive attitude towa
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
+validates:
+- when-partner-received-low-lottery
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -20,6 +22,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** Manipulation check that the social relationship was positive and non-competitive; the caption reader anchored it to Appendix 1—table 11 (ratings across the five items range roughly 8.35–9.34 across Studies 1 and 2).
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `validates` → `when-partner-received-low-lottery`: The icebreaker manipulation check validates that a positive partner attitude underlies the guilt effect.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

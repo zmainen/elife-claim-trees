@@ -1,5 +1,5 @@
 ---
-uuid: bad9b009-e0e0-4d21-ae18-e702f2447feb
+uuid: 5aef637e-66fa-4292-83f4-b6c850227d27
 slug: anterior-insula-tracks-guilt-insula
 doi: null
 claim: If the anterior insula tracks guilt, then insula BOLD should be higher in the Social than the Partner
@@ -7,7 +7,7 @@ claim: If the anterior insula tracks guilt, then insula BOLD should be higher in
 claim-type: prediction
 role: prediction
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: prediction
 derived-from:
 - anterior-insula-neural-substrate-guilt
@@ -21,6 +21,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** Phrased as the prediction the insula hypothesis commits the paper to; the text states it as the region-selection criteria.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `derived-from` → `anterior-insula-neural-substrate-guilt`: reciprocal of entails (anterior-insula-neural-substrate-guilt → anterior-insula-tracks-guilt-insula)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

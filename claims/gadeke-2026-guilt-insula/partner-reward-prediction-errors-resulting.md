@@ -1,5 +1,5 @@
 ---
-uuid: db461123-def3-48f9-b844-22dd93864d70
+uuid: 31dbdf89-fbc1-47e0-88ff-e01183873dbd
 slug: partner-reward-prediction-errors-resulting
 doi: null
 claim: 'The partner''s reward prediction errors resulting from the participants'' own choices (social_pRPE)
@@ -8,15 +8,13 @@ claim: 'The partner''s reward prediction errors resulting from the participants'
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 tests:
 - responsibility-partner-outcomes-influences-participant
 belongings:
 - relation: requires
   target: momentary-happiness-modelled-five-computational
-- relation: supports
-  target: both-studies-participants-felt-worse
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -45,6 +43,11 @@ reproductions:
   status: unattempted
   notes: null
 ---
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `tests` → `responsibility-partner-outcomes-influences-participant`: The finding that social_pRPE weights exceed zero tests the prediction's weight claim.
+- `requires` → `momentary-happiness-modelled-five-computational`: The social_pRPE weight estimate depends on the Responsibility model specification.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 
