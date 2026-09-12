@@ -4,8 +4,8 @@ title: Contributions of insula and superior temporal sulcus to interpersonal gui
   and responsibility in social decisions
 doi: 10.7554/eLife.105391
 url: https://doi.org/10.7554/eLife.105391
-added: '2026-09-11'
-claim-count: 68
+added: '2026-09-12'
+claim-count: 62
 extraction-path: jats
 questions:
 - id: q1
@@ -63,15 +63,9 @@ questions:
 - [responsibility-choices-not-influence-happiness](responsibility-choices-not-influence-happiness.md) (single-source) — Responsibility for choices did not influence happiness following positive (high) lottery outcomes for the partner (both 
 - [both-studies-participants-felt-worse](both-studies-participants-felt-worse.md) (single-source) — In both studies, participants felt worse after low lottery outcomes for the partner when those outcomes followed their o
 - [findings-rest-two-samples-healthy](findings-rest-two-samples-healthy.md) (high) — The findings rest on two samples of healthy adults — Study 1 (behaviour only, N = 40) and Study 2 (fMRI, N = 44); all BO
-- [study-sample-size-fixed-priori](study-sample-size-fixed-priori.md) (single-source) — The Study 2 sample size of 44 was fixed a priori by a G*Power analysis based on Study 1's effect size (Cohen's d = 0.56)
-- [fmri-data-four-study-participants](fmri-data-four-study-participants.md) (single-source) — The fMRI data of four Study 2 participants were excluded from the fMRI analysis for excessive head motion (>3 mm or >3°)
 - [each-trial-participants-chose-between](each-trial-participants-chose-between.md) (single-source) — On each trial participants chose between a safe and a risky monetary option under three conditions: choosing for oneself
 - [hold-partner-behaviour-constant-across](hold-partner-behaviour-constant-across.md) (single-source) — To hold the partner's behaviour constant across participants, the partner's decisions were simulated by an algorithm tha
-- [happiness-ratings-z-scored-per-participant](happiness-ratings-z-scored-per-participant.md) (single-source) — Happiness ratings were Z-scored per participant to remove the influence of differing rating variability across participa
 - [study-reproduced-study-design-inside](study-reproduced-study-design-inside.md) (single-source) — Study 2 reproduced the Study 1 design inside the fMRI scanner with identical parameters except for longer inter-stimulus
-- [risk-attitude-quantified-risk-premium](risk-attitude-quantified-risk-premium.md) (single-source) — Risk attitude was quantified as a risk premium — the EVdiff value yielding 50% risky choices from a fitted logistic regr
-- [two-gppi-seed-to-voxel-connectivity-analyses](two-gppi-seed-to-voxel-connectivity-analyses.md) (single-source) — Two gPPI seed-to-voxel connectivity analyses used functionally defined seeds: the left insula cluster more sensitive to 
-- [all-reported-clusters-survive-whole-brain](all-reported-clusters-survive-whole-brain.md) (single-source) — All reported clusters survive a whole-brain family-wise-error-corrected threshold of p < 0.05 with a cluster-forming vox
 - [bilateral-ventral-striatum-more-active](bilateral-ventral-striatum-more-active.md) (high) — The bilateral ventral striatum was more active when participants chose the risky rather than the safe option (Cohen's d 
 - [decisions-social-compared-solo-condition](decisions-social-compared-solo-condition.md) (high) — Decisions in the Social compared with the Solo condition engaged three clusters — the precuneus (d = 0.79), left temporo
 - [only-precuneus-tpj-showed-positive](only-precuneus-tpj-showed-positive.md) (high) — Only the precuneus and TPJ showed positive Risky–Safe differences in both the Social>Solo and Social>Partner comparisons

@@ -320,28 +320,47 @@ export function layerVersions(paper: string, layerId: string, produces: string[]
 
 // ── evaluation ──────────────────────────────────────────────────────────────────
 //
-// runs/<paper>/evaluation/ holds a scorecard and the matcher's alignments: scores.md, and one
-// match.v<N>.pairs.json per re-run scored. It is not a layer yet (#85 will make it one), so it
-// has no cell of its own — it is read here and shown on the paper's claim-tree cell, where a
-// reader asking what this tree is worth is already looking.
+// The evaluation layer (#85) writes review/evaluation.json: one row per (paper, profile) with
+// the metrics and the reference. The claim-tree cell reads that same file, filtered to this
+// paper, so the scorecard a reader sees here is the one the /pipeline/evaluation/ page renders
+// and nobody has to remember to regenerate a second copy. The matcher's per-re-run alignments
+// still live beside the paper (runs/<paper>/evaluation/match.v<N>.pairs.json) and are shown as
+// the detail behind the numbers.
 
 export interface MatchPair { committed: string; rerun: string; note?: string }
+export interface EvalRow {
+  profile: string;
+  status: string;
+  reference?: string;
+  n_cli?: number;
+  recovery?: number | null;
+  precision?: number | null;
+  role?: number | null;
+  panel?: number | null;
+  edge_recovery?: number | null;
+  note?: string;
+}
 export interface Evaluation {
-  /** The scorecard markdown, as written. */
-  scores: string | null;
+  /** The rows for this paper from review/evaluation.json, canonical profiles first. */
+  rows: EvalRow[];
   /** The matcher's alignments, one entry per scored re-run, newest first. */
   pairs: { v: number; rows: MatchPair[] }[];
   dir: string;
 }
 
-/** The evaluation for a paper, or null when the directory does not exist. */
+/** The evaluation for a paper, or null when nothing has been scored for it. */
 export function evaluation(paper: string): Evaluation | null {
+  // The scores come from the layer's output file, read once for the whole corpus.
+  let rows: EvalRow[] = [];
+  try {
+    const manifest = JSON.parse(
+      readFileSync(join(ROOT, 'review', 'evaluation.json'), 'utf8'));
+    rows = (manifest.rows as EvalRow[]).filter((r: any) => r.paper === paper);
+  } catch { /* no manifest, or unreadable */ }
+
+  // The alignments still come from disk, as the detail behind the numbers.
   const dir = `runs/${paper}/evaluation`;
   const abs = join(ROOT, dir);
-  if (!existsSync(abs)) return null;
-  const scoresPath = join(abs, 'scores.md');
-  const scores = existsSync(scoresPath) ? readFileSync(scoresPath, 'utf8') : null;
-
   const pairs: { v: number; rows: MatchPair[] }[] = [];
   let names: string[] = [];
   try { names = readdirSync(abs); } catch { /* none */ }
@@ -349,11 +368,11 @@ export function evaluation(paper: string): Evaluation | null {
     const m = name.match(/^match\.v(\d+)\.pairs\.json$/);
     if (!m) continue;
     try {
-      const rows = JSON.parse(readFileSync(join(abs, name), 'utf8'));
-      if (Array.isArray(rows)) pairs.push({ v: Number(m[1]), rows });
+      const prs = JSON.parse(readFileSync(join(abs, name), 'utf8'));
+      if (Array.isArray(prs)) pairs.push({ v: Number(m[1]), rows: prs });
     } catch { /* skip an unparseable alignment */ }
   }
   pairs.sort((a, b) => b.v - a.v);
-  if (!scores && pairs.length === 0) return null;
-  return { scores, pairs, dir };
+  if (rows.length === 0 && pairs.length === 0) return null;
+  return { rows, pairs, dir };
 }

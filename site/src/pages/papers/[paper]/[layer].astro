@@ -16,7 +16,6 @@ import { getCollection, render } from 'astro:content';
 import { paperLayers, byId, cell, STATE_LABEL } from '../../../lib/pipeline';
 import { artifacts, isDirectory } from '../../../lib/artifacts';
 import { layerVersions, evaluation } from '../../../lib/layer-source';
-import { renderMd } from '../../../lib/markdown';
 import corpus from '../../../data/claims.json';
 
 export async function getStaticPaths() {
@@ -86,10 +85,13 @@ const comparable = (layer.views ?? []).includes('comparison')
 const current = comparable[0] ?? null;
 const earlier = comparable.slice(1);
 
-// The evaluation scorecard, shown on the claim-tree cell where it belongs until #85 makes it
-// a layer of its own. runs/<paper>/evaluation/ holds a re-run scored against this tree.
+// The evaluation scorecard, shown on the claim-tree cell where a reader asking what this tree
+// is worth is already looking. The rows come from review/evaluation.json — the evaluation
+// layer's own output (#85) — filtered to this paper, so this is the same scorecard the
+// /pipeline/evaluation/ page renders, not a second copy.
 const evalData = layerId === 'claim-tree' ? evaluation(paper.slug) : null;
-const evalScoresHtml = evalData?.scores ? await renderMd(evalData.scores) : null;
+const evalScored = evalData?.rows.filter(r => r.status === 'scored') ?? [];
+const pctCell = (v: number | null | undefined) => (v === null || v === undefined ? '—' : `${v}%`);
 
 const rendered = report ? await render(report) : null;
 const showReport = layerId === 'formats-report' && rendered && c.state !== 'absent';
@@ -245,16 +247,44 @@ const TONE: Record<string, string> = {
 
     {evalData && (
       <section class="mb-10">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Scored against the previous version</h2>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Scored against this tree</h2>
         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-2xl leading-relaxed">
-          A re-run of the pipeline on this paper, aligned to the committed tree by a matcher and
-          scored for recovery, role agreement and panel agreement. The matcher was one model
-          subagent per tree, unreviewed — so a match is that model's judgement, not a checked
-          one. Evaluation is not yet a layer of its own; <a href="https://github.com/zmainen/elife-claim-trees/issues/85" target="_blank" rel="noopener" class="text-amber-700 dark:text-amber-400 no-underline hover:underline">#85</a> will make it one, with its own version, inputs and seat for approval.
-          Read from <span class="font-mono text-xs">{evalData.dir}/</span>.
+          Re-extractions of this paper under each model profile, aligned to the committed tree
+          by a matcher and scored for recovery, precision, role and panel agreement. This is the
+          <a href={url('/pipeline/evaluation')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">evaluation layer</a>'s
+          own scorecard (<a href="https://github.com/zmainen/elife-claim-trees/issues/85" target="_blank" rel="noopener" class="text-amber-700 dark:text-amber-400 no-underline hover:underline">#85</a>),
+          read from <span class="font-mono text-xs">review/evaluation.json</span> — the same file the sweep page renders.
+          No reference here has been approved yet, so a score is a comparison between two drafts.
         </p>
-        {evalScoresHtml && (
-          <article class="method-prose mb-6" set:html={evalScoresHtml} />
+        {evalScored.length > 0 && (
+          <div class="overflow-x-auto mb-6">
+            <table class="w-full text-sm border-collapse">
+              <thead>
+                <tr class="text-left text-[10px] font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-200 dark:border-gray-700">
+                  <th class="py-2 px-3 font-medium">profile</th>
+                  <th class="py-2 px-2 font-medium text-right">claims</th>
+                  <th class="py-2 px-2 font-medium text-right">recovery</th>
+                  <th class="py-2 px-2 font-medium text-right">precision</th>
+                  <th class="py-2 px-2 font-medium text-right">role</th>
+                  <th class="py-2 px-2 font-medium text-right">panel</th>
+                  <th class="py-2 px-3 font-medium">reference</th>
+                </tr>
+              </thead>
+              <tbody>
+                {evalScored.map(r => (
+                  <tr class="border-b border-gray-100 dark:border-gray-800 last:border-0">
+                    <td class="py-2 px-3 font-mono text-[11px] text-gray-700 dark:text-gray-300">{r.profile}</td>
+                    <td class="py-2 px-2 text-right font-mono tabular-nums text-gray-500 dark:text-gray-400">{r.n_cli}</td>
+                    <td class="py-2 px-2 text-right font-mono tabular-nums text-gray-900 dark:text-gray-100">{pctCell(r.recovery)}</td>
+                    <td class="py-2 px-2 text-right font-mono tabular-nums text-gray-900 dark:text-gray-100">{pctCell(r.precision)}</td>
+                    <td class="py-2 px-2 text-right font-mono tabular-nums text-gray-900 dark:text-gray-100">{pctCell(r.role)}</td>
+                    <td class="py-2 px-2 text-right font-mono tabular-nums text-gray-900 dark:text-gray-100">{pctCell(r.panel)}</td>
+                    <td class="py-2 px-3 text-[11px] text-gray-600 dark:text-gray-400">{r.reference}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
         {evalData.pairs.map(pr => (
           <details class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden mb-3">

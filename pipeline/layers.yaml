@@ -176,6 +176,45 @@ layers:
       out against this", so a failed prediction cannot be written down.
     command: "python3 scripts/prediction_outcome.py --write"
 
+  # A measurement over the trees, not over one paper: the same claim tree re-read under each
+  # model profile and scored against the best reference the paper has. It is corpus-scope
+  # because a scorecard that lives beside one paper is one nobody remembers to regenerate, and
+  # because the question it answers — which profile reads a paper best — is a question about
+  # the pipeline, not about a version of a tree.
+  - id: evaluation
+    kind: step
+    scope: corpus
+    title: Evaluation
+    question: How well does each model profile recover a paper's claim tree?
+    doc: /pipeline/evaluation/
+    how: >
+      For each paper the sweep has touched, `evaluate score` aligns a re-extraction — produced
+      under one model profile — to the best reference the paper has, and writes a scorecard
+      under `runs/<paper>/evaluation/`. This layer gathers every one of them into
+      `review/evaluation.json`: profile × paper × metric — recovery, precision, role, panel,
+      edge recovery, parts — with the reference it was scored against and whether that reference
+      was approved.
+
+      It measures and does not judge. The reference is the committed tree unless a person has
+      approved a version (none has yet, so every row here scores against the committed tree and
+      says so). Only the `subagent` profile and the two experiments run without a paid backend;
+      the other profiles appear as `not run: no backend credit`, so the table names what is
+      missing rather than omitting it.
+    needs: [claim-tree]
+    reads: [scripts/evaluation_report.py, extract/elife_extract/evaluate.py]
+    produces: [review/evaluation.json]
+    views: [table]
+    issue: 85
+    open: true
+    added: "2026-09-12"
+    found: >
+      Of {{evaluation_n_rows}} profile × paper rows, {{evaluation_n_scored}} were scored and
+      {{evaluation_n_not_run}} could not run for want of a paid backend. The best recovery
+      recorded so far is {{evaluation_best_recovery}}% of a paper's committed claims. No
+      reference here has been approved, so every score is against a committed tree, not a tree a
+      person has stood behind.
+    command: "python3 scripts/evaluation_report.py --write"
+
   # ── induction ──────────────────────────────────────────────────────────────
   # Fans in: three readers given different slices, reconciled to one draft. The three are
   # `candidate` rather than `step` because keeping them apart is the point — agreement

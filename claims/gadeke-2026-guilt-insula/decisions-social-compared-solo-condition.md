@@ -1,5 +1,5 @@
 ---
-uuid: c1fca5f1-0911-43e7-ab37-08816a073dfc
+uuid: ee017229-e215-452e-a719-932af2d716f2
 slug: decisions-social-compared-solo-condition
 doi: null
 claim: Decisions in the Social compared with the Solo condition engaged three clusters — the precuneus
@@ -7,11 +7,9 @@ claim: Decisions in the Social compared with the Solo condition engaged three cl
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
-belongings:
-- relation: requires
-  target: all-reported-clusters-survive-whole-brain
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391

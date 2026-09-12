@@ -1,5 +1,5 @@
 ---
-uuid: f5f7eb4a-b7bd-45df-a55c-ca042cee9c40
+uuid: 09960051-2473-4a67-b092-89fc6c2b9004
 slug: risk-premiums-not-differ-between
 doi: null
 claim: 'Risk premiums did not differ between Solo and Social conditions in either study (Study 1: t(39)
@@ -7,15 +7,13 @@ claim: 'Risk premiums did not differ between Solo and Social conditions in eithe
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 rules-out:
 - alt-social-context-shifts-risk-attitude
 part-of:
 - participants-showed-very-similar-risk
 belongings:
-- relation: requires
-  target: risk-attitude-quantified-risk-premium
 - relation: supports
   target: participants-showed-very-similar-risk
 assertions:
@@ -32,6 +30,10 @@ reproductions:
 ---
 
 **Notes from extraction:** Null result; evidence against social-context-driven changes in risk aversion.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `supports` → `participants-showed-very-similar-risk`: Equal risk premiums across conditions support the synthesis that risk preferences were very similar.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

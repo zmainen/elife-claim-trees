@@ -1,5 +1,5 @@
 ---
-uuid: e5fcf0ff-8dcd-4ccf-8140-55cb4f6ca0ff
+uuid: d4739c6f-68ab-48eb-9034-475485c62b88
 slug: both-studies-participants-felt-worse
 doi: null
 claim: In both studies, participants felt worse after low lottery outcomes for the partner when those
@@ -8,9 +8,11 @@ claim: In both studies, participants felt worse after low lottery outcomes for t
 claim-type: synthesis
 role: synthesis
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
-belongings: []
+belongings:
+- relation: supports
+  target: responsibility-social-choice-yields-low
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -20,6 +22,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** Integrates the guilt-effect results across both studies; synthesis is expected to be single-source (results reader only).
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `supports` → `responsibility-social-choice-yields-low`: The synthesis that participants felt worse after self-chosen low partner outcomes supports the guilt hypothesis (evidence at span results-085).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

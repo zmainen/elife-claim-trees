@@ -47,8 +47,9 @@ deps: $(SITE)/node_modules  ## Install the site's node modules
 # claims' own `priority` fields, so the export is a function of its inputs and running it
 # twice is a no-op — which is what lets it live here instead of in a target run by hand.
 #
-# Order is dependency order, and four edges in it are real:
+# Order is dependency order, and these edges in it are real:
 #   prediction_outcome writes review/prediction-outcome.json, which corpus_facts reads
+#   evaluation_report  writes review/evaluation.json, which corpus_facts reads
 #   export_mira        writes the .mira.jsonld files formats_report and validate_mira read
 #   formats_report     writes the .formats.json files corpus_facts reads
 #   validate_mira      writes site/src/data/mira-validation.json, which corpus_facts reads
@@ -60,6 +61,7 @@ deps: $(SITE)/node_modules  ## Install the site's node modules
 # inputs. The pipeline state flags oxa and dg as stale, so it surfaces rather than hiding.
 data: $(SITE)/node_modules  ## Regenerate every artifact the site is built from
 	$(PYTHON) scripts/prediction_outcome.py --write
+	$(PYTHON) scripts/evaluation_report.py --write
 	$(PYTHON) scripts/export_mira.py --all
 	$(PYTHON) scripts/formats_report.py --all
 	$(MAKE) validate PYTHON=$(PYTHON)
@@ -88,6 +90,7 @@ check:  ## Gates that are clean on main. A failure here is this change's fault.
 	cd extract && $(PYTHON) -c "import elife_extract.cli, elife_extract.edges, elife_extract.layers, elife_extract.write"
 	cd extract && $(PYTHON) tests/test_layer_contract.py
 	cd extract && $(PYTHON) tests/test_prompt_contract.py
+	cd extract && $(PYTHON) tests/test_profiles.py
 	cd extract && $(PYTHON) tests/test_evaluate_precision_and_edges.py
 	cd extract && $(PYTHON) tests/test_verdicts.py
 	$(PYTHON) scripts/audit_layers.py

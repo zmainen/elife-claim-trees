@@ -31,12 +31,14 @@ import json
 import logging
 import re
 import time
-
-from anthropic import Anthropic, AnthropicVertex
+from typing import TYPE_CHECKING
 
 from .config import Config, LITELLM_PREFIX, token_budget
 from .prepare import PreparedPaper
 from .schema import AgentExtraction, AgentName, CandidateClaim
+
+if TYPE_CHECKING:                      # for the annotations only; never imported at runtime
+    from anthropic import Anthropic, AnthropicVertex
 
 logger = logging.getLogger(__name__)
 
@@ -371,11 +373,22 @@ def _edge_output_schema() -> dict:
 # ── Anthropic client (cached per session) ───────────────────────────────
 
 
-_client_cache: Anthropic | AnthropicVertex | None = None
+_client_cache: "Anthropic | AnthropicVertex | None" = None
 
 
-def get_client(cfg: Config) -> Anthropic | AnthropicVertex:
+def get_client(cfg: Config) -> "Anthropic | AnthropicVertex":
+    """The SDK is imported here rather than at module scope.
+
+    `__init__.py` imports this module to export `call`, so a module-scope
+    `from anthropic import ...` made the SDK a hard dependency of importing the package at
+    all — including for `elife-extract contract`, which renders a prompt from the vocabulary
+    and calls no model. CI installs requirements.txt, which does not carry the SDK, so every
+    check that shells into the package has failed since the call paths were merged into one.
+
+    A backend client is needed when a call is made, and only then.
+    """
     global _client_cache
+    from anthropic import Anthropic, AnthropicVertex      # noqa: PLC0415
     if _client_cache is None:
         if cfg.backend == "anthropic" and cfg.anthropic_api_key:
             _client_cache = Anthropic(api_key=cfg.anthropic_api_key)
@@ -390,23 +403,6 @@ def reset_client():
     """Clear cached client — call when API key changes between requests."""
     global _client_cache
     _client_cache = None
-
-
-# Labels that warrant high inference effort (complex synthesis or graph tasks).
-_HIGH_EFFORT_LABELS: frozenset[str] = frozenset(
-    {"reconciler", "external-reviewer", "parts"}
-)
-
-
-def _effort_for(label: str | None) -> str:
-    """Map a call label to an effort level for output_config.
-
-    High: reconciler, external-reviewer, edge-inference*, parts.
-    Medium: readers and everything else.
-    """
-    if label and (label in _HIGH_EFFORT_LABELS or label.startswith("edge-inference")):
-        return "high"
-    return "medium"
 
 
 def _supports_adaptive_thinking(model: str) -> bool:
@@ -472,12 +468,19 @@ def stream_text(
             system=system_blocks,
             messages=[{"role": "user", "content": user}],
         )
-        # Adaptive thinking for 4.6+ models. budget_tokens is rejected on these.
-        if _supports_adaptive_thinking(model):
+        # Adaptive thinking for 4.6+ models, when the profile leaves it on. budget_tokens is
+        # rejected on these.
+        if cfg.thinking and _supports_adaptive_thinking(model):
             stream_kwargs["thinking"] = {"type": "adaptive"}
-        # Effort and structured output live in output_config.
-        out_cfg: dict = {"effort": _effort_for(label)}
-        if output_schema is not None:
+        # Effort and structured output live in output_config. Effort follows the profile's
+        # reader/reasoner split; enforcement follows its output_format.
+        out_cfg: dict = {"effort": cfg.effort_for(label)}
+        enforce = output_schema is not None and cfg.output_format != "none"
+        if enforce and cfg.output_format == "json_object":
+            out_cfg["format"] = {"type": "json"}
+            logger.info("  %s: sending %dc to %s (%s), json mode (no schema)",
+                        tag, len(system) + len(user), model, cfg.backend)
+        elif enforce:
             out_cfg["format"] = {
                 "type": "json",
                 "json_schema": {"name": label or "output", "schema": output_schema},
@@ -519,7 +522,13 @@ def stream_text(
             "max_tokens": max_tokens,
             "stream": True,
         }
-        if output_schema is not None:
+        enforce = output_schema is not None and cfg.output_format != "none"
+        if enforce and cfg.output_format == "json_object":
+            # json mode: valid JSON, no schema. What the `open` tier's providers reliably do.
+            kwargs["response_format"] = {"type": "json_object"}
+            logger.info("  %s: sending %dc to %s (%s), json mode (no schema)",
+                        tag, len(system) + len(user), kwargs["model"], cfg.backend)
+        elif enforce:
             # json_schema is supported by OpenAI-compatible and Gemini backends.
             # Providers that don't support it fall back to json_object (best effort).
             kwargs["response_format"] = {

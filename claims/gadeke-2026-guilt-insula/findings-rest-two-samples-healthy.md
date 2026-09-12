@@ -1,5 +1,5 @@
 ---
-uuid: 9c148a54-10ae-4234-9fe4-d187481dcf92
+uuid: 37937db1-e635-46d4-ac0a-f482400668e5
 slug: findings-rest-two-samples-healthy
 doi: null
 claim: The findings rest on two samples of healthy adults — Study 1 (behaviour only, N = 40) and Study
@@ -8,11 +8,13 @@ claim: The findings rest on two samples of healthy adults — Study 1 (behaviour
 claim-type: assessment
 role: scope
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 scopes:
-- participants-showed-very-similar-risk
-- both-studies-participants-felt-worse
+- when-partner-received-low-lottery
+- insula-rois-responded-more-low
+- one-cluster-left-sts-responded
+- functional-connectivity-between-left-anterior
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -32,6 +34,13 @@ reproductions:
 ---
 
 **Notes from extraction:** Global scope condition bounding the empirical claims; distinguishes the behavioural study from the fMRI study. The results reader emphasised that BOLD results come only from Study 2; the structure reader gave the two sample sizes.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `scopes` → `when-partner-received-low-lottery`: The two-sample design bounds the behavioural guilt effect (evidence at span results-087).
+- `scopes` → `insula-rois-responded-more-low`: All fMRI results, including the insula ROI, come from Study 2's sample (evidence at span results-087).
+- `scopes` → `one-cluster-left-sts-responded`: The STS fMRI result is bounded by the Study 2 sample (evidence at span results-087).
+- `scopes` → `functional-connectivity-between-left-anterior`: The connectivity fMRI result is bounded by the Study 2 sample (evidence at span results-087).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

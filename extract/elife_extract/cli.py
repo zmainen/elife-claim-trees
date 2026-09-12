@@ -35,6 +35,7 @@ from .config import (
     DEFAULT_MODEL_RESULTS,
     DEFAULT_MODEL_STRUCTURE,
     DEFAULT_PROMPT_VARIANT,
+    PROFILE_NAMES,
 )
 
 
@@ -174,6 +175,10 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
 
     cfg = _cfg(args)
 
+    # Per-arc is set by the flag or by the profile (the `open` tier defaults to it): a weaker
+    # model does better with one job per call.
+    per_arc = args.per_arc or cfg.per_arc
+
     # Emit the prompt and stop. Whatever answers it — an analyst, a reasoning agent — then
     # answers the same question the layer would have asked, rather than a paraphrase of it
     # written from memory. `--per-arc` writes one prompt per hypothesis arc, for a weaker model
@@ -184,7 +189,7 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
         slugs = _unique_slugs(draft.claims)
         out = Path(args.dump_prompt).expanduser()
         out.parent.mkdir(parents=True, exist_ok=True)
-        if args.per_arc:
+        if per_arc:
             for n, members in enumerate(arcs(draft.claims), 1):
                 system, user = build_edge_request(draft, slugs, cfg, include=set(members))
                 p = out.with_name(f"{out.stem}.arc{n}{out.suffix}")
@@ -211,7 +216,7 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
         path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), {
             "paper_slug": args.paper, "model": label, "edges": edges,
         })
-    elif args.per_arc:
+    elif per_arc:
         from .edges import infer_edges
         from .layers import _write_json
         draft, _ = best_draft(args.paper, cfg)
@@ -789,11 +794,16 @@ def cmd_score(args: argparse.Namespace) -> int:
             pairs_path=pairs_path,
             paper_slug=getattr(args, "paper", None) or ref_dir.name,
             review_mode="precomputed",
+            reference=getattr(args, "reference_label", None) or "unapproved",
         )
     except Exception as e:
         print(f"error: {e}", file=sys.stderr)
         return 1
 
+    if getattr(args, "profile", None):
+        card.profile = args.profile
+    if getattr(args, "note", None):
+        card.note = args.note
     print_score_report(card, ref_dir=ref_dir)
 
     # If a verdict file is named, score against the adjudicated gold too, and report it beside
@@ -810,6 +820,17 @@ def cmd_score(args: argparse.Namespace) -> int:
             print(f"error scoring against gold: {e}", file=sys.stderr)
             return 1
         print_gold_report(gold)
+
+    # A scorecard the evaluation layer can gather. It lives under runs/<paper>/evaluation/ in
+    # the scorer's own format, so evaluation_report.py reads it back without a second schema.
+    if getattr(args, "out", None):
+        from dataclasses import asdict
+        import json as _json
+        out = Path(args.out).expanduser()
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(_json.dumps(asdict(card), indent=2, default=str) + "\n",
+                       encoding="utf-8")
+        print(f"  scorecard: {out}")
     return 0
 
 
@@ -831,6 +852,20 @@ def _add_backend_args(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def _add_profile_arg(parser: argparse.ArgumentParser) -> None:
+    """`--profile` — one word for models, variant, chunking, enforcement and effort.
+
+    Shared by every model-answered subcommand and by `evaluate`, so a sweep names the profile
+    once and every call it makes resolves the same way (see config.PROFILES).
+    """
+    parser.add_argument(
+        "--profile", default=None, choices=list(PROFILE_NAMES),
+        help="Model profile: frontier, standard (default resolution), open, subagent. Sets "
+             "the models per role, the prompt variant, chunking, output enforcement and "
+             "effort. An explicit --model-*/--backend/--prompt-variant overrides it.",
+    )
+
+
 def _add_common_args(parser: argparse.ArgumentParser) -> None:
     """Args shared across every layer runner."""
     parser.add_argument(
@@ -847,9 +882,11 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
         help="Override the prompts directory (default: package-local prompts/).",
     )
     parser.add_argument(
-        "--prompt-variant", default=DEFAULT_PROMPT_VARIANT,
-        help=f"Named prompt variant under prompts/<variant>/ (default: {DEFAULT_PROMPT_VARIANT}).",
+        "--prompt-variant", default=None,
+        help=f"Named prompt variant under prompts/<variant>/ (default: the profile's, else "
+             f"{DEFAULT_PROMPT_VARIANT}).",
     )
+    _add_profile_arg(parser)
     parser.add_argument(
         "-v", "--verbose", action="store_true",
         help="Per-chunk DEBUG logging. Default is INFO, which reports each stage and a "
@@ -1247,7 +1284,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_eval.add_argument("-v", "--verbose", action="store_true")
     p_eval.add_argument("--prompts-dir", type=Path,
                         help="Override the prompts directory (default: package-local prompts/).")
-    p_eval.add_argument("--prompt-variant", default=DEFAULT_PROMPT_VARIANT,
+    _add_profile_arg(p_eval)
+    p_eval.add_argument("--prompt-variant", default=None,
                         help="Named prompt variant under prompts/<variant>/.")
     p_eval.add_argument(
         "--dump-prompts", metavar="DIR",
@@ -1303,6 +1341,23 @@ def build_parser() -> argparse.ArgumentParser:
         "candidate is also scored against the adjudicated reference: recovery over kept claims, "
         "struck claims counting against precision, corrected roles/panels/edges. Reported "
         "beside the matcher numbers."))
+    p_score.add_argument("--profile", default=None,
+                         help="A label for what produced the candidate — a profile name "
+                              "(frontier/standard/open/subagent) or an experiment name (e.g. "
+                              "fourth-reading). Recorded on the scorecard so the evaluation "
+                              "layer can group by it. Free-form, since experiments are not "
+                              "profiles.")
+    p_score.add_argument("--reference-label", default=None,
+                         help="How the reference is named in the scorecard, e.g. "
+                              "'claim-tree v1 (committed)' or 'approved v2'. Say which tree "
+                              "the score is against.")
+    p_score.add_argument("--note", default=None,
+                         help="A note the evaluation layer shows beside the row — what the "
+                              "candidate is, or a caveat about the reference.")
+    p_score.add_argument("-o", "--out", default=None,
+                         help="Also write the scorecard as JSON here, in the scorer's format, "
+                              "for the evaluation layer to gather "
+                              "(e.g. runs/<paper>/evaluation/<profile>.scorecard.json).")
     p_score.set_defaults(func=cmd_score)
 
     return parser

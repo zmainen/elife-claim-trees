@@ -1,5 +1,5 @@
 ---
-uuid: 327ecaa2-2563-49fc-951d-b52d069576f4
+uuid: 0248969b-e2f4-4d2b-bddb-6536f7de95b9
 slug: during-receipt-lottery-versus-safe
 doi: null
 claim: During receipt of lottery versus safe outcomes (across all conditions), clusters were more active
@@ -8,11 +8,9 @@ claim: During receipt of lottery versus safe outcomes (across all conditions), c
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
-belongings:
-- relation: requires
-  target: all-reported-clusters-survive-whole-brain
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391

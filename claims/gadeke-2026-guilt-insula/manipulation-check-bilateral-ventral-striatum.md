@@ -1,5 +1,5 @@
 ---
-uuid: 6c63f244-0dde-4737-8b0f-dd99c233d669
+uuid: eff3fbf5-c0c4-46e8-b43e-7b5e6208a969
 slug: manipulation-check-bilateral-ventral-striatum
 doi: null
 claim: 'As a manipulation check, bilateral ventral striatum activation increased with expected certain
@@ -8,13 +8,13 @@ claim: 'As a manipulation check, bilateral ventral striatum activation increased
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 rules-out:
 - alt-model-based-glm-invalid
-belongings:
-- relation: requires
-  target: model-based-glm-entered-best-fitting-computational
+validates:
+- model-based-glm-entered-best-fitting-computational
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -47,6 +47,10 @@ reproductions:
 ---
 
 **Notes from extraction:** The results reader treated this as a manipulation check validating the model-based BOLD analysis; the caption reader described it as a plain empirical result. Both agree on panel and direction; resolved to control.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `validates` → `model-based-glm-entered-best-fitting-computational`: The ventral-striatum manipulation check validates the model-based GLM (evidence at span results-134).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 
