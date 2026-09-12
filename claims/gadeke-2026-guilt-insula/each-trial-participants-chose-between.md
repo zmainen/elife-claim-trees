@@ -1,5 +1,5 @@
 ---
-uuid: 449feb5b-b494-4eb0-9698-4659d63dd670
+uuid: d025df31-f489-4b24-bde1-880be8fdbdec
 slug: each-trial-participants-chose-between
 doi: null
 claim: 'On each trial participants chose between a safe and a risky monetary option under three conditions:
@@ -8,13 +8,11 @@ claim: 'On each trial participants chose between a safe and a risky monetary opt
 claim-type: assessment
 role: scope
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 scopes:
 - participants-chose-risky-option-lottery
-- participants-slightly-more-risk-averse
-- participant-happiness-lower-when-participant
-- when-partner-received-low-lottery
+- risk-premiums-not-differ-between
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -25,6 +23,11 @@ reproductions: []
 ---
 
 **Notes from extraction:** The within-subject responsibility manipulation on which the guilt and agency contrasts depend.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `scopes` → `participants-chose-risky-option-lottery`: The three-condition choice design bounds the lottery-choice comparison.
+- `scopes` → `risk-premiums-not-differ-between`: The three-condition choice design bounds the risk-premium comparison.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

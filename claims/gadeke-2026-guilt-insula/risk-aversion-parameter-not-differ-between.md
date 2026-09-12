@@ -1,5 +1,5 @@
 ---
-uuid: e6844c56-06c3-4b32-a26c-6baeeb4612b3
+uuid: 6f5c63df-fb60-4e84-b0c6-4094ef525062
 slug: risk-aversion-parameter-not-differ-between
 doi: null
 claim: 'The risk-aversion parameter ρ did not differ between gain and loss trials (Study 1: t(17) = 0.21,
@@ -8,7 +8,7 @@ claim: 'The risk-aversion parameter ρ did not differ between gain and loss tria
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 belongings: []
 assertions:

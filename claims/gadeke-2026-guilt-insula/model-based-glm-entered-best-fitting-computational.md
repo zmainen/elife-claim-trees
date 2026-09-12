@@ -1,5 +1,5 @@
 ---
-uuid: 39b7b843-f4ba-4e00-9163-fb871aa3b989
+uuid: 98c01f4a-1be8-4bbc-b094-ae0b92cac054
 slug: model-based-glm-entered-best-fitting-computational
 doi: null
 claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsibility) model's variables
@@ -9,10 +9,8 @@ claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsi
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
-enables-method:
-- momentary-happiness-modelled-five-computational
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
