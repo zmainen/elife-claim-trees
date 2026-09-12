@@ -26,6 +26,7 @@ them concurrently when cost/latency budgets demand it.
 
 from __future__ import annotations
 
+import copy
 import json
 import logging
 import re
@@ -42,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 # ── Evidence verification ────────────────────────────────────────────────
 
-_CURLY_QUOTES = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"'})
+_CURLY_QUOTES = str.maketrans({"'": "‘", "’": "'", "“": '"', "”": '"'})
 _DASHES = str.maketrans({"–": "-", "—": "-", "―": "-"})
 
 
@@ -181,6 +182,10 @@ _JSON_FENCE_CLOSE = re.compile(r"\n?```\s*$")
 def parse_json_response(raw: str) -> list[dict] | dict:
     """Parse a JSON response from the model, tolerating markdown fences.
 
+    Used for --answer (free text) paths and as a fallback when structured output
+    is unavailable or returns unexpected content. The structured output path
+    bypasses the need for the salvage logic because the provider enforces valid JSON.
+
     Models sometimes wrap JSON output in ```json ... ``` despite explicit
     instructions not to. Strip leading and trailing fences independently
     (some models close with ``` while others get truncated before they
@@ -284,6 +289,85 @@ def _as_claim_list(parsed, agent: str) -> list:
     )
 
 
+# ── Schema helpers for provider-enforced structured outputs ─────────────
+
+
+def _filter_schema(schema: dict) -> dict:
+    """Remove 'Filled by the runner' fields from a JSON schema (root + all $defs).
+
+    The provider enforces the schema the model sees; fields the runner fills must
+    not appear in it, or the model will invent values for them that the runner
+    then overwrites anyway.
+    """
+    schema = copy.deepcopy(schema)
+    for container in [schema] + list(schema.get("$defs", {}).values()):
+        bad = {k for k, v in container.get("properties", {}).items()
+               if isinstance(v, dict) and v.get("description", "").startswith("Filled by the runner")}
+        if bad:
+            for k in bad:
+                container.get("properties", {}).pop(k, None)
+            if "required" in container:
+                container["required"] = [r for r in container["required"] if r not in bad]
+    return schema
+
+
+def _reader_output_schema() -> dict:
+    """JSON schema for a reader agent's output: {claims: [CandidateClaim, ...]}.
+
+    The object wrapper is required because most structured-output providers
+    (Anthropic, OpenAI) expect a top-level object. _as_claim_list already
+    handles the 'claims' key unwrap, so the rest of the parse path is unchanged.
+    """
+    claim_schema = _filter_schema(CandidateClaim.model_json_schema())
+    defs = claim_schema.pop("$defs", {})
+    claim_schema.pop("title", None)
+    result: dict = {
+        "type": "object",
+        "properties": {"claims": {"type": "array", "items": claim_schema}},
+        "required": ["claims"],
+    }
+    if defs:
+        result["$defs"] = defs
+    return result
+
+
+def _draft_table_schema() -> dict:
+    """JSON schema for the reconciler/reviewer output: filtered DraftClaimTable."""
+    from .schema import DraftClaimTable
+    return _filter_schema(DraftClaimTable.model_json_schema())
+
+
+def _edge_output_schema() -> dict:
+    """JSON schema for the edge-inference output: {edges: [{source, target, relation, why}]}.
+
+    _parse_edges already extracts the inner array from an object wrapper by locating the first
+    '[' and the last ']', so this wrapper does not require changes to the parsing path.
+    """
+    return {
+        "type": "object",
+        "properties": {
+            "edges": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "source": {"type": "string",
+                                   "description": "The source claim's 1-based index number."},
+                        "target": {"type": "string",
+                                   "description": "The target claim's 1-based index number."},
+                        "relation": {"type": "string",
+                                     "description": "The relation name from the vocabulary."},
+                        "why": {"type": "string",
+                                "description": "One sentence explaining the edge."},
+                    },
+                    "required": ["source", "target", "relation", "why"],
+                },
+            }
+        },
+        "required": ["edges"],
+    }
+
+
 # ── Anthropic client (cached per session) ───────────────────────────────
 
 
@@ -316,8 +400,14 @@ def stream_text(
     user: str,
     max_tokens: int = 32768,
     label: str | None = None,
+    output_schema: dict | None = None,
 ) -> str:
     """One model call on whichever backend is configured; returns the text.
+
+    When `output_schema` is given the provider enforces the reply is valid JSON
+    matching that schema (Anthropic: output_config.format; litellm: response_format).
+    Without it the free-text salvage parser in parse_json_response handles fences
+    and bracket mismatches. The log line names which path each reply takes.
 
     Every model call in the package goes through here, so adding a provider
     is a config entry rather than a new code path. "vertex" and "anthropic"
@@ -331,12 +421,25 @@ def stream_text(
 
     if cfg.backend in ("vertex", "anthropic"):
         client = get_client(cfg)
-        with client.messages.stream(
+        stream_kwargs: dict = dict(
             model=model,
             max_tokens=max_tokens,
             system=system,
             messages=[{"role": "user", "content": user}],
-        ) as stream:
+        )
+        if output_schema is not None:
+            stream_kwargs["output_config"] = {
+                "format": {
+                    "type": "json",
+                    "json_schema": {"name": label or "output", "schema": output_schema},
+                }
+            }
+            logger.info("  %s: sending %dc to %s (%s), structured output active",
+                        tag, len(system) + len(user), model, cfg.backend)
+        else:
+            logger.info("  %s: sending %dc to %s (%s), free-text (salvage parser active)",
+                        tag, len(system) + len(user), model, cfg.backend)
+        with client.messages.stream(**stream_kwargs) as stream:
             for text in stream.text_stream:
                 chunks.append(text)
                 progress.tick(len(text))
@@ -356,14 +459,28 @@ def stream_text(
             "max_tokens": max_tokens,
             "stream": True,
         }
+        if output_schema is not None:
+            # json_schema is supported by OpenAI-compatible and Gemini backends.
+            # Providers that don't support it fall back to json_object (best effort).
+            kwargs["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": label or "output",
+                    "schema": output_schema,
+                    "strict": True,
+                },
+            }
+            logger.info("  %s: sending %dc to %s (%s), structured output active",
+                        tag, len(system) + len(user), kwargs["model"], cfg.backend)
+        else:
+            logger.info("  %s: sending %dc to %s (%s), free-text (salvage parser active)",
+                        tag, len(system) + len(user), kwargs["model"], cfg.backend)
         if cfg.backend == "vertex_ai":
             # Gemini on Vertex AI: credentials from environment, project/location explicit.
             kwargs["vertex_project"] = cfg.vertex_project
             kwargs["vertex_location"] = cfg.vertex_region
         elif cfg.api_key:
             kwargs["api_key"] = cfg.api_key
-        logger.info("  %s: sending %dc to %s (%s), awaiting first byte…",
-                    tag, len(system) + len(user), kwargs["model"], cfg.backend)
         for chunk in litellm.completion(**kwargs):
             try:
                 delta = chunk.choices[0].delta.content
@@ -504,6 +621,7 @@ def run_agent(
             agent=agent, paper_slug=paper.paper_slug, model=model, claims=[]
         )
 
+    schema = _reader_output_schema()
     raw = None
     for attempt in range(max_retries + 1):
         try:
@@ -519,6 +637,7 @@ def run_agent(
                 max_tokens=32768,  # 30+ claims with verbatim quotes routinely
                                    # exceed 10k tokens; budget for headroom
                 label=f"{agent}-reader",
+                output_schema=schema,
             )
             break
         except Exception as e:

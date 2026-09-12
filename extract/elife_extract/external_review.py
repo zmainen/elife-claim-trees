@@ -22,7 +22,7 @@ from __future__ import annotations
 import json
 import logging
 
-from .agents import parse_json_response, stream_text
+from .agents import _draft_table_schema, parse_json_response, stream_text
 from .config import Config
 from .prepare import PreparedPaper
 from .schema import DraftClaimTable
@@ -148,6 +148,7 @@ def external_review(
         user=user_message,
         max_tokens=32768,
         label="external-reviewer",
+        output_schema=_draft_table_schema(),
     )
 
     return review_from_raw(raw, draft)

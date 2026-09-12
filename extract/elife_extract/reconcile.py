@@ -16,6 +16,7 @@ import json
 import logging
 
 from .agents import (
+    _draft_table_schema,
     _spans_by_uid,
     load_prompt,
     parse_json_response,
@@ -236,6 +237,7 @@ def reconcile(
         user=user_message,
         max_tokens=32768,  # reconciliation output can be large; budget headroom
         label="reconciler",
+        output_schema=_draft_table_schema(),
     )
     return draft_from_raw(raw, results, caption, structure, cfg, paper_doi,
                           paper_title, extraction_path, extraction_path_note, paper)

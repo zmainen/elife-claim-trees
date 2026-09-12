@@ -50,7 +50,7 @@ import logging
 import re
 from pathlib import Path
 
-from .agents import stream_text
+from .agents import _edge_output_schema, stream_text
 from .config import Config
 from .schema import DraftClaimTable, ReconciledClaim
 
@@ -373,17 +373,19 @@ def infer_edges(draft: DraftClaimTable, slugs: list[str], cfg: Config, *,
     # died on a live Gädeke run — HTTP 402 — and lost the spine while every other stage succeeded.
     budget = max(8192, min(32768, 500 * max(len(slugs), 1)))
 
+    edge_schema = _edge_output_schema()
     if per_arc:
         raws: list[str] = []
         for members in arcs(draft.claims):
             system, user = build_edge_request(draft, slugs, cfg, include=set(members))
             raws.append(stream_text(cfg, model=cfg.model_reconcile, system=system, user=user,
-                                    max_tokens=budget, label="edge-inference[arc]"))
+                                    max_tokens=budget, label="edge-inference[arc]",
+                                    output_schema=edge_schema))
         return edges_from_raw("\n".join(raws), draft.claims, slugs, source="model:per-arc")
 
     system, user = build_edge_request(draft, slugs, cfg)
     raw = stream_text(cfg, model=cfg.model_reconcile, system=system, user=user,
-                      max_tokens=budget, label="edge-inference")
+                      max_tokens=budget, label="edge-inference", output_schema=edge_schema)
     return edges_from_raw(raw, draft.claims, slugs, source="model")
 
 
