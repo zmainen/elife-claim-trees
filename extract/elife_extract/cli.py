@@ -320,6 +320,25 @@ def cmd_parts(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_stance(args: argparse.Namespace) -> int:
+    """Layer `stance` — the alternatives a paper rejects, raised from its controls."""
+    from .layers import stance_layer, stance_request
+
+    cfg = _cfg(args)
+    if _dump(args, lambda: stance_request(args.paper, cfg), "stance"):
+        return 0
+    path, payload = stance_layer(args.paper, cfg, answer=args.answer)
+    print(f"=== stance — {args.paper} ===")
+    print(f"  model        = {payload['model']}")
+    print(f"  alternatives = {len(payload['alternatives'])}")
+    for a in payload["alternatives"]:
+        by = ", ".join(a["ruled_out_by"]) or "(no control named)"
+        print(f"    {a['slug']}  [{a['stance']}]  ← {by}")
+    print(f"  rules-out edges written = {len(payload['edges'])}")
+    print(f"  written: {path}")
+    return 0
+
+
 def cmd_summaries(args: argparse.Namespace) -> int:
     """Layer `summaries` — the paper in three paragraphs, written from its claim graph."""
     from .layers import summaries_layer, summaries_request
@@ -1006,6 +1025,28 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common_args(p_parts)
     _add_model_args(p_parts)
     p_parts.set_defaults(func=cmd_parts)
+
+    # ── stance ───────────────────────────────────────────────────────────────
+    p_stance = sub.add_parser(
+        "stance", help="Layer `stance` — the alternatives a paper rejects, from its controls.",
+        description=(
+            "An alternative explanation is a claim, marked a rival by its stance not its role. "
+            "Given the tree's controls and empirical claims, the paper's questions and the "
+            "Results prose with span ids, return the alternatives the paper raises to reject or "
+            "leaves open, and the controls that eliminate each. It writes an `alt-` claim file "
+            "per rival (updating one already present by slug, not duplicating it) and adds the "
+            "`rules-out` edges from the named controls through the edge validator, so a rules-out "
+            "aimed at a claim the paper asserts, or sourced from anything but a control or "
+            "empirical claim, is dropped. `--dump-prompt` writes the exact request, `--answer` "
+            "feeds a reply back through the same validation."
+        ),
+    )
+    p_stance.add_argument("--paper", required=True, help="Paper slug.")
+    _add_answerable_args(p_stance, "the alternatives and their rules-out edges are validated "
+                                   "against this tree.")
+    _add_common_args(p_stance)
+    _add_model_args(p_stance)
+    p_stance.set_defaults(func=cmd_stance)
 
     # ── summaries ──────────────────────────────────────────────────────────
     p_sum = sub.add_parser(

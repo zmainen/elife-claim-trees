@@ -75,6 +75,10 @@ ROLES = [
      "reads": "the tree's claims, with their roles, panels and edges",
      "returns": "the `part-of` edges — which claims are components of other claims",
      "agent_key": None},
+    {"id": "stance", "stage": "relate",
+     "reads": "the tree's controls and empirical claims, the questions, and the Results prose",
+     "returns": "the alternatives the paper rejects, and the `rules-out` edges from its controls",
+     "agent_key": None},
     {"id": "summaries", "stage": "measure",
      "reads": "the claim graph — every claim's role, sentence and edges",
      "returns": "the paper in three paragraphs: hypotheses, claims and inferences",
@@ -105,8 +109,8 @@ LAYER_OF = {"results-reader": "results-reader", "caption-reader": "caption-reade
             "structure-reader": "structure-reader", "reconciler": "reconcile",
             "external-reviewer": "external-review", "edge-inference": "edge-inference",
             "coverage-adjudicator": "adjudication", "questions": "questions",
-            "parts": "parts", "summaries": "summaries", "synthesis": "synthesis",
-            "abstract-map": "abstract-map"}
+            "parts": "parts", "stance": "stance", "summaries": "summaries",
+            "synthesis": "synthesis", "abstract-map": "abstract-map"}
 
 
 def declared_reads():

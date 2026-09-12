@@ -16,6 +16,8 @@ concepts:
   - AP threshold
 priority: 2026-03-30
 epistemic: moderate
+rules-out:
+- alt-perisomatic-and-distal-share-mechanism
 
 tests:
   - prediction-perisomatic-threshold-mechanism

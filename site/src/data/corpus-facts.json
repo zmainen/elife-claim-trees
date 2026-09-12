@@ -1,5 +1,5 @@
 {
-  "claims": 285,
+  "claims": 288,
   "dangling_rules_out": 9,
   "eligible_claims": 151,
   "eligible_with_record": 133,
@@ -84,8 +84,8 @@
     },
     "headley-2026-inhibitory-rhythms": {
       "agent_trace": true,
-      "alternatives": false,
-      "alternatives_n": 0,
+      "alternatives": true,
+      "alternatives_n": 3,
       "coverage": true,
       "evidence_verified": {
         "quotes": 0,
@@ -207,14 +207,14 @@
     "meijer-2025-serotonin-orthogonal"
   ],
   "mira": {
-    "carried": 915,
+    "carried": 918,
     "inverse_only": 48,
     "lost": 3,
     "our_violations": 0,
     "pinned_schema_commit": "483f0b21480c0f4ced9c1519fc0f6df2b8617cfe",
-    "relations": 918,
-    "synthesised_questions": 24,
-    "upstream_violations": 184,
+    "relations": 921,
+    "synthesised_questions": 27,
+    "upstream_violations": 187,
     "verification_records": 197
   },
   "mira_mapping": {
@@ -745,19 +745,26 @@
       },
       {
         "added": "2026-09-10",
+        "by_from": "model",
+        "command": "cd extract && python3 -m elife_extract.cli stance --paper {paper}",
         "found": "A missing node does not only lose information, it misdirects the edges that would have pointed at it. Five eliminative relations were found aiming at claims their own paper asserts. {{dangling_rules_out}} eliminative edges still name prose that resolves to no claim.\n",
         "group": "tree",
-        "how": "Adds the claims a paper argues against. Each is an ordinary claim file \u2014 prefixed `alt-` \u2014 whose `assertions` entry carries `stance: rejects` rather than `asserts`, so an alternative the paper rules out is a node in the graph like any other and an eliminative edge has something correct to point at.\nBefore these existed, a rejected alternative lived only as prose inside the claim that dismissed it, and an edge that should have pointed at it pointed at whatever claim was nearest.\n",
+        "how": "Adds the claims a paper argues against. Each is an ordinary claim file \u2014 prefixed `alt-` \u2014 whose `assertions` entry carries `stance: rejects` rather than `asserts`, so an alternative the paper rules out is a node in the graph like any other and an eliminative edge has something correct to point at.\nGiven the tree's controls and empirical claims \u2014 slug, role, panel and sentence \u2014 the paper's questions, and the Results prose with span ids, it returns the rivals the paper raises to reject (or entertains and leaves open) and the controls that eliminate each. It writes an `alt-` claim file per rival \u2014 the stance on the assertion, `addresses` linking the question it answers where `index.md` states questions, the body carrying the `why` \u2014 and adds the `rules-out` edges from the named controls through the same validator every edge goes through, so a `rules-out` whose target is asserted, or whose source is not a control or empirical claim, is dropped with a logged reason. It is idempotent: an alternative already present by slug is updated, not duplicated.\n`--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through the same validation, so a model with no backend here can still answer it.\nBefore these existed, a rejected alternative lived only as prose inside the claim that dismissed it, and an edge that should have pointed at it pointed at whatever claim was nearest.\n",
         "id": "stance",
         "kind": "feature",
         "needs": [
           "claim-tree",
+          "prepare",
           "claim-format"
         ],
         "produces": [
           "claims/{paper}/alt-*.md"
         ],
         "question": "What does this paper rule out, and what does it merely entertain?",
+        "reads": [
+          "extract/prompts/stance.md",
+          "extract/prompts/contract/vocabulary.md"
+        ],
         "scope": "paper",
         "title": "Alternatives and stance",
         "views": [
@@ -10451,6 +10458,365 @@
           ],
           "ran": "2026-09-11T23:53:08Z",
           "v": 1
+        },
+        {
+          "answer": {
+            "path": "runs/gadeke-2026-guilt-insula/stance.answer.v2.json",
+            "sha": "8a03bb7c4012"
+          },
+          "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
+          "cmd": "cd extract && python3 -m elife_extract.cli stance --paper gadeke-2026-guilt-insula --answer runs/gadeke-2026-guilt-insula/stance.answer.v2.json",
+          "in": [
+            {
+              "path": "claims/gadeke-2026-guilt-insula/all-reported-clusters-survive-whole-brain.md",
+              "sha": "68e47eb84797"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+              "sha": "fc9e30141707"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+              "sha": "9d564576b877"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+              "sha": "a76fbcaadfa3"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+              "sha": "1a6c3aa44fd2"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+              "sha": "0043c79fe564"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+              "sha": "3d598abf49e4"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
+              "sha": "d4ab7dbfc682"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
+              "sha": "5c3896a31412"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
+              "sha": "b19bd2fd68e9"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/authors-suggest-left-sts-region.md",
+              "sha": "17a69dac7800"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/behavioural-guilt-effect-larger-happiness.md",
+              "sha": "4943046c5d7d"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/bilateral-ventral-striatum-more-active.md",
+              "sha": "3e7591fe3321"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/both-studies-participants-felt-worse.md",
+              "sha": "e2dc012619f6"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/connectivity-between-guilt-responsibility-related-outcome-ph.md",
+              "sha": "1e47627fbac1"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/connectivity-between-left-anterior-insula.md",
+              "sha": "f08ddb8e63b6"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/decisions-social-compared-solo-condition.md",
+              "sha": "d646d94531bc"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/difference-response-between-low-high.md",
+              "sha": "b32993f4ac97"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/dot-products-between-individual-neural.md",
+              "sha": "ce1512bba6f8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/during-outcome-phase-responses-low.md",
+              "sha": "f7792fbe0b45"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/during-receipt-lottery-versus-safe.md",
+              "sha": "18207db9dcae"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/each-trial-participants-chose-between.md",
+              "sha": "cf4c147f4adb"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/findings-rest-two-samples-healthy.md",
+              "sha": "75bdde559405"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/fmri-data-four-study-participants.md",
+              "sha": "342e9c34f635"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/functional-connectivity-between-guilt-responsibility-related.md",
+              "sha": "69ff089b1bc8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/functional-connectivity-between-left-anterior.md",
+              "sha": "0cbc49f8f5e8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+              "sha": "4e3f89daf463"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/happiness-ratings-z-scored-per-participant.md",
+              "sha": "886f838ae007"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/hold-partner-behaviour-constant-across.md",
+              "sha": "e9587feb76ea"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/index.md",
+              "sha": "9f5298701522"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/individual-grbs-dot-product-values-not.md",
+              "sha": "780ba34aad7c"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/insula-rois-responded-more-low.md",
+              "sha": "8d539e46e2f8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/left-ifg-cluster-showed-opposite.md",
+              "sha": "278871b59067"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/left-superior-temporal-sulcus-cluster.md",
+              "sha": "4a9d3f399ca3"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/likelihood-ratio-test-showed-responsibility.md",
+              "sha": "49d22da60554"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/linear-mixed-model-containing-all.md",
+              "sha": "deb6a6b0db2b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/lower-happiness-when-participant-decision-maker.md",
+              "sha": "39b40bf7ca9b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/manipulation-check-bilateral-ventral-striatum.md",
+              "sha": "2aae65b006b7"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/mass-univariate-voxel-wise-analysis-found-small.md",
+              "sha": "f82aafaaabd8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/mixed-effects-regressions-choices-social-condition.md",
+              "sha": "8a9acb1519ef"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/model-based-glm-entered-best-fitting-computational.md",
+              "sha": "e8bab92cd4e8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/model-selection-among-happiness-models.md",
+              "sha": "4b3b6a02f176"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/momentary-happiness-modelled-five-computational.md",
+              "sha": "69e17daecdc4"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/neural-substrate-tracks-participant-responsibility-2.md",
+              "sha": "c8cf85aec110"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/neural-substrate-tracks-participant-responsibility.md",
+              "sha": "20af5e4ce9d8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/no-significant-interaction-between-difference.md",
+              "sha": "ddcdb511fb29"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/one-cluster-left-sts-responded.md",
+              "sha": "4ef25b5b4751"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/only-precuneus-tpj-showed-positive.md",
+              "sha": "f64174731040"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/parameter-recovery-procedure-synthetic-data-generated.md",
+              "sha": "aabb3d289040"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participant-happiness-lower-when-participant.md",
+              "sha": "6fd35f69134b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participant-momentary-happiness-varied-rewards-2.md",
+              "sha": "693b024dc053"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participant-momentary-happiness-varied-rewards.md",
+              "sha": "223aad3cd7e9"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participants-chose-risky-option-lottery.md",
+              "sha": "d6b41783a39b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participants-own-reward-prediction-errors.md",
+              "sha": "549b71da022b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participants-probability-choosing-risky-option.md",
+              "sha": "bd88b80baebd"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participants-showed-very-similar-risk.md",
+              "sha": "bf3a5baf9dc6"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participants-slightly-more-risk-averse.md",
+              "sha": "b535a205802c"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/partner-reward-prediction-errors-resulting.md",
+              "sha": "1fa29d4ad3d8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/pre-task-icebreaker-succeeded-establishing-positive.md",
+              "sha": "07e71c9c5bfc"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/prior-functional-connectivity-work-shown.md",
+              "sha": "1c5a9af09ba2"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/prior-literature-documents-association-between.md",
+              "sha": "3e5682e81842"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-choices-not-influence-happiness.md",
+              "sha": "de5bc8ffc6b3"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-model-yielded-higher-values.md",
+              "sha": "bdde5947e214"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-outcomes-generates-guilt-participant.md",
+              "sha": "e96bb6e2428f"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-partner-outcomes-influences-participant.md",
+              "sha": "fb1385ed0854"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-redux-model-incorporating-expected.md",
+              "sha": "a691d4669aeb"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-social-choice-yields-low.md",
+              "sha": "869bc140fbb4"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/risk-attitude-quantified-risk-premium.md",
+              "sha": "760a3d1c487a"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/risk-aversion-parameter-not-differ-between.md",
+              "sha": "2c3083abbc31"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md",
+              "sha": "d0fcd2d97bc5"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/rutledge-colleagues-established-changes-momentary.md",
+              "sha": "c75d340657de"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/study-reproduced-study-design-inside.md",
+              "sha": "b389a13f8115"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/study-sample-size-fixed-priori.md",
+              "sha": "f93d81bcc2ec"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/two-gppi-seed-to-voxel-connectivity-analyses.md",
+              "sha": "acc0c7f2160c"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/when-partner-received-low-lottery.md",
+              "sha": "b053af85187c"
+            },
+            {
+              "path": "runs/gadeke-2026-guilt-insula/prepared.json",
+              "sha": "2f668cadbef7"
+            },
+            {
+              "path": "extract/prompts/stance.md",
+              "sha": "c9adb126147b"
+            },
+            {
+              "path": "extract/prompts/contract/vocabulary.md",
+              "sha": "f7b20823d3c6"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/gadeke-2026-guilt-insula/*.md",
+              "sha": "3fce707e9208"
+            }
+          ],
+          "kind": "feature",
+          "layer": "stance",
+          "note": "stance raised from the controls (#97)",
+          "out": [
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+              "sha": "fc9e30141707"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+              "sha": "9d564576b877"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+              "sha": "a76fbcaadfa3"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+              "sha": "1a6c3aa44fd2"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+              "sha": "0043c79fe564"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+              "sha": "3d598abf49e4"
+            }
+          ],
+          "ran": "2026-09-12T08:43:53Z",
+          "v": 2
         }
       ],
       "headley-2026-inhibitory-rhythms": [
@@ -11673,6 +12039,173 @@
           ],
           "ran": "2026-09-11T19:41:16Z",
           "v": 2
+        },
+        {
+          "answer": {
+            "path": "runs/headley-2026-inhibitory-rhythms/stance.answer.v1.json",
+            "sha": "8bf7ad95b333"
+          },
+          "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
+          "cmd": "cd extract && python3 -m elife_extract.cli stance --paper headley-2026-inhibitory-rhythms --answer runs/headley-2026-inhibitory-rhythms/stance.answer.v1.json",
+          "in": [
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/alt-distal-inhibition-raises-somatic-threshold.md",
+              "sha": "eb32af948c3d"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/alt-perisomatic-and-distal-share-mechanism.md",
+              "sha": "45f001c8c692"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/alt-phase-modulation-requires-buildup.md",
+              "sha": "0a144b55faa8"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/beta-bidirectional-dendritic-control.md",
+              "sha": "2ca9ce88a2be"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/beta-gates-distal-apical-inputs.md",
+              "sha": "d70f89175681"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/beta-optimal-distal-dendritic-entrainment.md",
+              "sha": "33d5a37fa565"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/burst-effects-emerge-first-cycles.md",
+              "sha": "b981c808f51c"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/ca-spikes-couple-20ms-before-ap.md",
+              "sha": "ad007bb91674"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/distal-inhib-drops-firing-02hz.md",
+              "sha": "94e604853f35"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/ei-lag-sensitivity-firing-rate.md",
+              "sha": "24d243271e60"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/gamma-gates-proximal-basal-inputs.md",
+              "sha": "6c8e27a03a69"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/gamma-optimal-perisomatic-ap-modulation.md",
+              "sha": "5a4b2a9a3bad"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/gamma-perisomatic-no-dendritic-spike-change.md",
+              "sha": "2c0e3200121e"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/hypothesis-distinct-compartmental-roles.md",
+              "sha": "c45af0b495f9"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/hypothesis-frequency-compartment-matching.md",
+              "sha": "dd6b84c7a079"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/index.md",
+              "sha": "6283093f0cc8"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/interprets-pv-gamma-sst-beta-associations.md",
+              "sha": "7934f4359cc8"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/l5-model-single-cell-scope.md",
+              "sha": "0db428c71f9b"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/na-spikes-couple-2to3ms-before-ap.md",
+              "sha": "f1952652919e"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/naturalistic-drive-parameterization.md",
+              "sha": "d13ac3435622"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/nmda-spikes-couple-25ms-before-ap.md",
+              "sha": "befaed136bb5"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/perisomatic-inhib-drops-firing-07hz.md",
+              "sha": "b480f9a2e164"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/perisomatic-inhib-subtractive-divisive.md",
+              "sha": "337cac7bf793"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-beta-optimal-distal.md",
+              "sha": "1a4918c57437"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-distal-dendritic-spike-mechanism.md",
+              "sha": "8712ff62fed5"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-gamma-optimal-perisomatic.md",
+              "sha": "e7cbe51a55c9"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-orthogonal-input-gating.md",
+              "sha": "b59493c7362e"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-perisomatic-input-output-shaping.md",
+              "sha": "ca906ba3234f"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/prediction-perisomatic-threshold-mechanism.md",
+              "sha": "f386e8b6a80d"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/pv-gamma-sst-beta-correspondence.md",
+              "sha": "f523d97f3903"
+            },
+            {
+              "path": "runs/headley-2026-inhibitory-rhythms/prepared.json",
+              "sha": "868d6c1e056b"
+            },
+            {
+              "path": "extract/prompts/stance.md",
+              "sha": "c9adb126147b"
+            },
+            {
+              "path": "extract/prompts/contract/vocabulary.md",
+              "sha": "f7b20823d3c6"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/headley-2026-inhibitory-rhythms/*.md",
+              "sha": "0f976b5ada8d"
+            }
+          ],
+          "kind": "feature",
+          "layer": "stance",
+          "note": "stance raised from the controls (#97)",
+          "out": [
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/alt-distal-inhibition-raises-somatic-threshold.md",
+              "sha": "eb32af948c3d"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/alt-perisomatic-and-distal-share-mechanism.md",
+              "sha": "45f001c8c692"
+            },
+            {
+              "path": "claims/headley-2026-inhibitory-rhythms/alt-phase-modulation-requires-buildup.md",
+              "sha": "0a144b55faa8"
+            }
+          ],
+          "ran": "2026-09-12T08:47:15Z",
+          "v": 1
         }
       ],
       "kammer-2026-foveal-feedback": [
@@ -18972,15 +19505,15 @@
       "gadeke-2026-guilt-insula": {
         "abstract-map": {
           "appeared": [],
-          "blocked_by": [
-            "claim-tree"
-          ],
           "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+            "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md"
+          ],
           "note": "first recorded run of abstract-map (#87)",
           "ran": "2026-09-11T23:50:18Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 2
         },
         "adjudication": {
@@ -19041,15 +19574,15 @@
         },
         "coverage": {
           "appeared": [],
-          "blocked_by": [
-            "claim-tree"
-          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+            "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md"
+          ],
           "note": "re-run after claim-tree v2",
           "ran": "2026-09-11T22:59:04Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 2
         },
         "dg-export": {
@@ -19129,16 +19662,15 @@
         },
         "marks": {
           "appeared": [],
-          "blocked_by": [
-            "adjudication",
-            "claim-tree"
-          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+            "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md"
+          ],
           "note": "re-marked against claim-tree v2",
           "ran": "2026-09-11T22:59:04Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 4
         },
         "mira-export": {
@@ -19206,6 +19738,8 @@
           "by": "claude-opus-4-8 (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+            "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md",
             "extract/prompts/contract/vocabulary.md"
           ],
           "note": "parts retrofitted on claim-tree v2 (#75)",
@@ -19215,15 +19749,15 @@
         },
         "plain-claim": {
           "appeared": [],
-          "blocked_by": [
-            "claim-tree"
-          ],
           "by": "Claude Opus 5",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+            "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md"
+          ],
           "note": "re-run for claim-tree v2",
           "ran": "2026-09-11T23:15:28Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 2
         },
         "prediction-outcome": {
@@ -19303,12 +19837,17 @@
           "v": 3
         },
         "stance": {
-          "backfilled": true,
-          "by": null,
-          "note": "backfilled from the artifact on disk",
-          "ran": "2026-09-10T16:37:02Z",
-          "state": "unrecorded",
-          "v": 1
+          "appeared": [],
+          "blocked_by": [
+            "claim-tree"
+          ],
+          "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
+          "lost": [],
+          "moved": [],
+          "note": "stance raised from the controls (#97)",
+          "ran": "2026-09-12T08:43:53Z",
+          "state": "blocked",
+          "v": 2
         },
         "structure-reader": {
           "appeared": [],
@@ -19322,29 +19861,28 @@
         },
         "summaries": {
           "appeared": [],
-          "blocked_by": [
-            "claim-tree"
-          ],
           "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+            "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md"
+          ],
           "note": "first recorded run of summaries (#87)",
           "ran": "2026-09-11T23:53:08Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 1
         },
         "synthesis": {
           "appeared": [],
-          "blocked_by": [
-            "claim-tree",
-            "abstract-map"
-          ],
           "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+            "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md"
+          ],
           "note": "first recorded run of synthesis (#87)",
           "ran": "2026-09-11T23:52:34Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 1
         },
         "verification": {
@@ -19413,15 +19951,16 @@
         },
         "coverage": {
           "appeared": [],
-          "blocked_by": [
-            "prepare"
-          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/headley-2026-inhibitory-rhythms/burst-effects-emerge-first-cycles.md",
+            "claims/headley-2026-inhibitory-rhythms/distal-inhib-drops-firing-02hz.md",
+            "claims/headley-2026-inhibitory-rhythms/gamma-perisomatic-no-dendritic-spike-change.md"
+          ],
           "note": "coverage for the nine papers that had none",
           "ran": "2026-09-11T16:29:27Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 1
         },
         "dg-export": {
@@ -19454,7 +19993,8 @@
           "lost": [],
           "moved": [
             "exports/headley-2026-inhibitory-rhythms.mira.jsonld",
-            "exports/headley-2026-inhibitory-rhythms.mira-extended.jsonld"
+            "exports/headley-2026-inhibitory-rhythms.mira-extended.jsonld",
+            "exports/headley-2026-inhibitory-rhythms.gap-report.md"
           ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:10Z",
@@ -19465,17 +20005,19 @@
           "state": "absent"
         },
         "marks": {
-          "appeared": [],
-          "blocked_by": [
-            "adjudication",
-            "prepare"
+          "appeared": [
+            "claims/headley-2026-inhibitory-rhythms/*.md"
           ],
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/headley-2026-inhibitory-rhythms/burst-effects-emerge-first-cycles.md",
+            "claims/headley-2026-inhibitory-rhythms/distal-inhib-drops-firing-02hz.md",
+            "claims/headley-2026-inhibitory-rhythms/gamma-perisomatic-no-dendritic-spike-change.md"
+          ],
           "note": "marks from the re-validated verdicts",
           "ran": "2026-09-11T19:41:16Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 2
         },
         "mira-export": {
@@ -19483,14 +20025,14 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
+            "claims/headley-2026-inhibitory-rhythms/burst-effects-emerge-first-cycles.md",
+            "claims/headley-2026-inhibitory-rhythms/distal-inhib-drops-firing-02hz.md",
+            "claims/headley-2026-inhibitory-rhythms/gamma-perisomatic-no-dendritic-spike-change.md",
             "scripts/export_mira.py"
           ],
           "note": "export timestamps derived from claim registration dates",
           "ran": "2026-09-11T12:14:10Z",
           "state": "stale",
-          "unrecorded_upstream": [
-            "stance"
-          ],
           "v": 3
         },
         "oxa-export": {
@@ -19499,9 +20041,6 @@
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-10T12:50:38Z",
           "state": "unrecorded",
-          "unrecorded_upstream": [
-            "stance"
-          ],
           "v": 1
         },
         "parts": {
@@ -19511,10 +20050,14 @@
           "appeared": [],
           "by": "supplied:runs/headley-2026-inhibitory-rhythms/plain-claim.answer.json",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/headley-2026-inhibitory-rhythms/burst-effects-emerge-first-cycles.md",
+            "claims/headley-2026-inhibitory-rhythms/distal-inhib-drops-firing-02hz.md",
+            "claims/headley-2026-inhibitory-rhythms/gamma-perisomatic-no-dendritic-spike-change.md"
+          ],
           "note": "first run: one plain sentence per claim, answered by Claude Opus 5 through --dump-prompt and fed back through --answer",
           "ran": "2026-09-11T16:20:42Z",
-          "state": "current",
+          "state": "stale",
           "v": 1
         },
         "prediction-outcome": {
@@ -19558,7 +20101,17 @@
           "state": "absent"
         },
         "stance": {
-          "state": "absent"
+          "appeared": [],
+          "blocked_by": [
+            "prepare"
+          ],
+          "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
+          "lost": [],
+          "moved": [],
+          "note": "stance raised from the controls (#97)",
+          "ran": "2026-09-12T08:47:15Z",
+          "state": "blocked",
+          "v": 1
         },
         "structure-reader": {
           "state": "absent"
@@ -20753,7 +21306,7 @@
     "refutes": 1,
     "replicates": 0,
     "requires": 119,
-    "rules-out": 18,
+    "rules-out": 21,
     "scopes": 151,
     "supports": 144,
     "tests": 77,
@@ -20761,7 +21314,7 @@
   },
   "relation_types_defined": 20,
   "relation_types_used": 15,
-  "relations": 918,
+  "relations": 921,
   "reproduction_status": {
     "blocked": 52,
     "partial": 16,
@@ -20771,7 +21324,7 @@
   "role_counts": {
     "control": 26,
     "empirical": 125,
-    "hypothesis": 34,
+    "hypothesis": 37,
     "interpretation": 10,
     "literature-context": 8,
     "methodological": 26,

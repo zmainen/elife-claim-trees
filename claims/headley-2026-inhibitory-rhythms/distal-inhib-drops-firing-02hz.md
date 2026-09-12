@@ -20,6 +20,8 @@ concepts:
   - NMDA spikes
 priority: 2026-03-30
 epistemic: strong
+rules-out:
+- alt-distal-inhibition-raises-somatic-threshold
 
 tests:
   - prediction-distal-dendritic-spike-mechanism
