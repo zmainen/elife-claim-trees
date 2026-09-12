@@ -24,6 +24,55 @@ Finally, fluctuations in foveal decodability covaried with activity in the intra
 These findings suggest that foveal cortex predicts the features of incoming stimuli through feedback from higher cortical areas, which offers a candidate mechanism underlying stable perception.
 
 
+## introduction
+
+Introduction Human vision relies heavily on foveal processing.
+
+Even though this region of the retina covers only a fraction of the visual field, it occupies a disproportionately large portion of neurons in the early visual cortex ( Curcio et al., 1990 ; Curcio and Allen, 1990 ; Hendrickson, 2005 ; Schira et al., 2009 ).
+
+To take advantage of the fovea’s high resolution, humans perform several rapid eye movements per second, with each saccade bringing an object of interest into the fovea ( O’Regan, 1992 ; Carpenter, 2000 ).
+
+Despite these frequent disruptions and dramatic shifts in retinal input, our perception of the visual environment remains stable, coherent, and continuous ( Golomb and Mazer, 2021 ; Melcher and Colby, 2008 ; Burr et al., 1994 ).
+
+This perceptual stability, while often taken for granted, points toward sophisticated neural mechanisms that integrate visual information across separate gaze fixations ( Wurtz, 2008 ; Cavanagh et al., 2010 ; Merriam et al., 2007 ; Denagamage et al., 2024 ).
+
+In the domain of visual perception, predictions may critically contribute to maintaining perceptual stability across rapid shifts in gaze ( Rao and Ballard, 1999 ; de Lange et al., 2018 ; Clark, 2013 ).
+
+One compelling hypothesis suggests that perceptual continuity arises through predictive feedback of peripheral information from higher cortical areas to foveal retinotopic regions.
+
+This feedback informs foveal regions about the expected visual features of a stimulus prior to its direct fixation to prepare for the shift in visual input ( Kroell and Rolfs, 2022 ).
+
+Support for this foveal-prediction hypothesis comes from psychophysical studies, which find that features of peripheral saccade targets are enhanced in the presaccadic fovea ( Kroell and Rolfs, 2022 ; Kroell and Rolfs, 2025 ).
+
+Current evidence for the role of feedback in foveal prediction is indirect, relying mostly on the interpretation of behavioral reports.
+
+While multiple studies have shown feedback of peripheral information to the fovea during fixation ( Williams et al., 2008 ; Fan et al., 2016 ; Costantino et al., 2025 ; Stewart et al., 2020 ), this effect was only shown when features of the target stimulus were task relevant.
+
+The relationship of these foveal feedback signals to foveal prediction during saccade preparation has remained unclear.
+
+Furthermore, the nature of such feedback signals and whether they resemble activity patterns elicited by direct foveal stimulation has remained poorly understood.
+
+In this study, we directly tested saccade-related foveal feedback in the brain to address (1) whether feedback is specific to stimulus features and which features are fed back, (2) whether feedback activation resembles activation elicited by direct stimulus presentation, and (3) which brain regions mediate this effect.
+
+To systematically address these open questions, we developed a gaze-contingent functional magnetic resonance imaging (fMRI) paradigm that allowed us to disentangle neural activity attributable to direct visual input from activity exclusively related to foveal feedback.
+
+By removing peripheral saccade targets before participants could fixate them, we ensured that observed neural activation within foveal retinotopic regions must originate from feedback rather than direct foveal stimulation.
+
+Furthermore, by employing naturalistic stimuli whose visual shape and semantic content were independently manipulated, we could explicitly assess the specificity and content of the signals fed back to early foveal cortex.
+
+Our findings robustly demonstrate the presence of feedback in early visual areas, including primary visual cortex, indicated by reliable decoding of peripheral saccade targets from foveal retinotopic areas, despite the absence of direct foveal stimulation.
+
+Critically, this decoding was selective for stimulus shape and not influenced by semantic category, indicating a predominantly low-to-mid-level visual representation.
+
+Eccentricity-dependent analyses showed a U-shaped decoding curve, demonstrating that these results cannot be explained by spillover of peripheral activity or large receptive fields.
+
+Cross-decoding analyses further confirmed the similarity between feedback and direct visual representations in the fovea, reinforcing the shared nature of neural codes.
+
+Finally, exploratory analyses identified the intraparietal sulcus (IPS), a brain area integral to visuomotor coordination and eye movement planning, as a likely candidate involved in driving foveal feedback.
+
+These findings reveal a plausible neural implementation for perceptual continuity and may also facilitate object recognition across saccades ( Herwig and Schneider, 2014 ; Blom et al., 2020 ).
+
+
 ## results
 
 Results Given the fast time scale of saccade-related processes, it is challenging to investigate foveal feedback using fMRI, which is based mostly on a sluggish hemodynamic response.
@@ -201,6 +250,123 @@ Foveal decoding was associated with significantly decreased activation in fronta
 We also found increased activation in lateral occipital area (LO) (t(27) = 5.11, p <0.001, difference = 16.89).⟦>zach claim=b5f7aa26-4228-4741-8680-93ebd04474fa: @{We also found increased activation in lateral occipital area (LO) (t(27) = 5.11, p <0.001, difference = 16.89).} cross-decoding-experimental-to-control⟧
 
 Peripheral decoding was not associated with significant changes in any of the region of interests (ROIs) (FEF: t(27) = 0.49, p =1.0; IPS: t(27) = 1.35, p =0.56; LO: t(27) = 2.43, p =0.07).⟦>zach claim=gap: @{Peripheral decoding was not associated with significant changes in any of the region of interests (ROIs) (FEF: t(27) = 0.49, p =1.0; IPS: t(27) = 1.35, p =0.56; LO: t(27) = 2.43, p =0.07).} The control-condition null for peripheral decoding across FEF, IPS and LO is reported nowhere in the claim tree.⟧
+
+
+## discussion
+
+Discussion The present preregistered study provides evidence that early foveal retinotopic areas are involved in the processing of peripheral saccade targets, even if the stimuli are never presented in the central part of the fovea.
+
+Using a combination of fMRI and eye-tracking, we were able to decode the identity of saccade targets from foveal regions of early visual cortex ( Figure 2A ), suggesting that shape-specific information about peripheral targets is fed back to foveal areas during saccade preparation.⟦>zach claim=6271606c-1989-4bb6-a6da-a14145a46145: @{Using a combination of fMRI and eye-tracking, we were able to decode the identity of saccade targets from foveal regions of early visual cortex ( Figure 2A ), suggesting that shape-specific information about peripheral targets is fed back to foveal areas during saccade preparation.} foveal-feedback-below-direct-stimulation⟧
+
+We also showed that this foveal feedback is unlikely to be caused by spillover from peripheral regions ( Figure 2B ) and that it has a similar neural representation as direct stimulus presentation, as shown by the above-chance cross-decoding ( Figure 2A ).⟦>zach claim=b5f7aa26-4228-4741-8680-93ebd04474fa: @{We also showed that this foveal feedback is unlikely to be caused by spillover from peripheral regions ( Figure 2B ) and that it has a similar neural representation as direct stimulus presentation, as shown by the above-chance cross-decoding ( Figure 2A ).} cross-decoding-experimental-to-control⟧
+
+This cross-decoding alleviates concerns about the type of information picked up by the decoder in the experimental condition.
+
+That is, it cannot be explained by the decoder picking up small changes in eye movements between different stimuli ( Williams et al., 2008 ), since the representation - at least in part - transfers to the control condition, where participants did not move their eyes.
+
+Furthermore, we showed that foveal feedback is sensitive to the shape, but not the semantic category of the stimulus ( Figure 3B ), which suggests that foveal feedback in early visual cortex is rather rudimentary and does not convey a category-invariant stimulus representation.⟦>zach claim=99ca4e8a-6fac-41f6-b901-5b63c1802a66: @{Furthermore, we showed that foveal feedback is sensitive to the shape, but not the semantic category of the stimulus ( Figure 3B ), which suggests that foveal feedback in early visual cortex is rather rudimentary and does not convey a category-invariant stimulus representation.} lo-shows-reversed-specificity⟧
+
+These findings are in line with recent work showing that feedback to primary visual cortex in a fixation condition may primarily carry low-level perceptual information ( Costantino et al., 2025 ).
+
+Lastly, in an exploratory analysis, we identified the intraparietal sulcus (IPS) as a candidate region for driving foveal feedback ( Figure 4B ).⟦>zach claim=3190bd67-2477-4174-b65f-7e70b8128535: @{Lastly, in an exploratory analysis, we identified the intraparietal sulcus (IPS) as a candidate region for driving foveal feedback ( Figure 4B ).} fef-lo-nonsignificant-after-correction⟧
+
+Foveal feedback during saccade preparation While previous studies have shown that peripheral information can be decoded from foveal regions of the visual cortex and can affect foveal processing, this effect has primarily been studied during passive fixation and under specific task conditions related to distinctive spatial features of the peripheral stimulus ( Williams et al., 2008 ; Costantino et al., 2025 ; Fan et al., 2016 ; Yu and Shim, 2016 ; Chambers et al., 2013 ).
+
+In the absence of target-specific tasks, or using a different control task, foveal feedback was not observed ( Williams et al., 2008 ; Knapen et al., 2016 ; Fan et al., 2016 ).
+
+The present study employed a paradigm in which participants performed a saccade towards the target—irrespective of target features or a specific task on the target.
+
+Despite the absence of a target-specific task, we still observed robust decoding from foveal regions.
+
+This task independence is reminiscent of the saccade-based recruitment of feature-based attention in area V4 of the macaque brain ( Burrows et al., 2014 ), showing that neurons tuned to the features of an imminent saccade target increase their responsiveness.
+
+However, in contrast to such spatially invariant feature selection, our results show clear spatial selectivity for foveal locations.
+
+Furthermore, we found a specific positive association of IPS activity with the experimental condition, not the control condition, which is in line with the idea that the foveal feedback effect reported in this study is related to saccade preparation ( Curtis and Connolly, 2008 ; Gaymard et al., 1998 ).
+
+Since humans invariably perform saccades to bring relevant objects into foveal view, instead of scrutinizing them peripherally, foveal feedback during fixation (e.g. Williams et al., 2008 ) could possibly be the result of the preparation of eye movements that are not executed (cf. Kroell and Rolfs, 2022 ; Fan et al., 2016 ; Chambers et al., 2013 ; Yu and Shim, 2016 ).
+
+The function of predictive foveal feedback in this context would be to support continuity of visual processing across eye movements that routinely change objects’ locations in retinotopic coordinates (cf. Kroell and Rolfs, 2022 ).
+
+Indeed, covert attention and saccade preparation are strongly coupled processes ( Li et al., 2021 ; Kowler et al., 1995 ; Deubel and Schneider, 1996 ; Montagnini and Castet, 2007 ; Rolfs and Carrasco, 2012 ; Rolfs et al., 2011 ).
+
+The task used by Williams et al., 2008 would, in natural vision, likely involve an eye movement to the peripheral targets.
+
+While these findings offer a plausible alternative understanding of the results of Williams et al., 2008 , this interpretation remains speculative, and more research is needed to determine whether our findings and theirs result from the same underlying mechanism.
+
+Saccadic remapping or foveal prediction Saccadic remapping, that is, the increase of activity of neurons in anticipation of a stimulus entering their receptive field, has been observed all over the visual cortex ( Golomb and Mazer, 2021 ; Duhamel et al., 1992 ; Merriam et al., 2007 ; Mirpour and Bisley, 2012 ), including primary visual cortex ( Nakamura and Colby, 2002 ; Knapen et al., 2016 ).
+
+While this effect has been widely reported, there is little evidence that saccadic remapping also encodes feature information in humans ( Rao and Ballard, 1999 ; Xiao et al., 2024 ; Knapen et al., 2009 ; Knapen et al., 2010 ; Lescroart et al., 2016 ; Yao et al., 2016 ), but see Denagamage et al., 2024 .
+
+One exception is the presaccadic integration of features across two peripheral locations, provided they are the current and future location of an attended stimulus ( Harrison et al., 2013 ; Szinte et al., 2015 ).
+
+Such integration, however, could be explained by presaccadic updating of spatial attention pointers ( Rolfs et al., 2011 ) that link two retinotopic locations to one object, rather than remapping of feature information per se ( Pelli and Cavanagh, 2013 ), although this is a topic of ongoing discussion ( Golomb and Mazer, 2021 ).
+
+This explanation does not apply to the effect observed in the present study, since there never was a stimulus presented in the fovea, so remapping of spatial attention to the fovea (as in Rolfs et al., 2011 , Figure 5) would not suffice to explain the data.⟦>zach claim=gap: @{This explanation does not apply to the effect observed in the present study, since there never was a stimulus presented in the fovea, so remapping of spatial attention to the fovea (as in Rolfs et al., 2011 , Figure 5) would not suffice to explain the data.}⟧
+
+Foveal prediction, on the other hand, genuinely involves the transfer of information of saccade target features.
+
+In their psychophysical experiments, Kroell and Rolfs, 2022 ; Kroell and Rolfs, 2025 found that, during saccade preparation, features of the peripheral saccade target were enhanced in the pre-saccadic fovea.
+
+In contrast, three independent studies found no automatic selection of saccade target features at peripheral locations ( Born et al., 2013 ; Jonikaitis and Theeuwes, 2013 ; White et al., 2013 ).
+
+Thus, while saccade-based feature-based attention is evident in visual cortex ( Burrows et al., 2014 ), it is not sufficient to explain feature predictions before saccades.
+
+These findings led ( Kroell and Rolfs, 2022 ; Kroell and Rolfs, 2025 ) to conclude that the fovea plays a unique role in maintaining perceptual continuity by predicting future inputs during saccade preparation.
+
+Our results support this view by showing shape-sensitive decoding, as well as cross-decoding from experimental to control condition, indicating that foveal feedback may lead early foveal regions to share features with the peripheral target stimulus in anticipation of an upcoming saccade.
+
+In line with this, Lescroart et al., 2016 found no evidence for periphery-to-periphery feature remapping, and Chiu and Golomb, 2025 found supporting evidence for remapping of object-location binding from periphery to fovea but not periphery to periphery.
+
+Together, these findings suggest that foveal processing is uniquely equipped for predicting feature information of upcoming stimuli.
+
+Comparing foveal feedback to direct presentation The decoding patterns in the present study revealed that the information about the saccade targets that is fed back to the foveal cortex may reflect shape information but does not contain higher-level categorical information.
+
+These decoding patterns resemble the ones we found in the control condition, where the stimuli were presented directly in the fovea ( Figure 3B ).⟦>zach claim=99ca4e8a-6fac-41f6-b901-5b63c1802a66: @{These decoding patterns resemble the ones we found in the control condition, where the stimuli were presented directly in the fovea ( Figure 3B ).} lo-shows-reversed-specificity⟧
+
+Lastly, it was possible to cross-decode by training a decoder on foveal V1 data from the experimental condition and decoding stimulus identity from the same regions in the control condition at above chance level ( Figure 2A ).⟦>zach claim=6271606c-1989-4bb6-a6da-a14145a46145: @{Lastly, it was possible to cross-decode by training a decoder on foveal V1 data from the experimental condition and decoding stimulus identity from the same regions in the control condition at above chance level ( Figure 2A ).} foveal-feedback-below-direct-stimulation⟧
+
+These results are in line with behavioral studies showing that presenting a foveal foil stimulus identical to the peripheral target shortly after target onset improves visual discrimination of the peripheral target ( Yu and Shim, 2016 ).
+
+Together, these findings suggest shared representational formats in early visual areas between foveal prediction and direct stimulus presentation, which indicates that foveal feedback reflects low-to-mid-level features of the target, similarly to the direct presentation of the stimulus.
+
+IPS as a candidate modulator of foveal prediction In a parametric modulation analysis, we found that the intraparietal sulcus (IPS) was significantly more active in association with foveal decoding compared to peripheral decoding in the experimental condition ( Figure 4B ).⟦>zach claim=3190bd67-2477-4174-b65f-7e70b8128535: @{IPS as a candidate modulator of foveal prediction In a parametric modulation analysis, we found that the intraparietal sulcus (IPS) was significantly more active in association with foveal decoding compared to peripheral decoding in the experimental condition ( Figure 4B ).} fef-lo-nonsignificant-after-correction⟧
+
+This area has been described as neither a strictly visual nor motor area but instead as performing visuomotor integration functions, such as determining the spatial location of saccade targets and forming plans to make eye movements ( Andersen et al., 1992 ; Andersen, 1989 ).
+
+Further research has shown that this region represents salient stimuli, relative to the center of gaze ( Colby and Duhamel, 1996 ).
+
+This integrative function makes the IPS an ideal candidate for modulating feature-specific feedback to foveal areas during saccade preparation.
+
+While this analysis is exploratory, it offers yet another indication that foveal feedback is inherently linked to saccadic eye movements, and that IPS could play an important role in driving this effect.
+
+Future hypothesis-driven research could specifically target this region to more clearly determine its role in foveal feedback.
+
+Limitations and future directions Despite the insights gained in the present study, several open questions remain.
+
+We did not specifically test whether we can find foveal feedback from peripheral targets without any stimulus-specific task (e.g. no eye movements), which is relevant to showing that foveal feedback is task-dependent.
+
+However, similar control conditions have been run by Williams et al., 2008 and Knapen et al., 2016 .
+
+Neither found any stimulus-specific foveal activation with peripheral target presentation in the absence of a target-specific task.
+
+Additionally, while the stimulus-specific effects reported in the present study were robust, the results were limited to four different stimuli, since the addition of further conditions would have led to a reduction in statistical power.
+
+Future studies could expand upon the present approach by increasing the number of stimuli, possibly collecting data across multiple sessions to achieve sufficiently large effects.
+
+Furthermore, while using an fMRI block-design paradigm allowed us to conduct precise spatial analyses of different retinotopic regions with high statistical power, it did not allow for any temporal analyses.
+
+Under these circumstances, we cannot fully rule out that the observed effects were influenced by working memory ( Harrison and Tong, 2009 ) or mental imagery ( Albers et al., 2013 ).
+
+However, given previous psychophysical work ( Kroell and Rolfs, 2022 ) and the fact that stimulus features were not task-relevant, participants had no incentive to engage in these processes, making it unlikely that they played a strong role in our findings.
+
+Another limitation of our work is that, while our results are consistent with psychophysical studies defining the temporal onset of foveal feedback during saccade preparation ( Kroell and Rolfs, 2025 ; Fan et al., 2016 ), we cannot rule out that post-saccadic processes might have also influenced the observed effects ( Chambers et al., 2013 ).
+
+Lastly, an additional condition in which participants make a saccade to a neighboring stimulus could elucidate if foveal prediction is exclusive to the target of a saccade.
+
+While these questions offer exciting research avenues for future studies, our results demonstrate the importance of foveal feedback during saccadic eye movements, offering a plausible candidate mechanism for our ability to integrate visual information across saccades.
+
+They also pave the way for future research about how foveal prediction may facilitate object recognition by giving object processing a head start before fixation onset.
 
 
 ## captions

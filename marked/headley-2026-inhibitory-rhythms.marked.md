@@ -26,6 +26,75 @@ Moreover, beta modulated responsiveness to distal inputs in a phase-dependent ma
 These results may provide a functional interpretation for the reported association of soma-targeting parvalbumin-positive interneurons with gamma and dendrite-targeting somatostatin interneurons with beta.
 
 
+## introduction
+
+Introduction Cortical circuits are composed of connected networks of excitatory pyramidal neurons.
+
+To maintain a balanced level of excitability, they form dense reciprocal connections with local inhibitory interneurons.
+
+The two largest subclasses of interneurons in the cortex are parvalbumin positive (PV) and somatostatin positive (SOM) cells ( Tremblay et al., 2016 ).
+
+A major distinction between PV and SOM interneurons is that they synapse onto different parts of the pyramidal neuron.
+
+PV interneurons tend to contact the soma and proximal dendrites (perisomatic), while SOMs target distal dendrites ( Kawaguchi and Kubota, 1997 ; Wang et al., 2004 ; Kubota, 2014 ; Kubota et al., 2015 ).
+
+Numerous studies have identified differences in how they regulate the responsiveness of local excitatory principal neurons ( Wilson et al., 2012 ; Lee et al., 2012 ; Atallah et al., 2012 ).
+
+These differences could arise from their connectivity, intrinsic properties, or where they synapse onto pyramidal neurons.
+
+Indeed, the location of an inhibitory synapse qualitatively changes its effect on synaptic integration ( Kubota et al., 2015 ; Leleo and Segev, 2021 ; Jadi et al., 2012 ; Ferguson and Cardin, 2020 ).
+
+Synaptic integration in pyramidal neurons arises from the interplay between passive and active ion channels and dendritic morphology ( Leleo and Segev, 2021 ; Egger et al., 2020 ; Goetz et al., 2021 ; Ujfalussy et al., 2018 ).
+
+Dendrites produce regenerative spiking events, namely Na + , NMDA, and Ca 2+ spikes.
+
+Their initiation depends upon the spatiotemporal coordination of excitatory synapses and interaction with the depolarization of dendritic branches.
+
+Incorporating just NMDA spikes into a model neuron radically increases the complexity of its dendritic integration ( Beniaguev et al., 2021 ).
+
+Na + and NMDA spikes can drive somatic spiking in an in vivo-like model neuron ( Goetz et al., 2021 ).
+
+A Ca 2+ spike in the apical trunk converts a single somatic spike to a burst ( Leleo and Segev, 2021 ; Larkum et al., 1999 ) and may allow pyramidal neurons to act as multi-stage integrators ( Poirazi et al., 2003 ; Larkum et al., 2009 ).
+
+This complexity is only increased by including inhibition.
+
+The emission of bursts of action potentials is controlled by the timing and dendritic location of inhibition ( Leleo and Segev, 2021 ).
+
+The rhythmicity of inhibition at distal dendrites also affects somatic integration ( Li et al., 2013 ).
+
+Reciprocal interactions between excitatory principal neurons and inhibitory interneurons give rise to rhythmic activities (pyramidal-interneuron network gamma or PING mechanism).
+
+To initiate the rhythm, excitatory principal neurons activate inhibitory interneurons that deliver feedback inhibition to principal neurons.
+
+This transiently suppresses principal neuron firing.
+
+As the inhibition wanes, principal neurons resume their activity and reengage the inhibitory population, starting a new oscillatory cycle.
+
+Some evidence suggests that different interneuron subtypes pace rhythms at different frequencies, with gamma oscillations depending on PV ( Sohal et al., 2009 ; Chen et al., 2017 ; Veit et al., 2017 ) and beta oscillations on SOM ( Chen et al., 2017 ).
+
+On the other hand, recent work has also found that beta/low-gamma rhythms in V1 engage both PV and SOM in their generation ( Onorato et al., 2025 ; Tahvili et al., 2025 ).
+
+Numerous cognitive processes are associated with these inhibitory rhythms in the cortex.
+
+Gamma oscillations are especially pronounced during stimulus presentation or behavioral initiation ( Headley and Weinberger, 2013 ; Murty et al., 2018 ; Muthukumaraswamy, 2010 ).
+
+Beta rhythms occur during preparatory states or working memory ( Sanes and Donoghue, 1993 ; Lundqvist et al., 2016 ).
+
+But fundamentally, these rhythms probably reflect different modes of local cortical activity and interregional communication ( Bastos et al., 2020 ; Bastos et al., 2015 ; Michalareas et al., 2016 ).
+
+For instance, gamma oscillations are associated with feedforward transmission of information in cortical circuits, and beta oscillations may mediate feedback ( Bastos et al., 2020 ; Vezoli et al., 2021 ), but see Vinck et al., 2023 .
+
+Given all this, it is important to better understand how the various integrative events in the dendritic tree are affected by the location and frequency of inhibition.
+
+Perhaps some rhythmic timescales are more effective in the dendrites, and others at the soma.
+
+Investigating this is beyond the reach of conventional experimental techniques.
+
+Moreover, computational models exploring how beta and gamma influence information processing have mostly relied upon simplified model neurons (e.g. Tiesinga et al., 2004 ; Feng et al., 2019 ).
+
+Thus, using a morphologically and biophysically detailed layer 5 (L5) pyramidal neuron model with Na + , NMDA, and Ca 2+ spikes, we investigated how perisomatic and distal dendritic inhibition impacted dendritic integration and the modulation of these events by beta and gamma rhythmicity.
+
+
 ## results
 
 Results Construction of a model cortical L5 pyramidal neuron To study the effect of inhibitory rhythms on synaptic integration and somatic spiking, we adapted a previously published morphologically and biophysically detailed model of a cortical L5 pyramidal neuron ( Figure 1A ; see Methods for details).⟦>zach claim=5037933c-103b-4f19-992e-1abb330ea4f1: @{Results Construction of a model cortical L5 pyramidal neuron To study the effect of inhibitory rhythms on synaptic integration and somatic spiking, we adapted a previously published morphologically and biophysically detailed model of a cortical L5 pyramidal neuron ( Figure 1A ; see Methods for details).} l5-model-single-cell-scope⟧
@@ -601,6 +670,203 @@ Summarizing these results ( Figure 10C ), we found that somatic spiking driven b
 On the other hand, spiking driven by distal clusters was bidirectionally modulated by the beta rhythm and suppressed by gamma.
 
 Thus, both rhythms regulate the sensitivity of pyramidal neurons to afferents throughout the dendritic tree, but in a counterposed location-dependent manner.
+
+
+## discussion
+
+Discussion Arising from multiple interneuron subtypes, inhibition sculpts pyramidal neuron activity by acting at different membrane regions and distinct rhythmic frequencies ( Figure 11A ).⟦>zach claim=gap: @{Discussion Arising from multiple interneuron subtypes, inhibition sculpts pyramidal neuron activity by acting at different membrane regions and distinct rhythmic frequencies ( Figure 11A ).}⟧
+
+Little was known about how these factors interact with the complexity of dendritic integration.
+
+To address this, we characterized the interaction between the location and rhythmicity of inhibition on integration in a morphologically and biophysically detailed L5 pyramidal neuron model with active dendrites.
+
+We found that distal dendritic inhibition modulated the occurrence of dendritic spikes, while perisomatic inhibition altered action potential generation.
+
+This translated into location-specific differences in the effectiveness of inhibitory rhythms.
+
+Beta rhythmic inhibition entrained dendritic spikes, focusing them into the phase when inhibition was at a minimum, but only when delivered to the distal dendrites ( Figure 11B ).⟦>zach claim=gap: @{Beta rhythmic inhibition entrained dendritic spikes, focusing them into the phase when inhibition was at a minimum, but only when delivered to the distal dendrites ( Figure 11B ).}⟧
+
+In contrast, gamma modulated the threshold for action potential initiation, but only when delivered perisomatically ( Figure 11C ).⟦>zach claim=gap: @{In contrast, gamma modulated the threshold for action potential initiation, but only when delivered perisomatically ( Figure 11C ).}⟧
+
+The effects of these rhythms were frequency specific, with the timing of beta and gamma aligning preferentially with phase-dependent effects on neuronal integration.
+
+As a likely result, beta oscillations bidirectionally controlled transmission in distal dendrites and suppressed those onto proximal dendrites, while gamma oscillations did the opposite.
+
+Figure 11. A summary schematic of the principal findings.⟦>zach claim=gap: @{Figure 11. A summary schematic of the principal findings.}⟧
+
+( A ) The microcircuitry that was simulated in this study.⟦>zach claim=gap: @{( A ) The microcircuitry that was simulated in this study.}⟧
+
+( B ) Beta rhythmic inhibition to the distal dendrites modulated dendritic spikes.⟦>zach claim=gap: @{( B ) Beta rhythmic inhibition to the distal dendrites modulated dendritic spikes.}⟧
+
+( C ) Gamma rhythmic inhibition to the perisomatic region modulated action potential initiation.⟦>zach claim=gap: @{( C ) Gamma rhythmic inhibition to the perisomatic region modulated action potential initiation.}⟧
+
+AP stands for action potentials.
+
+This indicates that the spatial targeting and timing of inhibition go hand in hand.
+
+Their alignment is thus fundamental to their distinct effects on neuronal integration.
+
+And in turn, this affects function at multiple levels, from synaptic responsiveness to neural coding and microcircuit operation.
+
+Neuronal responsiveness Oscillatory rhythms potentially affect synaptic integration through several mechanisms.
+
+Early theorizing held that oscillations synchronize populations of excitatory neurons such that their efferent synapses benefit from spatiotemporal summation in eliciting action potentials ( Salinas and Sejnowski, 2000 ).
+
+Later, it was proposed that if neurons in two regions exhibited coherent variations in their somatic membrane potentials, bringing them closer to or farther from action potential threshold, they could preferentially exchange activities ( Fries, 2005 ).
+
+Modeling and in vitro studies have shown that the phase of a sinusoidal current injected at the soma modulates the timing of evoked action potentials ( Hopfield, 1995 ) or their probability of occurrence ( Volgushev et al., 1998 ).
+
+Similar gamma phase dependence has been found in vivo ( Vinck et al., 2010a ).
+
+Rhythmic inhibition may also periodically modulate the sensitivity of the neuron to synaptic input.
+
+Inhibitory synapses achieve this by lowering the membrane resistance, i.e., shunting ( Prescott and De Koninck, 2003 ).
+
+This makes it harder for an excitatory synaptic current to drive the membrane voltage toward the action potential threshold.
+
+Indeed, optogenetically stimulating PV interneurons at gamma frequencies modulates the responsiveness of cortical neurons to sensory inputs in a phase-dependent manner ( Cardin et al., 2009 ).
+
+However, normally PV interneurons are driven by local principal cells, so the inhibition they impose reflects the aggregate activity in the local network (leading to E/I balance; Ferguson and Gao, 2018 ).
+
+Model networks wired in this manner emit spontaneous gamma bursts that produce phase-dependent modulation of the relationship between EPSP amplitude and spiking probability, with a strong positive relationship during the trough of gamma and a weak one during the peak ( Feng et al., 2019 ).
+
+Consistent with these results, putative monosynaptically connected pairs of single units recorded in vivo show an increase in spike transmission probability during the trough of gamma ( Headley et al., 2021 ).
+
+To summarize the present possibilities, oscillations could modulate a neuron’s responsiveness by (1) synchronizing the synaptic inputs impinging upon it, (2) modulating how close the membrane potential is to the action potential threshold, or (3) varying its sensitivity to synaptic inputs via shunting inhibition.
+
+Our results fill out this picture in two ways.
+
+First, we add a fourth mechanism, which is (4) the modulation of dendritic spiking events.
+
+Second, we found that beta and gamma oscillations differentially engaged these mechanisms.
+
+Beta oscillations were primarily caused by 2 via 4 and affected 3. Gamma, on the other hand, operated primarily through 3. It should be noted that to isolate these effects, our model had Poisson excitatory synaptic inputs, which precluded mechanism 1, afferent synchrony.
+
+However, it is likely the degree of synchrony would impact both rhythms.
+
+Supporting this, in vivo whole-cell recordings from neurons in mouse visual cortex exhibit brief membrane depolarizations in synchrony with gamma ( Perrenoud et al., 2016 ).
+
+Relevance to coding Given that beta and gamma rhythms influence spiking via distinct mechanisms, they may also differentially impact coding.
+
+During gamma bursts in V1, neurons show a stronger modulation of their firing rate by the contrast of grating stimuli ( Perrenoud et al., 2022 ).
+
+Gamma phase also modulates orientation selectivity and correlated variability between neurons ( Womelsdorf et al., 2012 ).
+
+This enhancement is modulated by attention ( Lisitsyn et al., 2020 ).
+
+Our results indicate that these effects reflect shifts in somatic sensitivity to excitatory synaptic inputs.
+
+Much less is known about the influence of beta oscillations on coding.
+
+In the visual cortex of mice, activation of SOM interneurons increased with the visual stimulus size and homogeneity ( Veit et al., 2017 ; note that this study referred to the rhythm as low gamma).
+
+In a different study, using a sequence working memory task in primates, the order of presented items corresponded to their phase in the beta rhythm ( Siegel et al., 2009 ).
+
+However, this does not indicate how coding varies with beta phase.
+
+Considering our finding of beta-synchronized dendritic spikes, it may operate by enabling the summation of normally asynchronous afferents on distal dendrites, thereby facilitating their ability to drive somatic spiking.
+
+One interpretation of rhythms arising from local inhibitory feedback is that they maintain the balance between excitation and inhibition.
+
+This can be thought of as a normalization operation that maintains activity within a set range.
+
+Normalization can be achieved either through a subtractive effect that raises the threshold for initiating an action potential or a multiplicative effect that lowers the slope of the relationship between excitation and action potential firing rate.
+
+When considered at the population level, these normalization effects impact coding in different ways.
+
+Subtractive normalization increases sparsity by dropping out neurons whose excitation is below the raised threshold.
+
+Multiplicative normalization, however, encourages dense codes by scaling down firing rates and compressing the range of firing rates.
+
+This study found that while both perisomatic and distal dendritic inhibition produced subtractive effects, only perisomatic had a multiplicative effect.
+
+Tying this to beta and gamma, beta rhythms may encourage sparse population codes, while gamma allows for dense.
+
+Interaction with microcircuitry Pyramidal neurons are embedded in a cortical column where they are sparsely connected among themselves and densely connected with local interneurons.
+
+The dense connectivity with interneurons is crucial for the generation of local beta and gamma rhythms ( Chen et al., 2017 ; Veit et al., 2017 ).
+
+How might this circuitry interact with the differential regulation of dendritic integration by beta and gamma?
+
+We found that beta rhythms preferentially modulated a pyramidal neuron’s response to inputs on its distal dendrites.
+
+The apical tuft in the superficial layers of cortex primarily receives long-range inputs from regions higher up in the cortical hierarchy ( D’Souza and Burkhalter, 2017 ; Harris et al., 2019 ).
+
+This makes beta rhythms ideally positioned to modulate these top-down/feedback signals.
+
+Since the rhythm likely derives from local activation of SOM interneurons, it is worth considering what situations would activate those and how they might relate to the functioning of apical dendrites.
+
+SOM interneurons receive facilitating synapses from local pyramidal neurons ( Beierlein et al., 2003 ; Campagnola et al., 2022 ), which would make them especially sensitive to bursts of action potentials arising from Ca 2+ spikes at the apical nexus ( Larkum et al., 2009 ).
+
+Since Ca 2+ spikes are driven by synaptic activation in the apical tuft, it is likely that beta rhythms regulate the generation of action potential bursts arising from long-range inputs.
+
+Particularly in the visual cortex, SOM interneurons can generate a rhythm in the 25–30 Hz range ( Veit et al., 2017 ).
+
+We found this to be at the upper end of the frequency range for dendritic inhibitory rhythms to be effective in modulating NMDA and Ca 2+ spikes.
+
+If this rhythm solely recruited SOM interneurons, its effectiveness would be marginal.
+
+Potentially compensating for this, recent work has found that PV interneurons also participate in beta/low gamma ( Onorato et al., 2025 ; Tahvili et al., 2025 ) (but see Chen et al., 2017 ; Veit et al., 2017 ).
+
+In our model, on its own, when beta rhythmic inhibition was delivered perisomatically, we found that it was less able to entrain spiking and had an overall hyperpolarizing effect.
+
+However, if delivered in conjunction with the distal dendritic inhibition arising from SOM interneurons, this may strengthen entrainment.
+
+Turning to gamma, our results indicated that it mainly affects processing in the soma and proximal dendrites.
+
+These are preferentially targeted by L5 pyramidal neurons, which sparsely interconnect with projection-type specificity ( Kawaguchi, 2017 ; Morishima et al., 2011 ; Morishima and Kawaguchi, 2006 ).
+
+A confluence of evidence implicates PV interneurons in the production of high-frequency inhibitory rhythms such as gamma ( Buzsáki and Wang, 2012 ; Fernandez-Ruiz et al., 2023 ).
+
+Given that PV interneurons diffusely interconnect with local pyramidal neurons ( Packer and Yuste, 2011 ; Morishima et al., 2017 ), and the synapses they receive from them are depressing ( Beierlein et al., 2003 ; Campagnola et al., 2022 ), they likely regulate abrupt increases in local ensemble activity.
+
+Interactions within ensembles that precede activating the PV population will be boosted, while those following will be attenuated.
+
+Interneuron specializations and rhythm timescales Lastly, it is worth considering why beta and gamma rhythms are primarily mediated by different types of interneurons (but see Tahvili et al., 2025 ).
+
+One possibility is that the differing pace merely arises from the electrotonic timescales of their feedback inhibition; SOM cells target distal dendrites and thus produce a slower inhibitory feedback signal, versus PV cells delivering rapid perisomatic inhibition.
+
+Indeed, we found that swapping the cellular compartments receiving beta and gamma rhythmic inhibition impaired their effectiveness and lowered overall excitability.
+
+So, while our results suggest that spatial targeting of SOM and PV interneurons aligns with the timescales of their network-level rhythms, it could also be that their timing and subcellular localization interact to produce specialized neuron-level functions ( Lovett-Barron et al., 2012 ).
+
+For instance, NMDA and Ca 2+ spikes in the distal dendrites last for ~50 ms, making the slower beta rhythm more appropriate for bidirectionally controlling them.
+
+Both can be described as dynamical systems with distinct phases with differing sensitivity to inhibition.
+
+Ca 2+ spikes are dynamical events comprised of an initiation, plateau, and termination phase.
+
+Inhibition delivered during the plateau phase shortens their duration ( Dudai et al., 2022 ).
+
+If the beta rhythm is comprised of cycling between periods of elevated excitation (increased NMDA spike generation) followed by elevated inhibition, then Ca 2+ spike initiation will tend to occur during the excitatory phase and its plateau during the subsequent inhibitory phase.
+
+A plateau during the inhibitory phase will more quickly enter termination.
+
+This is bidirectional control.
+
+On the other hand, slower rhythms (e.g. 1 Hz) initiate Ca 2+ spikes during the excitatory phase that plateau and enter termination autonomously, before the inhibitory phase is reached.
+
+The same principle holds for NMDA spikes ( Doron et al., 2017 ).
+
+As a result, rhythms in the range from 15 to 30 Hz are optimal for synchronizing the onsets and offsets of dendritic spikes across a population of neurons.
+
+The integrative effects of gamma (>40 Hz) are also specialized.
+
+Low-frequency inhibitory rhythms delivered to the soma tended to shift the membrane potential higher or lower with the rhythm’s phase, effectively bringing it closer or farther from action potential threshold but not changing the neuron’s sensitivity to fast synaptic inputs.
+
+In the gamma frequency range, this is reversed, with the mean membrane potential not varying with rhythm phase but with a shifting bias to positive or negative membrane potential fluctuations.
+
+In addition, the trough phase of gamma lowers the threshold for action potential initiation, while slower rhythms like beta only raise the threshold.
+
+Consequently, the timing of gamma is ideal for increasing the sensitivity of the neuron to rapid excitation.
+
+This agrees with the observation that gamma oscillations accompany rapid excitation-inhibition balancing ( Atallah and Scanziani, 2009 ).
+
+Conclusion For the most part, the study of beta and gamma rhythms has focused on their correlation with task-related events and entrainment of neuronal firing.
+
+Fundamentally, these effects derive from their influence on neuronal integration, which has multiple stages, from modulating the postsynaptic response, inducing a dendritic spike, and triggering an action potential.
+
+Since beta and gamma rhythms differentially impacted these processes, this invites a reappraisal of their role in coding and communication, along with unveiling a new hypothesis space for understanding their function.
 
 
 ## captions

@@ -18,6 +18,211 @@ Furthermore, intra-individual correlations revealed an ‘obligatory’ self-pri
 Together, our findings provide evidence for the influence of self-relatedness during earlier, automatic stages of attentional selection at the gateway to perception, distinct from later post-attentive processing stages.
 
 
+## introduction
+
+Introduction The ability to prioritize self-related information is crucial for adaptive cognition and behavior.
+
+It enables us to efficiently process cues pertaining to our own safety, goals, and well-being in complex, social environments ( Conway, 2005 ; Enock et al., 2018 ; Humphreys and Sui, 2015 ; Moray, 1959 ; Rogers et al., 1977 ).
+
+Decades of research have revealed that this self-relatedness boosts information processing not only for long-term established self-associated information (e.g. own names, owned objects), but also for completely arbitrary information newly associated with the self ( Cunningham et al., 2008 ; Golubickis et al., 2018 ; Moray, 1959 ; Scheller and Sui, 2022b ; Sui et al., 2012 ).
+
+However, the mechanisms underlying such self-prioritization remain unclear.
+
+While higher-level contributions from memory, decision making, and motor planning to the emergence of these self-prioritization effects (SPEs) are well established ( Caughey et al., 2021 ; Constable et al., 2011 ; Desebrock et al., 2018 ; Falbén et al., 2020a ; Falbén et al., 2020b ; Scheller and Sui, 2022b ; Yin et al., 2019 ), the role of earlier, perceptual processing stages is still debated ( Macrae et al., 2017 ; Macrae et al., 2018 ; Reuther and Chakravarthi, 2017 ; Scheller and Sui, 2022a ; Scheller and Sui, 2022b ; Stein et al., 2016 ; Sui et al., 2012 ).
+
+Some evidence suggests that self-relatedness can alter perceptual representations specifically through the integration of the sensory input with prior expectations ( Scheller et al., 2024 ; Scheller and Sui, 2022a ) or through attentional modulations ( Humphreys and Sui, 2016 ; Macrae et al., 2018 ).
+
+Nevertheless, its specific effects on attentional selection during perception remain unanswered, particularly since socially associated stimuli often do not contain inherent sensory salience that automatically captures attention in a purely bottom-up fashion.
+
+The putative role of social salience in driving self-prioritization ( Humphreys and Sui, 2015 ; Liu and Sui, 2016 ; Moradi et al., 2020 ; Siebold et al., 2015 ; Sui et al., 2012 ; Sui et al., 2015 ) begs the question whether the active decoding of higher-order social identities is strictly required to drive attentional selection, or whether more ‘automatic’ effects may arise from modulations of early perceptual attentional deployment.
+
+The first goal of the present study was to outline the mechanisms by which self-relatedness influences attentional selection of visual information.
+
+To address this, we assessed whether and how social association of arbitrary, sensory information alters attentional selection, leading to prior entry ( Schneider and Bavelier, 2003 ; Spence and Parise, 2010 ; Titchener, 1908 ; Weiß et al., 2013 ).
+
+Prior entry refers to the phenomenon that attention can boost processing of a stimulus so that it can sometimes be perceived as appearing earlier than another one, even if the other one was presented earlier.
+
+The magnitude of this catching up and overtaking in processing can be used to index the differential assignment of attentional resources to the stimuli.
+
+As a model of attention-biased stimulus encoding, the Theory of Visual Attention (TVA; Bundesen, 1990 ) formally describes mechanisms underpinning prior entry (; Tünnermann et al., 2017 ; Figure 1 ).⟦>zach claim=gap: @{As a model of attention-biased stimulus encoding, the Theory of Visual Attention (TVA; Bundesen, 1990 ) formally describes mechanisms underpinning prior entry (; Tünnermann et al., 2017 ; Figure 1 ).}⟧
+
+Prior entry could arise in different ways: (1) There may be a mere change in relative attentional weights (TVA’s parameter w ), where the attended stimulus receives resources at the expense of the other stimuli, with the overall employed processing resources (TVA’s capacity parameter C \begin{document}$C$\end{document} ) remaining constant.
+
+(2) According to TVA, objects in the visual field progress toward encoding at different processing rates (TVA’s v \begin{document}$v$\end{document} parameters).
+
+Therefore, alternatively, there may be an absolute boost of processing resources to the advantage of the attended stimulus (or an absolute decrease of processing resources towards the unattended stimuli, see Tünnermann et al., 2015 ).
+
+In combination, these lead to a higher absolute processing rate v of the attended compared to the unattended stimulus and consequently to prior entry.
+
+By estimating TVA parameters with a hierarchical Bayesian model ( Tünnermann et al., 2017 ), the present study quantified whether SPEs can be explained by changes in relative attentional weights, or absolute changes in processing rates of the self-related (salient) versus other-related (non-salient) stimuli.
+
+These mechanisms have previously been used to explain effects of low-level perceptual salience ( Krüger et al., 2016 ; Krüger et al., 2017 ; Krüger and Scharlau, 2021a ).
+
+Figure 1. Mechanisms of attentional selection.⟦>zach claim=gap: @{Figure 1. Mechanisms of attentional selection.}⟧
+
+Attentional selection can occur via different mechanisms: changes in the allocation or the availability and allocation of attentional resources.
+
+Panel A shows an example stimulus display with two identical perceptual objects (gray hexagons) on a dark background, and the processing resources ( C \begin{document}$C$\end{document} , blue columns) that are distributed equally across these stimuli.
+
+In this case, the attentional weights for the reference ( w r \begin{document}${w}_{r}$\end{document} ; left stimulus) and probe ( w p \begin{document}$w_{p}$\end{document} ; right stimulus) are identical.
+
+The processing rates for the reference ( v r \begin{document}$v_{r}$\end{document} ) and probe ( v p \begin{document}$v_{p}$\end{document} ) stimuli are given as the processing resources that are allocated to each of the two stimuli, i.e. w p , r ∗ C \begin{document}$w_{p,r}*C$\end{document} .
+
+Panels B and C show example stimulus displays with two perceptual objects, where one has a higher perceptual salience (luminance and color contrast).
+
+Panel B indicates a mechanism whereby the same processing resources are distributed differentially across the stimulus display, with more resources being given to the more salient stimulus.
+
+This is reflected in a change of relative weight, with constant processing capacity.
+
+Panel C indicates a mechanism whereby the amount of processing resources increases, along with a differential distribution of these resources.
+
+To arbitrate between these two mechanisms, we employed model comparisons to assess whether changes in relative attentional weight or changes in absolute processing rates (capacity and weights) better explained experimental data.
+
+The second aim of the present study was to establish at what representational level (perceptual, social) visual attention spreads across stimuli with varying different degrees of social salience.
+
+Prior work suggests that self-relatedness of owned objects ( Constable et al., 2019 ; Truong et al., 2017 ) and physical features (self-face; Jublie and Kumar, 2021 ) can lead to prior entry.
+
+While the mechanistic underpinnings of this attentional capture by self-relatedness have not been directly investigated, the authors manipulated the decisional dimension to be orthogonal to the social association.
+
+Findings from one study ( Constable et al., 2019 ) suggested that self-prioritization only emerged when the self was a relevant decisional category.
+
+Crucially, though, their manipulation was also orthogonal to the perceptual feature of interest (the color of the object, rather than the location, which was random).
+
+Expecting self-prioritization under such conditions, however, would assume not just a perceptual modulation, but rather a modulation of a completely unrelated feature.
+
+This, in turn, assumes an automatic fusion of social representations across all its instantaneous, unrelated perceptual features.
+
+However, it is well-established that information that is transferred via different cues does not instantly underlie fusion of all its features ( Enock et al., 2018 ).
+
+Hence, it remains unclear whether self-relatedness leads to prior entry at the level of the perceptual feature or requires decoding of the associated identity in a social feature dimension.
+
+Lastly, the third and final aim of the present study was to qualitatively compare the effects of and quantitatively probe the interactions of perceptual and social salience.
+
+Using a temporal order judgement (TOJ) task with simple, colored shape stimuli arbitrarily associated with social identities, the present study can, for the first time, directly compare social and perceptual salience on the same mechanistic metrics.
+
+That is, qualitatively, we can assess similarities/differences in social and perceptual changes while, quantitatively, studying the interactions between social and perceptual salience.
+
+Notably, if social and perceptual salience operate completely independently, such as at different processing levels, one would expect no interaction between social and perceptual salience.
+
+On the other hand, if social associations systematically alter the effects of perceptual salience, this would be strongly suggestive of self-relatedness directly affecting bottom-up perceptual processing.
+
+In summary, to characterize self-prioritization in early attentional selection, the study addresses three main research questions across two experiments.
+
+The resulting hypotheses and hypothesis-relevant details will be outlined more explicitly below: (Q1) Does mere self-association bias early attentional selection, and what are the underlying mechanisms?
+
+(Experiments 1+2) (H1) Based on previous findings of self-related prior entry findings ( Constable et al., 2019 ; Jublie and Kumar, 2021 ; Truong et al., 2017 ), we hypothesized that participants would show an attentional selection bias towards self-associated, relative to other-associated information.
+
+Mechanistically, this could arise from an enhancement of relative attentional weights towards self-associated information (TVA parameter w p \begin{document}$w_{p}$\end{document} ) or an increase in processing rates for self-associated over other-associated information.
+
+To arbitrate between these possible mechanisms, we compared hierarchical Bayesian models estimating: attentional weights for each condition with a single processing capacity parameter across conditions (indicative of changes in relative attentional weights), and attentional weights and processing capacity independently for each condition (indicative of changes in absolute processing rates).
+
+(Q2) Does self-relatedness bias attentional selection automatically or does it require explicit social decoding?
+
+(Experiment 1) (H2) Based on previous findings ( Constable et al., 2019 ; Jublie and Kumar, 2021 ; Truong et al., 2017 ), we hypothesized that participants would show a bias toward self-associated information when the decisional dimension requires the explicit decoding of the social identity ( Figure 2 , lower panel).⟦>zach claim=gap: @{(Experiment 1) (H2) Based on previous findings ( Constable et al., 2019 ; Jublie and Kumar, 2021 ; Truong et al., 2017 ), we hypothesized that participants would show a bias toward self-associated information when the decisional dimension requires the explicit decoding of the social identity ( Figure 2 , lower panel).}⟧
+
+If self-relatedness also biases attentional selection automatically at the perceptual feature level, self-related information should show higher relative attentional weights/absolute processing rates even when the decisional dimension does not require the explicit decoding of social identities, but merely of their associated perceptual feature (shapes; Figure 2 , upper panel).⟦>zach claim=gap: @{If self-relatedness also biases attentional selection automatically at the perceptual feature level, self-related information should show higher relative attentional weights/absolute processing rates even when the decisional dimension does not require the explicit decoding of social identities, but merely of their associated perceptual feature (shapes; Figure 2 , upper panel).}⟧
+
+As decisional criteria influence the expression of SPEs (e.g. Caughey et al., 2021 ; Falbén et al., 2020b ; Scheller and Sui, 2022b ), this automatic effect at perceptual levels was predicted to be smaller.
+
+Figure 2. Decision dimensions.⟦>zach claim=gap: @{Figure 2. Decision dimensions.}⟧
+
+Dissociating the processing stages at which social association may affect early attentional selection via different decisional dimensions.
+
+Automatic effects of self-association would assume that active decoding of the associated social identity is not necessary.
+
+In this case, the social identity associated with a specific perceptual feature renders this feature more salient, without having to be consciously recalled.
+
+On the other hand, some studies suggested that the self needs to be a decisional criterion.
+
+In this case, self-prioritization effects in attentional selection would require active decoding of the social associations.
+
+Altering the decisional dimension (asking which shape vs whose shape), without shifting attention from the crucial perceptual feature (shape), allows disentangling these processes.
+
+Note that the directionality of the sensory and social information does not make assumptions about the temporal dynamics of the underlying process.
+
+(Q3) Does self-association affect attentional selection in a similar way to perceptual salience, and how do social and perceptual salience interact?
+
+(Experiment 2) (H3) If social and perceptual salience bias attentional selection in similar ways, both manipulations were hypothesized to result in enhancements of relative attentional weights or similar enhancements in absolute processing rates towards the more salient stimulus (self).
+
+Overall, we expected effects of social salience to be smaller than those of perceptual salience ( Liu and Sui, 2016 ; Mevorach et al., 2010 ; Sui et al., 2015 ).
+
+Social and perceptual salience may interact or be processed independently.
+
+If they operate completely independently, the combination of their attentional processing rate changes would be additive.
+
+Sub- or supra-additive effects of social and perceptual salience would suggest interacting processes during attentional selection.
+
+The difference in degree of additivity for perceptual salience with either self- or other-related information (interference of social and perceptual salience) would suggest that self-relatedness affects information processing via distinct attentional streams from information linked to other social identities.
+
+Using a TOJ task with stimuli in which shape features have been arbitrarily associated with the self and a stranger identity ( Figure 3 ), we measured whether mere social associations lead to a differential allocation of attention across the visual field, or an increase/decrease in processing rates for self- and other-associated stimuli.⟦>zach claim=gap: @{Using a TOJ task with stimuli in which shape features have been arbitrarily associated with the self and a stranger identity ( Figure 3 ), we measured whether mere social associations lead to a differential allocation of attention across the visual field, or an increase/decrease in processing rates for self- and other-associated stimuli.}⟧
+
+Perceptual salience effects were quantified within the same task and stimuli, by altering local color features.
+
+Baseline TOJ measures were conducted for each participant, thereby allowing control for individual, pre-existing biases towards specific perceptual features.
+
+Hence, reported difference scores between baseline and social association conditions (i.e. in w p e f f e c t \begin{document}$w_{peffect}$\end{document} , Δ v p \begin{document}$\Delta v_{p}$\end{document} , or Δ v r \begin{document}$\Delta v_{r}$\end{document} ) are directly indicative of processing changes resulting from social/perceptual salience.
+
+Figure 3. Task design.⟦>zach claim=gap: @{Figure 3. Task design.}⟧
+
+( a ) Temporal order judgement task (TOJ) design.
+
+Following an initial presentation of the complete stimulus array, target shapes, which were relatively larger in size compared to background shapes, flickered with a variable stimulus onset asynchrony that was systematically varied between -/+ 83 ms with a higher presentation frequency at small SOAs.
+
+After the stimulus presentation, participants had to indicate which of the two shapes flickered first by selecting the correct shape (baseline conditions, perceptual salience conditions, social salience condition with perceptual decision boundary), or the identity label of the shape-associated social identity (social salience condition with social decision boundary).
+
+Stimulus displays consisted of two types of colored shapes (perceptual objects), distributed across two hemifields in an 8 x 8 grid.
+
+Targets would appear on each side at either of the four central locations.
+
+Lateralization of the specific perceptual objects was randomized across trials.
+
+( b ) Perceptual matching task design.
+
+Participants associated one of the two shapes with themselves, and one with another, anonymous participant.
+
+Associations between social identities and perceptual objects were counterbalanced across participants.
+
+Pairs of shapes and social identity labels were presented on screen.
+
+These could either be congruent (matching) or incongruent (mismatching).
+
+Participants had to respond whether the pair matched in the learned association or mismatched.
+
+Location of the shapes and labels (above, below fixation) was counterbalanced across the task.
+
+( c ) Task structures for Experiments 1 and 2. Both experiments began with a TOJ baseline task.
+
+Experiment 1 utilized non-salient targets exclusively, while Experiment 2 included both perceptually salient and non-salient targets.
+
+These were presented in randomly intermixed order.
+
+Next, targets were associated with social identities through a matching task.
+
+Following this association learning phase, which establishes social salience in the shapes, participants completed the same TOJ task again.
+
+In Experiment 1, they completed one block using a social decision dimension and one block using a perceptual decision dimension.
+
+The order of these blocks was counterbalanced across participants to reduce the influence of order effects in the results.
+
+In Experiment 2, perceptually salient and non-salient stimuli were presented in an intermixed fashion, and participants responded within the social decision dimension.
+
+Each task block was preceded by 8 (matching) to 14 (TOJ) practice trials.
+
+Furthermore, to establish the extent to which early attentional selection contributes to frequently observed SPEs using shape-label matching tasks ( Sui et al., 2012 ), we determined SPEs via this well-established paradigm.
+
+Employing the shape-label matching paradigm allowed us to form and practice associations between shapes and identities, while at the same time providing a (crude) independent measure of individual SPEs in matching.
+
+Within this task, self-relatedness biases build up over several processing stages including perception, attention, memory, and decision-making, leading to a behaviorally meaningful response-facilitation towards stimuli associated with the self.
+
+Group-level SPE measures were used to assess whether the included stimuli elicit self-prioritization benefits in the present sample, while, at the individual level, SPE measures were regressed over TVA parameters that indicated self-biases.
+
+The latter allowed us to determine whether the effects that attentional selection elicits in the perceptual or social representations contribute substantially to the SPE observed in the shape-label matching performance.
+
+Material availability statement Research questions, analyses, models, and additional details have been preregistered on the Open Science Framework: https://osf.io/ehu75 .
+
+The analysis notebooks and data are also available via the OSF project repository: https://osf.io/a62df .
+
+
 ## results
 
 Results Does mere self-association lead to a bias in early attentional selection, and what are the underlying mechanisms?
@@ -325,6 +530,131 @@ Table 1. Posterior coefficient summaries for perceptual salience and other-assoc
 Coefficient P(incl) P(incl|Data) B F i n c l u s i o n \begin{document}$BF_{inclusion}$\end{document} Mean SD C I 95 \begin{document}$CI^{95}$\end{document} Lower C I 95 \begin{document}$CI^{95}$\end{document} Upper Intercept 1.000 1.000 1.0 0.052 0.011 0.031 0.073 Δ w p P e r \begin{document}$\Delta{w_{p}^{Per}}$\end{document} 0.556 1.000 4638.74 0.833 0.200 0.434 1.232 Δ w p S o c \begin{document}$\Delta{w_{p}^{Soc}}$\end{document} 0.556 0.779 2.83 –1.191 0.624 –2.435 0.053 Δ w p P e r \begin{document}$\Delta{w_{p}^{Per}}$\end{document} * Δ w p S o c \begin{document}$\Delta{w_{p}^{Soc}}$\end{document} 0.333 0.414 1.42 6.081 6.667 –7.216 19.378 Table 2. Posterior coefficient summaries for perceptual salience and self-association.⟦>zach claim=gap: @{Coefficient P(incl) P(incl|Data) B F i n c l u s i o n \begin{document}}$BF_{inclusion}}$\end{document}} Mean SD C I 95 \begin{document}}$CI^{95}}$\end{document}} Lower C I 95 \begin{document}}$CI^{95}}$\end{document}} Upper Intercept 1.000 1.000 1.0 0.052 0.011 0.031 0.073 Δ w p P e r \begin{document}}$\Delta{w_{p}}^{Per}}}}$\end{document}} 0.556 1.000 4638.74 0.833 0.200 0.434 1.232 Δ w p S o c \begin{document}}$\Delta{w_{p}}^{Soc}}}}$\end{document}} 0.556 0.779 2.83 –1.191 0.624 –2.435 0.053 Δ w p P e r \begin{document}}$\Delta{w_{p}}^{Per}}}}$\end{document}} * Δ w p S o c \begin{document}}$\Delta{w_{p}}^{Soc}}}}$\end{document}} 0.333 0.414 1.42 6.081 6.667 –7.216 19.378 Table 2. Posterior coefficient summaries for perceptual salience and self-association.} This table is the only place the inclusion Bayes factors for the social-salience coefficient (BF=2.83) and for the perceptual-by-social interaction (BF=1.42, inconclusive) are reported, and no claim carries either.⟧
 
 Coefficient P(incl) P(incl|Data) B F i n c l u s i o n \begin{document}$BF_{inclusion}$\end{document} Mean SD C I 95 \begin{document}$CI^{95}$\end{document} Lower C I 95 \begin{document}$CI^{95}$\end{document} Upper Intercept 1.000 1.000 1.0 0.021 0.006 0.008 0.034 Δ w p P e r \begin{document}$\Delta{w_{p}^{Per}}$\end{document} 0.556 0.995 153.25 0.405 0.119 0.167 0.643 Δ w p S o c \begin{document}$\Delta{w_{p}^{Soc}}$\end{document} 0.556 1.000 2458.52 0.630 0.372 –0.111 1.372 Δ w p P e r \begin{document}$\Delta{w_{p}^{Per}}$\end{document} * Δ w p S o c \begin{document}$\Delta{w_{p}^{Soc}}$\end{document} 0.333 0.573 2.68 4.323 3.976 –3.606 12.252
+
+
+## discussion
+
+Discussion The present study investigated the mechanisms by which social salience biases attentional selection.
+
+Using a theory-informed Bayesian modeling framework of visual attention (TVA), we established evidence for effects of social and perceptual salience and assessed their interaction.
+
+In conjunction with the TOJ paradigm, TVA offers a clearly formalized, systematic framework for understanding attentional selection, allowing researchers to probe mechanisms via which attention facilitates encoding of sensory information into visual short-term memory.
+
+Its reliability and theoretical importance in describing attention and attentional selection of perceptually salient information have been demonstrated in previous studies ( Krüger et al., 2016 ; Krüger et al., 2017 ).
+
+The present study demonstrates the applicability of TVA in examining attentional selection of socially salient information, and its interaction with perceptual salience.
+
+Social salience effects in attentional selection – processing levels (Experiment 1) For the first time, we established that mere social relevance influences how attentional resources are allocated across the visual field: self-reference leads to changes in processing capacity and the allocation of resources across the visual field.
+
+That is, when sensory information becomes associated with social identities, its social connotation affects early attentional selection.
+
+Interestingly, the active decoding of social information was not necessary for this effect to take place.
+
+When participants had to decide which of two shapes flickered first, processing rates for self-associated shapes increased, relative to other-associated shapes, as a result of social association (i.e. relative to baseline).
+
+The conscious decoding of social associations was unnecessary for this effect to emerge, providing evidence against the claim that self-relatedness strictly has to be a conscious, goal-related feature in order to induce self-prioritization (e.g. Golubickis and Macrae, 2023 ; Woźniak and Knoblich, 2022 ).
+
+Instead, it supports further evidence showing that self-prioritization may emerge from the intrinsic nature of self-processing ( Lee et al., 2021 ; Zhang et al., 2023 ) and unfolds across different stages of the processing hierarchy ( Desebrock and Spence, 2021 ; Reuther and Chakravarthi, 2017 ; Scheller and Sui, 2022b ), with early processing stages being affected in an almost automatic fashion ( Alexopoulos et al., 2012 ; Geng and Xu, 2011 ; Humphreys and Sui, 2015 ; Sui et al., 2014 ; Yin et al., 2019 ).
+
+It further supports the framework of the Self-Attention Network (SAN; Humphreys and Sui, 2016 ), which outlines the crucial role of attention in the behavioral facilitation of self-related information.
+
+This framework suggests that early self-prioritization arises in an automatic fashion while subsequent, active suppression is required when non-self-related information becomes goal-relevant.
+
+Further evidence for the multi-stage nature of self-prioritization in information processing is given by the fact that SPEs, measured via the shape-label matching tasks ( Sui et al., 2012 ), which involves several higher-level processing stages, only correlated with the processing rate changes at higher processing levels in the current TVA-TOJ task.
+
+In other words, the SPEs measured via shape-label matching are more similar to the individuals’ attentional selection effects at higher-level, social decoding stages.
+
+Note, however, that self-relatedness biases at later processing levels do not rule out its automatic capture of attention at earlier levels of perceptual processing.
+
+Previous studies that established that self-ownership can favor attentional selection ( Constable et al., 2019 ; Jublie and Kumar, 2021 ; Truong et al., 2017 ) suggested that a social decision dimension was necessary ( Constable et al., 2019 ).
+
+The present investigation, therefore, contrasted perceptual and social salience across corresponding decisional dimensions: shape-specific (perceptual) versus identity-specific (social) decisions.
+
+Interestingly, we found that the decisional dimension had differential effects on social salience effects.
+
+Automatic biases that were favoring the self-associated stimulus were only present at the perceptual decision level, but not at the social decision level.
+
+When active decoding of social information was required, the same participant group that showed self-prioritization in early attentional selection instead showed no bias for the self, but a bias towards other-associated shapes.
+
+However, the relative slowing in processing rates for the self-associated stimuli was individual-specific.
+
+That is, those with the strongest self-relatedness benefit in shape-label matching showed the smallest decrease/the largest increase in processing rates for the self.
+
+This suggests that, rather than a general self-bias in the population, the benefit depended on the strength of self-representation.
+
+In contrast to previous studies, we controlled for any individual-specific, pre-existing biases, such as shape-preference biases, by including a baseline task prior to social association induction.
+
+This control allowed us to ensure that the attentional biases we measured were the direct result of perceptual and social salience.
+
+While we observed automatic attentional allocation effects towards the self-associated stimulus, the explicit decoding of the associated social identity led to a relative slowing of processing rates for the self-associated stimulus.
+
+This is opposite to what we expected and what was reported in previous studies (e.g. Constable et al., 2019 ; Jublie and Kumar, 2021 ), begging the question as to why this pattern emerged in the present task.
+
+One possibility is the type of social association that was being used: mere social association with arbitrary objects versus ownership ( Constable et al., 2019 ) or bodily self-representation (faces; Jublie and Kumar, 2021 ).
+
+Another alternative may be that the present study used a different type of event, for which the temporal order had to be established: Instead of assessing the order of stimulus onset, we asked participants to determine the order in which two stimuli flickered.
+
+We chose this particular event as TVA posits that attentional selection requires an initial wave of unselective attentional capacity buildup across the visual field, before attentional weights are selectively distributed across the processing channels to alter the rate at which information is subsequently processed ( Bundesen et al., 2005 ).
+
+Even bottom-up driven perceptual salience effects require an initial 150–200 ms to build up sufficient attentional processing capacity to show the typical, beneficial perceptual salience effects ( Krüger and Scharlau, 2021a ).
+
+A previous series of experiments on perceptual salience effects using TVA-TOJ showed that other events such as stimulus onset and stimulus offset failed to elicit expected benefit of pure bottom-up perceptual salience manipulations (orientation, color), likely because they induced more permanent changes in the salience of the display ( Krüger et al., 2016 ).
+
+Instead, a brief stimulus flicker allowed to probe the mechanisms of perceptual salience.
+
+Together with our findings of the differential effects of decision dimension in Experiment 1, this suggests that previous reports of prior entry (stimulus onset, social decision dimension in Constable et al., 2019 ; Truong et al., 2017 ) likely resulted from higher-level processing stages.
+
+Hence, the present study provides the first account of subconscious, automatic effects of mere self-relatedness on early attentional selection during perception.
+
+The factors that lead to changes in directionality of these effects remain to be explored in future studies.
+
+Comparing social and perceptual salience (Experiment 2) By combining social associations with perceptual salience, the present study allowed establishing, for the first time, similarities, differences, and interactions between social and perceptual salience effects.
+
+Experiment 2 revealed that changing local color features of the targets, relative to the background objects, produced the expected perceptual-salience effects, which have been reported in previous studies using TVA-TOJ ( Krüger et al., 2016 ; Krüger et al., 2017 ).
+
+That is, local color alterations produced a shift in attentional weights towards the more salient stimulus.
+
+The increase in attentional weight in the present study w p e f f e c t \begin{document}$w_{peffect}$\end{document} = 0.059 [0.037 – 0.081] was similar, albeit slightly larger, in magnitude to the one reported by Krüger et al., 2016 ; w p e f f e c t \begin{document}$w_{peffect}$\end{document} = 0.043. Inducing social salience, on the other hand, led to decreases in processing rates for the self-associated (presumably salient) stimulus, at least when active decoding of the social identities was required – an unpredicted effect possibly reflecting later, compensatory mechanisms overriding automatic perceptual benefits obtained by self-relatedness (as outlined above).
+
+We investigated whether the different decisional dimensions used for social salience versus perceptual salience contributed to any effect differences, by including two conditions assessing the effects of perceptual salience on specifically associated shapes (self, other) under the same decisional dimension.
+
+Here, we observed that perceptual salience effects were diminished by social associations, with a stronger effect reduction in the self-associated shape.
+
+Notably, the reduction in perceptual salience benefit corresponded to the decrease in processing rates for the self-associated and other-associated shapes, suggesting additive rather than interactive effects of perceptual and social salience.
+
+This additive pattern may reflect that perceptual and social salience were induced in different features (color and shape, respectively) and may therefore have led to a trade-off in attentional resource allocation.
+
+Indeed, even perceptual salience effects across two different feature dimensions, luminance and orientation contrasts, have previously been reported to be additive ( Krüger et al., 2017 ), reflected in the TVA parameter Kappa ( Nordfang et al., 2013 ).
+
+The processing speeds at which this information races can be influenced both by social and perceptual salience.
+
+While not completely ruling out that perceptual and social salience interact at any point in the processing hierarchy, our findings indicate that, when they are induced in different stimulus features, their salience effects on attentional selection are independent and additive.
+
+Using TVA’s report categories and the modulatory Beta parameter, future work could investigate the interactions between perceptual and social categorizations.
+
+Interestingly, while the average effects of social and perceptual salience were mostly additive, their respective contributions differed: prediction model comparisons revealed that when the self-related stimulus was also perceptually salient, the processing benefit magnitude was mostly predicted by the social salience of the stimulus, and to a lesser, even if substantial, extent by perceptual salience.
+
+On the contrary, for other-related stimuli, the processing benefit magnitude was determined primarily by its perceptual salience alone.
+
+This suggests that the trade-off between perceptual and social salience in attentional selection differs between self- and other-associated stimuli: Self-relatedness has the power to partially overwrite the effects of bottom-up perceptual salience on attentional selection, while other-association does not.
+
+Conclusions Overall, a consistent finding that emerges across the literature is that prioritization of social information requires the deployment of attention ( Alexopoulos et al., 2012 ; Humphreys and Sui, 2016 ; Sui and Rotshtein, 2019 ; Wade and Vickery, 2018 ).
+
+However, the mechanisms by which attention shapes different stages of information processing to facilitate self-related processing are not fully understood.
+
+Here, we show that mere self-association with arbitrary shapes can alter attentional selection at early, perceptual processing stages, leading to increased processing rates for self-associated stimuli.
+
+Crucially, this self-prioritization occurs in an automatic fashion that does not require the active decoding of the associated social identities.
+
+Secondly, we show that varying the decisional dimension alters the degree of processing benefit obtained from social relevance, highlighting the multi-stage nature of self-relatedness effects in information processing.
+
+Thirdly, our results suggest that social and perceptual salience do not interact during information processing but are likely processed in parallel: while perceptual salience showed robust increases in processing rates, this effect reduced in socially associated stimuli, consistent with the processing rate reductions associated with self and others.
+
+Lastly, exploratory intra-individual correlations showed that the relative contribution of social and perceptual salience to attentional selection depended on the social association: self-relatedness was considered more strongly than perceptual salience, while perceptual salience was considered more strongly than other-relatedness.
+
+This investigation provides the first evidence outlining how self-relatedness leads to automatic, perceptual benefits through early attentional selection, and how social and perceptual salience shape attentional deployment.
+
+These findings shed light on core mechanisms underlying the pervasive SPEs that fundamentally shape human information processing hierarchy from early perceptual encoding to higher-order cognition and conscious awareness.
 
 
 ## captions
