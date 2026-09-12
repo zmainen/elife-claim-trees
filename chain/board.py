@@ -26,7 +26,7 @@ TYPE_TONE = {"question": "#805ad5", "scope": "#718096", "hypothesis": "#3182ce",
              "prediction": "#4299e1", "method": "#38a169", "result": "#dd6b20",
              "interpretation": "#d69e2e", "assessment": "#e53e3e", "decision": "#c53030",
              "step": "#4a5568"}
-WORKER_TONE = {"code": "#718096", "model": "#3182ce", "human": "#805ad5"}
+WORKER_TONE = {"code": "#718096", "player": "#3182ce"}
 
 # ── plain words for a system with none of its own ───────────────────────────
 STATE_WORD = {"current": "up to date", "stale": "out of date", "blocked": "waiting",
@@ -37,7 +37,7 @@ STATE_MEANING = {
     "blocked": "Answered and unchanged, but something it depends on is no longer current.",
     "pending": "A request is open and waiting for someone to answer it.",
     "absent": "Never answered."}
-WORKER_WORD = {"code": "a script", "model": "a model", "human": "a person"}
+WORKER_WORD = {"code": "the referee (a script)", "player": "a player"}
 # What each step asks, in plain words. Falls back to the step's own question.
 STEP_NAME = {"question": "Ask the question", "hypotheses": "Propose hypotheses",
              "design": "Design the study", "proposal": "Compose the proposal",
@@ -85,6 +85,12 @@ def chip(state: str, text: str | None = None) -> str:
 
 def tag(t: str) -> str:
     return f'<span class="tag" style="background:{TYPE_TONE.get(t, "#718096")}">{esc(t)}</span>'
+
+
+def kind_of(x) -> str:
+    """Who answers: the referee runs a command, or a player answers. Steps and records alike."""
+    auto = x.automatic if hasattr(x, "automatic") else bool(x.get("automatic"))
+    return "code" if auto else "player"
 
 
 def who(worker: str) -> str:
@@ -304,7 +310,7 @@ def _what(proc: Process, store: Store, st: dict) -> str:
         boxes.append(
             f"<a class='stepbox' href='{target}'><span class='n'>{i}</span>"
             f"<span class='nm'>{esc(step_name(s))}</span>"
-            f"<span class='row'>{who(s.worker)} {chip(cell.get('state', 'absent'))}</span></a>")
+            f"<span class='row'>{who(kind_of(s))} {chip(cell.get('state', 'absent'))}</span></a>")
     strip = f"<div class='strip'>{''.join(boxes)}</div>"
     note = ("<p class='small muted'>A twelfth step stands apart: the process reviews itself, asking "
             "whether each step above should exist. Its ruling is the last card under The artifacts.</p>")
@@ -368,7 +374,7 @@ def _artifacts(proc, store, root, st, refs: Refs, verdicts) -> str:
 
 
 def _provenance(store, sid, step, v, rec, refs: Refs) -> str:
-    who_made = "a script" if step.worker == "code" else esc(rec.get("by"))
+    who_made = "a script" if kind_of(step) == "code" else esc(rec.get("by"))
     ins = [refs.artifact_link(i["ref"], f"{noun(i['ref'].split(':', 1)[1])} (v{i['v']})")
            for i in rec.get("in", []) if i["kind"] == "step"]
     tail = []
@@ -391,7 +397,7 @@ def _status_sentence(cell, store, refs: Refs) -> str:
         names = [f"{noun(b.split(':', 1)[1])}" for b in cell.get("blocked_by", [])]
         return f"<div class='stat' style='color:#c05621'>Waiting: {_join(names)} must be brought up to date first.</div>"
     if s == "pending":
-        return f"<div class='stat' style='color:#2b6cb0'>A request is open, waiting for {esc(WORKER_WORD.get(cell.get('worker'), 'an answer'))}.</div>"
+        return f"<div class='stat' style='color:#2b6cb0'>A request is open, waiting for {esc(WORKER_WORD.get(kind_of(cell), 'an answer'))}.</div>"
     return "<div class='stat muted'>Not started.</div>"
 
 
@@ -410,7 +416,7 @@ def _card(proc, store, root, st, refs: Refs, verdicts, sid, step, v) -> str:
     cell = st.get(sid, {}).get(step.id, {})
     is_latest = v == store.latest(sid, step.id)
     head = (f"<div class='hd'><span class='t'>{esc(title(step.id))} (version {v})</span> "
-            f"{who(step.worker)} {chip(cell.get('state', 'absent'))}</div>")
+            f"{who(kind_of(step))} {chip(cell.get('state', 'absent'))}</div>")
     body = [head, _provenance(store, sid, step, v, rec, refs), _status_sentence(cell, store, refs)]
     if step.judges:
         body.append(_report(cs, step, sid, refs, is_latest))
@@ -519,7 +525,7 @@ def _open(proc, store, st) -> str:
                     items = f" {n} items to judge."
             cards.append(
                 f"<article class='card'><div class='hd'><span class='t'>Waiting for "
-                f"{esc(WORKER_WORD.get(step.worker, 'an answer'))}: {esc(step_name(step))} for {esc(sid)}.</span></div>"
+                f"{esc(WORKER_WORD.get(kind_of(step), 'an answer'))}: {esc(step_name(step))} for {esc(sid)}.</span></div>"
                 f"<p class='prov'>{esc(step.question)}{items}</p></article>")
     inner = "".join(cards) or "<p class='muted'>Nothing is open right now — every question has been answered.</p>"
     return ("<section><h2 id='open'>Open requests</h2>"
@@ -581,7 +587,7 @@ def _process(proc: Process) -> str:
                      f"{esc(p.read_text(encoding='utf-8'))}</pre></details>")
         out.append(
             f"<article class='card' id='{step_anchor(sid)}'><div class='hd'>"
-            f"<span class='t'>{esc(step_name(s))}</span> {who(s.worker)}</div>"
+            f"<span class='t'>{esc(step_name(s))}</span> {who(kind_of(s))}</div>"
             f"<p class='prov'>{esc(s.question)}</p>"
             f"<p class='small'><b>Reads:</b> {reads}. <b>Produces:</b> {produces}.</p>{cmd}{instr}</article>")
     return "\n".join(out) + "</section>"
@@ -611,7 +617,7 @@ def _ledger(proc, store) -> str:
             for r in store.ledger(sid):
                 rows.append((r["answered"], f"<tr><td class='mono'>{esc(r['answered'])}</td>"
                              f"<td class='mono'>{esc(sid)}</td><td>{esc(step_name(proc.steps[r['step']]))} v{r['v']}</td>"
-                             f"<td>{esc(r['worker'])}</td><td>{esc(r['by'])}</td>"
+                             f"<td>{esc(kind_of(r))}</td><td>{esc(r['by'])}</td>"
                              f"<td class='small muted'>{esc(r.get('note'))}</td></tr>"))
     rows.sort(reverse=True)
     return ("<section><h2 id='ledger'>The ledger</h2>"

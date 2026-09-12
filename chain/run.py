@@ -1,11 +1,11 @@
 """ask and answer.
 
 `ask` stages a request: one directory holding copies of every input the step may read, the
-step's INSTRUCTIONS.md, a CONTRACT.json saying what may come back, a manifest naming every
-input by hash, and for a judging step a skeleton. A code step's request is executed at once
-(the command reads $CHAIN_IN, writes $CHAIN_OUT) and answered. A model's or a person's request
-waits. `answer` refuses an answer whose request has gone stale, validates the claim set, and
-writes the next version with its run record.
+step's INSTRUCTIONS.md, the player's PERSONA.md, a CONTRACT.json saying what may come back, a
+manifest naming every input by hash, and for a judging step a skeleton. A step with a command
+is run at once by the referee and answered. Any other step waits for a player. `answer` refuses
+an answer whose request has gone stale, validates the claim set, and writes the next version
+with its run record naming who answered.
 """
 
 from __future__ import annotations
@@ -30,33 +30,43 @@ def now() -> str:
 def inputs(proc: Process, store: Store, root: Path, sid: str, step: Step) -> tuple[list[dict], list[str]]:
     ins, missing = [], []
     for tok in step.inputs:
-        if is_ref(tok):
-            sub, dep = proc.resolve(tok, sid)
+        if not is_ref(tok):
+            p = root / tok
+            if p.exists():
+                ins.append({"kind": "path", "path": tok, "sha": sha_path(p)})
+            else:
+                missing.append(f"{tok} does not exist")
+            continue
+        members = proc.expand(tok, sid)
+        if proc.is_set(tok):
+            # Every player of a type: the membership is an input too, so a new player
+            # appearing makes the readers of the set stale. A member without a version yet
+            # is simply not staged.
+            ins.append({"kind": "set", "ref": tok, "path": tok,
+                        "members": [f"{s}:{d}" for s, d in members if store.latest(s, d)]})
+        for sub, dep in members:
             v = store.latest(sub, dep)
             if v is None:
-                missing.append(f"{sub}:{dep} has no version yet")
+                if not proc.is_set(tok):
+                    missing.append(f"{sub}:{dep} has no version yet")
                 continue
             d = store.version_dir(sub, dep, v)
             ins.append({"kind": "step", "ref": f"{sub}:{dep}", "v": v,
                         "path": str(d.relative_to(root)), "sha": sha_path(d)})
-        else:
-            p = root / tok
-            if not p.exists():
-                missing.append(f"{tok} does not exist")
-                continue
-            ins.append({"kind": "path", "path": tok, "sha": sha_path(p)})
-    if step.instructions:
-        p = root / step.instructions
-        if p.is_file():
-            ins.append({"kind": "instructions", "path": step.instructions, "sha": sha_path(p)})
-        else:
-            missing.append(f"instructions {step.instructions} do not exist")
+    for kind, rel in (("instructions", step.instructions), ("persona", proc.meta(sid).get("persona"))):
+        if rel:
+            p = root / rel
+            if p.is_file():
+                ins.append({"kind": kind, "path": rel, "sha": sha_path(p)})
+            else:
+                missing.append(f"{kind} {rel} does not exist")
     ins.append({"kind": "declaration", "path": str(proc.path.relative_to(root)), "sha": step.hash})
     return ins, missing
 
 
 def signature(ins: list[dict]) -> list[tuple]:
-    return [(i["kind"], i.get("ref") or i["path"], i.get("v") or i["sha"]) for i in ins]
+    return [(i["kind"], i.get("ref") or i["path"], i.get("v") or i.get("sha") or tuple(i.get("members", [])))
+            for i in ins]
 
 
 def stage(proc: Process, store: Store, root: Path, sid: str, step_id: str) -> Path:
@@ -68,34 +78,40 @@ def stage(proc: Process, store: Store, root: Path, sid: str, step_id: str) -> Pa
     rd = store.request_dir(sid, step_id)
     (rd / "in").mkdir(parents=True)
     for i in ins:
-        if i["kind"] == "declaration":
+        if i["kind"] in ("declaration", "set"):
             continue
-        src, dst = root / i["path"], rd / "in" / (i["ref"].replace(":", "/") if i["kind"] == "step" else i["path"])
+        src = root / i["path"]
+        dst = rd / "in" / (i["ref"].replace(":", "/") if i["kind"] == "step" else i["path"])
         dst.parent.mkdir(parents=True, exist_ok=True)
         (shutil.copytree if src.is_dir() else shutil.copyfile)(src, dst)
         if i["kind"] == "instructions":
             shutil.copyfile(src, rd / "INSTRUCTIONS.md")
+        if i["kind"] == "persona":
+            shutil.copyfile(src, rd / "PERSONA.md")
     v = (store.latest(sid, step_id) or 0) + 1
-    manifest = {"subject": sid, "step": step_id, "v": v, "worker": step.worker,
+    manifest = {"subject": sid, "step": step_id, "v": v, "automatic": step.automatic,
                 "question": step.question, "asked": now(), "in": ins}
     contract = {"emits": step.emits, "types": list(C.TYPES), "relations": list(C.RELATIONS),
                 "may_reference": sorted(C.refs_in(rd)), "answer": "claims.json"}
     if step.judges:
         if step.judges == "process":
-            judged, target = proc.as_judged(), "process"
+            targets = [("process", proc.as_judged())]
             manifest["judges"] = {"ref": "process", "sha": proc.hash}
             manifest["steps"] = list(proc.steps)
         else:
-            jsub, jstep = proc.resolve(step.judges, sid)
-            jv = store.latest(jsub, jstep)
-            judged, target = C.load(store.version_dir(jsub, jstep, jv)) or {"claims": []}, f"{jsub}:{jstep}"
-            manifest["judges"] = {"ref": target, "v": jv}
-        its = C.items(judged, target, rd)
+            targets = []
+            for jsub, jstep in proc.expand(step.judges, sid):
+                jv = store.latest(jsub, jstep)
+                if jv:
+                    targets.append((f"{jsub}:{jstep}", C.load(store.version_dir(jsub, jstep, jv)) or {"claims": []}))
+            manifest["judges"] = {"ref": step.judges, "targets": {t: store.latest(*t.split(":", 1)) for t, _ in targets}}
+        its = C.items(targets, rd)
         manifest["items"] = {r: it["sha"] for r, it in its.items()}
+        manifest["targets"] = [t for t, _ in targets]
         prev = store.latest(sid, step_id)
         prior = C.load(store.version_dir(sid, step_id, prev)) if prev else None
-        write_json(rd / "skeleton.json", C.skeleton(step, target, its, prior))
-        contract["verdicts"], contract["judges"] = step.verdicts, target
+        write_json(rd / "skeleton.json", C.skeleton(step, manifest["targets"], its, prior))
+        contract["verdicts"], contract["judges"] = step.verdicts, manifest["targets"]
     write_json(rd / "manifest.json", manifest)
     write_json(rd / "CONTRACT.json", contract)
     (rd / "QUESTION.md").write_text(_question(step, manifest, contract), encoding="utf-8")
@@ -104,17 +120,17 @@ def stage(proc: Process, store: Store, root: Path, sid: str, step_id: str) -> Pa
 
 def _question(step: Step, m: dict, c: dict) -> str:
     L = [f"# {m['subject']} · {step.id} · v{m['v']}", "", step.question, "",
-         f"Answered by: {step.worker}. Read INSTRUCTIONS.md, then everything under in/. Write claims.json "
-         f"as CONTRACT.json says. Refer only to what is listed there.", "", "## Staged", ""]
+         "Read INSTRUCTIONS.md and PERSONA.md if present, then everything under in/. Write claims.json "
+         "as CONTRACT.json says. Refer only to what is listed there.", "", "## Staged", ""]
     L += [f"- `in/{i['ref'].replace(':', '/') if i['kind'] == 'step' else i['path']}`  {i['sha']}"
-          for i in m["in"] if i["kind"] != "declaration"]
+          for i in m["in"] if i["kind"] in ("step", "path", "instructions", "persona")]
     if step.emits:
         L += ["", f"May emit claims of type: {', '.join(step.emits)}."]
     if step.judges:
-        L += ["", f"## Judging {c['judges']}", "", f"{len(m.get('items') or {})} items. Fill skeleton.json: "
-              f"an assessment per item with a verdict from {step.verdicts}, and the `overall` decision "
-              f"(accept / reject / partial). Leave what you did not read `unconsidered` and mark the "
-              f"decision `partial`; a partial reading is a legitimate answer."]
+        L += ["", f"## Judging {', '.join(m['targets'])}", "", f"{len(m.get('items') or {})} items. Fill "
+              f"skeleton.json: an assessment per item with a verdict from {step.verdicts}, and a decision "
+              f"per judged artifact (accept / reject / partial). Leave what you did not read `unconsidered` "
+              f"and mark the decisions `partial`; a partial reading is a legitimate answer."]
     if step.command:
         L += ["", "## Command", "", f"    {step.command}", "", "reads $CHAIN_IN, writes $CHAIN_OUT."]
     return "\n".join(L) + "\n"
@@ -154,10 +170,10 @@ def answer(proc: Process, store: Store, root: Path, sid: str, step_id: str, src:
         vd.mkdir(parents=True)
     if ans is not None:
         write_json(vd / "claims.json", ans)
-    shutil.copyfile(rd / "QUESTION.md", vd / "QUESTION.md")
-    if (rd / "INSTRUCTIONS.md").is_file():
-        shutil.copyfile(rd / "INSTRUCTIONS.md", vd / "INSTRUCTIONS.md")
-    rec = {"subject": sid, "step": step_id, "v": v, "worker": step.worker, "by": by, "note": note,
+    for name in ("QUESTION.md", "INSTRUCTIONS.md", "PERSONA.md"):
+        if (rd / name).is_file():
+            shutil.copyfile(rd / name, vd / name)
+    rec = {"subject": sid, "step": step_id, "v": v, "automatic": step.automatic, "by": by, "note": note,
            "asked": manifest["asked"], "answered": now(), "in": manifest["in"],
            "judges": manifest.get("judges"), "out": {"path": str(vd.relative_to(root)), "sha": sha_path(vd)}}
     write_json(vd / "run.json", rec)
@@ -168,9 +184,9 @@ def answer(proc: Process, store: Store, root: Path, sid: str, step_id: str, src:
 
 def ask(proc: Process, store: Store, root: Path, sid: str, target: str, *, by: str | None = None,
         note: str = "", again: bool = False) -> list[tuple[str, str, str]]:
-    """Ask `target`, asking first whatever it needs that is not current. Code answers itself;
-    the first model or person stops the walk with a pending request. A current target is not
-    re-asked unless `again`: asking is idempotent, and a fresh version is an explicit act."""
+    """Ask `target`, asking first whatever it needs of the same player that is not current.
+    Commands run at once; the first step that waits for a player stops the walk. Idempotent: a
+    current target is not re-asked without `again`."""
     from .status import status
     st = status(proc, store, root, [sid])[sid]
     wanted, seen = [], set()
@@ -182,8 +198,8 @@ def ask(proc: Process, store: Store, root: Path, sid: str, target: str, *, by: s
         if st[step_id]["state"] == "current" and not (top and again):
             return
         for tok in proc.steps[step_id].inputs:
-            if is_ref(tok):
-                sub, dep = proc.resolve(tok, sid)
+            if is_ref(tok) and not proc.is_set(tok):
+                sub, dep = proc.expand(tok, sid)[0]
                 if sub == sid:
                     walk(dep)
         wanted.append(step_id)
@@ -193,12 +209,11 @@ def ask(proc: Process, store: Store, root: Path, sid: str, target: str, *, by: s
     for step_id in wanted:
         step = proc.steps[step_id]
         rd = stage(proc, store, root, sid, step_id)
-        if step.worker != "code":
+        if not step.automatic:
             done.append((step_id, "pending", str(rd.relative_to(root))))
             break
         out = rd / "out"
         out.mkdir()
-        # The harness is an input too: the command runs with this interpreter and this package.
         pkg_root = str(Path(__file__).resolve().parents[1])
         env = dict(os.environ, CHAIN_IN=str(rd), CHAIN_OUT=str(out), CHAIN_SUBJECT=sid, CHAIN_STEP=step_id,
                    PYTHONPATH=pkg_root + os.pathsep + os.environ.get("PYTHONPATH", ""),
@@ -206,6 +221,6 @@ def ask(proc: Process, store: Store, root: Path, sid: str, target: str, *, by: s
         rc = subprocess.run(step.command, shell=True, cwd=root, env=env).returncode
         if rc != 0:
             raise SystemExit(f"{sid}/{step_id}: command exited {rc}")
-        vd = answer(proc, store, root, sid, step_id, out, by=by or step.command.split()[0], note=note)
+        vd = answer(proc, store, root, sid, step_id, out, by=by or "referee", note=note)
         done.append((step_id, "answered", str(vd.relative_to(root))))
     return done

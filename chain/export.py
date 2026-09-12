@@ -26,7 +26,7 @@ def export(proc: Process, store: Store, root: Path, sid: str, step_id: str, v: i
     rec = store.run_record(sid, step_id, v) or {}
     cs = C.load(vd) or {}
     step = proc.steps[step_id]
-    agent_type = "prov:Person" if step.worker == "human" else "prov:SoftwareAgent"
+    agent_type = "prov:SoftwareAgent" if step.automatic else "prov:Agent"   # a player may be either; the record says who
     graph = [
         {"@id": f"urn:chain:{sid}:{step_id}:v{v}", "@type": ["prov:Entity", "docmaps:Output"],
          "prov:wasGeneratedBy": f"urn:chain:{sid}:{step_id}:v{v}:run",

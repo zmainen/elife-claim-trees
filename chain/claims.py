@@ -4,9 +4,9 @@
      "edges":    [{"from", "to", "rel"}],
      "sections": [{"title", "claims": [refs]}]}          # compositions only
 
-A claim's global id is `subject:step:id`; inside its own artifact the local id suffices. A
-reference is a claim (`alpha:study:r1`) or a whole artifact (`alpha:paper`). An answer may
-only refer to what its request staged, so an agent cannot cite what it was not shown.
+A claim's global id is `player:step:id`; inside its own artifact the local id suffices. A
+reference is a claim (`juniper:study:r1`) or a whole artifact (`juniper:paper`). An answer may
+only refer to what its request staged, so a player cannot cite what it was not shown.
 
 A paper, a proposal, a review, a funding decision and a person's verdict are all claim sets.
 A review is assessments about claims; a decision is a claim with a verdict about an artifact.
@@ -37,13 +37,23 @@ def load(vdir: Path) -> dict | None:
     return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else None
 
 
+def staged(request_dir: Path) -> dict[str, dict]:
+    """Every artifact the request staged: {player:step: claim set}."""
+    out = {}
+    for cj in (request_dir / "in").rglob("claims.json"):
+        parts = cj.parent.relative_to(request_dir / "in").parts
+        if len(parts) >= 2:
+            out[f"{parts[0]}:{parts[1]}"] = json.loads(cj.read_text(encoding="utf-8"))
+    return out
+
+
 def refs_in(request_dir: Path) -> set[str]:
     """Every reference an answer to this request may make: staged claims and artifacts."""
     out = set()
-    for cj in (request_dir / "in").rglob("claims.json"):
-        sub, step = cj.parent.relative_to(request_dir / "in").parts[:2]
-        out.add(f"{sub}:{step}")
-        for c in (json.loads(cj.read_text(encoding="utf-8")).get("claims") or []):
+    for ref, cs in staged(request_dir).items():
+        out.add(ref)
+        sub, step = ref.split(":", 1)
+        for c in cs.get("claims") or []:
             out.add(gid(sub, step, c["id"]))
     return out
 
@@ -92,15 +102,17 @@ def validate(step: Step, subject: str, ans, known: set[str], manifest: dict) -> 
                 out.append(f"section {s.get('title')!r}: {r!r} not staged")
     if step.judges:
         items = manifest.get("items") or {}
+        targets = manifest.get("targets") or []
         judged = [c for c in ans["claims"] if c.get("type") == "assessment"]
         considered = sum(1 for c in judged if c.get("verdict") != "unconsidered")
-        overall = [c for c in ans["claims"] if c.get("type") == "decision"]
-        if not overall:
-            out.append("a judging answer carries one decision claim about the whole artifact")
-        elif overall[0].get("verdict") not in OVERALL:
-            out.append(f"the decision's verdict is one of {OVERALL}")
-        elif items and considered < len(items) and overall[0]["verdict"] != "partial":
-            out.append(f"{considered} of {len(items)} items considered: the decision is `partial`")
+        decisions = {a: c for c in ans["claims"] if c.get("type") == "decision" for a in c.get("about") or []}
+        for t in targets:
+            if t not in decisions:
+                out.append(f"a judging answer carries one decision about {t}")
+            elif decisions[t].get("verdict") not in OVERALL:
+                out.append(f"the decision about {t}: verdict is one of {OVERALL}")
+            elif items and considered < len(items) and decisions[t]["verdict"] != "partial":
+                out.append(f"{considered} of {len(items)} items considered: the decisions are `partial`")
     return out
 
 
@@ -108,34 +120,45 @@ def _sha(c: dict) -> str:
     return c.get("sha") or sha(json.dumps(c, sort_keys=True).encode())
 
 
-def items(judged: dict, target: str, request_dir: Path | None) -> dict[str, dict]:
-    """What a judging step judges, as {ref: {sha, text}}.
+def items(targets: list[tuple[str, dict]], request_dir: Path | None) -> dict[str, dict]:
+    """What a judging step judges, as {ref: {sha, text, of: target}}.
 
-    A step's own claims are the items. A composition (a proposal, a paper) has none of its
-    own: its items are the claims its sections reference, read from the request's staged
-    inputs — so a reviewer judges the hypotheses a proposal is made of, not the wrapper.
-    The process, judged by a ruling, has one item per step."""
+    A step's own claims are its items. A composition (a proposal, a paper, a journal's
+    submissions) has none of its own: its items are the claims its sections reference,
+    followed through staged artifacts — so a reviewer judges the hypotheses a proposal is made
+    of, and a journal judges the claims of every paper submitted, not the wrappers. The
+    process, judged by a ruling, has one item per step."""
     out = {}
-    if target == "process":
-        return {f"step:{c['id']}": {"sha": c["sha"], "text": c["text"]} for c in judged["claims"]}
-    for c in judged.get("claims") or []:
-        out[f"{target}:{c['id']}"] = {"sha": _sha(c), "text": c.get("text", "")}
-    if not out and judged.get("sections") and request_dir:
-        staged = {}
-        for cj in (request_dir / "in").rglob("claims.json"):
-            sub, step = cj.parent.relative_to(request_dir / "in").parts[:2]
-            for c in json.loads(cj.read_text(encoding="utf-8")).get("claims") or []:
-                staged[gid(sub, step, c["id"])] = c
-        for s in judged["sections"]:
+    st = staged(request_dir) if request_dir else {}
+
+    def claims_of(ref):
+        sub, step = ref.split(":", 1)
+        return {gid(sub, step, c["id"]): c for c in (st.get(ref) or {}).get("claims") or []}
+
+    def walk(target, cs, seen):
+        for c in cs.get("claims") or []:
+            out[f"{target}:{c['id']}"] = {"sha": _sha(c), "text": c.get("text", ""), "of": target}
+        for s in cs.get("sections") or []:
             for ref in s.get("claims") or []:
-                if ref in staged:
-                    out[ref] = {"sha": _sha(staged[ref]), "text": staged[ref].get("text", "")}
+                if ref.count(":") == 2:
+                    c = claims_of(ref.rsplit(":", 1)[0]).get(ref)
+                    if c:
+                        out[ref] = {"sha": _sha(c), "text": c.get("text", ""), "of": target}
+                elif ref in st and ref not in seen:
+                    walk(ref, st[ref], seen | {ref})
+
+    for target, judged in targets:
+        if target == "process":
+            for c in judged["claims"]:
+                out[f"step:{c['id']}"] = {"sha": c["sha"], "text": c["text"], "of": "process"}
+        else:
+            walk(target, judged, {target})
     return out
 
 
-def skeleton(step: Step, target: str, its: dict[str, dict], prior: dict | None) -> dict:
-    """Assessments pre-filled for a person: `unconsidered`, or carried from the prior answer
-    where the judged claim is unchanged."""
+def skeleton(step: Step, targets: list[str], its: dict[str, dict], prior: dict | None) -> dict:
+    """Assessments pre-filled for a player: `unconsidered`, or carried from the prior answer
+    where the judged claim is unchanged; one decision per judged artifact."""
     prior_by_about = {c["about"][0]: c for c in (prior or {}).get("claims") or []
                       if c.get("type") == "assessment" and c.get("about")}
     prior_hashes = (prior or {}).get("item_hashes") or {}
@@ -146,7 +169,9 @@ def skeleton(step: Step, target: str, its: dict[str, dict], prior: dict | None) 
             claims.append(dict(p, carried=True))
         else:
             claims.append({"id": "a-" + ref.replace(":", "-"), "type": "assessment", "about": [ref],
-                           "verdict": "unconsidered", "text": "", "judged": it["text"][:160]})
-    claims.append({"id": "overall", "type": "decision", "about": [target], "verdict": "partial", "text": ""})
+                           "of": it["of"], "verdict": "unconsidered", "text": "", "judged": it["text"][:160]})
+    for t in targets:
+        claims.append({"id": "overall" if len(targets) == 1 else "overall-" + t.replace(":", "-"),
+                       "type": "decision", "about": [t], "verdict": "partial", "text": ""})
     return {"claims": claims, "item_hashes": {r: it["sha"] for r, it in its.items()},
             "_per_item": step.verdicts + ["unconsidered"], "_overall": list(OVERALL)}

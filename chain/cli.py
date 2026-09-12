@@ -54,7 +54,7 @@ def cmd_status(a):
     for sid, cells in st.items():
         print(sid)
         for step_id, c in cells.items():
-            line = f"  {GLYPH[c['state']]} {step_id:18} {c['state']:8} {c['worker']:6}"
+            line = f"  {GLYPH[c['state']]} {step_id:18} {c['state']:8} {('referee' if c.get('automatic') else 'player'):7}"
             if c.get("v"):
                 line += f" v{c['v']} · {c.get('by')}"
             for d in c.get("assessed") or []:

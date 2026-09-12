@@ -1,109 +1,137 @@
-# Scientopia: the research → publishing → funding cycle as one process over one schema.
+# Scientopia: the research → publishing → funding loop as one process over one schema, with
+# players. Teams write papers, funders select proposals, journals decide what to publish, and
+# the library — which every team reads — grows with every publication. Every artifact is a
+# claim set; every player is a file (its persona) plus whatever answers its requests: a
+# person, a model, a team of both. The run records who.
 #
-# Every artifact is a claim set. A proposal and a paper are compositions of claims; a review is
-# assessments about claims; a funding or editorial decision is a claim with a verdict about a
-# composition. Nothing here implements research or review — the point is the shape.
-#
-# A step reads $CHAIN_IN and writes $CHAIN_OUT. Instructions are files, staged into the request.
+# Steps with a command are run by the referee. Every other step waits for its player.
+# Nothing here implements research, review or funding of substance; the shape is the point.
 
 name: scientopia
 subjects:
-  project: {ids: [alpha]}
+  library: {singleton: true}
+  team:
+    ids:
+      juniper: {name: Juniper Lab, persona: personas/juniper.md}
+      larch:   {name: Larch Group, persona: personas/larch.md}
+  funder:
+    ids:
+      aurora:  {name: Aurora Foundation, persona: personas/aurora.md}
+  journal:
+    ids:
+      meridian: {name: Meridian, persona: personas/meridian.md}
   process: {singleton: true}
 
 steps:
+  # ── the library: what everyone reads, and where publications go ──────────
+  - id: import
+    subject: library
+    question: What does the field already hold?
+    inputs: [seed/]
+    command: python3 -m chain.agents.seed
+
+  - id: catalogue
+    subject: library
+    question: What is there to read — imported work and every journal's publications?
+    inputs: [import, journal:*:published]
+    command: python3 -m chain.agents.compose sections "Seed corpus=import;Published=journal:*:published"
+
+  # ── teams ─────────────────────────────────────────────────────────────────
   - id: question
-    subject: project
-    question: What is this project asking?
-    worker: human
+    subject: team
+    question: What is this team asking, having read the library?
+    inputs: [library:import, journal:*:published]        # the library's holdings: what a team may cite
     instructions: instructions/question.md
     emits: [question, scope]
 
   - id: hypotheses
-    subject: project
-    question: What answers does the project bet on, and what would each predict?
-    worker: model
+    subject: team
+    question: What answers does the team bet on, and what would each predict?
     inputs: [question]
     instructions: instructions/hypotheses.md
     emits: [hypothesis, prediction]
 
   - id: design
-    subject: project
+    subject: team
     question: What would be measured, how, and within what limits?
-    worker: model
     inputs: [question, hypotheses]
     instructions: instructions/design.md
     emits: [method, scope]
 
   - id: proposal
-    subject: project
+    subject: team
     question: "The proposal, composed."
-    worker: code
     inputs: [question, hypotheses, design]
-    command: python3 -m chain.agents.compose "Question=question;Hypotheses and predictions=hypotheses;Design=design"
+    command: python3 -m chain.agents.compose sections "Question=question;Hypotheses and predictions=hypotheses;Design=design"
 
-  - id: proposal-review
-    subject: project
-    question: Is each part of the proposal sound?
-    worker: model
-    judges: proposal
-    inputs: [question, hypotheses, design]
-    instructions: instructions/proposal-review.md
-    verdicts: [sound, weak, unclear]
-
-  - id: funding
-    subject: project
-    question: Should this be funded?
-    worker: human
-    judges: proposal
-    inputs: [proposal-review, question, hypotheses, design]
-    instructions: instructions/funding.md
-    verdicts: [fund, decline]
+  - id: award
+    subject: team
+    question: What did the funders decide about this team's proposal?
+    inputs: [funder:*:select]
+    command: python3 -m chain.agents.compose about-me "Decisions=funder:*:select"
 
   - id: study
-    subject: project
+    subject: team
     question: What was found, and what does it mean for the predictions?
-    worker: model
-    inputs: [funding, hypotheses, design]
+    inputs: [award, hypotheses, design]
     instructions: instructions/study.md
-    emits: [result, interpretation]
+    emits: [result, interpretation, scope]
 
   - id: paper
-    subject: project
+    subject: team
     question: "The paper, composed."
-    worker: code
     inputs: [question, hypotheses, design, study]
-    command: python3 -m chain.agents.compose "Introduction=question,hypotheses;Methods=design;Results=study"
+    command: python3 -m chain.agents.compose sections "Introduction=question,hypotheses;Methods=design;Results=study"
 
-  - id: peer-review
-    subject: project
-    question: Does the evidence support each claim the paper makes?
-    worker: model
-    judges: paper
-    inputs: [question, hypotheses, design, study]
-    instructions: instructions/peer-review.md
+  # ── funders ───────────────────────────────────────────────────────────────
+  - id: call
+    subject: funder
+    question: What does this funder want to see proposed?
+    inputs: [library:import, journal:*:published]
+    instructions: instructions/call.md
+    emits: [scope]
+
+  - id: select
+    subject: funder
+    question: Which proposals are funded?
+    judges: team:*:proposal
+    inputs: [call, team:*:question, team:*:hypotheses, team:*:design]
+    instructions: instructions/select.md
+    verdicts: [fund, decline]
+
+  # ── journals ──────────────────────────────────────────────────────────────
+  - id: submissions
+    subject: journal
+    question: Which papers have been submitted?
+    inputs: [team:*:paper]
+    command: python3 -m chain.agents.compose sections "Submitted=team:*:paper"
+
+  - id: review
+    subject: journal
+    question: Does the evidence support each claim each paper makes?
+    judges: team:*:paper
+    inputs: [submissions, team:*:question, team:*:hypotheses, team:*:design, team:*:study]
+    instructions: instructions/review.md
     verdicts: [supported, weak, unsupported]
 
-  - id: editorial
-    subject: project
-    question: Publish, revise, or decline?
-    worker: human
-    judges: paper
-    inputs: [peer-review]
-    instructions: instructions/editorial.md
-    verdicts: [accept, revise, reject]
+  - id: decision
+    subject: journal
+    question: Which papers are published?
+    judges: team:*:paper
+    inputs: [review]
+    instructions: instructions/decision.md
+    verdicts: [accept, reject]
 
-  - id: publish
-    subject: project
-    question: "The published record: the article, its reviews, and the decision."
-    worker: code
-    inputs: [paper, peer-review, editorial]
-    command: python3 -m chain.agents.compose "Article=paper;Reviews=peer-review;Decision=editorial"
+  - id: published
+    subject: journal
+    question: "The published record: each accepted article with its reviews and decision."
+    inputs: [decision, review, submissions, team:*:paper]
+    command: python3 -m chain.agents.compose accepted decision review submissions
 
+  # ── the process itself ────────────────────────────────────────────────────
   - id: scheme
     subject: process
     question: Should each of these steps exist, and is this what it should do?
-    worker: human
     judges: process
     instructions: instructions/scheme.md
     verdicts: [accept, reject]
