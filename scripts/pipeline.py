@@ -277,6 +277,38 @@ def record(paper: str, layer: dict, by_id: dict, *, note: str, by: str,
 
 # ── state ─────────────────────────────────────────────────────────────────────
 
+def keep_versions(rec: dict, root: str = ROOT) -> list[str]:
+    """Keep a versioned copy of each single file this run produced under runs/.
+
+    A records layer's output file holds only its latest version — the reader, the
+    reconciler, the reviewer and the edge step each overwrite one file per run — so an
+    earlier version's bytes are otherwise unrecoverable, and the site's two-version
+    comparison has nothing to read the older side from. Copying `<name>.<ext>` to
+    `<name>.v<N>.<ext>` beside it, where N is the version this run just recorded, makes each
+    version addressable without moving the layer's own output path (which everything
+    downstream reads) or touching the ledger.
+
+    Only single files under `runs/`: `claims/` versions itself by archiving the whole tree
+    into `runs/<paper>/claim-tree.v<N>/`, and a path outside `runs/` is not this runner's to
+    duplicate. Nothing is backfilled — a versioned copy exists only for a version this ran.
+
+    Returns the copies made, for the caller to report and a test to assert.
+    """
+    made: list[str] = []
+    for o in rec.get("out", []):
+        path = o["path"]
+        if not path.startswith("runs/") or "*" in path:
+            continue
+        src = os.path.join(root, path)
+        if not os.path.isfile(src):
+            continue
+        stem, ext = os.path.splitext(path)
+        kept = f"{stem}.v{rec['v']}{ext}"
+        shutil.copyfile(src, os.path.join(root, kept))
+        made.append(kept)
+    return made
+
+
 def approvals_path(paper: str) -> str:
     return os.path.join(ROOT, "runs", paper, "approvals.jsonl")
 
@@ -655,6 +687,10 @@ def cmd_run(args) -> int:
             if args.by:
                 rec["by"] = args.by
         append(args.paper, rec)
+        # Keep this version's bytes addressable for the site's two-version comparison. Only
+        # single files under runs/; claims/ archives itself into claim-tree.v<N>/.
+        for kept in keep_versions(rec):
+            print(f"  {lid}: kept {kept}")
         ran += 1
 
     print(f"\n{ran} layer(s) run" + (" (dry run)" if args.dry_run else ""))

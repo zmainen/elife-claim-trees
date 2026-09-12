@@ -176,15 +176,26 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
 
     # Emit the prompt and stop. Whatever answers it — an analyst, a reasoning agent — then
     # answers the same question the layer would have asked, rather than a paraphrase of it
-    # written from memory.
+    # written from memory. `--per-arc` writes one prompt per hypothesis arc, for a weaker model
+    # that does better with one job per call; the answers merge through the same validation.
     if args.dump_prompt:
+        from .edges import arcs
         draft, source = best_draft(args.paper, cfg)
-        system, user = build_edge_request(draft, _unique_slugs(draft.claims))
+        slugs = _unique_slugs(draft.claims)
         out = Path(args.dump_prompt).expanduser()
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
-        print(f"  prompt written: {out}  (from {source})")
-        print(f"  answer it with a JSON array, then re-run with --edges-json <answer.json>")
+        if args.per_arc:
+            for n, members in enumerate(arcs(draft.claims), 1):
+                system, user = build_edge_request(draft, slugs, cfg, include=set(members))
+                p = out.with_name(f"{out.stem}.arc{n}{out.suffix}")
+                p.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
+                print(f"  arc {n}: {p}  ({len(members)} claims)")
+            print(f"  {source}: {n} arc prompt(s). Answer each, then --answer <dir or file>.")
+        else:
+            system, user = build_edge_request(draft, slugs, cfg)
+            out.write_text(system + "\n\n---\n\n" + user, encoding="utf-8")
+            print(f"  prompt written: {out}  (from {source})")
+            print(f"  answer it (one edge object per line), then re-run with --answer <answer.json>")
         return 0
 
     supplied = args.answer or args.edges_json
@@ -193,10 +204,20 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
         from .layers import _write_json, answer_file
         draft, _ = best_draft(args.paper, cfg)
         p, label = answer_file(supplied, cfg)
-        edges = edges_from_raw(p.read_text(encoding="utf-8"), _unique_slugs(draft.claims),
-                               source=label)
+        # A directory of per-arc answers merges into one reply; validation de-duplicates.
+        raw = ("\n".join(f.read_text(encoding="utf-8") for f in sorted(p.glob("*.json")))
+               if p.is_dir() else p.read_text(encoding="utf-8"))
+        edges = edges_from_raw(raw, draft.claims, _unique_slugs(draft.claims), source=label)
         path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), {
             "paper_slug": args.paper, "model": label, "edges": edges,
+        })
+    elif args.per_arc:
+        from .edges import infer_edges
+        from .layers import _write_json
+        draft, _ = best_draft(args.paper, cfg)
+        edges = infer_edges(draft, _unique_slugs(draft.claims), cfg, per_arc=True)
+        path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), {
+            "paper_slug": args.paper, "model": cfg.model_reconcile, "edges": edges,
         })
     else:
         path, edges = edge_inference_layer(args.paper, cfg)
@@ -636,6 +657,13 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
     work_root = Path(args.work_dir).expanduser().resolve()
     work_root.mkdir(parents=True, exist_ok=True)
 
+    dump_prompts_dir = (Path(args.dump_prompts).expanduser().resolve()
+                        if getattr(args, "dump_prompts", None) else None)
+    answers_dir = (Path(args.answers).expanduser().resolve()
+                   if getattr(args, "answers", None) else None)
+    matcher_answer = (Path(args.matcher_answer).expanduser().resolve()
+                      if getattr(args, "matcher_answer", None) else None)
+
     if args.papers:
         slugs = [s.strip() for s in args.papers.split(",") if s.strip()]
     elif args.all:
@@ -648,6 +676,12 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
     print(f"  reference_dir  = {reference_dir}")
     print(f"  work_dir       = {work_root}")
     print(f"  external review= {'on' if args.external_review else 'off'}")
+    if dump_prompts_dir:
+        print(f"  dump-prompts   = {dump_prompts_dir}")
+    if answers_dir:
+        print(f"  answers        = {answers_dir}")
+    if matcher_answer:
+        print(f"  matcher-answer = {matcher_answer}")
     print(f"  papers         = {len(slugs)} ({', '.join(slugs[:6])}{'...' if len(slugs) > 6 else ''})")
     print()
 
@@ -671,21 +705,73 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
             print(f"[{i}/{len(slugs)}] {slug}: SKIP (existing scorecard)")
             continue
 
+        paper_dump = (dump_prompts_dir / slug if dump_prompts_dir else None)
+        paper_answers = (answers_dir / slug if answers_dir else None)
+
         print(f"[{i}/{len(slugs)}] {slug}: starting...")
-        card = evaluate_paper(ref_paper_dir=ref_paper_dir, work_dir=paper_work_dir,
-                              cfg=cfg, review_mode=review_mode)
+        card = evaluate_paper(
+            ref_paper_dir=ref_paper_dir, work_dir=paper_work_dir,
+            cfg=cfg, review_mode=review_mode,
+            dump_prompts_dir=paper_dump,
+            answers_dir=paper_answers,
+            matcher_answer=matcher_answer,
+        )
         cards.append(card)
         if card.error:
-            print(f"[{i}/{len(slugs)}] {slug}: FAILED ({card.error})")
+            if dump_prompts_dir and "prompts dumped" in (card.error or ""):
+                print(f"[{i}/{len(slugs)}] {slug}: prompts written to {paper_dump}")
+            else:
+                print(f"[{i}/{len(slugs)}] {slug}: FAILED ({card.error})")
         else:
             print(f"[{i}/{len(slugs)}] {slug}: "
-                  f"recovery={card.recovery_pct:.0f}%, panel={card.panel_pct:.0f}%, "
+                  f"recovery={card.recovery_pct:.0f}%, "
+                  f"precision={card.precision_pct:.0f}%, "
+                  f"panel={card.panel_pct:.0f}%, "
                   f"role={card.role_pct:.0f}% ({card.n_cli} CLI vs {card.n_ref} ref)")
 
     out_path = work_root / "aggregate-scorecard.md"
     aggregate_report(cards=cards, out_path=out_path, reference_dir=reference_dir,
                      work_root=work_root, review_mode=review_mode)
     print(f"\naggregate scorecard: {out_path}")
+    return 0
+
+
+def cmd_score(args: argparse.Namespace) -> int:
+    """Score two claim directories against each other using pre-computed pairs.
+
+    Accepts both the matcher's output format ({matches: [...]}) and the
+    runs/.../evaluation/match.v*.pairs.json format ([{committed, rerun, note}]).
+    No model call is made.
+    """
+    from .evaluate import score_from_precomputed_pairs, print_score_report
+
+    ref_dir = Path(args.reference).expanduser().resolve()
+    cli_dir = Path(args.candidate).expanduser().resolve()
+    pairs_path = Path(args.pairs).expanduser().resolve()
+
+    for p, label in [(ref_dir, "reference"), (cli_dir, "candidate"), (pairs_path, "pairs")]:
+        if not p.exists():
+            print(f"error: {label} not found: {p}", file=sys.stderr)
+            return 2
+
+    print(f"=== evaluate score ===")
+    print(f"  reference = {ref_dir}")
+    print(f"  candidate = {cli_dir}")
+    print(f"  pairs     = {pairs_path}")
+
+    try:
+        card = score_from_precomputed_pairs(
+            ref_dir=ref_dir,
+            cli_dir=cli_dir,
+            pairs_path=pairs_path,
+            paper_slug=getattr(args, "paper", None) or ref_dir.name,
+            review_mode="precomputed",
+        )
+    except Exception as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+
+    print_score_report(card, ref_dir=ref_dir)
     return 0
 
 
@@ -872,7 +958,13 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     p_edge.add_argument("--paper", required=True, help="Paper slug.")
-    _add_answerable_args(p_edge, "unknown slugs and self-edges are dropped either way.")
+    _add_answerable_args(p_edge, "unknown, self-referential and mis-directed edges are dropped "
+                                 "either way. --answer may name a directory of per-arc replies.")
+    p_edge.add_argument("--per-arc", action="store_true",
+                        help="Chunk the request into one call per hypothesis arc (the hypothesis, "
+                             "its predictions and the claims that mention them) and merge the "
+                             "answers through the same validation. With --dump-prompt, writes one "
+                             "prompt file per arc. For weaker models; default off.")
     p_edge.add_argument("--edges-json", help=argparse.SUPPRESS)   # the older name for --answer
     _add_common_args(p_edge)
     _add_model_args(p_edge)
@@ -1097,9 +1189,56 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Override the prompts directory (default: package-local prompts/).")
     p_eval.add_argument("--prompt-variant", default=DEFAULT_PROMPT_VARIANT,
                         help="Named prompt variant under prompts/<variant>/.")
+    p_eval.add_argument(
+        "--dump-prompts", metavar="DIR",
+        help=(
+            "Write every prompt the chain would send (one JSON file per layer, named by "
+            "layer id, e.g. results-reader.json) to DIR and exit without calling any model. "
+            "Pass the same DIR to --answers to replay the answers."
+        ),
+    )
+    p_eval.add_argument(
+        "--answers", metavar="DIR",
+        help=(
+            "Read each model answer from a correspondingly named file in DIR instead of "
+            "calling the backend. Layer files: results-reader.json, caption-reader.json, "
+            "structure-reader.json, reconcile.json, external-review.json, "
+            "edge-inference.json. Matcher file: matcher.json (or use --matcher-answer)."
+        ),
+    )
+    p_eval.add_argument(
+        "--matcher-answer", metavar="FILE",
+        help=(
+            "Read a pre-computed matcher alignment from FILE instead of calling the matcher "
+            "model. Accepts both the matcher's own {matches:[...]} format and the "
+            "[{committed, rerun, note}] format from runs/.../evaluation/match.v*.pairs.json."
+        ),
+    )
     _add_model_args(p_eval)
     _add_backend_args(p_eval)
     p_eval.set_defaults(func=cmd_evaluate)
+
+    # ── evaluate score (no model; pre-computed pairs) ─────────────────────
+    p_score = sub.add_parser(
+        "score",
+        help="Score two claim dirs against each other using pre-computed pairs. No model call.",
+        description=(
+            "Score a candidate claim directory against a reference one using a pre-computed "
+            "alignment (pairs file). Accepts both the matcher's own output format and the "
+            "[{committed, rerun, note}] format from runs/.../evaluation/match.v*.pairs.json. "
+            "Reports recovery, precision, panel, role, edge recovery, and role confusion. "
+            "Replaces the evaluate subcommand of runs/.../evaluation/pairs.py."
+        ),
+    )
+    p_score.add_argument("--reference", required=True,
+                         help="Reference claim directory (e.g. claims/<paper>/ or "
+                              "runs/<paper>/claim-tree.v1/).")
+    p_score.add_argument("--candidate", required=True,
+                         help="Candidate (CLI) claim directory to score.")
+    p_score.add_argument("--pairs", required=True,
+                         help="Pairs file mapping reference claims to candidate claims.")
+    p_score.add_argument("--paper", help="Paper slug (default: reference directory name).")
+    p_score.set_defaults(func=cmd_score)
 
     return parser
 

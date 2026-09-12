@@ -49,6 +49,231 @@ function Dot({ c }: { c: Claim }) {
   return <span className={`rd-dot rd-${c.status}`} title={c.statusLabel} aria-label={c.statusLabel} />;
 }
 
+// ── drafts: a proposed claim, and the decision it is waiting for ──────────────
+
+type Decision = {
+  decision: string; claim: string; note: string; by: string; role?: string; decided_at: string;
+};
+type Draft = {
+  uid: string; span: string; slug: string; claim: string; role: string; panel: string;
+  why: string; whyGap: string; inText: boolean; decision: Decision | null;
+};
+
+/** A decision, once it is one. */
+const DECIDED: Record<string, string> = {
+  accept: 'Added as drafted', edit: 'Added, reworded', reject: 'Not a claim',
+};
+
+/** The write side of the reader. It exists only under `npm run dev` — the published site is
+ *  static and answers 404 — so every caller must be able to carry on without it. */
+async function postReview(base: string, record: Record<string, unknown>) {
+  const res = await fetch(`${base}/dev-review.json`, {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(record),
+  });
+  const body = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(res.status === 404
+      ? 'This page is the published build, which cannot write anything.'
+      : (body?.error ?? `the endpoint answered ${res.status}`));
+  }
+  return body;
+}
+
+/** Who is deciding. The five decisions already on file are signed `unnamed`, because the page
+ *  that took them asked for a name in a corner of a header nobody read. */
+function Who({ id, who, setWho }: { id: string; who: string; setWho: (s: string) => void }) {
+  return (
+    <p className="rd-who">
+      <label htmlFor={id}>Reviewing as</label>
+      <input id={id} value={who} placeholder="your name" autoComplete="name"
+        onChange={e => setWho(e.target.value)} />
+    </p>
+  );
+}
+
+/** A reader saying one of the graph's edges is wrong.
+ *  It writes down the dispute and nothing else: the relation stays in the graph, because an
+ *  edge is an assertion the extraction made and removing it silently from one reader's click
+ *  would leave no record that anybody disagreed. */
+function EdgeFlag({ base, paper, claim, rel, label, target, who }:
+  { base: string; paper: string; claim: string; rel: string; label: string; target: string; who: string }) {
+  const [open, setOpen] = useState(false);
+  const [note, setNote] = useState('');
+  const [sent, setSent] = useState(false);
+  const [err, setErr] = useState('');
+
+  if (sent) return <span className="rd-flagged">Flagged as wrong</span>;
+  if (!open) {
+    return (
+      <button className="rd-flag" onClick={() => setOpen(true)}
+        title={`Say that "${label}" is the wrong relation here`}>Wrong?</button>
+    );
+  }
+  const send = async () => {
+    if (!who.trim()) { setErr('Add your name in the rail first — the record says who disputed it.'); return; }
+    try {
+      await postReview(base, {
+        type: 'edge', paper, claim, relation: rel, target, note: note.trim(),
+        by: who.trim(), decided_at: new Date().toISOString(),
+      });
+      setSent(true);
+    } catch (e: any) {
+      setErr(`${e.message} Decisions need the dev server: run npm run dev and flag it there.`);
+    }
+  };
+  return (
+    <div className="rd-flagbox">
+      <p>“{label}” is wrong here. This records that you disagree; it does not change the graph.</p>
+      <input value={note} placeholder="What is wrong with it?" autoFocus
+        onChange={e => setNote(e.target.value)}
+        onKeyDown={e => { if (e.key === 'Enter') send(); }} />
+      <div className="rd-flagact">
+        <button className="rd-btn" onClick={send}>Flag it</button>
+        <button className="rd-btn rd-btn-q" onClick={() => { setOpen(false); setErr(''); }}>Cancel</button>
+      </div>
+      {err && <p className="rd-warn">{err}</p>}
+    </div>
+  );
+}
+
+/** The draft card: a claim nobody has agreed to yet, beside the sentence that prompted it.
+ *
+ *  Defined at module scope rather than inside `Reader`, unlike the claim card. A component
+ *  declared in a render body is a new type on every render, so React tears it down and builds
+ *  it again — which costs nothing for a card of static text and would empty this one's textarea
+ *  of focus, and of the caret's position, on every keystroke typed into it. */
+function DraftCard({ d, paper, base, roles, who, setWho, onDecided, onBack, onClose, onShow }: {
+  d: Draft; paper: string; base: string; roles: [string, string][];
+  who: string; setWho: (s: string) => void;
+  onDecided: (uid: string, rec: Decision) => void;
+  onBack: () => void; onClose: () => void; onShow: (uid: string) => void;
+}) {
+  const [text, setText] = useState(d.decision?.claim?.trim() || d.claim);
+  const [role, setRole] = useState(d.decision?.role || d.role);
+  const [note, setNote] = useState(d.decision?.note ?? '');
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState<{ why: string; record: any } | null>(null);
+  const box = useRef<HTMLTextAreaElement>(null);
+
+  const reworded = text.trim() !== d.claim.trim();
+  const meaning = roles.find(([r]) => r === role)?.[1] ?? '';
+
+  // `accept` or `edit` is not the reviewer's choice to make: an accepted draft whose wording
+  // they changed is an edit, and `promote.py` keeps both wordings so the two can be compared.
+  const decide = async (add: boolean) => {
+    if (!who.trim()) {
+      setFailed(null);
+      document.getElementById('rd-who-draft')?.focus();
+      return;
+    }
+    const record = {
+      paper, uid: d.uid, slug: d.slug,
+      decision: !add ? 'reject' : reworded ? 'edit' : 'accept',
+      claim: add ? text.trim() : '',
+      role, note: note.trim(), by: who.trim(), decided_at: new Date().toISOString(),
+    };
+    setBusy(true);
+    try {
+      await postReview(base, record);
+      setFailed(null);
+      onDecided(d.uid, record as Decision);
+    } catch (e: any) {
+      setFailed({ why: e.message, record });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const standing = d.decision;
+  return (
+    <div className="rd-card">
+      <div className="rd-cardnav">
+        <button onClick={onBack}>← All results</button>
+        <button onClick={onClose}>Close</button>
+      </div>
+      <p className="rd-kind rd-kind-draft">
+        Proposed claim
+        {standing && <span className="rd-settled">{DECIDED[standing.decision] ?? standing.decision}</span>}
+      </p>
+
+      {standing && (
+        <p className="rd-standing">
+          {standing.by} decided this on {(standing.decided_at || '').slice(0, 10)}
+          {standing.note ? ` — “${standing.note}”` : ''}. Deciding again supersedes it; both are kept.
+        </p>
+      )}
+
+      <div className="rd-blk rd-blk-top">
+        <p className="rd-k">The paper says</p>
+        <p className="rd-dspan">{d.span}</p>
+        {d.inText && <p className="rd-cwhere"><button onClick={() => onShow(d.uid)}>Find it in the paper</button></p>}
+        {!d.inText && <p className="rd-dnote">This sentence is in a table or a caption, so it is not underlined in the text above.</p>}
+      </div>
+
+      <div className="rd-blk">
+        <p className="rd-k rd-k-draft">The claim that would be added</p>
+        <textarea ref={box} className="rd-dedit" value={text} rows={5}
+          onChange={e => setText(e.target.value)} aria-label="The claim, as it would be written" />
+        <p className="rd-dslug">{d.slug}{d.panel ? ` · ${d.panel}` : ''}</p>
+      </div>
+
+      <div className="rd-blk">
+        <p className="rd-k">What kind of claim it is</p>
+        <select className="rd-dsel" value={role} onChange={e => setRole(e.target.value)}
+          aria-label="The claim's role">
+          {roles.map(([r, m]) => <option key={r} value={r} title={m}>{r}</option>)}
+        </select>
+        <p className="rd-dmeaning">{meaning}</p>
+        {role !== d.role && <p className="rd-dnote">Drafted as <b>{d.role}</b>. Your choice is what gets written.</p>}
+      </div>
+
+      {d.why && (
+        <div className="rd-blk">
+          <p className="rd-k">Why it was proposed</p>
+          <p>{d.why}</p>
+        </div>
+      )}
+      {d.whyGap && (
+        <div className="rd-blk">
+          <p className="rd-k">Why nothing covers it</p>
+          <p>{d.whyGap}</p>
+        </div>
+      )}
+
+      <div className="rd-blk">
+        <Who id="rd-who-draft" who={who} setWho={setWho} />
+        <input className="rd-dnoteinput" value={note} placeholder="A note on your decision, if it needs one"
+          onChange={e => setNote(e.target.value)} aria-label="A note on your decision" />
+        <div className="rd-dact">
+          <button className="rd-btn rd-btn-go" disabled={busy} onClick={() => decide(true)}>
+            {reworded ? 'Add it, reworded' : 'Add it'}
+          </button>
+          {!reworded && (
+            <button className="rd-btn" disabled={busy} onClick={() => box.current?.focus()}>Reword it</button>
+          )}
+          <button className="rd-btn" disabled={busy} onClick={() => decide(false)}>Not a claim</button>
+        </div>
+        {!who.trim() && <p className="rd-dnote">Your name goes on the record, so it is asked for before the decision is.</p>}
+      </div>
+
+      {failed && (
+        <div className="rd-blk rd-offline">
+          <p className="rd-k">Not recorded</p>
+          <p>{failed.why} Decisions are appended by the dev server: run <code>npm run dev</code> and
+            decide there, or add this line to <code>review/gap-claim-decisions.jsonl</code> yourself.</p>
+          <pre className="rd-copy">{JSON.stringify(failed.record)}</pre>
+        </div>
+      )}
+
+      <div className="rd-cfoot">
+        <span>Drafted by a language model from a span no claim covered</span>
+        <a href={`${base}/papers/${paper}/coverage/`}>Coverage ↗</a>
+      </div>
+    </div>
+  );
+}
+
 export default function Reader({ data, base }: Props) {
   const C: Record<string, Claim> = useMemo(
     () => Object.fromEntries(data.claims.map((c: Claim) => [c.slug, c])), [data]);
@@ -61,13 +286,33 @@ export default function Reader({ data, base }: Props) {
   const [showParts, setShowParts] = useState(false);
   const [stack, setStack] = useState<string[]>([]);
   const [near, setNear] = useState<Set<string>>(new Set());
+  // The decisions on file at build time, and any made since without a reload.
+  const [drafts, setDrafts] = useState<Draft[]>(data.drafts ?? []);
+  const [draftUid, setDraftUid] = useState<string | null>(null);
+  const [who, setWhoState] = useState('');
   const paperRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLElement>(null);
   const active = stack.length ? stack[stack.length - 1] : null;
+  const D: Record<string, Draft> = useMemo(
+    () => Object.fromEntries(drafts.map(d => [d.uid, d])), [drafts]);
+  const undecided = drafts.filter(d => !d.decision).length;
 
   // A card opening into a rail scrolled halfway down the results list starts the reader in
   // the middle of the card they just asked for.
-  useEffect(() => { if (railRef.current) railRef.current.scrollTop = 0; }, [active]);
+  useEffect(() => { if (railRef.current) railRef.current.scrollTop = 0; }, [active, draftUid]);
+
+  // The name is asked once and remembered, in the same place the old review page kept it.
+  useEffect(() => {
+    try { setWhoState(localStorage.getItem('reviewer') || ''); } catch { /* private browsing */ }
+  }, []);
+  const setWho = useCallback((s: string) => {
+    setWhoState(s);
+    try { localStorage.setItem('reviewer', s.trim()); } catch { /* private browsing */ }
+  }, []);
+
+  const decided = useCallback((uid: string, rec: Decision) => {
+    setDrafts(ds => ds.map(d => (d.uid === uid ? { ...d, decision: rec } : d)));
+  }, []);
 
   // ── results, in the order the paper shows them ──────────────────────────────
   const results = useMemo(() => {
@@ -91,23 +336,35 @@ export default function Reader({ data, base }: Props) {
     if (v === 'structure') setView('argument');
     const claim = sp.get('claim');
     if (claim && C[claim]) setStack([claim]);
-  }, [C]);
+    const draft = sp.get('draft');
+    // Against the drafts the page was built with, not the ones in state: state changes every
+    // time a decision is made, and re-running this then would put the reader back wherever the
+    // URL last pointed.
+    if (draft && (data.drafts ?? []).some((x: Draft) => x.uid === draft)) setDraftUid(draft);
+  }, [C, data]);
 
-  const sync = useCallback((v: string, claim: string | null) => {
+  const sync = useCallback((v: string, claim: string | null, draft: string | null) => {
     const url = new URL(window.location.href);
     v === 'paper' ? url.searchParams.delete('view') : url.searchParams.set('view', v);
     claim ? url.searchParams.set('claim', claim) : url.searchParams.delete('claim');
+    draft ? url.searchParams.set('draft', draft) : url.searchParams.delete('draft');
     window.history.replaceState({}, '', url.toString());
   }, []);
 
+  // One rail, two kinds of card: opening either puts the other away.
   const open = useCallback((slug: string) => {
     if (!C[slug]) return;
+    setDraftUid(null);
     setStack(s => (s[s.length - 1] === slug ? s : [...s, slug]));
   }, [C]);
-  const back = useCallback(() => setStack(s => s.slice(0, -1)), []);
-  const close = useCallback(() => setStack([]), []);
+  const openDraftCard = useCallback((uid: string) => {
+    setStack([]);
+    setDraftUid(uid);
+  }, []);
+  const back = useCallback(() => { setDraftUid(null); setStack(s => s.slice(0, -1)); }, []);
+  const close = useCallback(() => { setDraftUid(null); setStack([]); }, []);
 
-  useEffect(() => { sync(view, active); }, [view, active, sync]);
+  useEffect(() => { sync(view, active, draftUid); }, [view, active, draftUid, sync]);
 
   // The graph and any other component on the page open a claim the way they always have.
   useEffect(() => {
@@ -117,10 +374,10 @@ export default function Reader({ data, base }: Props) {
   }, [open]);
 
   useEffect(() => {
-    const h = (e: KeyboardEvent) => { if (e.key === 'Escape' && stack.length) close(); };
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape' && (stack.length || draftUid)) close(); };
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
-  }, [stack.length, close]);
+  }, [stack.length, draftUid, close]);
 
   // ── which findings are on screen, so the rail can say where you are ─────────
   useEffect(() => {
@@ -153,6 +410,11 @@ export default function Reader({ data, base }: Props) {
         .find(e => (e.dataset.claims ?? '').split(',').includes(slug));
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
+  };
+  const goDraft = (uid: string) => {
+    setView('paper');
+    requestAnimationFrame(() =>
+      document.querySelector(`[data-draft="${uid}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
   };
 
   const src = (s: string) => (s.startsWith('/') ? `${base}${s}` : s);
@@ -239,6 +501,19 @@ export default function Reader({ data, base }: Props) {
                       tabIndex={0}
                       onClick={() => open(pickClaim(s.claims))}
                       onKeyDown={e => { if (e.key === 'Enter') open(pickClaim(s.claims)); }}
+                      dangerouslySetInnerHTML={{ __html: linkFigures(s.text) }}
+                    />
+                  ) : s.draft && D[s.draft] ? (
+                    // A claim is asserted and a draft is proposed, so the two marks cannot look
+                    // alike: dashed until somebody has decided, and quiet once they have.
+                    <span
+                      className={`rd-dk${D[s.draft].decision ? ' settled' : ''}${s.draft === draftUid ? ' on' : ''}`}
+                      data-draft={s.draft}
+                      role="button"
+                      tabIndex={0}
+                      title={D[s.draft].decision ? 'A claim was proposed here and decided' : 'A claim is proposed here, awaiting a decision'}
+                      onClick={() => openDraftCard(s.draft)}
+                      onKeyDown={e => { if (e.key === 'Enter') openDraftCard(s.draft); }}
                       dangerouslySetInnerHTML={{ __html: linkFigures(s.text) }}
                     />
                   ) : (
@@ -543,6 +818,24 @@ export default function Reader({ data, base }: Props) {
             ))}
           </div>
         ))}
+        {drafts.length > 0 && (
+          <div className="rd-drafts">
+            <p className="rd-k rd-k-draft rd-railk">
+              Proposed claims <span>{undecided} of {drafts.length} undecided</span>
+            </p>
+            <p className="rd-railnote">
+              Drafted for results no claim covers. None of them is in the corpus until you say so.
+            </p>
+            {drafts.map(d => (
+              <button key={d.uid} className={`rd-drow${d.decision ? ' settled' : ''}`}
+                onClick={() => openDraftCard(d.uid)}>
+                <span className="rd-dmark" aria-hidden="true" />
+                <span className="rd-rt">{trimDot(d.decision?.claim || d.claim)}</span>
+                {d.decision && <span className="rd-settled">{DECIDED[d.decision.decision] ?? d.decision.decision}</span>}
+              </button>
+            ))}
+          </div>
+        )}
         {data.counts.gaps > 0 && (
           <p className="rd-gaps">
             {data.counts.gaps} results in the text carry no claim yet —
@@ -561,14 +854,17 @@ export default function Reader({ data, base }: Props) {
       [...document.querySelectorAll<HTMLElement>('[data-claims]')]
         .some(e => (e.dataset.claims ?? '').split(',').includes(c.slug));
 
+    // The relation name travels with the label: the label is what a reader is shown, and the
+    // name is what a flag has to say was wrong, because `Relies on` is not what the graph
+    // calls it.
     const seen = new Set<string>();
-    const groups = new Map<string, Claim[]>();
+    const groups = new Map<string, { rel: string; claims: Claim[] }>();
     for (const r of [...c.out, ...c.in].sort((a, b) => REL_ORDER.indexOf(a.label) - REL_ORDER.indexOf(b.label))) {
       const t = C[r.slug];
       if (!t || seen.has(r.slug)) continue;
       seen.add(r.slug);
-      if (!groups.has(r.label)) groups.set(r.label, []);
-      groups.get(r.label)!.push(t);
+      if (!groups.has(r.label)) groups.set(r.label, { rel: r.rel, claims: [] });
+      groups.get(r.label)!.claims.push(t);
     }
 
     const k = c.check ?? {};
@@ -631,17 +927,23 @@ export default function Reader({ data, base }: Props) {
           <div className="rd-blk">
             <p className="rd-k">How it connects</p>
             <ul className="rd-rel">
-              {[...groups].map(([label, cs]) => (
+              {[...groups].map(([label, g]) => (
                 <li key={label}>
                   <span className="rd-rl">{label}</span>
-                  <div>{cs.map(t => (
-                    <button key={t.slug} onClick={() => open(t.slug)}>
-                      {trimDot(t.plain)}<Dot c={t} />
-                    </button>
+                  <div>{g.claims.map(t => (
+                    <div className="rd-relrow" key={t.slug}>
+                      <button onClick={() => open(t.slug)}>{trimDot(t.plain)}<Dot c={t} /></button>
+                      <EdgeFlag base={base} paper={data.slug} claim={c.slug}
+                        rel={g.rel} label={label} target={t.slug} who={who} />
+                    </div>
                   ))}</div>
                 </li>
               ))}
             </ul>
+            <p className="rd-dnote">
+              These relations were inferred, not written by the authors. Flagging one records that
+              a person disputes it; it does not change the graph.
+            </p>
           </div>
         )}
 
@@ -689,8 +991,19 @@ export default function Reader({ data, base }: Props) {
           {view === 'findings' && <FindingsView />}
           {view === 'argument' && <ArgumentView />}
         </div>
-        <aside ref={railRef} className={`rd-rail${active ? ' open' : ''}`} aria-live="polite">
-          {active ? <Card c={C[active]} /> : <RailList />}
+        <aside ref={railRef} className={`rd-rail${active || draftUid ? ' open' : ''}`} aria-live="polite">
+          {draftUid && D[draftUid]
+            ? <DraftCard
+                key={draftUid} d={D[draftUid]} paper={data.slug} base={base}
+                roles={data.draftRoles ?? []} who={who} setWho={setWho}
+                onDecided={decided} onBack={back} onClose={close} onShow={goDraft} />
+            // Called, not mounted: both are declared in this render body, so as elements they
+            // would be a new component type on every render and React would rebuild the rail
+            // from scratch — taking with it whatever an `EdgeFlag` had half-typed in it.
+            : active ? Card({ c: C[active] }) : RailList()}
+          {/* Outside the two cards, because both of them are rebuilt on every render of this
+              component and an input inside a rebuilt subtree loses focus as you type it. */}
+          {drafts.length > 0 && !draftUid && <Who id="rd-who-rail" who={who} setWho={setWho} />}
         </aside>
       </div>
 
@@ -771,6 +1084,18 @@ export default function Reader({ data, base }: Props) {
         }
         .rd-mk:hover { background: var(--claim-wash); }
         .rd-mk.on { background: var(--claim-wash-2); text-decoration-color: var(--claim); }
+
+        /* a sentence somebody has proposed a claim for — dashed, because it is a proposal */
+        .rd-dk {
+          text-decoration: underline; text-decoration-style: dashed;
+          text-decoration-color: var(--draft-line); text-decoration-thickness: 1.5px;
+          text-underline-offset: 4px; cursor: pointer; border-radius: 2px; transition: background 0.12s;
+        }
+        .rd-dk:hover { background: var(--draft-wash); }
+        .rd-dk.on { background: var(--draft-wash-2); text-decoration-color: var(--draft); }
+        /* decided: the question is closed, so the sentence stops asking it */
+        .rd-dk.settled { text-decoration-style: dotted; text-decoration-color: var(--card-border-hover); }
+        .rd-dk.settled:hover { background: var(--card-sunk); }
 
         /* ── figures ──────────────────────────────────────────────────── */
         .rd-fig { margin: 1.9rem 0 2.1rem; scroll-margin-top: 4.5rem; }
@@ -922,6 +1247,83 @@ export default function Reader({ data, base }: Props) {
         .rd-cfoot { border-top: 1px solid var(--card-border); padding-top: 0.7rem; margin-top: 0.5rem; font-size: 12px; color: var(--card-muted); display: flex; justify-content: space-between; gap: 0.8rem; }
         .rd-cfoot a { color: var(--card-muted); }
         .rd-cfoot a:hover { color: var(--card-head); }
+
+        /* ── disputing an edge ────────────────────────────────────────── */
+        .rd-relrow { display: flex; align-items: baseline; gap: 0.5rem; }
+        .rd-relrow > button { flex: 1; }
+        .rd-flag { font-size: 11px; color: var(--card-faint); flex: none; opacity: 0; transition: opacity 0.12s; }
+        .rd-relrow:hover .rd-flag, .rd-flag:focus-visible { opacity: 1; }
+        .rd-flag:hover { color: var(--draft-strong); }
+        .rd-flagged { font-size: 11px; color: var(--draft); flex: none; white-space: nowrap; }
+        .rd-flagbox { border: 1px solid var(--draft-line); border-radius: 5px; padding: 0.6rem 0.7rem; margin: 0.3rem 0; background: var(--draft-wash); }
+        .rd-flagbox p { font-size: 12px; color: var(--card-body); margin: 0 0 0.45rem; line-height: 1.4; }
+        .rd-flagbox input { width: 100%; }
+        .rd-flagact { display: flex; gap: 0.4rem; margin-top: 0.45rem; }
+
+        /* ── the draft card ───────────────────────────────────────────── */
+        .rd-kind-draft { color: var(--draft); }
+        .rd-k-draft { color: var(--draft); }
+        .rd-settled {
+          font-size: 11px; letter-spacing: 0; text-transform: none; font-weight: 500;
+          color: var(--card-muted); border: 1px solid var(--card-border); border-radius: 3px;
+          padding: 1px 6px; white-space: nowrap;
+        }
+        .rd-standing { font-size: 12.5px; color: var(--card-muted); line-height: 1.45; margin: 0 0 0.6rem; }
+        .rd-blk-top { border-top: 0; padding-top: 0; }
+        .rd-dspan { font-family: var(--paper-serif); font-size: 14.5px; line-height: 1.5; color: var(--card-body); margin: 0 0 0.5rem; padding-left: 0.7rem; border-left: 2px solid var(--card-border-hover); }
+        .rd-dedit {
+          width: 100%; resize: vertical; font-family: var(--paper-serif); font-size: 15px;
+          line-height: 1.45; color: var(--card-head); background: var(--card-bg);
+          border: 1px solid var(--draft-line); border-radius: 5px; padding: 0.55rem 0.65rem;
+        }
+        .rd-dedit:focus { outline: 2px solid var(--draft); outline-offset: 1px; }
+        .rd-blk .rd-dslug { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--card-muted); margin: 0.35rem 0 0; overflow-wrap: anywhere; }
+        .rd-dsel {
+          font: inherit; font-size: 13px; color: var(--card-head); background: var(--card-bg);
+          border: 1px solid var(--card-border-hover); border-radius: 4px; padding: 0.3rem 0.45rem; width: 100%;
+        }
+        .rd-blk .rd-dmeaning { font-size: 12.5px; color: var(--card-muted); margin: 0.4rem 0 0; }
+        .rd-blk .rd-dnote, .rd-dnote { font-size: 12px; color: var(--card-muted); line-height: 1.45; margin: 0.4rem 0 0; }
+        .rd-dnote b { color: var(--card-head); font-weight: 600; }
+        .rd-who { display: flex; align-items: baseline; gap: 0.5rem; font-size: 12.5px; color: var(--card-muted); margin: 0 0 0.6rem; }
+        .rd-who input, .rd-dnoteinput, .rd-flagbox input {
+          font: inherit; font-size: 13px; color: var(--card-head); background: var(--card-bg);
+          border: 1px solid var(--card-border); border-radius: 4px; padding: 0.3rem 0.45rem;
+        }
+        .rd-who input { flex: 1; min-width: 0; }
+        .rd-who input:focus, .rd-dnoteinput:focus, .rd-flagbox input:focus { border-color: var(--draft); }
+        .rd-dnoteinput { width: 100%; margin-bottom: 0.6rem; }
+        .rd-dact { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .rd-btn {
+          font-size: 13px; font-weight: 500; color: var(--card-body); background: var(--card-bg);
+          border: 1px solid var(--card-border-hover); border-radius: 5px; padding: 0.35rem 0.7rem;
+          transition: border-color 0.12s, color 0.12s;
+        }
+        .rd-btn:hover:not(:disabled) { border-color: var(--draft); color: var(--draft-strong); }
+        .rd-btn:disabled { opacity: 0.5; cursor: default; }
+        .rd-btn-go { color: var(--draft-strong); border-color: var(--draft); background: var(--draft-wash); }
+        .rd-btn-q { border-color: var(--card-border); color: var(--card-muted); }
+        .rd-flagbox .rd-warn { font-size: 12px; color: var(--card-head); margin: 0.4rem 0 0; }
+        .rd-offline { background: var(--card-sunk); border-radius: 5px; padding: 0.7rem; margin-top: 0.6rem; }
+        .rd-offline code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+        .rd-copy {
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; line-height: 1.45;
+          color: var(--card-body); background: var(--card-bg); border: 1px solid var(--card-border);
+          border-radius: 4px; padding: 0.5rem; margin: 0.5rem 0 0; overflow-x: auto; white-space: pre-wrap;
+          overflow-wrap: anywhere; user-select: all;
+        }
+
+        /* ── drafts in the rail list ──────────────────────────────────── */
+        .rd-drafts { margin-top: 1.6rem; border-top: 1px solid var(--card-border); padding-top: 0.9rem; }
+        .rd-drow {
+          display: grid; grid-template-columns: 8px 1fr auto; gap: 0 0.6rem; align-items: baseline;
+          width: 100%; padding: 0.4rem 0.35rem 0.4rem 0; border-radius: 3px;
+          color: var(--card-body); font-size: 13px; line-height: 1.4;
+        }
+        .rd-drow:hover { color: var(--card-head); background: var(--draft-wash); }
+        .rd-dmark { display: inline-block; width: 8px; height: 8px; border-radius: 50%; border: 1.5px dashed var(--draft); flex: none; position: relative; top: -1px; }
+        .rd-drow.settled .rd-dmark { border-style: solid; border-color: var(--card-border-hover); }
+        .rd-drow.settled .rd-rt { color: var(--card-muted); }
 
         /* ── narrow ───────────────────────────────────────────────────── */
         @media (max-width: 1000px) {

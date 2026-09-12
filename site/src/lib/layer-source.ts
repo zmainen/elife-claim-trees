@@ -11,9 +11,11 @@
 // with no committed intermediate to go stale between them. The build's working directory is
 // site/, so the repository root is one level up — the same resolution lib/markdown.ts uses.
 
-import { readFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { join, basename, extname } from 'node:path';
+import matter from 'gray-matter';
 import type { LayerDecl } from './pipeline';
+import type { ClaimLite } from './compare';
 
 const ROOT = join(process.cwd(), '..');
 const REPO = 'https://github.com/zmainen/elife-claim-trees/blob/main';
@@ -201,4 +203,157 @@ export function output(produces: string[]):
     if (existsSync(join(ROOT, p))) return { path: p };
   }
   return {};
+}
+
+// ── versions, for the two-version comparison ────────────────────────────────────
+//
+// A cell's earlier versions are addressable on disk, and this reads them into claim lists the
+// aligner can diff. Two shapes, because two mechanisms keep them:
+//
+//   claim-tree  archives the whole tree into runs/<paper>/claim-tree.v<N>/ on each --replace,
+//               so an earlier version is a directory of claim files.
+//   the reader, reconcile, review and edge layers each overwrite one output file per run, so
+//               scripts/pipeline.py keeps a copy beside it as <name>.v<N>.<ext>. Nothing is
+//               backfilled, so a version is offered only where its bytes were actually kept.
+//
+// The current version is the live output — claims/<paper>/ or the layer's own output file —
+// and carries the ledger's latest version number.
+
+/** A version of a cell, reduced to the claim list a diff needs. */
+export interface LayerVersion {
+  v: number;
+  /** Where its bytes are: the live output, or a kept copy. */
+  source: 'current' | 'kept';
+  claims: ClaimLite[];
+  /** The file or directory the claims were read from, repo-relative. */
+  path: string;
+}
+
+/** The claims in a reader/reconciler/edge output file: the first array-of-objects value,
+ *  reduced to text, role and panel. Reuses the same `parse` the table view reads through. */
+function claimsFromOutput(rel: string): ClaimLite[] {
+  const r = records(rel);
+  if (!r) return [];
+  const textField = ['claim', 'text', 'sentence', 'from'].find(f => r.fields.includes(f));
+  return r.records.map(rec => ({
+    text: String(rec[textField ?? 'claim'] ?? ''),
+    role: (rec.role ?? rec.claim_type ?? null) as string | null,
+    panel: (rec.panel ?? null) as string | null,
+    slug: (rec.slug ?? null) as string | null,
+  })).filter(c => c.text);
+}
+
+/** The claims in a claim-tree directory: one markdown file per claim, panel read off the
+ *  first assertion where the writer records it. index.md is the paper, not a claim. */
+function claimsFromTree(absDir: string): ClaimLite[] {
+  let names: string[];
+  try { names = readdirSync(absDir); } catch { return []; }
+  const out: ClaimLite[] = [];
+  for (const name of names.sort()) {
+    if (name === 'index.md' || !name.endsWith('.md')) continue;
+    let fm: Record<string, any>;
+    try { fm = matter(readFileSync(join(absDir, name), 'utf8')).data; } catch { continue; }
+    const claim = typeof fm.claim === 'string' ? fm.claim.trim() : '';
+    if (!claim) continue;
+    const assertion = Array.isArray(fm.assertions) ? fm.assertions[0] : undefined;
+    out.push({
+      text: claim,
+      role: fm.role ?? null,
+      panel: assertion?.panel ?? fm.panel ?? null,
+      slug: fm.slug ?? name.replace(/\.md$/, ''),
+    });
+  }
+  return out;
+}
+
+const KEPT_RE = /\.v(\d+)(\.[a-z0-9]+)$/i;
+
+/** Every version of this cell whose bytes are on disk, newest first, with the current output
+ *  as the highest version. `latest` is the ledger's current version number for this cell; the
+ *  live output is stamped with it so the comparison can label the sides by version.
+ *
+ *  Returns fewer than two versions when only the current one is addressable — most cells, and
+ *  the honest state until a layer has run twice with the copy-keeping in place. */
+export function layerVersions(paper: string, layerId: string, produces: string[],
+                              latest: number): LayerVersion[] {
+  const out: LayerVersion[] = [];
+
+  if (layerId === 'claim-tree') {
+    const currentDir = `claims/${paper}`;
+    out.push({ v: latest, source: 'current', path: currentDir,
+               claims: claimsFromTree(join(ROOT, currentDir)) });
+    const runsDir = join(ROOT, 'runs', paper);
+    let names: string[] = [];
+    try { names = readdirSync(runsDir); } catch { /* no runs dir */ }
+    for (const name of names) {
+      const m = name.match(/^claim-tree\.v(\d+)$/);
+      if (!m) continue;
+      const rel = `runs/${paper}/${name}`;
+      out.push({ v: Number(m[1]), source: 'kept', path: rel,
+                 claims: claimsFromTree(join(ROOT, rel)) });
+    }
+  } else {
+    const rel = produces.find(p => /\.json$/.test(p)) ?? produces[0];
+    if (rel) {
+      out.push({ v: latest, source: 'current', path: rel, claims: claimsFromOutput(rel) });
+      const dir = rel.slice(0, rel.lastIndexOf('/'));
+      const stem = basename(rel, extname(rel));               // reconciler.output
+      const ext = extname(rel);                               // .json
+      let names: string[] = [];
+      try { names = readdirSync(join(ROOT, dir)); } catch { /* no dir */ }
+      for (const name of names) {
+        const m = name.match(KEPT_RE);
+        if (!m || !name.startsWith(`${stem}.v`) || m[2] !== ext) continue;
+        const krel = `${dir}/${name}`;
+        out.push({ v: Number(m[1]), source: 'kept', path: krel,
+                   claims: claimsFromOutput(krel) });
+      }
+    }
+  }
+
+  // Newest first, current before a kept copy of the same number, and only versions that
+  // actually yielded claims — an empty side is nothing to diff against.
+  return out
+    .filter(ver => ver.claims.length > 0)
+    .sort((a, b) => b.v - a.v || (a.source === 'current' ? -1 : 1));
+}
+
+// ── evaluation ──────────────────────────────────────────────────────────────────
+//
+// runs/<paper>/evaluation/ holds a scorecard and the matcher's alignments: scores.md, and one
+// match.v<N>.pairs.json per re-run scored. It is not a layer yet (#85 will make it one), so it
+// has no cell of its own — it is read here and shown on the paper's claim-tree cell, where a
+// reader asking what this tree is worth is already looking.
+
+export interface MatchPair { committed: string; rerun: string; note?: string }
+export interface Evaluation {
+  /** The scorecard markdown, as written. */
+  scores: string | null;
+  /** The matcher's alignments, one entry per scored re-run, newest first. */
+  pairs: { v: number; rows: MatchPair[] }[];
+  dir: string;
+}
+
+/** The evaluation for a paper, or null when the directory does not exist. */
+export function evaluation(paper: string): Evaluation | null {
+  const dir = `runs/${paper}/evaluation`;
+  const abs = join(ROOT, dir);
+  if (!existsSync(abs)) return null;
+  const scoresPath = join(abs, 'scores.md');
+  const scores = existsSync(scoresPath) ? readFileSync(scoresPath, 'utf8') : null;
+
+  const pairs: { v: number; rows: MatchPair[] }[] = [];
+  let names: string[] = [];
+  try { names = readdirSync(abs); } catch { /* none */ }
+  for (const name of names) {
+    const m = name.match(/^match\.v(\d+)\.pairs\.json$/);
+    if (!m) continue;
+    try {
+      const rows = JSON.parse(readFileSync(join(abs, name), 'utf8'));
+      if (Array.isArray(rows)) pairs.push({ v: Number(m[1]), rows });
+    } catch { /* skip an unparseable alignment */ }
+  }
+  pairs.sort((a, b) => b.v - a.v);
+  if (!scores && pairs.length === 0) return null;
+  return { scores, pairs, dir };
 }

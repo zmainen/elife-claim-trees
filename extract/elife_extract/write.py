@@ -3,8 +3,9 @@
 Step 6 — Dependency mapping: typed edges between claims (the edge inventory
 in `docs/method.md` § 4.3). This used to be left to the analyst, with the
 writer emitting `belongings: []` and a TODO. It is now inferred by a model
-call — see `edges.py`, which carries the vocabulary mapping and the rule for
-where each relation type is stored. Pass --no-infer-edges to skip it.
+call — see `edges.py`, which validates the corpus relation vocabulary with the
+direction rules and holds the rule for where each relation type is stored. Pass
+--no-infer-edges to skip it.
 
 Step 7 — Write claim files: generate UUID4 per claim, derive a slug, and
 write each claim as <corpus_dir>/<paper_slug>/<claim_slug>.md per the
@@ -249,16 +250,30 @@ def _claim_frontmatter(
     return fm
 
 
-def _claim_body(claim: ReconciledClaim) -> str:
+def _claim_body(claim: ReconciledClaim, slug: str | None = None,
+                edges: list[dict] | None = None) -> str:
     """Build the prose body of a claim file.
 
     The body is for caveats, alternative interpretations, and reasoning
     that doesn't compress into frontmatter. We seed it with the agent
     evidence quotes and the reconciler's notes — the analyst can revise.
+
+    The edge-inference layer returns a one-sentence `why` per edge. The frontmatter shape is
+    fixed and carries no room for it, so the reasons for this claim's outgoing edges are
+    recorded here, under a Relations note, where they stay auditable without changing the
+    schema.
     """
     parts = []
     if claim.notes:
         parts.append(f"**Notes from extraction:** {claim.notes}")
+        parts.append("")
+
+    whys = [e for e in (edges or []) if e.get("source") == slug and e.get("why")]
+    if whys:
+        parts.append("**Relations.** Why each outgoing edge was inferred:")
+        parts.append("")
+        for e in whys:
+            parts.append(f"- `{e['relation']}` → `{e['target']}`: {e['why']}")
         parts.append("")
 
     if claim.evidence_by_agent:
@@ -437,7 +452,7 @@ def resolve_edges(draft: DraftClaimTable, slugs: list[str], cfg: Config) -> list
         from .edges import edges_from_raw
         try:
             return edges_from_raw(Path(supplied).read_text(encoding="utf-8"),
-                                  slugs, source=f"supplied:{supplied}")
+                                  draft.claims, slugs, source=f"supplied:{supplied}")
         except Exception as e:                                   # noqa: BLE001
             logger.warning("supplied edge file unusable (%s); writing claims without edges", e)
             return []
@@ -545,7 +560,7 @@ def write_claim_files(draft: DraftClaimTable, cfg: Config,
         fm = _claim_frontmatter(
             claim, slug, draft.paper_slug, draft.paper_doi, edges, addresses=addr
         )
-        body = _claim_body(claim)
+        body = _claim_body(claim, slug, edges)
         text = _format_claim_file(fm, body)
         path = paper_dir / f"{slug}.md"
         path.write_text(text)

@@ -109,6 +109,18 @@ def test_part_of_has_a_direction_and_an_example():
     assert any({a, b} == {"part-of", "supports"} for a, b, _ in rel.CONFUSABLE)
 
 
+def test_edge_inference_reads_the_vocabulary_that_defines_the_relations():
+    """Edge inference is rebuilt on the contract (#83): its prompt is the task plus the
+    vocabulary — where the relations, their binding directions and the confusable pairs are
+    defined — and the declaration lists exactly that, so the run hashes what the edges are
+    inferred from and the checker cannot drift from the prompt."""
+    reads = prompts.declared_reads("edge-inference")
+    assert reads == ["extract/prompts/edge-inference.md",
+                     f"extract/prompts/{contract.CONTRACT_DIR}/vocabulary.md"]
+    decl = _declaration()
+    assert [r for r in decl["edge-inference"]["reads"] if r.startswith("extract/prompts/")] == reads
+
+
 def test_same_part_or_different_is_rendered():
     """The reconciler's three-way test is only as good as its examples; the section, and one
     real pair for each verdict, has to reach the prompt."""
