@@ -479,6 +479,51 @@ html.dark {
   --dag-edge-framing: #a78bfa;
 }
 
+/* The format switch above the graph. The site's card tokens rather than the graph's own, so
+   the bar reads as part of the page chrome and the canvas below it as the figure. */
+.dag-formatbar {
+  flex: none;
+  border-bottom: 1px solid var(--card-border);
+  background: var(--card-bg);
+  padding: 0.55rem 0.75rem;
+}
+.dag-formatrow { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.dag-seg { display: inline-flex; border: 1px solid var(--card-border); border-radius: 5px; overflow: hidden; flex: none; }
+.dag-seg button {
+  font-size: 12px; font-weight: 500; padding: 0.25rem 0.7rem;
+  background: transparent; color: var(--card-muted); border: 0; cursor: pointer;
+  font-family: inherit; line-height: 1.6;
+}
+.dag-seg button + button { border-left: 1px solid var(--card-border); }
+.dag-seg button:hover { color: var(--card-head); background: var(--card-bg-hover); }
+.dag-seg button[aria-pressed='true'] {
+  background: var(--claim-wash); color: var(--claim-strong); font-weight: 600;
+}
+.dag-formatnote { font-size: 12px; color: var(--card-muted); margin: 0; line-height: 1.5; min-width: 14rem; flex: 1; }
+.dag-formatnote strong { color: var(--card-head); font-weight: 600; }
+.dag-formatloss {
+  font-size: 11.5px; color: var(--card-muted); margin: 0.45rem 0 0;
+  line-height: 1.55; border-top: 1px dashed var(--card-border); padding-top: 0.45rem;
+}
+.dag-formatloss code { font-size: 11px; color: var(--card-strong); }
+
+/* The key, folded into a chip so it does not sit on top of the band labels. */
+.dag-key > summary {
+  list-style: none; cursor: pointer; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border-radius: 5px; padding: 0.25rem 0.6rem; display: inline-flex;
+  align-items: center; gap: 0.4rem; box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+}
+.dag-key > summary::-webkit-details-marker { display: none; }
+.dag-key > summary::after {
+  content: ''; width: 5px; height: 5px; transform: rotate(45deg) translateY(-1px);
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  opacity: 0.6; transition: transform 0.15s;
+}
+.dag-key[open] > summary::after { transform: rotate(-135deg) translateY(-1px); }
+.dag-key[open] > summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.dag-key .dag-keybody { border-top-left-radius: 0; margin-top: -1px; }
+
 /* The layers that run a narrative step, injected under its heading on /method. */
 .method-prose .step-runs {
   font-size: 12.5px;
