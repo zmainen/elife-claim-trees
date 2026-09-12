@@ -1,40 +1,351 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>scientopia · board</title><style>
-body{font:14px/1.5 -apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#1a202c;background:#f7fafc;margin:0;padding:0 0 4rem}
-main{max-width:1180px;margin:0 auto;padding:1.5rem}
-h1{font-size:1.6rem;margin:.2rem 0}h2{font-size:1.2rem;margin:2.2rem 0 .6rem;border-bottom:1px solid #e2e8f0;padding-bottom:.3rem}
-h3{font-size:1rem;margin:1.4rem 0 .4rem}p.lead{color:#4a5568;max-width:70ch}
-.wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;vertical-align:top;padding:.35rem .5rem;border-bottom:1px solid #edf2f7}
-th{font-weight:600;color:#4a5568;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
-code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
-.chip{display:inline-block;padding:0 .5em;border-radius:1em;color:#fff;font-size:11px;line-height:1.7;vertical-align:middle}
-.cell{white-space:nowrap}.muted{color:#718096}.small{font-size:12px}
-details{margin:.3rem 0}summary{cursor:pointer;color:#2b6cb0}pre{background:#edf2f7;padding:.6rem;border-radius:4px;overflow-x:auto;font-size:12px;white-space:pre-wrap}
-.art{background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:.8rem 1rem;margin:.8rem 0}
-.tag{display:inline-block;padding:0 .4em;border-radius:3px;color:#fff;font-size:10px;text-transform:uppercase;letter-spacing:.05em;line-height:1.7}
-.legend span{margin-right:1rem}svg text{font:11px -apple-system,Segoe UI,sans-serif}
-</style><main>
-<h1>scientopia</h1>
-<p class="lead">The process, every artifact it has produced, every request waiting for an answer, and where each fact came from. Generated from <code>store/</code>; process <code>798d917b6599</code>. 12 steps over project, process.</p>
-<h2>The process</h2><p class='lead'>A step is a question asked of a subject. It reads only what is staged into its request and writes one claim set. <em>code</em> answers itself; <em>model</em> and <em>human</em> steps wait for an answer.</p><div class="wrap"><table><tr><th>step</th><th>subject</th><th>worker</th><th>question · instructions</th><th>inputs</th><th>answer</th></tr><tr><td class='mono'>question</td><td>project</td><td>human</td><td>What is this project asking?<details><summary>instructions</summary><pre># Instructions: question
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>scientopia · board</title><style>
+:root{--ink:#1a202c;--muted:#718096;--line:#e2e8f0;--bg:#f7fafc;--card:#fff;--accent:#2b6cb0}
+*{box-sizing:border-box}
+body{font:15px/1.6 -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);margin:0}
+main{max-width:1100px;margin:0 auto;padding:1.5rem 1.25rem 5rem}
+h1{font-size:1.7rem;margin:.2rem 0 .4rem}
+h2{font-size:1.3rem;margin:2.6rem 0 .7rem;padding-bottom:.35rem;border-bottom:2px solid var(--line);scroll-margin-top:3.4rem}
+h3{font-size:1.05rem;margin:1.6rem 0 .5rem}
+h4{font-size:.95rem;margin:1rem 0 .3rem;color:#2d3748}
+p{max-width:74ch}p.lead{color:#4a5568}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.muted{color:var(--muted)}.small{font-size:.86rem}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82em}
+nav{position:sticky;top:0;z-index:5;background:rgba(247,250,252,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);margin:0 -1.25rem 1rem;padding:.5rem 1.25rem}
+nav a{display:inline-block;margin:.1rem .8rem .1rem 0;font-size:.85rem}
+.chip{display:inline-block;padding:.05em .6em;border-radius:1em;color:#fff;font-size:.75rem;font-weight:600;line-height:1.6;vertical-align:middle;white-space:nowrap}
+.tag{display:inline-block;padding:0 .45em;border-radius:3px;color:#fff;font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;line-height:1.7;vertical-align:middle}
+.who{display:inline-flex;align-items:center;gap:.3em;white-space:nowrap}
+.dot{width:.6em;height:.6em;border-radius:50%;display:inline-block}
+/* cycle strip */
+.strip{display:flex;flex-wrap:wrap;gap:.4rem;align-items:stretch;margin:1rem 0}
+.stepbox{flex:1 1 8.5rem;min-width:8.5rem;background:var(--card);border:1px solid var(--line);border-radius:7px;padding:.5rem .6rem;position:relative}
+.stepbox .n{font-size:.66rem;color:var(--muted)}
+.stepbox .nm{font-weight:600;font-size:.9rem;display:block;margin:.1rem 0 .35rem}
+.stepbox .row{display:flex;justify-content:space-between;align-items:center;gap:.3rem;font-size:.78rem}
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;margin:.6rem 0}
+.legend .it{font-size:.85rem;max-width:34ch}
+/* timeline */
+.tl{list-style:none;padding:0;margin:.6rem 0}
+.tl li{padding:.35rem 0 .35rem .9rem;border-left:2px solid var(--line);margin-left:.3rem}
+.tl .eff{color:var(--muted);font-size:.88rem}
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.9rem 1.1rem;margin:1rem 0;scroll-margin-top:3.4rem}
+.card>.hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem;margin-bottom:.2rem}
+.card>.hd .t{font-size:1.05rem;font-weight:600}
+.prov{color:#4a5568;font-size:.9rem;margin:.25rem 0}
+.stat{font-size:.9rem;margin:.2rem 0 .5rem;font-weight:500}
+/* claims within a card */
+.claim{border-top:1px solid var(--line);padding:.55rem 0}
+.claim:first-of-type{border-top:none}
+.claim .txt{margin:.1rem 0}
+.claim .id{font-size:.72rem;color:var(--muted)}
+.edges{font-size:.82rem;color:#4a5568;margin-top:.15rem}
+.revs{margin:.35rem 0 .1rem .9rem;padding-left:.7rem;border-left:2px solid #edf2f7}
+.rev{font-size:.85rem;color:#4a5568;padding:.05rem 0}
+.report .line{border-top:1px solid var(--line);padding:.45rem 0;display:flex;gap:.6rem;align-items:baseline;flex-wrap:wrap}
+.report .line .rz{color:#4a5568;font-size:.9rem}
+.decision{background:#f7fafc;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:5px;padding:.5rem .7rem;margin:.3rem 0 .6rem}
+.sec-claim{border-top:1px solid #edf2f7;padding:.45rem 0}
+details{margin:.5rem 0}summary{cursor:pointer;color:var(--accent);font-size:.9rem}
+pre{background:#f1f5f9;padding:.7rem;border-radius:5px;overflow-x:auto;font-size:.8rem;white-space:pre-wrap;line-height:1.5}
+.wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.85rem}
+th,td{text-align:left;vertical-align:top;padding:.4rem .55rem;border-bottom:1px solid #edf2f7}
+th{font-weight:600;color:#4a5568;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em}
+.grid td{white-space:nowrap}.grid .why{color:var(--muted);font-size:.78rem;white-space:normal;max-width:16ch}
+.pill{display:inline-block;background:#edf2f7;border-radius:4px;padding:0 .4em;font-size:.72rem;color:#4a5568;margin-right:.3rem}
+</style>
+<main><h1>scientopia</h1>
+<nav><a href="#what">What this is</a><a href="#story">The story so far</a><a href="#artifacts">The artifacts</a><a href="#open">Open requests</a><a href="#stand">Where things stand</a><a href="#process">The process</a><a href="#standards">Standards</a><a href="#ledger">The ledger</a></nav>
+<section><h2 id='what'>What this is</h2><p class='lead'>This is one research project — <b>alpha</b> — carried through the whole research &rarr; publishing &rarr; funding cycle by a mix of people, models and scripts. Every step is a question put to the project, and every answer is a set of plain claims — a hypothesis, a method, a result, a verdict. Nothing on this page was written by hand: it is all read back from the record of what was asked and answered.</p><div class='strip'><a class='stepbox' href='#art-alpha-question-v1'><span class='n'>1</span><span class='nm'>Ask the question</span><span class='row'><span class="who"><span class="dot" style="background:#805ad5"></span>a person</span> <span class="chip" style="background:#2f855a">up to date</span></span></a><a class='stepbox' href='#art-alpha-hypotheses-v2'><span class='n'>2</span><span class='nm'>Propose hypotheses</span><span class='row'><span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#2f855a">up to date</span></span></a><a class='stepbox' href='#art-alpha-design-v1'><span class='n'>3</span><span class='nm'>Design the study</span><span class='row'><span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#b7791f">out of date</span></span></a><a class='stepbox' href='#art-alpha-proposal-v1'><span class='n'>4</span><span class='nm'>Compose the proposal</span><span class='row'><span class="who"><span class="dot" style="background:#718096"></span>a script</span> <span class="chip" style="background:#b7791f">out of date</span></span></a><a class='stepbox' href='#art-alpha-proposal-review-v1'><span class='n'>5</span><span class='nm'>Review the proposal</span><span class='row'><span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#b7791f">out of date</span></span></a><a class='stepbox' href='#art-alpha-funding-v1'><span class='n'>6</span><span class='nm'>Decide funding</span><span class='row'><span class="who"><span class="dot" style="background:#805ad5"></span>a person</span> <span class="chip" style="background:#b7791f">out of date</span></span></a><a class='stepbox' href='#art-alpha-study-v1'><span class='n'>7</span><span class='nm'>Run the study</span><span class='row'><span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#b7791f">out of date</span></span></a><a class='stepbox' href='#art-alpha-paper-v1'><span class='n'>8</span><span class='nm'>Compose the paper</span><span class='row'><span class="who"><span class="dot" style="background:#718096"></span>a script</span> <span class="chip" style="background:#b7791f">out of date</span></span></a><a class='stepbox' href='#art-alpha-peer-review-v1'><span class='n'>9</span><span class='nm'>Peer review</span><span class='row'><span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#b7791f">out of date</span></span></a><a class='stepbox' href='#art-alpha-editorial-v1'><span class='n'>10</span><span class='nm'>Editorial decision</span><span class='row'><span class="who"><span class="dot" style="background:#805ad5"></span>a person</span> <span class="chip" style="background:#c05621">waiting</span></span></a><a class='stepbox' href='#art-alpha-publish-v1'><span class='n'>11</span><span class='nm'>Publish</span><span class='row'><span class="who"><span class="dot" style="background:#718096"></span>a script</span> <span class="chip" style="background:#c05621">waiting</span></span></a></div><p class='small muted'>A twelfth step stands apart: the process reviews itself, asking whether each step above should exist. Its ruling is the last card under The artifacts.</p><h3>What the colours mean</h3><div class='legend'><div class='it'><span class="chip" style="background:#2f855a">up to date</span> Answered, every input still as it was, and everything it depends on is current.</div><div class='it'><span class="chip" style="background:#b7791f">out of date</span> An input changed after this was answered, so it may no longer be right.</div><div class='it'><span class="chip" style="background:#c05621">waiting</span> Answered and unchanged, but something it depends on is no longer current.</div><div class='it'><span class="chip" style="background:#2b6cb0">open</span> A request is open and waiting for someone to answer it.</div><div class='it'><span class="chip" style="background:#a0aec0">not started</span> Never answered.</div></div></section>
+<section><h2 id='story'>The story so far</h2><p class='lead'>Every answer that has been recorded, oldest first. Each links to the artifact it produced.</p><ul class='tl'><li><span class='muted small'>12 Sep, 10:59</span> — demo-human answered <a href='#art-alpha-question-v1'><em>Ask the question</em></a> for alpha (v1): 3 claims.</li><li><span class='muted small'>12 Sep, 10:59</span> — demo-human answered <a href='#art-process-scheme-v1'><em>Review the process itself</em></a> for process (v1): 12 assessments and a decision.</li><li><span class='muted small'>12 Sep, 10:59</span> — stub-agent answered <a href='#art-alpha-hypotheses-v1'><em>Propose hypotheses</em></a> for alpha (v1): 4 claims.</li><li><span class='muted small'>12 Sep, 10:59</span> — stub-agent answered <a href='#art-alpha-design-v1'><em>Design the study</em></a> for alpha (v1): 3 claims.</li><li><span class='muted small'>12 Sep, 10:59</span> — python3 answered <a href='#art-alpha-proposal-v1'><em>Compose the proposal</em></a> for alpha (v1): a document of 3 sections.</li><li><span class='muted small'>12 Sep, 10:59</span> — stub-agent answered <a href='#art-alpha-proposal-review-v1'><em>Review the proposal</em></a> for alpha (v1): 10 assessments and a decision.</li><li><span class='muted small'>12 Sep, 10:59</span> — demo-human answered <a href='#art-alpha-funding-v1'><em>Decide funding</em></a> for alpha (v1): 10 assessments and a decision.</li><li><span class='muted small'>12 Sep, 10:59</span> — stub-agent answered <a href='#art-alpha-study-v1'><em>Run the study</em></a> for alpha (v1): 3 claims.</li><li><span class='muted small'>12 Sep, 10:59</span> — python3 answered <a href='#art-alpha-paper-v1'><em>Compose the paper</em></a> for alpha (v1): a document of 3 sections.</li><li><span class='muted small'>12 Sep, 10:59</span> — stub-agent answered <a href='#art-alpha-peer-review-v1'><em>Peer review</em></a> for alpha (v1): 13 assessments and a decision.</li><li><span class='muted small'>12 Sep, 10:59</span> — demo-human answered <a href='#art-alpha-editorial-v1'><em>Editorial decision</em></a> for alpha (v1): 0 assessments and a decision.</li><li><span class='muted small'>12 Sep, 10:59</span> — python3 answered <a href='#art-alpha-publish-v1'><em>Publish</em></a> for alpha (v1): a document of 3 sections.</li><li><span class='muted small'>12 Sep, 10:59</span> — stub-agent answered <a href='#art-alpha-hypotheses-v2'><em>Propose hypotheses</em></a> again (v2): 5 claims. <span class='eff'>This made 9 later steps out of date.</span></li></ul></section>
+<section><h2 id='artifacts'>The artifacts</h2><p class='lead'>One card per version, in the order the steps run. Each says who made it, from what, whether it is still current, and what it holds. Every claim links to where it is defined.</p><article class='card' id='art-alpha-question-v1'><div class='hd'><span class='t'>The question (version 1)</span> <span class="who"><span class="dot" style="background:#805ad5"></span>a person</span> <span class="chip" style="background:#2f855a">up to date</span></div><div class='prov'>Made by demo-human on 12 Sep 2026 at 10:59, from its instructions and the process definition.</div><div class='stat' style='color:#2f855a'>Up to date.</div><div class='claim' id='claim-alpha-question-q1'><span class="tag" style="background:#805ad5">question</span> <span class='id mono'>q1</span><div class='txt'>Does acute sleep deprivation impair reversal learning in mice?</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Well posed and answerable at this scale. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Answered affirmatively by r1. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim' id='claim-alpha-question-q2'><span class="tag" style="background:#805ad5">question</span> <span class='id mono'>q2</span><div class='txt'>If it does, is the impairment mediated by reduced orbitofrontal activity?</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — A clear mechanistic follow-on. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Answered negatively, within the design&#x27;s limits. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim' id='claim-alpha-question-s1'><span class="tag" style="background:#718096">scope</span> <span class='id mono'>s1</span><div class='txt'>The project will not test chronic sleep restriction or human participants.</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Sensible limit. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Respected. <span class='muted'>(on an earlier version)</span></div></div></div><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · question · v1
+
+What is this project asking?
+
+Answered by: human. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/instructions/question.md`  3c60b8655e9a
+
+May emit claims of type: question, scope.
+</pre><h4>Instructions</h4><pre># Instructions: question
 
 You are the investigator opening a project. State the research question(s) the project exists
 to answer, each as one interrogative sentence, and any scope you are setting in advance (what
 the project will not attempt). Emit `question` and `scope` claims only. Do not propose answers.
-</pre></details></td><td>—</td><td>emits <span class="tag" style="background:#805ad5">question</span> <span class="tag" style="background:#718096">scope</span></td></tr><tr><td class='mono'>hypotheses</td><td>project</td><td>model</td><td>What answers does the project bet on, and what would each predict?<details><summary>instructions</summary><pre># Instructions: hypotheses
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/question/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;demo-human&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;instructions&quot;,
+      &quot;path&quot;: &quot;instructions/question.md&quot;,
+      &quot;sha&quot;: &quot;3c60b8655e9a&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;2b30e2d3b1ca&quot;
+    }
+  ],
+  &quot;judges&quot;: null,
+  &quot;note&quot;: &quot;demo answer from question.json&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/question/v1&quot;,
+    &quot;sha&quot;: &quot;3bc38ee28f46&quot;
+  },
+  &quot;step&quot;: &quot;question&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;human&quot;
+}</pre></details></article><article class='card' id='art-alpha-hypotheses-v2'><div class='hd'><span class='t'>Hypotheses (version 2)</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#2f855a">up to date</span></div><div class='prov'>Made by stub-agent on 12 Sep 2026 at 10:59, from <a href="#art-alpha-question-v1">the question (v1)</a>, its instructions and the process definition.</div><div class='stat' style='color:#2f855a'>Up to date.</div><div class='claim' id='claim-alpha-hypotheses-h1'><span class="tag" style="background:#3182ce">hypothesis</span> <span class='id mono'>h1</span><div class='txt'>Acute (24 h) sleep deprivation impairs reversal learning in mice.</div><div class='edges'>answers <a href="#claim-alpha-question-q1">q1</a></div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Directly tested by m1. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — r1 is a large, well-powered effect. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim' id='claim-alpha-hypotheses-h2'><span class="tag" style="background:#3182ce">hypothesis</span> <span class='id mono'>h2</span><div class='txt'>The impairment is mediated by reduced orbitofrontal cortex activity during reversal.</div><div class='edges'>answers <a href="#claim-alpha-question-q2">q2</a></div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Mediation is asserted; the design measures activity, not mediation. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Fund as exploratory; the review&#x27;s caution about mediation is noted. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> unsupported — r2 finds no difference; the paper correctly says so. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim' id='claim-alpha-hypotheses-p1'><span class="tag" style="background:#4299e1">prediction</span> <span class='id mono'>p1</span><div class='txt'>Sleep-deprived mice need more trials than controls to reach criterion after a reward-contingency reversal.</div><div class='edges'>derived-from <a href="#claim-alpha-hypotheses-h1">h1</a></div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Concrete and powered. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Met. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim' id='claim-alpha-hypotheses-p2'><span class="tag" style="background:#4299e1">prediction</span> <span class='id mono'>p2</span><div class='txt'>Sleep-deprived mice show fewer c-Fos-positive cells in orbitofrontal cortex after the reversal session.</div><div class='edges'>derived-from <a href="#claim-alpha-hypotheses-h2">h2</a></div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Consistent with h2 but does not test it against reduced engagement. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> unsupported — Not met; a null with reasonable power. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim' id='claim-alpha-hypotheses-p3'><span class="tag" style="background:#4299e1">prediction</span> <span class='id mono'>p3</span><div class='txt'>Optogenetic activation of orbitofrontal cortex during reversal rescues performance in sleep-deprived mice.</div><div class='edges'>derived-from <a href="#claim-alpha-hypotheses-h2">h2</a></div></div><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · hypotheses · v2
+
+What answers does the project bet on, and what would each predict?
+
+Answered by: model. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/question`  7a092ad9352b
+- `in/instructions/hypotheses.md`  9bae5fbe9abf
+
+May emit claims of type: hypothesis, prediction.
+</pre><h4>Instructions</h4><pre># Instructions: hypotheses
 
 You are given the project&#x27;s questions. For each, state the answer the project bets on as a
 `hypothesis` (one declarative sentence), and for each hypothesis one or more `prediction`
 claims: observations that would be made if it were true, concrete enough to be tested by a
 study of ordinary size. Link each prediction to its hypothesis with a `derived-from` edge and
 each hypothesis to its question with `answers`. Do not describe methods.
-</pre></details></td><td><code>question</code></td><td>emits <span class="tag" style="background:#3182ce">hypothesis</span> <span class="tag" style="background:#4299e1">prediction</span></td></tr><tr><td class='mono'>design</td><td>project</td><td>model</td><td>What would be measured, how, and within what limits?<details><summary>instructions</summary><pre># Instructions: design
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/hypotheses/v2</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;stub-agent&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/question/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:question&quot;,
+      &quot;sha&quot;: &quot;7a092ad9352b&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;instructions&quot;,
+      &quot;path&quot;: &quot;instructions/hypotheses.md&quot;,
+      &quot;sha&quot;: &quot;9bae5fbe9abf&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;509b9ed27820&quot;
+    }
+  ],
+  &quot;judges&quot;: null,
+  &quot;note&quot;: &quot;demo answer from hypotheses.v2.json&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/hypotheses/v2&quot;,
+    &quot;sha&quot;: &quot;a6259160f7e0&quot;
+  },
+  &quot;step&quot;: &quot;hypotheses&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 2,
+  &quot;worker&quot;: &quot;model&quot;
+}</pre></details></article><article class='card' id='art-alpha-hypotheses-v1'><div class='hd'><span class='t'>Hypotheses (version 1)</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#2f855a">up to date</span></div><div class='prov'>Made by stub-agent on 12 Sep 2026 at 10:59, from <a href="#art-alpha-question-v1">the question (v1)</a>, its instructions and the process definition.</div><div class='stat' style='color:#2f855a'>Up to date.</div><div class='claim'><span class="tag" style="background:#3182ce">hypothesis</span> <span class='id mono'>h1</span><div class='txt'>Acute (24 h) sleep deprivation impairs reversal learning in mice.</div><div class='edges'>answers <a href="#claim-alpha-question-q1">q1</a></div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Directly tested by m1. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — r1 is a large, well-powered effect. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim'><span class="tag" style="background:#3182ce">hypothesis</span> <span class='id mono'>h2</span><div class='txt'>The impairment is mediated by reduced orbitofrontal cortex activity during reversal.</div><div class='edges'>answers <a href="#claim-alpha-question-q2">q2</a></div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Mediation is asserted; the design measures activity, not mediation. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Fund as exploratory; the review&#x27;s caution about mediation is noted. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> unsupported — r2 finds no difference; the paper correctly says so. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim'><span class="tag" style="background:#4299e1">prediction</span> <span class='id mono'>p1</span><div class='txt'>Sleep-deprived mice need more trials than controls to reach criterion after a reward-contingency reversal.</div><div class='edges'>derived-from <a href="#claim-alpha-hypotheses-h1">h1</a></div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Concrete and powered. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Met. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim'><span class="tag" style="background:#4299e1">prediction</span> <span class='id mono'>p2</span><div class='txt'>Sleep-deprived mice show fewer c-Fos-positive cells in orbitofrontal cortex after the reversal session.</div><div class='edges'>derived-from <a href="#claim-alpha-hypotheses-h2">h2</a></div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Consistent with h2 but does not test it against reduced engagement. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> unsupported — Not met; a null with reasonable power. <span class='muted'>(on an earlier version)</span></div></div></div><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · hypotheses · v1
+
+What answers does the project bet on, and what would each predict?
+
+Answered by: model. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/question`  7a092ad9352b
+- `in/instructions/hypotheses.md`  9bae5fbe9abf
+
+May emit claims of type: hypothesis, prediction.
+</pre><h4>Instructions</h4><pre># Instructions: hypotheses
+
+You are given the project&#x27;s questions. For each, state the answer the project bets on as a
+`hypothesis` (one declarative sentence), and for each hypothesis one or more `prediction`
+claims: observations that would be made if it were true, concrete enough to be tested by a
+study of ordinary size. Link each prediction to its hypothesis with a `derived-from` edge and
+each hypothesis to its question with `answers`. Do not describe methods.
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/hypotheses/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;stub-agent&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/question/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:question&quot;,
+      &quot;sha&quot;: &quot;7a092ad9352b&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;instructions&quot;,
+      &quot;path&quot;: &quot;instructions/hypotheses.md&quot;,
+      &quot;sha&quot;: &quot;9bae5fbe9abf&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;509b9ed27820&quot;
+    }
+  ],
+  &quot;judges&quot;: null,
+  &quot;note&quot;: &quot;demo answer from hypotheses.json&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/hypotheses/v1&quot;,
+    &quot;sha&quot;: &quot;52c381661ba6&quot;
+  },
+  &quot;step&quot;: &quot;hypotheses&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;model&quot;
+}</pre></details></article><article class='card' id='art-alpha-design-v1'><div class='hd'><span class='t'>The study design (version 1)</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#b7791f">out of date</span></div><div class='prov'>Made by stub-agent on 12 Sep 2026 at 10:59, from <a href="#art-alpha-question-v1">the question (v1)</a>, <a href="#art-alpha-hypotheses-v2">the hypotheses (v1)</a>, its instructions and the process definition.</div><div class='stat' style='color:#b7791f'>Out of date: the hypotheses (now v2) changed after this was made.</div><div class='claim' id='claim-alpha-design-m1'><span class="tag" style="background:#38a169">method</span> <span class='id mono'>m1</span><div class='txt'>Two-choice odour discrimination with a single reward-contingency reversal; trials to criterion (8 of 10 correct) compared between 24 h sleep-deprived and rested mice (n = 16 per group).</div><div class='edges'>tests <a href="#claim-alpha-hypotheses-p1">p1</a></div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Standard, adequately powered. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — As proposed. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim' id='claim-alpha-design-m2'><span class="tag" style="background:#38a169">method</span> <span class='id mono'>m2</span><div class='txt'>c-Fos immunostaining in lateral orbitofrontal cortex 90 min after the reversal session; positive-cell density compared between groups.</div><div class='edges'>tests <a href="#claim-alpha-hypotheses-p2">p2</a></div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Correlational; the scope claim s1 already concedes this. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Fund; ask for an engagement control in the report. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> weak — No engagement control was added, as funding requested. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim' id='claim-alpha-design-s1'><span class="tag" style="background:#718096">scope</span> <span class='id mono'>s1</span><div class='txt'>c-Fos density cannot distinguish reduced orbitofrontal activity from reduced task engagement; the design bears on prediction p2 only correlationally.</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — The proposal is honest about its limit. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — The limit stands and is stated. <span class='muted'>(on an earlier version)</span></div></div></div><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · design · v1
+
+What would be measured, how, and within what limits?
+
+Answered by: model. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/question`  7a092ad9352b
+- `in/alpha/hypotheses`  dae433808da4
+- `in/instructions/design.md`  3dcb15dd6647
+
+May emit claims of type: method, scope.
+</pre><h4>Instructions</h4><pre># Instructions: design
 
 You are given the questions, hypotheses and predictions. Emit `method` claims: what will be
 measured, in whom, under what manipulation, with what comparison and what analysis — one claim
 per measurement. Emit `scope` claims for what the design cannot decide. Link each method to the
 prediction it will test with a `tests` edge. Be conservative: a method that cannot in
 practice distinguish the hypothesis from its rivals should be marked so in a scope claim.
-</pre></details></td><td><code>question</code>, <code>hypotheses</code></td><td>emits <span class="tag" style="background:#38a169">method</span> <span class="tag" style="background:#718096">scope</span></td></tr><tr><td class='mono'>proposal</td><td>project</td><td>code</td><td>The proposal, composed.<div class='mono muted small'>python3 -m chain.agents.compose &quot;Question=question;Hypotheses and predictions=hypotheses;Design=design&quot;</div></td><td><code>question</code>, <code>hypotheses</code>, <code>design</code></td><td>composes</td></tr><tr><td class='mono'>proposal-review</td><td>project</td><td>model</td><td>Is each part of the proposal sound?<details><summary>instructions</summary><pre># Instructions: proposal review
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/design/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;stub-agent&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/question/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:question&quot;,
+      &quot;sha&quot;: &quot;7a092ad9352b&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/hypotheses/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:hypotheses&quot;,
+      &quot;sha&quot;: &quot;dae433808da4&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;instructions&quot;,
+      &quot;path&quot;: &quot;instructions/design.md&quot;,
+      &quot;sha&quot;: &quot;3dcb15dd6647&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;a586a0e09eb4&quot;
+    }
+  ],
+  &quot;judges&quot;: null,
+  &quot;note&quot;: &quot;demo answer from design.json&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/design/v1&quot;,
+    &quot;sha&quot;: &quot;dd51cece158c&quot;
+  },
+  &quot;step&quot;: &quot;design&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;model&quot;
+}</pre></details></article><article class='card' id='art-alpha-proposal-v1'><div class='hd'><span class='t'>The proposal (version 1)</span> <span class="who"><span class="dot" style="background:#718096"></span>a script</span> <span class="chip" style="background:#b7791f">out of date</span></div><div class='prov'>Made by a script on 12 Sep 2026 at 10:59, from <a href="#art-alpha-question-v1">the question (v1)</a>, <a href="#art-alpha-hypotheses-v2">the hypotheses (v1)</a>, <a href="#art-alpha-design-v1">the design (v1)</a> and the process definition.</div><div class='stat' style='color:#b7791f'>Out of date: the hypotheses (now v2) changed after this was made.</div><div class='doc'><h4>Question</h4><div class='sec-claim'><span class="tag" style="background:#805ad5">question</span> <a href="#claim-alpha-question-q1">q1</a> <div class='txt'>Does acute sleep deprivation impair reversal learning in mice?</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Well posed and answerable at this scale. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Answered affirmatively by r1. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#805ad5">question</span> <a href="#claim-alpha-question-q2">q2</a> <div class='txt'>If it does, is the impairment mediated by reduced orbitofrontal activity?</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — A clear mechanistic follow-on. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Answered negatively, within the design&#x27;s limits. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#718096">scope</span> <a href="#claim-alpha-question-s1">s1</a> <div class='txt'>The project will not test chronic sleep restriction or human participants.</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Sensible limit. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Respected. <span class='muted'>(on an earlier version)</span></div></div></div><h4>Hypotheses and predictions</h4><div class='sec-claim'><span class="tag" style="background:#3182ce">hypothesis</span> <a href="#claim-alpha-hypotheses-h1">h1</a> <div class='txt'>Acute (24 h) sleep deprivation impairs reversal learning in mice.</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Directly tested by m1. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — r1 is a large, well-powered effect. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#3182ce">hypothesis</span> <a href="#claim-alpha-hypotheses-h2">h2</a> <div class='txt'>The impairment is mediated by reduced orbitofrontal cortex activity during reversal.</div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Mediation is asserted; the design measures activity, not mediation. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Fund as exploratory; the review&#x27;s caution about mediation is noted. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> unsupported — r2 finds no difference; the paper correctly says so. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#4299e1">prediction</span> <a href="#claim-alpha-hypotheses-p1">p1</a> <div class='txt'>Sleep-deprived mice need more trials than controls to reach criterion after a reward-contingency reversal.</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Concrete and powered. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Met. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#4299e1">prediction</span> <a href="#claim-alpha-hypotheses-p2">p2</a> <div class='txt'>Sleep-deprived mice show fewer c-Fos-positive cells in orbitofrontal cortex after the reversal session.</div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Consistent with h2 but does not test it against reduced engagement. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> unsupported — Not met; a null with reasonable power. <span class='muted'>(on an earlier version)</span></div></div></div><h4>Design</h4><div class='sec-claim'><span class="tag" style="background:#38a169">method</span> <a href="#claim-alpha-design-m1">m1</a> <div class='txt'>Two-choice odour discrimination with a single reward-contingency reversal; trials to criterion (8 of 10 correct) compared between 24 h sleep-deprived and rested mice (n = 16 per group).</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Standard, adequately powered. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — As proposed. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#38a169">method</span> <a href="#claim-alpha-design-m2">m2</a> <div class='txt'>c-Fos immunostaining in lateral orbitofrontal cortex 90 min after the reversal session; positive-cell density compared between groups.</div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Correlational; the scope claim s1 already concedes this. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Fund; ask for an engagement control in the report. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> weak — No engagement control was added, as funding requested. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#718096">scope</span> <a href="#claim-alpha-design-s1">s1</a> <div class='txt'>c-Fos density cannot distinguish reduced orbitofrontal activity from reduced task engagement; the design bears on prediction p2 only correlationally.</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — The proposal is honest about its limit. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — The limit stands and is stated. <span class='muted'>(on an earlier version)</span></div></div></div></div><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · proposal · v1
+
+The proposal, composed.
+
+Answered by: code. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/question`  7a092ad9352b
+- `in/alpha/hypotheses`  dae433808da4
+- `in/alpha/design`  83a3f9b92d6c
+
+## Command
+
+    python3 -m chain.agents.compose &quot;Question=question;Hypotheses and predictions=hypotheses;Design=design&quot;
+
+reads $CHAIN_IN, writes $CHAIN_OUT.
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/proposal/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;python3&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/question/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:question&quot;,
+      &quot;sha&quot;: &quot;7a092ad9352b&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/hypotheses/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:hypotheses&quot;,
+      &quot;sha&quot;: &quot;dae433808da4&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/design/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:design&quot;,
+      &quot;sha&quot;: &quot;83a3f9b92d6c&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;a84444f0f3a6&quot;
+    }
+  ],
+  &quot;judges&quot;: null,
+  &quot;note&quot;: &quot;&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/proposal/v1&quot;,
+    &quot;sha&quot;: &quot;eebaf36322fe&quot;
+  },
+  &quot;step&quot;: &quot;proposal&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;code&quot;
+}</pre></details></article><article class='card' id='art-alpha-proposal-review-v1'><div class='hd'><span class='t'>Proposal review (version 1)</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#b7791f">out of date</span></div><div class='prov'>Made by stub-agent on 12 Sep 2026 at 10:59, from <a href="#art-alpha-proposal-v1">the proposal (v1)</a>, <a href="#art-alpha-question-v1">the question (v1)</a>, <a href="#art-alpha-hypotheses-v2">the hypotheses (v1)</a>, <a href="#art-alpha-design-v1">the design (v1)</a>, its instructions and the process definition.</div><div class='stat' style='color:#b7791f'>Out of date: the hypotheses (now v2) changed after this was made.</div><div class='report'><div class='decision' id='claim-alpha-proposal-review-overall'><b>Decision: accept</b> — A sound behavioural test with a weak mechanistic arm; fundable if the mechanistic claim is held provisional.</div><div class='line' id='claim-alpha-proposal-review-a-alpha-question-q1'><span class='pill'>sound</span><span>Does acute sleep deprivation impair reversal learning in mice? · <a href="#claim-alpha-question-q1">q1</a></span><span class='rz'>Well posed and answerable at this scale.</span></div><div class='line' id='claim-alpha-proposal-review-a-alpha-question-q2'><span class='pill'>sound</span><span>If it does, is the impairment mediated by reduced orbitofrontal activity? · <a href="#claim-alpha-question-q2">q2</a></span><span class='rz'>A clear mechanistic follow-on.</span></div><div class='line' id='claim-alpha-proposal-review-a-alpha-question-s1'><span class='pill'>sound</span><span>The project will not test chronic sleep restriction or human participants. · <a href="#claim-alpha-question-s1">s1</a></span><span class='rz'>Sensible limit.</span></div><div class='line' id='claim-alpha-proposal-review-a-alpha-hypotheses-h1'><span class='pill'>sound</span><span>Acute (24 h) sleep deprivation impairs reversal learning in mice. · <a href="#claim-alpha-hypotheses-h1">h1</a></span><span class='rz'>Directly tested by m1.</span></div><div class='line' id='claim-alpha-proposal-review-a-alpha-hypotheses-h2'><span class='pill'>weak</span><span>The impairment is mediated by reduced orbitofrontal cortex activity during reversal. · <a href="#claim-alpha-hypotheses-h2">h2</a></span><span class='rz'>Mediation is asserted; the design measures activity, not mediation.</span></div><div class='line' id='claim-alpha-proposal-review-a-alpha-hypotheses-p1'><span class='pill'>sound</span><span>Sleep-deprived mice need more trials than controls to reach criterion after a reward-contingency reversal. · <a href="#claim-alpha-hypotheses-p1">p1</a></span><span class='rz'>Concrete and powered.</span></div><div class='line' id='claim-alpha-proposal-review-a-alpha-hypotheses-p2'><span class='pill'>weak</span><span>Sleep-deprived mice show fewer c-Fos-positive cells in orbitofrontal cortex after the reversal session. · <a href="#claim-alpha-hypotheses-p2">p2</a></span><span class='rz'>Consistent with h2 but does not test it against reduced engagement.</span></div><div class='line' id='claim-alpha-proposal-review-a-alpha-design-m1'><span class='pill'>sound</span><span>Two-choice odour discrimination with a single reward-contingency reversal; trials to criterion (8 of 10 correct) compared between 24 h sleep-deprived and rested · <a href="#claim-alpha-design-m1">m1</a></span><span class='rz'>Standard, adequately powered.</span></div><div class='line' id='claim-alpha-proposal-review-a-alpha-design-m2'><span class='pill'>weak</span><span>c-Fos immunostaining in lateral orbitofrontal cortex 90 min after the reversal session; positive-cell density compared between groups. · <a href="#claim-alpha-design-m2">m2</a></span><span class='rz'>Correlational; the scope claim s1 already concedes this.</span></div><div class='line' id='claim-alpha-proposal-review-a-alpha-design-s1'><span class='pill'>sound</span><span>c-Fos density cannot distinguish reduced orbitofrontal activity from reduced task engagement; the design bears on prediction p2 only correlationally. · <a href="#claim-alpha-design-s1">s1</a></span><span class='rz'>The proposal is honest about its limit.</span></div></div><p class='small muted'>10 of 10 items considered.</p><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · proposal-review · v1
+
+Is each part of the proposal sound?
+
+Answered by: model. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/proposal`  8a1f0167fe92
+- `in/alpha/question`  7a092ad9352b
+- `in/alpha/hypotheses`  dae433808da4
+- `in/alpha/design`  83a3f9b92d6c
+- `in/instructions/proposal-review.md`  588703d0b383
+
+May emit claims of type: assessment, decision.
+
+## Judging alpha:proposal
+
+10 items. Fill skeleton.json: an assessment per item with a verdict from [&#x27;sound&#x27;, &#x27;weak&#x27;, &#x27;unclear&#x27;], and the `overall` decision (accept / reject / partial). Leave what you did not read `unconsidered` and mark the decision `partial`; a partial reading is a legitimate answer.
+</pre><h4>Instructions</h4><pre># Instructions: proposal review
 
 You are given a proposal composed of questions, hypotheses, predictions, methods and scope.
 Fill the skeleton: one `assessment` per item with a verdict — `sound` (the item is well posed
@@ -42,129 +353,635 @@ and the design bears on it), `weak` (posed, but the design or the logic is thin)
 (you cannot tell what is being claimed) — and one sentence of reasoning in `text`. Then the
 `overall` decision: `accept` if you stand behind the whole reading, `partial` if you left items
 unconsidered. You are not deciding funding.
-</pre></details></td><td><code>proposal</code>, <code>question</code>, <code>hypotheses</code>, <code>design</code></td><td>judges <code>proposal</code> · verdicts sound, weak, unclear</td></tr><tr><td class='mono'>funding</td><td>project</td><td>human</td><td>Should this be funded?<details><summary>instructions</summary><pre># Instructions: funding
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/proposal-review/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;stub-agent&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/proposal/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:proposal&quot;,
+      &quot;sha&quot;: &quot;8a1f0167fe92&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/question/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:question&quot;,
+      &quot;sha&quot;: &quot;7a092ad9352b&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/hypotheses/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:hypotheses&quot;,
+      &quot;sha&quot;: &quot;dae433808da4&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/design/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:design&quot;,
+      &quot;sha&quot;: &quot;83a3f9b92d6c&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;instructions&quot;,
+      &quot;path&quot;: &quot;instructions/proposal-review.md&quot;,
+      &quot;sha&quot;: &quot;588703d0b383&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;2e5620609d2c&quot;
+    }
+  ],
+  &quot;judges&quot;: {
+    &quot;ref&quot;: &quot;alpha:proposal&quot;,
+    &quot;v&quot;: 1
+  },
+  &quot;note&quot;: &quot;demo answer from proposal-review.json&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/proposal-review/v1&quot;,
+    &quot;sha&quot;: &quot;0600a24c6add&quot;
+  },
+  &quot;step&quot;: &quot;proposal-review&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;model&quot;
+}</pre></details></article><article class='card' id='art-alpha-funding-v1'><div class='hd'><span class='t'>Funding decision (version 1)</span> <span class="who"><span class="dot" style="background:#805ad5"></span>a person</span> <span class="chip" style="background:#b7791f">out of date</span></div><div class='prov'>Made by demo-human on 12 Sep 2026 at 10:59, from <a href="#art-alpha-proposal-v1">the proposal (v1)</a>, <a href="#art-alpha-proposal-review-v1">the proposal review (v1)</a>, <a href="#art-alpha-question-v1">the question (v1)</a>, <a href="#art-alpha-hypotheses-v2">the hypotheses (v1)</a>, <a href="#art-alpha-design-v1">the design (v1)</a>, its instructions and the process definition.</div><div class='stat' style='color:#b7791f'>Out of date: the hypotheses (now v2) changed after this was made.</div><div class='report'><div class='decision' id='claim-alpha-funding-overall'><b>Decision: accept</b> — Funded. The mediation claim is to be reported as provisional.</div><div class='line' id='claim-alpha-funding-a-alpha-question-q1'><span class='pill'>fund</span><span>Does acute sleep deprivation impair reversal learning in mice? · <a href="#claim-alpha-question-q1">q1</a></span><span class='rz'>Merits support.</span></div><div class='line' id='claim-alpha-funding-a-alpha-question-q2'><span class='pill'>fund</span><span>If it does, is the impairment mediated by reduced orbitofrontal activity? · <a href="#claim-alpha-question-q2">q2</a></span><span class='rz'>Merits support.</span></div><div class='line' id='claim-alpha-funding-a-alpha-question-s1'><span class='pill'>fund</span><span>The project will not test chronic sleep restriction or human participants. · <a href="#claim-alpha-question-s1">s1</a></span><span class='rz'>Merits support.</span></div><div class='line' id='claim-alpha-funding-a-alpha-hypotheses-h1'><span class='pill'>fund</span><span>Acute (24 h) sleep deprivation impairs reversal learning in mice. · <a href="#claim-alpha-hypotheses-h1">h1</a></span><span class='rz'>Merits support.</span></div><div class='line' id='claim-alpha-funding-a-alpha-hypotheses-h2'><span class='pill'>fund</span><span>The impairment is mediated by reduced orbitofrontal cortex activity during reversal. · <a href="#claim-alpha-hypotheses-h2">h2</a></span><span class='rz'>Fund as exploratory; the review&#x27;s caution about mediation is noted.</span></div><div class='line' id='claim-alpha-funding-a-alpha-hypotheses-p1'><span class='pill'>fund</span><span>Sleep-deprived mice need more trials than controls to reach criterion after a reward-contingency reversal. · <a href="#claim-alpha-hypotheses-p1">p1</a></span><span class='rz'>Merits support.</span></div><div class='line' id='claim-alpha-funding-a-alpha-hypotheses-p2'><span class='pill'>fund</span><span>Sleep-deprived mice show fewer c-Fos-positive cells in orbitofrontal cortex after the reversal session. · <a href="#claim-alpha-hypotheses-p2">p2</a></span><span class='rz'>Merits support.</span></div><div class='line' id='claim-alpha-funding-a-alpha-design-m1'><span class='pill'>fund</span><span>Two-choice odour discrimination with a single reward-contingency reversal; trials to criterion (8 of 10 correct) compared between 24 h sleep-deprived and rested · <a href="#claim-alpha-design-m1">m1</a></span><span class='rz'>Merits support.</span></div><div class='line' id='claim-alpha-funding-a-alpha-design-m2'><span class='pill'>fund</span><span>c-Fos immunostaining in lateral orbitofrontal cortex 90 min after the reversal session; positive-cell density compared between groups. · <a href="#claim-alpha-design-m2">m2</a></span><span class='rz'>Fund; ask for an engagement control in the report.</span></div><div class='line' id='claim-alpha-funding-a-alpha-design-s1'><span class='pill'>fund</span><span>c-Fos density cannot distinguish reduced orbitofrontal activity from reduced task engagement; the design bears on prediction p2 only correlationally. · <a href="#claim-alpha-design-s1">s1</a></span><span class='rz'>Merits support.</span></div></div><p class='small muted'>10 of 10 items considered.</p><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · funding · v1
+
+Should this be funded?
+
+Answered by: human. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/proposal`  8a1f0167fe92
+- `in/alpha/proposal-review`  fa8eae8c7370
+- `in/alpha/question`  7a092ad9352b
+- `in/alpha/hypotheses`  dae433808da4
+- `in/alpha/design`  83a3f9b92d6c
+- `in/instructions/funding.md`  bcdfba106ba6
+
+May emit claims of type: assessment, decision.
+
+## Judging alpha:proposal
+
+10 items. Fill skeleton.json: an assessment per item with a verdict from [&#x27;fund&#x27;, &#x27;decline&#x27;], and the `overall` decision (accept / reject / partial). Leave what you did not read `unconsidered` and mark the decision `partial`; a partial reading is a legitimate answer.
+</pre><h4>Instructions</h4><pre># Instructions: funding
 
 You are the programme officer. You are given the proposal, its review, and the claims it is
 composed of. Fill the skeleton: `fund` or `decline` per item is a statement about whether that
 part of the work merits support; the `overall` decision is your decision on the proposal.
 Write one sentence per verdict. A partial reading is permitted and must be marked `partial`.
-</pre></details></td><td><code>proposal</code>, <code>proposal-review</code>, <code>question</code>, <code>hypotheses</code>, <code>design</code></td><td>judges <code>proposal</code> · verdicts fund, decline</td></tr><tr><td class='mono'>study</td><td>project</td><td>model</td><td>What was found, and what does it mean for the predictions?<details><summary>instructions</summary><pre># Instructions: study
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/funding/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;demo-human&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/proposal/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:proposal&quot;,
+      &quot;sha&quot;: &quot;8a1f0167fe92&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/proposal-review/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:proposal-review&quot;,
+      &quot;sha&quot;: &quot;fa8eae8c7370&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/question/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:question&quot;,
+      &quot;sha&quot;: &quot;7a092ad9352b&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/hypotheses/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:hypotheses&quot;,
+      &quot;sha&quot;: &quot;dae433808da4&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/design/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:design&quot;,
+      &quot;sha&quot;: &quot;83a3f9b92d6c&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;instructions&quot;,
+      &quot;path&quot;: &quot;instructions/funding.md&quot;,
+      &quot;sha&quot;: &quot;bcdfba106ba6&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;beca07451fd4&quot;
+    }
+  ],
+  &quot;judges&quot;: {
+    &quot;ref&quot;: &quot;alpha:proposal&quot;,
+    &quot;v&quot;: 1
+  },
+  &quot;note&quot;: &quot;demo answer from funding.json&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/funding/v1&quot;,
+    &quot;sha&quot;: &quot;a6120689c3f6&quot;
+  },
+  &quot;step&quot;: &quot;funding&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;human&quot;
+}</pre></details></article><article class='card' id='art-alpha-study-v1'><div class='hd'><span class='t'>Study results (version 1)</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#b7791f">out of date</span></div><div class='prov'>Made by stub-agent on 12 Sep 2026 at 10:59, from <a href="#art-alpha-funding-v1">the funding decision (v1)</a>, <a href="#art-alpha-hypotheses-v2">the hypotheses (v1)</a>, <a href="#art-alpha-design-v1">the design (v1)</a>, its instructions and the process definition.</div><div class='stat' style='color:#b7791f'>Out of date: the hypotheses (now v2) changed after this was made.</div><div class='claim' id='claim-alpha-study-r1'><span class="tag" style="background:#dd6b20">result</span> <span class='id mono'>r1</span><div class='txt'>Sleep-deprived mice required 41 ± 6 trials to criterion after reversal versus 27 ± 4 for rested controls (n = 16 per group; d = 1.1; p &lt; 0.001).</div><div class='edges'>tests <a href="#claim-alpha-hypotheses-p1">p1</a> · supports <a href="#claim-alpha-hypotheses-h1">h1</a></div><div class='revs'><div class='rev'><b>Peer review:</b> supported — Effect size and n adequate. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim' id='claim-alpha-study-r2'><span class="tag" style="background:#dd6b20">result</span> <span class='id mono'>r2</span><div class='txt'>c-Fos-positive cell density in lateral orbitofrontal cortex did not differ between groups (312 ± 40 vs 298 ± 45 cells/mm²; p = 0.61).</div><div class='edges'>tests <a href="#claim-alpha-hypotheses-p2">p2</a> · contradicts <a href="#claim-alpha-hypotheses-h2">h2</a></div><div class='revs'><div class='rev'><b>Peer review:</b> supported — A clean null; power to detect a 20% difference was ~0.8. <span class='muted'>(on an earlier version)</span></div></div></div><div class='claim' id='claim-alpha-study-i1'><span class="tag" style="background:#d69e2e">interpretation</span> <span class='id mono'>i1</span><div class='txt'>Acute sleep deprivation impairs reversal learning without a detectable reduction in orbitofrontal activation, so the behavioural effect is unlikely to be mediated by lower orbitofrontal activity as measured here.</div><div class='edges'>derived-from <a href="#claim-alpha-study-r1">r1</a> · derived-from <a href="#claim-alpha-study-r2">r2</a></div><div class='revs'><div class='rev'><b>Peer review:</b> weak — Correct as far as c-Fos goes; &#x27;unlikely to be mediated&#x27; is stronger than a single correlational null allows. <span class='muted'>(on an earlier version)</span></div></div></div><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · study · v1
+
+What was found, and what does it mean for the predictions?
+
+Answered by: model. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/funding`  7e803af7eb37
+- `in/alpha/hypotheses`  dae433808da4
+- `in/alpha/design`  83a3f9b92d6c
+- `in/instructions/study.md`  5f67d74162fa
+
+May emit claims of type: result, interpretation.
+</pre><h4>Instructions</h4><pre># Instructions: study
 
 You are given the funded design and the predictions it tests. Emit `result` claims — one per
 measurement, stating what was observed with its effect size and uncertainty — and
 `interpretation` claims saying what the results mean for the hypotheses. Link each result to the
 prediction it tested with `tests`, and to the hypothesis with `supports` or `contradicts`.
 Report what did not come out. A study whose every prediction succeeded is less believable, not more.
-</pre></details></td><td><code>funding</code>, <code>hypotheses</code>, <code>design</code></td><td>emits <span class="tag" style="background:#dd6b20">result</span> <span class="tag" style="background:#d69e2e">interpretation</span></td></tr><tr><td class='mono'>paper</td><td>project</td><td>code</td><td>The paper, composed.<div class='mono muted small'>python3 -m chain.agents.compose &quot;Introduction=question,hypotheses;Methods=design;Results=study&quot;</div></td><td><code>question</code>, <code>hypotheses</code>, <code>design</code>, <code>study</code></td><td>composes</td></tr><tr><td class='mono'>peer-review</td><td>project</td><td>model</td><td>Does the evidence support each claim the paper makes?<details><summary>instructions</summary><pre># Instructions: peer review
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/study/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;stub-agent&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/funding/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:funding&quot;,
+      &quot;sha&quot;: &quot;7e803af7eb37&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/hypotheses/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:hypotheses&quot;,
+      &quot;sha&quot;: &quot;dae433808da4&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/design/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:design&quot;,
+      &quot;sha&quot;: &quot;83a3f9b92d6c&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;instructions&quot;,
+      &quot;path&quot;: &quot;instructions/study.md&quot;,
+      &quot;sha&quot;: &quot;5f67d74162fa&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;5867f34e8915&quot;
+    }
+  ],
+  &quot;judges&quot;: null,
+  &quot;note&quot;: &quot;demo answer from study.json&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/study/v1&quot;,
+    &quot;sha&quot;: &quot;a52478ca20ef&quot;
+  },
+  &quot;step&quot;: &quot;study&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;model&quot;
+}</pre></details></article><article class='card' id='art-alpha-paper-v1'><div class='hd'><span class='t'>The paper (version 1)</span> <span class="who"><span class="dot" style="background:#718096"></span>a script</span> <span class="chip" style="background:#b7791f">out of date</span></div><div class='prov'>Made by a script on 12 Sep 2026 at 10:59, from <a href="#art-alpha-question-v1">the question (v1)</a>, <a href="#art-alpha-hypotheses-v2">the hypotheses (v1)</a>, <a href="#art-alpha-design-v1">the design (v1)</a>, <a href="#art-alpha-study-v1">the study results (v1)</a> and the process definition.</div><div class='stat' style='color:#b7791f'>Out of date: the hypotheses (now v2) changed after this was made.</div><div class='doc'><h4>Introduction</h4><div class='sec-claim'><span class="tag" style="background:#805ad5">question</span> <a href="#claim-alpha-question-q1">q1</a> <div class='txt'>Does acute sleep deprivation impair reversal learning in mice?</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Well posed and answerable at this scale. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Answered affirmatively by r1. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#805ad5">question</span> <a href="#claim-alpha-question-q2">q2</a> <div class='txt'>If it does, is the impairment mediated by reduced orbitofrontal activity?</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — A clear mechanistic follow-on. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Answered negatively, within the design&#x27;s limits. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#718096">scope</span> <a href="#claim-alpha-question-s1">s1</a> <div class='txt'>The project will not test chronic sleep restriction or human participants.</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Sensible limit. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Respected. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#3182ce">hypothesis</span> <a href="#claim-alpha-hypotheses-h1">h1</a> <div class='txt'>Acute (24 h) sleep deprivation impairs reversal learning in mice.</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Directly tested by m1. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — r1 is a large, well-powered effect. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#3182ce">hypothesis</span> <a href="#claim-alpha-hypotheses-h2">h2</a> <div class='txt'>The impairment is mediated by reduced orbitofrontal cortex activity during reversal.</div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Mediation is asserted; the design measures activity, not mediation. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Fund as exploratory; the review&#x27;s caution about mediation is noted. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> unsupported — r2 finds no difference; the paper correctly says so. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#4299e1">prediction</span> <a href="#claim-alpha-hypotheses-p1">p1</a> <div class='txt'>Sleep-deprived mice need more trials than controls to reach criterion after a reward-contingency reversal.</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Concrete and powered. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — Met. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#4299e1">prediction</span> <a href="#claim-alpha-hypotheses-p2">p2</a> <div class='txt'>Sleep-deprived mice show fewer c-Fos-positive cells in orbitofrontal cortex after the reversal session.</div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Consistent with h2 but does not test it against reduced engagement. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> unsupported — Not met; a null with reasonable power. <span class='muted'>(on an earlier version)</span></div></div></div><h4>Methods</h4><div class='sec-claim'><span class="tag" style="background:#38a169">method</span> <a href="#claim-alpha-design-m1">m1</a> <div class='txt'>Two-choice odour discrimination with a single reward-contingency reversal; trials to criterion (8 of 10 correct) compared between 24 h sleep-deprived and rested mice (n = 16 per group).</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — Standard, adequately powered. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — As proposed. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#38a169">method</span> <a href="#claim-alpha-design-m2">m2</a> <div class='txt'>c-Fos immunostaining in lateral orbitofrontal cortex 90 min after the reversal session; positive-cell density compared between groups.</div><div class='revs'><div class='rev'><b>Proposal review:</b> weak — Correlational; the scope claim s1 already concedes this. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Fund; ask for an engagement control in the report. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> weak — No engagement control was added, as funding requested. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#718096">scope</span> <a href="#claim-alpha-design-s1">s1</a> <div class='txt'>c-Fos density cannot distinguish reduced orbitofrontal activity from reduced task engagement; the design bears on prediction p2 only correlationally.</div><div class='revs'><div class='rev'><b>Proposal review:</b> sound — The proposal is honest about its limit. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Funding:</b> fund — Merits support. <span class='muted'>(on an earlier version)</span></div><div class='rev'><b>Peer review:</b> supported — The limit stands and is stated. <span class='muted'>(on an earlier version)</span></div></div></div><h4>Results</h4><div class='sec-claim'><span class="tag" style="background:#dd6b20">result</span> <a href="#claim-alpha-study-r1">r1</a> <div class='txt'>Sleep-deprived mice required 41 ± 6 trials to criterion after reversal versus 27 ± 4 for rested controls (n = 16 per group; d = 1.1; p &lt; 0.001).</div><div class='revs'><div class='rev'><b>Peer review:</b> supported — Effect size and n adequate. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#dd6b20">result</span> <a href="#claim-alpha-study-r2">r2</a> <div class='txt'>c-Fos-positive cell density in lateral orbitofrontal cortex did not differ between groups (312 ± 40 vs 298 ± 45 cells/mm²; p = 0.61).</div><div class='revs'><div class='rev'><b>Peer review:</b> supported — A clean null; power to detect a 20% difference was ~0.8. <span class='muted'>(on an earlier version)</span></div></div></div><div class='sec-claim'><span class="tag" style="background:#d69e2e">interpretation</span> <a href="#claim-alpha-study-i1">i1</a> <div class='txt'>Acute sleep deprivation impairs reversal learning without a detectable reduction in orbitofrontal activation, so the behavioural effect is unlikely to be mediated by lower orbitofrontal activity as measured here.</div><div class='revs'><div class='rev'><b>Peer review:</b> weak — Correct as far as c-Fos goes; &#x27;unlikely to be mediated&#x27; is stronger than a single correlational null allows. <span class='muted'>(on an earlier version)</span></div></div></div></div><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · paper · v1
+
+The paper, composed.
+
+Answered by: code. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/question`  7a092ad9352b
+- `in/alpha/hypotheses`  dae433808da4
+- `in/alpha/design`  83a3f9b92d6c
+- `in/alpha/study`  b84f13cd0bfb
+
+## Command
+
+    python3 -m chain.agents.compose &quot;Introduction=question,hypotheses;Methods=design;Results=study&quot;
+
+reads $CHAIN_IN, writes $CHAIN_OUT.
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/paper/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;python3&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/question/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:question&quot;,
+      &quot;sha&quot;: &quot;7a092ad9352b&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/hypotheses/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:hypotheses&quot;,
+      &quot;sha&quot;: &quot;dae433808da4&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/design/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:design&quot;,
+      &quot;sha&quot;: &quot;83a3f9b92d6c&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/study/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:study&quot;,
+      &quot;sha&quot;: &quot;b84f13cd0bfb&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;8abf3910af2d&quot;
+    }
+  ],
+  &quot;judges&quot;: null,
+  &quot;note&quot;: &quot;&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/paper/v1&quot;,
+    &quot;sha&quot;: &quot;31bd6fff4f19&quot;
+  },
+  &quot;step&quot;: &quot;paper&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;code&quot;
+}</pre></details></article><article class='card' id='art-alpha-peer-review-v1'><div class='hd'><span class='t'>Peer review (version 1)</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span> <span class="chip" style="background:#b7791f">out of date</span></div><div class='prov'>Made by stub-agent on 12 Sep 2026 at 10:59, from <a href="#art-alpha-paper-v1">the paper (v1)</a>, <a href="#art-alpha-question-v1">the question (v1)</a>, <a href="#art-alpha-hypotheses-v2">the hypotheses (v1)</a>, <a href="#art-alpha-design-v1">the design (v1)</a>, <a href="#art-alpha-study-v1">the study results (v1)</a>, its instructions and the process definition.</div><div class='stat' style='color:#b7791f'>Out of date: the hypotheses (now v2) changed after this was made.</div><div class='report'><div class='decision' id='claim-alpha-peer-review-overall'><b>Decision: accept</b> — The behavioural finding is solid and the negative mechanistic result is reported honestly; the interpretation should be softened.</div><div class='line' id='claim-alpha-peer-review-a-alpha-question-q1'><span class='pill'>supported</span><span>Does acute sleep deprivation impair reversal learning in mice? · <a href="#claim-alpha-question-q1">q1</a></span><span class='rz'>Answered affirmatively by r1.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-question-q2'><span class='pill'>supported</span><span>If it does, is the impairment mediated by reduced orbitofrontal activity? · <a href="#claim-alpha-question-q2">q2</a></span><span class='rz'>Answered negatively, within the design&#x27;s limits.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-question-s1'><span class='pill'>supported</span><span>The project will not test chronic sleep restriction or human participants. · <a href="#claim-alpha-question-s1">s1</a></span><span class='rz'>Respected.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-hypotheses-h1'><span class='pill'>supported</span><span>Acute (24 h) sleep deprivation impairs reversal learning in mice. · <a href="#claim-alpha-hypotheses-h1">h1</a></span><span class='rz'>r1 is a large, well-powered effect.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-hypotheses-h2'><span class='pill'>unsupported</span><span>The impairment is mediated by reduced orbitofrontal cortex activity during reversal. · <a href="#claim-alpha-hypotheses-h2">h2</a></span><span class='rz'>r2 finds no difference; the paper correctly says so.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-hypotheses-p1'><span class='pill'>supported</span><span>Sleep-deprived mice need more trials than controls to reach criterion after a reward-contingency reversal. · <a href="#claim-alpha-hypotheses-p1">p1</a></span><span class='rz'>Met.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-hypotheses-p2'><span class='pill'>unsupported</span><span>Sleep-deprived mice show fewer c-Fos-positive cells in orbitofrontal cortex after the reversal session. · <a href="#claim-alpha-hypotheses-p2">p2</a></span><span class='rz'>Not met; a null with reasonable power.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-design-m1'><span class='pill'>supported</span><span>Two-choice odour discrimination with a single reward-contingency reversal; trials to criterion (8 of 10 correct) compared between 24 h sleep-deprived and rested · <a href="#claim-alpha-design-m1">m1</a></span><span class='rz'>As proposed.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-design-m2'><span class='pill'>weak</span><span>c-Fos immunostaining in lateral orbitofrontal cortex 90 min after the reversal session; positive-cell density compared between groups. · <a href="#claim-alpha-design-m2">m2</a></span><span class='rz'>No engagement control was added, as funding requested.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-design-s1'><span class='pill'>supported</span><span>c-Fos density cannot distinguish reduced orbitofrontal activity from reduced task engagement; the design bears on prediction p2 only correlationally. · <a href="#claim-alpha-design-s1">s1</a></span><span class='rz'>The limit stands and is stated.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-study-r1'><span class='pill'>supported</span><span>Sleep-deprived mice required 41 ± 6 trials to criterion after reversal versus 27 ± 4 for rested controls (n = 16 per group; d = 1.1; p &lt; 0.001). · <a href="#claim-alpha-study-r1">r1</a></span><span class='rz'>Effect size and n adequate.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-study-r2'><span class='pill'>supported</span><span>c-Fos-positive cell density in lateral orbitofrontal cortex did not differ between groups (312 ± 40 vs 298 ± 45 cells/mm²; p = 0.61). · <a href="#claim-alpha-study-r2">r2</a></span><span class='rz'>A clean null; power to detect a 20% difference was ~0.8.</span></div><div class='line' id='claim-alpha-peer-review-a-alpha-study-i1'><span class='pill'>weak</span><span>Acute sleep deprivation impairs reversal learning without a detectable reduction in orbitofrontal activation, so the behavioural effect is unlikely to be mediat · <a href="#claim-alpha-study-i1">i1</a></span><span class='rz'>Correct as far as c-Fos goes; &#x27;unlikely to be mediated&#x27; is stronger than a single correlational null allows.</span></div></div><p class='small muted'>13 of 13 items considered.</p><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · peer-review · v1
+
+Does the evidence support each claim the paper makes?
+
+Answered by: model. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/paper`  c0418142b0a7
+- `in/alpha/question`  7a092ad9352b
+- `in/alpha/hypotheses`  dae433808da4
+- `in/alpha/design`  83a3f9b92d6c
+- `in/alpha/study`  b84f13cd0bfb
+- `in/instructions/peer-review.md`  1612ddc9a49e
+
+May emit claims of type: assessment, decision.
+
+## Judging alpha:paper
+
+13 items. Fill skeleton.json: an assessment per item with a verdict from [&#x27;supported&#x27;, &#x27;weak&#x27;, &#x27;unsupported&#x27;], and the `overall` decision (accept / reject / partial). Leave what you did not read `unconsidered` and mark the decision `partial`; a partial reading is a legitimate answer.
+</pre><h4>Instructions</h4><pre># Instructions: peer review
 
 You are given the paper and the claims it is composed of. Fill the skeleton: one `assessment`
 per claim — `supported` (the evidence shown establishes it), `weak` (consistent with it but
 not decisive), `unsupported` (the evidence does not bear on it or points the other way) — with
 one sentence saying why. Assess results against their methods and interpretations against
 their results. Then the `overall` decision. You do not decide publication.
-</pre></details></td><td><code>paper</code>, <code>question</code>, <code>hypotheses</code>, <code>design</code>, <code>study</code></td><td>judges <code>paper</code> · verdicts supported, weak, unsupported</td></tr><tr><td class='mono'>editorial</td><td>project</td><td>human</td><td>Publish, revise, or decline?<details><summary>instructions</summary><pre># Instructions: editorial decision
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/peer-review/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;stub-agent&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/paper/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:paper&quot;,
+      &quot;sha&quot;: &quot;c0418142b0a7&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/question/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:question&quot;,
+      &quot;sha&quot;: &quot;7a092ad9352b&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/hypotheses/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:hypotheses&quot;,
+      &quot;sha&quot;: &quot;dae433808da4&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/design/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:design&quot;,
+      &quot;sha&quot;: &quot;83a3f9b92d6c&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/study/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:study&quot;,
+      &quot;sha&quot;: &quot;b84f13cd0bfb&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;instructions&quot;,
+      &quot;path&quot;: &quot;instructions/peer-review.md&quot;,
+      &quot;sha&quot;: &quot;1612ddc9a49e&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;7536b162616d&quot;
+    }
+  ],
+  &quot;judges&quot;: {
+    &quot;ref&quot;: &quot;alpha:paper&quot;,
+    &quot;v&quot;: 1
+  },
+  &quot;note&quot;: &quot;demo answer from peer-review.json&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/peer-review/v1&quot;,
+    &quot;sha&quot;: &quot;76873668fd50&quot;
+  },
+  &quot;step&quot;: &quot;peer-review&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;model&quot;
+}</pre></details></article><article class='card' id='art-alpha-editorial-v1'><div class='hd'><span class='t'>Editorial decision (version 1)</span> <span class="who"><span class="dot" style="background:#805ad5"></span>a person</span> <span class="chip" style="background:#c05621">waiting</span></div><div class='prov'>Made by demo-human on 12 Sep 2026 at 10:59, from <a href="#art-alpha-paper-v1">the paper (v1)</a>, <a href="#art-alpha-peer-review-v1">the peer review (v1)</a>, its instructions and the process definition.</div><div class='stat' style='color:#c05621'>Waiting: the paper and the peer review must be brought up to date first.</div><div class='report'><div class='decision' id='claim-alpha-editorial-overall'><b>Decision: accept</b> — Publish. The reviewers&#x27; one reservation concerns wording in the interpretation and is recorded beside it.</div></div><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · editorial · v1
+
+Publish, revise, or decline?
+
+Answered by: human. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/paper`  c0418142b0a7
+- `in/alpha/peer-review`  900b3d942849
+- `in/instructions/editorial.md`  cf15af8839be
+
+May emit claims of type: assessment, decision.
+
+## Judging alpha:paper
+
+0 items. Fill skeleton.json: an assessment per item with a verdict from [&#x27;accept&#x27;, &#x27;revise&#x27;, &#x27;reject&#x27;], and the `overall` decision (accept / reject / partial). Leave what you did not read `unconsidered` and mark the decision `partial`; a partial reading is a legitimate answer.
+</pre><h4>Instructions</h4><pre># Instructions: editorial decision
 
 You are the editor. You are given the peer review. Record one `decision` about the paper:
 `accept`, `reject`, or `partial` if you are returning it for revision with the review standing.
 Say in `text` what the decision rests on.
-</pre></details></td><td><code>paper</code>, <code>peer-review</code></td><td>judges <code>paper</code> · verdicts accept, revise, reject</td></tr><tr><td class='mono'>publish</td><td>project</td><td>code</td><td>The published record: the article, its reviews, and the decision.<div class='mono muted small'>python3 -m chain.agents.compose &quot;Article=paper;Reviews=peer-review;Decision=editorial&quot;</div></td><td><code>paper</code>, <code>peer-review</code>, <code>editorial</code></td><td>composes</td></tr><tr><td class='mono'>scheme</td><td>process</td><td>human</td><td>Should each of these steps exist, and is this what it should do?<details><summary>instructions</summary><pre># Instructions: ruling on the process
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/editorial/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;demo-human&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/paper/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:paper&quot;,
+      &quot;sha&quot;: &quot;c0418142b0a7&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/peer-review/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:peer-review&quot;,
+      &quot;sha&quot;: &quot;900b3d942849&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;instructions&quot;,
+      &quot;path&quot;: &quot;instructions/editorial.md&quot;,
+      &quot;sha&quot;: &quot;cf15af8839be&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;6750f5dd3b0b&quot;
+    }
+  ],
+  &quot;judges&quot;: {
+    &quot;ref&quot;: &quot;alpha:paper&quot;,
+    &quot;v&quot;: 1
+  },
+  &quot;note&quot;: &quot;demo answer from editorial.json&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/editorial/v1&quot;,
+    &quot;sha&quot;: &quot;7544479b9d99&quot;
+  },
+  &quot;step&quot;: &quot;editorial&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;human&quot;
+}</pre></details></article><article class='card' id='art-alpha-publish-v1'><div class='hd'><span class='t'>The published record (version 1)</span> <span class="who"><span class="dot" style="background:#718096"></span>a script</span> <span class="chip" style="background:#c05621">waiting</span></div><div class='prov'>Made by a script on 12 Sep 2026 at 10:59, from <a href="#art-alpha-paper-v1">the paper (v1)</a>, <a href="#art-alpha-peer-review-v1">the peer review (v1)</a>, <a href="#art-alpha-editorial-v1">the editorial decision (v1)</a> and the process definition.</div><div class='stat' style='color:#c05621'>Waiting: the paper, the peer review and the editorial decision must be brought up to date first.</div><div class='doc'><h4>Article</h4><div class='sec-claim'><a href="#art-alpha-paper-v1">The paper</a> <span class='muted small'>— see its own card</span></div><h4>Reviews</h4><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-question-q1">a-alpha-question-q1</a> <div class='txt'>Answered affirmatively by r1.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-question-q2">a-alpha-question-q2</a> <div class='txt'>Answered negatively, within the design&#x27;s limits.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-question-s1">a-alpha-question-s1</a> <div class='txt'>Respected.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-hypotheses-h1">a-alpha-hypotheses-h1</a> <div class='txt'>r1 is a large, well-powered effect.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-hypotheses-h2">a-alpha-hypotheses-h2</a> <div class='txt'>r2 finds no difference; the paper correctly says so.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-hypotheses-p1">a-alpha-hypotheses-p1</a> <div class='txt'>Met.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-hypotheses-p2">a-alpha-hypotheses-p2</a> <div class='txt'>Not met; a null with reasonable power.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-design-m1">a-alpha-design-m1</a> <div class='txt'>As proposed.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-design-m2">a-alpha-design-m2</a> <div class='txt'>No engagement control was added, as funding requested.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-design-s1">a-alpha-design-s1</a> <div class='txt'>The limit stands and is stated.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-study-r1">a-alpha-study-r1</a> <div class='txt'>Effect size and n adequate.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-study-r2">a-alpha-study-r2</a> <div class='txt'>A clean null; power to detect a 20% difference was ~0.8.</div></div><div class='sec-claim'><span class="tag" style="background:#e53e3e">assessment</span> <a href="#claim-alpha-peer-review-a-alpha-study-i1">a-alpha-study-i1</a> <div class='txt'>Correct as far as c-Fos goes; &#x27;unlikely to be mediated&#x27; is stronger than a single correlational null allows.</div></div><div class='sec-claim'><span class="tag" style="background:#c53030">decision</span> <a href="#claim-alpha-peer-review-overall">overall</a> <div class='txt'>The behavioural finding is solid and the negative mechanistic result is reported honestly; the interpretation should be softened.</div></div><h4>Decision</h4><div class='sec-claim'><span class="tag" style="background:#c53030">decision</span> <a href="#claim-alpha-editorial-overall">overall</a> <div class='txt'>Publish. The reviewers&#x27; one reservation concerns wording in the interpretation and is recorded beside it.</div></div></div><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># alpha · publish · v1
+
+The published record: the article, its reviews, and the decision.
+
+Answered by: code. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/alpha/paper`  c0418142b0a7
+- `in/alpha/peer-review`  900b3d942849
+- `in/alpha/editorial`  1eecaf95a483
+
+## Command
+
+    python3 -m chain.agents.compose &quot;Article=paper;Reviews=peer-review;Decision=editorial&quot;
+
+reads $CHAIN_IN, writes $CHAIN_OUT.
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/alpha/publish/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;python3&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/paper/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:paper&quot;,
+      &quot;sha&quot;: &quot;c0418142b0a7&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/peer-review/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:peer-review&quot;,
+      &quot;sha&quot;: &quot;900b3d942849&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;step&quot;,
+      &quot;path&quot;: &quot;store/alpha/editorial/v1&quot;,
+      &quot;ref&quot;: &quot;alpha:editorial&quot;,
+      &quot;sha&quot;: &quot;1eecaf95a483&quot;,
+      &quot;v&quot;: 1
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;85ae7a5cd0c0&quot;
+    }
+  ],
+  &quot;judges&quot;: null,
+  &quot;note&quot;: &quot;&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/alpha/publish/v1&quot;,
+    &quot;sha&quot;: &quot;c45bae86060e&quot;
+  },
+  &quot;step&quot;: &quot;publish&quot;,
+  &quot;subject&quot;: &quot;alpha&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;code&quot;
+}</pre></details></article><article class='card' id='art-process-scheme-v1'><div class='hd'><span class='t'>Ruling on the process (version 1)</span> <span class="who"><span class="dot" style="background:#805ad5"></span>a person</span> <span class="chip" style="background:#2f855a">up to date</span></div><div class='prov'>Made by demo-human on 12 Sep 2026 at 10:59, from its instructions and the process definition.</div><div class='stat' style='color:#2f855a'>Up to date.</div><div class='report'><div class='decision' id='claim-process-scheme-overall'><b>Decision: accept</b> — The cycle is complete and each step has a home.</div><div class='line' id='claim-process-scheme-a-step-question'><span class='pill'>accept</span><span>What is this project asking? · <a href="#step-question">Ask the question</a></span><span class='rz'>The step is what it should be.</span></div><div class='line' id='claim-process-scheme-a-step-hypotheses'><span class='pill'>accept</span><span>What answers does the project bet on, and what would each predict? · <a href="#step-hypotheses">Propose hypotheses</a></span><span class='rz'>The step is what it should be.</span></div><div class='line' id='claim-process-scheme-a-step-design'><span class='pill'>accept</span><span>What would be measured, how, and within what limits? · <a href="#step-design">Design the study</a></span><span class='rz'>The step is what it should be.</span></div><div class='line' id='claim-process-scheme-a-step-proposal'><span class='pill'>accept</span><span>The proposal, composed. · <a href="#step-proposal">Compose the proposal</a></span><span class='rz'>The step is what it should be.</span></div><div class='line' id='claim-process-scheme-a-step-proposal-review'><span class='pill'>accept</span><span>Is each part of the proposal sound? · <a href="#step-proposal-review">Review the proposal</a></span><span class='rz'>The step is what it should be.</span></div><div class='line' id='claim-process-scheme-a-step-funding'><span class='pill'>accept</span><span>Should this be funded? · <a href="#step-funding">Decide funding</a></span><span class='rz'>The step is what it should be.</span></div><div class='line' id='claim-process-scheme-a-step-study'><span class='pill'>accept</span><span>What was found, and what does it mean for the predictions? · <a href="#step-study">Run the study</a></span><span class='rz'>The step is what it should be.</span></div><div class='line' id='claim-process-scheme-a-step-paper'><span class='pill'>accept</span><span>The paper, composed. · <a href="#step-paper">Compose the paper</a></span><span class='rz'>The step is what it should be.</span></div><div class='line' id='claim-process-scheme-a-step-peer-review'><span class='pill'>accept</span><span>Does the evidence support each claim the paper makes? · <a href="#step-peer-review">Peer review</a></span><span class='rz'>The step is what it should be.</span></div><div class='line' id='claim-process-scheme-a-step-editorial'><span class='pill'>accept</span><span>Publish, revise, or decline? · <a href="#step-editorial">Editorial decision</a></span><span class='rz'>Accept, noting the editor reads only the review, not the paper: deliberate, and worth revisiting.</span></div><div class='line' id='claim-process-scheme-a-step-publish'><span class='pill'>accept</span><span>The published record: the article, its reviews, and the decision. · <a href="#step-publish">Publish</a></span><span class='rz'>The step is what it should be.</span></div><div class='line' id='claim-process-scheme-a-step-scheme'><span class='pill'>accept</span><span>Should each of these steps exist, and is this what it should do? · <a href="#step-scheme">Review the process itself</a></span><span class='rz'>The step is what it should be.</span></div></div><p class='small muted'>12 of 12 items considered.</p><details><summary>What the agent was asked</summary><h4>The question, as posed</h4><pre># process · scheme · v1
+
+Should each of these steps exist, and is this what it should do?
+
+Answered by: human. Read INSTRUCTIONS.md, then everything under in/. Write claims.json as CONTRACT.json says. Refer only to what is listed there.
+
+## Staged
+
+- `in/instructions/scheme.md`  6a6752da8023
+
+May emit claims of type: assessment, decision.
+
+## Judging process
+
+12 items. Fill skeleton.json: an assessment per item with a verdict from [&#x27;accept&#x27;, &#x27;reject&#x27;], and the `overall` decision (accept / reject / partial). Leave what you did not read `unconsidered` and mark the decision `partial`; a partial reading is a legitimate answer.
+</pre><h4>Instructions</h4><pre># Instructions: ruling on the process
 
 You are given the process declaration, one item per step. For each step: `accept` if the step
 should exist and its question, worker and inputs are what they should be; `reject` otherwise,
 saying why. Items whose declaration is unchanged since your last ruling are carried forward and
 marked so; you need only read the rest.
-</pre></details></td><td>—</td><td>judges <code>process</code> · verdicts accept, reject</td></tr></table></div>
-<h2>Where things stand</h2><p class='lead'>Computed from hashes, never stored. A judgement is shown beside the version it judged and says whether it still applies; the scheme column is the newest current ruling on the process.</p>
-<p class="legend small"><span class="chip" style="background:#2f855a">current</span> <span class="chip" style="background:#b7791f">stale</span> <span class="chip" style="background:#c05621">blocked</span> <span class="chip" style="background:#2b6cb0">pending</span> <span class="chip" style="background:#a0aec0">absent</span></p>
-<h3>project</h3><div class="wrap"><table><tr><th>subject</th><th class='mono'>question</th><th class='mono'>hypotheses</th><th class='mono'>design</th><th class='mono'>proposal</th><th class='mono'>proposal-review</th><th class='mono'>funding</th><th class='mono'>study</th><th class='mono'>paper</th><th class='mono'>peer-review</th><th class='mono'>editorial</th><th class='mono'>publish</th></tr>
-<tr><td class='mono'>alpha</td><td class='cell'><span class="chip" style="background:#2f855a">current</span><div class='small'>v1 · demo-human</div><div class='small muted'>scheme: accept</div></td><td class='cell'><span class="chip" style="background:#2f855a">current</span><div class='small'>v2 · stub-agent</div><div class='small muted'>scheme: accept</div></td><td class='cell'><span class="chip" style="background:#b7791f">stale</span><div class='small'>v1 · stub-agent</div><div class='small muted'>moved: alpha:hypotheses</div><div class='small muted'>scheme: accept</div></td><td class='cell'><span class="chip" style="background:#b7791f">stale</span><div class='small'>v1 · python3</div><div class='small'><span class='mono'>proposal-review</span> by stub-agent: <b>accept</b> (10/10; sound 7, weak 3) <span class='muted'>— judged an earlier version</span></div><div class='small'><span class='mono'>funding</span> by demo-human: <b>accept</b> (10/10; fund 10) <span class='muted'>— judged an earlier version</span></div><div class='small muted'>moved: alpha:hypotheses</div><div class='small muted'>upstream: alpha:design</div><div class='small muted'>scheme: accept</div></td><td class='cell'><span class="chip" style="background:#b7791f">stale</span><div class='small'>v1 · stub-agent</div><div class='small muted'>moved: alpha:hypotheses</div><div class='small muted'>upstream: alpha:proposal, alpha:design</div><div class='small muted'>scheme: accept</div></td><td class='cell'><span class="chip" style="background:#b7791f">stale</span><div class='small'>v1 · demo-human</div><div class='small muted'>moved: alpha:hypotheses</div><div class='small muted'>upstream: alpha:proposal, alpha:proposal-review, alpha:design</div><div class='small muted'>scheme: accept</div></td><td class='cell'><span class="chip" style="background:#b7791f">stale</span><div class='small'>v1 · stub-agent</div><div class='small muted'>moved: alpha:hypotheses</div><div class='small muted'>upstream: alpha:funding, alpha:design</div><div class='small muted'>scheme: accept</div></td><td class='cell'><span class="chip" style="background:#b7791f">stale</span><div class='small'>v1 · python3</div><div class='small'><span class='mono'>peer-review</span> by stub-agent: <b>accept</b> (13/13; supported 9, unsupported 2, weak 2) <span class='muted'>— judged an earlier version</span></div><div class='small'><span class='mono'>editorial</span> by demo-human: <b>accept</b> (0/0; no items) <span class='muted'>— judged an earlier version</span></div><div class='small muted'>moved: alpha:hypotheses</div><div class='small muted'>upstream: alpha:design, alpha:study</div><div class='small muted'>scheme: accept</div></td><td class='cell'><span class="chip" style="background:#b7791f">stale</span><div class='small'>v1 · stub-agent</div><div class='small muted'>moved: alpha:hypotheses</div><div class='small muted'>upstream: alpha:paper, alpha:design, alpha:study</div><div class='small muted'>scheme: accept</div></td><td class='cell'><span class="chip" style="background:#c05621">blocked</span><div class='small'>v1 · demo-human</div><div class='small muted'>upstream: alpha:paper, alpha:peer-review</div><div class='small muted'>scheme: accept</div></td><td class='cell'><span class="chip" style="background:#c05621">blocked</span><div class='small'>v1 · python3</div><div class='small muted'>upstream: alpha:paper, alpha:peer-review, alpha:editorial</div><div class='small muted'>scheme: accept</div></td></tr>
+</pre></details><details><summary>Files &amp; provenance</summary><p class='small'>Directory: <code>store/process/scheme/v1</code></p><pre>{
+  &quot;answered&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;asked&quot;: &quot;2026-09-12T10:59:33Z&quot;,
+  &quot;by&quot;: &quot;demo-human&quot;,
+  &quot;in&quot;: [
+    {
+      &quot;kind&quot;: &quot;instructions&quot;,
+      &quot;path&quot;: &quot;instructions/scheme.md&quot;,
+      &quot;sha&quot;: &quot;6a6752da8023&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;declaration&quot;,
+      &quot;path&quot;: &quot;process.yaml&quot;,
+      &quot;sha&quot;: &quot;8349334fc5b4&quot;
+    }
+  ],
+  &quot;judges&quot;: {
+    &quot;ref&quot;: &quot;process&quot;,
+    &quot;sha&quot;: &quot;798d917b6599&quot;
+  },
+  &quot;note&quot;: &quot;demo answer from scheme.json&quot;,
+  &quot;out&quot;: {
+    &quot;path&quot;: &quot;store/process/scheme/v1&quot;,
+    &quot;sha&quot;: &quot;5e473087aae3&quot;
+  },
+  &quot;step&quot;: &quot;scheme&quot;,
+  &quot;subject&quot;: &quot;process&quot;,
+  &quot;v&quot;: 1,
+  &quot;worker&quot;: &quot;human&quot;
+}</pre></details></article></section>
+<section><h2 id='open'>Open requests</h2><p class='lead'>Questions a person or an agent could answer now.</p><p class='muted'>Nothing is open right now — every question has been answered.</p></section>
+<section><h2 id='stand'>Where things stand</h2>
+<p class='lead'>Every subject against every step. Worked out from the record each time the page is built, never stored. A cell that is not up to date says why.</p>
+<h3>project</h3><div class='wrap'><table class='grid'><tr><th>subject</th><th>Ask the question</th><th>Propose hypotheses</th><th>Design the study</th><th>Compose the proposal</th><th>Review the proposal</th><th>Decide funding</th><th>Run the study</th><th>Compose the paper</th><th>Peer review</th><th>Editorial decision</th><th>Publish</th></tr>
+<tr><td><span class='mono'>alpha</span></td><td><span class="chip" style="background:#2f855a">up to date</span><div class='small muted'>v1</div></td><td><span class="chip" style="background:#2f855a">up to date</span><div class='small muted'>v2</div></td><td><span class="chip" style="background:#b7791f">out of date</span><div class='small muted'>v1</div><div class='why'>changed input</div></td><td><span class="chip" style="background:#b7791f">out of date</span><div class='small muted'>v1</div><div class='why'>changed input</div></td><td><span class="chip" style="background:#b7791f">out of date</span><div class='small muted'>v1</div><div class='why'>changed input</div></td><td><span class="chip" style="background:#b7791f">out of date</span><div class='small muted'>v1</div><div class='why'>changed input</div></td><td><span class="chip" style="background:#b7791f">out of date</span><div class='small muted'>v1</div><div class='why'>changed input</div></td><td><span class="chip" style="background:#b7791f">out of date</span><div class='small muted'>v1</div><div class='why'>changed input</div></td><td><span class="chip" style="background:#b7791f">out of date</span><div class='small muted'>v1</div><div class='why'>changed input</div></td><td><span class="chip" style="background:#c05621">waiting</span><div class='small muted'>v1</div><div class='why'>waiting on paper</div></td><td><span class="chip" style="background:#c05621">waiting</span><div class='small muted'>v1</div><div class='why'>waiting on paper</div></td></tr>
 </table></div>
-<h3>process</h3><div class="wrap"><table><tr><th>subject</th><th class='mono'>scheme</th></tr>
-<tr><td class='mono'>process</td><td class='cell'><span class="chip" style="background:#2f855a">current</span><div class='small'>v1 · demo-human</div><div class='small muted'>scheme: accept</div></td></tr>
-</table></div>
-<h2>Open requests</h2><p class='lead'>What a person or an agent could answer now. Each is a directory: the question, the instructions, everything it may read, and a skeleton.</p><p class='muted'>None.</p>
-<h2>alpha</h2>
-<p class='small muted'>Every claim of this subject's latest versions, by type, with what each review and decision said about it beneath. Lines are edges: green supports, red contradicts, grey the rest. Hover a claim for its text and every verdict on it.</p><svg viewBox="0 0 1140 160" width="100%" style="background:#fff;border:1px solid #e2e8f0;border-radius:6px"><text x="6.0" y="16" fill="#805ad5" font-weight="600">question</text><text x="168.85714285714286" y="16" fill="#718096" font-weight="600">scope</text><text x="331.7142857142857" y="16" fill="#3182ce" font-weight="600">hypothesis</text><text x="494.57142857142856" y="16" fill="#4299e1" font-weight="600">prediction</text><text x="657.4285714285714" y="16" fill="#38a169" font-weight="600">method</text><text x="820.2857142857143" y="16" fill="#dd6b20" font-weight="600">result</text><text x="983.1428571428571" y="16" fill="#d69e2e" font-weight="600">interpretation</text><line x1="480.57142857142856" y1="42" x2="6.0" y2="42" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:hypotheses:h1 answers alpha:question:q1</title></line><line x1="480.57142857142856" y1="82" x2="6.0" y2="82" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:hypotheses:h2 answers alpha:question:q2</title></line><line x1="643.4285714285714" y1="42" x2="331.7142857142857" y2="42" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:hypotheses:p1 derived-from alpha:hypotheses:h1</title></line><line x1="643.4285714285714" y1="82" x2="331.7142857142857" y2="82" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:hypotheses:p2 derived-from alpha:hypotheses:h2</title></line><line x1="643.4285714285714" y1="122" x2="331.7142857142857" y2="82" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:hypotheses:p3 derived-from alpha:hypotheses:h2</title></line><line x1="806.2857142857143" y1="42" x2="494.57142857142856" y2="42" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:design:m1 tests alpha:hypotheses:p1</title></line><line x1="806.2857142857143" y1="82" x2="494.57142857142856" y2="82" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:design:m2 tests alpha:hypotheses:p2</title></line><line x1="969.1428571428572" y1="42" x2="494.57142857142856" y2="42" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:study:r1 tests alpha:hypotheses:p1</title></line><line x1="969.1428571428572" y1="42" x2="331.7142857142857" y2="42" stroke="#2f855a" stroke-width="1.2" opacity=".7"><title>alpha:study:r1 supports alpha:hypotheses:h1</title></line><line x1="969.1428571428572" y1="82" x2="494.57142857142856" y2="82" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:study:r2 tests alpha:hypotheses:p2</title></line><line x1="969.1428571428572" y1="82" x2="331.7142857142857" y2="82" stroke="#e53e3e" stroke-width="1.2" opacity=".7"><title>alpha:study:r2 contradicts alpha:hypotheses:h2</title></line><line x1="1132.0" y1="42" x2="820.2857142857143" y2="42" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:study:i1 derived-from alpha:study:r1</title></line><line x1="1132.0" y1="42" x2="820.2857142857143" y2="82" stroke="#a0aec0" stroke-width="1.2" opacity=".7"><title>alpha:study:i1 derived-from alpha:study:r2</title></line><rect x="6.0" y="30" width="146.85714285714286" height="32" rx="3" fill="#805ad5" opacity=".12"/><text x="10.0" y="43" font-weight="600"><title>Does acute sleep deprivation impair reversal learning in mice?
-— proposal-review: sound. Well posed and answerable at this scale.
-— funding: fund. Merits support.
-— peer-review: supported. Answered affirmatively by r1.</title>q1  <tspan font-weight="400" fill="#4a5568">Does acute sleep de</tspan></text><text x="10.0" y="56" fill="#718096"><title>Does acute sleep deprivation impair reversal learning in mice?
-— proposal-review: sound. Well posed and answerable at this scale.
-— funding: fund. Merits support.
-— peer-review: supported. Answered affirmatively by r1.</title>proposal: sound · funding: fu</text><rect x="6.0" y="70" width="146.85714285714286" height="32" rx="3" fill="#805ad5" opacity=".12"/><text x="10.0" y="83" font-weight="600"><title>If it does, is the impairment mediated by reduced orbitofrontal activity?
-— proposal-review: sound. A clear mechanistic follow-on.
-— funding: fund. Merits support.
-— peer-review: supported. Answered negatively, within the design&#x27;s limits.</title>q2  <tspan font-weight="400" fill="#4a5568">If it does, is the </tspan></text><text x="10.0" y="96" fill="#718096"><title>If it does, is the impairment mediated by reduced orbitofrontal activity?
-— proposal-review: sound. A clear mechanistic follow-on.
-— funding: fund. Merits support.
-— peer-review: supported. Answered negatively, within the design&#x27;s limits.</title>proposal: sound · funding: fu</text><rect x="168.85714285714286" y="30" width="146.85714285714286" height="32" rx="3" fill="#718096" opacity=".12"/><text x="172.85714285714286" y="43" font-weight="600"><title>The project will not test chronic sleep restriction or human participants.
-— proposal-review: sound. Sensible limit.
-— funding: fund. Merits support.
-— peer-review: supported. Respected.</title>s1  <tspan font-weight="400" fill="#4a5568">The project will no</tspan></text><text x="172.85714285714286" y="56" fill="#718096"><title>The project will not test chronic sleep restriction or human participants.
-— proposal-review: sound. Sensible limit.
-— funding: fund. Merits support.
-— peer-review: supported. Respected.</title>proposal: sound · funding: fu</text><rect x="331.7142857142857" y="30" width="146.85714285714286" height="32" rx="3" fill="#3182ce" opacity=".12"/><text x="335.7142857142857" y="43" font-weight="600"><title>Acute (24 h) sleep deprivation impairs reversal learning in mice.
-— proposal-review: sound. Directly tested by m1.
-— funding: fund. Merits support.
-— peer-review: supported. r1 is a large, well-powered effect.</title>h1  <tspan font-weight="400" fill="#4a5568">Acute (24 h) sleep </tspan></text><text x="335.7142857142857" y="56" fill="#718096"><title>Acute (24 h) sleep deprivation impairs reversal learning in mice.
-— proposal-review: sound. Directly tested by m1.
-— funding: fund. Merits support.
-— peer-review: supported. r1 is a large, well-powered effect.</title>proposal: sound · funding: fu</text><rect x="331.7142857142857" y="70" width="146.85714285714286" height="32" rx="3" fill="#3182ce" opacity=".12"/><text x="335.7142857142857" y="83" font-weight="600"><title>The impairment is mediated by reduced orbitofrontal cortex activity during reversal.
-— proposal-review: weak. Mediation is asserted; the design measures activity, not mediation.
-— funding: fund. Fund as exploratory; the review&#x27;s caution about mediation is noted.
-— peer-review: unsupported. r2 finds no difference; the paper correctly says so.</title>h2  <tspan font-weight="400" fill="#4a5568">The impairment is m</tspan></text><text x="335.7142857142857" y="96" fill="#718096"><title>The impairment is mediated by reduced orbitofrontal cortex activity during reversal.
-— proposal-review: weak. Mediation is asserted; the design measures activity, not mediation.
-— funding: fund. Fund as exploratory; the review&#x27;s caution about mediation is noted.
-— peer-review: unsupported. r2 finds no difference; the paper correctly says so.</title>proposal: weak · funding: fun</text><rect x="494.57142857142856" y="30" width="146.85714285714286" height="32" rx="3" fill="#4299e1" opacity=".12"/><text x="498.57142857142856" y="43" font-weight="600"><title>Sleep-deprived mice need more trials than controls to reach criterion after a reward-contingency reversal.
-— proposal-review: sound. Concrete and powered.
-— funding: fund. Merits support.
-— peer-review: supported. Met.</title>p1  <tspan font-weight="400" fill="#4a5568">Sleep-deprived mice</tspan></text><text x="498.57142857142856" y="56" fill="#718096"><title>Sleep-deprived mice need more trials than controls to reach criterion after a reward-contingency reversal.
-— proposal-review: sound. Concrete and powered.
-— funding: fund. Merits support.
-— peer-review: supported. Met.</title>proposal: sound · funding: fu</text><rect x="494.57142857142856" y="70" width="146.85714285714286" height="32" rx="3" fill="#4299e1" opacity=".12"/><text x="498.57142857142856" y="83" font-weight="600"><title>Sleep-deprived mice show fewer c-Fos-positive cells in orbitofrontal cortex after the reversal session.
-— proposal-review: weak. Consistent with h2 but does not test it against reduced engagement.
-— funding: fund. Merits support.
-— peer-review: unsupported. Not met; a null with reasonable power.</title>p2  <tspan font-weight="400" fill="#4a5568">Sleep-deprived mice</tspan></text><text x="498.57142857142856" y="96" fill="#718096"><title>Sleep-deprived mice show fewer c-Fos-positive cells in orbitofrontal cortex after the reversal session.
-— proposal-review: weak. Consistent with h2 but does not test it against reduced engagement.
-— funding: fund. Merits support.
-— peer-review: unsupported. Not met; a null with reasonable power.</title>proposal: weak · funding: fun</text><rect x="494.57142857142856" y="110" width="146.85714285714286" height="32" rx="3" fill="#4299e1" opacity=".12"/><text x="498.57142857142856" y="123" font-weight="600"><title>Optogenetic activation of orbitofrontal cortex during reversal rescues performance in sleep-deprived mice.</title>p3  <tspan font-weight="400" fill="#4a5568">Optogenetic activat</tspan></text><text x="498.57142857142856" y="136" fill="#718096"><title>Optogenetic activation of orbitofrontal cortex during reversal rescues performance in sleep-deprived mice.</title></text><rect x="657.4285714285714" y="30" width="146.85714285714286" height="32" rx="3" fill="#38a169" opacity=".12"/><text x="661.4285714285714" y="43" font-weight="600"><title>Two-choice odour discrimination with a single reward-contingency reversal; trials to criterion (8 of 10 correct) compared between 24 h sleep-deprived and rested mice (n = 16 per group).
-— proposal-review: sound. Standard, adequately powered.
-— funding: fund. Merits support.
-— peer-review: supported. As proposed.</title>m1  <tspan font-weight="400" fill="#4a5568">Two-choice odour di</tspan></text><text x="661.4285714285714" y="56" fill="#718096"><title>Two-choice odour discrimination with a single reward-contingency reversal; trials to criterion (8 of 10 correct) compared between 24 h sleep-deprived and rested mice (n = 16 per group).
-— proposal-review: sound. Standard, adequately powered.
-— funding: fund. Merits support.
-— peer-review: supported. As proposed.</title>proposal: sound · funding: fu</text><rect x="657.4285714285714" y="70" width="146.85714285714286" height="32" rx="3" fill="#38a169" opacity=".12"/><text x="661.4285714285714" y="83" font-weight="600"><title>c-Fos immunostaining in lateral orbitofrontal cortex 90 min after the reversal session; positive-cell density compared between groups.
-— proposal-review: weak. Correlational; the scope claim s1 already concedes this.
-— funding: fund. Fund; ask for an engagement control in the report.
-— peer-review: weak. No engagement control was added, as funding requested.</title>m2  <tspan font-weight="400" fill="#4a5568">c-Fos immunostainin</tspan></text><text x="661.4285714285714" y="96" fill="#718096"><title>c-Fos immunostaining in lateral orbitofrontal cortex 90 min after the reversal session; positive-cell density compared between groups.
-— proposal-review: weak. Correlational; the scope claim s1 already concedes this.
-— funding: fund. Fund; ask for an engagement control in the report.
-— peer-review: weak. No engagement control was added, as funding requested.</title>proposal: weak · funding: fun</text><rect x="168.85714285714286" y="70" width="146.85714285714286" height="32" rx="3" fill="#718096" opacity=".12"/><text x="172.85714285714286" y="83" font-weight="600"><title>c-Fos density cannot distinguish reduced orbitofrontal activity from reduced task engagement; the design bears on prediction p2 only correlationally.
-— proposal-review: sound. The proposal is honest about its limit.
-— funding: fund. Merits support.
-— peer-review: supported. The limit stands and is stated.</title>s1  <tspan font-weight="400" fill="#4a5568">c-Fos density canno</tspan></text><text x="172.85714285714286" y="96" fill="#718096"><title>c-Fos density cannot distinguish reduced orbitofrontal activity from reduced task engagement; the design bears on prediction p2 only correlationally.
-— proposal-review: sound. The proposal is honest about its limit.
-— funding: fund. Merits support.
-— peer-review: supported. The limit stands and is stated.</title>proposal: sound · funding: fu</text><rect x="820.2857142857143" y="30" width="146.85714285714286" height="32" rx="3" fill="#dd6b20" opacity=".12"/><text x="824.2857142857143" y="43" font-weight="600"><title>Sleep-deprived mice required 41 ± 6 trials to criterion after reversal versus 27 ± 4 for rested controls (n = 16 per group; d = 1.1; p &lt; 0.001).
-— peer-review: supported. Effect size and n adequate.</title>r1  <tspan font-weight="400" fill="#4a5568">Sleep-deprived mice</tspan></text><text x="824.2857142857143" y="56" fill="#718096"><title>Sleep-deprived mice required 41 ± 6 trials to criterion after reversal versus 27 ± 4 for rested controls (n = 16 per group; d = 1.1; p &lt; 0.001).
-— peer-review: supported. Effect size and n adequate.</title>peer: supported</text><rect x="820.2857142857143" y="70" width="146.85714285714286" height="32" rx="3" fill="#dd6b20" opacity=".12"/><text x="824.2857142857143" y="83" font-weight="600"><title>c-Fos-positive cell density in lateral orbitofrontal cortex did not differ between groups (312 ± 40 vs 298 ± 45 cells/mm²; p = 0.61).
-— peer-review: supported. A clean null; power to detect a 20% difference was ~0.8.</title>r2  <tspan font-weight="400" fill="#4a5568">c-Fos-positive cell</tspan></text><text x="824.2857142857143" y="96" fill="#718096"><title>c-Fos-positive cell density in lateral orbitofrontal cortex did not differ between groups (312 ± 40 vs 298 ± 45 cells/mm²; p = 0.61).
-— peer-review: supported. A clean null; power to detect a 20% difference was ~0.8.</title>peer: supported</text><rect x="983.1428571428571" y="30" width="146.85714285714286" height="32" rx="3" fill="#d69e2e" opacity=".12"/><text x="987.1428571428571" y="43" font-weight="600"><title>Acute sleep deprivation impairs reversal learning without a detectable reduction in orbitofrontal activation, so the behavioural effect is unlikely to be mediated by lower orbitofrontal activity as measured here.
-— peer-review: weak. Correct as far as c-Fos goes; &#x27;unlikely to be mediated&#x27; is stronger than a single correlational null allows.</title>i1  <tspan font-weight="400" fill="#4a5568">Acute sleep depriva</tspan></text><text x="987.1428571428571" y="56" fill="#718096"><title>Acute sleep deprivation impairs reversal learning without a detectable reduction in orbitofrontal activation, so the behavioural effect is unlikely to be mediated by lower orbitofrontal activity as measured here.
-— peer-review: weak. Correct as far as c-Fos goes; &#x27;unlikely to be mediated&#x27; is stronger than a single correlational null allows.</title>peer: weak</text></svg>
-<div class='art'><b class='mono'>question</b> v1 · human · demo-human · 2026-09-12T10:59:33Z <span class="chip" style="background:#2f855a">current</span><div class='small muted'>What is this project asking? · <code>store/alpha/question/v1</code></div><details><summary>read from (2)</summary><ul class='small'><li><code>instructions/question.md</code> instructions <span class='mono muted'>3c60b8655e9a</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>2b30e2d3b1ca</span></li></ul></details><div class="wrap"><table><tr><th>claim</th><th>type</th><th>text</th><th>by</th></tr><tr><td class='mono'>alpha:question:q1</td><td><span class="tag" style="background:#805ad5">question</span></td><td>Does acute sleep deprivation impair reversal learning in mice?</td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:question:q2</td><td><span class="tag" style="background:#805ad5">question</span></td><td>If it does, is the impairment mediated by reduced orbitofrontal activity?</td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:question:s1</td><td><span class="tag" style="background:#718096">scope</span></td><td>The project will not test chronic sleep restriction or human participants.</td><td class='small muted'>demo-human</td></tr></table></div></div>
-<div class='art'><b class='mono'>hypotheses</b> v2 · model · stub-agent · 2026-09-12T10:59:33Z <span class="chip" style="background:#2f855a">current</span><div class='small muted'>What answers does the project bet on, and what would each predict? · <code>store/alpha/hypotheses/v2</code></div><details><summary>read from (3)</summary><ul class='small'><li><code>alpha:question</code> step <span class='mono muted'>v1</span></li><li><code>instructions/hypotheses.md</code> instructions <span class='mono muted'>9bae5fbe9abf</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>509b9ed27820</span></li></ul></details><div class="wrap"><table><tr><th>claim</th><th>type</th><th>text</th><th>by</th></tr><tr><td class='mono'>alpha:hypotheses:h1</td><td><span class="tag" style="background:#3182ce">hypothesis</span></td><td>Acute (24 h) sleep deprivation impairs reversal learning in mice.</td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:hypotheses:h2</td><td><span class="tag" style="background:#3182ce">hypothesis</span></td><td>The impairment is mediated by reduced orbitofrontal cortex activity during reversal.</td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:hypotheses:p1</td><td><span class="tag" style="background:#4299e1">prediction</span></td><td>Sleep-deprived mice need more trials than controls to reach criterion after a reward-contingency reversal.</td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:hypotheses:p2</td><td><span class="tag" style="background:#4299e1">prediction</span></td><td>Sleep-deprived mice show fewer c-Fos-positive cells in orbitofrontal cortex after the reversal session.</td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:hypotheses:p3</td><td><span class="tag" style="background:#4299e1">prediction</span></td><td>Optogenetic activation of orbitofrontal cortex during reversal rescues performance in sleep-deprived mice.</td><td class='small muted'>stub-agent</td></tr></table></div><p class='small'><code>h1</code> <b>answers</b> <code>alpha:question:q1</code> · <code>h2</code> <b>answers</b> <code>alpha:question:q2</code> · <code>p1</code> <b>derived-from</b> <code>h1</code> · <code>p2</code> <b>derived-from</b> <code>h2</code> · <code>p3</code> <b>derived-from</b> <code>h2</code></p></div>
-<div class='art'><b class='mono'>design</b> v1 · model · stub-agent · 2026-09-12T10:59:33Z <span class="chip" style="background:#b7791f">stale</span><div class='small muted'>What would be measured, how, and within what limits? · <code>store/alpha/design/v1</code></div><details><summary>read from (4)</summary><ul class='small'><li><code>alpha:question</code> step <span class='mono muted'>v1</span></li><li><code>alpha:hypotheses</code> step <span class='mono muted'>v1</span></li><li><code>instructions/design.md</code> instructions <span class='mono muted'>3dcb15dd6647</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>a586a0e09eb4</span></li></ul></details><div class="wrap"><table><tr><th>claim</th><th>type</th><th>text</th><th>by</th></tr><tr><td class='mono'>alpha:design:m1</td><td><span class="tag" style="background:#38a169">method</span></td><td>Two-choice odour discrimination with a single reward-contingency reversal; trials to criterion (8 of 10 correct) compared between 24 h sleep-deprived and rested mice (n = 16 per group).</td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:design:m2</td><td><span class="tag" style="background:#38a169">method</span></td><td>c-Fos immunostaining in lateral orbitofrontal cortex 90 min after the reversal session; positive-cell density compared between groups.</td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:design:s1</td><td><span class="tag" style="background:#718096">scope</span></td><td>c-Fos density cannot distinguish reduced orbitofrontal activity from reduced task engagement; the design bears on prediction p2 only correlationally.</td><td class='small muted'>stub-agent</td></tr></table></div><p class='small'><code>m1</code> <b>tests</b> <code>alpha:hypotheses:p1</code> · <code>m2</code> <b>tests</b> <code>alpha:hypotheses:p2</code></p></div>
-<div class='art'><b class='mono'>proposal</b> v1 · code · python3 · 2026-09-12T10:59:33Z <span class="chip" style="background:#b7791f">stale</span><div class='small muted'>The proposal, composed. · <code>store/alpha/proposal/v1</code></div><details><summary>read from (4)</summary><ul class='small'><li><code>alpha:question</code> step <span class='mono muted'>v1</span></li><li><code>alpha:hypotheses</code> step <span class='mono muted'>v1</span></li><li><code>alpha:design</code> step <span class='mono muted'>v1</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>a84444f0f3a6</span></li></ul></details><ul class='small'><li><b>Question</b>: <code>alpha:question:q1</code>, <code>alpha:question:q2</code>, <code>alpha:question:s1</code></li><li><b>Hypotheses and predictions</b>: <code>alpha:hypotheses:h1</code>, <code>alpha:hypotheses:h2</code>, <code>alpha:hypotheses:p1</code>, <code>alpha:hypotheses:p2</code></li><li><b>Design</b>: <code>alpha:design:m1</code>, <code>alpha:design:m2</code>, <code>alpha:design:s1</code></li></ul></div>
-<div class='art'><b class='mono'>proposal-review</b> v1 · model · stub-agent · 2026-09-12T10:59:33Z <span class="chip" style="background:#b7791f">stale</span><div class='small muted'>Is each part of the proposal sound? · <code>store/alpha/proposal-review/v1</code></div><details><summary>read from (6)</summary><ul class='small'><li><code>alpha:proposal</code> step <span class='mono muted'>v1</span></li><li><code>alpha:question</code> step <span class='mono muted'>v1</span></li><li><code>alpha:hypotheses</code> step <span class='mono muted'>v1</span></li><li><code>alpha:design</code> step <span class='mono muted'>v1</span></li><li><code>instructions/proposal-review.md</code> instructions <span class='mono muted'>588703d0b383</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>2e5620609d2c</span></li></ul></details><div class="wrap"><table><tr><th>claim</th><th>type</th><th>text</th><th>by</th></tr><tr><td class='mono'>alpha:proposal-review:a-alpha-question-q1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Well posed and answerable at this scale.<div class='small muted'>about alpha:question:q1</div><div class='small'><b>sound</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:proposal-review:a-alpha-question-q2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>A clear mechanistic follow-on.<div class='small muted'>about alpha:question:q2</div><div class='small'><b>sound</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:proposal-review:a-alpha-question-s1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Sensible limit.<div class='small muted'>about alpha:question:s1</div><div class='small'><b>sound</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:proposal-review:a-alpha-hypotheses-h1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Directly tested by m1.<div class='small muted'>about alpha:hypotheses:h1</div><div class='small'><b>sound</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:proposal-review:a-alpha-hypotheses-h2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Mediation is asserted; the design measures activity, not mediation.<div class='small muted'>about alpha:hypotheses:h2</div><div class='small'><b>weak</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:proposal-review:a-alpha-hypotheses-p1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Concrete and powered.<div class='small muted'>about alpha:hypotheses:p1</div><div class='small'><b>sound</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:proposal-review:a-alpha-hypotheses-p2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Consistent with h2 but does not test it against reduced engagement.<div class='small muted'>about alpha:hypotheses:p2</div><div class='small'><b>weak</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:proposal-review:a-alpha-design-m1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Standard, adequately powered.<div class='small muted'>about alpha:design:m1</div><div class='small'><b>sound</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:proposal-review:a-alpha-design-m2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Correlational; the scope claim s1 already concedes this.<div class='small muted'>about alpha:design:m2</div><div class='small'><b>weak</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:proposal-review:a-alpha-design-s1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The proposal is honest about its limit.<div class='small muted'>about alpha:design:s1</div><div class='small'><b>sound</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:proposal-review:overall</td><td><span class="tag" style="background:#c53030">decision</span></td><td>A sound behavioural test with a weak mechanistic arm; fundable if the mechanistic claim is held provisional.<div class='small muted'>about alpha:proposal</div><div class='small'><b>accept</b></div></td><td class='small muted'>stub-agent</td></tr></table></div></div>
-<div class='art'><b class='mono'>funding</b> v1 · human · demo-human · 2026-09-12T10:59:33Z <span class="chip" style="background:#b7791f">stale</span><div class='small muted'>Should this be funded? · <code>store/alpha/funding/v1</code></div><details><summary>read from (7)</summary><ul class='small'><li><code>alpha:proposal</code> step <span class='mono muted'>v1</span></li><li><code>alpha:proposal-review</code> step <span class='mono muted'>v1</span></li><li><code>alpha:question</code> step <span class='mono muted'>v1</span></li><li><code>alpha:hypotheses</code> step <span class='mono muted'>v1</span></li><li><code>alpha:design</code> step <span class='mono muted'>v1</span></li><li><code>instructions/funding.md</code> instructions <span class='mono muted'>bcdfba106ba6</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>beca07451fd4</span></li></ul></details><div class="wrap"><table><tr><th>claim</th><th>type</th><th>text</th><th>by</th></tr><tr><td class='mono'>alpha:funding:a-alpha-question-q1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Merits support.<div class='small muted'>about alpha:question:q1</div><div class='small'><b>fund</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:funding:a-alpha-question-q2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Merits support.<div class='small muted'>about alpha:question:q2</div><div class='small'><b>fund</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:funding:a-alpha-question-s1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Merits support.<div class='small muted'>about alpha:question:s1</div><div class='small'><b>fund</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:funding:a-alpha-hypotheses-h1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Merits support.<div class='small muted'>about alpha:hypotheses:h1</div><div class='small'><b>fund</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:funding:a-alpha-hypotheses-h2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Fund as exploratory; the review&#x27;s caution about mediation is noted.<div class='small muted'>about alpha:hypotheses:h2</div><div class='small'><b>fund</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:funding:a-alpha-hypotheses-p1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Merits support.<div class='small muted'>about alpha:hypotheses:p1</div><div class='small'><b>fund</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:funding:a-alpha-hypotheses-p2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Merits support.<div class='small muted'>about alpha:hypotheses:p2</div><div class='small'><b>fund</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:funding:a-alpha-design-m1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Merits support.<div class='small muted'>about alpha:design:m1</div><div class='small'><b>fund</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:funding:a-alpha-design-m2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Fund; ask for an engagement control in the report.<div class='small muted'>about alpha:design:m2</div><div class='small'><b>fund</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:funding:a-alpha-design-s1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Merits support.<div class='small muted'>about alpha:design:s1</div><div class='small'><b>fund</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>alpha:funding:overall</td><td><span class="tag" style="background:#c53030">decision</span></td><td>Funded. The mediation claim is to be reported as provisional.<div class='small muted'>about alpha:proposal</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr></table></div></div>
-<div class='art'><b class='mono'>study</b> v1 · model · stub-agent · 2026-09-12T10:59:33Z <span class="chip" style="background:#b7791f">stale</span><div class='small muted'>What was found, and what does it mean for the predictions? · <code>store/alpha/study/v1</code></div><details><summary>read from (5)</summary><ul class='small'><li><code>alpha:funding</code> step <span class='mono muted'>v1</span></li><li><code>alpha:hypotheses</code> step <span class='mono muted'>v1</span></li><li><code>alpha:design</code> step <span class='mono muted'>v1</span></li><li><code>instructions/study.md</code> instructions <span class='mono muted'>5f67d74162fa</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>5867f34e8915</span></li></ul></details><div class="wrap"><table><tr><th>claim</th><th>type</th><th>text</th><th>by</th></tr><tr><td class='mono'>alpha:study:r1</td><td><span class="tag" style="background:#dd6b20">result</span></td><td>Sleep-deprived mice required 41 ± 6 trials to criterion after reversal versus 27 ± 4 for rested controls (n = 16 per group; d = 1.1; p &lt; 0.001).</td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:study:r2</td><td><span class="tag" style="background:#dd6b20">result</span></td><td>c-Fos-positive cell density in lateral orbitofrontal cortex did not differ between groups (312 ± 40 vs 298 ± 45 cells/mm²; p = 0.61).</td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:study:i1</td><td><span class="tag" style="background:#d69e2e">interpretation</span></td><td>Acute sleep deprivation impairs reversal learning without a detectable reduction in orbitofrontal activation, so the behavioural effect is unlikely to be mediated by lower orbitofrontal activity as measured here.</td><td class='small muted'>stub-agent</td></tr></table></div><p class='small'><code>r1</code> <b>tests</b> <code>alpha:hypotheses:p1</code> · <code>r1</code> <b>supports</b> <code>alpha:hypotheses:h1</code> · <code>r2</code> <b>tests</b> <code>alpha:hypotheses:p2</code> · <code>r2</code> <b>contradicts</b> <code>alpha:hypotheses:h2</code> · <code>i1</code> <b>derived-from</b> <code>r1</code> · <code>i1</code> <b>derived-from</b> <code>r2</code></p></div>
-<div class='art'><b class='mono'>paper</b> v1 · code · python3 · 2026-09-12T10:59:33Z <span class="chip" style="background:#b7791f">stale</span><div class='small muted'>The paper, composed. · <code>store/alpha/paper/v1</code></div><details><summary>read from (5)</summary><ul class='small'><li><code>alpha:question</code> step <span class='mono muted'>v1</span></li><li><code>alpha:hypotheses</code> step <span class='mono muted'>v1</span></li><li><code>alpha:design</code> step <span class='mono muted'>v1</span></li><li><code>alpha:study</code> step <span class='mono muted'>v1</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>8abf3910af2d</span></li></ul></details><ul class='small'><li><b>Introduction</b>: <code>alpha:question:q1</code>, <code>alpha:question:q2</code>, <code>alpha:question:s1</code>, <code>alpha:hypotheses:h1</code>, <code>alpha:hypotheses:h2</code>, <code>alpha:hypotheses:p1</code>, <code>alpha:hypotheses:p2</code></li><li><b>Methods</b>: <code>alpha:design:m1</code>, <code>alpha:design:m2</code>, <code>alpha:design:s1</code></li><li><b>Results</b>: <code>alpha:study:r1</code>, <code>alpha:study:r2</code>, <code>alpha:study:i1</code></li></ul></div>
-<div class='art'><b class='mono'>peer-review</b> v1 · model · stub-agent · 2026-09-12T10:59:33Z <span class="chip" style="background:#b7791f">stale</span><div class='small muted'>Does the evidence support each claim the paper makes? · <code>store/alpha/peer-review/v1</code></div><details><summary>read from (7)</summary><ul class='small'><li><code>alpha:paper</code> step <span class='mono muted'>v1</span></li><li><code>alpha:question</code> step <span class='mono muted'>v1</span></li><li><code>alpha:hypotheses</code> step <span class='mono muted'>v1</span></li><li><code>alpha:design</code> step <span class='mono muted'>v1</span></li><li><code>alpha:study</code> step <span class='mono muted'>v1</span></li><li><code>instructions/peer-review.md</code> instructions <span class='mono muted'>1612ddc9a49e</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>7536b162616d</span></li></ul></details><div class="wrap"><table><tr><th>claim</th><th>type</th><th>text</th><th>by</th></tr><tr><td class='mono'>alpha:peer-review:a-alpha-question-q1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Answered affirmatively by r1.<div class='small muted'>about alpha:question:q1</div><div class='small'><b>supported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-question-q2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Answered negatively, within the design&#x27;s limits.<div class='small muted'>about alpha:question:q2</div><div class='small'><b>supported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-question-s1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Respected.<div class='small muted'>about alpha:question:s1</div><div class='small'><b>supported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-hypotheses-h1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>r1 is a large, well-powered effect.<div class='small muted'>about alpha:hypotheses:h1</div><div class='small'><b>supported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-hypotheses-h2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>r2 finds no difference; the paper correctly says so.<div class='small muted'>about alpha:hypotheses:h2</div><div class='small'><b>unsupported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-hypotheses-p1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Met.<div class='small muted'>about alpha:hypotheses:p1</div><div class='small'><b>supported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-hypotheses-p2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Not met; a null with reasonable power.<div class='small muted'>about alpha:hypotheses:p2</div><div class='small'><b>unsupported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-design-m1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>As proposed.<div class='small muted'>about alpha:design:m1</div><div class='small'><b>supported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-design-m2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>No engagement control was added, as funding requested.<div class='small muted'>about alpha:design:m2</div><div class='small'><b>weak</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-design-s1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The limit stands and is stated.<div class='small muted'>about alpha:design:s1</div><div class='small'><b>supported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-study-r1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Effect size and n adequate.<div class='small muted'>about alpha:study:r1</div><div class='small'><b>supported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-study-r2</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>A clean null; power to detect a 20% difference was ~0.8.<div class='small muted'>about alpha:study:r2</div><div class='small'><b>supported</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:a-alpha-study-i1</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Correct as far as c-Fos goes; &#x27;unlikely to be mediated&#x27; is stronger than a single correlational null allows.<div class='small muted'>about alpha:study:i1</div><div class='small'><b>weak</b></div></td><td class='small muted'>stub-agent</td></tr><tr><td class='mono'>alpha:peer-review:overall</td><td><span class="tag" style="background:#c53030">decision</span></td><td>The behavioural finding is solid and the negative mechanistic result is reported honestly; the interpretation should be softened.<div class='small muted'>about alpha:paper</div><div class='small'><b>accept</b></div></td><td class='small muted'>stub-agent</td></tr></table></div></div>
-<div class='art'><b class='mono'>editorial</b> v1 · human · demo-human · 2026-09-12T10:59:33Z <span class="chip" style="background:#c05621">blocked</span><div class='small muted'>Publish, revise, or decline? · <code>store/alpha/editorial/v1</code></div><details><summary>read from (4)</summary><ul class='small'><li><code>alpha:paper</code> step <span class='mono muted'>v1</span></li><li><code>alpha:peer-review</code> step <span class='mono muted'>v1</span></li><li><code>instructions/editorial.md</code> instructions <span class='mono muted'>cf15af8839be</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>6750f5dd3b0b</span></li></ul></details><div class="wrap"><table><tr><th>claim</th><th>type</th><th>text</th><th>by</th></tr><tr><td class='mono'>alpha:editorial:overall</td><td><span class="tag" style="background:#c53030">decision</span></td><td>Publish. The reviewers&#x27; one reservation concerns wording in the interpretation and is recorded beside it.<div class='small muted'>about alpha:paper</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr></table></div></div>
-<div class='art'><b class='mono'>publish</b> v1 · code · python3 · 2026-09-12T10:59:33Z <span class="chip" style="background:#c05621">blocked</span><div class='small muted'>The published record: the article, its reviews, and the decision. · <code>store/alpha/publish/v1</code></div><details><summary>read from (4)</summary><ul class='small'><li><code>alpha:paper</code> step <span class='mono muted'>v1</span></li><li><code>alpha:peer-review</code> step <span class='mono muted'>v1</span></li><li><code>alpha:editorial</code> step <span class='mono muted'>v1</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>85ae7a5cd0c0</span></li></ul></details><ul class='small'><li><b>Article</b>: <code>alpha:paper</code></li><li><b>Reviews</b>: <code>alpha:peer-review:a-alpha-question-q1</code>, <code>alpha:peer-review:a-alpha-question-q2</code>, <code>alpha:peer-review:a-alpha-question-s1</code>, <code>alpha:peer-review:a-alpha-hypotheses-h1</code>, <code>alpha:peer-review:a-alpha-hypotheses-h2</code>, <code>alpha:peer-review:a-alpha-hypotheses-p1</code>, <code>alpha:peer-review:a-alpha-hypotheses-p2</code>, <code>alpha:peer-review:a-alpha-design-m1</code>, <code>alpha:peer-review:a-alpha-design-m2</code>, <code>alpha:peer-review:a-alpha-design-s1</code>, <code>alpha:peer-review:a-alpha-study-r1</code>, <code>alpha:peer-review:a-alpha-study-r2</code>, <code>alpha:peer-review:a-alpha-study-i1</code>, <code>alpha:peer-review:overall</code></li><li><b>Decision</b>: <code>alpha:editorial:overall</code></li></ul></div>
-<h2>process</h2>
+<h3>process</h3><div class='wrap'><table class='grid'><tr><th>subject</th><th>Review the process itself</th></tr>
+<tr><td><span class='mono'>process</span></td><td><span class="chip" style="background:#2f855a">up to date</span><div class='small muted'>v1</div></td></tr>
+</table></div></section>
+<section><h2 id='process'>The process</h2>
+<p class='lead'>This is the <b>definition</b> — the rules the run above followed, not what happened. Each step is a question, an answerer, what it reads, and what it must produce.</p>
+<article class='card' id='step-question'><div class='hd'><span class='t'>Ask the question</span> <span class="who"><span class="dot" style="background:#805ad5"></span>a person</span></div><p class='prov'>What is this project asking?</p><p class='small'><b>Reads:</b> nothing but its instructions. <b>Produces:</b> claims of type question, scope.</p><details><summary>Instructions</summary><pre># Instructions: question
 
-<div class='art'><b class='mono'>scheme</b> v1 · human · demo-human · 2026-09-12T10:59:33Z <span class="chip" style="background:#2f855a">current</span><div class='small muted'>Should each of these steps exist, and is this what it should do? · <code>store/process/scheme/v1</code></div><details><summary>read from (2)</summary><ul class='small'><li><code>instructions/scheme.md</code> instructions <span class='mono muted'>6a6752da8023</span></li><li><code>process.yaml</code> declaration <span class='mono muted'>8349334fc5b4</span></li></ul></details><div class="wrap"><table><tr><th>claim</th><th>type</th><th>text</th><th>by</th></tr><tr><td class='mono'>process:scheme:a-step-question</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:question</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-hypotheses</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:hypotheses</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-design</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:design</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-proposal</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:proposal</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-proposal-review</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:proposal-review</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-funding</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:funding</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-study</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:study</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-paper</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:paper</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-peer-review</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:peer-review</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-editorial</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>Accept, noting the editor reads only the review, not the paper: deliberate, and worth revisiting.<div class='small muted'>about step:editorial</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-publish</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:publish</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:a-step-scheme</td><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>The step is what it should be.<div class='small muted'>about step:scheme</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr><tr><td class='mono'>process:scheme:overall</td><td><span class="tag" style="background:#c53030">decision</span></td><td>The cycle is complete and each step has a home.<div class='small muted'>about process</div><div class='small'><b>accept</b></div></td><td class='small muted'>demo-human</td></tr></table></div></div>
-<h2>Standards</h2><p class='lead'>Kept as a mapping from step zero (<code>chain/standards.yaml</code>) and exported with every version. Where a standard does not fit, the note says so.</p><h3>records</h3><div class="wrap"><table><tr><td><code>process</code></td><td>bpmn: Process. worker code → serviceTask; model → serviceTask with an agent implementation; human → userTask. BPMN has no notion of content-hashed inputs.; cwl: Workflow, for code steps only — CWL has no human or model task and no notion of a pending answer.; docmaps: a DocMap is a manifest of steps with inputs, actions and outputs; our process is the template and a subject&#x27;s ledger is one DocMap.</td></tr><tr><td><code>step</code></td><td>bpmn: task; cwl: CommandLineTool (code steps); docmaps: step (with `inputs`, `actions`, `assertions`)</td></tr><tr><td><code>run</code></td><td>prov: Activity — `prov:used` each input, `prov:generated` the version, `prov:wasAssociatedWith` the answerer; intoto: Link / Statement — materials = `in`, products = `out`, functionary = `by`; unsigned here; docmaps: action, with the answerer as participant</td></tr><tr><td><code>version</code></td><td>prov: Entity, `prov:wasRevisionOf` the previous version, `prov:wasDerivedFrom` each input; ro-crate: a Dataset; the version directory can carry ro-crate-metadata.json as-is; docmaps: output</td></tr><tr><td><code>worker</code></td><td>prov: code/model → SoftwareAgent; human → Person; bpmn: serviceTask / userTask; credit: human roles can carry a CRediT term (Investigation, Supervision, …) in `by`</td></tr></table></div><h3>claim types</h3><div class="wrap"><table><tr><td><span class="tag" style="background:#805ad5">question</span></td><td>dg: Question; mira: ResearchQuestion; schema: Question</td></tr><tr><td><span class="tag" style="background:#3182ce">hypothesis</span></td><td>dg: Claim; mira: Hypothesis; schema: Claim</td></tr><tr><td><span class="tag" style="background:#4299e1">prediction</span></td><td>dg: Claim; mira: Prediction; note: DG has no prediction; it is a Claim entailed by another</td></tr><tr><td><span class="tag" style="background:#38a169">method</span></td><td>mira: Method; schema: HowTo; note: DG has no method node; methods are attributes of Evidence</td></tr><tr><td><span class="tag" style="background:#dd6b20">result</span></td><td>dg: Evidence; mira: Result; schema: Observation</td></tr><tr><td><span class="tag" style="background:#d69e2e">interpretation</span></td><td>dg: Claim; mira: Interpretation; schema: Claim</td></tr><tr><td><span class="tag" style="background:#718096">scope</span></td><td>mira: Scope; note: DG and schema.org have no scope node; exported as a Claim with a scope flag</td></tr><tr><td><span class="tag" style="background:#e53e3e">assessment</span></td><td>schema: Review; mira: Assessment; docmaps: assertion; np: Assertion about an assertion</td></tr><tr><td><span class="tag" style="background:#c53030">decision</span></td><td>docmaps: assertion (status); schema: Review/reviewRating for editorial; Grant/funder for funding; note: no standard node for a decision as such; the verdict travels as a status</td></tr><tr><td><span class="tag" style="background:#4a5568">step</span></td><td>docmaps: step; note: only appears in a ruling on the process</td></tr></table></div><h3>relations</h3><div class="wrap"><table><tr><td><code>answers</code></td><td>mira: answers; dg: Claim → Question (implicit)</td></tr><tr><td><code>derived-from</code></td><td>cito: derives; mira: entails (inverse); dg: Claim → Claim</td></tr><tr><td><code>tests</code></td><td>mira: tests; cito: none — tests is neutral; do not map to supports</td></tr><tr><td><code>supports</code></td><td>cito: supports; dg: supports; mira: supports</td></tr><tr><td><code>contradicts</code></td><td>cito: disputes; dg: opposedBy; mira: opposes</td></tr><tr><td><code>part-of</code></td><td>schema: isPartOf; mira: partOf</td></tr><tr><td><code>replicates</code></td><td>cito: confirms; mira: replicates; note: cito:confirms is the nearest; it overstates</td></tr><tr><td><code>cites</code></td><td>cito: cites; schema: citation</td></tr><tr><td><code>assesses</code></td><td>cito: reviews; schema: itemReviewed (inverse); docmaps: assertion about an output</td></tr><tr><td><code>decides</code></td><td>docmaps: assertion status; note: no CiTO term; exported as schema:about on the decision</td></tr></table></div>
-<h2>Ledger</h2><div class="wrap"><table><tr><th>answered</th><th>subject</th><th>version</th><th>worker</th><th>by</th><th>note</th></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>process</td><td class='mono'>scheme v1</td><td>human</td><td>demo-human</td><td class='small muted'>demo answer from scheme.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>study v1</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from study.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>question v1</td><td>human</td><td>demo-human</td><td class='small muted'>demo answer from question.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>publish v1</td><td>code</td><td>python3</td><td class='small muted'></td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>proposal-review v1</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from proposal-review.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>proposal v1</td><td>code</td><td>python3</td><td class='small muted'></td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>peer-review v1</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from peer-review.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>paper v1</td><td>code</td><td>python3</td><td class='small muted'></td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>hypotheses v2</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from hypotheses.v2.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>hypotheses v1</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from hypotheses.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>funding v1</td><td>human</td><td>demo-human</td><td class='small muted'>demo answer from funding.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>editorial v1</td><td>human</td><td>demo-human</td><td class='small muted'>demo answer from editorial.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td class='mono'>design v1</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from design.json</td></tr></table></div>
+You are the investigator opening a project. State the research question(s) the project exists
+to answer, each as one interrogative sentence, and any scope you are setting in advance (what
+the project will not attempt). Emit `question` and `scope` claims only. Do not propose answers.
+</pre></details></article>
+<article class='card' id='step-hypotheses'><div class='hd'><span class='t'>Propose hypotheses</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span></div><p class='prov'>What answers does the project bet on, and what would each predict?</p><p class='small'><b>Reads:</b> <a href='#step-question'>the question</a>. <b>Produces:</b> claims of type hypothesis, prediction.</p><details><summary>Instructions</summary><pre># Instructions: hypotheses
+
+You are given the project&#x27;s questions. For each, state the answer the project bets on as a
+`hypothesis` (one declarative sentence), and for each hypothesis one or more `prediction`
+claims: observations that would be made if it were true, concrete enough to be tested by a
+study of ordinary size. Link each prediction to its hypothesis with a `derived-from` edge and
+each hypothesis to its question with `answers`. Do not describe methods.
+</pre></details></article>
+<article class='card' id='step-design'><div class='hd'><span class='t'>Design the study</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span></div><p class='prov'>What would be measured, how, and within what limits?</p><p class='small'><b>Reads:</b> <a href='#step-question'>the question</a> and <a href='#step-hypotheses'>the hypotheses</a>. <b>Produces:</b> claims of type method, scope.</p><details><summary>Instructions</summary><pre># Instructions: design
+
+You are given the questions, hypotheses and predictions. Emit `method` claims: what will be
+measured, in whom, under what manipulation, with what comparison and what analysis — one claim
+per measurement. Emit `scope` claims for what the design cannot decide. Link each method to the
+prediction it will test with a `tests` edge. Be conservative: a method that cannot in
+practice distinguish the hypothesis from its rivals should be marked so in a scope claim.
+</pre></details></article>
+<article class='card' id='step-proposal'><div class='hd'><span class='t'>Compose the proposal</span> <span class="who"><span class="dot" style="background:#718096"></span>a script</span></div><p class='prov'>The proposal, composed.</p><p class='small'><b>Reads:</b> <a href='#step-question'>the question</a>, <a href='#step-hypotheses'>the hypotheses</a> and <a href='#step-design'>the design</a>. <b>Produces:</b> a composition — a document that arranges other claims.</p><p class='small'><span class='pill'>command</span><code>python3 -m chain.agents.compose &quot;Question=question;Hypotheses and predictions=hypotheses;Design=design&quot;</code></p></article>
+<article class='card' id='step-proposal-review'><div class='hd'><span class='t'>Review the proposal</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span></div><p class='prov'>Is each part of the proposal sound?</p><p class='small'><b>Reads:</b> <a href='#step-proposal'>the proposal</a>, <a href='#step-question'>the question</a>, <a href='#step-hypotheses'>the hypotheses</a> and <a href='#step-design'>the design</a>. <b>Produces:</b> assessments and a decision about the proposal.</p><details><summary>Instructions</summary><pre># Instructions: proposal review
+
+You are given a proposal composed of questions, hypotheses, predictions, methods and scope.
+Fill the skeleton: one `assessment` per item with a verdict — `sound` (the item is well posed
+and the design bears on it), `weak` (posed, but the design or the logic is thin), `unclear`
+(you cannot tell what is being claimed) — and one sentence of reasoning in `text`. Then the
+`overall` decision: `accept` if you stand behind the whole reading, `partial` if you left items
+unconsidered. You are not deciding funding.
+</pre></details></article>
+<article class='card' id='step-funding'><div class='hd'><span class='t'>Decide funding</span> <span class="who"><span class="dot" style="background:#805ad5"></span>a person</span></div><p class='prov'>Should this be funded?</p><p class='small'><b>Reads:</b> <a href='#step-proposal'>the proposal</a>, <a href='#step-proposal-review'>the proposal review</a>, <a href='#step-question'>the question</a>, <a href='#step-hypotheses'>the hypotheses</a> and <a href='#step-design'>the design</a>. <b>Produces:</b> assessments and a decision about the proposal.</p><details><summary>Instructions</summary><pre># Instructions: funding
+
+You are the programme officer. You are given the proposal, its review, and the claims it is
+composed of. Fill the skeleton: `fund` or `decline` per item is a statement about whether that
+part of the work merits support; the `overall` decision is your decision on the proposal.
+Write one sentence per verdict. A partial reading is permitted and must be marked `partial`.
+</pre></details></article>
+<article class='card' id='step-study'><div class='hd'><span class='t'>Run the study</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span></div><p class='prov'>What was found, and what does it mean for the predictions?</p><p class='small'><b>Reads:</b> <a href='#step-funding'>the funding decision</a>, <a href='#step-hypotheses'>the hypotheses</a> and <a href='#step-design'>the design</a>. <b>Produces:</b> claims of type result, interpretation.</p><details><summary>Instructions</summary><pre># Instructions: study
+
+You are given the funded design and the predictions it tests. Emit `result` claims — one per
+measurement, stating what was observed with its effect size and uncertainty — and
+`interpretation` claims saying what the results mean for the hypotheses. Link each result to the
+prediction it tested with `tests`, and to the hypothesis with `supports` or `contradicts`.
+Report what did not come out. A study whose every prediction succeeded is less believable, not more.
+</pre></details></article>
+<article class='card' id='step-paper'><div class='hd'><span class='t'>Compose the paper</span> <span class="who"><span class="dot" style="background:#718096"></span>a script</span></div><p class='prov'>The paper, composed.</p><p class='small'><b>Reads:</b> <a href='#step-question'>the question</a>, <a href='#step-hypotheses'>the hypotheses</a>, <a href='#step-design'>the design</a> and <a href='#step-study'>the study results</a>. <b>Produces:</b> a composition — a document that arranges other claims.</p><p class='small'><span class='pill'>command</span><code>python3 -m chain.agents.compose &quot;Introduction=question,hypotheses;Methods=design;Results=study&quot;</code></p></article>
+<article class='card' id='step-peer-review'><div class='hd'><span class='t'>Peer review</span> <span class="who"><span class="dot" style="background:#3182ce"></span>a model</span></div><p class='prov'>Does the evidence support each claim the paper makes?</p><p class='small'><b>Reads:</b> <a href='#step-paper'>the paper</a>, <a href='#step-question'>the question</a>, <a href='#step-hypotheses'>the hypotheses</a>, <a href='#step-design'>the design</a> and <a href='#step-study'>the study results</a>. <b>Produces:</b> assessments and a decision about the paper.</p><details><summary>Instructions</summary><pre># Instructions: peer review
+
+You are given the paper and the claims it is composed of. Fill the skeleton: one `assessment`
+per claim — `supported` (the evidence shown establishes it), `weak` (consistent with it but
+not decisive), `unsupported` (the evidence does not bear on it or points the other way) — with
+one sentence saying why. Assess results against their methods and interpretations against
+their results. Then the `overall` decision. You do not decide publication.
+</pre></details></article>
+<article class='card' id='step-editorial'><div class='hd'><span class='t'>Editorial decision</span> <span class="who"><span class="dot" style="background:#805ad5"></span>a person</span></div><p class='prov'>Publish, revise, or decline?</p><p class='small'><b>Reads:</b> <a href='#step-paper'>the paper</a> and <a href='#step-peer-review'>the peer review</a>. <b>Produces:</b> assessments and a decision about the paper.</p><details><summary>Instructions</summary><pre># Instructions: editorial decision
+
+You are the editor. You are given the peer review. Record one `decision` about the paper:
+`accept`, `reject`, or `partial` if you are returning it for revision with the review standing.
+Say in `text` what the decision rests on.
+</pre></details></article>
+<article class='card' id='step-publish'><div class='hd'><span class='t'>Publish</span> <span class="who"><span class="dot" style="background:#718096"></span>a script</span></div><p class='prov'>The published record: the article, its reviews, and the decision.</p><p class='small'><b>Reads:</b> <a href='#step-paper'>the paper</a>, <a href='#step-peer-review'>the peer review</a> and <a href='#step-editorial'>the editorial decision</a>. <b>Produces:</b> a composition — a document that arranges other claims.</p><p class='small'><span class='pill'>command</span><code>python3 -m chain.agents.compose &quot;Article=paper;Reviews=peer-review;Decision=editorial&quot;</code></p></article>
+<article class='card' id='step-scheme'><div class='hd'><span class='t'>Review the process itself</span> <span class="who"><span class="dot" style="background:#805ad5"></span>a person</span></div><p class='prov'>Should each of these steps exist, and is this what it should do?</p><p class='small'><b>Reads:</b> nothing but its instructions. <b>Produces:</b> assessments and a decision about the process itself.</p><details><summary>Instructions</summary><pre># Instructions: ruling on the process
+
+You are given the process declaration, one item per step. For each step: `accept` if the step
+should exist and its question, worker and inputs are what they should be; `reject` otherwise,
+saying why. Items whose declaration is unchanged since your last ruling are carried forward and
+marked so; you need only read the rest.
+</pre></details></article></section>
+<section><h2 id='standards'>Standards</h2><p class='lead'>How this vocabulary maps onto established ones, kept from the start and exported with every version. Where a standard does not fit, the note says so.</p><h3>Records</h3><div class='wrap'><table><tr><td><code>process</code></td><td class='small'>bpmn: Process. worker code → serviceTask; model → serviceTask with an agent implementation; human → userTask. BPMN has no notion of content-hashed inputs.; cwl: Workflow, for code steps only — CWL has no human or model task and no notion of a pending answer.; docmaps: a DocMap is a manifest of steps with inputs, actions and outputs; our process is the template and a subject&#x27;s ledger is one DocMap.</td></tr><tr><td><code>step</code></td><td class='small'>bpmn: task; cwl: CommandLineTool (code steps); docmaps: step (with `inputs`, `actions`, `assertions`)</td></tr><tr><td><code>run</code></td><td class='small'>prov: Activity — `prov:used` each input, `prov:generated` the version, `prov:wasAssociatedWith` the answerer; intoto: Link / Statement — materials = `in`, products = `out`, functionary = `by`; unsigned here; docmaps: action, with the answerer as participant</td></tr><tr><td><code>version</code></td><td class='small'>prov: Entity, `prov:wasRevisionOf` the previous version, `prov:wasDerivedFrom` each input; ro-crate: a Dataset; the version directory can carry ro-crate-metadata.json as-is; docmaps: output</td></tr><tr><td><code>worker</code></td><td class='small'>prov: code/model → SoftwareAgent; human → Person; bpmn: serviceTask / userTask; credit: human roles can carry a CRediT term (Investigation, Supervision, …) in `by`</td></tr></table></div><h3>Claim types</h3><div class='wrap'><table><tr><td><span class="tag" style="background:#805ad5">question</span></td><td class='small'>dg: Question; mira: ResearchQuestion; schema: Question</td></tr><tr><td><span class="tag" style="background:#3182ce">hypothesis</span></td><td class='small'>dg: Claim; mira: Hypothesis; schema: Claim</td></tr><tr><td><span class="tag" style="background:#4299e1">prediction</span></td><td class='small'>dg: Claim; mira: Prediction; note: DG has no prediction; it is a Claim entailed by another</td></tr><tr><td><span class="tag" style="background:#38a169">method</span></td><td class='small'>mira: Method; schema: HowTo; note: DG has no method node; methods are attributes of Evidence</td></tr><tr><td><span class="tag" style="background:#dd6b20">result</span></td><td class='small'>dg: Evidence; mira: Result; schema: Observation</td></tr><tr><td><span class="tag" style="background:#d69e2e">interpretation</span></td><td class='small'>dg: Claim; mira: Interpretation; schema: Claim</td></tr><tr><td><span class="tag" style="background:#718096">scope</span></td><td class='small'>mira: Scope; note: DG and schema.org have no scope node; exported as a Claim with a scope flag</td></tr><tr><td><span class="tag" style="background:#e53e3e">assessment</span></td><td class='small'>schema: Review; mira: Assessment; docmaps: assertion; np: Assertion about an assertion</td></tr><tr><td><span class="tag" style="background:#c53030">decision</span></td><td class='small'>docmaps: assertion (status); schema: Review/reviewRating for editorial; Grant/funder for funding; note: no standard node for a decision as such; the verdict travels as a status</td></tr><tr><td><span class="tag" style="background:#4a5568">step</span></td><td class='small'>docmaps: step; note: only appears in a ruling on the process</td></tr></table></div><h3>Relations</h3><div class='wrap'><table><tr><td><code>answers</code></td><td class='small'>mira: answers; dg: Claim → Question (implicit)</td></tr><tr><td><code>derived-from</code></td><td class='small'>cito: derives; mira: entails (inverse); dg: Claim → Claim</td></tr><tr><td><code>tests</code></td><td class='small'>mira: tests; cito: none — tests is neutral; do not map to supports</td></tr><tr><td><code>supports</code></td><td class='small'>cito: supports; dg: supports; mira: supports</td></tr><tr><td><code>contradicts</code></td><td class='small'>cito: disputes; dg: opposedBy; mira: opposes</td></tr><tr><td><code>part-of</code></td><td class='small'>schema: isPartOf; mira: partOf</td></tr><tr><td><code>replicates</code></td><td class='small'>cito: confirms; mira: replicates; note: cito:confirms is the nearest; it overstates</td></tr><tr><td><code>cites</code></td><td class='small'>cito: cites; schema: citation</td></tr><tr><td><code>assesses</code></td><td class='small'>cito: reviews; schema: itemReviewed (inverse); docmaps: assertion about an output</td></tr><tr><td><code>decides</code></td><td class='small'>docmaps: assertion status; note: no CiTO term; exported as schema:about on the decision</td></tr></table></div></section>
+<section><h2 id='ledger'>The ledger</h2><p class='lead'>The raw append-only record, newest first — the source everything above is built from.</p><div class='wrap'><table><tr><th>answered</th><th>subject</th><th>step</th><th>worker</th><th>by</th><th>note</th></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>process</td><td>Review the process itself v1</td><td>human</td><td>demo-human</td><td class='small muted'>demo answer from scheme.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Run the study v1</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from study.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Review the proposal v1</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from proposal-review.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Publish v1</td><td>code</td><td>python3</td><td class='small muted'></td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Propose hypotheses v2</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from hypotheses.v2.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Propose hypotheses v1</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from hypotheses.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Peer review v1</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from peer-review.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Editorial decision v1</td><td>human</td><td>demo-human</td><td class='small muted'>demo answer from editorial.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Design the study v1</td><td>model</td><td>stub-agent</td><td class='small muted'>demo answer from design.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Decide funding v1</td><td>human</td><td>demo-human</td><td class='small muted'>demo answer from funding.json</td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Compose the proposal v1</td><td>code</td><td>python3</td><td class='small muted'></td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Compose the paper v1</td><td>code</td><td>python3</td><td class='small muted'></td></tr><tr><td class='mono'>2026-09-12T10:59:33Z</td><td class='mono'>alpha</td><td>Ask the question v1</td><td>human</td><td>demo-human</td><td class='small muted'>demo answer from question.json</td></tr></table></div></section>
 </main>
