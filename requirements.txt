@@ -13,3 +13,11 @@ pydantic>=2.0
 # SHACL validation of the MIRA exports (scripts/validate_mira.py shells out to `pyshacl`).
 # Kept here rather than installed ad hoc in the workflow so there is one list to read.
 pyshacl>=0.25
+
+# `make check` now imports elife_extract.edges, .layers, and .write directly. Those modules
+# pull in anthropic, httpx, lxml, and oxa-types at module level, so CI needs them installed.
+# Versions match extract/pyproject.toml; oxa-types is on PyPI.
+anthropic[vertex]>=0.40
+httpx>=0.25
+lxml>=4.9
+oxa-types>=0.1
