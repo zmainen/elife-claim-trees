@@ -448,15 +448,31 @@ layers:
       the paper rules out is a node in the graph like any other and an eliminative edge has
       something correct to point at.
 
+      Given the tree's controls and empirical claims — slug, role, panel and sentence — the
+      paper's questions, and the Results prose with span ids, it returns the rivals the paper
+      raises to reject (or entertains and leaves open) and the controls that eliminate each. It
+      writes an `alt-` claim file per rival — the stance on the assertion, `addresses` linking the
+      question it answers where `index.md` states questions, the body carrying the `why` — and
+      adds the `rules-out` edges from the named controls through the same validator every edge
+      goes through, so a `rules-out` whose target is asserted, or whose source is not a control or
+      empirical claim, is dropped with a logged reason. It is idempotent: an alternative already
+      present by slug is updated, not duplicated.
+
+      `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back
+      through the same validation, so a model with no backend here can still answer it.
+
       Before these existed, a rejected alternative lived only as prose inside the claim that
       dismissed it, and an edge that should have pointed at it pointed at whatever claim was
       nearest.
     added: "2026-09-10"
     found: >
       A missing node does not only lose information, it misdirects the edges that would have pointed at it. Five eliminative relations were found aiming at claims their own paper asserts. {{dangling_rules_out}} eliminative edges still name prose that resolves to no claim.
-    needs: [claim-tree, claim-format]
+    needs: [claim-tree, prepare, claim-format]
+    reads: [extract/prompts/stance.md, extract/prompts/contract/vocabulary.md]
     produces: ["claims/{paper}/alt-*.md"]
     views: [graph, list]
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli stance --paper {paper}"
 
   # A question is not a claim — a claim is a declarative sentence — so it lives on the paper,
   # in `index.md`'s frontmatter, and each hypothesis and rejected alternative names the one it

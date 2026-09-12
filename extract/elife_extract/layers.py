@@ -550,6 +550,304 @@ def _apply_parts(paper: str, data: dict, cfg: Config) -> None:
         _write_key(f, "part-of", block, after="epistemic")
 
 
+# ── stance ───────────────────────────────────────────────────────────────
+# The alternatives a paper rejects, raised from its controls. A control exists to eliminate a
+# rival explanation, and states its target in prose; before this layer that rival lived only
+# inside the control's sentence, so the `rules-out` edge that should have named it had nothing
+# to point at — and on the contract (#83) an edge aimed at a claim the paper asserts is refused,
+# so on a fresh draft the eliminative move had no target at all. This layer gives each rival a
+# node — an `alt-` claim whose assertion carries `stance: rejects` — and writes the `rules-out`
+# edge from the named control through `edges.edges_from_raw`, so the direction check applies: a
+# `rules-out` whose target is asserted, or whose source is not a control or empirical claim, is
+# dropped with a logged reason. A `feature`, like `questions` and `parts`: it revises a tree
+# rather than making a new kind of thing, and is idempotent — an alternative already present by
+# slug is updated, not duplicated.
+
+
+def _claim_stance(fm: dict) -> str:
+    """This paper's stance toward a claim file, read from its assertions; absent means `asserts`.
+
+    The same rule `scripts/check_relations.py` applies (claim-format.md §2): a claim with no
+    stance is asserted. The edge validator needs it to refuse a `rules-out` aimed at an asserted
+    claim, so an `alt-` file's `rejects`/`entertains` has to reach it.
+    """
+    for a in (fm.get("assertions") or []):
+        if isinstance(a, dict) and a.get("stance"):
+            return a["stance"]
+    return "asserts"
+
+
+def _controls_and_empirical(paper: str, cfg: Config) -> list[dict]:
+    """The claims that can do the eliminating — role `control` or `empirical` — for the prompt."""
+    return [c for c in _tree_claims(paper, cfg) if c["role"] in ("control", "empirical")]
+
+
+def _existing_alternatives(paper: str, cfg: Config) -> list[tuple[str, str]]:
+    """(slug, sentence) for the `alt-` claims already in the tree, so a re-run can reuse a slug."""
+    d = cfg.corpus_dir / paper
+    out = []
+    for f in sorted(d.glob("alt-*.md")):
+        fm = _read_frontmatter(f)
+        out.append((fm.get("slug") or f.stem, " ".join(str(fm.get("claim") or "").split())))
+    return out
+
+
+def _paper_questions(paper: str, cfg: Config) -> list[dict]:
+    """The paper's questions from index.md — id and text — the only ids `addresses` may name."""
+    fm = _read_frontmatter(cfg.corpus_dir / paper / "index.md")
+    return [q for q in (fm.get("questions") or []) if isinstance(q, dict) and q.get("id")]
+
+
+def _results_spans(paper: str, cfg: Config) -> list[tuple[str, str]]:
+    """(uid, text) for the Results section of the prepared paper — the span ids the model cites.
+
+    A prepared.json written before spans were recorded carries none, so the spans are segmented
+    from the prepared paper on the fly — the same function prepare uses — rather than leaving the
+    layer with no Results prose to reason over on the older papers.
+    """
+    from .prepare import _build_spans
+
+    prepared = read_prepared(paper, cfg)
+    spans = prepared.spans or [s for s in _build_spans(prepared)]
+    return [(s["uid"], " ".join(str(s.get("text") or "").split()))
+            for s in spans if s.get("section") == "results"]
+
+
+def stance_request(paper: str, cfg: Config) -> tuple[str, str]:
+    """The exact (system, user) the stance layer would send.
+
+    Separated from the call, as every model-answered layer is, so an analyst or another model
+    can answer the same question through `--dump-prompt` / `--answer`.
+    """
+    from .prompts import prompt
+
+    lines = ["# Controls and empirical claims\n"]
+    for c in _controls_and_empirical(paper, cfg):
+        head = f"- `{c['slug']}` ({c['role']}"
+        head += f", {c['panel']}" if c["panel"] else ""
+        lines.append(f"{head}): {c['claim']}")
+    questions = _paper_questions(paper, cfg)
+    if questions:
+        lines.append("\n# Research questions\n")
+        for q in questions:
+            lines.append(f"- `{q['id']}`: {' '.join(str(q.get('text') or '').split())}")
+    existing = _existing_alternatives(paper, cfg)
+    if existing:
+        lines.append("\n# Alternatives already recorded\n")
+        for slug, sentence in existing:
+            lines.append(f"- `{slug}`: {sentence}")
+    lines.append("\n# Results, by span\n")
+    for uid, text in _results_spans(paper, cfg):
+        lines.append(f"[{uid}] {text}")
+    return prompt("stance", cfg), "\n".join(lines) + "\n"
+
+
+def _alt_slug(raw_slug, claim: str) -> str:
+    """The `alt-` slug for one alternative: an explicit slug when given, else derived from claim.
+
+    An explicit slug lets a re-run land on the file it already wrote (idempotency is keyed on the
+    slug), and lets a supplied answer reuse the hand-authored slug of an alternative the paper
+    already carries. Either way the `alt-` prefix is enforced, so a rejected rival is never
+    confused with a claim the paper asserts.
+    """
+    from .write import derive_claim_slug
+
+    if raw_slug and str(raw_slug).strip():
+        base = re.sub(r"^alt-", "", str(raw_slug).strip())
+        base = re.sub(r"[^a-z0-9]+", "-", base.lower()).strip("-")
+    else:
+        base = ""
+    if not base:
+        base = derive_claim_slug(claim)
+    return f"alt-{base}"
+
+
+def _validate_stance(raw: dict, paper: str, cfg: Config) -> dict:
+    """Coerce a model answer into `{alternatives: [...]}`, dropping what does not resolve.
+
+    The same rule the other retrofits apply to their answers: what does not resolve is dropped,
+    not guessed. An alternative needs a claim sentence; its stance is `rejects` or `entertains`
+    (never `asserts` — a rival the paper commits to is not a rival); `ruled_out_by` keeps only
+    the tree's own slugs; `addresses` keeps only a question id the paper states; `span` keeps only
+    a real span id. Slugs are made unique within the run so two new alternatives cannot collide,
+    while an `alt-` file already on disk is matched, not renamed.
+    """
+    import logging as _logging
+    log = _logging.getLogger(__name__)
+
+    if not isinstance(raw, dict):
+        raise ValueError("stance answer must be a JSON object with `alternatives`")
+    in_tree = {c["slug"] for c in _tree_claims(paper, cfg)}
+    qids = {q["id"] for q in _paper_questions(paper, cfg)}
+    span_ids = {uid for uid, _ in _results_spans(paper, cfg)}
+    on_disk = {slug for slug, _ in _existing_alternatives(paper, cfg)}
+
+    assigned: set[str] = set()
+    out: list[dict] = []
+    for e in (raw.get("alternatives") or []):
+        if not isinstance(e, dict):
+            continue
+        claim = " ".join(str(e.get("claim") or "").split())
+        if not claim:
+            log.warning("stance: an alternative with no claim text; dropped")
+            continue
+        slug = _alt_slug(e.get("slug"), claim)
+        if slug in assigned:                            # two new alternatives, one slug
+            if slug in on_disk:
+                log.warning("stance: %r seen twice in this answer; second dropped", slug)
+                continue
+            n = 2
+            while f"{slug}-{n}" in assigned or f"{slug}-{n}" in on_disk:
+                n += 1
+            slug = f"{slug}-{n}"
+        assigned.add(slug)
+
+        stance = e.get("stance") if e.get("stance") in ("rejects", "entertains") else "rejects"
+        ruled = [s for s in (e.get("ruled_out_by") or []) if isinstance(s, str) and s in in_tree]
+        dropped = [s for s in (e.get("ruled_out_by") or [])
+                   if isinstance(s, str) and s not in in_tree]
+        if dropped:
+            log.warning("stance: %s names %r as ruling it out, not in this tree; dropped",
+                        slug, dropped)
+        addresses = e.get("addresses") if e.get("addresses") in qids else None
+        span = e.get("span") if e.get("span") in span_ids else None
+        out.append({"slug": slug, "claim": claim, "role": e.get("role") or "hypothesis",
+                    "stance": stance, "addresses": addresses, "ruled_out_by": ruled,
+                    "span": span, "why": " ".join(str(e.get("why") or "").split()),
+                    "existing": slug in on_disk})
+    return {"alternatives": out}
+
+
+def _tree_claims_for_edges(paper: str, cfg: Config) -> tuple[list[dict], list[str]]:
+    """(claims, slugs) parallel lists for `edges.edges_from_raw`, with each claim's stance.
+
+    Read after the `alt-` files are written, so a freshly raised alternative reads its own
+    `rejects`/`entertains` — which is what lets the direction check keep the `rules-out` aimed at
+    it and refuse one aimed at a claim the paper asserts.
+    """
+    d = cfg.corpus_dir / paper
+    claims, slugs = [], []
+    for f in sorted(d.glob("*.md")):
+        if f.name == "index.md":
+            continue
+        fm = _read_frontmatter(f)
+        slugs.append(fm.get("slug") or f.stem)
+        claims.append({"role": fm.get("role"), "stance": _claim_stance(fm),
+                       "claim": " ".join(str(fm.get("claim") or "").split())})
+    return claims, slugs
+
+
+def stance_layer(paper: str, cfg: Config, *,
+                 answer: str | None = None) -> tuple[Path, dict]:
+    """Raise the alternatives a paper rejects, write their `alt-` files, and the `rules-out` edges.
+
+    The model (or a supplied answer) returns the rivals and the controls that kill them; the
+    runner writes an `alt-` claim file per rival (creating a new one, or updating one already
+    present by slug rather than duplicating it), then adds the `rules-out` edges from the named
+    controls through `edges.edges_from_raw` so the direction check applies, and records the run.
+    """
+    from .agents import parse_json_response, stream_text
+
+    system, user = stance_request(paper, cfg)
+    if answer is not None:
+        p, model = answer_file(answer, cfg)
+        raw = p.read_text(encoding="utf-8")
+    else:
+        model = cfg.model_reconcile
+        raw = stream_text(cfg, model=model, system=system, user=user, label="stance")
+
+    data = _validate_stance(parse_json_response(raw), paper, cfg)
+    edges = _apply_stance(paper, data, cfg)
+    payload = {"paper_slug": paper, "model": model, **data, "edges": edges}
+    path = _write_json(run_file(paper, "stance.output.json", cfg), payload)
+    return path, payload
+
+
+def _write_alt_file(f: Path, alt: dict, paper: str, doi: str | None) -> None:
+    """Write a new `alt-` claim file — the assertion carries the stance, the body carries the why.
+
+    Built in the shape the hand-authored `alt-` files use (claim-format.md §2, "Alternative
+    explanations are claims"): the role is whatever the rival functionally is, and it is the
+    stance on the assertion, not the role, that marks it as a rival.
+    """
+    import uuid
+    from datetime import date
+
+    from .write import _format_claim_file
+
+    fm: dict = {
+        "uuid": str(uuid.uuid4()),
+        "slug": alt["slug"],
+        "doi": None,
+        "claim": alt["claim"],
+        "claim-type": "interpretive",
+        "role": alt["role"],
+        **({"addresses": alt["addresses"]} if alt["addresses"] else {}),
+        "concepts": [],
+        "priority": date.today().isoformat(),
+        "epistemic": "weak",
+        "assertions": [{
+            "paper-slug": paper,
+            "doi": doi,
+            "stance": alt["stance"],
+            "method": "agent extraction of the alternative the paper argues against",
+            "confidence": "weak",
+        }],
+        "reproductions": [],
+    }
+    body = ["An alternative explanation the paper argues against, not a proposition it asserts.", ""]
+    if alt["why"]:
+        body += [alt["why"], ""]
+    if alt["span"]:
+        body += [f"Raised in the Results at `{alt['span']}`.", ""]
+    f.write_text(_format_claim_file(fm, "\n".join(body).rstrip() + "\n"), encoding="utf-8")
+
+
+def _apply_stance(paper: str, data: dict, cfg: Config) -> list[dict]:
+    """Write the `alt-` files and the `rules-out` edges, and return the edges written.
+
+    An alternative already present by slug is updated in place — its `addresses` refreshed —
+    rather than rewritten, so the hand-authored body and assertions survive; a new one is written
+    whole. The `rules-out` edges then go through `edges.edges_from_raw` against the tree as it now
+    stands, so a `rules-out` whose source is not a control or empirical claim, or whose target is
+    a claim the paper asserts, is dropped with a logged reason before it is written.
+    """
+    import yaml
+
+    from .edges import edges_from_raw
+
+    d = cfg.corpus_dir / paper
+    doi = doi_of(paper, cfg)
+
+    for alt in data["alternatives"]:
+        f = d / f"{alt['slug']}.md"
+        if f.is_file():
+            if alt["addresses"]:
+                _write_key(f, "addresses", f"addresses: {alt['addresses']}", after="role")
+        else:
+            _write_alt_file(f, alt, paper, doi)
+
+    raw_edges = [{"source": src, "target": alt["slug"], "relation": "rules-out", "why": alt["why"]}
+                 for alt in data["alternatives"] for src in alt["ruled_out_by"]]
+    claims, slugs = _tree_claims_for_edges(paper, cfg)
+    edges = edges_from_raw(json.dumps(raw_edges), claims, slugs, source="stance")
+
+    by_source: dict[str, list[str]] = {}
+    for e in edges:
+        if e["relation"] == "rules-out":
+            by_source.setdefault(e["source"], []).append(e["target"])
+    for src, targets in by_source.items():
+        f = d / f"{src}.md"
+        if not f.is_file():
+            continue
+        have = [t for t in (_read_frontmatter(f).get("rules-out") or []) if isinstance(t, str)]
+        merged = have + [t for t in targets if t not in have]
+        block = yaml.safe_dump({"rules-out": merged}, sort_keys=False, allow_unicode=True,
+                               default_flow_style=False, width=100).rstrip("\n")
+        _write_key(f, "rules-out", block, after="epistemic")
+    return edges
+
+
 # ── the measures: prose written from the graph, on disk under site/src/data ──
 # summaries, synthesis and abstract-map were declared with outputs the site renders and no
 # runner or committed prompt, so their artifacts could not be regenerated and no version could

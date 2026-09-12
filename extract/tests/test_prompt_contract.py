@@ -41,6 +41,7 @@ LAYER_OF = {
     "coverage-adjudicator": "adjudication",
     "questions": "questions",
     "parts": "parts",
+    "stance": "stance",
     "summaries": "summaries",
     "synthesis": "synthesis",
     "abstract-map": "abstract-map",

@@ -89,8 +89,12 @@ BELONGINGS_RELATIONS = {"requires", "supports"}
 RECIPROCAL = {"entails": "derived-from", "predicts": "confirms"}
 NEVER_EMITTED = set(RECIPROCAL.values())          # {"derived-from", "confirms"}
 
-# The role a relation's source must have, where the direction rule fixes it.
-_SOURCE_ROLE = {"entails": {"hypothesis"}, "scopes": {"scope"}, "tests": {"empirical", "control"}}
+# The role a relation's source must have, where the direction rule fixes it. `rules-out` runs
+# from the control or evidence that eliminates a rival, so its source is a control or an
+# empirical claim — the `stance` layer aims one from a named control at the alternative it kills,
+# and a rules-out from anything else is dropped the way a mis-directed `tests` is.
+_SOURCE_ROLE = {"entails": {"hypothesis"}, "scopes": {"scope"}, "tests": {"empirical", "control"},
+                "rules-out": {"empirical", "control"}}
 
 
 # The prompt is a file, not a string, so that a committed run can record which version of
@@ -492,8 +496,10 @@ def _validate_edges(parsed: list, claims: list, slugs: list[str], *, source: str
     return edges
 
 
-# Reverse mapping for OXA output — corpus relation names back to CiTO/claimrel IRIs.
-_CORPUS_TO_CITO = {v: k for k, v in CITO_TO_CORPUS.items()}
+# Reverse mapping for OXA output — corpus relation names back to CiTO/claimrel IRIs. The CiTO
+# map lives in `oxa.py` now (there is no `CITO_TO_CORPUS` in this module any more), and
+# `oxa.EDGE_MAP` is already corpus-name → IRI, which is exactly what `apply_oxa_edges` needs.
+from .oxa import EDGE_MAP as _CORPUS_TO_CITO
 
 
 def apply_oxa_edges(oxa_claims: list[dict], edges: list[dict]) -> list[dict]:
