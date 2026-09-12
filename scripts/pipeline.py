@@ -256,6 +256,38 @@ def _by_from_output(layer: dict, outs: list[str], paper: str | None = None) -> s
     return None
 
 
+ANSWERED_TOKENS_ENV = "ELIFE_ANSWERED_TOKENS"
+
+
+def answered_tokens(flag: int | None = None) -> int | None:
+    """What the session that answered this layer spent, if anybody said.
+
+    Every layer in this corpus is answered by something other than the configured backend: a
+    prompt is dumped, an agent or a person answers it, and the answer comes back through
+    `--answer`. That route makes no API call, so the usage the call path records is zero, and
+    the ledger has carried `supplied:<path>` — how the answer arrived — with nothing about what
+    it cost. The one number that exists at that moment lives in the answering session's own
+    accounting and had nowhere to go.
+
+    A runner takes it from `--tokens` when invoked directly, or from the environment when
+    `pipeline.py run` invokes it, because the declared command is fixed and cannot carry a
+    value that changes every run.
+
+    It is deliberately not called `input_tokens`: a session total covers reading the prompt,
+    the contract and the corpus, then fixing what the validator refused. Summing it into the
+    API's four fields would make two different things look like one measurement.
+    """
+    if flag:
+        return int(flag)
+    raw = os.environ.get(ANSWERED_TOKENS_ENV, "").strip()
+    return int(raw) if raw.isdigit() and int(raw) else None
+
+
+def answered_usage(tokens: int | None) -> dict:
+    """The usage block for a layer answered outside a backend call."""
+    return {"answered_tokens": int(tokens)} if tokens else {}
+
+
 def _usage_from_outputs(outs: list[str], root: str = ROOT) -> dict:
     """Scan the layer's output JSON files for a top-level 'usage' dict; merge and return."""
     merged: dict = {}
@@ -856,7 +888,10 @@ def cmd_run(args) -> int:
 
     def _run_one(lid, prep):
         """Run a prepared layer's command. Returns (rc, lid)."""
-        rc = subprocess.run(prep["cmd"], shell=True, cwd=ROOT).returncode
+        env = dict(os.environ)
+        if getattr(args, "tokens", None):
+            env[ANSWERED_TOKENS_ENV] = str(args.tokens)
+        rc = subprocess.run(prep["cmd"], shell=True, cwd=ROOT, env=env).returncode
         return rc, lid
 
     for wave in _wanted_waves(wanted, by_id):
@@ -1025,6 +1060,12 @@ def main() -> int:
     r.add_argument("--jobs", type=int, default=3, metavar="N",
                    help="max concurrent layer commands within a wave (default: 3)")
     r.add_argument("--note", help="the changelog line for the ledger entry")
+    r.add_argument("--tokens", type=int, metavar="N",
+                   help="what the session that answered this layer spent. Every layer here is "
+                        "answered outside the configured backend, so the usage the call path "
+                        "records is zero and the ledger knew how the answer arrived but not "
+                        "what it cost. The declared command is fixed, so this reaches the "
+                        "runner through the environment.")
     r.add_argument("--answer", metavar="FILE",
                    help="record this file as the named layer's answer instead of calling a "
                         "backend; the raw reply is kept beside the output as a version")

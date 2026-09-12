@@ -46,6 +46,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "extract"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import pipeline  # noqa: E402
+
 from elife_extract import edges as E  # noqa: E402
 from corpus_facts import frontmatter, loadable  # noqa: E402
 
@@ -162,7 +164,8 @@ def review(raw: str, paper: str) -> tuple[list[dict], list[str]]:
     return kept, dropped
 
 
-def write_output(paper: str, edges: list[dict], dropped: list[str], *, by: str) -> Path:
+def write_output(paper: str, edges: list[dict], dropped: list[str], *, by: str,
+                 tokens: int | None = None) -> Path:
     out = OUT / paper / "edge-review.output.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({
@@ -174,6 +177,7 @@ def write_output(paper: str, edges: list[dict], dropped: list[str], *, by: str) 
                  "vocabulary hold exactly as they do for edge-inference."),
         "edges": edges,
         "dropped_already_connected": dropped,
+        **({"usage": pipeline.answered_usage(tokens)} if tokens else {}),
     }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return out
 
@@ -232,6 +236,10 @@ def main() -> int:
                     help="write the exact prompt this layer would send to PATH and exit")
     ap.add_argument("--answer", metavar="PATH",
                     help="edges produced elsewhere; validated exactly as edge-inference's are")
+    ap.add_argument("--tokens", type=int, metavar="N",
+                    help="what the session that answered this spent; the "
+                         "ledger records how an answer arrived and, with "
+                         "this, what it cost")
     ap.add_argument("--write", action="store_true",
                     help="merge the validated edges into the claim files")
     args = ap.parse_args()
@@ -268,7 +276,8 @@ def main() -> int:
         where = src.relative_to(ROOT)
     except ValueError:
         where = src
-    out = write_output(args.paper, edges, dropped, by=f"supplied:{where}")
+    out = write_output(args.paper, edges, dropped, by=f"supplied:{where}",
+                       tokens=pipeline.answered_tokens(args.tokens))
 
     loose = {c["slug"] for c in unconnected(claims_of(args.paper))}
     print(f"  {args.paper}")
