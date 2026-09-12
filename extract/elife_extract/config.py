@@ -16,11 +16,37 @@ from pathlib import Path
 # Reconciliation on Opus (the harder synthesis step).
 # Mixed-model pattern matches panel-claim-unification.md Phase 1's
 # measured ~$4.48/paper cost.
+#
+# These are the `standard` profile's models, and they name the current generation:
+# `claude-sonnet-5` for the readers, `claude-opus-5` for the synthesis steps. The generation
+# is a logical id; BACKEND_MODEL_OVERRIDES below maps it to whatever a given backend actually
+# serves. `--profile` picks a different set (see PROFILES); an explicit `--model-*` overrides
+# either.
 
-DEFAULT_MODEL_RESULTS = "claude-sonnet-4-6"
-DEFAULT_MODEL_CAPTION = "claude-sonnet-4-6"
-DEFAULT_MODEL_STRUCTURE = "claude-sonnet-4-6"
-DEFAULT_MODEL_RECONCILE = "claude-opus-4-6"
+DEFAULT_MODEL_RESULTS = "claude-sonnet-5"
+DEFAULT_MODEL_CAPTION = "claude-sonnet-5"
+DEFAULT_MODEL_STRUCTURE = "claude-sonnet-5"
+DEFAULT_MODEL_RECONCILE = "claude-opus-5"
+
+# ── Per-backend model id overrides ───────────────────────────────────────
+# A profile names a generation as a logical id (`claude-opus-5`), but not every backend serves
+# every generation. The Vertex project this repo uses (cr-mainen / europe-west1) has the 4.6
+# generation enabled and not the 5 generation, so a run routed through Vertex must ask for the
+# ids Vertex actually serves or the call 404s. The 4.6 ids are therefore the Vertex entries
+# here — the last generation Vertex has — and stay until the project enables 5. The Anthropic
+# direct path and the litellm backends receive the logical id unchanged.
+
+BACKEND_MODEL_OVERRIDES: dict[str, dict[str, str]] = {
+    "vertex": {
+        "claude-sonnet-5": "claude-sonnet-4-6",
+        "claude-opus-5": "claude-opus-4-6",
+    },
+}
+
+
+def _backend_model(backend: str, model: str) -> str:
+    """Map a logical model id to what *backend* actually serves (identity when no override)."""
+    return BACKEND_MODEL_OVERRIDES.get(backend, {}).get(model, model)
 
 # ── Vertex AI defaults (HaaK canonical: cr-mainen / europe-west1) ────────
 DEFAULT_VERTEX_PROJECT = "cr-mainen"
@@ -32,6 +58,94 @@ DEFAULT_VERTEX_REGION = "europe-west1"
 # structure-reader.md). Variants live at prompts/<variant>/<role>.md.
 
 DEFAULT_PROMPT_VARIANT = "default"
+
+# ── Model profiles ────────────────────────────────────────────────────────
+# A profile is one coherent choice of models, prompt variant, chunking, output enforcement and
+# effort — the axes the model sweep (issue #85) varies. `--profile` selects one on every
+# model-answered subcommand and on `evaluate`; the fields it resolves to are read by config,
+# the CLI and the layer runners, so a run's whole shape follows from one word.
+#
+#   readers / reasoner   the logical model id for the three readers, and for the synthesis
+#                        steps (reconcile, external-review, edge-inference, parts, questions).
+#                        A backend override (above) maps the id to what the backend serves.
+#   variant              the prompt-variant directory; task files there override, the contract
+#                        is inherited. `default` is today's tasks.
+#   per_arc              edge inference runs one call per hypothesis arc rather than over the
+#                        whole table — a weaker model does better with one job per call.
+#   per_figure_captions  the caption reader runs once per figure with its panels enumerated.
+#   output_format        provider-enforced output: json_schema (strict), json_object (json
+#                        mode, best-effort), or none (the prompt is dumped and answered
+#                        elsewhere — the subagent path, where no provider enforces anything).
+#   reader_effort /      inference effort for the readers, and for the synthesis steps.
+#   reasoner_effort
+#   thinking             adaptive thinking on (Claude 4.6+/5); ignored where unsupported.
+#   backend              a fallback backend when none is given — `open` implies litellm.
+#
+# The table follows issue #85. `subagent` is the zero-cost path: every step is a dumped prompt
+# answered by a Claude Code subagent, so it enforces nothing and names the answering model in
+# the ledger's `by`.
+
+
+@dataclass(frozen=True)
+class Profile:
+    readers: str
+    reasoner: str
+    variant: str = DEFAULT_PROMPT_VARIANT
+    per_arc: bool = False
+    per_figure_captions: bool = False
+    output_format: str = "json_schema"
+    reader_effort: str = "medium"
+    reasoner_effort: str = "high"
+    thinking: bool = True
+    backend: str | None = None
+
+
+PROFILES: dict[str, Profile] = {
+    # Frontier: one model, lean tasks, whole slices, high/xhigh effort. Over-prescriptive
+    # prompts measurably cost accuracy on this tier, so the scaffolding is stripped to the
+    # contract plus a one-page task.
+    "frontier": Profile(
+        readers="claude-opus-5", reasoner="claude-opus-5", variant="frontier",
+        reader_effort="high", reasoner_effort="xhigh",
+    ),
+    # Standard (default): the current generation with today's tasks — the signal-phrase tables
+    # and the quantity ceiling the standard tier needs because it over-splits.
+    "standard": Profile(
+        readers="claude-sonnet-5", reasoner="claude-opus-5", variant="default",
+        reader_effort="medium", reasoner_effort="high",
+    ),
+    # Open: local/hosted open-weight models via litellm, with the work chunked so each call has
+    # one job, the full example set, and json mode enforced by the provider.
+    "open": Profile(
+        readers="deepseek-chat", reasoner="deepseek-chat", variant="open",
+        per_arc=True, per_figure_captions=True, output_format="json_object",
+        reader_effort="medium", reasoner_effort="medium", thinking=False,
+        backend="deepseek",
+    ),
+    # Subagent: the zero-cost path. A Claude Code subagent answers each dumped prompt; nothing
+    # is enforced by a provider, and the ledger's `by` names the model that actually answered.
+    # Models mirror `standard` because that is what today's recorded runs stand in for.
+    "subagent": Profile(
+        readers="claude-sonnet-5", reasoner="claude-opus-5", variant="default",
+        output_format="none",
+    ),
+}
+
+PROFILE_NAMES = tuple(PROFILES)
+
+
+def resolve_profile(name: str, backend: str | None = None) -> Profile:
+    """The Profile named, or ValueError naming the ones that exist.
+
+    `backend` is unused here — the backend override is applied to the resolved model ids by
+    Config, which knows the backend in force — but is accepted so callers can pass it without
+    caring whether the mapping happens here or there.
+    """
+    if name not in PROFILES:
+        raise ValueError(
+            f"unknown profile {name!r}; choose one of {', '.join(PROFILE_NAMES)}")
+    return PROFILES[name]
+
 
 # ── Backend routing ──────────────────────────────────────────────────────
 # "vertex" and "anthropic" call the Anthropic SDK directly. Any other value
@@ -140,6 +254,18 @@ class Config:
     prompt_variant: str = DEFAULT_PROMPT_VARIANT
     reconcile_strategy: str = "confidence-tagged"
 
+    # Profile: the one word that sets models, variant, chunking, enforcement and effort.
+    # `None` means no profile was named and the per-field defaults above stand.
+    profile: str | None = None
+    per_arc: bool = False
+    per_figure_captions: bool = False
+    # Provider-enforced output mode: "json_schema", "json_object", or "none" (answered
+    # elsewhere, so nothing to enforce).
+    output_format: str = "json_schema"
+    reader_effort: str = "medium"
+    reasoner_effort: str = "high"
+    thinking: bool = True
+
     # Behavioral knobs
     max_claims: int | None = None
     retry_on_thin: bool = True
@@ -151,38 +277,65 @@ class Config:
 
     @classmethod
     def from_args(cls, args) -> "Config":
-        """Build a Config from argparse Namespace, falling back to env then defaults."""
+        """Build a Config from argparse Namespace, falling back to env then defaults.
+
+        Precedence is CLI arg > env var > the named profile > the per-field default. A
+        `--profile` sits between the environment and the defaults: it moves the whole set of
+        fields at once, and an explicit `--model-*`, `--backend` or `--prompt-variant` still
+        wins over what the profile would have chosen.
+        """
         cfg = cls()
 
-        # Models (CLI > env > default)
-        cfg.model_results = (
-            getattr(args, "model_results", None)
-            or os.environ.get("ELIFE_EXTRACT_MODEL_RESULTS")
-            or DEFAULT_MODEL_RESULTS
-        )
-        cfg.model_caption = (
-            getattr(args, "model_caption", None)
-            or os.environ.get("ELIFE_EXTRACT_MODEL_CAPTION")
-            or DEFAULT_MODEL_CAPTION
-        )
-        cfg.model_structure = (
-            getattr(args, "model_structure", None)
-            or os.environ.get("ELIFE_EXTRACT_MODEL_STRUCTURE")
-            or DEFAULT_MODEL_STRUCTURE
-        )
-        cfg.model_reconcile = (
-            getattr(args, "model_reconcile", None)
-            or os.environ.get("ELIFE_EXTRACT_MODEL_RECONCILE")
-            or DEFAULT_MODEL_RECONCILE
-        )
+        # Profile: resolved first, so its fields can serve as the fallback for everything
+        # below. An unknown name is left on cfg.profile and reported by validate(), rather
+        # than raised here, so the CLI prints one clean error instead of a traceback.
+        cfg.profile = getattr(args, "profile", None)
+        prof: Profile | None = PROFILES.get(cfg.profile) if cfg.profile else None
 
         # Backend selection. Anything other than "vertex"/"anthropic" is routed
-        # through litellm, so openrouter/openai/google work without new code.
+        # through litellm, so openrouter/openai/google work without new code. The `open`
+        # profile implies a litellm backend, offered here only as a fallback.
         cfg.backend = (
             getattr(args, "backend", None)
             or os.environ.get("ELIFE_EXTRACT_BACKEND")
+            or (prof.backend if prof else None)
             or DEFAULT_BACKEND
         )
+
+        # Models (CLI > env > profile > default), then mapped to what the backend serves.
+        cfg.model_results = _backend_model(cfg.backend,
+            getattr(args, "model_results", None)
+            or os.environ.get("ELIFE_EXTRACT_MODEL_RESULTS")
+            or (prof.readers if prof else None)
+            or DEFAULT_MODEL_RESULTS
+        )
+        cfg.model_caption = _backend_model(cfg.backend,
+            getattr(args, "model_caption", None)
+            or os.environ.get("ELIFE_EXTRACT_MODEL_CAPTION")
+            or (prof.readers if prof else None)
+            or DEFAULT_MODEL_CAPTION
+        )
+        cfg.model_structure = _backend_model(cfg.backend,
+            getattr(args, "model_structure", None)
+            or os.environ.get("ELIFE_EXTRACT_MODEL_STRUCTURE")
+            or (prof.readers if prof else None)
+            or DEFAULT_MODEL_STRUCTURE
+        )
+        cfg.model_reconcile = _backend_model(cfg.backend,
+            getattr(args, "model_reconcile", None)
+            or os.environ.get("ELIFE_EXTRACT_MODEL_RECONCILE")
+            or (prof.reasoner if prof else None)
+            or DEFAULT_MODEL_RECONCILE
+        )
+
+        # Chunking, enforcement and effort follow the profile when one is named.
+        if prof:
+            cfg.per_arc = prof.per_arc
+            cfg.per_figure_captions = prof.per_figure_captions
+            cfg.output_format = prof.output_format
+            cfg.reader_effort = prof.reader_effort
+            cfg.reasoner_effort = prof.reasoner_effort
+            cfg.thinking = prof.thinking
         cfg.api_key = (
             getattr(args, "api_key", None)
             or os.environ.get(BACKEND_ENV_KEY.get(cfg.backend, ""))
@@ -227,8 +380,13 @@ class Config:
         output = getattr(args, "output_dir", None) or os.environ.get("ELIFE_EXTRACT_OUTPUT")
         cfg.output_dir = Path(output).expanduser().resolve() if output else Path.cwd() / "out"
 
-        # Variants
-        cfg.prompt_variant = getattr(args, "prompt_variant", None) or DEFAULT_PROMPT_VARIANT
+        # Variants. An explicit --prompt-variant wins; otherwise the profile's variant; then
+        # the default. (The CLI passes None when the flag is absent, so the profile is reached.)
+        cfg.prompt_variant = (
+            getattr(args, "prompt_variant", None)
+            or (prof.variant if prof else None)
+            or DEFAULT_PROMPT_VARIANT
+        )
         cfg.reconcile_strategy = getattr(args, "reconcile_strategy", None) or "confidence-tagged"
 
         # Knobs
@@ -243,9 +401,24 @@ class Config:
             return self.prompts_dir / f"{agent}.md"
         return self.prompts_dir / self.prompt_variant / f"{agent}.md"
 
+    # Which call labels are synthesis steps rather than readers. Effort follows the profile's
+    # reader_effort / reasoner_effort by this split, and the labels match those stream_text is
+    # given (`{agent}-reader`, `reconciler`, `external-reviewer`, `edge-inference*`, …).
+    _REASONER_LABELS = frozenset(
+        {"reconciler", "external-reviewer", "parts"})
+
+    def effort_for(self, label: str | None) -> str:
+        """The inference effort for a call, from the profile's reader/reasoner split."""
+        if label and (label in self._REASONER_LABELS or label.startswith("edge-inference")):
+            return self.reasoner_effort
+        return self.reader_effort
+
     def validate(self) -> list[str]:
         """Return a list of error strings, or empty if valid."""
         errors = []
+        if self.profile is not None and self.profile not in PROFILES:
+            errors.append(
+                f"unknown profile {self.profile!r}; choose one of {', '.join(PROFILE_NAMES)}")
         if self.root is None or not self.root.is_dir():
             errors.append(
                 f"root not found: {self.root}. Pass --root, or set ELIFE_CLAIM_TREES_ROOT, "

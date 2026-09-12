@@ -424,6 +424,14 @@ class PaperScorecard:
     # Reference status: "approved v<N>", "approved v<N> (committed)", or "unapproved".
     reference: str = "unapproved"
 
+    # Which model profile produced the candidate this was scored against (#85). Empty when the
+    # candidate was not produced under a named profile.
+    profile: str = ""
+
+    # A free note the evaluation layer surfaces beside the row — what the candidate is, or a
+    # caveat about the reference. Empty by default.
+    note: str = ""
+
     @property
     def recovery_pct(self) -> float:
         return self.n_recovered / self.n_ref * 100 if self.n_ref else 0.0

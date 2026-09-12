@@ -713,6 +713,12 @@ def cmd_run(args) -> int:
             return {"skip": True, "fatal": lid == args.layer, "cmd": None, "answered_kept": None}
 
         cmd = cmd.replace("{paper}", args.paper).replace("{doi}", doi or "")
+        # A profile travels to the command that understands it. The declared commands that
+        # call a model go through `elife_extract.cli`, which takes `--profile`; the others
+        # (article_json.py, prediction_outcome.py) do not, so the flag is appended only to the
+        # former. The ledger's `by` records the profile too, below.
+        if getattr(args, "profile", None) and "elife_extract.cli" in cmd:
+            cmd += f" --profile {shlex.quote(args.profile)}"
         # An answer made somewhere other than the configured backend — a subagent, a person —
         # goes through the same runner and the same validation, so the ledger records it the
         # same way. Before this the answered path could only be taken by calling the CLI by
@@ -792,6 +798,13 @@ def cmd_run(args) -> int:
                 # to whoever ran this, and is the fact the ledger exists to keep.
                 if args.by:
                     rec["by"] = args.by
+            # The profile is the other half of who answered: `<model> · <profile>`. The model
+            # came from the output (via `by_from`) or from --by; the profile is appended here,
+            # unless it is already the tail of `by` (a re-run of the same command).
+            if getattr(args, "profile", None) and rec.get("by"):
+                tail = f" · {args.profile}"
+                if not str(rec["by"]).endswith(tail):
+                    rec["by"] = f"{rec['by']}{tail}"
             append(args.paper, rec)
             # Keep this version's bytes addressable for the site's two-version comparison.
             # Only single files under runs/; claims/ archives itself into claim-tree.v<N>/.
@@ -877,6 +890,8 @@ def main() -> int:
                    help="record this file as the named layer's answer instead of calling a "
                         "backend; the raw reply is kept beside the output as a version")
     r.add_argument("--by", help="with --answer: who answered, e.g. the model of the subagent")
+    r.add_argument("--profile", help="model profile to pass through to each layer command "
+                   "(frontier, standard, open, subagent). The ledger's `by` records it.")
     r.set_defaults(fn=cmd_run)
     a = sub.add_parser("approve", help="record that a person approved one version of a layer")
     a.add_argument("paper")
