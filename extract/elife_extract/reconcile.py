@@ -16,6 +16,7 @@ import json
 import logging
 
 from .agents import (
+    _draft_table_schema,
     _spans_by_uid,
     load_prompt,
     parse_json_response,
@@ -23,6 +24,7 @@ from .agents import (
     stream_text,
     verify_evidence,
 )
+from .config import token_budget
 from .config import Config
 from .prepare import PreparedPaper
 from .schema import AgentExtraction, DraftClaimTable, ReconciledClaim
@@ -205,7 +207,7 @@ def reconcile(
     extraction_path: str | None = None,
     extraction_path_note: str | None = None,
     paper: PreparedPaper | None = None,
-) -> DraftClaimTable:
+) -> tuple[DraftClaimTable, dict]:
     """Reconcile three extractions into a draft claim table via Opus.
 
     The reconciler sees all three lists at once. It returns a DraftClaimTable
@@ -229,13 +231,17 @@ def reconcile(
         len(structure.claims),
         cfg.model_reconcile,
     )
-    raw = stream_text(
+    raw, usage = stream_text(
         cfg,
         model=cfg.model_reconcile,
         system=system_prompt,
         user=user_message,
-        max_tokens=32768,  # reconciliation output can be large; budget headroom
+        max_tokens=token_budget(
+            "reconciler",
+            len(results.claims) + len(caption.claims) + len(structure.claims),
+        ),
         label="reconciler",
+        output_schema=_draft_table_schema(),
     )
     return draft_from_raw(raw, results, caption, structure, cfg, paper_doi,
-                          paper_title, extraction_path, extraction_path_note, paper)
+                          paper_title, extraction_path, extraction_path_note, paper), usage

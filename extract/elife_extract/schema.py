@@ -150,3 +150,33 @@ class DraftClaimTable(BaseModel):
         default_factory=dict,
         description="Filled by the runner: models and prompt variant. Leave empty.",
     )
+
+
+class ReviewEdit(BaseModel):
+    """One targeted change to an existing claim in the draft."""
+
+    claim: str = Field(..., description=(
+        "The exact `claim` sentence of the claim to edit, as it appears in the draft."))
+    role: Role | None = Field(None, description=(
+        "New role to assign; omit or null to leave unchanged."))
+    claim_type: ClaimType | None = Field(None, description=(
+        "New claim_type to assign; omit or null to leave unchanged."))
+    panel: str | None = Field(None, description=(
+        "New panel value; omit or null to leave unchanged."))
+    notes: str | None = Field(None, description=(
+        "Replacement notes string (prefix with [reviewer]); omit to leave unchanged."))
+
+
+class ReviewPatch(BaseModel):
+    """The external reviewer's output: targeted edits and new claims, not a full replacement.
+
+    The runner applies this patch to the reconciled draft, writes the revised
+    DraftClaimTable as external-review.output.json, and writes the raw patch
+    as external-review.patch.json for audit.
+    """
+
+    edits: list[ReviewEdit] = Field(default_factory=list, description=(
+        "Zero or more targeted changes to existing claims, keyed by their `claim` sentence."))
+    additions: list[ReconciledClaim] = Field(default_factory=list, description=(
+        "Zero or more new claims to append to the draft; each must carry "
+        "confidence=single-source and sources=[reviewer]."))

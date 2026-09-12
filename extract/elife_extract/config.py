@@ -40,6 +40,49 @@ DEFAULT_PROMPT_VARIANT = "default"
 
 DEFAULT_BACKEND = "vertex"
 
+# ── Per-layer output-token budgets ──────────────────────────────────────
+# Budget = tokens_per_claim * n_claims, clamped to [min_tokens, max_tokens].
+# Fixed-budget layers use tokens_per_claim = 0 and return max_tokens directly.
+#
+# Rationale for each row:
+#   reader           450 t/claim — verbatim evidence quotes are long
+#   reconciler       900 t/claim — richer format: sources, evidence_by_agent, span_by_agent
+#   external-reviewer 900 t/claim — same format as reconciler (revises the draft in place)
+#   edge-inference    60 t/claim — each edge is a short 4-field object
+#   questions/parts/summaries/synthesis/abstract-map — prose outputs; small fixed ceiling
+#   stance            fixed 4096 — a small set of ruled-out alternative claims
+
+_BUDGET_TABLE: dict[str, tuple[int, int, int]] = {
+    # (tokens_per_claim, min_tokens, max_tokens)
+    "reader":             (450,     8_192, 32_768),
+    "reconciler":         (900,     8_192, 32_768),
+    "external-reviewer":  (900,     8_192, 32_768),
+    "edge-inference":     ( 60,     4_096, 32_768),
+    "questions":          (  0,       512,  2_048),
+    "parts":              (  0,       512,  2_048),
+    "summaries":          (  0,       512,  4_096),
+    "synthesis":          (  0,       512,  4_096),
+    "abstract-map":       (  0,       512,  2_048),
+    "stance":             (  0,     1_024,  4_096),
+}
+
+
+def token_budget(label: str, n_claims: int = 25) -> int:
+    """Return a max_tokens budget for *label* scaled to *n_claims*.
+
+    For layers whose budget scales with output size, *n_claims* should be the
+    expected number of output claims (reader) or the input draft's claim count
+    (reconciler/reviewer/edges).  Fixed-budget layers ignore *n_claims*.
+
+    The result is always within the [min_tokens, max_tokens] interval declared
+    in _BUDGET_TABLE, which prevents both reservation errors (HTTP 402 when the
+    provider reserves more than the account balance) and truncated output.
+    """
+    per, lo, hi = _BUDGET_TABLE.get(label, (450, 8_192, 32_768))
+    raw = per * max(n_claims, 1) if per else hi
+    return max(lo, min(hi, raw))
+
+
 LITELLM_PREFIX = {
     "openrouter": "openrouter",
     "openai": "openai",
