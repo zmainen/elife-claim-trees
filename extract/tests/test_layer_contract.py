@@ -142,7 +142,7 @@ def test_model_answered_layers_declare_where_to_find_the_model():
     """
     decl = _declaration()
     for lid in ("results-reader", "caption-reader", "structure-reader", "reconcile",
-                "external-review", "edge-inference", "questions", "parts",
+                "external-review", "edge-inference", "questions", "parts", "stance",
                 "summaries", "synthesis", "abstract-map"):
         assert decl[lid].get("by_from") == "model", f"{lid} does not declare by_from"
 
@@ -338,7 +338,7 @@ def test_every_model_answered_layer_can_be_dumped_and_answered():
     choices = cli.build_parser()._subparsers._group_actions[0].choices
     for name in ("results-reader", "caption-reader", "structure-reader",
                  "reconcile", "external-review", "edge-inference", "questions", "parts",
-                 "summaries", "synthesis", "abstract-map"):
+                 "stance", "summaries", "synthesis", "abstract-map"):
         opts = {o for a in choices[name]._actions for o in a.option_strings}
         assert "--dump-prompt" in opts, f"{name} cannot be asked for its prompt"
         assert "--answer" in opts, f"{name} cannot be given an answer"
@@ -609,6 +609,97 @@ def test_parts_is_answerable_and_its_declared_command_exists():
     cmd = _declaration()["parts"]["command"]
     m = re.search(r"elife_extract\.cli\s+([a-z-]+)", cmd)
     assert m and m.group(1) in choices, "parts' command names a subcommand the CLI does not have"
+
+
+# ── stance: the alternatives a paper rejects, raised from its controls ─────
+
+
+def _seed_stance_tree(cfg: Config) -> None:
+    """A control, an empirical result and an asserted hypothesis on disk, an index with one
+    question, and a prepared.json with one Results span — enough for the stance runner to read,
+    write an `alt-` file, and aim a `rules-out` edge from the control at it."""
+    d = cfg.corpus_dir / SLUG
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "index.md").write_text(
+        f"---\npaper-slug: {SLUG}\ndoi: {DOI}\nquestions:\n- id: q1\n  text: Is it guilt?\n---\n")
+    for slug, role in (("the-control", "control"), ("a-result", "empirical"),
+                       ("the-hypothesis", "hypothesis")):
+        (d / f"{slug}.md").write_text(
+            f"---\nslug: {slug}\ndoi: null\nclaim: {slug}\nrole: {role}\n"
+            f"epistemic: tentative\nassertions:\n- paper-slug: {SLUG}\n  stance: asserts\n---\n")
+    paper = _paper()
+    paper.spans = [{"uid": "results-001", "section": "results", "text": "A control ruled it out."}]
+    layers._write_json(layers.run_file(SLUG, "prepared.json", cfg), asdict(paper))
+
+
+def test_stance_edge_validator_drops_a_rules_out_at_an_asserted_claim_and_a_bad_source():
+    """The `rules-out` edges the stance runner writes go through `edges.edges_from_raw`, so the
+    direction check applies: one aimed at a claim the paper asserts is dropped, and so is one
+    whose source is not a control or empirical claim. The one from a control at the rejected
+    rival is kept."""
+    from elife_extract.edges import edges_from_raw
+
+    claims = [
+        {"role": "control", "stance": "asserts", "claim": "the control"},          # ctrl
+        {"role": "empirical", "stance": "asserts", "claim": "an asserted result"},  # asserted
+        {"role": "hypothesis", "stance": "asserts", "claim": "a hypothesis"},       # hyp
+        {"role": "hypothesis", "stance": "rejects", "claim": "the rival"},          # alt-rival
+    ]
+    slugs = ["ctrl", "asserted", "hyp", "alt-rival"]
+    raw = json.dumps([
+        {"source": "ctrl", "target": "asserted", "relation": "rules-out"},   # target asserts → drop
+        {"source": "hyp", "target": "alt-rival", "relation": "rules-out"},    # source hypothesis → drop
+        {"source": "ctrl", "target": "alt-rival", "relation": "rules-out"},   # kept
+    ])
+    edges = edges_from_raw(raw, claims, slugs, source="stance")
+    assert {(e["source"], e["target"], e["relation"]) for e in edges} == \
+        {("ctrl", "alt-rival", "rules-out")}
+
+
+def test_stance_runner_writes_an_alt_and_a_rules_out_and_does_not_duplicate_on_rerun():
+    """A supplied answer raises an alternative: the runner writes the `alt-` file with the stance
+    on its assertion and the `rules-out` edge from the named control, records the model from the
+    supplied file, and a second run with the same answer neither doubles the file nor the edge."""
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = _cfg(Path(tmp))
+        _seed_stance_tree(cfg)
+        ans = Path(tmp) / "s.json"
+        ans.write_text(json.dumps({"alternatives": [
+            {"slug": "alt-it-was-noise", "claim": "The effect is noise.",
+             "role": "hypothesis", "stance": "rejects", "addresses": "q1",
+             "ruled_out_by": ["the-control"], "span": "results-001",
+             "why": "the control rules it out"}]}))
+
+        path, payload = layers.stance_layer(SLUG, cfg, answer=str(ans))
+        d = cfg.corpus_dir / SLUG
+        alt = d / "alt-it-was-noise.md"
+        assert alt.is_file(), "the alternative's claim file was not written"
+        alt_fm = yaml.safe_load(alt.read_text().split("---", 2)[1])
+        assert alt_fm["assertions"][0]["stance"] == "rejects", "the stance is on the assertion"
+        assert alt_fm["addresses"] == "q1", "the alternative was not linked to the question"
+        assert json.loads(path.read_text())["model"].startswith("supplied:")
+
+        ctrl_fm = yaml.safe_load((d / "the-control.md").read_text().split("---", 2)[1])
+        assert ctrl_fm.get("rules-out") == ["alt-it-was-noise"], "the rules-out edge did not land"
+        assert len(payload["edges"]) == 1
+
+        before = sorted(p.name for p in d.glob("alt-*.md"))
+        layers.stance_layer(SLUG, cfg, answer=str(ans))
+        after = sorted(p.name for p in d.glob("alt-*.md"))
+        assert before == after == ["alt-it-was-noise.md"], "a re-run duplicated the alternative"
+        ctrl_fm2 = yaml.safe_load((d / "the-control.md").read_text().split("---", 2)[1])
+        assert ctrl_fm2.get("rules-out") == ["alt-it-was-noise"], "a re-run duplicated the edge"
+
+
+def test_stance_is_answerable_and_its_declared_command_exists():
+    """`stance` can be dumped and answered, and the command its declaration names is a real
+    subcommand — the seam every model-answered layer has."""
+    choices = cli.build_parser()._subparsers._group_actions[0].choices
+    opts = {o for a in choices["stance"]._actions for o in a.option_strings}
+    assert "--dump-prompt" in opts and "--answer" in opts
+    cmd = _declaration()["stance"]["command"]
+    m = re.search(r"elife_extract\.cli\s+([a-z-]+)", cmd)
+    assert m and m.group(1) in choices, "stance's command names a subcommand the CLI does not have"
 
 
 # ── the measures: each lands on its declared site path and records who answered ──

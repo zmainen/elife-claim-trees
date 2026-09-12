@@ -9,10 +9,10 @@ role: control
 concepts: []
 priority: '2026-09-11'
 epistemic: tentative
-part-of:
-- participants-showed-very-similar-risk
 rules-out:
 - alt-social-context-shifts-risk-attitude
+part-of:
+- participants-showed-very-similar-risk
 belongings:
 - relation: requires
   target: risk-attitude-quantified-risk-premium

@@ -1,0 +1,122 @@
+{
+  "paper_slug": "gadeke-2026-guilt-insula",
+  "model": "supplied:runs/gadeke-2026-guilt-insula/stance.answer.v2.json",
+  "alternatives": [
+    {
+      "slug": "alt-agency-aversion-not-guilt",
+      "claim": "The happiness cost observed in the Social condition is general agency aversion — the unpleasantness of being the decision-maker as such — and is not contingent on responsibility for a negative outcome befalling the partner.",
+      "role": "hypothesis",
+      "stance": "rejects",
+      "addresses": "q1",
+      "ruled_out_by": [
+        "participant-happiness-lower-when-participant"
+      ],
+      "span": null,
+      "why": "Establishing that being the chooser depresses happiness independently of outcome isolates the residual responsibility-contingent interaction, so a pure agency-aversion account (a main effect, no interaction) cannot be the whole story.",
+      "existing": true
+    },
+    {
+      "slug": "alt-guilt-effect-driven-by-own-outcome",
+      "claim": "The happiness decrease following negative partner outcomes under participant choice is driven by the participant's own lottery outcome rather than by the partner's, and so reflects self-directed disappointment rather than interpersonal guilt.",
+      "role": "hypothesis",
+      "stance": "rejects",
+      "addresses": "q1",
+      "ruled_out_by": [
+        "guilt-effect-occurred-whether-participant"
+      ],
+      "span": null,
+      "why": "The guilt effect held whether the participant received the high or the low lottery outcome, so it does not depend on the participant's own outcome.",
+      "existing": true
+    },
+    {
+      "slug": "alt-social-context-shifts-risk-attitude",
+      "claim": "The happiness and choice differences between Social and Partner conditions reflect a social-context-driven shift in risk attitude — participants become more or less risk averse when choosing on another person's behalf — rather than responsibility-contingent interpersonal guilt.",
+      "role": "hypothesis",
+      "stance": "rejects",
+      "addresses": "q1",
+      "ruled_out_by": [
+        "risk-premiums-not-differ-between"
+      ],
+      "span": null,
+      "why": "Risk premiums did not differ between Solo and Social conditions in either study, with Bayes factors favouring the null, so a social shift in risk attitude cannot explain the contrast.",
+      "existing": true
+    },
+    {
+      "slug": "alt-participants-insensitive-to-value",
+      "claim": "Participants did not engage with the lottery task in a value-sensitive way — choices were inattentive or random — so the behavioural measures carry no information about preference or affect.",
+      "role": "hypothesis",
+      "stance": "rejects",
+      "addresses": "q1",
+      "ruled_out_by": [
+        "participants-probability-choosing-risky-option"
+      ],
+      "span": null,
+      "why": "The probability of choosing the risky option rose steeply with the lottery's expected-value advantage in both studies, confirming participants were sensitive to value.",
+      "existing": true
+    },
+    {
+      "slug": "alt-imaging-contrast-invalid",
+      "claim": "The imaging pipeline and condition contrasts do not recover established effects, so differences reported between Social and Partner conditions cannot be attributed to the experimental manipulation.",
+      "role": "hypothesis",
+      "stance": "rejects",
+      "addresses": "q2",
+      "ruled_out_by": [
+        "bilateral-ventral-striatum-more-active"
+      ],
+      "span": null,
+      "why": "The bilateral ventral striatum was more active for risky than safe choices (d = 0.72, 0.85) irrespective of condition, replicating an established striatal response, so the imaging pipeline recovers known effects.",
+      "existing": true
+    },
+    {
+      "slug": "alt-model-based-glm-invalid",
+      "claim": "The model-based fMRI approach does not recover known neural signals, so parametric modulators derived from the computational model — including the partner reward prediction error regressors — cannot be trusted.",
+      "role": "hypothesis",
+      "stance": "rejects",
+      "addresses": "q3",
+      "ruled_out_by": [
+        "manipulation-check-bilateral-ventral-striatum"
+      ],
+      "span": null,
+      "why": "As a manipulation check, bilateral ventral striatum activation tracked the model's expected values, validating the model-based fMRI approach before the STS analysis.",
+      "existing": true
+    }
+  ],
+  "edges": [
+    {
+      "source": "participant-happiness-lower-when-participant",
+      "target": "alt-agency-aversion-not-guilt",
+      "relation": "rules-out",
+      "why": "Establishing that being the chooser depresses happiness independently of outcome isolates the residual responsibility-contingent interaction, so a pure agency-aversion account (a main effect, no interaction) cannot be the whole story."
+    },
+    {
+      "source": "guilt-effect-occurred-whether-participant",
+      "target": "alt-guilt-effect-driven-by-own-outcome",
+      "relation": "rules-out",
+      "why": "The guilt effect held whether the participant received the high or the low lottery outcome, so it does not depend on the participant's own outcome."
+    },
+    {
+      "source": "risk-premiums-not-differ-between",
+      "target": "alt-social-context-shifts-risk-attitude",
+      "relation": "rules-out",
+      "why": "Risk premiums did not differ between Solo and Social conditions in either study, with Bayes factors favouring the null, so a social shift in risk attitude cannot explain the contrast."
+    },
+    {
+      "source": "participants-probability-choosing-risky-option",
+      "target": "alt-participants-insensitive-to-value",
+      "relation": "rules-out",
+      "why": "The probability of choosing the risky option rose steeply with the lottery's expected-value advantage in both studies, confirming participants were sensitive to value."
+    },
+    {
+      "source": "bilateral-ventral-striatum-more-active",
+      "target": "alt-imaging-contrast-invalid",
+      "relation": "rules-out",
+      "why": "The bilateral ventral striatum was more active for risky than safe choices (d = 0.72, 0.85) irrespective of condition, replicating an established striatal response, so the imaging pipeline recovers known effects."
+    },
+    {
+      "source": "manipulation-check-bilateral-ventral-striatum",
+      "target": "alt-model-based-glm-invalid",
+      "relation": "rules-out",
+      "why": "As a manipulation check, bilateral ventral striatum activation tracked the model's expected values, validating the model-based fMRI approach before the STS analysis."
+    }
+  ]
+}

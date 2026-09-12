@@ -1,21 +1,21 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `headley-2026-inhibitory-rhythms` · **Claims registered:** 2026-03-30 – 2026-04-20
+**Paper:** `headley-2026-inhibitory-rhythms` · **Claims registered:** 2026-03-30 – 2026-09-12
 
-26 claims, 85 typed relations between them.
+29 claims, 88 typed relations between them.
 
 ## Claims by role
 
 - **empirical** — 14
 - **prediction** — 6
-- **hypothesis** — 2
+- **hypothesis** — 5
 - **scope** — 2
 - **interpretation** — 1
 - **literature-context** — 1
 
 ## Relations dropped
 
-**47 of 85 relations (55%) have no MIRA predicate and are absent from the strict export.**
+**47 of 88 relations (53%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
@@ -37,8 +37,11 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Questions synthesized
 
-MIRA requires every Claim to address a `mira:Question`; a claim tree has no such node. **2 questions were derived mechanically from hypothesis text and need human review.**
+MIRA requires every Claim to address a `mira:Question`; a claim tree has no such node. **5 questions were derived mechanically from hypothesis text and need human review.**
 
+- Is it the case that distal dendritic inhibition reduces somatic firing by directly raising the action-potential threshold — the same subtractive mechanism as perisomatic inhibition — rather than by suppressing dendritic Ca²⁺ and NMDA spikes?
+- Is it the case that perisomatic and distal dendritic inhibition act through a single shared mechanism, so perisomatic inhibition also controls dendritic Ca²⁺ and NMDA spiking, rather than the perisomatic-gamma and distal-beta streams being functionally orthogonal?
+- Is it the case that the phase-dependent modulation of dendritic spike probability and action-potential timing by beta and gamma bursts requires a slow buildup or evolving entrainment of an underlying process across many oscillatory cycles?
 - Is it the case that perisomatic and distal dendritic inhibition serve distinct computational roles in layer 5 pyramidal neurons: perisomatic inhibition principally regulates somatic action potential generation (gain and threshold of axonal output), while distal dendritic inhibition principally regulates dendritic spike incidence and the temporal coupling of dendritic spikes to somatic APs?
 - Is it the case that the optimal frequency of rhythmic inhibition for modulating a given dendritic computation is determined by matching the rhythm's cycle period to the intrinsic timescale of the spike process at the target compartment: fast (gamma) for perisomatic Na+/AP processes, slow (beta) for distal Ca²⁺/NMDA dendritic spike processes?
 
@@ -46,7 +49,13 @@ Override any of these by adding a `question:` field to the hypothesis's frontmat
 
 ## Stance: claims this paper does not assert
 
-Every claim in this paper is asserted by it.
+**3 of this paper's claims are not asserted by it.** They are alternative explanations it entertains, rejects, or attributes to others. MIRA has no vocabulary for that distinction: it types a node as `Claim` and says nothing about who stands behind it.
+
+The strict export still carries the `rules-out` edge that eliminated each one, declared under `mira:opposes`, so a MIRA-only reader can see the direction of the argument. What that reader cannot see is that the paper **denies** these propositions — so it will over-read them as assertions. The stance travels in the extended file as `haak:stance`.
+
+- `alt-distal-inhibition-raises-somatic-threshold` — rejects
+- `alt-perisomatic-and-distal-share-mechanism` — rejects
+- `alt-phase-modulation-requires-buildup` — rejects
 
 ## Alternatives materialised as claims
 
