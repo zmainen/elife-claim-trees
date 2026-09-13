@@ -144,10 +144,12 @@ def cmd_approve(args) -> int:
         print("warning: some claims or edges carry no verdict — approving a partial reading")
 
     # The same code path as `pipeline.py approve <paper> claim-tree --v <N> --by NAME --note`.
-    # The note names the verdict file, so the approval records what was read.
+    # The note names the verdict file, so the approval records what was read; `procedure` names
+    # the procedure version the file was read under.
     run = pipeline._latest(pipeline.read_ledger(args.paper), "claim-tree")
     note = args.note or str(path.relative_to(ROOT))
-    rec = pipeline.approve(args.paper, "claim-tree", v, by=args.by, note=note)
+    rec = pipeline.approve(args.paper, "claim-tree", v, by=args.by, note=note,
+                           procedure=vd.resolve(records).procedure)
     current = " (the current version)" if run and v == run.get("v") else \
               f" (superseded — the ledger is at v{run.get('v')})" if run else ""
     print(f"{args.paper}/claim-tree v{v} approved by {rec['by']}{current}")
