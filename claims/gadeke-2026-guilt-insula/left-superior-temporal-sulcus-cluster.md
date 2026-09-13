@@ -1,5 +1,5 @@
 ---
-uuid: 85d6f59d-c105-4667-ac43-9caaad0a77d4
+uuid: c7ae4d30-36cb-4898-9edb-621144cc2880
 slug: left-superior-temporal-sulcus-cluster
 doi: null
 claim: The left superior temporal sulcus cluster responded to model-based regressors coding participant
@@ -9,9 +9,9 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
-part-of:
-- one-cluster-left-sts-responded
-belongings: []
+belongings:
+- relation: supports
+  target: one-cluster-left-sts-responded
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -24,7 +24,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `part-of` → `one-cluster-left-sts-responded`: The STS response to the model regressors across sessions is one component of the STS cluster result.
+- `supports` → `one-cluster-left-sts-responded`: the STS response across both sessions corroborates the left-STS responsibility result
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

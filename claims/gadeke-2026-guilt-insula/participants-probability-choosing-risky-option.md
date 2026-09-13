@@ -1,5 +1,5 @@
 ---
-uuid: 56bf1148-c460-4adf-aab8-73b43562f53e
+uuid: 5e3c9187-cbb5-4918-83a1-d4d6dea23597
 slug: participants-probability-choosing-risky-option
 doi: null
 claim: 'Participants'' probability of choosing the risky option (lottery) increased with the difference

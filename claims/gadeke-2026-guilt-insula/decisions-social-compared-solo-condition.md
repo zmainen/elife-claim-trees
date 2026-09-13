@@ -1,5 +1,5 @@
 ---
-uuid: d01d92ca-6fe9-49ac-b6ee-0fff322dd121
+uuid: 370dd7d3-1e14-4a15-b30d-698b7270dec9
 slug: decisions-social-compared-solo-condition
 doi: null
 claim: Decisions in the Social compared with the Solo condition engaged three clusters — the precuneus

@@ -275,6 +275,25 @@ def markdown(r):
                  ". Every relation in this paper reaches the export, either as an edge or "
                  "as the declared inverse of one.")
 
+    # Measured from the OXA file, not the tree: `dissociates-with` is dropped only once the
+    # export has been regenerated under the #125 ruling (no `cito:disagreesWith` remains).
+    oxa_iris = set(r["oxa"]["edges"])
+    diss = r["by_type"].get("dissociates-with", 0)
+    tens = r["by_type"].get("in-tension-with", 0)
+    diss_dropped = diss and "cito:disagreesWith" not in oxa_iris
+    if diss_dropped or tens:
+        L += ["", "## What OXA maps only approximately", ""]
+        if diss_dropped:
+            L.append(f"**OXA drops `dissociates-with` ({diss}).** It is a neutral, symmetric "
+                     f"contrast, and CiTO offers no predicate for one. `cito:disagreesWith`, "
+                     f"which it carried until the #125 ruling, misstated it as disagreement, so "
+                     f"it is omitted rather than mismapped.")
+        if tens:
+            L.append(f"**`in-tension-with` ({tens}) maps to `claimrel:contradicts`** — the "
+                     f"nearest oppositional predicate. It overstates: a tension holds between "
+                     f"two claims the paper asserts, both of which stand.")
+        L.append("")
+
     L += ["", "## What no format carries", "",
           "Verification — that a claim was checked, by what code, against what deposited "
           "data, with what result beside the published value. None of the three has a node "

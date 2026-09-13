@@ -1,5 +1,5 @@
 ---
-uuid: 910e0721-f42c-4468-8cfd-ee97384aaedb
+uuid: 279bc71f-6262-4461-b4dd-b3190c58c69e
 slug: anterior-insula-tracks-guilt-insula
 doi: null
 claim: If the anterior insula tracks guilt, then insula BOLD should be higher in the Social than the Partner

@@ -1,5 +1,5 @@
 ---
-uuid: d257d87e-829e-4afe-b347-979696de1faa
+uuid: f601eab3-3c29-4093-8eae-45cf47647a10
 slug: responsibility-model-yielded-higher-values
 doi: null
 claim: 'The Responsibility model yielded higher R² values than all other models (Study 1: all t > 3.6,
@@ -9,11 +9,7 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
-belongings:
-- relation: supports
-  target: responsibility-partner-outcomes-influences-participant
-- relation: requires
-  target: momentary-happiness-modelled-five-computational
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -21,11 +17,6 @@ assertions:
   confidence: tentative
 reproductions: []
 ---
-
-**Relations.** Why each outgoing edge was inferred:
-
-- `supports` → `responsibility-partner-outcomes-influences-participant`: The higher R2 of the Responsibility model supports the prediction that it explains happiness best.
-- `requires` → `momentary-happiness-modelled-five-computational`: The R2 comparison depends on the five fitted happiness models.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

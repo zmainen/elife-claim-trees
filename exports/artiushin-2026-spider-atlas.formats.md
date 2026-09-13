@@ -6,7 +6,7 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
-| `dissociates-with` | 23 | `haak:dissociates-with`, under `mira:opposes` | kept | kept |
+| `dissociates-with` | 23 | `haak:dissociates-with`, neutral | kept | dropped |
 | `scopes` | 15 | `haak:scopes`, neutral | kept | dropped |
 | `enables-method` | 14 | `haak:enables-method`, neutral | kept | dropped |
 | `supports` | 5 | `haak:supports`, under `mira:supports` | kept | kept |
@@ -18,8 +18,9 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 
 ## What MIRA has no predicate for — and what happens instead
 
-**33 of 67 relations (49%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
+**56 of 67 relations (84%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
+- `haak:dissociates-with` (23) — the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric)
 - `haak:scopes` (15) — a scope constraint governs another claim's validity
 - `haak:enables-method` (14) — a result makes a downstream method possible
 - `haak:requires` (2) — a claim depends on another holding
@@ -30,9 +31,9 @@ Declaring them under `mira:supports` would have been worse than dropping them: i
 
 ## What a reader who knows only core MIRA sees
 
-Every relation keeps its own type — nothing is flattened into `supports`. 32 of the 65 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
+Every relation keeps its own type — nothing is flattened into `supports`. 9 of the 65 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
-- `dissociates-with` (23) — under `mira:opposes`
+- `dissociates-with` (23) — neutral
 - `scopes` (15) — neutral
 - `enables-method` (14) — neutral
 - `supports` (5) — under `mira:supports`

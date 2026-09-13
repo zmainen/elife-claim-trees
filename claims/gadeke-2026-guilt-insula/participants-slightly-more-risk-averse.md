@@ -1,5 +1,5 @@
 ---
-uuid: a213496f-3fb9-4c9a-bb80-d6e8b4a95980
+uuid: 0a8b2666-94ce-4a7f-9242-067a47ee0134
 slug: participants-slightly-more-risk-averse
 doi: null
 claim: Participants were slightly more risk averse (higher ρ) in the Social than the Solo condition in
@@ -23,7 +23,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `supports` → `participants-showed-very-similar-risk`: The slight extra risk aversion in Social in Study 1 is the tendency the synthesis notes.
+- `supports` → `participants-showed-very-similar-risk`: only a slight Study-1 risk-aversion difference supports the 'similar with a tendency' synthesis
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

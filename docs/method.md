@@ -242,7 +242,8 @@ Edges are propositions about logical structure between claim entities, not citat
 | `tests` | deduction → empirical loop | Empirical claim A tests prediction B (closes the hypothesis-prediction-test loop). | {{relation_counts.tests}} |
 | `refutes` | test outcome (negative) | A's result came out against prediction B — the negative outcome of a test, aimed at a prediction (parallel to `confirms`; distinct from `contradicts`/`rules-out`, which assert B is false). | {{relation_counts.refutes}} |
 | `rules-out` | elimination | A's evidence eliminates an alternative explanation B. | {{relation_counts.rules-out}} |
-| `dissociates-with` | dissociation | A and B jointly establish a dissociation (symmetric edge between two empirical claims that together form a contrast). | {{relation_counts.dissociates-with}} |
+| `dissociates-with` | dissociation | A and B jointly establish a dissociation (symmetric edge between two claims whose difference is itself the finding; neither bears on the other's truth). Neutral — no MIRA predicate. | {{relation_counts.dissociates-with}} |
+| `in-tension-with` | tension | A and B are both asserted and both stand, yet pull a shared implication in opposite directions or cannot be jointly explained without a further claim (symmetric). Exported under `mira:opposes`, which overstates it. | {{relation_counts.in-tension-with}} |
 | `validates` | disconfirmation control | A is a control or sign-flip whose specific result strengthens the warrant for B. | {{relation_counts.validates}} |
 | `predicts` | predictive validation | A predicts B (typically model-to-experiment). | {{relation_counts.predicts}} |
 | `confirms` | test outcome (positive) | A's result came out as prediction B said it would — the positive outcome of a test, aimed at a prediction (parallel to `refutes`). | {{relation_counts.confirms}} |
@@ -253,7 +254,7 @@ Edges are propositions about logical structure between claim entities, not citat
 
 ### 4.4 Edge-to-reasoning-form mapping
 
-The edge inventory operationalises six argumentative moves:
+The edge inventory operationalises seven argumentative moves:
 
 1. **Deduction.** `entails` and its reciprocal `derived-from` carry hypothesis-to-prediction deduction. The Headley paper's `hypothesis-distinct-compartmental-roles` `entails:` four predictions; each prediction `derived-from:` the same hypothesis. The Meijer R1 paper's `hypothesis-additive-modulation` `entails:` `prediction-near-zero-choice-stim-interaction` and (notably) `entails:` `orthogonality-derived-from-additivity` — a synthesis claim that is itself a deductive consequence of the hypothesis, demoting the empirical orthogonality finding from independent evidence to geometric corollary.
 
@@ -263,9 +264,11 @@ The edge inventory operationalises six argumentative moves:
 
 4. **Elimination.** `rules-out` carries the eliminative move: A's evidence eliminates an explicit alternative B. The Meijer R1 paper's `rules-out-multiplicative-gain-control` synthesis claim explicitly aggregates this move at the discussion level. The corpus carries 15 `rules-out` edges, scattered across papers, and the `synthesis` layer shows they are diagnostically interesting because they are scrubbed by abstracts.
 
-5. **Dissociation.** `dissociates-with` is a symmetric edge between two empirical claims that together establish a contrast. The Headley `distal-inhib-drops-firing-02hz` `dissociates-with` `perisomatic-inhib-drops-firing-07hz` — neither claim alone establishes the compartmental dissociation; the contrast does. The corpus carries 65 such pairings, often joined to the shared hypothesis they jointly support.
+5. **Dissociation.** `dissociates-with` is a symmetric edge between two claims whose difference across a condition, region, population or measure is itself the finding; neither bears on the other's truth. The Headley `distal-inhib-drops-firing-02hz` `dissociates-with` `perisomatic-inhib-drops-firing-07hz` — neither claim alone establishes the compartmental dissociation; the contrast does. It is a neutral contrast marked by "whereas", "in contrast", "selectively", and has no MIRA predicate.
 
-6. **Scope qualification.** `scopes` carries the boundary condition. A scope claim with `scopes: ["*"]` qualifies every empirical claim in the paper. The Headley paper's two global-scope claims (`l5-model-single-cell-scope`, `naturalistic-drive-parameterization`) qualify all empirical results — no network dynamics, no sensitivity analysis over synaptic parameters. The Meijer R1 paper's `optogenetic-activation-not-physiological-pattern` scopes the brain-wide additivity claim to optogenetic stimulation, leaving open whether endogenous, mixed-selectivity DRN release would yield the same signature.
+6. **Tension.** `in-tension-with` is the symmetric edge the #125 ruling split from `dissociates-with`: two claims the paper asserts, both of which stand, that pull a shared implication in opposite directions or cannot be jointly explained without a further claim — marked by "although", "however", "despite", "no correlation with", "at the cost of". The Gädeke insula guilt response matches the published Yu/Koban signature at the group level (`dot-products-between-individual-neural`), while individual signature scores do not track individual behavioural guilt (`individual-grbs-dot-product-values-not`): the replication is real and the null bounds what it can mean. A tension is not a contradiction (both claims hold), not a qualification (neither narrows the other), and not a `rules-out` (nothing is eliminated). The paper usually resolves it in the discussion with a claim that `interprets` both.
+
+7. **Scope qualification.** `scopes` carries the boundary condition. A scope claim with `scopes: ["*"]` qualifies every empirical claim in the paper. The Headley paper's two global-scope claims (`l5-model-single-cell-scope`, `naturalistic-drive-parameterization`) qualify all empirical results — no network dynamics, no sensitivity analysis over synaptic parameters. The Meijer R1 paper's `optogenetic-activation-not-physiological-pattern` scopes the brain-wide additivity claim to optogenetic stimulation, leaving open whether endogenous, mixed-selectivity DRN release would yield the same signature.
 
 ### 4.5 Auxiliary fields
 

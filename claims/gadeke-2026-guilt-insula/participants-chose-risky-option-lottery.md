@@ -1,5 +1,5 @@
 ---
-uuid: dde18bb7-50c9-455e-b0fe-8f0987a91acf
+uuid: d7b20c94-63f7-4c6e-b62d-7c6988ee3bce
 slug: participants-chose-risky-option-lottery
 doi: null
 claim: Participants chose the risky option (lottery) more often in the Solo than the Social condition

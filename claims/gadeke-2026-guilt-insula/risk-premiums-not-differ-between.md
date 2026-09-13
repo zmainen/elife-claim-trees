@@ -1,5 +1,5 @@
 ---
-uuid: d7531503-f518-45a8-983a-bd6256f4430a
+uuid: a28706b5-a5bd-4e5f-8d11-b6453e75e2b5
 slug: risk-premiums-not-differ-between
 doi: null
 claim: 'Risk premiums did not differ between Solo and Social conditions in either study (Study 1: t(39)
@@ -31,7 +31,7 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `supports` → `participants-showed-very-similar-risk`: Equal risk premiums across conditions support the synthesis that risk preferences were very similar.
+- `supports` → `participants-showed-very-similar-risk`: equal risk premiums across conditions support the similar-risk-preferences synthesis
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -15,26 +15,27 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 | `tests` | 5 | `haak:tests`, neutral | kept | kept |
 | `interprets` | 5 | `haak:interprets`, neutral | kept | dropped |
 | `validates` | 4 | `haak:validates`, under `mira:supports` | kept | kept |
-| `dissociates-with` | 4 | `haak:dissociates-with`, under `mira:opposes` | kept | kept |
+| `dissociates-with` | 4 | `haak:dissociates-with`, neutral | kept | dropped |
 | `enables-method` | 3 | `haak:enables-method`, neutral | kept | dropped |
 | `confirms` | 1 | `haak:confirms`, under `mira:supports` | kept | kept |
 
 ## What MIRA has no predicate for — and what happens instead
 
-**43 of 83 relations (52%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
+**47 of 83 relations (57%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
 - `haak:requires` (13) — a claim depends on another holding
 - `haak:scopes` (11) — a scope constraint governs another claim's validity
 - `haak:entails` (6) — a hypothesis entails its prediction — the deductive step
 - `haak:derived-from` (6) — a prediction derived from its hypothesis (inverse of entails)
 - `haak:interprets` (5) — one claim interprets another
+- `haak:dissociates-with` (4) — the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric)
 - `haak:enables-method` (3) — a result makes a downstream method possible
 
 Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.
 
 ## What a reader who knows only core MIRA sees
 
-Every relation keeps its own type — nothing is flattened into `supports`. 34 of the 77 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
+Every relation keeps its own type — nothing is flattened into `supports`. 30 of the 77 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
 - `supports` (19) — under `mira:supports`
 - `requires` (13) — neutral
@@ -44,7 +45,7 @@ Every relation keeps its own type — nothing is flattened into `supports`. 34 o
 - `tests` (5) — neutral
 - `interprets` (5) — neutral
 - `validates` (4) — under `mira:supports`
-- `dissociates-with` (4) — under `mira:opposes`
+- `dissociates-with` (4) — neutral
 - `enables-method` (3) — neutral
 - `confirms` (1) — under `mira:supports`
 

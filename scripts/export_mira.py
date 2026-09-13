@@ -101,9 +101,18 @@ RELATION_DEFS = {
                          "The source evidence is incompatible with the destination claim."),
     "rules-out":        ("mira:opposes", "mira:Evidence", "mira:Claim",
                          "The source evidence eliminates the destination claim as viable."),
-    "dissociates-with": ("mira:opposes", "mira:Evidence", "mira:Claim",
-                         "The source result separates two things the destination claim joins."),
+    # A tension between two claims the paper asserts (#125). It exports under `mira:opposes` so a
+    # MIRA reader sees the friction, but that says more than the relation means — both claims
+    # stand — and the gap report says so.
+    "in-tension-with":  ("mira:opposes", "mira:Claim", "mira:Claim",
+                         "The source and destination claims are both asserted yet pull a shared "
+                         "implication in opposite directions."),
     # Neither supporting nor opposing — rooted at AbstractRelationDef and nothing else.
+    "dissociates-with": (None, "mira:Claim", "mira:Claim",
+                         "The source and destination jointly establish a dissociation — a "
+                         "contrast between two results, neither bearing on the other's truth. "
+                         "MIRA has no predicate for a contrast, so like the deductive relations "
+                         "it hangs at AbstractRelationDef and the gap report names it."),
     "tests":            (None, "mira:Evidence", "mira:Claim",
                          "The source evidence was gathered to test the destination claim. "
                          "Neither supports nor opposes: it records that a test was run, not "
@@ -692,10 +701,15 @@ def gap_report(paper_slug, claims, dropped, questions, minted=(), wildcards=()):
 
     L.append("## Relations flattened\n")
     L.append("`tests`, `confirms`, `validates`, `extends` and `replicates` all become "
-             "`mira:supports`; `contradicts`, `rules-out` and `dissociates-with` all become "
+             "`mira:supports`; `contradicts`, `rules-out` and `in-tension-with` all become "
              "`mira:opposes`. Both directions of collapse lose real distinctions — most "
              "sharply, evidence *designed* to test a prediction becomes indistinguishable "
-             "from evidence that merely agrees with it after the fact.\n")
+             "from evidence that merely agrees with it after the fact. `in-tension-with` under "
+             "`mira:opposes` says more than the relation means: a tension holds between two "
+             "claims the paper *asserts*, both of which stand, so `mira:opposes` overstates it "
+             "as one claim standing against the other. `dissociates-with` is no longer flattened "
+             "here — it is a neutral contrast with no MIRA predicate and is dropped instead "
+             "(see above).\n")
 
     L.append("## Verification records dropped\n")
     L.append(f"**{reps} verification records across {verified} claims are absent from the "
