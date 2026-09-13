@@ -13,19 +13,38 @@ relation types mean.
      graph asserted an internal contradiction the paper does not make.
 
   2. Supporting and opposing the same target.
-     Fourteen pairs do. `contradicts` alongside `supports` is incoherent under any reading;
-     the rest are `dissociates-with` paired with a supporting relation, which is a signal
-     that the term is not being used oppositionally at all (issue #19).
+     A source that both supports a target and asserts it false (`contradicts`, `rules-out`,
+     `refutes`) is incoherent. The rule is sound now that issue #19/#125 has ruled: the old
+     `dissociates-with` was two relations — a neutral contrast (kept as `dissociates-with`) and
+     a tension (`in-tension-with`) — and neither is an opposition in this sense, so the pairs
+     that once sat in review (a support beside a `dissociates-with`) are fine and close.
 
   3. Attributing a claim to someone without saying to whom.
      `stance: attributes` without a `source` is indistinguishable from an invented rival.
+
+Two more come from the issue #28 ruling that every tested prediction carries an outcome:
+
+  4. A tested prediction with no outcome.
+     A `tests` edge points at the prediction and no `confirms` or `refutes` does, so the graph
+     records that the prediction was tested and never how the test came out.
+
+  5. An outcome aimed at a hypothesis.
+     `confirms`/`refutes` are outcomes of a stated prediction and aim at predictions only. Aimed
+     at a hypothesis they are the shortcut the ruling retires -- the fix is to write the
+     prediction the hypothesis entails and aim the outcome there.
+
+Rules 4 and 5 need to know which papers' edge-inference is current under the post-ruling
+contract, which is a fact about the ledger this script cannot see -- it reads claim files, not
+run state. So it follows the ruling's stated fallback: they are errors for Gaedeke, whose
+edge-inference is re-answered under the new contract in the same change, and warnings for every
+other paper, whose trees the ruling does not re-run. `--warnings` lists the warnings.
 
 Before any of that, every claim file's frontmatter must parse as written: a file strict YAML
 refuses is not checked by anything, it is silently skipped, and nine such files went unchecked
 for five months.
 
 A dangling target -- a relation naming something that is not a claim in the paper -- is
-reported separately as a warning, not a failure. Some are genuine gaps awaiting the
+reported the same way, as a warning, not a failure. Some are genuine gaps awaiting the
 alternative claims of issue #3; `scopes: '*'` is deliberate and means the whole paper.
 
 Usage:
@@ -46,16 +65,23 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from export_mira import (CLAIMS_DIR, load_paper, public_papers,  # noqa: E402
                          relations)
 
-from relations import (CONTRARY, DISTINGUISHES, OPPOSES,  # noqa: E402
-                       STANCES, SUPPORTS)
+from relations import (CONTRARY, NEUTRAL_TEST,  # noqa: E402
+                       OUTCOME, STANCES)
 
-# `dissociates-with` is held apart from the rest of OPPOSES deliberately. It is declared under
-# `mira:opposes`, but it is used more than the other opposing relations combined and many of
-# those uses sit alongside a *supporting* relation on the same pair, which is only coherent if
-# the term means "these two things come apart" rather than "the target is wrong". Whether it is
-# an opposition at all is open (issue #19), and a checker that assumed the answer would report
-# those as errors and force the question closed by attrition. So they are counted and shown for
-# review, never failed.
+# The support-plus-oppose rule (issue #19), now sound under the #125 ruling. A source may not
+# both *support* a target and assert it *false*. The support side is narrow on purpose: `tests`
+# is neutral (a test says nothing about the outcome), and `predicts`/`replicates` do not bear on
+# the same-target incoherence — so they are not support here. The oppose side is the moves that
+# say the target is false: `contradicts`, `rules-out`, and `refutes` (an outcome aimed at a
+# prediction). `in-tension-with` and `dissociates-with` are deliberately *not* in the oppose
+# set — a result can support a hypothesis and be in tension with another result, and a
+# dissociation is a neutral contrast — which is what closes the 72 cases the checker once held.
+LINT_SUPPORT = {"supports", "extends", "validates", "confirms"}
+LINT_OPPOSE = {"contradicts", "rules-out", "refutes"}
+
+# The paper whose edge-inference is re-answered under the post-#28 contract in this change, so
+# its outcome rules fail rather than warn. See the module docstring.
+CURRENT_UNDER_CONTRACT = {"gadeke-2026-guilt-insula"}
 
 
 def strict_frontmatter_errors(paper_slug):
@@ -101,7 +127,7 @@ def stance(claim, paper_slug):
 def check(paper_slug):
     claims = load_paper(paper_slug)
     by_slug = {c["slug"]: c for c in claims}
-    errors, warnings, review = [], [], []
+    errors, warnings = [], []
 
     for c in claims:
         st = stance(c, paper_slug)
@@ -125,23 +151,39 @@ def check(paper_slug):
                                     f"this paper")
                 continue
 
-            if stance(t, paper_slug) == "asserts":
-                if key in CONTRARY:
-                    errors.append(
-                        f"{c['slug']} -{key}-> {t['slug']}: cannot oppose a claim this paper "
-                        f"asserts. Either the target is the wrong claim, or the thing being "
-                        f"opposed needs its own claim with stance 'entertains'.")
-                elif key in DISTINGUISHES:
-                    review.append(f"{c['slug']} -{key}-> {t['slug']}")
+            if stance(t, paper_slug) == "asserts" and key in CONTRARY:
+                errors.append(
+                    f"{c['slug']} -{key}-> {t['slug']}: cannot oppose a claim this paper "
+                    f"asserts. Either the target is the wrong claim, or the thing being "
+                    f"opposed needs its own claim with stance 'entertains'.")
 
         for target, keys in seen.items():
-            if not (keys & SUPPORTS and keys & OPPOSES):
-                continue
-            msg = f"{c['slug']} -> {target}: both supports and opposes " \
-                  f"({', '.join(sorted(keys))})"
-            (errors if keys & CONTRARY else review).append(msg)
+            if keys & LINT_SUPPORT and keys & LINT_OPPOSE:
+                errors.append(f"{c['slug']} -> {target}: both supports and opposes "
+                              f"({', '.join(sorted(keys))})")
 
-    return errors, warnings, review
+    # Rules 4 and 5, from the issue #28 ruling. Errors for the paper re-answered under the new
+    # contract, warnings for the rest -- the script cannot see which trees are current, so it
+    # follows the ruling's fallback (see the module docstring).
+    bucket = errors if paper_slug in CURRENT_UNDER_CONTRACT else warnings
+    incoming: dict[str, set] = {}
+    for c in claims:
+        for key, target in relations(c):
+            if key in OUTCOME or key in NEUTRAL_TEST:
+                incoming.setdefault(target, set()).add(key)
+        for key, target in relations(c):        # 5. an outcome aimed at a hypothesis
+            if key in OUTCOME and by_slug.get(target, {}).get("role") == "hypothesis":
+                bucket.append(f"{c['slug']} -{key}-> {target}: outcome aimed at a hypothesis; "
+                              f"write the prediction the hypothesis entails and aim it there")
+    for c in claims:                            # 4. a tested prediction with no outcome
+        if c.get("role") != "prediction":
+            continue
+        keys = incoming.get(c["slug"], set())
+        if keys & NEUTRAL_TEST and not keys & OUTCOME:
+            bucket.append(f"{c['slug']}: tested prediction with no outcome edge "
+                          f"(a `tests` points at it, no `confirms`/`refutes` does)")
+
+    return errors, warnings
 
 
 def main():
@@ -149,37 +191,29 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paper", nargs="?")
     ap.add_argument("--warnings", action="store_true", help="also list dangling targets")
-    ap.add_argument("--review", action="store_true",
-                    help="list the dissociates-with cases held open under issue #19")
     a = ap.parse_args()
 
     slugs = [a.paper] if a.paper else public_papers()
-    total_e = total_w = total_r = 0
+    total_e = total_w = 0
     for s in slugs:
         if not os.path.isdir(os.path.join(CLAIMS_DIR, s)):
             print(f"  {s}: no claim directory", file=sys.stderr)
             continue
-        errors, warnings, review = check(s)
+        errors, warnings = check(s)
         errors = strict_frontmatter_errors(s) + errors
         total_e += len(errors)
         total_w += len(warnings)
-        total_r += len(review)
-        if errors or (warnings and a.warnings) or (review and a.review):
+        if errors or (warnings and a.warnings):
             print(f"\n{s}")
             for e in errors:
                 print(f"  ERROR   {e}")
             if a.warnings:
                 for w in warnings:
                     print(f"  warn    {w}")
-            if a.review:
-                for r in review:
-                    print(f"  review  {r}")
 
     print(f"\n{total_e} error(s) across {len(slugs)} paper(s)")
-    print(f"{total_w} dangling target(s)"
+    print(f"{total_w} warning(s) — dangling targets and issue #28 outcome gaps"
           + ("" if a.warnings else " — --warnings to list"))
-    print(f"{total_r} dissociates-with case(s) awaiting issue #19"
-          + ("" if a.review else " — --review to list"))
     return 1 if total_e else 0
 
 

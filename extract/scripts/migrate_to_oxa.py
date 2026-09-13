@@ -26,7 +26,6 @@ EDGE_MAP = {
     # CiTO close
     "derived-from": "cito:citesAsSourceDocument",
     "enables-method": "cito:usesMethodIn",
-    "dissociates-with": "cito:disagreesWith",
     # Extensions
     "requires": "claimrel:requires",
     "tests": "claimrel:tests",
@@ -36,6 +35,10 @@ EDGE_MAP = {
     "rules-out": "claimrel:rulesOut",
     "replicates": "claimrel:replicates",
     "contradicts": "claimrel:contradicts",
+    # A tension maps as `contradicts` does — the nearest oppositional predicate (#125).
+    "in-tension-with": "claimrel:contradicts",
+    # `dissociates-with` is omitted (#125): a neutral contrast, and `cito:disagreesWith` (which
+    # it carried until this ruling) misstates it as disagreement. The formats report says so.
     # Were missing entirely, so every relation of these two types was silently dropped —
     # 19 of Gädeke's 89 alone. `validates` is the corpus's most-used positive relation.
     "validates": "cito:confirms",

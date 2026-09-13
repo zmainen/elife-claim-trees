@@ -21,7 +21,7 @@ FULL MODE (--full, ~3 hrs):
 Usage:
   python verify.py           # fast mode
   python verify.py --full    # full pipeline
-  python verify.py --claim lottery-choice-increases-with-ev
+  python verify.py --claim participants-probability-choosing-risky-option
 """
 
 import argparse
@@ -91,7 +91,7 @@ def write_provenance():
     with open(out, "w", encoding="utf-8") as fh:
         _json.dump(PROV, fh, indent=2)
     print(f"[prov] {len(PROV['opened'])} file(s) opened, "
-          f"{len(PROV['results'])} result(s) → {out}")
+          f"{len(PROV['results'])} result(s) → {os.path.relpath(out)}")
 
 def print_table():
     col_w = [55, 22, 22, 6]
@@ -164,7 +164,7 @@ def clone_repo():
         print("[data] Clone complete.")
     _unpack_archives()
 
-# ── Claim 1: lottery-choice-increases-with-ev ──────────────────────────────────
+# ── Claim 1: participants-probability-choosing-risky-option ──────────────────────────────────
 
 def verify_lottery_ev():
     """
@@ -175,7 +175,7 @@ def verify_lottery_ev():
         from statsmodels.formula.api import logit
         import glob
 
-        slug = "lottery-choice-increases-with-ev"
+        slug = "participants-probability-choosing-risky-option"
         t0 = time.time()
 
         choices_file = os.path.join(REPO_DIR, "Code", "csv", "Behav - Choices_singleTrialData.csv")
@@ -234,15 +234,15 @@ def verify_lottery_ev():
         return passes
 
     except Exception as e:
-        row("lottery-choice-increases-with-ev", "β>0, p<0.05", f"ERROR: {e}", "FAIL")
+        row("participants-probability-choosing-risky-option", "β>0, p<0.05", f"ERROR: {e}", "FAIL")
         return 0
 
-# ── Claim 2: happiness-correlates-partner-reward ───────────────────────────────
+# ── Claim 2: participant-momentary-happiness-varied-rewards-2 ───────────────────────────────
 
 def verify_happiness_partner():
     """R² values from pre-computed LMM tables. Paper: fMRI R²=0.185, Behav R²=0.147."""
     import glob
-    slug = "happiness-correlates-partner-reward"
+    slug = "participant-momentary-happiness-varied-rewards-2"
     t0 = time.time()
     csv_dir = os.path.join(REPO_DIR, "Code", "csv")
     all_csv = glob.glob(os.path.join(csv_dir, "*.csv"))
@@ -287,12 +287,12 @@ def _csv_error(f):
     except Exception:
         return True
 
-# ── Claim 3: guilt-reduces-happiness-after-partner-loss ───────────────────────
+# ── Claim 3: when-partner-received-low-lottery ───────────────────────
 
 def verify_guilt_happiness():
     """partnerWon:subjDecided_1 interaction. Paper: β=0.33 (fMRI), β=0.39 (Behav)."""
     import glob
-    slug = "guilt-reduces-happiness-after-partner-loss"
+    slug = "when-partner-received-low-lottery"
     t0 = time.time()
     csv_dir = os.path.join(REPO_DIR, "Code", "csv")
     all_csv = glob.glob(os.path.join(csv_dir, "*.csv"))
@@ -325,7 +325,7 @@ def verify_guilt_happiness():
     print(f"  {slug}: ({time.time()-t0:.1f}s)")
     return 1
 
-# ── Claim 4: insula-tracks-guilt-effect ───────────────────────────────────────
+# ── Claim 4: mass-univariate-voxel-wise-analysis-found-small ───────────────────────────────────────
 
 def verify_insula_peak():
     """Peak MNI coordinate from guiltEffect NIfTI. Paper: [-28, 24, -4]."""
@@ -333,7 +333,7 @@ def verify_insula_peak():
         import nibabel as nib
         import glob
 
-        slug = "insula-tracks-guilt-effect"
+        slug = "mass-univariate-voxel-wise-analysis-found-small"
         t0 = time.time()
         nii_path = os.path.join(
             REPO_DIR, "fMRIresults", "outcome", "guiltEffect_0p05FWE_SVC_aIns.nii"
@@ -348,7 +348,7 @@ def verify_insula_peak():
             row(slug, "peak MNI [-28, 24, -4]", "NIfTI not found in repo", "WARN")
             return 0
 
-        img = nib.load(nii_path)
+        img = nib.load(used(nii_path, "deposited guilt-effect contrast map"))
         data = img.get_fdata()
         data_clean = np.where(np.isnan(data), 0, data)
         peak_idx = np.unravel_index(np.argmax(np.abs(data_clean)), data_clean.shape)
@@ -362,13 +362,13 @@ def verify_insula_peak():
         return 1 if match else 0
 
     except ImportError:
-        row("insula-tracks-guilt-effect", "peak MNI [-28, 24, -4]", "nibabel not installed", "WARN")
+        row("mass-univariate-voxel-wise-analysis-found-small", "peak MNI [-28, 24, -4]", "nibabel not installed", "WARN")
         return 0
     except Exception as e:
-        row("insula-tracks-guilt-effect", "peak MNI [-28, 24, -4]", f"ERROR: {e}", "FAIL")
+        row("mass-univariate-voxel-wise-analysis-found-small", "peak MNI [-28, 24, -4]", f"ERROR: {e}", "FAIL")
         return 0
 
-# ── Claim 5: insula-guilt-replicates-yu-koban-signature ───────────────────────
+# ── Claim 5: dot-products-between-individual-neural ───────────────────────
 
 def verify_yu_koban():
     """Sign test of per-participant dot products against Yu/Koban mask. Paper: p<0.05."""
@@ -377,7 +377,7 @@ def verify_yu_koban():
         import glob
         from scipy.stats import wilcoxon
 
-        slug = "insula-guilt-replicates-yu-koban-signature"
+        slug = "dot-products-between-individual-neural"
         t0 = time.time()
 
         map_4d = glob.glob(os.path.join(REPO_DIR, "**", "*guiltEffect*Partic*.nii"), recursive=True)
@@ -435,11 +435,11 @@ def verify_yu_koban():
         return 1 if passes else 0
 
     except ImportError:
-        row("insula-guilt-replicates-yu-koban-signature", "sign test p<0.05",
+        row("dot-products-between-individual-neural", "sign test p<0.05",
             "nibabel not installed", "WARN")
         return 0
     except Exception as e:
-        row("insula-guilt-replicates-yu-koban-signature", "sign test p<0.05",
+        row("dot-products-between-individual-neural", "sign test p<0.05",
             f"ERROR: {e}", "FAIL")
         return 0
 
@@ -491,7 +491,7 @@ def _map(*parts):
 
 def verify_vs_computational_reward():
     """Bilateral VS for model-based reward. Paper gives both peaks and both cluster sizes."""
-    slug = "ventral-striatum-tracks-computational-reward"
+    slug = "manipulation-check-bilateral-ventral-striatum"
     paper = "L 110vox [-14 8 -8] T=5.63 · R 80vox [10 10 -4] T=5.46"
     try:
         cl = _clusters(_map("model-based", "CR+EV_0p001u_k70_0p05FWE.nii"), min_vox=50)
@@ -515,7 +515,7 @@ def verify_vs_computational_reward():
 def verify_vs_risky_choices():
     """Bilateral VS for risky>safe. The claim names no coordinates, so bilaterality is the
     testable part: one cluster in each hemisphere."""
-    slug = "ventral-striatum-tracks-risky-choices"
+    slug = "bilateral-ventral-striatum-more-active"
     paper = "bilateral VS, risky>safe (d=0.72 / 0.85)"
     try:
         cl = _clusters(_map("decision", "risky>safe_0p05FWE_clust.nii"), min_vox=50)
@@ -537,7 +537,7 @@ def verify_social_decision_network():
     """Precuneus, left TPJ and mPFC for Social>Solo. The claim names three regions and no
     coordinates, so what is tested is three clusters in those three positions: one posterior
     midline, one left lateral posterior, one anterior medial."""
-    slug = "precuneus-tpj-mpfc-social-decisions"
+    slug = "decisions-social-compared-solo-condition"
     paper = "3 clusters: precuneus, left TPJ, mPFC"
     try:
         cl = _clusters(_map("decision", "social>solo_0p05FWE_clust.nii"), min_vox=50)
@@ -557,7 +557,7 @@ def verify_social_decision_network():
 
 def verify_sts_partner_rpe():
     """Left STS for social>partner pRPE. Testable part: a left-lateralised temporal cluster."""
-    slug = "sts-tracks-partner-reward-prediction-errors"
+    slug = "one-cluster-left-sts-responded"
     paper = "left STS, pRPEsocial > pRPEpartner"
     try:
         cl = _clusters(_map("model-based", "pRPEsocial>pRPEpartner_0p001u_k70.nii"), min_vox=50)
@@ -573,7 +573,7 @@ def verify_sts_partner_rpe():
 
 def verify_insula_ifg_ppi():
     """Insula-seeded gPPI. Testable part: a cluster in inferior frontal gyrus territory."""
-    slug = "insula-ifg-connectivity-guilt"
+    slug = "connectivity-between-left-anterior-insula"
     paper = "aIns seed, condition-dependent IFG coupling"
     try:
         cl = _clusters(_map("PPI", "aIns_seed",
@@ -594,7 +594,7 @@ def verify_signature_no_individual_difference():
     Paper: Spearman rho = -0.058, p = 0.725 — explicitly a null. Both inputs are already
     downloaded by verify_yu_koban(); this claim was recorded `unattempted` regardless.
     """
-    slug = "guilt-signature-no-individual-difference"
+    slug = "individual-grbs-dot-product-values-not"
     paper = "Spearman rho=-0.058, p=0.725"
     try:
         import nibabel as nib
@@ -671,7 +671,7 @@ def _csv(name, note):
 def verify_social_prpe_weight():
     """Weight on partner RPEs from participants' own choices is above zero.
     Paper, Study 1: Z=2.85, p=0.004."""
-    slug = "social-prpe-weight-positive"
+    slug = "partner-reward-prediction-errors-resulting"
     paper = "Z=2.85, p=0.004 (social_pRPE > 0)"
     try:
         from scipy.stats import wilcoxon
@@ -693,7 +693,7 @@ def verify_social_prpe_weight():
 def verify_guilt_effect_independent_of_own_outcome():
     """The guilt effect holds whether or not the participant won.
     Paper: high own outcome t(39)=-3.58 p<0.001; low own outcome t(39)=-3.39 p=0.002."""
-    slug = "guilt-effect-independent-of-own-outcome"
+    slug = "guilt-effect-occurred-whether-participant"
     paper = "own-win t(39)=-3.58 p<0.001 · own-loss t(39)=-3.39 p=0.002"
     try:
         from scipy.stats import ttest_rel
@@ -724,7 +724,7 @@ def verify_agency_reduces_happiness():
     The deposited per-trial happiness file covers social risky choices only, so this tests
     the claim's direction on a subset of the trials the paper modelled, not its statistics.
     """
-    slug = "agency-reduces-happiness"
+    slug = "participant-happiness-lower-when-participant"
     paper = "t(3600)=-3.92, p<0.0001, beta=-0.14"
     try:
         from scipy.stats import ttest_rel
@@ -752,7 +752,7 @@ def verify_solo_vs_social_choice():
     `condition` is coded 0/1 in the deposit with no key, so which level is Solo cannot be
     determined from the data. The magnitudes are reported and the verdict withheld.
     """
-    slug = "solo-vs-social-choice-difference"
+    slug = "participants-chose-risky-option-lottery"
     paper = "t(4796)=2.54, p=0.011 (weak, not replicated in Study 2)"
     try:
         from scipy.stats import ttest_rel
@@ -777,7 +777,7 @@ def generate_figures():
     if not os.path.exists(fig_script):
         print("[figures] generate_figures.py not found — skipping.")
         return
-    print(f"\n[figures] Running {fig_script} ...")
+    print(f"\n[figures] Running {os.path.relpath(fig_script)} ...")
     result = subprocess.run([sys.executable, fig_script], capture_output=True, text=True)
     if result.stdout:
         print(result.stdout.rstrip())
@@ -873,21 +873,21 @@ def main():
     clone_repo()
 
     claim_fns = {
-        "lottery-choice-increases-with-ev": verify_lottery_ev,
-        "happiness-correlates-partner-reward": verify_happiness_partner,
-        "guilt-reduces-happiness-after-partner-loss": verify_guilt_happiness,
-        "insula-tracks-guilt-effect": verify_insula_peak,
-        "insula-guilt-replicates-yu-koban-signature": verify_yu_koban,
-        "guilt-signature-no-individual-difference": verify_signature_no_individual_difference,
-        "ventral-striatum-tracks-computational-reward": verify_vs_computational_reward,
-        "ventral-striatum-tracks-risky-choices": verify_vs_risky_choices,
-        "precuneus-tpj-mpfc-social-decisions": verify_social_decision_network,
-        "sts-tracks-partner-reward-prediction-errors": verify_sts_partner_rpe,
-        "insula-ifg-connectivity-guilt": verify_insula_ifg_ppi,
-        "social-prpe-weight-positive": verify_social_prpe_weight,
-        "guilt-effect-independent-of-own-outcome": verify_guilt_effect_independent_of_own_outcome,
-        "agency-reduces-happiness": verify_agency_reduces_happiness,
-        "solo-vs-social-choice-difference": verify_solo_vs_social_choice,
+        "participants-probability-choosing-risky-option": verify_lottery_ev,
+        "participant-momentary-happiness-varied-rewards-2": verify_happiness_partner,
+        "when-partner-received-low-lottery": verify_guilt_happiness,
+        "mass-univariate-voxel-wise-analysis-found-small": verify_insula_peak,
+        "dot-products-between-individual-neural": verify_yu_koban,
+        "individual-grbs-dot-product-values-not": verify_signature_no_individual_difference,
+        "manipulation-check-bilateral-ventral-striatum": verify_vs_computational_reward,
+        "bilateral-ventral-striatum-more-active": verify_vs_risky_choices,
+        "decisions-social-compared-solo-condition": verify_social_decision_network,
+        "one-cluster-left-sts-responded": verify_sts_partner_rpe,
+        "connectivity-between-left-anterior-insula": verify_insula_ifg_ppi,
+        "partner-reward-prediction-errors-resulting": verify_social_prpe_weight,
+        "guilt-effect-occurred-whether-participant": verify_guilt_effect_independent_of_own_outcome,
+        "participant-happiness-lower-when-participant": verify_agency_reduces_happiness,
+        "participants-chose-risky-option-lottery": verify_solo_vs_social_choice,
     }
 
     if args.claim:

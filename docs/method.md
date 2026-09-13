@@ -173,6 +173,12 @@ Read the abstract and identify two to four top-level claims — the paper's main
 
 The three agents are deliberately partitioned along the axes along which extractions most often disagree: framing versus literal numerics versus computational structure. A claim that all three surface independently is high-confidence; a claim that only one surfaces is single-source and may be either real-but-buried or an artefact of the reading strategy. The `reconcile` layer records both cases distinctly.
 
+The partition is by section, and each reader sees its sections and nothing else. The results reader is given the abstract, the Introduction, the Results and the Discussion, preceded by a panel inventory; the Introduction and Discussion were added on 2026-09-11 (#56), after the first runs showed that cutting them lost the organising hypothesis and every literature-context premise. The caption reader is given the figure and table captions with the inventory. The structure reader is given the Methods, the appendices and the supplementary material. No reader sees the whole paper.
+
+A single reading of the whole paper is kept as a comparison, not as a layer. It runs through the same reader code on the raw paper (`reader_from_raw`) and is scored by `evaluate` as the `fourth-reading` row beside the three-reader chain; on Gädeke it recovered slightly more of the curated tree at higher precision and missed every alternative the paper rules out. Whether the partition earns its place is a scheme question (#85), to be settled against adjudicated trees, and the comparison row exists so that it can be. Until it is settled, the three-reader chain is the accepted scheme and every recorded run uses it.
+
+Which model reads is a profile, not a property of the readers. The `standard` profile puts the three readers on Sonnet and the reconciler, reviewer and edge inference on Opus; `frontier` puts everything on Opus with leaner tasks. A run answered by Claude Code subagents rather than an API records, in the ledger's `by`, the model that actually answered each prompt, which need not match the profile it stands in for; Gädeke's v3 readers, for instance, were answered by Opus under the `subagent` profile.
+
 ### Where short-form fields fit
 
 Three fields are populated during authoring but are not the primary claim sentence:
@@ -231,7 +237,7 @@ Role is the rhetorical function the claim plays in the paper's argument. The syn
 
 ### 4.3 Edges — the edge inventory
 
-Edges are propositions about logical structure between claim entities, not citations. Each is a top-level YAML key whose value is a list of target slugs. Reciprocal edges (`predicts` / `confirms`) are populated symmetrically at build.
+Edges are propositions about logical structure between claim entities, not citations. Each is a top-level YAML key whose value is a list of target slugs. The deductive pair `entails` / `derived-from` is populated symmetrically at build (the reader emits `entails`; `derived-from` is written as its reciprocal). `confirms` and `refutes` are not reciprocals — they are the two outcomes of a test, stated directly from the result to the prediction it settled (§ 4.3, issue #28).
 
 | Edge | Reasoning form | Meaning | Count in corpus |
 |:-----|:---------------|:--------|---:|
@@ -240,12 +246,13 @@ Edges are propositions about logical structure between claim entities, not citat
 | `entails` | deduction | A (typically a hypothesis) deductively implies B (typically a prediction). | {{relation_counts.entails}} |
 | `derived-from` | deduction | A is the deductive consequence of B; reciprocal of `entails`. | {{relation_counts.derived-from}} |
 | `tests` | deduction → empirical loop | Empirical claim A tests prediction B (closes the hypothesis-prediction-test loop). | {{relation_counts.tests}} |
-| `refutes` | abduction (negative) | A's evidence is incompatible with B (B is the prediction, hypothesis, or alternative being refuted). | {{relation_counts.refutes}} |
+| `refutes` | test outcome (negative) | A's result came out against prediction B — the negative outcome of a test, aimed at a prediction (parallel to `confirms`; distinct from `contradicts`/`rules-out`, which assert B is false). | {{relation_counts.refutes}} |
 | `rules-out` | elimination | A's evidence eliminates an alternative explanation B. | {{relation_counts.rules-out}} |
-| `dissociates-with` | dissociation | A and B jointly establish a dissociation (symmetric edge between two empirical claims that together form a contrast). | {{relation_counts.dissociates-with}} |
+| `dissociates-with` | dissociation | A and B jointly establish a dissociation (symmetric edge between two claims whose difference is itself the finding; neither bears on the other's truth). Neutral — no MIRA predicate. | {{relation_counts.dissociates-with}} |
+| `in-tension-with` | tension | A and B are both asserted and both stand, yet pull a shared implication in opposite directions or cannot be jointly explained without a further claim (symmetric). Exported under `mira:opposes`, which overstates it. | {{relation_counts.in-tension-with}} |
 | `validates` | disconfirmation control | A is a control or sign-flip whose specific result strengthens the warrant for B. | {{relation_counts.validates}} |
 | `predicts` | predictive validation | A predicts B (typically model-to-experiment). | {{relation_counts.predicts}} |
-| `confirms` | predictive validation | Reciprocal of `predicts`; populated at build. | {{relation_counts.confirms}} |
+| `confirms` | test outcome (positive) | A's result came out as prediction B said it would — the positive outcome of a test, aimed at a prediction (parallel to `refutes`). | {{relation_counts.confirms}} |
 | `interprets` | reframing | A reframes empirical B through theoretical lens (this is an act of mapping, not a derivation). | {{relation_counts.interprets}} |
 | `enables-method` | methodological warrant | A is the methodological capability that warrants B's interpretability. | {{relation_counts.enables-method}} |
 | `scopes` | scope qualification | A is a boundary condition on B (or, if `["*"]`, on every empirical claim in the paper). | {{relation_counts.scopes}} |
@@ -253,19 +260,21 @@ Edges are propositions about logical structure between claim entities, not citat
 
 ### 4.4 Edge-to-reasoning-form mapping
 
-The edge inventory operationalises six argumentative moves:
+The edge inventory operationalises seven argumentative moves:
 
 1. **Deduction.** `entails` and its reciprocal `derived-from` carry hypothesis-to-prediction deduction. The Headley paper's `hypothesis-distinct-compartmental-roles` `entails:` four predictions; each prediction `derived-from:` the same hypothesis. The Meijer R1 paper's `hypothesis-additive-modulation` `entails:` `prediction-near-zero-choice-stim-interaction` and (notably) `entails:` `orthogonality-derived-from-additivity` — a synthesis claim that is itself a deductive consequence of the hypothesis, demoting the empirical orthogonality finding from independent evidence to geometric corollary.
 
 2. **Induction (hierarchical support).** `requires` and `supports` carry mechanistic dependency and inductive support. Standalone empirical claims that are not themselves predictions tested in a hypothesis loop nonetheless carry `supports:` edges to higher-order claims via inductive accumulation. The Headley `ca-spikes-couple-20ms-before-ap` `supports` `beta-bidirectional-dendritic-control` and `beta-gates-distal-apical-inputs` — the timescale measurement is the inductive ground for the period-matching argument.
 
-3. **Abduction.** `supports` and `refutes` from empirical claims back to hypotheses close the abductive loop. The Meijer R1 `near-zero-choice-by-stim-interaction` `supports: hypothesis-additive-modulation` and `refutes: prediction-multiplicative-gain-yields-significant-interaction` — abduction to additivity by elimination of the alternative.
+3. **Abduction.** `supports` from an empirical claim back to a hypothesis, and `refutes` from a result to the prediction it came out against, close the abductive loop. The Meijer R1 `near-zero-choice-by-stim-interaction` `supports: hypothesis-additive-modulation` and `refutes: prediction-multiplicative-gain-yields-significant-interaction` — abduction to additivity by elimination of the alternative. `confirms` and `refutes` are the two outcomes a tested prediction can carry, and aim at predictions only; a result bearing on a hypothesis takes `supports` (issue #28).
 
 4. **Elimination.** `rules-out` carries the eliminative move: A's evidence eliminates an explicit alternative B. The Meijer R1 paper's `rules-out-multiplicative-gain-control` synthesis claim explicitly aggregates this move at the discussion level. The corpus carries 15 `rules-out` edges, scattered across papers, and the `synthesis` layer shows they are diagnostically interesting because they are scrubbed by abstracts.
 
-5. **Dissociation.** `dissociates-with` is a symmetric edge between two empirical claims that together establish a contrast. The Headley `distal-inhib-drops-firing-02hz` `dissociates-with` `perisomatic-inhib-drops-firing-07hz` — neither claim alone establishes the compartmental dissociation; the contrast does. The corpus carries 65 such pairings, often joined to the shared hypothesis they jointly support.
+5. **Dissociation.** `dissociates-with` is a symmetric edge between two claims whose difference across a condition, region, population or measure is itself the finding; neither bears on the other's truth. The Headley `distal-inhib-drops-firing-02hz` `dissociates-with` `perisomatic-inhib-drops-firing-07hz` — neither claim alone establishes the compartmental dissociation; the contrast does. It is a neutral contrast marked by "whereas", "in contrast", "selectively", and has no MIRA predicate.
 
-6. **Scope qualification.** `scopes` carries the boundary condition. A scope claim with `scopes: ["*"]` qualifies every empirical claim in the paper. The Headley paper's two global-scope claims (`l5-model-single-cell-scope`, `naturalistic-drive-parameterization`) qualify all empirical results — no network dynamics, no sensitivity analysis over synaptic parameters. The Meijer R1 paper's `optogenetic-activation-not-physiological-pattern` scopes the brain-wide additivity claim to optogenetic stimulation, leaving open whether endogenous, mixed-selectivity DRN release would yield the same signature.
+6. **Tension.** `in-tension-with` is the symmetric edge the #125 ruling split from `dissociates-with`: two claims the paper asserts, both of which stand, that pull a shared implication in opposite directions or cannot be jointly explained without a further claim — marked by "although", "however", "despite", "no correlation with", "at the cost of". The Gädeke insula guilt response matches the published Yu/Koban signature at the group level (`dot-products-between-individual-neural`), while individual signature scores do not track individual behavioural guilt (`individual-grbs-dot-product-values-not`): the replication is real and the null bounds what it can mean. A tension is not a contradiction (both claims hold), not a qualification (neither narrows the other), and not a `rules-out` (nothing is eliminated). The paper usually resolves it in the discussion with a claim that `interprets` both.
+
+7. **Scope qualification.** `scopes` carries the boundary condition. A scope claim with `scopes: ["*"]` qualifies every empirical claim in the paper. The Headley paper's two global-scope claims (`l5-model-single-cell-scope`, `naturalistic-drive-parameterization`) qualify all empirical results — no network dynamics, no sensitivity analysis over synaptic parameters. The Meijer R1 paper's `optogenetic-activation-not-physiological-pattern` scopes the brain-wide additivity claim to optogenetic stimulation, leaving open whether endogenous, mixed-selectivity DRN release would yield the same signature.
 
 ### 4.5 Auxiliary fields
 

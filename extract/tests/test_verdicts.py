@@ -82,14 +82,29 @@ def test_skeleton_covers_every_claim_and_edge():
     slugs = ["x", "y", "z"]
     edges = [("x", "y", "tests"), ("y", "z", "requires")]
     records = vd.skeleton(slugs, edges)
-    # one keep per claim, one ok per edge, all considered: false
-    assert sum(1 for r in records if r["kind"] == "claim") == 3
-    assert sum(1 for r in records if r["kind"] == "edge") == 2
-    assert all(r["considered"] is False for r in records)
-    assert all(r["verdict"] in ("keep", "ok") for r in records)
+    # a procedure header, then one keep per claim, one ok per edge, all considered: false
+    assert records[0] == {"kind": "procedure", "version": vd.PROCEDURE_VERSION,
+                          "when": records[0]["when"]}
+    verdicts = [r for r in records if r["kind"] in ("claim", "edge")]
+    assert sum(1 for r in verdicts if r["kind"] == "claim") == 3
+    assert sum(1 for r in verdicts if r["kind"] == "edge") == 2
+    assert all(r["considered"] is False for r in verdicts)
+    assert all(r["verdict"] in ("keep", "ok") for r in verdicts)
     assert vd.is_complete(records, claim_slugs=slugs, edge_triples=edges)
-    # dropping a line makes it incomplete
+    # dropping a verdict line makes it incomplete
     assert not vd.is_complete(records[:-1], claim_slugs=slugs, edge_triples=edges)
+
+
+# ── the procedure version ───────────────────────────────────────────────────
+
+def test_skeleton_names_the_procedure_and_validate_requires_it():
+    records = vd.skeleton(SLUGS, EDGES)
+    assert vd.resolve(records).procedure == vd.PROCEDURE_VERSION
+    assert vd.validate(records, claim_slugs=SLUGS, edge_triples=EDGES) == []
+    # a file with no procedure header is refused; adding one clears the complaint
+    no_header = [r for r in records if r["kind"] != "procedure"]
+    problems = vd.validate(no_header, claim_slugs=SLUGS, edge_triples=EDGES)
+    assert any("procedure version" in p for p in problems)
 
 
 # ── evaluate score --gold ───────────────────────────────────────────────────

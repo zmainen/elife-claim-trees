@@ -1,5 +1,5 @@
 ---
-uuid: 26c73aee-3f30-40fe-8132-875fd7538b9a
+uuid: 27f533ad-bcb5-46df-991e-753bf40fed9f
 slug: participants-showed-very-similar-risk
 doi: null
 claim: Participants showed very similar risk preferences whether deciding only for themselves (Solo) or
@@ -8,8 +8,12 @@ claim: Participants showed very similar risk preferences whether deciding only f
 claim-type: synthesis
 role: synthesis
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: a synthesis backed by three converging results — no-significant-interaction-between-difference, participants-slightly-more-risk-averse, risk-premiums-not-differ-between
+warrant_from:
+- supported_by
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula

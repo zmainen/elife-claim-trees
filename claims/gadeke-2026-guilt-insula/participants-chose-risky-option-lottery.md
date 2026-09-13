@@ -1,5 +1,5 @@
 ---
-uuid: 2952075b-80ca-4849-9ddd-6582a1967dac
+uuid: d7b20c94-63f7-4c6e-b62d-7c6988ee3bce
 slug: participants-chose-risky-option-lottery
 doi: null
 claim: Participants chose the risky option (lottery) more often in the Solo than the Social condition
@@ -8,10 +8,13 @@ claim: Participants chose the risky option (lottery) more often in the Solo than
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
-part-of:
-- participants-showed-very-similar-risk
+warrant: weak
+warrant_why: its only reproduction is partial and did not reach significance per-participant; the paper itself notes it was weak and not replicated in Study 2
+warrant_from:
+- reproductions
+- verification
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula

@@ -24,10 +24,12 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA = ROOT / "schema" / "claim-set-v0.schema.json"
 
-PREDICATES = ("tests", "derived-from", "dissociates-with", "confirms", "entails", "scopes",
-              "interprets", "validates", "supports", "rules-out", "enables-method", "part-of",
-              "refutes", "qualifies", "predicts", "requires", "contradicts", "extends")
-RELATION_ALIAS = {"predicts": "entails"}
+# The relation names a claim file may carry as a top-level key. Taken from
+# scripts/relations.py EDGE_KEYS, which is normative: when the vocabulary changes there — as it
+# did when #125's ruling split `dissociates-with` into a neutral contrast and `in-tension-with` —
+# this list and the schema's enum follow it rather than drifting from it.
+PREDICATES = tuple(sorted(['confirms', 'contradicts', 'derived-from', 'dissociates-with', 'enables-method', 'entails', 'extends', 'in-tension-with', 'interprets', 'opposes', 'part-of', 'predicts', 'qualifies', 'refutes', 'replicates', 'requires', 'rules-out', 'scopes', 'supports', 'tests', 'validates']))
+RELATION_ALIAS: dict[str, str] = {}
 TYPE_ALIAS = {"methodological": ("assessment", "methodological"), "scope": ("scope", None)}
 ROLE_FUNCTION = {"control": "control", "literature-context": "literature-context",
                  "methodological": "methodological"}

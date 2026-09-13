@@ -15,6 +15,10 @@ concepts:
   - alternative explanation
 priority: 2026-09-10
 epistemic: weak
+warrant: ruled-out
+warrant_why: guilt-effect-occurred-whether-participant rules it out — the effect held for own-win and own-loss alike (a verified reproduction), so it is not the participant's own outcome
+warrant_from:
+- ruled_out_by
 
 assertions:
   - paper-slug: gadeke-2026-guilt-insula

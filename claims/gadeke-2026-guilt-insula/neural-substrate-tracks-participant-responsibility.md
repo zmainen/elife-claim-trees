@@ -1,5 +1,5 @@
 ---
-uuid: e1559c09-fc85-4120-91bb-ea7fb25b4694
+uuid: 6ca5f92c-bc58-4b76-93a8-96926ff375de
 slug: neural-substrate-tracks-participant-responsibility
 doi: null
 claim: 'A neural substrate tracks the participant''s responsibility for the partner''s outcomes: within
@@ -7,10 +7,14 @@ claim: 'A neural substrate tracks the participant''s responsibility for the part
   when they arise from the participant''s own choice than from the partner''s choice.'
 claim-type: hypothesis
 role: hypothesis
-addresses: q3
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: hypothesis
+warrant: strong
+warrant_why: its prediction is confirmed by one-cluster-left-sts-responded, a verified STS cluster it is also supported by
+warrant_from:
+- predictions
+- supported_by
 entails:
 - neural-substrate-tracks-participant-responsibility-2
 belongings: []
@@ -26,7 +30,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `entails` → `neural-substrate-tracks-participant-responsibility-2`: The responsibility-tracking hypothesis implies stronger BOLD to the partner's RPEs from the participant's own choices within outcome-sensitive regions.
+- `entails` → `neural-substrate-tracks-participant-responsibility-2`: the responsibility-tracking hypothesis implies outcome-sensitive regions respond more to partner pRPE from participant choices
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -1,18 +1,21 @@
 ---
-uuid: a246d73e-44f4-4bee-aff2-96388949b76a
+uuid: f271bd20-2658-4c3a-a4fa-c29b6929bc94
 slug: participant-momentary-happiness-varied-rewards-2
 doi: null
 claim: Participant momentary happiness varied with the rewards the partner received in the current trial.
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
-part-of:
-- responsibility-redux-model-incorporating-expected
+warrant: strong
+warrant_why: a verified reproduction recovered the R^2 in both cohorts (0.185->0.184, 0.147->0.145)
+warrant_from:
+- reproductions
+- verification
 belongings:
 - relation: supports
-  target: responsibility-partner-outcomes-influences-participant
+  target: likelihood-ratio-test-showed-responsibility
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -70,7 +73,7 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `supports` → `responsibility-partner-outcomes-influences-participant`: Happiness tracking the partner's rewards supports a model that carries partner reward prediction errors (evidence at span results-029).
+- `supports` → `likelihood-ratio-test-showed-responsibility`: happiness varying with partner rewards grounds the partner-RPE terms of the models
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

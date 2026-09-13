@@ -1,5 +1,5 @@
 ---
-uuid: 31dbdf89-fbc1-47e0-88ff-e01183873dbd
+uuid: 2e7b6fa2-a2ee-4143-b083-4eaffc3a5876
 slug: partner-reward-prediction-errors-resulting
 doi: null
 claim: 'The partner''s reward prediction errors resulting from the participants'' own choices (social_pRPE)
@@ -8,13 +8,20 @@ claim: 'The partner''s reward prediction errors resulting from the participants'
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the social_pRPE weight above zero (wilcoxon p=0.0037)
+warrant_from:
+- reproductions
+- verification
 tests:
 - responsibility-partner-outcomes-influences-participant
+confirms:
+- responsibility-partner-outcomes-influences-participant
 belongings:
-- relation: requires
-  target: momentary-happiness-modelled-five-computational
+- relation: supports
+  target: responsibility-social-choice-yields-low
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -46,8 +53,9 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `tests` → `responsibility-partner-outcomes-influences-participant`: The finding that social_pRPE weights exceed zero tests the prediction's weight claim.
-- `requires` → `momentary-happiness-modelled-five-computational`: The social_pRPE weight estimate depends on the Responsibility model specification.
+- `tests` → `responsibility-partner-outcomes-influences-participant`: the social_pRPE weight tests the prediction that partner pRPE from own choices contributes
+- `confirms` → `responsibility-partner-outcomes-influences-participant`: social_pRPE weights were reliably greater than zero in both studies
+- `supports` → `responsibility-social-choice-yields-low`: a positive social_pRPE weight supports that partner outcomes from own choices affect happiness
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

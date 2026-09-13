@@ -1,5 +1,5 @@
 ---
-uuid: 5d2ef557-c6ec-4052-82c2-0b8e4c297e01
+uuid: bd115e8c-ec7a-4e6f-8b10-9ee16c17f4b1
 slug: functional-connectivity-between-left-anterior
 doi: null
 claim: Functional connectivity between the left anterior insula (seed) and a cluster in the right inferior
@@ -9,15 +9,17 @@ claim: Functional connectivity between the left anterior insula (seed) and a clu
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the tree records no reproduction, control or test bearing on this PPI result
 tests:
+- connectivity-between-guilt-responsibility-related-outcome-ph
+confirms:
 - connectivity-between-guilt-responsibility-related-outcome-ph
 belongings:
 - relation: supports
   target: functional-connectivity-between-guilt-responsibility-related
-- relation: requires
-  target: prior-functional-connectivity-work-shown
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -30,9 +32,9 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `tests` → `connectivity-between-guilt-responsibility-related-outcome-ph`: The insula-IFG connectivity varying with condition and choice tests the connectivity prediction (evidence at span results-142).
-- `supports` → `functional-connectivity-between-guilt-responsibility-related`: The condition- and choice-dependent insula-IFG connectivity supports the connectivity hypothesis (evidence at span results-142).
-- `requires` → `prior-functional-connectivity-work-shown`: The connectivity analysis inherits prior functional-connectivity findings as background (evidence at span results-142).
+- `tests` → `connectivity-between-guilt-responsibility-related-outcome-ph`: the insula-seed PPI tests the prefrontal Condition-by-Choice interaction prediction (results-142)
+- `confirms` → `connectivity-between-guilt-responsibility-related-outcome-ph`: a right-IFG cluster's insula connectivity varied with condition and choice and survived FWE correction
+- `supports` → `functional-connectivity-between-guilt-responsibility-related`: condition/choice-dependent insula connectivity supports the connectivity hypothesis
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

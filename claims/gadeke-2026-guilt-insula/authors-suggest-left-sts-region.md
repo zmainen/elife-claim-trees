@@ -1,5 +1,5 @@
 ---
-uuid: 4802ca6d-d5f5-40ab-9f8c-49c6ea91f5f6
+uuid: 8fc127d0-2fa2-4cb9-a337-89d34d734772
 slug: authors-suggest-left-sts-region
 doi: null
 claim: The authors suggest this left STS region tracks a partner's unexpected outcomes less when they
@@ -7,8 +7,12 @@ claim: The authors suggest this left STS region tracks a partner's unexpected ou
 claim-type: interpretive
 role: interpretation
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: interprets the verified one-cluster-left-sts-responded, but is itself a suggestion the authors advance rather than a tested claim
+warrant_from:
+- interprets
 interprets:
 - one-cluster-left-sts-responded
 belongings: []
@@ -22,7 +26,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `interprets` → `one-cluster-left-sts-responded`: The suggestion that the STS tracks a partner's unexpected outcomes reframes the STS result (evidence at span results-138).
+- `interprets` → `one-cluster-left-sts-responded`: the STS-tracks-partner-outcomes reading interprets the left-STS result (results-138)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

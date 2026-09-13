@@ -40,11 +40,15 @@ assertions:
 
 reproductions:
   - agent: mainen-z
-    date: 2026-03-30
+    date: 2026-09-13
     status: verified
+    script: verification/headley-2026-inhibitory-rhythms/verify.py
     original_script: https://github.com/dbheadley/InhibOnDendComp/blob/main/scripts/Fig2_3.ipynb
-    script_execution: unmodified
-    script_execution_note: "Run unmodified on pre-computed CSV data from GitHub repo"
+    script_execution: executed
+    script_execution_note: >
+      Automated as verify_ca_spikes(): checks Figure3c.csv's per-distance peak times against
+      this note's figures — mid compartments (dist 2-7) at -5ms and the most distal
+      compartment at the tuft-coupling range this claim's ~20ms figure is grounded in.
     time_fast: "~2 min"
     time_full: "~6 hrs (NEURON + 1.88 GB Dryad)"
     notes: >

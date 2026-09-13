@@ -1,5 +1,5 @@
 ---
-uuid: 3531ed17-66ac-4b50-8bc8-1bcf3c035e9e
+uuid: 6c3a5d6b-5ee5-4884-aa7a-ba1318eafb2e
 slug: when-partner-received-low-lottery
 doi: null
 claim: 'When the partner received the low lottery outcome, participant happiness was lower when the participant
@@ -9,13 +9,24 @@ claim: 'When the partner received the low lottery outcome, participant happiness
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the guilt interaction beta in both cohorts (0.33->0.34, 0.39->0.40), and it is validated by guilt-effect-occurred-whether-participant and pre-task-icebreaker-succeeded-establishing-positive
+warrant_from:
+- validated_by
+- reproductions
+- verification
+- requires
 tests:
+- responsibility-outcomes-generates-guilt-participant
+confirms:
 - responsibility-outcomes-generates-guilt-participant
 belongings:
 - relation: supports
   target: responsibility-social-choice-yields-low
+- relation: supports
+  target: both-studies-participants-felt-worse
 - relation: requires
   target: linear-mixed-model-containing-all
 assertions:
@@ -76,9 +87,11 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `tests` → `responsibility-outcomes-generates-guilt-participant`: The significant partner-outcome by decision-maker interaction on happiness is the empirical test of the guilt prediction.
-- `supports` → `responsibility-social-choice-yields-low`: The behavioural guilt effect is the central evidence for the guilt hypothesis.
-- `requires` → `linear-mixed-model-containing-all`: The reported guilt interaction is taken from the best-fitting linear mixed model (Model 5).
+- `tests` → `responsibility-outcomes-generates-guilt-participant`: the partner-outcome x decision-maker interaction tests the happiness prediction
+- `confirms` → `responsibility-outcomes-generates-guilt-participant`: the interaction was significant in both studies: happiness lower after low partner outcomes from own choice
+- `supports` → `responsibility-social-choice-yields-low`: the behavioural guilt effect is evidence for the guilt hypothesis
+- `supports` → `both-studies-participants-felt-worse`: the guilt interaction is the evidence for the synthesis that participants felt worse from their own choices
+- `requires` → `linear-mixed-model-containing-all`: the reported guilt interaction depends on Model 5's LMM being the warranted model
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

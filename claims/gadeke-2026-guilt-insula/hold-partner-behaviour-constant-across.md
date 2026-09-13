@@ -1,5 +1,5 @@
 ---
-uuid: c46dee52-5335-46f9-8545-de650b13359e
+uuid: 1f8168fc-149d-4876-ad38-6dc8625e24cb
 slug: hold-partner-behaviour-constant-across
 doi: null
 claim: To hold the partner's behaviour constant across participants, the partner's decisions were simulated
@@ -7,8 +7,12 @@ claim: To hold the partner's behaviour constant across participants, the partner
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: its only reproduction is blocked, so nothing in the tree actually checks the simulated-partner procedure
+warrant_from:
+- reproductions
 enables-method:
 - when-partner-received-low-lottery
 belongings: []
@@ -33,7 +37,7 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `enables-method` → `when-partner-received-low-lottery`: Holding the simulated partner's behaviour constant is what lets the guilt contrast be interpreted.
+- `enables-method` → `when-partner-received-low-lottery`: simulating the partner's choices holds behaviour constant, making the guilt comparison possible
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

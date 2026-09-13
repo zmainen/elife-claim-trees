@@ -40,6 +40,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "extract"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import pipeline  # noqa: E402
+
 from adjudicate import claims, orphans  # noqa: E402
 
 PROMPT = ROOT / "extract" / "prompts" / "gap-claim.md"
@@ -261,7 +263,7 @@ def validate(answer: dict, paper: str) -> tuple[dict, list[str]]:
                          for d in declined if d.get("uid") in want]}, problems
 
 
-def write(paper: str, result: dict, *, by: str) -> Path:
+def write(paper: str, result: dict, *, by: str, tokens: int | None = None) -> Path:
     out = OUT / paper / "gap-claim.output.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({
@@ -271,6 +273,7 @@ def write(paper: str, result: dict, *, by: str) -> Path:
         "note": NOTE,
         "candidates": result["drafted"],
         "declined": result["declined"],
+        **({"usage": pipeline.answered_usage(tokens)} if tokens else {}),
     }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return out
 
@@ -283,6 +286,10 @@ def main() -> int:
                     help="write the exact prompt this layer would send to PATH and exit")
     ap.add_argument("--answer", metavar="PATH",
                     help="drafts produced elsewhere; validated before anything is written")
+    ap.add_argument("--tokens", type=int, metavar="N",
+                    help="what the session that answered this spent; the "
+                         "ledger records how an answer arrived and, with "
+                         "this, what it cost")
     args = ap.parse_args()
 
     system, user = build_prompt(args.paper)
@@ -311,7 +318,8 @@ def main() -> int:
         where = src.relative_to(ROOT)
     except ValueError:
         where = src
-    out = write(args.paper, result, by=f"supplied:{where}")
+    out = write(args.paper, result, by=f"supplied:{where}",
+                tokens=pipeline.answered_tokens(args.tokens))
     print(f"  {args.paper:38} {len(result['drafted'])} drafted · "
           f"{len(result['declined'])} declined · {out.relative_to(ROOT)}")
     return 0

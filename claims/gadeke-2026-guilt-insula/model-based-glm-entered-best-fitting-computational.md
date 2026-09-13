@@ -1,5 +1,5 @@
 ---
-uuid: 98c01f4a-1be8-4bbc-b094-ae0b92cac054
+uuid: d2eacfbd-b9a8-4e92-b304-041d20f7a635
 slug: model-based-glm-entered-best-fitting-computational
 doi: null
 claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsibility) model's variables
@@ -9,8 +9,12 @@ claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsi
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: validated by manipulation-check-bilateral-ventral-striatum, a verified control showing the GLM recovers the known VS reward signal
+warrant_from:
+- validated_by
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula

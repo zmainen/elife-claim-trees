@@ -141,39 +141,40 @@ layers:
     issue: 20
     open: true
 
-  # Declared `proposed`: the question is open, the rule that answers it mechanically exists
-  # and runs, and nothing has been accepted. That is a different state from `relation-vocab`'s
-  # `open: true`, which says a decision is outstanding but carries no machinery to evaluate —
-  # here the rule's behaviour across the whole corpus is the thing to be reviewed.
+  # Accepted on the issue #28 ruling (2026-09-13): every tested prediction carries an outcome,
+  # and `refutes` is the negative outcome beside `confirms`. Accepting the rule accepted its
+  # v3 reading — `refutes` counts as an outcome, and the convention question the `proposed`
+  # version left open is settled. The declaration reads `accepted`; the person's approval of
+  # this declaration version is appended to runs/approvals.jsonl, the way parts and questions
+  # were, and until it is the pipeline shows the scheme as open on this cell.
   - id: prediction-outcome
     kind: question
     scope: corpus
-    status: proposed
+    status: accepted
     title: Prediction outcomes
     question: Did the paper's predictions come out, and does the tree say so?
     how: >
-      The rule is mechanical. For each `role: prediction` claim it looks at the edges pointing in
-      and out, and sorts the prediction by the shape of that wiring: a `tests` edge with a
-      `confirms` beside it, a `tests` edge alone, a conjunction of several. It reads the graph and
-      nothing else — not the paper, and not whether the prediction was in fact met.
+      The rule is mechanical, and it is now rule v3. For each `role: prediction` claim it looks at
+      the edges pointing in and out, and sorts the prediction by the shape of that wiring: a `tests`
+      edge with an outcome (`confirms` or `refutes`) beside it, a `tests` edge alone, nothing, or a
+      conjunction of several. It reads the graph and nothing else — not the paper, and not whether
+      the prediction was in fact met.
 
-      That limit is the point of running it. Three wiring conventions are in use across the corpus
-      and they split by paper rather than by case, so the buckets measure how the trees were written
-      as much as what the papers found. Accepting the rule would mean accepting that reading, which
-      is why the declaration is `proposed` and not accepted.
+      That limit is the point of running it. The issue #28 ruling settled the wiring convention — a
+      `tests` edge carries its outcome beside it — so the buckets now measure which trees have had
+      the outcome filled in, not which convention a paper happened to follow.
     needs: [claim-format, relation-vocab]
     reads: [scripts/prediction_outcome.py]
     produces: [review/prediction-outcome.json]
     views: [table]
     issue: 28
-    open: true
     added: "2026-09-11"
     found: >
       `tests` is neutral by design, so a tree can record that a prediction was tested and never
-      whether it was met. Of {{prediction_outcome_total}} predictions, {{prediction_outcome_unrecorded}} carry a `tests` edge
-      and no outcome at all. Three wiring conventions are in use and they split by paper, not by
-      case. And the vocabulary is asymmetric: `confirms` exists, nothing means "the result came
-      out against this", so a failed prediction cannot be written down.
+      whether it was met. Of {{prediction_outcome_total}} predictions, {{prediction_outcome_recorded}} now carry a recorded
+      outcome and {{prediction_outcome_unrecorded}} carry a `tests` edge and no outcome yet. The issue #28 ruling gave
+      the vocabulary its missing half — `refutes`, the negative outcome beside `confirms` — so a
+      failed prediction can now be written down; what remains is filling the rest in.
     command: "python3 scripts/prediction_outcome.py --write"
 
   # A measurement over the trees, not over one paper: the same claim tree re-read under each
@@ -752,7 +753,7 @@ layers:
     produces: ["site/src/data/plain-claims/{paper}.json"]
     views: [list, table]
     by_from: model
-    command: "python3 scripts/plain_claims.py {paper}"
+    command: "python3 scripts/plain_claims.py {paper} --answer runs/{paper}/plain-claim.answer.json"
 
   - id: verification
     group: measures
@@ -1035,3 +1036,46 @@ layers:
       - exports/{paper}.formats.json
     views: [table, comparison]
     command: "python3 scripts/formats_report.py {paper}"
+
+  # How well the tree supports each claim, as distinct from what the paper says (`confidence`)
+  # and how it stands toward it (`stance`). Accepted as a new layer on the #126 ruling
+  # (2026-09-13): a warrant is derived from the evidence, it requires model reasoning rather
+  # than strict rule application, and the mechanical rule's floor is shown to the reader only
+  # AFTER it judges. A `feature`, like `stance`, `parts` and `questions`: it revises the tree
+  # rather than making a new kind of thing, writing `warrant:`, `warrant_why:` and
+  # `warrant_from:` onto each claim and leaving `epistemic` untouched while the draft is tried.
+  # It runs last, so it goes stale whenever the tree, the stances, the prediction outcomes or
+  # the verification move — the behaviour docs/claim-format.md asked for by hand and never got.
+  - id: warrant
+    group: tree
+    kind: feature
+    scope: paper
+    status: proposed
+    title: Warrant
+    question: How well does the tree support each claim, judged from its evidence?
+    how: >
+      Assembles, for each claim, a dossier of what the tree holds about its support — its role and
+      stance, the outcomes on its predictions, the controls that validate it, the alternatives it
+      rules out, its reproduction records and their verification provenance, what it requires and
+      is part of, the claims that support or extend it, and the paper's own confidence. It shows a
+      reader every claim with its sentence and that dossier, and asks for a warrant level from the
+      vocabulary the claim's role allows — a prediction's confirmed/refuted/untested, an
+      alternative's ruled-out/open, everything else's strong/moderate/weak/contested — a one-line
+      why that cites the dossier, and an `unsupported` flag where the tree records nothing.
+
+      The basis is the tree's evidence, not the paper's confidence, and a `verified` reproduction
+      checks a number, not the inference drawn from it. The prompt shows the dossier and the
+      vocabulary, never the mechanical rule: scripts/warrant.py carries a rule floor the reading is
+      scored against afterwards, and the ruling puts that floor after the judgement, not before.
+
+      `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through
+      the same validation — a slug not in the tree, or a level outside the role's vocabulary, is
+      dropped — so a model with no backend here can still answer it.
+    needs: [claim-tree, stance, prediction-outcome, verification]
+    reads: [extract/prompts/warrant.md, extract/prompts/contract/vocabulary.md, scripts/warrant.py]
+    produces: ["runs/{paper}/warrant.json"]
+    views: [table]
+    issue: 126
+    added: "2026-09-13"
+    by_from: model
+    command: "cd extract && python3 -m elife_extract.cli warrant --paper {paper}"

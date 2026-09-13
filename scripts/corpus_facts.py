@@ -371,6 +371,9 @@ def _verdict_counts():
             vers[m.group(1)] = {
                 "considered": len(res.claims_considered()) + len(res.edges_considered()),
                 "total": len(res.claims) + len(res.edges),
+                # The procedure version the reading was made under (#108), for the badge's
+                # "read under procedure v<N>". None on a file written before procedure v1.
+                "procedure": res.procedure,
             }
         if vers:
             out[paper] = vers
@@ -462,7 +465,7 @@ def main():
         "literature_context_doi_in_assertions": lc_assert,
         "role_counts": dict(roles.most_common()),
         # Every defined relation, including the ones at zero. A page documenting the
-        # vocabulary has to name all 17; leaving the unused ones out of the map meant any
+        # vocabulary has to name every one; leaving the unused ones out of the map meant any
         # page that showed them had to type "0" beside a column generated from this file.
         "relation_counts": {k: rels.get(k, 0)
                             for k in sorted(EDGE_KEYS, key=lambda k: (-rels.get(k, 0), k))},

@@ -1,5 +1,5 @@
 ---
-uuid: 24f2ba86-7238-4940-a76d-5d6eed151429
+uuid: 7dd73224-d876-4cfd-b7c0-0488d5d347ae
 slug: responsibility-social-choice-yields-low
 doi: null
 claim: Responsibility for a social choice that yields a low outcome for a partner produces interpersonal
@@ -7,10 +7,14 @@ claim: Responsibility for a social choice that yields a low outcome for a partne
   made the same choice.
 claim-type: hypothesis
 role: hypothesis
-addresses: q1
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: hypothesis
+warrant: strong
+warrant_why: both its predictions are confirmed and it is supported by when-partner-received-low-lottery, partner-reward-prediction-errors-resulting and likelihood-ratio-test-showed-responsibility
+warrant_from:
+- predictions
+- supported_by
 entails:
 - responsibility-outcomes-generates-guilt-participant
 - responsibility-partner-outcomes-influences-participant
@@ -27,8 +31,8 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `entails` → `responsibility-outcomes-generates-guilt-participant`: The guilt hypothesis deductively implies that happiness should fall more after low partner outcomes the participant chose (evidence at span abstract-001).
-- `entails` → `responsibility-partner-outcomes-influences-participant`: If responsibility for the partner's outcomes shapes happiness, a model carrying social_pRPE should fit best with weights above zero (evidence at span abstract-001).
+- `entails` → `responsibility-outcomes-generates-guilt-participant`: the guilt hypothesis deductively implies the happiness prediction (results-119)
+- `entails` → `responsibility-partner-outcomes-influences-participant`: if responsibility for outcomes generates guilt, a model with social_pRPE should fit happiness better
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

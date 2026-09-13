@@ -6,14 +6,15 @@ a prediction, and never whether the test came out for or against it, has recorde
 and dropped the result.
 
 `tests` is neutral on purpose -- `X tests P` says X bears on P, not which way it went. The
-vocabulary has a positive counterpart, `confirms`, used 74 times corpus-wide. What it has no
-counterpart for is failure: nothing in the vocabulary says "the result came out against this
-prediction". `contradicts` and `rules-out` do not fill the gap, because both assert the target
-is *false*, and a refuted prediction is not a false statement -- it was a correct derivation
-from its hypothesis, and what the failure damages is the hypothesis, one edge upstream.
+issue #28 ruling gave it two outcomes to be stated beside it: `confirms` when the result came
+out as the prediction said, and `refutes` when it came out against. `refutes` is distinct from
+`contradicts` and `rules-out`, which assert the target is *false*: a refuted prediction is not
+a false statement -- it was a correct derivation from its hypothesis, and what the failure
+damages is the hypothesis, one edge upstream. Both outcomes aim at a prediction only.
 
-So the corpus can record that a prediction succeeded and cannot record that one failed. Every
-tree we publish will look like a paper whose predictions all worked out.
+Before the ruling the vocabulary was asymmetric -- `confirms` existed, nothing meant "came out
+against" -- so a tree could record that a prediction succeeded and not that one failed. That
+gap is closed; what remains is filling the outcomes in, prediction by prediction.
 
 WHAT THIS DOES, AND WHAT IT DELIBERATELY DOES NOT
 
@@ -26,22 +27,22 @@ That is a semantic reading, it needs an agent or a person, and a rule that guess
 launder a judgement as a measurement. Where the reading is what matters, this abstains and
 says so.
 
-THE RULE, v2
+THE RULE, v3
 
-  recorded            a `confirms` edge exists, and if the prediction enumerates conjuncts,
-                      there are at least as many outcome edges as conjuncts.
-  unrecorded          `tests` edges exist, no `confirms`. The outcome is not in the graph.
+  recorded            an outcome edge (`confirms` or `refutes`) exists, and if the prediction
+                      enumerates conjuncts, there are at least as many outcome edges as conjuncts.
+  unrecorded          `tests` edges exist, no outcome. The outcome is not in the graph.
   untested            nothing points at it at all.
   abstain:conjunction the prediction enumerates more commitments than it has edges, so no
                       single verdict can be right about all of them.
-  abstain:convention  `confirms` without `tests`. Two conventions are in use in this corpus
-                      and this prediction follows the other one; which is correct is the
-                      question this layer asks, so the rule must not assume an answer.
 
-v1 of the rule matched enumerated conjuncts by roman numeral only and found 4. v2 adds
-`(a)(b)(c)` and finds 6 -- the two it had missed include the largest conjunction in the
-corpus, a four-part prediction with nine testing results. The version is recorded in the
-manifest because an approval is granted to a rule version, not to a rule.
+v1 of the rule matched enumerated conjuncts by roman numeral only and found 4. v2 added
+`(a)(b)(c)`. v3 follows the issue #28 ruling: `refutes` is now an outcome alongside `confirms`,
+so `recorded` counts either, and the `abstain:convention` bucket is gone -- the ruling settled
+which wiring convention is correct (a `tests` edge carries an outcome beside it), so the layer
+no longer declines the `confirms`-without-`tests` case, it reads the outcome as recorded. The
+version is recorded in the manifest because an approval is granted to a rule version, not to a
+rule.
 
 Usage:
   python3 scripts/prediction_outcome.py                 # summary across the corpus
@@ -61,16 +62,16 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from export_mira import CLAIMS_DIR, load_paper, public_papers, relations  # noqa: E402
+from relations import NEUTRAL_TEST as NEUTRAL, OUTCOME  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST = os.path.join(ROOT, "review", "prediction-outcome.json")
 
-RULE_VERSION = 2
+RULE_VERSION = 3
 
-# An outcome edge says how a test came out. `confirms` is the only one that exists; the
-# absence of a negative counterpart is the finding, not an oversight in this list.
-OUTCOME = {"confirms"}
-NEUTRAL = {"tests"}
+# An outcome edge says how a test came out: `confirms` (positive) or `refutes` (negative),
+# aimed at a prediction. `tests` is the neutral edge whose verdict they record. Both sets are
+# declared in scripts/relations.py so the checker and this layer read one definition.
 
 # Predictions enumerate their commitments two ways. v1 knew only the first.
 ENUMERATORS = (
@@ -80,8 +81,8 @@ ENUMERATORS = (
 
 BUCKETS = {
     "recorded": (
-        "The graph says how the test came out. A `confirms` edge points at the prediction "
-        "from the result that settled it."),
+        "The graph says how the test came out. An outcome edge -- `confirms` or `refutes` -- "
+        "points at the prediction from the result that settled it."),
     "unrecorded": (
         "A result is wired to the prediction with `tests`, which is neutral, and nothing "
         "records the outcome. The paper asserts the result, so a reader would infer the "
@@ -93,10 +94,6 @@ BUCKETS = {
         "The prediction states more commitments than it has edges -- \"should show (i)... "
         "(ii)... (iii)...\" with fewer results wired than parts. One verdict cannot be right "
         "about all of them, so the rule declines rather than picking the majority."),
-    "abstain:convention": (
-        "`confirms` without `tests`. Two conventions for wiring outcomes are in use across "
-        "this corpus, and this prediction follows the one that omits the neutral edge. Which "
-        "is correct is the question this layer asks, so the rule must not assume an answer."),
 }
 
 
@@ -113,14 +110,14 @@ def classify(pred: dict, incoming: dict[str, list[str]]) -> tuple[str, dict]:
     """Bucket one prediction, and return the evidence the bucket was chosen on."""
     tests = sorted(incoming.get("tests", []))
     confirms = sorted(incoming.get("confirms", []))
+    refutes = sorted(incoming.get("refutes", []))
+    outcome = sorted(set(confirms) | set(refutes))
     parts = conjuncts(pred.get("claim", "") or "")
-    ev = {"tests": tests, "confirms": confirms, "conjuncts": parts}
+    ev = {"tests": tests, "confirms": confirms, "refutes": refutes, "conjuncts": parts}
 
-    if confirms and not tests:
-        return "abstain:convention", ev
-    if parts and max(len(tests), len(confirms)) < len(parts):
+    if parts and max(len(tests), len(outcome)) < len(parts):
         return "abstain:conjunction", ev
-    if confirms:
+    if outcome:
         return "recorded", ev
     if tests:
         return "unrecorded", ev
@@ -158,8 +155,8 @@ def conventions(items: list[dict]) -> dict[str, dict[str, int]]:
     """Which wiring convention each paper used. The split is the finding."""
     out: dict[str, collections.Counter] = collections.defaultdict(collections.Counter)
     for it in items:
-        t, c = bool(it["tests"]), bool(it["confirms"])
-        name = ("tests+confirms" if t and c else "confirms only" if c
+        t, o = bool(it["tests"]), bool(it["confirms"] or it["refutes"])
+        name = ("tests+outcome" if t and o else "outcome only" if o
                 else "tests only" if t else "neither")
         out[it["paper"]][name] += 1
     return {p: dict(v) for p, v in sorted(out.items())}
@@ -219,6 +216,7 @@ def main():
             print(f"\n{it['paper']} :: {it['prediction']}")
             print(f"  tests={it['tests'] or '—'}")
             print(f"  confirms={it['confirms'] or '—'}")
+            print(f"  refutes={it['refutes'] or '—'}")
             if it["conjuncts"]:
                 print(f"  conjuncts={it['conjuncts']}")
         return 0

@@ -157,6 +157,7 @@ def test_model_answered_layers_declare_where_to_find_the_model():
                 "external-review", "edge-inference", "questions", "parts", "stance",
                 "summaries", "synthesis", "abstract-map"):
         assert decl[lid].get("by_from") == "model", f"{lid} does not declare by_from"
+    assert decl["warrant"].get("by_from") == "model", "warrant does not declare by_from"
 
 
 # ── each runner lands on its declared path ───────────────────────────────
@@ -350,7 +351,7 @@ def test_every_model_answered_layer_can_be_dumped_and_answered():
     choices = cli.build_parser()._subparsers._group_actions[0].choices
     for name in ("results-reader", "caption-reader", "structure-reader",
                  "reconcile", "external-review", "edge-inference", "questions", "parts",
-                 "stance", "summaries", "synthesis", "abstract-map"):
+                 "stance", "warrant", "summaries", "synthesis", "abstract-map"):
         opts = {o for a in choices[name]._actions for o in a.option_strings}
         assert "--dump-prompt" in opts, f"{name} cannot be asked for its prompt"
         assert "--answer" in opts, f"{name} cannot be given an answer"
@@ -612,6 +613,17 @@ def test_parts_validator_rejects_cycle_self_edge_and_two_wholes():
         assert data["parts"] == [{"part": "b", "whole": "a", "why": ""}]
 
 
+def test_warrant_is_answerable_and_its_declared_command_exists():
+    """`warrant` can be dumped and answered, and the command its declaration names is a real
+    subcommand — the seam every model-answered layer has, on the warrant layer (#126)."""
+    choices = cli.build_parser()._subparsers._group_actions[0].choices
+    opts = {o for a in choices["warrant"]._actions for o in a.option_strings}
+    assert "--dump-prompt" in opts and "--answer" in opts
+    cmd = _declaration()["warrant"]["command"]
+    m = re.search(r"elife_extract\.cli\s+([a-z-]+)", cmd)
+    assert m and m.group(1) in choices, "warrant's command names a subcommand the CLI does not have"
+
+
 def test_parts_is_answerable_and_its_declared_command_exists():
     """`parts` can be dumped and answered, and the command its declaration names is a real
     subcommand — the seam every model-answered layer has, on the newest one."""
@@ -800,13 +812,29 @@ def test_edge_rejects_unknown_relation_reference_and_self():
     assert _triples(edges) == {("e", "p", "tests")}
 
 
-def test_edge_rejects_the_mechanically_written_reciprocals():
-    """`derived-from` and `confirms` are synthesised, never emitted; emitting them is dropped."""
+def test_edge_derived_from_is_the_only_mechanically_written_reciprocal():
+    """`derived-from` is synthesised, never emitted; emitting it is dropped. `confirms` used to
+    be too, but under the #28 ruling it is an outcome the reader states directly (result →
+    prediction), so it is now kept rather than dropped."""
     edges = _validate([
-        {"source": 2, "target": 1, "relation": "derived-from"},
-        {"source": 3, "target": 2, "relation": "confirms"},
+        {"source": 2, "target": 1, "relation": "derived-from"},   # mechanical → drop
+        {"source": 3, "target": 2, "relation": "confirms"},       # outcome, result → prediction → kept
     ])
-    assert edges == []
+    assert _triples(edges) == {("e", "p", "confirms")}
+
+
+def test_edge_outcomes_target_a_prediction_from_a_result():
+    """`confirms`/`refutes` are outcomes aimed at a prediction, from a result or control (#28).
+    A source that is not empirical/control, or a target that is not a prediction, is dropped."""
+    edges = _validate([
+        {"source": 3, "target": 2, "relation": "confirms"},   # result → prediction → kept
+        {"source": 4, "target": 2, "relation": "refutes"},    # control → prediction → kept
+        {"source": 3, "target": 1, "relation": "confirms"},   # target hypothesis → drop
+        {"source": 3, "target": 1, "relation": "refutes"},    # target hypothesis → drop
+        {"source": 1, "target": 2, "relation": "confirms"},   # source hypothesis → drop
+    ])
+    t = _triples(edges)
+    assert t == {("e", "p", "confirms"), ("c", "p", "refutes")}
 
 
 def test_edge_direction_tests_entails_scopes():
@@ -860,16 +888,27 @@ def test_edge_dissociates_with_is_symmetric_and_written_once():
     assert len([e for e in edges if e["relation"] == "dissociates-with"]) == 1
 
 
+def test_edge_in_tension_with_is_symmetric_and_written_once():
+    """`in-tension-with` (the #125 split) is symmetric like `dissociates-with`; the same pair
+    written both ways keeps one edge. It holds between two asserted results — e and e2."""
+    edges = _validate([
+        {"source": 3, "target": 6, "relation": "in-tension-with"},
+        {"source": 6, "target": 3, "relation": "in-tension-with"},   # same pair → drop
+    ])
+    assert len([e for e in edges if e["relation"] == "in-tension-with"]) == 1
+
+
 def test_edge_reciprocals_are_synthesised():
-    """`entails` synthesises `derived-from`; `predicts` synthesises `confirms`. The site's
-    hierarchical numbering walks the reciprocal, so it must be written."""
+    """`entails` synthesises `derived-from`; the site's hierarchical numbering walks it, so it
+    must be written. `predicts` no longer synthesises `confirms` — under the #28 ruling the
+    outcome is stated directly by the reader, not derived."""
     edges = _validate([
         {"source": 1, "target": 2, "relation": "entails", "why": "h implies p"},
         {"source": 1, "target": 2, "relation": "predicts", "why": "h predicts p"},
     ])
     t = _triples(edges)
-    assert {("h", "p", "entails"), ("p", "h", "derived-from"),
-            ("h", "p", "predicts"), ("p", "h", "confirms")} <= t
+    assert {("h", "p", "entails"), ("p", "h", "derived-from"), ("h", "p", "predicts")} <= t
+    assert ("p", "h", "confirms") not in t
 
 
 def test_edge_why_is_carried_through_to_the_output():

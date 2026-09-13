@@ -256,6 +256,38 @@ def _by_from_output(layer: dict, outs: list[str], paper: str | None = None) -> s
     return None
 
 
+ANSWERED_TOKENS_ENV = "ELIFE_ANSWERED_TOKENS"
+
+
+def answered_tokens(flag: int | None = None) -> int | None:
+    """What the session that answered this layer spent, if anybody said.
+
+    Every layer in this corpus is answered by something other than the configured backend: a
+    prompt is dumped, an agent or a person answers it, and the answer comes back through
+    `--answer`. That route makes no API call, so the usage the call path records is zero, and
+    the ledger has carried `supplied:<path>` — how the answer arrived — with nothing about what
+    it cost. The one number that exists at that moment lives in the answering session's own
+    accounting and had nowhere to go.
+
+    A runner takes it from `--tokens` when invoked directly, or from the environment when
+    `pipeline.py run` invokes it, because the declared command is fixed and cannot carry a
+    value that changes every run.
+
+    It is deliberately not called `input_tokens`: a session total covers reading the prompt,
+    the contract and the corpus, then fixing what the validator refused. Summing it into the
+    API's four fields would make two different things look like one measurement.
+    """
+    if flag:
+        return int(flag)
+    raw = os.environ.get(ANSWERED_TOKENS_ENV, "").strip()
+    return int(raw) if raw.isdigit() and int(raw) else None
+
+
+def answered_usage(tokens: int | None) -> dict:
+    """The usage block for a layer answered outside a backend call."""
+    return {"answered_tokens": int(tokens)} if tokens else {}
+
+
 def _usage_from_outputs(outs: list[str], root: str = ROOT) -> dict:
     """Scan the layer's output JSON files for a top-level 'usage' dict; merge and return."""
     merged: dict = {}
@@ -360,10 +392,17 @@ def read_approvals(paper: str) -> list[dict]:
     return out
 
 
-def approve(paper: str, layer_id: str, v: int, *, by: str, note: str = "") -> dict:
-    """Record that a person approved one version of one layer."""
+def approve(paper: str, layer_id: str, v: int, *, by: str, note: str = "",
+            procedure: int | None = None) -> dict:
+    """Record that a person approved one version of one layer.
+
+    `procedure` names the adjudication procedure version the reading was made under, for a
+    claim-tree approval bound to a verdict file; it is omitted for a plain output approval.
+    """
     rec = {"layer": layer_id, "v": v, "by": by, "note": note,
            "when": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    if procedure is not None:
+        rec["procedure"] = procedure
     p = approvals_path(paper)
     os.makedirs(os.path.dirname(p), exist_ok=True)
     with open(p, "a", encoding="utf-8") as fh:
@@ -383,6 +422,11 @@ def approve(paper: str, layer_id: str, v: int, *, by: str, note: str = "") -> di
 # corpus-level ledger, in the same shape as a per-paper approval.
 
 ACCEPTED, PROPOSED = "accepted", "proposed"
+
+# A declaration that is not a layer: a design note ruled on and versioned, keyed on the note's
+# own content hash the way a layer's declaration is keyed on `digest`. The adjudication procedure
+# — the steps and verdict vocabulary in this note — is one such scheme, ruled on under #108.
+DOC_DECLARATIONS = {"procedure": "docs/design/2026-09-12-kinds-of-decision.md"}
 
 
 def corpus_approvals_path() -> str:
@@ -763,6 +807,23 @@ def cmd_run(args) -> int:
         print(f"error: no paper {args.paper!r}", file=sys.stderr)
         return 2
 
+    # Ask the named layer for the prompt it would send and stop. Nothing is produced, so no
+    # ledger entry is written — the answer comes back through `--answer`, which does record a
+    # version. The seam every model-answered layer has (`--dump-prompt`/`--answer` on the CLI),
+    # reached through `run` so the command is the declared one and cannot drift.
+    if getattr(args, "dump_prompt", None):
+        layer = by_id[args.layer]
+        cmd = layer.get("command")
+        if not cmd or "elife_extract.cli" not in cmd:
+            print(f"error: {args.layer} has no model prompt to dump", file=sys.stderr)
+            return 3
+        cmd = cmd.replace("{paper}", args.paper).replace("{doi}", _doi_of(args.paper) or "")
+        cmd += f" --dump-prompt {shlex.quote(args.dump_prompt)}"
+        if args.profile:
+            cmd += f" --profile {shlex.quote(args.profile)}"
+        print(f"  {args.layer}: {cmd}")
+        return subprocess.run(cmd, shell=True, cwd=ROOT).returncode
+
     st = state(decl, [args.paper])[args.paper]
 
     # Dependency order, restricted to this layer's ancestors — and pruned at the ones that
@@ -856,7 +917,10 @@ def cmd_run(args) -> int:
 
     def _run_one(lid, prep):
         """Run a prepared layer's command. Returns (rc, lid)."""
-        rc = subprocess.run(prep["cmd"], shell=True, cwd=ROOT).returncode
+        env = dict(os.environ)
+        if getattr(args, "tokens", None):
+            env[ANSWERED_TOKENS_ENV] = str(args.tokens)
+        rc = subprocess.run(prep["cmd"], shell=True, cwd=ROOT, env=env).returncode
         return rc, lid
 
     for wave in _wanted_waves(wanted, by_id):
@@ -977,17 +1041,27 @@ def cmd_approve(args) -> int:
 
 
 def cmd_approve_declaration(args) -> int:
-    """Record a scheme ruling: a person accepts what a layer means, for every paper."""
-    decl = load()
+    """Record a scheme ruling: a person accepts what a layer — or a versioned design note — means.
+
+    A layer is keyed on its declaration version; a design note in `DOC_DECLARATIONS` (the
+    adjudication procedure) is keyed on the note's own content hash, the same `digest`.
+    """
     lid = args.declaration
-    if lid not in decl["by_id"]:
-        print(f"error: no layer {lid!r}", file=sys.stderr)
-        return 2
-    ver = declaration_version(decl["by_id"][lid])
-    was = declaration_state(decl)[lid]
-    if was["scheme"] == ACCEPTED:
-        print(f"{lid}: declaration {ver} is already accepted by {was['approved']['by']} — "
-              f"recording another ruling on the same version")
+    if lid in DOC_DECLARATIONS:
+        ver = digest(DOC_DECLARATIONS[lid])
+        if ver is None:
+            print(f"error: {DOC_DECLARATIONS[lid]} does not exist", file=sys.stderr)
+            return 2
+    else:
+        decl = load()
+        if lid not in decl["by_id"]:
+            print(f"error: no layer {lid!r}", file=sys.stderr)
+            return 2
+        ver = declaration_version(decl["by_id"][lid])
+        was = declaration_state(decl)[lid]
+        if was["scheme"] == ACCEPTED:
+            print(f"{lid}: declaration {ver} is already accepted by {was['approved']['by']} — "
+                  f"recording another ruling on the same version")
     rec = approve_declaration(lid, ver, by=args.by, note=args.note or "")
     print(f"{lid} declaration {ver} accepted by {rec['by']}")
     if rec["note"]:
@@ -1025,6 +1099,16 @@ def main() -> int:
     r.add_argument("--jobs", type=int, default=3, metavar="N",
                    help="max concurrent layer commands within a wave (default: 3)")
     r.add_argument("--note", help="the changelog line for the ledger entry")
+    r.add_argument("--tokens", type=int, metavar="N",
+                   help="what the session that answered this layer spent. Every layer here is "
+                        "answered outside the configured backend, so the usage the call path "
+                        "records is zero and the ledger knew how the answer arrived but not "
+                        "what it cost. The declared command is fixed, so this reaches the "
+                        "runner through the environment.")
+    r.add_argument("--dump-prompt", metavar="PATH",
+                   help="write the exact prompt the named layer would send to PATH and exit, so "
+                        "whatever answers it answers the same question. Nothing is run or "
+                        "recorded; hand the reply back with --answer.")
     r.add_argument("--answer", metavar="FILE",
                    help="record this file as the named layer's answer instead of calling a "
                         "backend; the raw reply is kept beside the output as a version")

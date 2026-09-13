@@ -1,6 +1,7 @@
 # Kinds of decision
 
-**Status:** proposed
+**Status:** accepted (procedure v1, 2026-09-13)
+**Issue:** [#108](https://github.com/zmainen/elife-claim-trees/issues/108)
 **Frames:** [#31](https://github.com/zmainen/elife-claim-trees/issues/31) · [#56](https://github.com/zmainen/elife-claim-trees/issues/56) · [#82](https://github.com/zmainen/elife-claim-trees/issues/82)
 **Depends on:** `docs/design/2026-09-11-layers-as-pipeline.html` (approval as an operation on a version; a layer as a proposal)
 
@@ -134,12 +135,24 @@ Consequences for the current tracker, applied with this note:
 - The adjudication procedure gets its own scheme issue under #31, so that a change to the
   verdict vocabulary or the steps is ruled on and versioned rather than edited in passing.
 
-## What this does not decide
+## What is decided by default
 
-Whether a scheme ruling needs one person or two. The record can hold several approvals of a
-declaration version; whether acceptance requires more than one is a governance question the
-corpus is too small to have needed yet.
+Two governance questions the proposal left open are settled by default in accepting it as
+procedure v1, and either can be reopened as a scheme ruling under
+[#31](https://github.com/zmainen/elife-claim-trees/issues/31) once the corpus grows to need more.
 
-Whether adjudication verdicts should be public on the site or only their counts. The
-verdict file is committed, so they are public in the repository; the note recommends the site
-show counts and the corrected values, and link the file.
+Whether accepting a declaration needs one approver or two: one. The record can already hold
+several approvals of a declaration version, so requiring a second is a change the ledger
+supports whenever it is wanted; but a corpus this small is moved by a single reader's ruling,
+and demanding a quorum now would delay rulings without making them any better founded. The
+question is worth reopening when two independent readings become the norm — the agreement
+measure above depends on there being two — rather than before there is a second reader to
+require.
+
+Whether adjudication verdicts are shown on the site or only their counts: counts and the
+corrected values, with a link to the verdict file. The verdict file is committed, so the
+verdicts are already public in the repository, and withholding them on the site while shipping
+them in git would be a distinction without a difference. The site shows how many claims and
+edges a reader considered and what they corrected, and links the file that records each
+decision, so a reader who wants the individual verdicts follows the link rather than reads a
+count standing in for them.

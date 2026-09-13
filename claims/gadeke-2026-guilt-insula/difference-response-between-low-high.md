@@ -1,5 +1,5 @@
 ---
-uuid: 25a91132-88d8-461c-82bf-d857cc4c9e72
+uuid: 62ebe5fc-9d62-4ad9-9846-e90a024f9f26
 slug: difference-response-between-low-high
 doi: null
 claim: The difference in response between low and high lottery outcomes was greater in the Social than
@@ -8,8 +8,12 @@ claim: The difference in response between low and high lottery outcomes was grea
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: part of insula-rois-responded-more-low; the low-minus-high contrast itself carries no reproduction, control or test in the tree
+warrant_from:
+- part_of
 part-of:
 - insula-rois-responded-more-low
 belongings: []
@@ -25,7 +29,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `part-of` → `insula-rois-responded-more-low`: The larger low-minus-high difference in Social is one measure of the insula guilt result.
+- `part-of` → `insula-rois-responded-more-low`: the low-minus-high difference is one measure of the same insula guilt response
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

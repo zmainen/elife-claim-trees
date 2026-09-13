@@ -29,7 +29,7 @@ _SUPPORTS = {
     "supports": "the source provides evidence for the target",
     "tests": "an empirical result tests the target prediction, closing the loop",
     "validates": "a control whose specific result strengthens the target's warrant",
-    "confirms": "the source confirms the target; reciprocal of predicts",
+    "confirms": "an empirical result confirms the prediction it tested — the positive outcome of a test",
     "predicts": "the source predicts the target, typically model to experiment",
     "extends": "the source extends the target beyond its original conditions",
     "replicates": "an independent finding of the same result as the target",
@@ -37,16 +37,20 @@ _SUPPORTS = {
 
 # A relation that asserts the target is weakened, eliminated, or separated from something.
 #
-# `dissociates-with` sits here uneasily and is held apart by check_relations for that reason:
-# it is used more than the rest of this group combined, and many of its uses sit alongside a
-# supporting relation on the same pair — coherent only if it means "these two come apart"
-# rather than "the target is wrong". Whether it is an opposition at all is the open question.
+# `in-tension-with` sits here as the mild opposition the #125 ruling named when it split the
+# old `dissociates-with`: two claims the paper asserts, both of which stand, that pull a shared
+# implication in opposite directions. It exports under `mira:opposes`, but it is kept out of
+# CONTRARY — a result may support a hypothesis and be in tension with another result — so the
+# support-plus-oppose rule leaves it alone. The neutral contrast it was split from,
+# `dissociates-with`, moved to GAPS: it opposes nothing and belongs under no MIRA predicate.
 _OPPOSES = {
     "contradicts": "the source and target cannot both hold",
     "opposes": "the source stands against the target",
-    "refutes": "the source's evidence is incompatible with the target",
+    "refutes": "an empirical result refutes the prediction it tested — the negative outcome of a test",
     "rules-out": "the source's evidence eliminates the target as an explanation",
-    "dissociates-with": "the source and target jointly establish a dissociation (symmetric)",
+    "in-tension-with": "two claims the paper asserts, both of which stand, that pull a shared "
+                       "implication in opposite directions or cannot be jointly explained "
+                       "without a further claim (symmetric)",
 }
 
 # A relation with no supporting or opposing sense, and — for the MIRA export — no predicate at
@@ -59,6 +63,9 @@ GAPS = {
     "scopes": "a scope constraint governs another claim's validity",
     "requires": "a claim depends on another holding",
     "qualifies": "a claim narrows another's applicability",
+    "dissociates-with": "the source and target jointly establish a dissociation — two claims "
+                        "whose difference across a condition, region, population or measure is "
+                        "itself the finding, neither bearing on the other's truth (symmetric)",
     "part-of": "a component of another claim — one comparison, condition, measure or study "
                "of a proposition the target states whole; the target is weakened but not "
                "falsified by the source alone",
@@ -82,16 +89,17 @@ DIRECTION = {
     "supports": "from the evidence to the claim it is evidence for",
     "tests": "from the empirical result to the prediction it tests",
     "validates": "from the control to the claim whose warrant it strengthens",
-    "confirms": "from the result to the prediction or hypothesis it confirms; the reciprocal of predicts",
+    "confirms": "from the result to the prediction it confirms — the positive outcome of a test, aimed at a prediction only",
     "predicts": "from the model or hypothesis to the observation it predicts",
     "extends": "from the later or broader result to the claim it extends",
     "replicates": "from the independent finding to the claim it reproduces",
     "contradicts": "from either claim to the other; they cannot both hold",
     "opposes": "from the claim that stands against to the one it stands against",
-    "refutes": "from the evidence to the prediction, hypothesis or alternative it is incompatible with",
+    "refutes": "from the result to the prediction it came out against — the negative outcome of a test, aimed at a prediction only",
     "rules-out": "from the control or evidence to the alternative explanation it eliminates — a claim "
                  "the paper entertains or rejects, never one it asserts",
     "dissociates-with": "symmetric: between the two empirical claims that together establish the contrast",
+    "in-tension-with": "symmetric: between two claims the paper asserts whose implications pull against each other",
     "entails": "from the hypothesis to the prediction it deductively implies",
     "derived-from": "from the prediction back to its hypothesis; written mechanically as the reciprocal of entails",
     "interprets": "from the interpretation to the empirical claim it reframes",
@@ -127,6 +135,11 @@ EXAMPLE = {
                   "alt-agency-aversion-not-guilt"),
     "dissociates-with": ("headley-2026-inhibitory-rhythms", "distal-inhib-drops-firing-02hz",
                          "perisomatic-inhib-drops-firing-07hz"),
+    # The Gädeke tension (#125): the neural guilt response matches the published Yu/Koban
+    # signature at the group level, yet individual signature scores do not track individual
+    # behavioural guilt. Both stand; the replication is real and the null bounds what it means.
+    "in-tension-with": ("gadeke-2026-guilt-insula", "dot-products-between-individual-neural",
+                        "individual-grbs-dot-product-values-not"),
     "validates": ("meijer-2025-serotonin-orthogonal", "wt-controls-rule-out-light-artifact",
                   "5ht-stim-dilates-pupil"),
     "predicts": ("meijer-2025-serotonin-orthogonal", "hypothesis-state-switch-by-5ht",
@@ -164,14 +177,39 @@ CONFUSABLE = [
     ("rules-out", "refutes",
      "`rules-out` eliminates an alternative explanation — a claim the paper raises in order to "
      "reject, which has a node of its own with stance `entertains` or `rejects`. `refutes` is "
-     "aimed at one of the paper's own predictions or hypotheses that the evidence came out "
-     "against; a paper refuting its own prediction is the hypothetico-deductive loop closing. "
-     "Never aim `rules-out` at a claim the same paper asserts."),
+     "the negative outcome of a test, aimed at one of the paper's own predictions that the "
+     "evidence came out against; a paper refuting its own prediction is the hypothetico-deductive "
+     "loop closing. When a result bears against a hypothesis, do not aim `refutes` at the "
+     "hypothesis — write the prediction the hypothesis entails and refute that. Never aim "
+     "`rules-out` at a claim the same paper asserts."),
+    ("confirms", "supports",
+     "`confirms` is the outcome of a stated prediction: an empirical result came out the way the "
+     "prediction said it would, and the edge runs from the result to that prediction — its "
+     "negative counterpart is `refutes`. `supports` is evidence for a hypothesis or higher-order "
+     "claim, making it more credible without being the settling of a prediction. A result that "
+     "tests a prediction carries `tests` and then `confirms` or `refutes` it; the same result may "
+     "`supports` the hypothesis that prediction was derived from. Aim `confirms` and `refutes` at "
+     "predictions only — a result that bears on a hypothesis directly takes `supports`."),
     ("dissociates-with", "contradicts",
      "`dissociates-with` joins two results that are both true and *differ*: the contrast between "
      "them is the finding, and neither undermines the other. `contradicts` says two claims cannot "
      "both hold. Two conditions producing different effects is a dissociation, not a "
-     "contradiction."),
+     "contradiction. A dissociation is also not a tension: a contrast is marked by “whereas”, "
+     "“in contrast”, “selectively”, and the two results simply differ; a tension (`in-tension-with`) "
+     "is marked by “although”, “however”, “despite”, “no correlation with”, “at the cost of”, and "
+     "the two results pull a shared implication in opposite directions."),
+    ("in-tension-with", "contradicts",
+     "`contradicts` says two claims cannot both hold. A tension says both do: the paper asserts "
+     "each, and they stand together while pulling a shared implication in opposite directions."),
+    ("in-tension-with", "qualifies",
+     "`qualifies` is directional — one result narrows the applicability of another. A tension has "
+     "no narrower side: neither claim bounds the other, they simply pull against each other. The "
+     "wengert case (a general impairment, and a layer that mostly escapes it) is arguably a "
+     "qualification, and the reading is left to the reader rather than fixed by rule."),
+    ("in-tension-with", "rules-out",
+     "`rules-out` eliminates an alternative the paper raised in order to reject — a claim with "
+     "stance `entertains` or `rejects`. A tension is between two claims the paper *asserts*, both "
+     "of which stand; nothing is being eliminated."),
     ("scopes", "requires",
      "A scope claim bounds what a result can mean and is written from the scope claim *to* the "
      "results it bounds (or to `*`). `requires` is written from the result *to* what it depends "
@@ -201,18 +239,26 @@ CONFUSABLE = [
 # node, and the edge found the nearest claim that does.
 #
 # `refutes` is not in that group, and the distinction is the substance rather than a detail.
-# docs/method.md § 4.3 defines its target as "the prediction, hypothesis, or alternative being
-# refuted": a paper refuting its own prediction is the hypothetico-deductive loop closing, not
-# a mis-aimed edge. Scheller's `self-salience-reduces-perceptual-benefit` refutes that paper's
-# own independence hypothesis, which is what the experiment was for. Grouping `refutes` with
-# `rules-out` reported eight such cases as errors.
+# Under the #28 ruling `refutes` is an outcome aimed at a prediction only: a paper refuting its
+# own prediction is the hypothetico-deductive loop closing, not opposing a claim it asserts, so
+# it stays out of CONTRARY. A `refutes` (or `confirms`) that lands on a hypothesis is the
+# shortcut the ruling retires — the fix is to write the prediction the hypothesis entails and
+# aim the outcome there — and `check_relations.py` flags it as "outcome aimed at a hypothesis"
+# rather than this set doing so. Grouping `refutes` with `rules-out` reported the loop-closing
+# cases as errors.
 #
-# `dissociates-with` is excluded for a different reason: whether it opposes anything at all is
-# the open question, and a checker that assumed it does would report it as an error 65 times
-# and close issue #19 by attrition.
+# `in-tension-with` and `dissociates-with` are both excluded, which the #125 ruling settles:
+# a tension holds between two claims the paper *asserts*, so it could never target a claim it
+# does not; and a dissociation is a neutral contrast that eliminates nothing. Neither is a move
+# that says the target is false, so neither belongs here.
 CONTRARY = {"contradicts", "opposes", "rules-out"}
 REFUTES_OWN = {"refutes"}
-DISTINGUISHES = {"dissociates-with"}
+
+# The outcome relations: how a test came out, aimed at a prediction only (issue #28). `confirms`
+# is the positive outcome, `refutes` the negative; `tests` is the neutral edge whose verdict
+# they record. Declared here so the checker and the prediction-outcome layer read one set.
+OUTCOME = {"confirms", "refutes"}
+NEUTRAL_TEST = {"tests"}
 
 # What a paper may do with a proposition, per docs/claim-format.md § 2.
 STANCES = {"asserts", "entertains", "rejects", "attributes"}

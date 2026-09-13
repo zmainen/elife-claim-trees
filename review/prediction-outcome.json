@@ -1,28 +1,26 @@
 {
   "layer": "prediction-outcome",
-  "rule_version": 2,
+  "rule_version": 3,
   "papers": 12,
   "predictions": 47,
   "buckets": {
-    "recorded": 8,
-    "unrecorded": 28,
-    "untested": 5,
-    "abstain:conjunction": 1,
-    "abstain:convention": 5
+    "recorded": 23,
+    "unrecorded": 23,
+    "untested": 0,
+    "abstain:conjunction": 1
   },
   "bucket_notes": {
-    "recorded": "The graph says how the test came out. A `confirms` edge points at the prediction from the result that settled it.",
+    "recorded": "The graph says how the test came out. An outcome edge -- `confirms` or `refutes` -- points at the prediction from the result that settled it.",
     "unrecorded": "A result is wired to the prediction with `tests`, which is neutral, and nothing records the outcome. The paper asserts the result, so a reader would infer the prediction was met -- but that inference is the reader's, not the graph's.",
     "untested": "Nothing points at this prediction at all. It was derived from a hypothesis and then left unconnected to any result.",
-    "abstain:conjunction": "The prediction states more commitments than it has edges -- \"should show (i)... (ii)... (iii)...\" with fewer results wired than parts. One verdict cannot be right about all of them, so the rule declines rather than picking the majority.",
-    "abstain:convention": "`confirms` without `tests`. Two conventions for wiring outcomes are in use across this corpus, and this prediction follows the one that omits the neutral edge. Which is correct is the question this layer asks, so the rule must not assume an answer."
+    "abstain:conjunction": "The prediction states more commitments than it has edges -- \"should show (i)... (ii)... (iii)...\" with fewer results wired than parts. One verdict cannot be right about all of them, so the rule declines rather than picking the majority."
   },
   "conventions": {
     "bouyeure-2026-fear-rsa": {
       "tests only": 5
     },
     "gadeke-2026-guilt-insula": {
-      "tests only": 5
+      "tests+outcome": 5
     },
     "headley-2026-inhibitory-rhythms": {
       "tests only": 6
@@ -34,12 +32,10 @@
       "tests only": 2
     },
     "meijer-2025-serotonin-additive-r1": {
-      "neither": 3,
-      "confirms only": 3
+      "outcome only": 6
     },
     "meijer-2025-serotonin-orthogonal": {
-      "neither": 2,
-      "confirms only": 2
+      "outcome only": 4
     },
     "rozak-2026-neurovascular-dl": {
       "tests only": 2
@@ -48,7 +44,7 @@
       "tests only": 4
     },
     "wengert-2026-kcnc1": {
-      "tests+confirms": 9
+      "tests+outcome": 9
     }
   },
   "items": [
@@ -61,6 +57,7 @@
         "context-specificity-increases-reversal"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -72,6 +69,7 @@
         "generalized-pattern-cs-minus-plus-reversal"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -83,6 +81,7 @@
         "cue-generalization-increases-acquisition"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -94,6 +93,7 @@
         "item-stability-precuneus-pfc-reversal"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -105,65 +105,81 @@
         "pfc-context-specificity-predicts-renewal"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
       "paper": "gadeke-2026-guilt-insula",
       "prediction": "anterior-insula-tracks-guilt-insula",
-      "bucket": "unrecorded",
+      "bucket": "recorded",
       "claim": "If the anterior insula tracks guilt, then insula BOLD should be higher in the Social than the Partner condition and show a significant Social-by-low-outcome interaction.",
       "tests": [
         "insula-rois-responded-more-low",
         "mass-univariate-voxel-wise-analysis-found-small"
       ],
-      "confirms": [],
+      "confirms": [
+        "insula-rois-responded-more-low",
+        "mass-univariate-voxel-wise-analysis-found-small"
+      ],
+      "refutes": [],
       "conjuncts": []
     },
     {
       "paper": "gadeke-2026-guilt-insula",
       "prediction": "connectivity-between-guilt-responsibility-related-outcome-ph",
-      "bucket": "unrecorded",
+      "bucket": "recorded",
       "claim": "If connectivity between the guilt- and responsibility-related outcome-phase regions (left insula, left STS) and prefrontal cortex depends on whether participants decide for themselves alone or also for their partner and on the type of choice, then a seed-to-voxel psychophysiological-interaction analysis seeded in these regions should reveal prefrontal clusters showing a significant Condition-by-Choice interaction.",
       "tests": [
-        "functional-connectivity-between-left-anterior",
-        "left-ifg-cluster-showed-opposite",
-        "left-ifg-insula-connectivity-subthreshold"
+        "functional-connectivity-between-left-anterior"
       ],
-      "confirms": [],
+      "confirms": [
+        "functional-connectivity-between-left-anterior"
+      ],
+      "refutes": [],
       "conjuncts": []
     },
     {
       "paper": "gadeke-2026-guilt-insula",
       "prediction": "neural-substrate-tracks-participant-responsibility-2",
-      "bucket": "unrecorded",
+      "bucket": "recorded",
       "claim": "If a neural substrate tracks the participant's responsibility for the partner's outcomes, then within regions sensitive to the outcomes of risky choices, BOLD should respond more strongly to the partner's reward prediction errors resulting from the participant's own choices than from the partner's choices.",
       "tests": [
         "one-cluster-left-sts-responded"
       ],
-      "confirms": [],
+      "confirms": [
+        "one-cluster-left-sts-responded"
+      ],
+      "refutes": [],
       "conjuncts": []
     },
     {
       "paper": "gadeke-2026-guilt-insula",
       "prediction": "responsibility-outcomes-generates-guilt-participant",
-      "bucket": "unrecorded",
+      "bucket": "recorded",
       "claim": "If responsibility for outcomes generates guilt, then participant happiness should decrease more after low lottery outcomes for the partner when the participant rather than the partner chose the lottery.",
       "tests": [
         "when-partner-received-low-lottery"
       ],
-      "confirms": [],
+      "confirms": [
+        "when-partner-received-low-lottery"
+      ],
+      "refutes": [],
       "conjuncts": []
     },
     {
       "paper": "gadeke-2026-guilt-insula",
       "prediction": "responsibility-partner-outcomes-influences-participant",
-      "bucket": "unrecorded",
+      "bucket": "recorded",
       "claim": "If responsibility for the partner's outcomes influences the participant's momentary happiness, then a computational model that includes the partner's reward prediction errors arising from the participant's own choices (social_pRPE) should explain the happiness data better than models omitting them, and social_pRPE weights should be reliably greater than zero.",
       "tests": [
         "likelihood-ratio-test-showed-responsibility",
         "partner-reward-prediction-errors-resulting"
       ],
-      "confirms": [],
+      "confirms": [
+        "likelihood-ratio-test-showed-responsibility",
+        "partner-reward-prediction-errors-resulting"
+      ],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -175,6 +191,7 @@
         "beta-optimal-distal-dendritic-entrainment"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -186,6 +203,7 @@
         "distal-inhib-drops-firing-02hz"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -197,6 +215,7 @@
         "gamma-optimal-perisomatic-ap-modulation"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -209,6 +228,7 @@
         "gamma-gates-proximal-basal-inputs"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -220,6 +240,7 @@
         "perisomatic-inhib-subtractive-divisive"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -232,6 +253,7 @@
         "perisomatic-inhib-drops-firing-07hz"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -243,6 +265,7 @@
         "cross-decoding-experimental-to-control"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -254,6 +277,7 @@
         "lo-shows-reversed-specificity"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -265,6 +289,7 @@
         "u-shaped-eccentricity-rejects-spillover"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -277,6 +302,7 @@
         "v2-v3-generalize-shape-not-category"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -290,6 +316,7 @@
         "igabasnfr2-single-bouton-hippocampus"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": [
         "i",
         "ii",
@@ -308,6 +335,7 @@
         "mutagenesis-3947-variants-screened"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": [
         "i",
         "ii",
@@ -317,101 +345,121 @@
     {
       "paper": "meijer-2025-serotonin-additive-r1",
       "prediction": "prediction-5ht-accelerates-prior-update",
-      "bucket": "untested",
+      "bucket": "recorded",
       "claim": "If phasic 5-HT release functions as a surprise / belief-updating signal, then stimulation during the period after a prior-probability block switch should accelerate the rate at which the mouse updates its choice bias toward the new dominant side.",
       "tests": [],
       "confirms": [],
-      "conjuncts": []
-    },
-    {
-      "paper": "meijer-2025-serotonin-additive-r1",
-      "prediction": "prediction-5ht-axis-orthogonal-to-choice",
-      "bucket": "abstain:convention",
-      "claim": "If brain-wide 5-HT modulation is structurally separable from the choice computation (under additive modulation), then in a low-dimensional projection of the population response (here, the first three principal components), the vector that separates 5-HT-stimulated from unstimulated trials should be near-orthogonal to the vector that separates left-choice from right-choice trials, with orthogonality measured as 1 - |dot product| of unit-normalized direction vectors.",
-      "tests": [],
-      "confirms": [
-        "5ht-axis-orthogonal-to-choice-axis"
+      "refutes": [
+        "5ht-stim-leaves-decision-behavior-intact"
       ],
       "conjuncts": []
     },
     {
       "paper": "meijer-2025-serotonin-additive-r1",
+      "prediction": "prediction-5ht-axis-orthogonal-to-choice",
+      "bucket": "recorded",
+      "claim": "If brain-wide 5-HT modulation is structurally separable from the choice computation (under additive modulation), then in a low-dimensional projection of the population response (here, the first three principal components), the vector that separates 5-HT-stimulated from unstimulated trials should be near-orthogonal to the vector that separates left-choice from right-choice trials, with orthogonality measured as 1 - |dot product| of unit-normalized direction vectors.",
+      "tests": [],
+      "confirms": [
+        "5ht-axis-orthogonal-to-choice-axis"
+      ],
+      "refutes": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-additive-r1",
       "prediction": "prediction-5ht-shifts-psychometric",
-      "bucket": "untested",
+      "bucket": "recorded",
       "claim": "If phasic 5-HT release alters how the animal weighs sensory evidence against prior expectation, or alters motivation, attention, or visual sensitivity, then 5-HT stimulation should produce detectable changes in psychometric slope, lapse rate, bias, reaction time, or any of the predictor weights of a probabilistic choice model fitting visual evidence, prior, and past choice with separate stimulated/unstimulated coefficients.",
       "tests": [],
       "confirms": [],
+      "refutes": [
+        "5ht-stim-leaves-decision-behavior-intact"
+      ],
       "conjuncts": []
     },
     {
       "paper": "meijer-2025-serotonin-additive-r1",
       "prediction": "prediction-multiplicative-gain-yields-significant-interaction",
-      "bucket": "untested",
+      "bucket": "recorded",
       "claim": "If serotonergic modulation acted via multiplicative gain modulation — that is, scaling the choice-related component of neural activity rather than shifting it additively — then a per-neuron GLM with choice, stimulation, and choice × stimulation predictors should yield a significantly non-zero interaction coefficient, because under multiplicative scaling the size of the stimulation effect on a neuron depends on the magnitude of its choice-related drive.",
       "tests": [],
       "confirms": [],
-      "conjuncts": []
-    },
-    {
-      "paper": "meijer-2025-serotonin-additive-r1",
-      "prediction": "prediction-near-zero-choice-stim-interaction",
-      "bucket": "abstain:convention",
-      "claim": "If serotonergic modulation combines additively with choice-related activity, then a generalized linear model fitted to per-neuron trial-by-trial spike counts with separate predictors for choice (left/right), 5-HT stimulation (on/off), and their interaction (choice × stimulation) should yield a near-zero interaction coefficient when averaged across animals and tested against zero with a one-sample t-test.",
-      "tests": [],
-      "confirms": [
+      "refutes": [
         "near-zero-choice-by-stim-interaction"
       ],
       "conjuncts": []
     },
     {
       "paper": "meijer-2025-serotonin-additive-r1",
+      "prediction": "prediction-near-zero-choice-stim-interaction",
+      "bucket": "recorded",
+      "claim": "If serotonergic modulation combines additively with choice-related activity, then a generalized linear model fitted to per-neuron trial-by-trial spike counts with separate predictors for choice (left/right), 5-HT stimulation (on/off), and their interaction (choice × stimulation) should yield a near-zero interaction coefficient when averaged across animals and tested against zero with a one-sample t-test.",
+      "tests": [],
+      "confirms": [
+        "near-zero-choice-by-stim-interaction"
+      ],
+      "refutes": [],
+      "conjuncts": []
+    },
+    {
+      "paper": "meijer-2025-serotonin-additive-r1",
       "prediction": "prediction-orthogonality-grows-toward-choice",
-      "bucket": "abstain:convention",
+      "bucket": "recorded",
       "claim": "If 5-HT modulation occupies a subspace orthogonal to the choice readout dimensions, then the orthogonality measure between the 5-HT effect axis and the choice axis should increase over the pre-choice timecourse — as the choice axis emerges and stabilizes approaching the choice moment, the 5-HT axis should remain in the orthogonal complement rather than aligning with it.",
       "tests": [],
       "confirms": [
         "5ht-axis-orthogonal-to-choice-axis"
       ],
+      "refutes": [],
       "conjuncts": []
     },
     {
       "paper": "meijer-2025-serotonin-orthogonal",
       "prediction": "prediction-5ht-accelerates-prior-update",
-      "bucket": "untested",
+      "bucket": "recorded",
       "claim": "If 5-HT signals surprise and supports cognitive flexibility, then optogenetic 5-HT stimulation across blocks of trials should accelerate the rate at which the animal updates its choice bias after a prior-probability block switch — for example, after the prior switches from 80% left to 80% right, 5-HT-stimulated mice should reach the new rightward bias in fewer trials than unstimulated mice.",
       "tests": [],
       "confirms": [],
+      "refutes": [
+        "5ht-stim-leaves-decision-behavior-intact"
+      ],
       "conjuncts": []
     },
     {
       "paper": "meijer-2025-serotonin-orthogonal",
       "prediction": "prediction-5ht-axis-orthogonal-to-choice",
-      "bucket": "abstain:convention",
+      "bucket": "recorded",
       "claim": "If brain-wide 5-HT modulation is structurally separable from the choice computation, then in a low-dimensional projection of the population response (here, the first three principal components), the vector that separates 5-HT-stimulated from unstimulated trials should be near-orthogonal to the vector that separates left-choice from right-choice trials, with orthogonality measured as 1 - |dot product| of unit-normalized direction vectors.",
       "tests": [],
       "confirms": [
         "5ht-axis-orthogonal-to-choice-axis"
       ],
+      "refutes": [],
       "conjuncts": []
     },
     {
       "paper": "meijer-2025-serotonin-orthogonal",
       "prediction": "prediction-5ht-shifts-psychometric",
-      "bucket": "untested",
+      "bucket": "recorded",
       "claim": "If 5-HT functions as a surprise / belief-updating signal that scales prior dependence or motivation, then optogenetic 5-HT stimulation during the steering-wheel task should produce measurable shifts in at least one of: psychometric slope (visual acuity), bias (prior influence), lapse rate (motivation), percent-correct, reaction time, or in the weight assigned to the visual-evidence / prior / past-choice predictors of a probabilistic choice model.",
       "tests": [],
       "confirms": [],
+      "refutes": [
+        "5ht-stim-leaves-decision-behavior-intact"
+      ],
       "conjuncts": []
     },
     {
       "paper": "meijer-2025-serotonin-orthogonal",
       "prediction": "prediction-orthogonality-grows-toward-choice",
-      "bucket": "abstain:convention",
+      "bucket": "recorded",
       "claim": "If the 5-HT modulation specifically avoids the choice readout dimension as that dimension becomes informative, then the orthogonality between the 5-HT axis and the choice axis should not be constant — it should grow over the trial timecourse, becoming maximal in the hundreds of milliseconds leading up to the choice moment, when the choice axis has separated maximally and the readout demand is greatest.",
       "tests": [],
       "confirms": [
         "5ht-axis-orthogonal-to-choice-axis"
       ],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -426,6 +474,7 @@
         "unetr-outperforms-ilastik-hd95"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": [
         "a",
         "b",
@@ -449,6 +498,7 @@
         "wt-controls-no-blue-green-difference"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": [
         "a",
         "b",
@@ -465,6 +515,7 @@
         "self-social-additive-perceptual"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -476,6 +527,7 @@
         "tva-capacity-model-wins"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -488,6 +540,7 @@
         "self-prioritization-absent-social-decision"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -499,6 +552,7 @@
         "self-prioritization-perceptual-decision-automatic"
       ],
       "confirms": [],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -512,6 +566,7 @@
       "confirms": [
         "a421v-spatial-learning-working-memory-impaired"
       ],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -527,6 +582,7 @@
         "excitatory-neurons-unaffected-adult",
         "excitatory-neurons-unaffected-juvenile"
       ],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -542,6 +598,7 @@
         "layer-v-pv-ins-subtle-impairment",
         "rtn-neurons-impaired-excitability"
       ],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -555,6 +612,7 @@
       "confirms": [
         "a421v-kv31-membrane-trafficking-impaired"
       ],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -570,6 +628,7 @@
         "in-vivo-hypersynchronous-discharges-mutant-only",
         "in-vivo-pv-minus-transient-frequency-increased"
       ],
+      "refutes": [],
       "conjuncts": [
         "i",
         "ii"
@@ -588,6 +647,7 @@
         "inhibitory-dysfunction-progresses-to-adulthood",
         "pv-in-inhibitory-synapse-altered-adult"
       ],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -603,6 +663,7 @@
         "pv-in-ap-waveform-altered-downstroke-apd50",
         "pv-ins-impaired-maximal-firing"
       ],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -616,6 +677,7 @@
       "confirms": [
         "pv-ins-reduced-k-current-density"
       ],
+      "refutes": [],
       "conjuncts": []
     },
     {
@@ -630,6 +692,7 @@
         "a421v-mice-die-before-122d",
         "spontaneous-seizures-and-sudep-kcnc1"
       ],
+      "refutes": [],
       "conjuncts": [
         "i",
         "ii",

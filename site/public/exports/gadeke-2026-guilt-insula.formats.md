@@ -1,62 +1,70 @@
 # gadeke-2026-guilt-insula — what each format carries
 
-71 claims, 90 typed relations between them.
+68 claims, 71 typed relations between them.
 
 One source, three targets. Each row is a relation type the paper's claim tree uses; each column is what became of it.
 
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
-| `part-of` | 16 | `haak:part-of`, neutral | kept | dropped |
-| `supports` | 16 | `haak:supports`, under `mira:supports` | kept | kept |
-| `requires` | 10 | `haak:requires`, neutral | kept | dropped |
-| `scopes` | 9 | `haak:scopes`, neutral | kept | dropped |
-| `tests` | 9 | `haak:tests`, neutral | kept | kept |
+| `supports` | 17 | `haak:supports`, under `mira:supports` | kept | kept |
+| `confirms` | 7 | `haak:confirms`, under `mira:supports` | kept | kept |
+| `tests` | 7 | `haak:tests`, neutral | kept | kept |
 | `rules-out` | 6 | `haak:rules-out`, under `mira:opposes` | kept | kept |
+| `validates` | 6 | `haak:validates`, under `mira:supports` | kept | kept |
 | `entails` | 5 | `haak:entails`, neutral | kept | dropped |
 | `derived-from` | 5 | — | kept | dropped |
 | `interprets` | 4 | `haak:interprets`, neutral | kept | dropped |
-| `validates` | 4 | `haak:validates`, under `mira:supports` | kept | kept |
+| `requires` | 4 | `haak:requires`, neutral | kept | dropped |
+| `scopes` | 3 | `haak:scopes`, neutral | kept | dropped |
 | `enables-method` | 3 | `haak:enables-method`, neutral | kept | dropped |
-| `qualifies` | 2 | `haak:qualifies`, neutral | kept | dropped |
-| `dissociates-with` | 1 | `haak:dissociates-with`, under `mira:opposes` | kept | kept |
+| `part-of` | 2 | `haak:part-of`, neutral | kept | dropped |
+| `in-tension-with` | 1 | `haak:in-tension-with`, under `mira:opposes` | kept | kept |
+| `dissociates-with` | 1 | `haak:dissociates-with`, neutral | kept | dropped |
 
 ## What MIRA has no predicate for — and what happens instead
 
-**58 of 90 relations (64%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
+**29 of 71 relations (41%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
-- `haak:part-of` (16) — a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone
-- `haak:requires` (10) — a claim depends on another holding
-- `haak:scopes` (9) — a scope constraint governs another claim's validity
 - `haak:entails` (5) — a hypothesis entails its prediction — the deductive step
 - `haak:derived-from` (5) — a prediction derived from its hypothesis (inverse of entails)
 - `haak:interprets` (4) — one claim interprets another
+- `haak:requires` (4) — a claim depends on another holding
+- `haak:scopes` (3) — a scope constraint governs another claim's validity
 - `haak:enables-method` (3) — a result makes a downstream method possible
-- `haak:qualifies` (2) — a claim narrows another's applicability
+- `haak:part-of` (2) — a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone
+- `haak:dissociates-with` (1) — the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric)
 
 Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.
 
 ## What a reader who knows only core MIRA sees
 
-Every relation keeps its own type — nothing is flattened into `supports`. 27 of the 85 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
+Every relation keeps its own type — nothing is flattened into `supports`. 37 of the 66 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
-- `part-of` (16) — neutral
-- `supports` (16) — under `mira:supports`
-- `requires` (10) — neutral
-- `scopes` (9) — neutral
-- `tests` (9) — neutral
+- `supports` (17) — under `mira:supports`
+- `confirms` (7) — under `mira:supports`
+- `tests` (7) — neutral
 - `rules-out` (6) — under `mira:opposes`
+- `validates` (6) — under `mira:supports`
 - `entails` (5) — neutral
 - `interprets` (4) — neutral
-- `validates` (4) — under `mira:supports`
+- `requires` (4) — neutral
+- `scopes` (3) — neutral
 - `enables-method` (3) — neutral
-- `qualifies` (2) — neutral
-- `dissociates-with` (1) — under `mira:opposes`
+- `part-of` (2) — neutral
+- `in-tension-with` (1) — under `mira:opposes`
+- `dissociates-with` (1) — neutral
 
 ## What MIRA genuinely cannot carry
 
 5 `derived-from` relations are not emitted as edges. This is not loss: `derived-from` is declared `owl:inverseOf` `entails`, and MIRA never materialises the reverse direction — its own 942-node demo graph emits no inverse edges either. A reader recovers each one from the forward edge and the declaration.
 
 Beyond those, nothing. Every relation in this paper reaches the export, either as an edge or as the declared inverse of one.
+
+## What OXA maps only approximately
+
+**OXA drops `dissociates-with` (1).** It is a neutral, symmetric contrast, and CiTO offers no predicate for one. `cito:disagreesWith`, which it carried until the #125 ruling, misstated it as disagreement, so it is omitted rather than mismapped.
+**`in-tension-with` (1) maps to `claimrel:contradicts`** — the nearest oppositional predicate. It overstates: a tension holds between two claims the paper asserts, both of which stand.
+
 
 ## What no format carries
 

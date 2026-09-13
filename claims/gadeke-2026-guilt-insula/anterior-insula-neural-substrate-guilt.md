@@ -1,15 +1,19 @@
 ---
-uuid: 68dd6cb8-d201-428b-85db-9341dbf71708
+uuid: c80839ec-9b4b-4b6a-aae9-f24c99024a6b
 slug: anterior-insula-neural-substrate-guilt
 doi: null
 claim: The anterior insula is the neural substrate of the guilt effect, increasing its BOLD response when
   participants are responsible for low outcomes affecting their partner.
 claim-type: hypothesis
 role: hypothesis
-addresses: q2
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: hypothesis
+warrant: strong
+warrant_why: its prediction anterior-insula-tracks-guilt-insula is confirmed, supported by the verified insula-rois-responded-more-low result and by prior-literature-documents-association-between
+warrant_from:
+- predictions
+- supported_by
 entails:
 - anterior-insula-tracks-guilt-insula
 belongings: []
@@ -25,7 +29,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `entails` → `anterior-insula-tracks-guilt-insula`: If the insula is the substrate of the guilt effect, its BOLD must be higher in Social and show a Social-by-low-outcome interaction (evidence at span results-086).
+- `entails` → `anterior-insula-tracks-guilt-insula`: the insula-as-guilt-substrate hypothesis implies insula BOLD is higher Social>Partner with a Social:LowOutcome interaction (results-124)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

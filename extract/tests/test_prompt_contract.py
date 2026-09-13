@@ -42,6 +42,7 @@ LAYER_OF = {
     "questions": "questions",
     "parts": "parts",
     "stance": "stance",
+    "warrant": "warrant",
     "summaries": "summaries",
     "synthesis": "synthesis",
     "abstract-map": "abstract-map",
@@ -142,6 +143,17 @@ def test_what_is_not_a_claim_is_rendered_with_methodological_warrants():
     for paper, slug in vocabulary.WARRANTS:
         c = contract._claim(REPO, paper, slug)
         assert c["role"] == "methodological", f"{paper}/{slug} is {c['role']}, shown as a warrant"
+
+
+def test_warrant_layer_reads_the_vocabulary_that_defines_the_roles():
+    """The warrant layer is sent its task and the vocabulary — where the roles it reasons over
+    are defined — and the declaration lists exactly that, so the run hashes what the reading is
+    composed from. The dossier the model reads over is built by the runner, not a prompt file."""
+    reads = prompts.declared_reads("warrant")
+    assert reads == ["extract/prompts/warrant.md",
+                     f"extract/prompts/{contract.CONTRACT_DIR}/vocabulary.md"]
+    decl = _declaration()
+    assert [r for r in decl["warrant"]["reads"] if r.startswith("extract/prompts/")] == reads
 
 
 def test_parts_layer_reads_the_vocabulary_that_defines_composition():

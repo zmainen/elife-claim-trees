@@ -1,5 +1,5 @@
 ---
-uuid: ba8c6ab1-a835-422f-937b-65a71ea39b04
+uuid: 599086f5-bff1-4448-b108-6ae5f0f1aebd
 slug: behavioural-guilt-effect-larger-happiness
 doi: null
 claim: The behavioural guilt effect (larger happiness decrease after low partner outcomes following participant
@@ -7,8 +7,12 @@ claim: The behavioural guilt effect (larger happiness decrease after low partner
 claim-type: interpretive
 role: interpretation
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: interprets when-partner-received-low-lottery (verified), but reads the effect as compatible with 'simple guilt' — an interpretation, not a test
+warrant_from:
+- interprets
 interprets:
 - when-partner-received-low-lottery
 belongings: []
@@ -22,7 +26,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `interprets` → `when-partner-received-low-lottery`: The 'simple guilt' reading reframes the behavioural guilt effect (evidence at span results-080).
+- `interprets` → `when-partner-received-low-lottery`: 'simple guilt' is the interpretive reading of the behavioural guilt interaction (results-080)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

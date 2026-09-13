@@ -31,10 +31,13 @@ Four conventions matter and are not obvious:
    rule is dropped with a logged reason, never silently kept.
 
 3. **Deduction is reciprocal.** A hypothesis carries `entails:` to its
-   prediction and the prediction carries `derived-from:` back; a hypothesis or
-   result `predicts` an observation and the observation `confirms` it. The model
-   is asked for one direction and forbidden the other; we synthesise it, because
+   prediction and the prediction carries `derived-from:` back. The model is
+   asked for `entails` and forbidden `derived-from`; we synthesise it, because
    the site's hierarchical numbering (H1, H1.P1, H1.P1.E1) walks `derived-from`.
+   The outcome of a test is not reciprocal: under the #28 ruling a `tests` edge
+   from a result to a prediction is stated beside a `confirms` or `refutes` from
+   the same result to that prediction, and the reader emits the outcome directly
+   rather than it being derived from a `predicts`.
 
 4. **Where an edge is stored depends on its type.** The site's build step
    (`site/scripts/build-data.js`) reads `requires` and `supports` from the
@@ -84,17 +87,31 @@ CONTRARY = set(_REL.CONTRARY)
 # top-level list key. See module docstring.
 BELONGINGS_RELATIONS = {"requires", "supports"}
 
+# Symmetric relations: the same unordered pair written both ways is one edge, not two. Both
+# are declared symmetric in `relations.py` — `dissociates-with` a neutral contrast,
+# `in-tension-with` the tension the #125 ruling split from it.
+SYMMETRIC = {"dissociates-with", "in-tension-with"}
+
 # Deduction is recorded from both ends. The model is asked for the left key and forbidden the
-# right one, which we write mechanically as its reciprocal.
-RECIPROCAL = {"entails": "derived-from", "predicts": "confirms"}
-NEVER_EMITTED = set(RECIPROCAL.values())          # {"derived-from", "confirms"}
+# right one, which we write mechanically as its reciprocal. `confirms` used to be synthesised
+# here as the reciprocal of `predicts`; under the #28 ruling it is an outcome the reader states
+# directly beside a `tests` edge (aimed at a prediction), so it is emitted, not synthesised.
+RECIPROCAL = {"entails": "derived-from"}
+NEVER_EMITTED = set(RECIPROCAL.values())          # {"derived-from"}
 
 # The role a relation's source must have, where the direction rule fixes it. `rules-out` runs
 # from the control or evidence that eliminates a rival, so its source is a control or an
 # empirical claim — the `stance` layer aims one from a named control at the alternative it kills,
 # and a rules-out from anything else is dropped the way a mis-directed `tests` is.
+# The outcome relations run from the result that settled a test to the prediction it tested, so
+# their source is a control or an empirical claim, exactly like `tests`, and their target is a
+# prediction (checked below beside `tests`).
 _SOURCE_ROLE = {"entails": {"hypothesis"}, "scopes": {"scope"}, "tests": {"empirical", "control"},
-                "rules-out": {"empirical", "control"}}
+                "rules-out": {"empirical", "control"}, "confirms": {"empirical", "control"},
+                "refutes": {"empirical", "control"}}
+
+# The relations whose target must be a prediction: the neutral test and its two outcomes.
+_PREDICTION_TARGET = {"tests", "confirms", "refutes"}
 
 
 # The prompt is a file, not a string, so that a committed run can record which version of
@@ -358,6 +375,28 @@ def edges_from_raw(raw: str, claims: list, slugs: list[str], *,
     return _validate_edges(parsed, claims, slugs, source=source)
 
 
+def unsupported_from_raw(raw: str, slugs: list[str]) -> list[dict]:
+    """The unsupported parts of the argument the reader surfaced (#125), validated to real slugs.
+
+    The edge answer carries no free-text field, so a reader that finds a hypothesis with no
+    tested prediction, a prediction with no test, or an empirical claim resting on nothing marks
+    each in its own object among the edge lines: `{"unsupported": <slug or number>, "reason": …}`.
+    Each names a claim in this paper; an unresolvable one is dropped, as an edge would be.
+    """
+    parsed = _parse_edges(raw) or []
+    out: list[dict] = []
+    seen: set[str] = set()
+    for obj in parsed:
+        if not isinstance(obj, dict) or obj.get("unsupported") is None:
+            continue
+        slug = _resolve(obj.get("unsupported"), slugs)
+        reason = " ".join(str(obj.get("reason") or obj.get("why") or "").split())
+        if slug and slug not in seen:
+            seen.add(slug)
+            out.append({"slug": slug, "reason": reason})
+    return out
+
+
 def infer_edges(draft: DraftClaimTable, slugs: list[str], cfg: Config, *,
                 per_arc: bool = False) -> tuple[list[dict], dict]:
     """Ask the configured backend for typed relations between the claims.
@@ -407,7 +446,7 @@ def _validate_edges(parsed: list, claims: list, slugs: list[str], *, source: str
     edges: list[dict] = []
     seen: set[tuple[str, str, str]] = set()
     part_whole: dict[str, str] = {}                 # part slug → its whole, for cycle detection
-    dissociate_pairs: set[frozenset] = set()        # symmetric: one edge per unordered pair
+    symmetric_pairs: set[tuple[str, frozenset]] = set()   # (relation, unordered pair): one edge each
     rejected: dict[str, int] = {}
 
     def reject(reason: str) -> None:
@@ -441,8 +480,8 @@ def _validate_edges(parsed: list, claims: list, slugs: list[str], *, source: str
         if need and role_of.get(src) not in need:
             reject(f"{rel} source must be {'/'.join(sorted(need))}, not {role_of.get(src)}")
             continue
-        if rel == "tests" and role_of.get(tgt) != "prediction":
-            reject(f"tests target must be a prediction, not {role_of.get(tgt)}")
+        if rel in _PREDICTION_TARGET and role_of.get(tgt) != "prediction":
+            reject(f"{rel} target must be a prediction, not {role_of.get(tgt)}")
             continue
         if rel in CONTRARY and stance_of.get(tgt) == "asserts":
             reject(f"{rel} cannot target a claim the paper asserts")
@@ -465,12 +504,12 @@ def _validate_edges(parsed: list, claims: list, slugs: list[str], *, source: str
                 continue
             part_whole[src] = tgt
 
-        if rel == "dissociates-with":
-            pair = frozenset((src, tgt))
-            if pair in dissociate_pairs:
-                reject("dissociates-with: symmetric, already recorded for this pair")
+        if rel in SYMMETRIC:
+            key_sym = (rel, frozenset((src, tgt)))
+            if key_sym in symmetric_pairs:
+                reject(f"{rel}: symmetric, already recorded for this pair")
                 continue
-            dissociate_pairs.add(pair)
+            symmetric_pairs.add(key_sym)
 
         key = (src, tgt, rel)
         if key in seen:

@@ -1,5 +1,5 @@
 ---
-uuid: 86ccf2d0-0182-4d14-a72d-183c27d73310
+uuid: 5e3c9187-cbb5-4918-83a1-d4d6dea23597
 slug: participants-probability-choosing-risky-option
 doi: null
 claim: 'Participants'' probability of choosing the risky option (lottery) increased with the difference
@@ -8,8 +8,14 @@ claim: 'Participants'' probability of choosing the risky option (lottery) increa
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the value-sensitivity effect (beta>0, p<<0.05)
+warrant_from:
+- rules_out
+- reproductions
+- verification
 rules-out:
 - alt-participants-insensitive-to-value
 belongings: []

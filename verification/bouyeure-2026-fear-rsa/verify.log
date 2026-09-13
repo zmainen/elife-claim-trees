@@ -1,27 +1,31 @@
-======================================================================
-Bouyeure et al. 2026 — Fear RSA — Verification
-======================================================================
+FAST MODE — estimated time: ~4 min
+============================================================
 NIfTI source: NeuroVault collection 23032
 Behavioral source: OSF https://osf.io/download/ngwka/
 
-[data] Downloading CSplus-minus_TFCE_nlog10p.nii.gz ...
-[data] Downloading run2_currentvalencecontrast_TFCE_nlog10p.nii.gz ...
-[data] Downloading run2_previousvalencecontrast_TFCE_nlog10p.nii.gz ...
+[data] CSplus-minus_TFCE_nlog10p.nii.gz already cached
+  cs-plus-univariate-fear-network-acquisition: n_sig=5544, dACC=1075 → PASS (0.0s)
+[data] s1r1__CSplus_s1r1_between_vs__CSminus_s1r1_between_logpmax_size025.nii.gz already cached
+  cue-generalization-increases-acquisition: n_sig=2283, peak_val=2.959 → PASS (0.0s)
+[data] run2_currentvalencecontrast_TFCE_nlog10p.nii.gz already cached
+  current-threat-activates-fear-network-reversal: n_sig=7473 → PASS (0.0s)
+[data] run2_previousvalencecontrast_TFCE_nlog10p.nii.gz already cached
+  prior-threat-activates-fear-network-weakly: n_sig=36, occipital=True → PASS (0.0s)
 [data] Downloading behaviordata_final.csv ...
 [WARN] Download failed: HTTP Error 500: Internal Server Error
+
+============================================================
+SUMMARY
 
 -----------------------------------------------------------+--------------------------+--------------------------------+-------
 CLAIM SLUG                                                 | PAPER VALUE              | REPRODUCED                     | STATUS
 -----------------------------------------------------------+--------------------------+--------------------------------+-------
-cs-plus-univariate-fear-network-acquisition                | dACC/SFG cluster confirmed, >100 total sig voxels | total=5544 voxels, dACC/SFG=1075 voxels, peak=[6.0, 15.0, 39.0] | PASS  
-current-threat-activates-fear-network-reversal             | >1000 sig voxels in fear network | total=7473 voxels, dACC/SFG=1112 voxels, peak=[-9.0, 10.0, 41.5] | PASS  
+cs-plus-univariate-fear-network-acquisition                | dACC/SFG cluster confirmed, >100 total sig voxels | total=5544 voxels, dACC/SFG=1075, peak=[6.0, 15.0, 39.0] | PASS  
+cue-generalization-increases-acquisition                   | 2283 sig voxels, peak -log10(p)=2.959 in dACC/SFG | n_sig=2283, peak=[-11.5, 10.0, 44.0], peak_val=2.959 | PASS  
+current-threat-activates-fear-network-reversal             | >1000 sig voxels in fear network | total=7473 voxels, peak=[-9.0, 10.0, 41.5] | PASS  
 prior-threat-activates-fear-network-weakly                 | ~36 sig voxels, occipital peak NOT fear network (MISMATCH documented) | n_sig=36, peak=[-9.0, -92.5, -6.0] | PASS  
 behavioral-learning-confirms-contingencies                 | CS++ > CS+- > CS-+ > CS--, p<0.0001 | Download failed                | WARN  
 -----------------------------------------------------------+--------------------------+--------------------------------+-------
 
-Summary: 4 claims | 3 PASS | 1 WARN | 0 FAIL
-
 Note: prior-threat claim PASS = documented mismatch reproduced as expected.
-
-All claims PASS or WARN.
-EXIT: 0
+4/5 claims verified (1 WARN, 0 FAIL)

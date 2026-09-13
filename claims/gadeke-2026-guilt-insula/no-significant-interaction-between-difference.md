@@ -1,5 +1,5 @@
 ---
-uuid: 630e2396-70a6-46dc-93cd-5e49a3a8b472
+uuid: 892dad5c-8e04-45e0-842c-22844d606e0b
 slug: no-significant-interaction-between-difference
 doi: null
 claim: There was no significant interaction between the difference in expected values and experimental
@@ -7,8 +7,10 @@ claim: There was no significant interaction between the difference in expected v
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the tree records no reproduction, control or test bearing on this null result
 belongings:
 - relation: supports
   target: participants-showed-very-similar-risk
@@ -24,7 +26,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `supports` → `participants-showed-very-similar-risk`: The absent EVdiff-by-condition interaction supports the similar-risk-preferences synthesis (evidence at span results-007).
+- `supports` → `participants-showed-very-similar-risk`: no EV-difference-by-condition interaction supports similar preferences across conditions
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -1,5 +1,5 @@
 ---
-uuid: 079ebf00-e69a-40ab-863a-03d6a7d34129
+uuid: 8439bd99-f01d-40a9-9b7a-c390ebff1a46
 slug: dot-products-between-individual-neural
 doi: null
 claim: Dot products between individual neural guilt responses and the Yu et al. (2020) guilt-related brain
@@ -8,10 +8,17 @@ claim: Dot products between individual neural guilt responses and the Yu et al. 
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: the convergent-validity sign test is a verified reproduction (sign p=0.008); the partial record is a secondary value
+warrant_from:
+- reproductions
+- verification
 validates:
 - insula-rois-responded-more-low
+in-tension-with:
+- individual-grbs-dot-product-values-not
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -83,7 +90,8 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `validates` → `insula-rois-responded-more-low`: Positive GRBS dot products give convergent validity to the insula guilt response (evidence at span results-152).
+- `validates` → `insula-rois-responded-more-low`: positive dot products with the published Yu GRBS give convergent validity to the insula guilt response (results-152)
+- `in-tension-with` → `individual-grbs-dot-product-values-not`: the neural guilt response matches the published Yu/Koban signature at the group level (60), yet individual signature scores do not track individual behavioural guilt (61); both stand and the null bounds what the group replication can mean
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

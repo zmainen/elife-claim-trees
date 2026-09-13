@@ -1,5 +1,5 @@
 ---
-uuid: e20e6df1-1a69-452d-9051-3d3355132deb
+uuid: 973ba1c8-7a3e-4e36-a78a-10fbd38c45b2
 slug: model-selection-among-happiness-models
 doi: null
 claim: Model selection among the happiness models used likelihood-ratio tests comparing the Responsibility
@@ -7,8 +7,10 @@ claim: Model selection among the happiness models used likelihood-ratio tests co
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the tree records no reproduction, control or test bearing on this model-selection method
 enables-method:
 - likelihood-ratio-test-showed-responsibility
 belongings: []
@@ -24,7 +26,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `enables-method` → `likelihood-ratio-test-showed-responsibility`: The pairwise likelihood-ratio procedure is what produces the model-comparison result.
+- `enables-method` → `likelihood-ratio-test-showed-responsibility`: the likelihood-ratio selection method makes the model-comparison result interpretable
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

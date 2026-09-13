@@ -1,5 +1,5 @@
 ---
-uuid: b4cfe28f-8a72-4aeb-9d52-b405c160af07
+uuid: 0a8b2666-94ce-4a7f-9242-067a47ee0134
 slug: participants-slightly-more-risk-averse
 doi: null
 claim: Participants were slightly more risk averse (higher ρ) in the Social than the Solo condition in
@@ -8,10 +8,10 @@ claim: Participants were slightly more risk averse (higher ρ) in the Social tha
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
-part-of:
-- participants-showed-very-similar-risk
+warrant: weak
+warrant_why: the tree records nothing that checks it, and the paper's own BF10 (1.69 / 0.41) is weak and not replicated in Study 2
 belongings:
 - relation: supports
   target: participants-showed-very-similar-risk
@@ -25,7 +25,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `supports` → `participants-showed-very-similar-risk`: The slight extra risk aversion in Social in Study 1 is the tendency the synthesis notes.
+- `supports` → `participants-showed-very-similar-risk`: only a slight Study-1 risk-aversion difference supports the 'similar with a tendency' synthesis
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

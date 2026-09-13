@@ -11,7 +11,8 @@ follows this task — not CiTO, not claimrel, just the bare relation names. Each
 directed, and the direction rule stated beside its definition is binding: an edge that points
 the wrong way is wrong even when the two claims are genuinely related. Read the definitions and
 the confusable-pair notes before you begin — `requires` is not `supports`, `entails` is not
-`tests`, `part-of` is not `supports`, `rules-out` is not `refutes`.
+`tests`, `part-of` is not `supports`, `rules-out` is not `refutes`, `confirms` is not
+`supports`.
 
 ## What you are given
 
@@ -32,11 +33,63 @@ fence:
 
 - `source` and `target` are claim numbers. The edge runs from source to target in the direction
   the vocabulary states for that relation.
-- `relation` is one of the corpus relation names. Never emit `derived-from` or `confirms`: they
-  are written mechanically as the reciprocals of `entails` and `predicts`, so emitting them by
-  hand double-counts the same deduction.
+- `relation` is one of the corpus relation names. Never emit `derived-from`: it is written
+  mechanically as the reciprocal of `entails`, so emitting it by hand double-counts the same
+  deduction.
 - `why` is one sentence saying why the edge holds, defensible from the digest, and citing the
   span id (for example `results-026`) wherever the claim it rests on shows one.
+
+## Every tested prediction carries its outcome
+
+A `tests` edge is neutral: it records that a result bears on a prediction, not which way the
+test came out. That verdict is the point of the test, so it must be written down. For **every**
+`tests` edge you emit, from a result to a prediction, emit an outcome edge beside it, from the
+same result to the same prediction:
+
+- `confirms` — the result came out the way the prediction said it would.
+- `refutes` — the result came out against the prediction.
+
+Read the evidence quotes to decide which; a `tests` edge with no `confirms` or `refutes` beside
+it leaves the prediction a waypoint with no verdict on it, and the linter flags it.
+
+Outcomes aim at **predictions only**. A result that bears on a hypothesis does not `confirms`
+or `refutes` it — it `supports` the hypothesis (or `rules-out` an alternative). If a result
+came out against a hypothesis, write the prediction the hypothesis entails and refute that
+prediction; do not aim `refutes` at the hypothesis.
+
+## Look for tensions between results the paper asserts
+
+After the outcome edges, go back through the results the paper asserts and look deliberately for
+**tensions**: two claims, both of which stand, that pull a shared implication in opposite
+directions, or that cannot be jointly explained without a further claim. This is not a contrast,
+where two results simply differ across a condition, region, population or measure and the
+difference is the finding (that is `dissociates-with`). A tension is marked by “although”,
+“however”, “despite”, “no correlation with”, “at the cost of” — a replication that holds at the
+group level while the individual-level null bounds what it can mean; a gain bought at the cost of
+a resolution; two metrics that disagree about which method is better. Where you find one, write:
+
+```
+{"source": 12, "target": 7, "relation": "in-tension-with", "why": "one sentence"}
+```
+
+`in-tension-with` is symmetric — write it once per pair. It holds only between two claims the
+paper **asserts**; it is not `contradicts` (both claims hold), not `qualifies` (neither narrows
+the other), and not `rules-out` (nothing is eliminated). Do not fail to surface a real tension:
+a paper usually resolves one in its discussion, and an unresolved one is a gap worth seeing.
+
+## Look for unsupported parts of the argument
+
+Then look for parts of the argument that rest on nothing: a hypothesis with no prediction tested,
+a prediction with no result testing it, an empirical claim with no evidence behind it. These are
+not edges — they are the *absence* of one — so mark each on its own line, one object per claim,
+alongside the edge lines:
+
+```
+{"unsupported": 4, "reason": "hypothesis with no tested prediction"}
+```
+
+`unsupported` is the claim's number (or slug); keep each reason to one clause. This is the other
+half of the reading the ruling asks for: we do not want to fail to surface these.
 
 ## The rules the direction checks enforce
 
@@ -45,6 +98,9 @@ written, so do not spend an edge on it.
 
 - **`tests`** runs from an empirical result or a control to the **prediction** it checks. Never
   from the prediction, and never aimed at a hypothesis.
+- **`confirms`, `refutes`** run from the empirical result or control to the **prediction** whose
+  test they settle — `confirms` when it came out as predicted, `refutes` when it came out
+  against. Both are aimed at a prediction only; aimed at a hypothesis they are dropped.
 - **`entails`** runs from a **hypothesis** to a prediction it deductively implies. An empirical
   result never entails anything.
 - **`scopes`** runs from a **scope** claim to the claims it bounds, or to `*` for every empirical

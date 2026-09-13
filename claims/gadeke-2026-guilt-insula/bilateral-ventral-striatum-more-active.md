@@ -1,5 +1,5 @@
 ---
-uuid: 8eccf358-8cda-4fec-b608-34581e8afbe7
+uuid: 0ad222b7-5c48-4f64-9ac8-1e2628e37a43
 slug: bilateral-ventral-striatum-more-active
 doi: null
 claim: The bilateral ventral striatum was more active when participants chose the risky rather than the
@@ -8,13 +8,17 @@ claim: The bilateral ventral striatum was more active when participants chose th
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the bilateral VS risk clusters
+warrant_from:
+- rules_out
+- reproductions
+- verification
 rules-out:
 - alt-imaging-contrast-invalid
-belongings:
-- relation: supports
-  target: manipulation-check-bilateral-ventral-striatum
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -48,10 +52,6 @@ reproductions:
 ---
 
 **Notes from extraction:** The results reader treated this as a control replicating a known risk-related effect and validating the imaging analysis; the caption reader described it as a plain empirical result. Both are empirical measurements agreeing on panel and direction; resolved to control.
-
-**Relations.** Why each outgoing edge was inferred:
-
-- `supports` → `manipulation-check-bilateral-ventral-striatum`: Ventral-striatum activation to risky choices supports the model-based finding that the striatum tracks reward (evidence at span results-088).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 
