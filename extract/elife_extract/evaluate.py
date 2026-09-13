@@ -565,7 +565,7 @@ def score_against_reference(
 
     return _build_scorecard(
         paper_slug=paper_slug, paper_doi=paper_doi, review_mode=review_mode,
-        reference=reference, cli_dir=str(cli_dir),
+        reference=reference, cli_dir=_local(cli_dir),
         ref_claims=ref_claims, cli_claims=cli_claims, matches=matches,
         ref_dir=ref_dir, cli_dir_path=cli_dir,
     )
@@ -600,7 +600,7 @@ def score_from_precomputed_pairs(
 
     return _build_scorecard(
         paper_slug=slug, paper_doi=paper_doi, review_mode=review_mode,
-        reference=reference, cli_dir=str(cli_dir),
+        reference=reference, cli_dir=_local(cli_dir),
         ref_claims=ref_claims, cli_claims=cli_claims, matches=matches,
         ref_dir=ref_dir, cli_dir_path=cli_dir,
     )
@@ -632,6 +632,24 @@ def _fill_panel_role(
                 m["role_match"] = ref_c.role == cli_c.role
         out.append(m)
     return out
+
+
+def _local(path) -> str:
+    """A path as it should be written into a scorecard, not as this machine happened to see it.
+
+    `cli_dir` was stored resolved and absolute, so four committed scorecards name
+    `.claude/worktrees/agent-a5e6ff1bc32e226cd` — a worktree that no longer exists. A
+    scorecard is evidence about a comparison, and a reader who cannot locate either side of
+    it has less than they were promised. Inside the repository the path is written relative
+    to it; outside, only the home directory is folded away, because a candidate corpus really
+    can live elsewhere and saying so is the honest record.
+    """
+    root = Path(__file__).resolve().parents[2]
+    q = Path(path).resolve()
+    try:
+        return str(q.relative_to(root))
+    except ValueError:
+        return str(q).replace(str(Path.home()), "~")
 
 
 def _build_scorecard(
