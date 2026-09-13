@@ -1,5 +1,5 @@
 ---
-uuid: f6e89490-9237-427d-bea1-cc17fc6d0d21
+uuid: 306862c9-33d0-40a1-ae34-99755cce42e4
 slug: during-outcome-phase-responses-low
 doi: null
 claim: During the outcome phase, responses to low lottery outcomes were higher in the Social than the
@@ -9,7 +9,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 part-of:
 - insula-rois-responded-more-low
 belongings: []
@@ -17,7 +16,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: app1table9
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

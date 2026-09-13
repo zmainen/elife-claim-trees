@@ -178,6 +178,9 @@ _BUDGET_TABLE: dict[str, tuple[int, int, int]] = {
     "synthesis":          (  0,       512,  4_096),
     "abstract-map":       (  0,       512,  2_048),
     "stance":             (  0,     1_024,  4_096),
+    # One warrant level, a why and a flag per claim — output scales with the tree, so a paper's
+    # worth of claims needs more room than the other feature layers' fixed reasoning.
+    "warrant":            (  0,     2_048, 16_384),
 }
 
 
@@ -360,12 +363,21 @@ class Config:
 
         # Paths. The package ships inside the corpus repo as extract/elife_extract/, so the
         # repository root is two directories up — the same guess prompts_dir already makes.
-        root = (getattr(args, "root", None)
+        root_arg = getattr(args, "root", None)
+        root = (root_arg
                 or os.environ.get("ELIFE_CLAIM_TREES_ROOT")
                 or Path(__file__).resolve().parents[2])
         cfg.root = Path(root).expanduser().resolve()
 
-        corpus = getattr(args, "corpus_dir", None) or os.environ.get("ELIFE_CORPUS_DIR")
+        # A flag beats the environment. An explicit --root used to lose to an exported
+        # ELIFE_CORPUS_DIR, so any test or run that passed --root to isolate itself in a
+        # temporary tree silently wrote into whichever corpus the shell happened to name. That
+        # is not hypothetical: it put a claims/p/ from the writer test into this corpus and it
+        # was committed before anyone noticed. Order: --corpus-dir, then --root/claims, then
+        # the environment, then root.
+        corpus = (getattr(args, "corpus_dir", None)
+                  or (Path(root_arg).expanduser() / "claims" if root_arg else None)
+                  or os.environ.get("ELIFE_CORPUS_DIR"))
         cfg.corpus_dir = (Path(corpus).expanduser().resolve() if corpus
                           else cfg.root / "claims")
 

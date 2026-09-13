@@ -1,5 +1,5 @@
 ---
-uuid: 6f1b3e16-b580-4ee8-95c4-09318cb9f71c
+uuid: 967ee5e0-b99e-4525-a9d3-8e9f3f6ac8fd
 slug: manipulation-check-bilateral-ventral-striatum
 doi: null
 claim: 'As a manipulation check, bilateral ventral striatum activation increased with expected certain
@@ -9,9 +9,6 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-rules-out:
-- alt-model-based-glm-invalid
 validates:
 - model-based-glm-entered-best-fitting-computational
 belongings: []
@@ -19,7 +16,9 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4g
-  confidence: tentative
+  readers: high
+rules-out:
+- alt-model-based-glm-invalid
 reproductions:
 - carried_from: ventral-striatum-tracks-computational-reward
   agent: mainen-z

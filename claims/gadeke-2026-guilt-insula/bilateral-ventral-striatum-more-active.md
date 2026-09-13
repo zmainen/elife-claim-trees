@@ -1,5 +1,5 @@
 ---
-uuid: 0ad222b7-5c48-4f64-9ac8-1e2628e37a43
+uuid: d35c82b1-64ad-4973-a1e7-6a8eb58209a4
 slug: bilateral-ventral-striatum-more-active
 doi: null
 claim: The bilateral ventral striatum was more active when participants chose the risky rather than the
@@ -9,15 +9,14 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-rules-out:
-- alt-imaging-contrast-invalid
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4a
-  confidence: tentative
+  readers: high
+rules-out:
+- alt-imaging-contrast-invalid
 reproductions:
 - carried_from: ventral-striatum-tracks-risky-choices
   agent: mainen-z

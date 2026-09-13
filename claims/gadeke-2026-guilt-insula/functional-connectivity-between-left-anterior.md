@@ -1,5 +1,5 @@
 ---
-uuid: bd115e8c-ec7a-4e6f-8b10-9ee16c17f4b1
+uuid: f32921d6-4787-4075-844d-3f876827d831
 slug: functional-connectivity-between-left-anterior
 doi: null
 claim: Functional connectivity between the left anterior insula (seed) and a cluster in the right inferior
@@ -10,7 +10,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 tests:
 - connectivity-between-guilt-responsibility-related-outcome-ph
 confirms:
@@ -22,7 +21,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig5
-  confidence: tentative
+  readers: high
 reproductions: []
 ---
 

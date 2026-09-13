@@ -881,6 +881,156 @@ def _apply_stance(paper: str, data: dict, cfg: Config) -> list[dict]:
     return edges
 
 
+# ── warrant ────────────────────────────────────────────────────────────────
+# How well the tree supports each claim, as distinct from what the paper says (`confidence`) and
+# how it stands toward the claim (`stance`). A `feature`, like `stance` and `parts`: it revises a
+# tree rather than making a new kind of thing, writing `warrant:`, `warrant_why:` and
+# `warrant_from:` onto each claim file and leaving `epistemic` untouched (#126). The dossier the
+# model reads — and the rule floor the reading is later scored against — live in scripts/warrant.py,
+# so the layer, the rule and the comparison read one definition of what a claim's support is. Per
+# the ruling, the prompt shows the reader the dossier and the vocabulary, never the rule.
+
+
+def _warrant_module():
+    """`scripts/warrant.py`, loaded by path — the dossier and the warrant vocabulary.
+
+    The same load `_relations_module` does: the package cannot import a script beside it, and the
+    warrant prompt is composed from the dossier that script assembles from the tree.
+    """
+    import importlib.util
+
+    p = Path(__file__).resolve().parents[2] / "scripts" / "warrant.py"
+    spec = importlib.util.spec_from_file_location("warrant", p)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod
+
+
+def warrant_request(paper: str, cfg: Config) -> tuple[str, str]:
+    """The exact (system, user) the warrant layer would send: every claim and its dossier.
+
+    Separated from the call, as every model-answered layer is, so an analyst or another model can
+    answer the same question through `--dump-prompt` / `--answer`. The user message gives each
+    claim its sentence, role and stance, then its dossier rendered readably — and never the rule.
+    """
+    from .prompts import prompt
+
+    w = _warrant_module()
+    doss = w.dossier(paper)
+    w._wire_rivals(paper, doss)
+    lines = ["# The claim tree, with each claim's dossier\n"]
+    for slug in sorted(doss):
+        d = doss[slug]
+        conf = f", the paper's confidence: {d['confidence']}" if d.get("confidence") else ""
+        lines.append(f"## `{slug}` — {d['role']}, stance {d['stance']}{conf}\n")
+        lines.append(f"{d['sentence']}\n")
+        lines.append("Dossier:")
+        lines.append(w.render_dossier(d))
+        lines.append("")
+    return prompt("warrant", cfg), "\n".join(lines) + "\n"
+
+
+def _validate_warrant(raw: dict, paper: str, cfg: Config) -> dict:
+    """Coerce a model answer into `{claims: [...]}`, dropping what does not resolve.
+
+    The same rule the other retrofits apply: what does not resolve is dropped, not guessed. A
+    warrant needs a slug in this tree and a level in the vocabulary its role allows (a prediction's
+    outcome, an alternative's ruled-out/open, everything else's graded level). `warrant_from` is
+    the dossier keys that fired — the non-empty evidence the reading was made over — read from the
+    tree, not from the answer, so it is a fact about the dossier and not the model's to assert.
+    """
+    import logging as _logging
+    log = _logging.getLogger(__name__)
+
+    if not isinstance(raw, dict):
+        raise ValueError("warrant answer must be a JSON object with `warrants`")
+    w = _warrant_module()
+    doss = w.dossier(paper)
+    seen: set[str] = set()
+    out: list[dict] = []
+    for e in (raw.get("warrants") or []):
+        if not isinstance(e, dict):
+            continue
+        slug = e.get("slug")
+        if slug not in doss:
+            log.warning("warrant: %r is not a claim in this tree; dropped", slug)
+            continue
+        if slug in seen:
+            log.warning("warrant: %r seen twice; second dropped", slug)
+            continue
+        d = doss[slug]
+        vocab = w.vocabulary_for(d["role"], d["stance"])
+        level = e.get("warrant")
+        if level not in vocab:
+            log.warning("warrant: %s given %r, not one of %s; dropped", slug, level, vocab)
+            continue
+        seen.add(slug)
+        out.append({"slug": slug, "role": d["role"], "stance": d["stance"], "warrant": level,
+                    "why": " ".join(str(e.get("why") or "").split()),
+                    "unsupported": bool(e.get("unsupported")),
+                    "warrant_from": w.fired_keys(d)})
+    return {"claims": out}
+
+
+def warrant_layer(paper: str, cfg: Config, *,
+                  answer: str | None = None) -> tuple[Path, dict]:
+    """Record the model's warrant reading, and write it onto each claim file.
+
+    The model (or a supplied answer) returns a warrant level, a `why` and an `unsupported` flag
+    per claim; the runner writes the output JSON, then edits each claim file in place — inserting
+    `warrant:`, `warrant_why:` and `warrant_from:` after `epistemic`, which it leaves untouched.
+    """
+    from .agents import parse_json_response, stream_text
+
+    system, user = warrant_request(paper, cfg)
+    if answer is not None:
+        p, model = answer_file(answer, cfg)
+        raw = p.read_text(encoding="utf-8")
+        warrant_usage: dict = {}
+    else:
+        model = cfg.model_reconcile
+        raw, warrant_usage = stream_text(cfg, model=model, system=system, user=user,
+                                         label="warrant", max_tokens=token_budget("warrant"))
+
+    data = _validate_warrant(parse_json_response(raw), paper, cfg)
+    payload = {"paper_slug": paper, "model": model, **data}
+    if warrant_usage:
+        payload["usage"] = warrant_usage
+    path = _write_json(run_file(paper, "warrant.json", cfg), payload)
+    _apply_warrant(paper, data, cfg)
+    return path, payload
+
+
+def _apply_warrant(paper: str, data: dict, cfg: Config) -> None:
+    """Write `warrant:`, `warrant_why:` and `warrant_from:` into each claim file, after `epistemic`.
+
+    `epistemic` is left where it is: the draft is for seeing how the reading works, not for
+    replacing the field yet (#126). The three keys go in order after it, so a claim reads its
+    warrant, why, and the dossier keys the reading was made over, together.
+    """
+    import yaml
+
+    d = cfg.corpus_dir / paper
+    for e in data["claims"]:
+        f = d / f"{e['slug']}.md"
+        if not f.is_file():
+            continue
+        _write_key(f, "warrant", f"warrant: {e['warrant']}", after="epistemic")
+        # A wide width keeps `warrant_why` on one line: `_write_key` inserts the next key after
+        # the first line of the block it finds, so a folded value would be split across the key
+        # that follows it.
+        if e["why"]:
+            block = yaml.safe_dump({"warrant_why": e["why"]}, sort_keys=False,
+                                   allow_unicode=True, default_flow_style=False,
+                                   width=10 ** 6).rstrip("\n")
+            _write_key(f, "warrant_why", block, after="warrant")
+        if e["warrant_from"]:
+            block = yaml.safe_dump({"warrant_from": e["warrant_from"]}, sort_keys=False,
+                                   allow_unicode=True, default_flow_style=False,
+                                   width=10 ** 6).rstrip("\n")
+            _write_key(f, "warrant_from", block, after="warrant_why" if e["why"] else "warrant")
+
+
 # ── the measures: prose written from the graph, on disk under site/src/data ──
 # summaries, synthesis and abstract-map were declared with outputs the site renders and no
 # runner or committed prompt, so their artifacts could not be regenerated and no version could

@@ -1,5 +1,5 @@
 ---
-uuid: bb0523ca-0d4c-485f-9736-8a7340aade67
+uuid: 38ca5d5e-16b9-4e0d-b0f0-ccf8f3970b79
 slug: guilt-effect-occurred-whether-participant
 doi: null
 claim: 'The guilt effect occurred whether the participant received the high lottery outcome (Study 1:
@@ -9,9 +9,6 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-rules-out:
-- alt-guilt-effect-driven-by-own-outcome
 validates:
 - when-partner-received-low-lottery
 belongings: []
@@ -19,7 +16,9 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
+rules-out:
+- alt-guilt-effect-driven-by-own-outcome
 reproductions:
 - carried_from: guilt-effect-independent-of-own-outcome
   agent: mainen-z

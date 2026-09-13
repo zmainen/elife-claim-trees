@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "extract"))
 
 from lxml import etree  # noqa: E402
-from elife_extract.prepare import article_id_from_doi, fetch_jats  # noqa: E402
+from elife_extract.sources import ElifeSource  # noqa: E402
 
 OUT_DIR = ROOT / "site" / "src" / "data" / "article"
 FIGURE_DIR = ROOT / "site" / "public" / "figures"
@@ -203,8 +203,11 @@ def build(paper: str) -> dict:
     doi = fm.get("doi")
     if not doi:
         raise SystemExit(f"{paper}: no doi in claims/{paper}/index.md")
-    aid = article_id_from_doi(doi)
-    root = etree.parse(str(fetch_jats(aid))).getroot()
+    # This script is eLife-specific by construction — it builds the IIIF figure URLs the site
+    # serves — so it names the source rather than resolving one.
+    elife = ElifeSource()
+    aid = elife.doc_id(doi)
+    root = etree.parse(str(elife.resolve(doi, prefer="jats").path)).getroot()
     strip_ns(root)
 
     # `root.find` takes the article's own children, so the editor assessment, the referee

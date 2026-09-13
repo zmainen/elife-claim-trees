@@ -1,5 +1,5 @@
 ---
-uuid: c9af8e4b-cce9-4023-9ed8-a6ed4e79f916
+uuid: 6842234d-9e46-414c-ac0b-2c0e66b6d95f
 slug: one-cluster-left-sts-responded
 doi: null
 claim: One cluster in the left STS responded more to partner reward prediction errors resulting from participant
@@ -8,7 +8,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 tests:
 - neural-substrate-tracks-participant-responsibility-2
 confirms:
@@ -22,7 +21,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4h
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: sts-tracks-partner-reward-prediction-errors
   agent: mainen-z

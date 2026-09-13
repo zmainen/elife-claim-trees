@@ -1,5 +1,5 @@
 ---
-uuid: 8439bd99-f01d-40a9-9b7a-c390ebff1a46
+uuid: 7efa7ffe-7999-4a97-a227-7d3090e5d2f3
 slug: dot-products-between-individual-neural
 doi: null
 claim: Dot products between individual neural guilt responses and the Yu et al. (2020) guilt-related brain
@@ -9,7 +9,6 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 validates:
 - insula-rois-responded-more-low
 in-tension-with:
@@ -19,7 +18,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions:
 - carried_from: insula-guilt-replicates-yu-koban-signature
   agent: mainen-z

@@ -1,5 +1,5 @@
 ---
-uuid: da5db1fe-60a4-4dd5-9f77-17b2d0199282
+uuid: 63b08f16-464f-432d-ba9d-7cece203ffcc
 slug: both-studies-participants-felt-worse
 doi: null
 claim: In both studies, participants felt worse after low lottery outcomes for the partner when those
@@ -9,13 +9,12 @@ claim-type: synthesis
 role: synthesis
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

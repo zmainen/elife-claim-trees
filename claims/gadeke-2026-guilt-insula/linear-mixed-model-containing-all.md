@@ -1,5 +1,5 @@
 ---
-uuid: a85b6a55-80fd-400c-a20e-e6c542e56af6
+uuid: a9e560bb-10e1-4fc2-a077-7dc4325304f9
 slug: linear-mixed-model-containing-all
 doi: null
 claim: The linear mixed model containing all three two-way interaction terms (Model 5, Equation 10) explained
@@ -10,13 +10,12 @@ claim-type: assessment
 role: methodological
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: app1table2
-  confidence: tentative
+  readers: contested
 reproductions: []
 ---
 

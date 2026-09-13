@@ -1,5 +1,5 @@
 ---
-uuid: f271bd20-2658-4c3a-a4fa-c29b6929bc94
+uuid: 4963e421-2409-4af8-ac94-5ff315db419e
 slug: participant-momentary-happiness-varied-rewards-2
 doi: null
 claim: Participant momentary happiness varied with the rewards the partner received in the current trial.
@@ -7,7 +7,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 belongings:
 - relation: supports
   target: likelihood-ratio-test-showed-responsibility
@@ -15,7 +14,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig3b,fig3f
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: happiness-correlates-partner-reward
   agent: mainen-z

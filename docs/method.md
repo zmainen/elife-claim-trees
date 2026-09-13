@@ -173,6 +173,12 @@ Read the abstract and identify two to four top-level claims — the paper's main
 
 The three agents are deliberately partitioned along the axes along which extractions most often disagree: framing versus literal numerics versus computational structure. A claim that all three surface independently is high-confidence; a claim that only one surfaces is single-source and may be either real-but-buried or an artefact of the reading strategy. The `reconcile` layer records both cases distinctly.
 
+The partition is by section, and each reader sees its sections and nothing else. The results reader is given the abstract, the Introduction, the Results and the Discussion, preceded by a panel inventory; the Introduction and Discussion were added on 2026-09-11 (#56), after the first runs showed that cutting them lost the organising hypothesis and every literature-context premise. The caption reader is given the figure and table captions with the inventory. The structure reader is given the Methods, the appendices and the supplementary material. No reader sees the whole paper.
+
+A single reading of the whole paper is kept as a comparison, not as a layer. It runs through the same reader code on the raw paper (`reader_from_raw`) and is scored by `evaluate` as the `fourth-reading` row beside the three-reader chain; on Gädeke it recovered slightly more of the curated tree at higher precision and missed every alternative the paper rules out. Whether the partition earns its place is a scheme question (#85), to be settled against adjudicated trees, and the comparison row exists so that it can be. Until it is settled, the three-reader chain is the accepted scheme and every recorded run uses it.
+
+Which model reads is a profile, not a property of the readers. The `standard` profile puts the three readers on Sonnet and the reconciler, reviewer and edge inference on Opus; `frontier` puts everything on Opus with leaner tasks. A run answered by Claude Code subagents rather than an API records, in the ledger's `by`, the model that actually answered each prompt, which need not match the profile it stands in for; Gädeke's v3 readers, for instance, were answered by Opus under the `subagent` profile.
+
 ### Where short-form fields fit
 
 Three fields are populated during authoring but are not the primary claim sentence:

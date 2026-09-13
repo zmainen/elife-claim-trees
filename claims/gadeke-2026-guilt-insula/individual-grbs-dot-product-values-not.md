@@ -1,5 +1,5 @@
 ---
-uuid: feed68e6-a751-45c5-85d1-db29634215a4
+uuid: aa50d537-ccc3-40a4-8b30-48adc2d54783
 slug: individual-grbs-dot-product-values-not
 doi: null
 claim: Individual GRBS dot-product values did not correlate with the behavioural guilt responses (Spearman's
@@ -9,13 +9,12 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions:
 - carried_from: guilt-signature-no-individual-difference
   agent: mainen-z

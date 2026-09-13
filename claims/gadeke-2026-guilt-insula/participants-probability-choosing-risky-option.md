@@ -1,5 +1,5 @@
 ---
-uuid: 5e3c9187-cbb5-4918-83a1-d4d6dea23597
+uuid: 83c23e5c-b65b-4e40-9292-18bb9fce0284
 slug: participants-probability-choosing-risky-option
 doi: null
 claim: 'Participants'' probability of choosing the risky option (lottery) increased with the difference
@@ -9,15 +9,14 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-rules-out:
-- alt-participants-insensitive-to-value
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig2a,fig2d
-  confidence: tentative
+  readers: single-source
+rules-out:
+- alt-participants-insensitive-to-value
 reproductions:
 - carried_from: lottery-choice-increases-with-ev
   agent: mainen-z

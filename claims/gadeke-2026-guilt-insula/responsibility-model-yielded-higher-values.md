@@ -1,5 +1,5 @@
 ---
-uuid: f601eab3-3c29-4093-8eae-45cf47647a10
+uuid: b9d96711-3ff9-4d43-9c6d-d3ba3b4c8b4b
 slug: responsibility-model-yielded-higher-values
 doi: null
 claim: 'The Responsibility model yielded higher R² values than all other models (Study 1: all t > 3.6,
@@ -8,13 +8,12 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: table1
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

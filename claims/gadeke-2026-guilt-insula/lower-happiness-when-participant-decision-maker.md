@@ -1,5 +1,5 @@
 ---
-uuid: 97e9a49d-aab6-431f-b12a-fc1d430d5e58
+uuid: 9e21bd9a-d1b7-4506-a8a1-b11c9e837389
 slug: lower-happiness-when-participant-decision-maker
 doi: null
 claim: The lower happiness when the participant is the decision-maker may reflect responsibility aversion
@@ -8,7 +8,6 @@ claim-type: interpretive
 role: interpretation
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 interprets:
 - participant-happiness-lower-when-participant
 belongings: []
@@ -16,7 +15,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

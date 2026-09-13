@@ -335,22 +335,8 @@ def segment(paper: PreparedPaper, *, include_methods: bool = True) -> list[Span]
     nothing is dropped here. Deciding what need not be claimed is a policy
     question, and policy does not belong in the measurement.
     """
-    sections: list[tuple[str, str]] = [
-        ("abstract", paper.abstract),
-        ("introduction", paper.introduction_text),
-        ("results", paper.results_text),
-        ("discussion", paper.discussion_text),
-        ("captions", paper.captions_text),
-        ("tables", paper.tables_text),
-    ]
-    if include_methods:
-        sections += [("methods", paper.methods_text),
-                     ("appendix", paper.appendix_text)]
-
     spans: list[Span] = []
-    for section, text in sections:
-        if not text or not text.strip():
-            continue
+    for section, text in paper.sections(include_methods=include_methods):
         current_figure: str | None = None
         for i, sent in enumerate(split_sentences(text), 1):
             current_figure = _figure_context(sent, current_figure)

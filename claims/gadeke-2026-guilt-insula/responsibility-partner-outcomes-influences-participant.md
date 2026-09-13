@@ -1,5 +1,5 @@
 ---
-uuid: 8521b374-e125-4aea-85ed-7429dc9af6ec
+uuid: 656a6629-b515-4661-af80-e7bf08bfdf9a
 slug: responsibility-partner-outcomes-influences-participant
 doi: null
 claim: If responsibility for the partner's outcomes influences the participant's momentary happiness,
@@ -18,7 +18,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

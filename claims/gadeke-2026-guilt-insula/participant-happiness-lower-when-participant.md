@@ -1,5 +1,5 @@
 ---
-uuid: 9560b688-25bc-48f9-873b-45ef6d861e93
+uuid: 79972f12-e238-40cd-a72e-0fbd494de585
 slug: participant-happiness-lower-when-participant
 doi: null
 claim: 'Participant happiness was lower when the participant was the decision-maker (Social + Solo vs.
@@ -9,9 +9,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-rules-out:
-- alt-agency-aversion-not-guilt
 dissociates-with:
 - when-partner-received-low-lottery
 belongings: []
@@ -19,7 +16,9 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
+rules-out:
+- alt-agency-aversion-not-guilt
 reproductions:
 - carried_from: agency-reduces-happiness
   agent: mainen-z

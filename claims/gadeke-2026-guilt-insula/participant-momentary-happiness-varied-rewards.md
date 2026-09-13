@@ -1,5 +1,5 @@
 ---
-uuid: 0a4a5f1a-193b-482e-8bae-50c59eb77a0c
+uuid: a1212a98-0ca1-4b98-a933-adb4b9bd8dbd
 slug: participant-momentary-happiness-varied-rewards
 doi: null
 claim: Participant momentary happiness varied with the rewards the participant received in the current
@@ -8,7 +8,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 belongings:
 - relation: supports
   target: likelihood-ratio-test-showed-responsibility
@@ -16,7 +15,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig3a,fig3e
-  confidence: tentative
+  readers: high
 reproductions: []
 ---
 

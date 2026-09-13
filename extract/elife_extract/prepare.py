@@ -1,15 +1,16 @@
-"""Step 1 — Prepare: locate paper, fetch text, map figure structure.
+"""Step 1 — Prepare: slice a document into the three agent inputs.
 
-Two input paths:
-  1. JATS-XML (primary for eLife): structured XML from eLife CDN
-  2. PDF (fallback): pdfplumber text extraction with regex section detection
+Two reading paths:
+  1. JATS-XML: labelled sections, typed figures with captions, structured references
+  2. PDF: pdfplumber text extraction with regex section detection
 
-JATS gives us labeled sections, typed figures with captions, structured
-references with DOIs, and explicit metadata. PDF works for any journal
-but requires heuristic parsing.
+JATS is preferred wherever it exists; the PDF heuristics can only guess at what JATS states.
+The path used is recorded in PreparedPaper.extraction_path because it constrains what the
+readers in Step 3 can extract.
 
-The path used is recorded in PreparedPaper.extraction_path because it
-constrains what the three agents in Step 3 can extract.
+*Where* a document comes from is not this module's business — `sources.py` resolves a DOI, URL
+or path to a local file and says what format it is in, and every publisher-specific detail
+lives there. This module parses what it is handed.
 """
 
 from __future__ import annotations
@@ -21,18 +22,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
-import httpx
 from lxml import etree
 
+from .sources import Format, Resolved
+from .sources import resolve as resolve_source
+
 logger = logging.getLogger(__name__)
-
-
-# ── eLife CDN URL patterns ───────────────────────────────────────────────
-ELIFE_CDN_PDF_URL = "https://cdn.elifesciences.org/articles/{article_id}/elife-{article_id}-v1.pdf"
-ELIFE_CDN_XML_URL = "https://cdn.elifesciences.org/articles/{article_id}/elife-{article_id}-v1.xml"
-
-# Cache directory — survives across CLI runs
-DEFAULT_CACHE_DIR = Path.home() / ".cache" / "elife-extract"
 
 
 # ── Section headings ─────────────────────────────────────────────────────
@@ -85,6 +80,38 @@ FIG_CAPTION_START = re.compile(
 PANEL_GROUP_RE = re.compile(r"(?:^|[^A-Za-z])\(\s*([A-Za-z][^()]{0,24}?)\s*\)")
 
 
+# The document's sections, in reading order: the name a span carries, the attribute holding the
+# text, and whether the section is procedural — described method rather than asserted finding.
+#
+# Declared once, here. It used to be declared twice: as these field names, and again as string
+# literals in segment.segment(). The two disagreed — `supplementary_text` was among the fields
+# and absent from the list — so every paper's supplementary text was fetched, parsed, stored in
+# prepared.json and never segmented. No reader was given it and coverage could not see it (#137).
+#
+# `procedural` is what the `include_methods` flag gates. The flag's name predates appendix and
+# supplementary joining methods behind it; what it actually selects is "sections the corpus is
+# expected to make claims about" (coverage.py), which is the distinction that matters.
+#
+# Supplementary is procedural because of what it holds: a manifest of supplementary files, one
+# caption per line — "Figure 1—source code 1. Source code used to generate data in A, D, E, and
+# F." Nothing in it is a proposition, so it must stay out of the coverage denominator or it
+# would lower measured coverage with spans nothing should ever claim. It is worth segmenting
+# anyway: those lines map source code and source data to figure panels, which is the evidence a
+# claim's `analysis` and `dataset` fields are populated from and the hardest to recover later.
+SECTIONS: tuple[tuple[str, str, bool], ...] = (
+    #  span name        attribute             procedural
+    ("abstract",      "abstract",           False),
+    ("introduction",  "introduction_text",  False),
+    ("results",       "results_text",       False),
+    ("discussion",    "discussion_text",    False),
+    ("captions",      "captions_text",      False),
+    ("tables",        "tables_text",        False),
+    ("methods",       "methods_text",       True),
+    ("appendix",      "appendix_text",      True),
+    ("supplementary", "supplementary_text", True),
+)
+
+
 # ── Data class ───────────────────────────────────────────────────────────
 
 
@@ -93,7 +120,7 @@ class PreparedPaper:
     """Output of Step 1 — what the three agents in Step 3 read from."""
 
     doi: str
-    article_id: str
+    article_id: str          # the source's own document id, where it has one; else ""
     paper_slug: str
     title: str | None
     authors: list[str]
@@ -120,6 +147,17 @@ class PreparedPaper:
     @property
     def tables_text(self) -> str:
         return "\n\n".join(t.text for t in self.tables)
+
+    def sections(self, *, include_methods: bool = True) -> list[tuple[str, str]]:
+        """The document's sections as (span name, text), in reading order, empties dropped.
+
+        The one place the section vocabulary is read from, so a section cannot be added to the
+        type and forgotten by the segmenter. `include_methods=False` drops the procedural ones,
+        which is what coverage measures against.
+        """
+        return [(name, text) for name, attr, procedural in SECTIONS
+                if include_methods or not procedural
+                for text in [getattr(self, attr, "") or ""] if text.strip()]
 
     @property
     def panel_ids(self) -> list[str]:
@@ -210,67 +248,6 @@ def _build_spans(paper: "PreparedPaper") -> list[dict]:
     from .segment import segment  # deferred: segment imports PreparedPaper from here
     return [{"uid": s.uid, "section": s.section, "text": s.text}
             for s in segment(paper, include_methods=True)]
-
-
-# ── DOI / article-ID handling ────────────────────────────────────────────
-
-
-_ELIFE_DOI_RE = re.compile(r"10\.7554/eLife\.(\d+)", re.IGNORECASE)
-
-
-def article_id_from_doi(doi: str) -> str:
-    """Extract the article ID from an eLife DOI like 10.7554/eLife.95562."""
-    m = _ELIFE_DOI_RE.match(doi.strip())
-    if not m:
-        raise ValueError(
-            f"Not a recognized eLife DOI: {doi!r}. "
-            "Expected format: 10.7554/eLife.<article-id>"
-        )
-    return m.group(1)
-
-
-# ── PDF fetch ────────────────────────────────────────────────────────────
-
-
-def fetch_pdf(article_id: str, cache_dir: Path | None = None) -> Path:
-    """Fetch the eLife PDF for a given article ID. Cache locally.
-
-    Raises httpx.HTTPStatusError on 4xx/5xx; re-uses cached file if present.
-    """
-    cache_dir = cache_dir or DEFAULT_CACHE_DIR
-    cache_dir.mkdir(parents=True, exist_ok=True)
-    cached = cache_dir / f"elife-{article_id}-v1.pdf"
-    if cached.is_file() and cached.stat().st_size > 0:
-        logger.info("using cached PDF: %s", cached)
-        return cached
-
-    url = ELIFE_CDN_PDF_URL.format(article_id=article_id)
-    logger.info("fetching %s", url)
-    with httpx.Client(timeout=60.0, follow_redirects=True) as client:
-        resp = client.get(url)
-        resp.raise_for_status()
-        cached.write_bytes(resp.content)
-    return cached
-
-
-# ── JATS-XML fetch ──────────────────────────────────────────────────────
-
-
-def fetch_jats(article_id: str, cache_dir: Path | None = None) -> Path:
-    """Fetch JATS-XML from eLife CDN. Cache locally."""
-    cache_dir = cache_dir or DEFAULT_CACHE_DIR
-    cache_dir.mkdir(parents=True, exist_ok=True)
-    cached = cache_dir / f"elife-{article_id}-v1.xml"
-    if cached.is_file() and cached.stat().st_size > 0:
-        logger.info("using cached JATS: %s", cached)
-        return cached
-    url = ELIFE_CDN_XML_URL.format(article_id=article_id)
-    logger.info("fetching %s", url)
-    with httpx.Client(timeout=60.0, follow_redirects=True) as client:
-        resp = client.get(url)
-        resp.raise_for_status()
-        cached.write_bytes(resp.content)
-    return cached
 
 
 # ── JATS-XML parsing ────────────────────────────────────────────────────
@@ -495,13 +472,19 @@ def _extract_jats_metadata(root: etree._Element) -> tuple[str | None, list[str],
     return title, authors, year
 
 
-def parse_jats(xml_path: Path, doi: str, paper_slug_override: str | None = None) -> PreparedPaper:
-    """Parse a JATS-XML file into PreparedPaper."""
+def parse_jats(xml_path: Path, doi: str, paper_slug_override: str | None = None,
+               provenance: Resolved | None = None) -> PreparedPaper:
+    """Parse a JATS-XML file into PreparedPaper.
+
+    `provenance` is what `sources.resolve()` returned. It supplies the publisher's own document
+    id and the note recording where the file came from; without it both are left empty rather
+    than guessed, because only a source knows how to read an id out of a DOI.
+    """
     tree = etree.parse(str(xml_path))
     root = tree.getroot()
     _strip_ns(root)
 
-    article_id = article_id_from_doi(doi)
+    article_id = provenance.doc_id if provenance and provenance.doc_id else ""
     title, authors, year = _extract_jats_metadata(root)
     slug = paper_slug_override or derive_slug(authors, year, title)
 
@@ -532,7 +515,7 @@ def parse_jats(xml_path: Path, doi: str, paper_slug_override: str | None = None)
         introduction_text=introduction_text,
         discussion_text=discussion_text,
         extraction_path="jats",
-        extraction_path_note=f"JATS-XML from {ELIFE_CDN_XML_URL.format(article_id=article_id)}",
+        extraction_path_note=provenance.note if provenance else f"JATS-XML from {xml_path}",
         figure_captions=captions,
     )
     paper.spans = _build_spans(paper)
@@ -703,6 +686,14 @@ def derive_slug(authors: list[str], year: str | None, title: str | None) -> str:
 _YEAR_RE = re.compile(r"\b(20\d{2})\b")
 
 
+# Publisher furniture on a PDF's first page, which the title and author heuristics must step
+# over. Not exhaustive and not meant to be: a layout these miss yields a wrong title, which
+# `--slug` overrides. A source that knows its publisher's furniture should prefer JATS.
+TITLE_SKIP = ("research article", "short report", "tools and resources", "review article",
+              "preprint", "doi:", "doi.org", "https://", "www.", "elife", "biorxiv", "medrxiv")
+AUTHOR_SKIP = ("@", "elifesciences", "correspondence", "equal contribution")
+
+
 def guess_metadata(text: str) -> tuple[str | None, list[str], str | None]:
     """Pull title, authors, year from the first ~3000 chars of the PDF.
 
@@ -717,7 +708,7 @@ def guess_metadata(text: str) -> tuple[str | None, list[str], str | None]:
     # Title is typically the first non-trivial line of the PDF
     for ln in lines[:20]:
         # Skip obvious non-title artifacts
-        if any(s in ln.lower() for s in ("research article", "elife", "doi:", "https://")):
+        if any(marker in ln.lower() for marker in TITLE_SKIP):
             continue
         if len(ln) > 20 and len(ln) < 300 and not ln.endswith("."):
             title = ln
@@ -728,7 +719,7 @@ def guess_metadata(text: str) -> tuple[str | None, list[str], str | None]:
         try:
             ti = lines.index(title)
             for ln in lines[ti + 1 : ti + 8]:
-                if "@" in ln or "elifesciences" in ln.lower():
+                if any(marker in ln.lower() for marker in AUTHOR_SKIP):
                     continue
                 # Heuristic: comma-separated names with capitalized words
                 if "," in ln and len(re.findall(r"\b[A-Z][a-z]+", ln)) >= 4:
@@ -756,39 +747,28 @@ def prepare(
     input_format: Literal["auto", "jats", "pdf"] = "auto",
     pdf_path: Path | None = None,
 ) -> PreparedPaper:
-    """Fetch and slice a paper into the three agent inputs.
+    """Resolve a document and slice it into the three agent inputs.
 
     input_format:
-      - "auto" (default): use JATS for eLife DOIs, PDF otherwise
-      - "jats": force JATS-XML input
-      - "pdf": force PDF input
+      - "auto" (default): whatever the source prefers — JATS wherever it exists
+      - "jats" / "pdf": require that format, and fail if the source cannot serve it
 
-    pdf_path supplies a local PDF for a paper that is not on the eLife CDN.
-    It bypasses fetching, forces the PDF path, and makes `doi` optional.
+    pdf_path supplies a local PDF directly, bypassing lookup and making `doi` optional. The
+    reference is resolved by `sources.resolve()`, so which publishers are reachable is a
+    question about the registered sources and not about this function.
     """
     if not doi and pdf_path is None:
         raise ValueError("prepare() requires a DOI or a local pdf_path")
 
-    article_id = article_id_from_doi(doi) if doi else None
+    ref = str(pdf_path) if pdf_path is not None else doi
+    prefer: Format | None = "pdf" if pdf_path is not None else (
+        None if input_format == "auto" else input_format)
+    resolved = resolve_source(ref, cache_dir=cache_dir, prefer=prefer)
 
-    if pdf_path is not None:
-        input_format = "pdf"
-    elif input_format == "auto":
-        input_format = "jats"  # eLife DOIs always have JATS
+    if resolved.format == "jats":
+        return parse_jats(resolved.path, doi or "", paper_slug_override, provenance=resolved)
 
-    if input_format == "jats":
-        if article_id is None:
-            raise ValueError("JATS input requires a DOI")
-        xml_path = fetch_jats(article_id, cache_dir=cache_dir)
-        return parse_jats(xml_path, doi, paper_slug_override)
-
-    # PDF path — a local file when given, otherwise fetched from the eLife CDN.
-    if pdf_path is None:
-        pdf_path = fetch_pdf(article_id, cache_dir=cache_dir)
-        source_note = f"PDF from {ELIFE_CDN_PDF_URL.format(article_id=article_id)}"
-    else:
-        source_note = f"local PDF at {pdf_path}"
-    full_text = extract_text(pdf_path)
+    full_text = extract_text(resolved.path)
 
     sections = slice_sections(full_text)
     captions = extract_figure_captions(full_text)
@@ -800,7 +780,7 @@ def prepare(
     # simply never read out.
     paper = PreparedPaper(
         doi=doi or "",
-        article_id=article_id or "",
+        article_id=resolved.doc_id or "",
         paper_slug=slug,
         title=title,
         authors=authors,
@@ -811,7 +791,7 @@ def prepare(
         introduction_text=sections.get("introduction", ""),
         discussion_text=sections.get("discussion", ""),
         extraction_path="pdf",
-        extraction_path_note=source_note,
+        extraction_path_note=resolved.note,
         figure_captions=captions,
     )
     paper.spans = _build_spans(paper)

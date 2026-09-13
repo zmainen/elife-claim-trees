@@ -1,5 +1,5 @@
 ---
-uuid: 6c3a5d6b-5ee5-4884-aa7a-ba1318eafb2e
+uuid: 10243ff4-f67a-4024-a845-118a466902b5
 slug: when-partner-received-low-lottery
 doi: null
 claim: 'When the partner received the low lottery outcome, participant happiness was lower when the participant
@@ -10,7 +10,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 tests:
 - responsibility-outcomes-generates-guilt-participant
 confirms:
@@ -26,7 +25,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig3d,fig3h
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: guilt-reduces-happiness-after-partner-loss
   agent: mainen-z

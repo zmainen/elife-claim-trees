@@ -1,5 +1,5 @@
 ---
-uuid: ca73aff9-03a3-4724-9a14-ec6f0c9414e4
+uuid: c6dd6eaa-d472-48e3-9418-bf2708e3068f
 slug: likelihood-ratio-test-showed-responsibility
 doi: null
 claim: 'A likelihood ratio test showed the Responsibility model fitted the happiness data better than
@@ -9,7 +9,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 tests:
 - responsibility-partner-outcomes-influences-participant
 confirms:
@@ -23,7 +22,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: table1
-  confidence: tentative
+  readers: single-source
 reproductions:
 - carried_from: responsibility-modulates-guilt-computational
   agent: mainen-z

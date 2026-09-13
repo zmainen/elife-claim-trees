@@ -1,0 +1,38 @@
+---
+uuid: cead7cec-7ae8-412c-9521-8bf93a618165
+slug: neural-substrate-tracks-participant-responsibility-2
+doi: null
+claim: If a neural substrate tracks the participant's responsibility for the partner's outcomes, then
+  within regions sensitive to the outcomes of risky choices, BOLD should respond more strongly to the
+  partner's reward prediction errors resulting from the participant's own choices than from the partner's
+  choices.
+claim-type: prediction
+role: prediction
+concepts: []
+priority: '2026-09-13'
+epistemic: prediction
+warrant: confirmed
+warrant_why: confirmed by one-cluster-left-sts-responded (a verified STS cluster)
+warrant_from:
+- outcome
+derived-from:
+- neural-substrate-tracks-participant-responsibility
+belongings: []
+assertions:
+- paper-slug: gadeke-2026-guilt-insula
+  doi: 10.7554/eLife.105391
+  panel: null
+  confidence: tentative
+reproductions: []
+---
+
+**Notes from extraction:** [reviewer] added: the conditional the responsibility-tracking hypothesis commits the paper to, tested by the left-STS model-based result; kept distinct from that empirical result.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `derived-from` → `neural-substrate-tracks-participant-responsibility`: reciprocal of entails (neural-substrate-tracks-participant-responsibility → neural-substrate-tracks-participant-responsibility-2)
+
+<!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
+
+**reviewer-reader evidence:**
+> Deduced from the responsibility-tracking hypothesis; the paper states the corresponding search directly ('we thus used this model to search for voxels responding more to partner reward prediction errors resulting from participant rather than partner choices, within the regions sensitive to outcomes of risky choices'). The draft carries the result (left STS, fig4h) but not the prediction it tests.

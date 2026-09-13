@@ -1,5 +1,5 @@
 ---
-uuid: a28706b5-a5bd-4e5f-8d11-b6453e75e2b5
+uuid: 111df34a-8b8f-4014-8c9d-d94f29e6af17
 slug: risk-premiums-not-differ-between
 doi: null
 claim: 'Risk premiums did not differ between Solo and Social conditions in either study (Study 1: t(39)
@@ -8,9 +8,6 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-rules-out:
-- alt-social-context-shifts-risk-attitude
 belongings:
 - relation: supports
   target: participants-showed-very-similar-risk
@@ -18,7 +15,9 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig2b,fig2e
-  confidence: tentative
+  readers: high
+rules-out:
+- alt-social-context-shifts-risk-attitude
 reproductions:
 - carried_from: risk-premiums-null-social-solo
   agent: mainen-z

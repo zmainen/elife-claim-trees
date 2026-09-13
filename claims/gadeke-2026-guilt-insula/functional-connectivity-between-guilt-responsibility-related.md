@@ -1,5 +1,5 @@
 ---
-uuid: a1c4c0a7-504f-4fd8-ae65-4c6fe1580350
+uuid: 0957b990-be15-48c5-a041-adfe6044b9ba
 slug: functional-connectivity-between-guilt-responsibility-related
 doi: null
 claim: Functional connectivity between guilt- and responsibility-related outcome-phase regions and prefrontal
@@ -17,7 +17,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

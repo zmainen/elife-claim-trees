@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zmainen.github.io/claim-graphs/schema/claim-set-v0.schema.json",
+  "title": "Claim set, v0",
+  "description": "One document's claims and the typed relations between them. This is the interchange form: a single JSON file that a consumer can read with no knowledge of how it was produced, of the authoring layout (claims/<doc>/*.md), or of any publisher. The authoring form is normalised into this on export; where the two disagree, this file is the contract.\n\nThe relation graph is directed, multi-edged and CYCLIC. Converse pairs are the reason (a hypothesis entails a prediction; the prediction tests the hypothesis), and `edges` stores each direction it was given. Consumers must not assume acyclicity. See `views` for the spanning-tree projections a reader UI can use instead.",
+  "type": "object",
+  "required": ["schemaVersion", "document", "claims"],
+  "additionalProperties": false,
+
+  "properties": {
+    "schemaVersion": { "const": "0" },
+
+    "document": {
+      "description": "What the claims are asserted in. A claim set has exactly one primary document; a claim may carry assertions in others (see claim.assertions).",
+      "type": "object",
+      "required": ["id"],
+      "additionalProperties": false,
+      "properties": {
+        "id":    { "$ref": "#/$defs/localId", "description": "Stable slug, e.g. gadeke-2026-guilt-insula." },
+        "doi":   { "$ref": "#/$defs/doi" },
+        "title": { "type": "string" },
+        "url":   { "type": "string", "format": "uri" },
+        "license": { "type": "string", "description": "SPDX id or URL for the source document, e.g. CC-BY-4.0." }
+      }
+    },
+
+    "provenance": {
+      "description": "How this set was produced. Required reading for anyone deciding how much to trust it.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "generator":   { "type": "string", "description": "Tool and version, e.g. claim-graphs 0.1.0." },
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "reviewed": {
+          "description": "Whether a person has checked this set. `none` means every claim and edge is machine output that no human has verified.",
+          "enum": ["none", "partial", "full"]
+        },
+        "sourceRun": { "type": "string", "description": "Opaque pointer to the producing run, e.g. runs/<doc>/ledger.jsonl#<hash>." }
+      }
+    },
+
+    "questions": {
+      "description": "The questions the document sets out to answer. Claims point at these with `addresses`.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "id":   { "$ref": "#/$defs/localId" },
+          "text": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/claim" }
+    },
+
+    "edges": {
+      "description": "Typed relations between claims. Directed; may contain cycles; may contain both directions of a converse pair. Duplicates of the same (from, rel, to) are not permitted.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/edge" }
+    },
+
+    "views": {
+      "description": "Acyclic projections of the graph, for consumers that need a tree (a reader UI, an outline, a table of contents). A view is advisory: it carries no information the graph does not, and dropping it loses no claims.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "roots"],
+        "additionalProperties": false,
+        "properties": {
+          "id":    { "$ref": "#/$defs/localId" },
+          "kind":  { "enum": ["spanning-tree", "ordering", "sections"] },
+          "label": { "type": "string" },
+          "roots": { "type": "array", "items": { "$ref": "#/$defs/localId" } },
+          "follow": {
+            "description": "Which relations the projection walks, in preference order. The walk stops at the first already-visited node, which is what makes the result a tree.",
+            "type": "array",
+            "items": { "$ref": "#/$defs/relation" }
+          }
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "localId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 120,
+      "description": "Lowercase kebab-case. Unique within its collection in this file."
+    },
+
+    "doi": {
+      "type": "string",
+      "pattern": "^10\\.[0-9]{4,9}/[-._;()/:a-zA-Z0-9]+$"
+    },
+
+    "claimRef": {
+      "description": "A claim: either a localId in this set, or `<document-id>:<claim-id>` for a claim in another set. A consumer that cannot resolve the document half should treat the edge as dangling rather than dropping it silently.",
+      "type": "string",
+      "pattern": "^(?:[a-z0-9]+(?:-[a-z0-9]+)*:)?[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+
+    "claim": {
+      "type": "object",
+      "required": ["id", "uuid", "text", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id":   { "$ref": "#/$defs/localId", "description": "Stable within this set; the key a citing tool writes (tika's `claim=KEY`)." },
+        "uuid": { "type": "string", "format": "uuid", "description": "Stable across sets and across renames of `id`. Identity is the proposition, not the document: the same proposition asserted by two documents is ONE claim with two `assertions`." },
+
+        "text":  { "type": "string", "minLength": 1, "description": "The proposition, as one declarative sentence, in the document's own register." },
+        "plain": { "type": "string", "description": "The same proposition for a non-specialist. One sentence, no statistics, no jargon." },
+        "short": { "type": "string", "maxLength": 90, "description": "Label length, for graph nodes and chips." },
+
+        "type": {
+          "description": "The claim's epistemic kind — what sort of thing it is. One axis only; see `function` for the other.",
+          "enum": ["hypothesis", "prediction", "empirical", "interpretive", "assessment", "existence", "synthesis", "scope"]
+        },
+        "function": {
+          "description": "The claim's job in the argument, where that is not implied by `type`. `control` validates a method or rules out an artefact; `literature-context` is imported from another paper and not shown here; `alternative` is a rival explanation the document argues against (its assertion carries stance `rejects`).",
+          "enum": ["control", "literature-context", "alternative", "methodological"]
+        },
+        "confidence": {
+          "description": "How firmly the document asserts this, as judged at extraction. NOT a reproduction outcome — see `reproductions.status` for that, and note that `reviewed: none` makes this a machine judgement.",
+          "enum": ["strong", "moderate", "tentative", "weak"]
+        },
+
+        "addresses": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/localId" },
+          "description": "Question ids from `questions`."
+        },
+        "concepts": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Free-text index terms. Not a controlled vocabulary and not load-bearing."
+        },
+
+        "assertions": {
+          "description": "Where this proposition is asserted and on what grounds. More than one entry means the same claim is asserted by more than one document — the mechanism by which a claim outlives any single paper.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/assertion" }
+        },
+
+        "reproductions": {
+          "description": "Attempts to re-derive the claim's result from its data and code. Absent or empty means untried, which is not the same as failed.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/reproduction" }
+        }
+      }
+    },
+
+    "assertion": {
+      "type": "object",
+      "required": ["document", "stance"],
+      "additionalProperties": false,
+      "properties": {
+        "document": { "$ref": "#/$defs/localId", "description": "Document id. The primary document appears here too." },
+        "doi":      { "$ref": "#/$defs/doi" },
+        "stance": {
+          "description": "What this document does with the proposition. `asserts` is the default and by far the common case; `rejects` marks a rival explanation the document argues against — a claim it states in order to rule out.",
+          "enum": ["asserts", "rejects", "reports", "questions"]
+        },
+        "locator": {
+          "description": "Where in the document. `panel` is the figure panel or analysis block that produced the result — the unit the whole format is built on.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "panel":     { "type": "string", "description": "e.g. \"fig5, fig7\" or \"fig3b\"." },
+            "section":   { "type": "string" },
+            "quote":     { "type": "string", "description": "A sentence from the document that asserts it, verbatim." },
+            "figureUri": { "type": "string", "format": "uri" }
+          }
+        },
+        "grounds": {
+          "description": "What the claim rests on. Absent fields mean not recorded, never \"none\".",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "method":     { "type": "string", "description": "Free text, e.g. \"compartmental model\"." },
+            "analysis":   { "type": "string", "description": "Path or URL to the script, e.g. scripts/Fig5.ipynb." },
+            "dataset":    { "type": "string", "format": "uri" },
+            "datasetDoi": { "$ref": "#/$defs/doi" }
+          }
+        },
+        "confidence": {
+          "enum": ["strong", "moderate", "tentative", "weak"],
+          "description": "Per-document; overrides the claim-level value for this assertion."
+        },
+        "note": { "type": "string" }
+      }
+    },
+
+    "reproduction": {
+      "type": "object",
+      "required": ["status"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "description": "`verified` re-derived the result. `mismatch` ran and disagreed — the only value that is a negative finding about the claim. `partial` ran and agreed in part. `blocked` could not run (see `blockedBy`). `unattempted` was never tried. `unverified` was tried and neither confirmed nor refuted.",
+          "enum": ["verified", "partial", "mismatch", "blocked", "unattempted", "unverified"]
+        },
+        "by":        { "type": "string", "description": "Who or what ran it. An agent name here is NOT a person's check." },
+        "date":      { "type": "string", "format": "date" },
+        "blockedBy": { "type": "string", "description": "Why it could not run: no-data, no-code, code-error, compute-infeasible, licence." },
+        "script":    { "type": "string" },
+        "figure":    { "type": "string", "description": "Path to the regenerated figure, for visual comparison." },
+        "discrepancy": {
+          "description": "Present when the re-run disagreed with the document. Required detail for status `mismatch` and `partial`: what the document reported, what the re-run gave, and the likeliest cause. Without it a mismatch is an accusation with no argument.",
+          "type": "object",
+          "required": ["kind", "explanation"],
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "description": "Where the disagreement comes from. `methodological-gap` means the two could differ legitimately — different exclusions, a different test — and the document is not thereby wrong.",
+              "enum": ["methodological-gap", "numeric", "direction", "data-mismatch", "unexplained"]
+            },
+            "explanation": { "type": "string", "minLength": 1 }
+          }
+        },
+        "note":      { "type": "string" }
+      }
+    },
+
+    "relation": {
+      "description": "Relation vocabulary, taken from scripts/relations.py EDGE_KEYS — that file is normative and this enum tracks it. Directed unless marked symmetric. Converses are listed together: an exporter SHOULD emit the canonical direction and MAY emit both, and a consumer MUST tolerate both.\n\n  entails        hypothesis/premise -> what follows from it        (converse: derived-from)\n  derived-from   consequence -> what it follows from               (converse: entails)\n  tests          prediction/result -> the claim it bears on        (neutral: does not say which way it came out)\n  confirms       result -> the prediction it bore out\n  refutes        result -> the prediction it contradicted\n  supports       evidence -> the claim it makes more credible\n  contradicts    either -> the other; they cannot both hold        (symmetric)\n  requires       claim -> what it would be invalidated by          (converse: scopes)\n  scopes         scope/bound -> what it bounds, or \"*\"            (converse: requires)\n  validates      control -> the method or result it licenses\n  rules-out      claim -> the alternative it eliminates\n  enables-method method/resource -> what it made possible\n  interprets     interpretation -> the result it reads\n  extends        later or broader claim -> what it extends\n  replicates     claim -> the earlier claim it reproduces\n  part-of        component -> whole\n  predicts       hypothesis -> the observation it anticipates\n  opposes        claim -> a claim it argues against (declared; unused in the seed corpus)\n  dissociates-with  two results whose contrast is itself the finding  (symmetric, neutral)\n  in-tension-with   two results that both stand yet pull a shared implication apart (symmetric)\n  qualifies      claim -> the claim it narrows without contradicting",
+      "enum": ["confirms", "contradicts", "derived-from", "dissociates-with", "enables-method", "entails", "extends", "in-tension-with", "interprets", "opposes", "part-of", "predicts", "qualifies", "refutes", "replicates", "requires", "rules-out", "scopes", "supports", "tests", "validates"]
+    },
+
+    "edge": {
+      "type": "object",
+      "required": ["from", "rel", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "$ref": "#/$defs/claimRef" },
+        "rel":  { "$ref": "#/$defs/relation" },
+        "to":   {
+          "oneOf": [
+            { "$ref": "#/$defs/claimRef" },
+            { "const": "*", "description": "Only for `scopes`: this claim bounds the whole set." }
+          ]
+        },
+        "note": { "type": "string", "description": "Why the relation holds. Load-bearing for `requires` and `dissociates-with`, where the reason is not recoverable from the two texts." },
+        "by":   { "type": "string", "description": "Who or what asserted the edge. Edges are inferred separately from claims and are the less reliable half." }
+      }
+    }
+  }
+}

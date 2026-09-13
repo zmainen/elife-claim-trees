@@ -1,5 +1,5 @@
 ---
-uuid: cf5b5030-9e1a-4771-a165-1d98a0955fe9
+uuid: afdc8692-e8ce-4521-a89e-cf405f1725e3
 slug: parameter-recovery-procedure-synthetic-data-generated
 doi: null
 claim: A parameter-recovery procedure on synthetic data generated from each participant's estimated parameters
@@ -8,7 +8,6 @@ claim-type: assessment
 role: methodological
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 enables-method:
 - responsibility-redux-model-incorporating-expected
 belongings: []
@@ -16,7 +15,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig3s1
-  confidence: tentative
+  readers: contested
 reproductions: []
 ---
 
