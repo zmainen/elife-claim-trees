@@ -2,7 +2,7 @@
 
 **Generated:** 2026-05-10
 
-**Reference:** `/Users/zach/Projects/mainenlab/elife-claim-trees/claims/headley-2026-inhibitory-rhythms` (26 curated claims)
+**Reference:** `claims/headley-2026-inhibitory-rhythms` (26 curated claims)
 **CLI output:** `/tmp/elife-test/headley-2024-spatially-targeted-inhibitory` (76 extracted claims)
 **Matcher model:** claude-opus-4-6
 
