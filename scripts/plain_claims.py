@@ -37,6 +37,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "extract"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import pipeline  # noqa: E402
+
 import yaml  # noqa: E402
 
 # Six scripts here carry the same three-line fix for one quirk of the claim files — a key
@@ -126,7 +128,8 @@ def validate(answer: dict, claims: list[dict]) -> list[str]:
     return problems
 
 
-def write(paper: str, answer: dict, claims: list[dict], *, model: str) -> Path:
+def write(paper: str, answer: dict, claims: list[dict], *, model: str,
+          tokens: int | None = None) -> Path:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out = OUT_DIR / f"{paper}.json"
     # A list of records rather than a slug→sentence map, so the layer's own page renders it
@@ -141,6 +144,7 @@ def write(paper: str, answer: dict, claims: list[dict], *, model: str) -> Path:
              "plain": answer[c["slug"]].strip()}
             for c in claims
         ],
+        **({"usage": pipeline.answered_usage(tokens)} if tokens else {}),
     }
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return out
@@ -149,14 +153,19 @@ def write(paper: str, answer: dict, claims: list[dict], *, model: str) -> Path:
 # ── the model call ────────────────────────────────────────────────────────────
 
 def ask_model(system: str, user: str) -> tuple[str, str]:
+    import argparse as _a
+
     from elife_extract.agents import stream_text
     from elife_extract.config import Config
 
-    cfg = Config.load()
+    # `Config.load()` has never existed; the class builds from parsed args. Nothing caught it
+    # because no run of this layer has ever reached the backend — every one came through
+    # `--answer` — so the only path that calls this crashed the first time it was taken.
+    cfg = Config.from_args(_a.Namespace())
     model = getattr(cfg, "reconciler_model", None) or getattr(cfg, "model", None)
     if not model:
         raise SystemExit("no model configured — see extract/elife_extract/config.py")
-    raw = stream_text(cfg, model=model, system=system, user=user, label="plain-claim")
+    raw, _usage = stream_text(cfg, model=model, system=system, user=user, label="plain-claim")
     return raw, model
 
 
@@ -180,6 +189,10 @@ def main() -> int:
                          "whatever answers it answers this question rather than a paraphrase")
     ap.add_argument("--answer", metavar="PATH",
                     help="an answer produced elsewhere; validated exactly as a backend reply is")
+    ap.add_argument("--tokens", type=int, metavar="N",
+                    help="what the session that answered this spent; the "
+                         "ledger records how an answer arrived and, with "
+                         "this, what it cost")
     args = ap.parse_args()
 
     claims = load_claims(args.paper)
@@ -216,7 +229,8 @@ def main() -> int:
             print(f"  {p}", file=sys.stderr)
         return 1
 
-    out = write(args.paper, answer, claims, model=model)
+    out = write(args.paper, answer, claims, model=model,
+                tokens=pipeline.answered_tokens(args.tokens))
     longest = max(len(answer[c["slug"]].strip()) for c in claims)
     print(f"  {args.paper:38} {len(claims)} claims · longest {longest} chars · "
           f"{out.relative_to(ROOT)}")

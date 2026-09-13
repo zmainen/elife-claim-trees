@@ -35,6 +35,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "extract"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import pipeline  # noqa: E402
+
 from elife_extract.coverage import claim_fingerprint, tree_fingerprint  # noqa: E402
 from elife_extract.segment import span_sha  # noqa: E402
 from corpus_facts import frontmatter  # noqa: E402
@@ -167,7 +169,7 @@ def validate(answer: list[dict], paper: str) -> tuple[list[dict], list[str]]:
     return out, problems
 
 
-def write(paper: str, verdicts: list[dict], *, by: str) -> Path:
+def write(paper: str, verdicts: list[dict], *, by: str, tokens: int | None = None) -> Path:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out = OUT_DIR / f"{paper}.json"
     out.write_text(json.dumps({
@@ -176,6 +178,7 @@ def write(paper: str, verdicts: list[dict], *, by: str) -> Path:
         "by": by,
         "note": NOTE,
         "spans": verdicts,
+        **({"usage": pipeline.answered_usage(tokens)} if tokens else {}),
     }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return out
 
@@ -188,6 +191,10 @@ def main() -> int:
                     help="write the exact prompt this layer would send to PATH and exit")
     ap.add_argument("--answer", metavar="PATH",
                     help="verdicts produced elsewhere; validated before anything is written")
+    ap.add_argument("--tokens", type=int, metavar="N",
+                    help="what the session that answered this spent; the "
+                         "ledger records how an answer arrived and, with "
+                         "this, what it cost")
     args = ap.parse_args()
 
     system, user = build_prompt(args.paper)
@@ -217,7 +224,8 @@ def main() -> int:
         where = src.relative_to(ROOT)
     except ValueError:
         where = src
-    out = write(args.paper, verdicts, by=f"supplied:{where}")
+    out = write(args.paper, verdicts, by=f"supplied:{where}",
+                tokens=pipeline.answered_tokens(args.tokens))
     counts = {v: sum(1 for x in verdicts if x["verdict"] == v) for v in VERDICTS}
     print(f"  {args.paper:38} {len(verdicts)} verdicts · "
           + " · ".join(f"{k} {v}" for k, v in counts.items())
