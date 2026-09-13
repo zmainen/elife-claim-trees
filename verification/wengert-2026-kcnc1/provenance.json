@@ -3,7 +3,7 @@
   "script": "verification/wengert-2026-kcnc1/verify.py",
   "argv": [],
   "observed_by": "verification/audit_run.py",
-  "recorded": "2026-09-13T12:45:57+00:00",
+  "recorded": "2026-09-13T16:01:35+00:00",
   "interpreter": {
     "executable": "~/anaconda/bin/python",
     "version": "3.10.18"
@@ -14,43 +14,50 @@
       "claim": "pv-ins-reduced-k-current-density",
       "paper_value": "WT\u22481884, KI\u2248757 pA/pF, p=3.3e-5",
       "reproduced_value": "WT=1883 (n=13), KI=757 (n=17), p=3.34e-05",
-      "status": "PASS"
+      "status": "PASS",
+      "measured": true
     },
     {
       "claim": "pv-ins-impaired-maximal-firing",
       "paper_value": "WT\u2248201>KI\u2248126 APs, p<0.001",
       "reproduced_value": "WT=207.8 (n=20), KI=175.8 (n=37), p=0.1661",
-      "status": "WARN"
+      "status": "WARN",
+      "measured": true
     },
     {
       "claim": "excitatory-neurons-unaffected-juvenile",
       "paper_value": "p=0.66 NS (WT=343, KI=307 pA/pF)",
       "reproduced_value": "WT=343, KI=307 pA/pF, p=0.66 (from notes; parse error: Could not find +40mV row)",
-      "status": "PASS"
+      "status": "PASS",
+      "measured": false
     },
     {
       "claim": "a421v-mice-die-before-122d",
       "paper_value": "n=33 KI, n=46 WT, max KI age \u2264122d",
       "reproduced_value": "n_KI=33, n_WT=46, max KI age=122d",
-      "status": "PASS"
+      "status": "PASS",
+      "measured": true
     },
     {
       "claim": "pv-in-ap-waveform-altered-downstroke-apd50",
       "paper_value": "downstroke less negative & APD50 longer in KI, both ages",
       "reproduced_value": "P16-21: DV -183\u2192-137 p=0.0008 (n=20/37), APD50 0.40\u21920.56 p=0.0063 \u00b7 P32-42: DV -248\u2192-164 p=0.0051 (n=14/17), APD50 0.31\u21920.58 p=0.0033",
-      "status": "PASS"
+      "status": "PASS",
+      "measured": true
     },
     {
       "claim": "pv-in-inhibitory-synapse-altered-adult",
       "paper_value": "amplitude KI>WT, PPR KI<WT (adult, 20 Hz)",
       "reproduced_value": "amp WT=-78.4(n=13) KI=-143.2(n=13) p=0.029; PPR WT=0.815(n=13) KI=0.674(n=12) p=0.074",
-      "status": "PASS"
+      "status": "PASS",
+      "measured": true
     },
     {
       "claim": "pv-in-inhibitory-synapse-intact-juvenile",
       "paper_value": "no significant amplitude or PPR difference (juvenile, 20 Hz)",
       "reproduced_value": "amp WT=-66.1(n=18) KI=-98.9(n=14) p=0.221; PPR WT=0.774(n=18) KI=0.659(n=14) p=0.239",
-      "status": "PASS"
+      "status": "PASS",
+      "measured": true
     }
   ],
   "opened": [
@@ -60,5 +67,5 @@
       "sha256_12": "9e0ed68fe280"
     }
   ],
-  "stdout_tail": "FAST MODE \u2014 estimated time: ~2 min\n============================================================\nData source: G-Node GIN https://gin.g-node.org/GoldbergNeuroLab/Wengert-et-al-2025-eLife\n\n[data] Excel already cached at /tmp/wengert-2026/electrophysiology.xlsx\n[data] Sheets available: ['Survival', 'PV-IN K+ currents', 'PV-IN WT P16-21 Spiking', 'PV-IN A421V+ P16-21 Spiking', 'PV-IN WT P32-42 Spiking', 'PV-IN A421V+ P32-42 Spiking', 'Pyr WT (P16-21) Potassium Curre', 'Pyr A421V P16-21 Potassium Curr', 'Pyr WT P16-21 Spiking', 'Pyr A421V P16-21 Spiking', 'WT (P16-21) PV->Pyr', 'Kcnc1 (P16-21) PV->Pyr', 'WT (P32-42) PV-> Pyr', 'Kcnc1 (P32-42) PV->Pyr', 'Layer V PV-IN P16-21 Spiking', 'RTN PV+ P16-21 Spiking', 'Pyr (P32-42) Spiking', 'WT (P16-21) Pyr->PV ', 'Kcnc1 (P16-21) Pyr->PV']\n\n  pv-ins-reduced-k-current-density: WT=1883, KI=757, p=3.34e-05 \u2192 PASS (0.9s)\n  pv-ins-impaired-maximal-firing: WT=207.8, KI=175.8, p=0.1661 \u2192 FAIL (2.0s)\n  a421v-mice-die-before-122d: n_KI=33, n_WT=46 \u2192 PASS (0.8s)\n  pv-in-ap-waveform-altered-downstroke-apd50: P16-21: DV -183\u2192-137 p=0.0008 (n=20/37), APD50 0.40\u21920.56 p=0.0063 \u00b7 P32-42: DV -248\u2192-164 p=0.0051 (n=14/17), APD50 0.31\u21920.58 p=0.0033 \u2192 PASS (3.8s)\n  pv-in-inhibitory-synapse-altered-adult: amp p=0.029, PPR p=0.074 \u2192 PASS (2.1s)\n  pv-in-inhibitory-synapse-intact-juvenile: amp p=0.221, PPR p=0.239 \u2192 PASS (1.9s)\n\n============================================================\nSUMMARY\n\n---------------------------------------------------+----------------------------+----------------------------------+-------\nCLAIM SLUG                                         | PAPER VALUE                | REPRODUCED                       | STATUS\n---------------------------------------------------+----------------------------+----------------------------------+-------\npv-ins-reduced-k-current-density                   | WT\u22481884, KI\u2248757 pA/pF, p=3.3e-5 | WT=1883 (n=13), KI=757 (n=17), p=3.34e-05 | PASS  \npv-ins-impaired-maximal-firing                     | WT\u2248201>KI\u2248126 APs, p<0.001 | WT=207.8 (n=20), KI=175.8 (n=37), p=0.1661 | WARN  \nexcitatory-neurons-unaffected-juvenile             | p=0.66 NS (WT=343, KI=307 pA/pF) | WT=343, KI=307 pA/pF, p=0.66 (from notes; parse error: Could not find +40mV row) | PASS  \na421v-mice-die-before-122d                         | n=33 KI, n=46 WT, max KI age \u2264122d | n_KI=33, n_WT=46, max KI age=122d | PASS  \npv-in-ap-waveform-altered-downstroke-apd50         | downstroke less negative & APD50 longer in KI, both ages | P16-21: DV -183\u2192-137 p=0.0008 (n=20/37), APD50 0.40\u21920.56 p=0.0063 \u00b7 P32-42: DV -248\u2192-164 p=0.0051 (n=14/17), APD50 0.31\u21920.58 p=0.0033 | PASS  \npv-in-inhibitory-synapse-altered-adult             | amplitude KI>WT, PPR KI<WT (adult, 20 Hz) | amp WT=-78.4(n=13) KI=-143.2(n=13) p=0.029; PPR WT=0.815(n=13) KI=0.674(n=12) p=0.074 | PASS  \npv-in-inhibitory-synapse-intact-juvenile           | no significant amplitude or PPR difference (juvenile, 20 Hz) | amp WT=-66.1(n=18) KI=-98.9(n=14) p=0.221; PPR WT=0.774(n=18) KI=0.659(n=14) p=0.239 | PASS  \n---------------------------------------------------+----------------------------+----------------------------------+-------\n\n6/7 claims verified (1 WARN, 0 FAIL)\n"
+  "stdout_tail": "FAST MODE \u2014 estimated time: ~2 min\n============================================================\nData source: G-Node GIN https://gin.g-node.org/GoldbergNeuroLab/Wengert-et-al-2025-eLife\n\n[data] Excel already cached at /tmp/wengert-2026/electrophysiology.xlsx\n[data] Sheets available: ['Survival', 'PV-IN K+ currents', 'PV-IN WT P16-21 Spiking', 'PV-IN A421V+ P16-21 Spiking', 'PV-IN WT P32-42 Spiking', 'PV-IN A421V+ P32-42 Spiking', 'Pyr WT (P16-21) Potassium Curre', 'Pyr A421V P16-21 Potassium Curr', 'Pyr WT P16-21 Spiking', 'Pyr A421V P16-21 Spiking', 'WT (P16-21) PV->Pyr', 'Kcnc1 (P16-21) PV->Pyr', 'WT (P32-42) PV-> Pyr', 'Kcnc1 (P32-42) PV->Pyr', 'Layer V PV-IN P16-21 Spiking', 'RTN PV+ P16-21 Spiking', 'Pyr (P32-42) Spiking', 'WT (P16-21) Pyr->PV ', 'Kcnc1 (P16-21) Pyr->PV']\n\n  pv-ins-reduced-k-current-density: WT=1883, KI=757, p=3.34e-05 \u2192 PASS (1.1s)\n  pv-ins-impaired-maximal-firing: WT=207.8, KI=175.8, p=0.1661 \u2192 FAIL (3.2s)\n  a421v-mice-die-before-122d: n_KI=33, n_WT=46 \u2192 PASS (1.4s)\n  pv-in-ap-waveform-altered-downstroke-apd50: P16-21: DV -183\u2192-137 p=0.0008 (n=20/37), APD50 0.40\u21920.56 p=0.0063 \u00b7 P32-42: DV -248\u2192-164 p=0.0051 (n=14/17), APD50 0.31\u21920.58 p=0.0033 \u2192 PASS (6.5s)\n  pv-in-inhibitory-synapse-altered-adult: amp p=0.029, PPR p=0.074 \u2192 PASS (3.7s)\n  pv-in-inhibitory-synapse-intact-juvenile: amp p=0.221, PPR p=0.239 \u2192 PASS (3.6s)\n\n============================================================\nSUMMARY\n\n---------------------------------------------------+----------------------------+----------------------------------+-------\nCLAIM SLUG                                         | PAPER VALUE                | REPRODUCED                       | STATUS\n---------------------------------------------------+----------------------------+----------------------------------+-------\npv-ins-reduced-k-current-density                   | WT\u22481884, KI\u2248757 pA/pF, p=3.3e-5 | WT=1883 (n=13), KI=757 (n=17), p=3.34e-05 | PASS  \npv-ins-impaired-maximal-firing                     | WT\u2248201>KI\u2248126 APs, p<0.001 | WT=207.8 (n=20), KI=175.8 (n=37), p=0.1661 | WARN  \nexcitatory-neurons-unaffected-juvenile             | p=0.66 NS (WT=343, KI=307 pA/pF) | WT=343, KI=307 pA/pF, p=0.66 (from notes; parse error: Could not find +40mV row) | PASS* \na421v-mice-die-before-122d                         | n=33 KI, n=46 WT, max KI age \u2264122d | n_KI=33, n_WT=46, max KI age=122d | PASS  \npv-in-ap-waveform-altered-downstroke-apd50         | downstroke less negative & APD50 longer in KI, both ages | P16-21: DV -183\u2192-137 p=0.0008 (n=20/37), APD50 0.40\u21920.56 p=0.0063 \u00b7 P32-42: DV -248\u2192-164 p=0.0051 (n=14/17), APD50 0.31\u21920.58 p=0.0033 | PASS  \npv-in-inhibitory-synapse-altered-adult             | amplitude KI>WT, PPR KI<WT (adult, 20 Hz) | amp WT=-78.4(n=13) KI=-143.2(n=13) p=0.029; PPR WT=0.815(n=13) KI=0.674(n=12) p=0.074 | PASS  \npv-in-inhibitory-synapse-intact-juvenile           | no significant amplitude or PPR difference (juvenile, 20 Hz) | amp WT=-66.1(n=18) KI=-98.9(n=14) p=0.221; PPR WT=0.774(n=18) KI=0.659(n=14) p=0.239 | PASS  \n---------------------------------------------------+----------------------------+----------------------------------+-------\n* not measured in this run \u2014 the value is from notes taken when the analysis was first done.\n\n6/7 claims verified (1 WARN, 0 FAIL)\n"
 }
