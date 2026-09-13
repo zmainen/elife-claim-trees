@@ -47,6 +47,11 @@ warrant: moderate
 warrant_why: a manipulation check recovering the VS reward signal that rules out alt-model-based-glm-invalid
 warrant_from:
 - rules_out
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:blocked
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** The results reader treated this as a manipulation check validating the model-based BOLD analysis; the caption reader described it as a plain empirical result. Both agree on panel and direction; resolved to control.

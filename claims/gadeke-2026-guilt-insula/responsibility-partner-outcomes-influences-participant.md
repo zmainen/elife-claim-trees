@@ -11,6 +11,7 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
+check_verification: unrecorded
 warrant: confirmed
 warrant_why: confirmed by likelihood-ratio-test-showed-responsibility and partner-reward-prediction-errors-resulting (social_pRPE weights > 0)
 warrant_from:

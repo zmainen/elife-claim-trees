@@ -14,6 +14,9 @@ concepts:
   - autoreceptor dynamics
 priority: 2026-03-29
 epistemic: weak
+check_verification: partial
+check_verification_from:
+- record:verified
 
 tests:
   - hypothesis-d1-d2-temporal-distinction

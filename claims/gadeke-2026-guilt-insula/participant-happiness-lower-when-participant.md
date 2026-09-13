@@ -47,6 +47,11 @@ warrant: moderate
 warrant_why: it rules out the rival alt-agency-aversion-not-guilt by showing the cost is decision-maker-contingent
 warrant_from:
 - rules_out
+check_verification: reproduced
+check_verification_from:
+- record:partial
+- record:unattempted
+- provenance:WARN measured
 ---
 
 **Notes from extraction:** The agency effect on happiness, distinct from the guilt (partner-outcome-contingent) effect.

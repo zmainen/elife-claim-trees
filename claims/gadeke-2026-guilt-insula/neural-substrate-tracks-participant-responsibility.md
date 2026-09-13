@@ -10,6 +10,7 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+check_verification: unrecorded
 warrant: strong
 warrant_why: its prediction neural-substrate-tracks-participant-responsibility-2 is confirmed by one-cluster-left-sts-responded and no rival stands
 warrant_from:

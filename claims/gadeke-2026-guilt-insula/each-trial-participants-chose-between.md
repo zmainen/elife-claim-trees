@@ -20,6 +20,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: asserted task description; nothing in the tree's argument bears on it
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** The within-subject responsibility manipulation on which the guilt and agency contrasts depend.

@@ -43,6 +43,11 @@ reproductions:
   notes: null
 warrant: weak
 warrant_why: a null asserted on its own; nothing in the tree's argument bears on it
+check_verification: reproduced
+check_verification_from:
+- record:partial
+- record:unattempted
+- provenance:WARN measured
 ---
 
 **Notes from extraction:** Null result: the neural signature does not track individual differences in behavioural guilt sensitivity.

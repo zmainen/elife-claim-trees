@@ -29,6 +29,7 @@ warrant_from:
 - validated_by
 - confirms
 - requires
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Caption states all coefficients and differences are significantly different from 0 (see Appendix 1—table 6).

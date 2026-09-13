@@ -22,6 +22,7 @@ concepts:
   - tonic dopamine
 priority: 2026-04-19
 epistemic: hypothesis
+check_verification: unrecorded
 status: N/A
 panel: hypothesis
 

@@ -21,6 +21,7 @@ warrant: weak
 warrant_why: a 'may reflect' interpretation over participant-happiness-lower-when-participant, speculating responsibility aversion
 warrant_from:
 - interprets
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Interpretation of the agency effect through the responsibility-aversion literature.

@@ -40,6 +40,11 @@ reproductions:
   notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
 warrant: weak
 warrant_why: asserted; the tree's argument records no prediction outcome, control or supporting claim for the three-cluster result
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:blocked
+- provenance:PASS measured
 ---
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->

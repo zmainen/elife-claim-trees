@@ -42,6 +42,11 @@ reproductions:
   notes: Behavioral result from Study 1. Not yet executed.
 warrant: weak
 warrant_why: asserted, significant in Study 1 only; nothing in the tree's argument bears on it
+check_verification: reproduced
+check_verification_from:
+- record:partial
+- record:unattempted
+- provenance:WARN measured
 ---
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->

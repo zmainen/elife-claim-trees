@@ -15,6 +15,7 @@ concepts:
   - alternative explanation
 priority: 2026-09-10
 epistemic: weak
+check_verification: unrecorded
 warrant: ruled-out
 warrant_why: 'participant-happiness-lower-when-participant rules it out: the happiness cost is decision-maker-contingent, not agency-aversion as such'
 warrant_from:

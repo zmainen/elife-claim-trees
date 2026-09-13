@@ -15,6 +15,7 @@ concepts:
   - validity threat
 priority: 2026-09-10
 epistemic: weak
+check_verification: unrecorded
 warrant: ruled-out
 warrant_why: 'participants-probability-choosing-risky-option rules it out: choice tracked expected value, so participants were value-sensitive'
 warrant_from:

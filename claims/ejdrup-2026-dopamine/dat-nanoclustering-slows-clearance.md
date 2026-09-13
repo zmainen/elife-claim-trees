@@ -15,6 +15,10 @@ concepts:
   - varicosity-scale dynamics
 priority: 2026-03-29
 epistemic: moderate
+check_verification: partial
+check_verification_from:
+- record:blocked
+- record:partial
 
 tests:
   - hypothesis-nanoclustering-regulates-vmax

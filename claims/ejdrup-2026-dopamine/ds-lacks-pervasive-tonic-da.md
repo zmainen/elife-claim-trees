@@ -15,6 +15,11 @@ concepts:
   - pacemaker firing
 priority: 2026-03-29
 epistemic: moderate
+check_verification: partial
+check_verification_from:
+- record:blocked
+- record:verified
+- provenance:PASS
 
 tests:
   - hypothesis-vmax-explains-regional-difference

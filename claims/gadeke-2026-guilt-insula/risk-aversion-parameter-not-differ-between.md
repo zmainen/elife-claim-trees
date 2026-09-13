@@ -20,6 +20,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: asserted; its own dossier records no argument behind it
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Null result justifying pooling across gain and loss trials.

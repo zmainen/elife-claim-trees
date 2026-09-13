@@ -10,6 +10,7 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+check_verification: unrecorded
 warrant: strong
 warrant_why: its prediction connectivity-between-guilt-responsibility-related-outcome-ph is confirmed and no rival stands
 warrant_from:

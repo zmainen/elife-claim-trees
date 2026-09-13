@@ -20,6 +20,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: asserted; the tree's argument records nothing behind this weighting comparison
+check_verification: unrecorded
 ---
 
 **Relations.** Why each outgoing edge was inferred:

@@ -20,6 +20,7 @@ warrant: moderate
 warrant_why: a synthesis drawing together three converging risk-preference results — no-significant-interaction-between-difference, participants-slightly-more-risk-averse and risk-premiums-not-differ-between
 warrant_from:
 - supported_by
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Integrates the choice, risk-premium and ρ results across both studies; synthesis is expected to be single-source (results reader only).

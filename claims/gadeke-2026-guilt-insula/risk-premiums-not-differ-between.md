@@ -28,6 +28,9 @@ warrant: moderate
 warrant_why: a null that rules out alt-social-context-shifts-risk-attitude — risk premiums did not differ by condition
 warrant_from:
 - rules_out
+check_verification: unattempted
+check_verification_from:
+- record:unattempted
 ---
 
 **Notes from extraction:** Null result; evidence against social-context-driven changes in risk aversion.
