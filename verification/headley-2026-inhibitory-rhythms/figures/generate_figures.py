@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generate reproduced figure panels for Headley et al. 2026 — Inhibitory Rhythms.
-Data source: /tmp/InhibOnDendComp/data/ (pre-computed CSVs from GitHub repo)
+Data source: /tmp/headley/data/ (pre-computed CSVs from GitHub repo)
 """
 
 import matplotlib
@@ -13,7 +13,8 @@ import os
 
 plt.style.use('seaborn-v0_8-whitegrid')
 
-DATA_DIR = "/tmp/InhibOnDendComp/data"
+# Matches verify.py's REPO_DIR — the clone this script reads is the one verify.py made.
+DATA_DIR = "/tmp/headley/data"
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 DPI = 150
 
@@ -52,7 +53,7 @@ def fig4a_firing_rates():
     out_path = os.path.join(OUT_DIR, "fig4a-firing-rates.png")
     fig.savefig(out_path, dpi=DPI, bbox_inches='tight')
     plt.close(fig)
-    print(f"[saved] {out_path}  ({os.path.getsize(out_path) // 1024} KB)")
+    print(f"[saved] {os.path.relpath(out_path)}  ({os.path.getsize(out_path) // 1024} KB)")
     return out_path
 
 
@@ -82,7 +83,7 @@ def fig3a_nmda_coupling():
     out_path = os.path.join(OUT_DIR, "fig3a-nmda-coupling.png")
     fig.savefig(out_path, dpi=DPI, bbox_inches='tight')
     plt.close(fig)
-    print(f"[saved] {out_path}  ({os.path.getsize(out_path) // 1024} KB)")
+    print(f"[saved] {os.path.relpath(out_path)}  ({os.path.getsize(out_path) // 1024} KB)")
     return out_path
 
 
@@ -111,7 +112,7 @@ def fig2b_na_coupling():
     out_path = os.path.join(OUT_DIR, "fig2b-na-coupling.png")
     fig.savefig(out_path, dpi=DPI, bbox_inches='tight')
     plt.close(fig)
-    print(f"[saved] {out_path}  ({os.path.getsize(out_path) // 1024} KB)")
+    print(f"[saved] {os.path.relpath(out_path)}  ({os.path.getsize(out_path) // 1024} KB)")
     return out_path
 
 
