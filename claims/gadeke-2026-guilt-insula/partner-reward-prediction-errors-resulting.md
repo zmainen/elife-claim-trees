@@ -43,6 +43,10 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: null
+warrant: moderate
+warrant_why: it confirms responsibility-partner-outcomes-influences-participant (social_pRPE weight > 0)
+warrant_from:
+- confirms
 ---
 
 **Relations.** Why each outgoing edge was inferred:

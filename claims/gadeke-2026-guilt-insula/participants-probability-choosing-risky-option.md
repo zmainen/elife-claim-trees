@@ -63,6 +63,10 @@ reproductions:
     a coefficient-scale comparison against a utility-weighted predictor, not a failure to reproduce.
 
     '
+warrant: moderate
+warrant_why: 'it rules out alt-participants-insensitive-to-value: choice probability tracked the expected-value difference strongly'
+warrant_from:
+- rules_out
 ---
 
 **Notes from extraction:** Manipulation check that choices tracked expected value as intended.

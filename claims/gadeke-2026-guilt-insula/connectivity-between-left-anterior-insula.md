@@ -42,6 +42,10 @@ reproductions:
   blocked_by: compute-infeasible
   notes: gPPI analysis requires individual-level GLM outputs from OpenNeuro raw data. gPPI toolbox dependency.
     Group-level results may be in fMRIresults/ NIfTI files. Not yet executed.
+warrant: weak
+warrant_why: it interprets functional-connectivity-between-left-anterior (moderate), reading a guilt-sensitivity into a single connectivity result
+warrant_from:
+- interprets
 ---
 
 **Notes from extraction:** Interpretation stated in the abstract.

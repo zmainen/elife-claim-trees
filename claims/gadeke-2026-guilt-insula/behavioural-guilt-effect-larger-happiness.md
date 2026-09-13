@@ -17,6 +17,10 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
+warrant: moderate
+warrant_why: it interprets the strong when-partner-received-low-lottery result as compatible with 'simple guilt'
+warrant_from:
+- interprets
 ---
 
 **Relations.** Why each outgoing edge was inferred:

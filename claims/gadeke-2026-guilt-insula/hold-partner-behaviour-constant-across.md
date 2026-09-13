@@ -26,6 +26,8 @@ reproductions:
     were simulated using a simple algorithm that always selected the option with the highest expected
     value". Authors acknowledge this in Discussion as a limitation and note that partner outcomes nonetheless
     influenced participant happiness, arguing the effects could be stronger with genuine interaction.'
+warrant: weak
+warrant_why: asserted procedure; nothing in the tree's argument bears on it
 ---
 
 **Notes from extraction:** The partner was not a free agent; partner choices in the Partner condition were deterministic, which the responsibility/guilt contrasts rely on.

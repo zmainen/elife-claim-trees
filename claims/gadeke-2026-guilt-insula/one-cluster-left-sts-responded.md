@@ -47,6 +47,12 @@ reproductions:
   blocked_by: compute-infeasible
   notes: Model-based fMRI analysis requires computational model fitted to behavioral data. Model code
     in GitHub repo. Pre-computed group NIfTI results may be in fMRIresults/. Not yet executed.
+warrant: moderate
+warrant_why: it confirms neural-substrate-tracks-participant-responsibility-2, supported by left-superior-temporal-sulcus-cluster
+warrant_from:
+- confirms
+- supported_by
+- requires
 ---
 
 **Notes from extraction:** Caption notes this is restricted to brain regions sensitive to outcomes of risky choices.

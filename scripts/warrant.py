@@ -1,33 +1,37 @@
 #!/usr/bin/env python3
 """How well does the tree support a claim — the dossier, the rule floor, and the comparison.
 
-`warrant` is what the tree gives a reader grounds to believe, as distinct from what the paper
-says (`confidence`) and from how many readers agreed (`READER_CONFIDENCE`). Issue #126, and the
-design note docs/design/2026-09-13-warrant.md, ask for three mechanical pieces here, and one
-model judgement that lives in the `warrant` layer (extract/prompts/warrant.md):
+`warrant` is what the tree's *argument* gives a reader grounds to believe, as distinct from what
+the paper says (`confidence`) and from how many readers agreed (`READER_CONFIDENCE`). Version 2
+(the 2026-09-13 rulings, docs/design/2026-09-13-warrant.md) reframes it: warrant reasons only
+from what the paper reports and how its argument hangs together, as the tree records it —
+predictions and their outcomes, the controls that validate a result, the rivals it rules out,
+what supports and requires what. *Checking* is not part of it. A reproduction, a methods
+assessment, a statistics check, a citation check are each a separate later layer that writes a
+modifier beside the warrant; none of them enters here. There are three mechanical pieces, and
+one model judgement that lives in the `warrant` layer (extract/prompts/warrant.md):
 
-  dossier(paper)        Per claim, what the tree holds about its support — role, stance, the
-                        outcomes on its predictions, the controls that validate it, the
-                        alternatives it rules out, its reproduction records and their
-                        verification provenance, what it requires and is part of, the claims
-                        that support or extend it, and the assertion's confidence. Plain data,
-                        no judgement in it.
+  dossier(paper)        Per claim, what the tree's argument holds — role, stance, the outcomes
+                        on its predictions, the controls that validate it, the rivals it rules
+                        out, the incoming supports/extends/confirms/refutes, what it requires
+                        and is part of (with their roles), and what it interprets. No checking
+                        record, no confidence, no reproduction. Plain data, no judgement in it.
 
-  warrant_rule(d)       The note's version-1 rule, by role, over one claim's dossier. Returns
+  warrant_rule(d)       The note's version-2 rule, by role, over one claim's dossier. Returns
                         the level and the inputs that fired. It is the floor the model's reading
-                        is scored against — and, per the ruling, it is shown to the model only
+                        is scored against — kept for scoring only, and shown to the model only
                         *after* it judges, never before.
 
   resolve(paper)        Runs the rule over the whole tree, in dependency order, so propagation
-                        (a claim is bounded above by the weakest claim it requires) and the
-                        minimum a synthesis takes over what it interprets can read their
-                        neighbours' resolved levels.
+                        (a claim is bounded above by the weakest same-kind claim it requires)
+                        and the interpretation/synthesis rules can read their neighbours'
+                        resolved levels.
 
-  report(paper)         The comparison the note's §"How the rule is evaluated" asks for: the
-                        model's level beside the rule's floor for every claim, agreement by
-                        role, and every disagreement with the model's `why` beside the rule's
-                        inputs. Reads the recorded `warrant.v<N>.json` and writes
-                        `runs/<paper>/warrant.v<N>.report.md`.
+  report(paper)         The comparison: the model's level beside the rule's floor for every
+                        claim, agreement overall and by role, and every disagreement with the
+                        model's `why` beside the rule's fired keys. Reads the recorded
+                        `warrant.v<N>.json`, writes `runs/<paper>/warrant.v<N>.report.md`, and
+                        writes `runs/<paper>/warrant.v<N>.annotated.json` beside it.
 
 The rule is deliberately coarse (four levels, one a flag), because a fine rule with no
 adjudicated readings behind it is a guess with more digits. It is scored against the model's
@@ -50,7 +54,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import prediction_outcome  # noqa: E402
 from export_mira import CLAIMS_DIR, first_assertion, load_paper, relations  # noqa: E402
 
-RULE_VERSION = 1
+RULE_VERSION = 2
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -60,11 +64,20 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GRADED = ("contested", "weak", "moderate", "strong")
 _RANK = {lv: i for i, lv in enumerate(GRADED)}
 
-# The roles whose warrant is graded from the paper's assertion and the evidence on it. A role
-# outside every branch of the rule (literature-context is the one in the corpus) is graded here
-# too: it is an asserted claim with a confidence and, usually, nothing that checks it.
+# The roles whose warrant is graded from the tree's argument on the claim. A role outside every
+# branch of the rule (literature-context is the one in the corpus) is graded here too.
 GRADED_ROLES = {"empirical", "control", "methodological", "scope", "literature-context"}
 INTERPRETIVE_ROLES = {"synthesis", "interpretation"}
+
+# The role groups propagation runs within: a claim is bounded only by a required claim of its own
+# group. Methodological and scope are in no group, so they never bound anything and are never
+# bounded (§rule v2). An unassessed prerequisite of another kind is noted, not counted.
+_ROLE_GROUP = {"empirical": "result", "control": "result",
+               "hypothesis": "claim", "prediction": "claim"}
+
+# One step below, for an interpretation over the strongest claim it interprets. `contested` and
+# `weak` floor at `weak` — an interpretation is not itself refuted by interpreting refuted work.
+_STEP_DOWN = {"strong": "moderate", "moderate": "weak", "weak": "weak", "contested": "weak"}
 
 VOCABULARY = {
     "prediction": ("confirmed", "refuted", "untested"),
@@ -87,7 +100,7 @@ def _is_alternative(role: str, stance: str) -> bool:
     return role == "hypothesis" and stance in ("rejects", "entertains")
 
 
-# ── the dossier: what the tree holds about a claim's support ──────────────────────────────
+# ── the dossier: what the tree's argument holds about a claim ──────────────────────────────
 
 
 def _incoming(claims: list[dict]) -> dict[str, list[tuple[str, str]]]:
@@ -99,37 +112,18 @@ def _incoming(claims: list[dict]) -> dict[str, list[tuple[str, str]]]:
     return inc
 
 
-def _verification(paper: str) -> dict[str, list[dict]]:
-    """claim slug → the provenance entries that observed a run against it, where any exist.
-
-    The record's `claim` field carries a bracketed qualifier for the several values checked
-    against one claim (`… [fMRI β]`); the slug is what precedes it. A `verified` reproduction
-    checks a number, and this is where the number was actually re-run and what it came to.
-    """
-    p = os.path.join(ROOT, "verification", paper, "provenance.json")
-    if not os.path.isfile(p):
-        return {}
-    data = json.load(open(p, encoding="utf-8"))
-    out: dict[str, list[dict]] = collections.defaultdict(list)
-    for r in data.get("results", []):
-        slug = (r.get("claim") or "").split(" [", 1)[0].strip()
-        if slug:
-            out[slug].append({"status": r.get("status"), "paper_value": r.get("paper_value"),
-                              "reproduced_value": r.get("reproduced_value")})
-    return out
-
-
 def dossier(paper: str) -> dict[str, dict]:
-    """Per claim, what the tree holds about its support. Plain data — no judgement in it.
+    """Per claim, what the tree's argument holds about its support. Plain data — no judgement.
 
-    One dict per claim, keyed by slug. The identity keys (slug, role, stance, confidence,
-    sentence) say what the claim is; the evidence keys say what stands behind it, and it is the
-    non-empty ones the layer records as `warrant_from`.
+    One dict per claim, keyed by slug. The identity keys (slug, role, stance, sentence) say what
+    the claim is; the evidence keys say how the paper's argument stands behind it, and it is the
+    non-empty ones the layer records as `warrant_from`. No checking record enters here: a
+    reproduction, a methods or statistics check, a citation check is a later layer's word
+    (§"Checks are separate layers").
     """
     claims = load_paper(paper)
     by_slug = {c["slug"]: c for c in claims}
     inc = _incoming(claims)
-    prov = _verification(paper)
     outcomes = {it["prediction"]: it for it in prediction_outcome.scan([paper])}
 
     def prediction_outcome_of(slug: str) -> dict | None:
@@ -157,58 +151,57 @@ def dossier(paper: str) -> dict[str, dict]:
         predictions = [{"slug": s, **(prediction_outcome_of(s) or {"outcome": "untested"})}
                        for s in sorted(preds) if by_slug.get(s, {}).get("role") == "prediction"]
 
+        requires = sorted(t for r, t in outgoing if r == "requires")
+        part_of = sorted(t for r, t in outgoing if r == "part-of")
         d = {
             "slug": slug,
             "role": role,
             "stance": stance,
-            "confidence": a.get("confidence"),
             "sentence": " ".join((c.get("claim") or "").split()),
-            # Evidence keys — the ones that "fire".
+            # Evidence keys — the argument that "fires".
             "outcome": prediction_outcome_of(slug) if role == "prediction" else None,
             "predictions": predictions,
             "validated_by": sorted(src for r, src in incoming if r == "validates"),
+            # This claim tests a prediction that came out as predicted — it is the source of a
+            # `confirms` (§rule v2, the empirical `strong` clause). And the predictions others
+            # confirm about it, shown as argument.
+            "confirms": sorted(t for r, t in outgoing if r == "confirms"),
+            "confirmed_by": sorted(src for r, src in incoming if r == "confirms"),
             "rules_out": sorted(t for r, t in outgoing if r == "rules-out"),
-            "reproductions": [{"status": r.get("status"),
-                               "paper_value": r.get("paper_value"),
-                               "reproduced_value": r.get("reproduced_value")}
-                              for r in (c.get("reproductions") or [])],
-            "verification": prov.get(slug, []),
-            "requires": sorted(t for r, t in outgoing if r == "requires"),
-            "part_of": sorted(t for r, t in outgoing if r == "part-of"),
-            "interprets": sorted(t for r, t in outgoing if r == "interprets"),
+            "ruled_out_by": sorted(src for r, src in incoming if r == "rules-out"),
             "supported_by": sorted(src for r, src in incoming if r == "supports"),
             "extended_by": sorted(src for r, src in incoming if r == "extends"),
-            # The control or result that rules this claim out — the evidence behind an
-            # alternative's ruled-out/open, and empty for a claim the paper asserts.
-            "ruled_out_by": sorted(src for r, src in incoming if r == "rules-out"),
-            # A cross-paper result that refutes this claim moves it to contested; within a
-            # single tree this is always empty, and its emptiness is itself a finding (§inputs).
-            "refuted_by_other_paper": sorted(
-                src for r, src in incoming
-                if r in ("refutes", "contradicts") and by_slug.get(src) is None),
+            # A result in the tree that refutes this claim moves it to contested (§rule v2).
+            "refuted_by": sorted(src for r, src in incoming
+                                 if r in ("refutes", "contradicts") and src in by_slug),
+            "requires": requires,
+            "part_of": part_of,
+            "interprets": sorted(t for r, t in outgoing if r == "interprets"),
+            # The roles of what it requires and is part of, for the rendered dossier and for
+            # propagation's same-group test.
+            "require_roles": {t: by_slug.get(t, {}).get("role") for t in requires},
+            "part_of_roles": {t: by_slug.get(t, {}).get("role") for t in part_of},
         }
         doss[slug] = d
     return doss
 
 
-# ── the rule floor: the note's version 1, by role ─────────────────────────────────────────
+# ── the rule floor: the note's version 2, by role ─────────────────────────────────────────
 
 
-def _repro_statuses(d: dict) -> set[str]:
-    return {r.get("status") for r in d.get("reproductions", [])}
+def warrant_rule(d: dict, resolved: dict[str, str] | None = None,
+                 unassessed: set[str] | None = None) -> tuple[str, list[str]]:
+    """The version-2 rule over one claim's dossier: the level, and the inputs that fired.
 
-
-def warrant_rule(d: dict, resolved: dict[str, str] | None = None) -> tuple[str, list[str]]:
-    """The version-1 rule over one claim's dossier: the level, and the inputs that fired.
-
-    `resolved` carries the levels the rest of the tree has already resolved to, which the two
-    non-local branches read: propagation caps a graded claim at the weakest claim it requires,
-    and a synthesis or interpretation takes the minimum over the claims it interprets. Every
+    `resolved` carries the levels the rest of the tree has already resolved to, which the
+    non-local branches read: propagation caps a claim at the weakest same-kind claim it
+    requires, and interpretation/synthesis read the levels of what they interpret. `unassessed`
+    is the slugs the rule found empty, so a prerequisite of another kind can be flagged. Every
     other branch is a function of the dossier alone, so a synthetic claim tests it without one.
     """
     resolved = resolved or {}
+    unassessed = unassessed or set()
     role, stance = d["role"], d.get("stance") or "asserts"
-    fired: list[str] = []
 
     # A prediction has an outcome, not a warrant (§rule, #28).
     if role == "prediction":
@@ -225,15 +218,23 @@ def warrant_rule(d: dict, resolved: dict[str, str] | None = None) -> tuple[str, 
             return "ruled-out", [f"ruled-out-by:{s}" for s in d["ruled_out_by"]]
         return "open", ["no-rules-out"]
 
-    # A synthesis or interpretation takes the minimum over the claims it interprets.
-    if role in INTERPRETIVE_ROLES:
-        interpreted = [resolved[t] for t in d.get("interprets", [])
-                       if resolved.get(t) in _RANK]
-        if interpreted:
-            lvl = min(interpreted, key=lambda x: _RANK[x])
-            return lvl, [f"interprets:{t}={resolved[t]}" for t in d["interprets"]
-                         if resolved.get(t) in _RANK]
-        # Nothing graded to interpret: fall through to the graded branch on its own assertion.
+    # An interpretation sits one step below the strongest claim it interprets, capped at
+    # moderate — argument alone never reaches strong.
+    if role == "interpretation":
+        levels = [(t, resolved[t]) for t in d.get("interprets", []) if resolved.get(t) in _RANK]
+        if not levels:
+            return "weak", ["interprets-nothing"]
+        top = max((lv for _, lv in levels), key=lambda x: _RANK[x])
+        lvl = _cap(_STEP_DOWN[top], "moderate")
+        return lvl, [f"interprets:{t}={lv}" for t, lv in levels]
+
+    # A synthesis reads agreement among what it interprets: moderate if two or more, none weak.
+    if role == "synthesis":
+        levels = [(t, resolved[t]) for t in d.get("interprets", []) if resolved.get(t) in _RANK]
+        fired = [f"interprets:{t}={lv}" for t, lv in levels]
+        if len(levels) >= 2 and all(lv != "weak" for _, lv in levels):
+            return "moderate", fired
+        return "weak", (fired or ["interprets-nothing"])
 
     # A hypothesis is warranted by its predictions and its rivals.
     if role == "hypothesis":
@@ -241,24 +242,30 @@ def warrant_rule(d: dict, resolved: dict[str, str] | None = None) -> tuple[str, 
         confirmed = [p["slug"] for p in preds if p.get("outcome") == "confirmed"]
         refuted = [p["slug"] for p in preds if p.get("outcome") == "refuted"]
         if refuted:
-            return "contested", [f"prediction-refuted:{s}" for s in refuted]
-        if confirmed:
+            lvl, fired = "contested", [f"prediction-refuted:{s}" for s in refuted]
+        elif confirmed:
             fired = [f"prediction-confirmed:{s}" for s in confirmed]
             standing = _standing_rivals(d, resolved)
             if standing:
-                return "moderate", fired + [f"rival-stands:{s}" for s in standing]
-            return "strong", fired + (["rivals-ruled-out"] if _rivals(d, resolved) else [])
-        return "weak", ["no-prediction-outcome"]
+                lvl, fired = "moderate", fired + [f"rival-stands:{s}" for s in standing]
+            else:
+                lvl = "strong"
+                fired = fired + (["rivals-ruled-out"] if _rivals(d, resolved) else [])
+        else:
+            lvl, fired = "weak", ["no-prediction-outcome"]
+        return _propagate(lvl, fired, role, d, resolved, unassessed)
 
     # Empirical, control, methodological, scope (and any other asserted, graded claim).
     lvl, fired = _graded_rule(d)
-    return _propagate(lvl, fired, d, resolved)
+    return _propagate(lvl, fired, role, d, resolved, unassessed)
+
+
+def _cap(lvl: str, ceiling: str) -> str:
+    return lvl if _RANK[lvl] <= _RANK[ceiling] else ceiling
 
 
 def _rivals(d: dict, resolved: dict[str, str]) -> list[str]:
     """Alternatives that address the same question as this hypothesis (§rule)."""
-    # Matching is by the `addresses` question id the stance layer wrote on each side; a
-    # hypothesis that carries none has no rivals to weigh here, which the report can note.
     return d.get("rivals", [])
 
 
@@ -268,36 +275,52 @@ def _standing_rivals(d: dict, resolved: dict[str, str]) -> list[str]:
 
 
 def _graded_rule(d: dict) -> tuple[str, list[str]]:
-    """The graded branch: start from the assertion, move on the evidence on it (§rule)."""
-    statuses = _repro_statuses(d)
-    if "mismatch" in statuses or d.get("refuted_by_other_paper"):
-        why = (["reproduction:mismatch"] if "mismatch" in statuses else [])
-        why += [f"refuted-by:{s}" for s in d.get("refuted_by_other_paper", [])]
-        return "contested", why
-    if "verified" in statuses:
-        return "strong", ["reproduction:verified"]
-    if d.get("validated_by") and "partial" not in statuses:
-        return "strong", [f"validated-by:{s}" for s in d["validated_by"]]
-    if statuses == {"partial"} or (statuses and statuses <= {"partial"}):
-        return "weak", ["reproduction:partial"]
-    if d.get("confidence") == "weak" and not _has_check(d):
-        return "weak", [f"confidence:{d['confidence']}", "unchecked"]
-    checks = sorted(s for s in statuses if s) or ["asserted"]
-    return "moderate", [f"reproduction:{s}" for s in checks] if statuses else ["asserted"]
+    """The graded branch: the tree's argument alone (§rule v2). No confidence, no reproduction.
+
+    `strong` when the claim both tests a prediction that came out as predicted (it is the source
+    of a `confirms`) and is validated by a control; `moderate` when exactly one of those holds,
+    or when two or more distinct claims support it; `weak` otherwise; `contested` when a result
+    in the tree refutes it. An empty dossier is `weak`, flagged `unassessed`.
+    """
+    if d.get("refuted_by"):
+        return "contested", [f"refuted-by:{s}" for s in d["refuted_by"]]
+    confirms = d.get("confirms", [])
+    validated = d.get("validated_by", [])
+    supports = d.get("supported_by", [])
+    tests = bool(confirms)
+    ctrl = bool(validated)
+    if tests and ctrl:
+        return "strong", ([f"confirms:{s}" for s in confirms]
+                          + [f"validated-by:{s}" for s in validated])
+    if (tests != ctrl) or len(supports) >= 2:
+        fired = [f"confirms:{s}" for s in confirms] + [f"validated-by:{s}" for s in validated]
+        if len(supports) >= 2:
+            fired += [f"supported-by:{s}" for s in supports]
+        return "moderate", fired
+    if not fired_keys(d):
+        return "weak", ["unassessed"]
+    return "weak", ([f"supported-by:{s}" for s in supports] or ["asserted"])
 
 
-def _has_check(d: dict) -> bool:
-    """Whether anything in the tree checks this claim: a reproduction, a control, or a test."""
-    return bool(d.get("reproductions") or d.get("validated_by") or d.get("verification"))
+def _propagate(lvl: str, fired: list[str], role: str, d: dict,
+               resolved: dict[str, str], unassessed: set[str]) -> tuple[str, list[str]]:
+    """Bound a claim's warrant at the weakest same-kind claim it requires (§propagation, v2).
 
-
-def _propagate(lvl: str, fired: list[str], d: dict, resolved: dict[str, str]) -> tuple[str, list[str]]:
-    """Cap a graded claim's warrant at the weakest graded claim it requires (§propagation)."""
-    caps = [(t, resolved[t]) for t in d.get("requires", []) if resolved.get(t) in _RANK]
-    for t, req in caps:
-        if _RANK[req] < _RANK[lvl]:
-            lvl = req
-            fired = fired + [f"bounded-by-requires:{t}={req}"]
+    Only a required claim of the same role group bounds it (empirical/control together;
+    hypothesis/prediction together). Methodological and scope are in no group, so they neither
+    bound nor are bounded. An unassessed prerequisite of another kind is listed and left to
+    change nothing.
+    """
+    grp = _ROLE_GROUP.get(role)
+    rroles = d.get("require_roles", {})
+    for t in d.get("requires", []):
+        t_lvl = resolved.get(t)
+        same = grp is not None and grp == _ROLE_GROUP.get(rroles.get(t))
+        if same and t_lvl in _RANK and _RANK[t_lvl] < _RANK[lvl]:
+            lvl = t_lvl
+            fired = fired + [f"bounded-by-requires:{t}={t_lvl}"]
+        elif not same and t in unassessed:
+            fired = fired + [f"prerequisite-unassessed:{t}"]
     return lvl, fired
 
 
@@ -332,14 +355,17 @@ def _order(doss: dict[str, dict]) -> list[str]:
 
 
 def resolve(paper: str) -> dict[str, dict]:
-    """Every claim's floor: {slug: {level, fired, dossier}}, propagation and minima applied."""
+    """Every claim's floor: {slug: {level, fired, dossier}}, propagation and interpretation applied."""
     doss = dossier(paper)
     _wire_rivals(paper, doss)
     resolved: dict[str, str] = {}
+    unassessed: set[str] = set()
     out: dict[str, dict] = {}
     for slug in _order(doss):
-        lvl, fired = warrant_rule(doss[slug], resolved)
+        lvl, fired = warrant_rule(doss[slug], resolved, unassessed)
         resolved[slug] = lvl
+        if "unassessed" in fired:
+            unassessed.add(slug)
         out[slug] = {"level": lvl, "fired": fired, "dossier": doss[slug]}
     return out
 
@@ -351,7 +377,6 @@ def _wire_rivals(paper: str, doss: dict[str, dict]) -> None:
     rival. Hypotheses in the corpus rarely carry `addresses`, so this usually attaches nothing —
     which, with every Gädeke alternative already ruled out, changes no hypothesis's level.
     """
-    d = os.path.join(CLAIMS_DIR, paper)
     addresses: dict[str, str] = {}
     alt_stance: dict[str, str] = {}
     for c in load_paper(paper):
@@ -372,9 +397,9 @@ def _wire_rivals(paper: str, doss: dict[str, dict]) -> None:
 
 def fired_keys(d: dict) -> list[str]:
     """The non-empty evidence keys of a dossier — what the layer records as `warrant_from`."""
-    keys = ("outcome", "predictions", "validated_by", "rules_out", "ruled_out_by",
-            "reproductions", "verification", "requires", "part_of", "interprets",
-            "supported_by", "extended_by")
+    keys = ("outcome", "predictions", "validated_by", "confirms", "confirmed_by", "rules_out",
+            "ruled_out_by", "supported_by", "extended_by", "refuted_by", "requires", "part_of",
+            "interprets")
     return [k for k in keys if d.get(k)]
 
 
@@ -388,7 +413,8 @@ def _latest_version(paper: str) -> int | None:
         return None
     vs = []
     for fn in os.listdir(d):
-        if fn.startswith("warrant.v") and fn.endswith(".json") and "report" not in fn:
+        if fn.startswith("warrant.v") and fn.endswith(".json") and "report" not in fn \
+                and "annotated" not in fn:
             try:
                 vs.append(int(fn[len("warrant.v"):-len(".json")]))
             except ValueError:
@@ -397,7 +423,13 @@ def _latest_version(paper: str) -> int | None:
 
 
 def render_dossier(d: dict) -> str:
-    """A claim's dossier as the prompt shows it to the reader — readable, not JSON."""
+    """A claim's dossier as the prompt shows it to the reader — readable, not JSON.
+
+    The tree's argument only: predictions and their outcomes, the controls that validate it, the
+    rivals it rules out, what supports/extends/confirms/refutes it, what it requires and is part
+    of (with their roles), what it interprets. No reproduction, no confidence — a later layer's
+    business, not warrant's.
+    """
     lines = []
     o = d.get("outcome")
     if o:
@@ -411,6 +443,8 @@ def render_dossier(d: dict) -> str:
         lines.append("  outcome: " + ("; ".join(parts) if parts else "no test points at it"))
     for p in d.get("predictions", []):
         lines.append(f"  prediction {p['slug']}: {p.get('outcome', 'untested')}")
+    if d.get("confirms"):
+        lines.append("  confirms prediction(s): " + ", ".join(d["confirms"]))
     if d.get("validated_by"):
         lines.append("  validated by control(s): " + ", ".join(d["validated_by"]))
     if d.get("ruled_out_by"):
@@ -419,29 +453,31 @@ def render_dossier(d: dict) -> str:
         lines.append("  rules out: " + ", ".join(d["rules_out"]))
     if d.get("rivals"):
         lines.append("  same-question rivals: " + ", ".join(d["rivals"]))
-    for r in d.get("reproductions", []):
-        lines.append(f"  reproduction [{r.get('status')}]: "
-                     f"paper {r.get('paper_value')} → reproduced {r.get('reproduced_value')}")
-    for v in d.get("verification", []):
-        lines.append(f"  verification [{v.get('status')}]: "
-                     f"paper {v.get('paper_value')} → observed {v.get('reproduced_value')}")
-    if d.get("requires"):
-        lines.append("  requires: " + ", ".join(d["requires"]))
-    if d.get("part_of"):
-        lines.append("  part of: " + ", ".join(d["part_of"]))
-    if d.get("interprets"):
-        lines.append("  interprets: " + ", ".join(d["interprets"]))
+    if d.get("refuted_by"):
+        lines.append("  refuted by: " + ", ".join(d["refuted_by"]))
     if d.get("supported_by"):
         lines.append("  supported by: " + ", ".join(d["supported_by"]))
     if d.get("extended_by"):
         lines.append("  extended by: " + ", ".join(d["extended_by"]))
+    if d.get("confirmed_by"):
+        lines.append("  confirmed by: " + ", ".join(d["confirmed_by"]))
+    if d.get("requires"):
+        lines.append("  requires: " + ", ".join(_with_roles(d["requires"], d.get("require_roles", {}))))
+    if d.get("part_of"):
+        lines.append("  part of: " + ", ".join(_with_roles(d["part_of"], d.get("part_of_roles", {}))))
+    if d.get("interprets"):
+        lines.append("  interprets: " + ", ".join(d["interprets"]))
     if not lines:
         lines.append("  (the tree records nothing that bears on this claim)")
     return "\n".join(lines)
 
 
+def _with_roles(slugs: list[str], roles: dict[str, str]) -> list[str]:
+    return [f"{s} ({roles[s]})" if roles.get(s) else s for s in slugs]
+
+
 def report(paper: str) -> str:
-    """Write runs/<paper>/warrant.v<N>.report.md: the model's reading beside the rule's floor."""
+    """Write warrant.v<N>.report.md and warrant.v<N>.annotated.json from the recorded answer."""
     v = _latest_version(paper)
     if v is None:
         sys.exit(f"no recorded warrant version for {paper} — run the warrant layer first")
@@ -474,8 +510,8 @@ def report(paper: str) -> str:
     total = sum(t for _, t in agree_by_role.values())
 
     out = [f"# Warrant: the model's reading beside the rule's floor — {paper}", ""]
-    out.append(f"Rule v{RULE_VERSION}, shown here *after* the model judged, never before. "
-               f"The model read {total} claims; it and the rule agree on "
+    out.append(f"Rule v{RULE_VERSION}, the argument-only floor, shown here *after* the model "
+               f"judged, never before. The model read {total} claims; it and the rule agree on "
                f"{total_agree}/{total}.")
     out += ["", "## Agreement by role", "",
             "| role | agree | total |", "|:--|--:|--:|"]
@@ -500,46 +536,46 @@ def report(paper: str) -> str:
         out.append(f"- **rule:** {dd['rule']}  ·  fired: {', '.join(dd['fired']) or '—'}")
         out.append("")
 
-    out += _mismatch_note(paper, floor, model)
     text = "\n".join(out).rstrip() + "\n"
     path = os.path.join(ROOT, "runs", paper, f"warrant.v{v}.report.md")
     with open(path, "w", encoding="utf-8") as fh:
         fh.write(text)
+    ann = write_annotated(paper, v, floor, model)
     print(f"{path}: written ({total_agree}/{total} agree)")
+    print(f"{ann}: written")
     return path
 
 
-def _mismatch_note(paper: str, floor: dict, model: dict) -> list[str]:
-    """The single fact the note asks the comparison to assert (§How the rule is evaluated).
+def write_annotated(paper: str, v: int, floor: dict, model: dict) -> str:
+    """One object per claim, the maintainer's annotated page is built from — byte-stable.
 
-    The corpus holds exactly one `mismatch` reproduction, and it must come out `contested`. It
-    is not Gädeke's, so the note's contingency applies: say so, and show what the rule and the
-    model did on Gädeke's `partial` records instead.
+    Sorted by slug, sorted keys, trailing newline: a function of the tree and the recorded
+    answer alone, so it is not rewritten by `make data` (which does not touch runs/) and a
+    re-run produces the same bytes.
     """
-    out = ["## The one assertion the note asks for", ""]
-    here = [s for s, f in floor.items()
-            if any(r.get("status") == "mismatch" for r in f["dossier"].get("reproductions", []))]
-    if here:
-        s = here[0]
-        out.append(f"`{s}` carries the corpus's `mismatch` reproduction, and the rule reads it "
-                   f"`{floor[s]['level']}` — the note's requirement that a `mismatch` come out "
-                   f"`contested` holds.")
-        return out
-    out.append("The corpus's one `mismatch` reproduction is **not** in this paper — it is "
-               "`ejdrup-2026-dopamine/dat-clustering-greater-in-vs`, which this tree cannot "
-               "exercise. The rule's `mismatch → contested` step is covered by the synthetic "
-               "test instead. What this paper has is `partial` records, and the note asks what "
-               "the rule and the model did on those:")
-    out.append("")
-    out.append("| claim | reproductions | model | rule |")
-    out.append("|:--|:--|:--|:--|")
-    for s in sorted(floor):
-        f = floor[s]
-        statuses = [r.get("status") for r in f["dossier"].get("reproductions", [])]
-        if "partial" in statuses:
-            m = model.get(s, {})
-            out.append(f"| {s} | {', '.join(statuses)} | {m.get('warrant')} | {f['level']} |")
-    return out
+    records = []
+    for slug in sorted(floor):
+        f = floor[slug]
+        d = f["dossier"]
+        m = model.get(slug, {})
+        records.append({
+            "slug": slug,
+            "role": d["role"],
+            "stance": d["stance"],
+            "sentence": d["sentence"],
+            "rule": f["level"],
+            "rule_fired": f["fired"],
+            "model": m.get("warrant"),
+            "why": m.get("why", ""),
+            "model_from": m.get("warrant_from", []),
+            "unsupported": bool(m.get("unsupported", False)),
+            "dossier": render_dossier(d),
+        })
+    path = os.path.join(ROOT, "runs", paper, f"warrant.v{v}.annotated.json")
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(records, fh, indent=2, ensure_ascii=False, sort_keys=True)
+        fh.write("\n")
+    return path
 
 
 def main() -> int:

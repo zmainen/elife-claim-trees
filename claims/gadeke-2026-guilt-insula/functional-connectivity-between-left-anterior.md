@@ -23,6 +23,10 @@ assertions:
   panel: fig5
   readers: high
 reproductions: []
+warrant: moderate
+warrant_why: it confirms connectivity-between-guilt-responsibility-related-outcome-ph, the single surviving PPI cluster
+warrant_from:
+- confirms
 ---
 
 **Notes from extraction:** The caption reader (tentative) stated the analysis but not the direction; the results reader supplied the direction and statistics.

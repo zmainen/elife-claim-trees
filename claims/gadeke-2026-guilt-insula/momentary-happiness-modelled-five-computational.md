@@ -16,6 +16,10 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
+warrant: moderate
+warrant_why: validated by the risk-aversion-parameter-not-differ-between control that justifies pooling
+warrant_from:
+- validated_by
 ---
 
 **Notes from extraction:** The Basic, Inequality and Guilt-envy models are identical to those in Rutledge et al., 2016.

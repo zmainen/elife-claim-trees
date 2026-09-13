@@ -24,6 +24,10 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: null
+warrant: moderate
+warrant_why: a null that rules out alt-social-context-shifts-risk-attitude — risk premiums did not differ by condition
+warrant_from:
+- rules_out
 ---
 
 **Notes from extraction:** Null result; evidence against social-context-driven changes in risk aversion.

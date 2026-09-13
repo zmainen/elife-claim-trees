@@ -43,6 +43,10 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: null
+warrant: moderate
+warrant_why: it rules out the rival alt-agency-aversion-not-guilt by showing the cost is decision-maker-contingent
+warrant_from:
+- rules_out
 ---
 
 **Notes from extraction:** The agency effect on happiness, distinct from the guilt (partner-outcome-contingent) effect.

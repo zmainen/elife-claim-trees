@@ -61,6 +61,8 @@ reproductions:
     and matching on column names rather than by a pinned filename, so this row of the chain is not yet
     independently auditable — a reader cannot confirm which file was read. Pinning the exact filename
     is an open task.'
+warrant: weak
+warrant_why: asserted; nothing in the tree's argument bears on it
 ---
 
 **Notes from extraction:** The results reader stated the participant- and partner-reward correlations jointly; the caption reader anchored the partner-reward correlation to fig3b/fig3f specifically, so it is split from the participant-reward claim by panel.

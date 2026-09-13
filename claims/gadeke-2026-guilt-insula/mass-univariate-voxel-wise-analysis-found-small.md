@@ -57,6 +57,10 @@ reproductions:
   reproduced_value: peak MNI [-28, 24, -4]
   notes: Loads the authors' deposited thresholded contrast map, finds the peak voxel, and applies the
     image affine to convert voxel indices to MNI millimetres. Exact match to the published coordinates.
+warrant: moderate
+warrant_why: it confirms anterior-insula-tracks-guilt-insula via an independent whole-brain analysis surviving SVC
+warrant_from:
+- confirms
 ---
 
 **Notes from extraction:** The caption reader treated this as a control — convergent voxel-wise confirmation of the ROI-based insula guilt effect in panel E; the results reader treated it as the empirical voxel-wise guilt result. The small-volume FWE correction (p = 0.024) is reported in a following sentence by the results reader. Both are empirical measurements agreeing on panel and direction; resolved to empirical.

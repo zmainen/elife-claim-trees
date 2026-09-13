@@ -43,6 +43,10 @@ reproductions:
   status: blocked
   blocked_by: compute-infeasible
   notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
+warrant: moderate
+warrant_why: a manipulation check recovering the VS reward signal that rules out alt-model-based-glm-invalid
+warrant_from:
+- rules_out
 ---
 
 **Notes from extraction:** The results reader treated this as a manipulation check validating the model-based BOLD analysis; the caption reader described it as a plain empirical result. Both agree on panel and direction; resolved to control.

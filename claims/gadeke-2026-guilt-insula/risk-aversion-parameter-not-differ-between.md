@@ -18,6 +18,8 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: asserted; its own dossier records no argument behind it
 ---
 
 **Notes from extraction:** Null result justifying pooling across gain and loss trials.

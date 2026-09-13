@@ -17,6 +17,8 @@ assertions:
   panel: fig4i
   readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: asserted; nothing in the tree's argument bears on this responsiveness result
 ---
 
 **Notes from extraction:** Caption describes what is plotted (coefficients with 95% confidence intervals) rather than stating a directional result; the caption reader marked it tentative.

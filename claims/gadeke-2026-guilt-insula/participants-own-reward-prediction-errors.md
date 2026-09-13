@@ -18,6 +18,8 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: asserted; the tree's argument records nothing behind this weighting comparison
 ---
 
 **Relations.** Why each outgoing edge was inferred:
