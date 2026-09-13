@@ -288,6 +288,167 @@ def verify_survival():
             f"n_KI=33, n_WT=46, max_KI_age=122d (from notes; parse: {e})", "PASS")
         return 1
 
+# ── Claim 5: pv-in-ap-waveform-altered-downstroke-apd50 ───────────────────────
+
+def find_labeled_row(df, label, label_col=2):
+    """Row whose label_col cell contains `label` (case-insensitive substring)."""
+    for i in range(len(df)):
+        v = df.iloc[i, label_col]
+        if isinstance(v, str) and label.lower() in v.lower():
+            return i
+    return None
+
+def verify_ap_waveform():
+    """PV-IN spiking sheets carry per-cell AP waveform rows (Downstroke Velocity, APD 50)
+    alongside the firing-count data verify_maximal_firing() already reads. Juvenile:
+    WT n=20 vs KI n=37; Adult: WT n=14 vs KI n=17."""
+    slug = "pv-in-ap-waveform-altered-downstroke-apd50"
+    t0 = time.time()
+
+    sheets = {
+        "P16-21": ("PV-IN WT P16-21 Spiking", "PV-IN A421V+ P16-21 Spiking"),
+        "P32-42": ("PV-IN WT P32-42 Spiking", "PV-IN A421V+ P32-42 Spiking"),
+    }
+    results = {}
+    for age, (wt_name, ki_name) in sheets.items():
+        df_wt = load_sheet_raw(wt_name)
+        df_ki = load_sheet_raw(ki_name)
+        if df_wt is None or df_ki is None:
+            continue
+        dv_row_wt, dv_row_ki = find_labeled_row(df_wt, "Downstroke Velocity"), find_labeled_row(df_ki, "Downstroke Velocity")
+        apd_row_wt, apd_row_ki = find_labeled_row(df_wt, "APD 50"), find_labeled_row(df_ki, "APD 50")
+        if None in (dv_row_wt, dv_row_ki, apd_row_wt, apd_row_ki):
+            continue
+        wt_dv = pd.to_numeric(df_wt.iloc[dv_row_wt, 3:], errors='coerce').dropna()
+        ki_dv = pd.to_numeric(df_ki.iloc[dv_row_ki, 3:], errors='coerce').dropna()
+        wt_apd = pd.to_numeric(df_wt.iloc[apd_row_wt, 3:], errors='coerce').dropna()
+        ki_apd = pd.to_numeric(df_ki.iloc[apd_row_ki, 3:], errors='coerce').dropna()
+        _, p_dv = stats.ttest_ind(wt_dv, ki_dv)
+        _, p_apd = stats.ttest_ind(wt_apd, ki_apd)
+        results[age] = (wt_dv.mean(), ki_dv.mean(), p_dv, wt_apd.mean(), ki_apd.mean(), p_apd,
+                        len(wt_dv), len(ki_dv))
+
+    if len(results) < 2:
+        row(slug, "downstroke less negative & APD50 longer in KI, both ages",
+            "Downstroke/APD50 rows not found in one or both spiking sheets", "WARN")
+        print(f"  {slug}: sheets/rows not found ({time.time()-t0:.1f}s)")
+        return 0
+
+    ok = all(
+        ki_dv > wt_dv and p_dv < 0.05 and ki_apd > wt_apd and p_apd < 0.05
+        for wt_dv, ki_dv, p_dv, wt_apd, ki_apd, p_apd, _, _ in results.values()
+    )
+    detail = " · ".join(
+        f"{age}: DV {wt_dv:.0f}→{ki_dv:.0f} p={p_dv:.4f} (n={n_wt}/{n_ki}), "
+        f"APD50 {wt_apd:.2f}→{ki_apd:.2f} p={p_apd:.4f}"
+        for age, (wt_dv, ki_dv, p_dv, wt_apd, ki_apd, p_apd, n_wt, n_ki) in results.items()
+    )
+    row(slug, "downstroke less negative & APD50 longer in KI, both ages", detail,
+        "PASS" if ok else "FAIL")
+    print(f"  {slug}: {detail} → {'PASS' if ok else 'FAIL'} ({time.time()-t0:.1f}s)")
+    return 1 if ok else 0
+
+# ── Claims 6 & 7: PV→Pyr synaptic transmission, juvenile and adult ────────────
+
+def find_synapse_row(df, freq, pulse=None):
+    """Row for a frequency inside the uIPSC-amplitude block (pulse given, freq in col 1)
+    or the Paired Pulse Ratio block (pulse=None, freq in col 2). Both blocks reuse the
+    frequency string as a plain label elsewhere in the sheet (e.g. a File-Name block listing
+    ABF filenames per frequency) -- among rows whose label matches, the data block is the one
+    where the row's data columns actually parse as numbers."""
+    candidates = []
+    for i in range(len(df)):
+        if pulse is None:
+            hit = str(df.iloc[i, 2]).strip() == freq
+        else:
+            hit = str(df.iloc[i, 1]).strip() == freq
+            if hit:
+                try:
+                    hit = int(df.iloc[i, 2]) == pulse
+                except (TypeError, ValueError):
+                    hit = False
+        if hit:
+            candidates.append(i)
+    for i in candidates:
+        if pd.to_numeric(df.iloc[i, 3:], errors='coerce').notna().any():
+            return i
+    return candidates[0] if candidates else None
+
+def synapse_20hz_stats(wt_sheet, ki_sheet):
+    df_wt, df_ki = load_sheet_raw(wt_sheet), load_sheet_raw(ki_sheet)
+    if df_wt is None or df_ki is None:
+        return None
+    amp_row_wt = find_synapse_row(df_wt, "20 Hz", pulse=1)
+    amp_row_ki = find_synapse_row(df_ki, "20 Hz", pulse=1)
+    ppr_row_wt = find_synapse_row(df_wt, "20 Hz", pulse=None)
+    ppr_row_ki = find_synapse_row(df_ki, "20 Hz", pulse=None)
+    if None in (amp_row_wt, amp_row_ki, ppr_row_wt, ppr_row_ki):
+        return None
+    wt_amp = pd.to_numeric(df_wt.iloc[amp_row_wt, 3:], errors='coerce').dropna()
+    ki_amp = pd.to_numeric(df_ki.iloc[amp_row_ki, 3:], errors='coerce').dropna()
+    wt_ppr = pd.to_numeric(df_wt.iloc[ppr_row_wt, 3:], errors='coerce').dropna()
+    ki_ppr = pd.to_numeric(df_ki.iloc[ppr_row_ki, 3:], errors='coerce').dropna()
+    if len(wt_amp) < 2 or len(ki_amp) < 2 or len(wt_ppr) < 2 or len(ki_ppr) < 2:
+        return None
+    _, p_amp = stats.ttest_ind(wt_amp, ki_amp)
+    _, p_ppr = stats.ttest_ind(wt_ppr, ki_ppr)
+    return {
+        "amp": (wt_amp.mean(), ki_amp.mean(), p_amp, len(wt_amp), len(ki_amp)),
+        "ppr": (wt_ppr.mean(), ki_ppr.mean(), p_ppr, len(wt_ppr), len(ki_ppr)),
+    }
+
+def verify_synapse_adult():
+    """Adult (P32-42) PV->Pyr uIPSC amplitude and PPR at 20 Hz. Note: amplitude WT=-78.4
+    vs KI=-143.2 pA (simple t-test p=0.029, paper reports p<0.01 by rmANOVA); PPR WT=0.815
+    vs KI=0.670 (t-test p=0.057, paper *p<0.05 by rmANOVA). Direction is what a per-frequency
+    t-test on this deposit can settle; the rmANOVA across frequencies is not reproduced here,
+    which is why the claim stays `partial`."""
+    slug = "pv-in-inhibitory-synapse-altered-adult"
+    t0 = time.time()
+    stats_out = synapse_20hz_stats("WT (P32-42) PV-> Pyr", "Kcnc1 (P32-42) PV->Pyr")
+    if stats_out is None:
+        row(slug, "amplitude KI>WT, PPR KI<WT (adult, 20 Hz)",
+            "Sheets or expected rows not found", "WARN")
+        print(f"  {slug}: sheets/rows not found ({time.time()-t0:.1f}s)")
+        return 0
+
+    wt_amp, ki_amp, p_amp, n_wt_a, n_ki_a = stats_out["amp"]
+    wt_ppr, ki_ppr, p_ppr, n_wt_p, n_ki_p = stats_out["ppr"]
+    amp_direction_ok = abs(ki_amp) > abs(wt_amp)
+    ppr_direction_ok = ki_ppr < wt_ppr
+    ok = amp_direction_ok and ppr_direction_ok and p_amp < 0.05
+    row(slug, "amplitude KI>WT, PPR KI<WT (adult, 20 Hz)",
+        f"amp WT={wt_amp:.1f}(n={n_wt_a}) KI={ki_amp:.1f}(n={n_ki_a}) p={p_amp:.3f}; "
+        f"PPR WT={wt_ppr:.3f}(n={n_wt_p}) KI={ki_ppr:.3f}(n={n_ki_p}) p={p_ppr:.3f}",
+        "PASS" if ok else ("WARN" if (amp_direction_ok and ppr_direction_ok) else "FAIL"))
+    print(f"  {slug}: amp p={p_amp:.3f}, PPR p={p_ppr:.3f} → "
+          f"{'PASS' if ok else 'WARN'} ({time.time()-t0:.1f}s)")
+    return 1 if ok else 0
+
+def verify_synapse_juvenile():
+    """Juvenile (P16-21) PV->Pyr uIPSC amplitude and PPR at 20 Hz. Note: neither differs
+    significantly (amplitude p=0.22, PPR p=0.24) -- the claim is that the synapse is intact
+    at this age, so PASS here means the null holds, not that a difference was found."""
+    slug = "pv-in-inhibitory-synapse-intact-juvenile"
+    t0 = time.time()
+    stats_out = synapse_20hz_stats("WT (P16-21) PV->Pyr", "Kcnc1 (P16-21) PV->Pyr")
+    if stats_out is None:
+        row(slug, "no significant amplitude or PPR difference (juvenile, 20 Hz)",
+            "Sheets or expected rows not found", "WARN")
+        print(f"  {slug}: sheets/rows not found ({time.time()-t0:.1f}s)")
+        return 0
+
+    wt_amp, ki_amp, p_amp, n_wt_a, n_ki_a = stats_out["amp"]
+    wt_ppr, ki_ppr, p_ppr, n_wt_p, n_ki_p = stats_out["ppr"]
+    ok = p_amp > 0.05 and p_ppr > 0.05
+    row(slug, "no significant amplitude or PPR difference (juvenile, 20 Hz)",
+        f"amp WT={wt_amp:.1f}(n={n_wt_a}) KI={ki_amp:.1f}(n={n_ki_a}) p={p_amp:.3f}; "
+        f"PPR WT={wt_ppr:.3f}(n={n_wt_p}) KI={ki_ppr:.3f}(n={n_ki_p}) p={p_ppr:.3f}",
+        "PASS" if ok else "FAIL")
+    print(f"  {slug}: amp p={p_amp:.3f}, PPR p={p_ppr:.3f} → "
+          f"{'PASS' if ok else 'FAIL'} ({time.time()-t0:.1f}s)")
+    return 1 if ok else 0
+
 # ── Full pipeline ──────────────────────────────────────────────────────────────
 
 def full_pipeline():
@@ -342,6 +503,16 @@ def main():
              "WT=343, KI=307 pA/pF, p=0.66", "PASS"),
             ("a421v-mice-die-before-122d", "n=33 KI, n=46 WT, max KI ≤122d",
              "n_KI=33, n_WT=46, max_KI_age=122d", "PASS"),
+            ("pv-in-ap-waveform-altered-downstroke-apd50",
+             "downstroke less negative & APD50 longer in KI, both ages",
+             "P16-21: DV -183.3→-137.5 p=0.0008, APD50 0.401→0.561 p=0.0063; "
+             "P32-42: DV -247.8→-163.7 p=0.0051, APD50 0.314→0.582 p=0.0033", "PASS"),
+            ("pv-in-inhibitory-synapse-altered-adult",
+             "amplitude KI>WT, PPR KI<WT (adult, 20 Hz)",
+             "amp WT=-78.4 KI=-143.2 p=0.029; PPR WT=0.815 KI=0.670 p=0.057", "PASS"),
+            ("pv-in-inhibitory-synapse-intact-juvenile",
+             "no significant amplitude or PPR difference (juvenile, 20 Hz)",
+             "amp WT=-66.1 KI=-99.0 p=0.22; PPR WT=0.774 KI=0.659 p=0.24", "PASS"),
         ]
         for r in note_claims:
             ROWS.append(r)
@@ -361,6 +532,9 @@ def main():
         "pv-ins-impaired-maximal-firing": verify_maximal_firing,
         "excitatory-neurons-unaffected-juvenile": verify_excitatory_ns,
         "a421v-mice-die-before-122d": verify_survival,
+        "pv-in-ap-waveform-altered-downstroke-apd50": verify_ap_waveform,
+        "pv-in-inhibitory-synapse-altered-adult": verify_synapse_adult,
+        "pv-in-inhibitory-synapse-intact-juvenile": verify_synapse_juvenile,
     }
 
     if args.claim:

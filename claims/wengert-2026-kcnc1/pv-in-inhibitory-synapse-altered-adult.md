@@ -46,8 +46,17 @@ assertions:
 
 reproductions:
   - agent: mainen-z
-    date: 2026-03-30
+    date: 2026-09-13
     status: partial
+    script: verification/wengert-2026-kcnc1/verify.py
+    original_script: https://doi.gin.g-node.org/10.12751/g-node.bqni9h
+    script_execution: executed
+    script_execution_note: >
+      Automated as verify_synapse_adult(): reads uIPSC amplitude (pulse 1) and PPR at 20 Hz
+      from the adult WT/Kcnc1 PV->Pyr sheets and t-tests WT vs KI. A per-frequency t-test is
+      what this script can do; the paper's rmANOVA across frequencies is not reproduced,
+      which is why this stays `partial`.
+    data_source: https://doi.gin.g-node.org/10.12751/g-node.bqni9h
     notes: >
       Verified from G-Node Excel (WT P32-42 PV->Pyr and Kcnc1 P32-42 PV->Pyr sheets).
       uIPSC amplitude at 20Hz pulse 1: WT n=13 mean=-78.4 pA, KI n=13 mean=-143.2 pA;

@@ -45,11 +45,16 @@ assertions:
 
 reproductions:
   - agent: mainen-z
-    date: 2026-03-30
+    date: 2026-09-13
     status: verified
+    script: verification/headley-2026-inhibitory-rhythms/verify.py
     original_script: https://github.com/dbheadley/InhibOnDendComp/blob/main/scripts/Fig5.ipynb
-    script_execution: pre-computed
-    script_execution_note: "Verified from deposited pre-computed CSV data; Fig5.ipynb/Fig6.ipynb require 1.88 GB Dryad data for full panels"
+    script_execution: executed
+    script_execution_note: >
+      Automated as verify_subtractive_divisive(): checks Figure4b.csv's I/O curve for a
+      rightward threshold shift (subtractive) and a lower max firing rate (divisive) in the
+      somatic-inhibition condition vs control. Fig5.ipynb/Fig6.ipynb require the 1.88 GB Dryad
+      archive for full panels.
     time_fast: "~2 min"
     time_full: "~6 hrs (NEURON + 1.88 GB Dryad)"
     notes: >

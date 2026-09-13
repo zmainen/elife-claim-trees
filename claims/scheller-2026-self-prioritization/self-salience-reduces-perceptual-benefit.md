@@ -43,8 +43,17 @@ assertions:
 
 reproductions:
   - agent: mainen-z
-    date: 2026-03-30
+    date: 2026-09-13
     status: verified
+    script: verification/scheller-2026-self-prioritization/verify.py
+    original_script: https://osf.io/a62df
+    script_execution: executed
+    script_execution_note: >
+      Automated as verify_self_salience_subadditive(): recomputes mean(v_p - v_r) per
+      condition from the deposited posterior summary CSV and checks the sub-additive
+      ordering (self-salient < other-salient < pure perceptual).
+    data_source: https://osf.io/a62df
+    data_file: estimates_indiv_C_Exp2.csv
     notes: >
       Verified from estimates_indiv_C.csv (Exp2, OSF https://osf.io/a62df). Self-salient
       cond (4): diff = 2.58 Hz (claim: 2.5 Hz). Other-salient cond (5): diff = 5.32 Hz

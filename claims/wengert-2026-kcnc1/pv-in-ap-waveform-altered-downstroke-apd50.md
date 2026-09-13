@@ -46,8 +46,15 @@ assertions:
 
 reproductions:
   - agent: mainen-z
-    date: 2026-03-30
+    date: 2026-09-13
     status: verified
+    script: verification/wengert-2026-kcnc1/verify.py
+    original_script: https://doi.gin.g-node.org/10.12751/g-node.bqni9h
+    script_execution: executed
+    script_execution_note: >
+      Automated as verify_ap_waveform(): reads the Downstroke Velocity and APD 50 rows from
+      the four PV-IN spiking sheets (WT/KI x P16-21/P32-42) and t-tests WT vs KI at each age.
+    data_source: https://doi.gin.g-node.org/10.12751/g-node.bqni9h
     notes: >
       VERIFIED from G-Node Excel summary. Juvenile (P16-21): WT n=20, KI n=37.
       Downstroke velocity: WT -183.3±37.4, KI -137.5±50.7 mV/ms; p=0.0008.
