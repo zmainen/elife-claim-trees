@@ -36,7 +36,7 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Verification records dropped
 
-**18 verification records across 18 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `haak:VerificationRecord`.
+**18 verification records across 18 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `cg:VerificationRecord`.
 
 ## Questions synthesized
 
@@ -53,7 +53,7 @@ Override any of these by adding a `question:` field to the hypothesis's frontmat
 
 **1 of this paper's claims are not asserted by it.** They are alternative explanations it entertains, rejects, or attributes to others. MIRA has no vocabulary for that distinction: it types a node as `Claim` and says nothing about who stands behind it.
 
-The strict export still carries the `rules-out` edge that eliminated each one, declared under `mira:opposes`, so a MIRA-only reader can see the direction of the argument. What that reader cannot see is that the paper **denies** these propositions — so it will over-read them as assertions. The stance travels in the extended file as `haak:stance`.
+The strict export still carries the `rules-out` edge that eliminated each one, declared under `mira:opposes`, so a MIRA-only reader can see the direction of the argument. What that reader cannot see is that the paper **denies** these propositions — so it will over-read them as assertions. The stance travels in the extended file as `cg:stance`.
 
 - `alt-inhibitory-dysfunction-present-juvenile` — rejects
 

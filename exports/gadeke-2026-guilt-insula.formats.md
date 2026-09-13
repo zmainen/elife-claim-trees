@@ -6,33 +6,33 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
-| `supports` | 19 | `haak:supports`, under `mira:supports` | kept | kept |
-| `requires` | 9 | `haak:requires`, neutral | kept | dropped |
-| `validates` | 8 | `haak:validates`, under `mira:supports` | kept | kept |
-| `confirms` | 7 | `haak:confirms`, under `mira:supports` | kept | kept |
-| `tests` | 7 | `haak:tests`, neutral | kept | kept |
-| `rules-out` | 6 | `haak:rules-out`, under `mira:opposes` | kept | kept |
-| `entails` | 5 | `haak:entails`, neutral | kept | dropped |
+| `supports` | 19 | `cg:supports`, under `mira:supports` | kept | kept |
+| `requires` | 9 | `cg:requires`, neutral | kept | dropped |
+| `validates` | 8 | `cg:validates`, under `mira:supports` | kept | kept |
+| `confirms` | 7 | `cg:confirms`, under `mira:supports` | kept | kept |
+| `tests` | 7 | `cg:tests`, neutral | kept | kept |
+| `rules-out` | 6 | `cg:rules-out`, under `mira:opposes` | kept | kept |
+| `entails` | 5 | `cg:entails`, neutral | kept | dropped |
 | `derived-from` | 5 | — | kept | dropped |
-| `interprets` | 4 | `haak:interprets`, neutral | kept | dropped |
-| `part-of` | 4 | `haak:part-of`, neutral | kept | dropped |
-| `scopes` | 3 | `haak:scopes`, neutral | kept | dropped |
-| `enables-method` | 3 | `haak:enables-method`, neutral | kept | dropped |
-| `in-tension-with` | 1 | `haak:in-tension-with`, under `mira:opposes` | kept | kept |
-| `dissociates-with` | 1 | `haak:dissociates-with`, neutral | kept | dropped |
+| `interprets` | 4 | `cg:interprets`, neutral | kept | dropped |
+| `part-of` | 4 | `cg:part-of`, neutral | kept | dropped |
+| `scopes` | 3 | `cg:scopes`, neutral | kept | dropped |
+| `enables-method` | 3 | `cg:enables-method`, neutral | kept | dropped |
+| `in-tension-with` | 1 | `cg:in-tension-with`, under `mira:opposes` | kept | kept |
+| `dissociates-with` | 1 | `cg:dissociates-with`, neutral | kept | dropped |
 
 ## What MIRA has no predicate for — and what happens instead
 
 **36 of 82 relations (44%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
-- `haak:requires` (9) — a claim depends on another holding
-- `haak:entails` (5) — a hypothesis entails its prediction — the deductive step
-- `haak:derived-from` (5) — a prediction derived from its hypothesis (inverse of entails)
-- `haak:interprets` (4) — one claim interprets another
-- `haak:part-of` (4) — a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone
-- `haak:scopes` (3) — a scope constraint governs another claim's validity
-- `haak:enables-method` (3) — a result makes a downstream method possible
-- `haak:dissociates-with` (1) — the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric)
+- `cg:requires` (9) — a claim depends on another holding
+- `cg:entails` (5) — a hypothesis entails its prediction — the deductive step
+- `cg:derived-from` (5) — a prediction derived from its hypothesis (inverse of entails)
+- `cg:interprets` (4) — one claim interprets another
+- `cg:part-of` (4) — a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone
+- `cg:scopes` (3) — a scope constraint governs another claim's validity
+- `cg:enables-method` (3) — a result makes a downstream method possible
+- `cg:dissociates-with` (1) — the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric)
 
 Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.
 

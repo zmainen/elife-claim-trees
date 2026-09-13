@@ -38,7 +38,7 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Verification records dropped
 
-**14 verification records across 14 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `haak:VerificationRecord`.
+**14 verification records across 14 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `cg:VerificationRecord`.
 
 ## Questions synthesized
 

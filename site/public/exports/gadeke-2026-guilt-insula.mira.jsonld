@@ -2,7 +2,7 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "haak": "https://haak.world/schema/claim#",
+      "cg": "https://w3id.org/claim-graphs/schema#",
       "dgb": "https://discoursegraphs.com/schema/dg_base#",
       "owl": "http://www.w3.org/2002/07/owl#",
       "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -20,66 +20,66 @@
   ],
   "@graph": [
     {
-      "@id": "haak:agent/elife-claim-trees",
+      "@id": "urn:claim-graphs:pipeline",
       "@type": "UserAccount",
-      "accountName": "elife-claim-trees pipeline"
+      "accountName": "claim-graphs pipeline"
     },
     {
-      "@id": "haak:type/Claim",
+      "@id": "cg:type/Claim",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Claim"
       ],
       "label": "Claim",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Evidence",
+      "@id": "cg:type/Evidence",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Evidence"
       ],
       "label": "Evidence",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Protocol",
+      "@id": "cg:type/Protocol",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Protocol"
       ],
       "label": "Protocol",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms",
+      "@id": "cg:reldef/confirms",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/confirms"
+          "hasValue": "cg:reldef/confirms"
         }
       ],
       "label": "confirms",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms/def",
+      "@id": "cg:reldef/confirms/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/confirms",
+        "cg:reldef/confirms",
         "dgb:RelationInstance"
       ],
       "label": "confirms",
@@ -88,33 +88,33 @@
         "format": "text/plain",
         "content": "The source evidence confirms the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/derived_from",
+      "@id": "cg:reldef/derived_from",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/derived_from"
+          "hasValue": "cg:reldef/derived_from"
         }
       ],
       "label": "derived-from",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z",
-      "inverseOf": "haak:reldef/entails"
+      "inverseOf": "cg:reldef/entails"
     },
     {
-      "@id": "haak:reldef/derived_from/def",
+      "@id": "cg:reldef/derived_from/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/derived_from",
+        "cg:reldef/derived_from",
         "dgb:RelationInstance"
       ],
       "label": "derived-from",
@@ -123,32 +123,32 @@
         "format": "text/plain",
         "content": "The source claim was derived from the destination claim; the inverse of entails."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with",
+      "@id": "cg:reldef/dissociates_with",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/dissociates_with"
+          "hasValue": "cg:reldef/dissociates_with"
         }
       ],
       "label": "dissociates-with",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with/def",
+      "@id": "cg:reldef/dissociates_with/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/dissociates_with",
+        "cg:reldef/dissociates_with",
         "dgb:RelationInstance"
       ],
       "label": "dissociates-with",
@@ -157,32 +157,32 @@
         "format": "text/plain",
         "content": "The source and destination jointly establish a dissociation — a contrast between two results, neither bearing on the other's truth. MIRA has no predicate for a contrast, so like the deductive relations it hangs at AbstractRelationDef and the gap report names it."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method",
+      "@id": "cg:reldef/enables_method",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/enables_method"
+          "hasValue": "cg:reldef/enables_method"
         }
       ],
       "label": "enables-method",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method/def",
+      "@id": "cg:reldef/enables_method/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Protocol",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Protocol",
       "subClassOf": [
-        "haak:reldef/enables_method",
+        "cg:reldef/enables_method",
         "dgb:RelationInstance"
       ],
       "label": "enables-method",
@@ -191,32 +191,32 @@
         "format": "text/plain",
         "content": "The source result makes the destination method possible."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails",
+      "@id": "cg:reldef/entails",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/entails"
+          "hasValue": "cg:reldef/entails"
         }
       ],
       "label": "entails",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails/def",
+      "@id": "cg:reldef/entails/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/entails",
+        "cg:reldef/entails",
         "dgb:RelationInstance"
       ],
       "label": "entails",
@@ -225,33 +225,33 @@
         "format": "text/plain",
         "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/in_tension_with",
+      "@id": "cg:reldef/in_tension_with",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:opposes",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/in_tension_with"
+          "hasValue": "cg:reldef/in_tension_with"
         }
       ],
       "label": "in-tension-with",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/in_tension_with/def",
+      "@id": "cg:reldef/in_tension_with/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/in_tension_with",
+        "cg:reldef/in_tension_with",
         "dgb:RelationInstance"
       ],
       "label": "in-tension-with",
@@ -260,32 +260,32 @@
         "format": "text/plain",
         "content": "The source and destination claims are both asserted yet pull a shared implication in opposite directions."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets",
+      "@id": "cg:reldef/interprets",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/interprets"
+          "hasValue": "cg:reldef/interprets"
         }
       ],
       "label": "interprets",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets/def",
+      "@id": "cg:reldef/interprets/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Evidence",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Evidence",
       "subClassOf": [
-        "haak:reldef/interprets",
+        "cg:reldef/interprets",
         "dgb:RelationInstance"
       ],
       "label": "interprets",
@@ -294,32 +294,32 @@
         "format": "text/plain",
         "content": "The source claim offers a theoretical reading of the destination result."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/part_of",
+      "@id": "cg:reldef/part_of",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/part_of"
+          "hasValue": "cg:reldef/part_of"
         }
       ],
       "label": "part-of",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/part_of/def",
+      "@id": "cg:reldef/part_of/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/part_of",
+        "cg:reldef/part_of",
         "dgb:RelationInstance"
       ],
       "label": "part-of",
@@ -328,32 +328,32 @@
         "format": "text/plain",
         "content": "The source claim is a component of the destination — one comparison, condition, measure or study of a proposition the destination states whole. MIRA has no predicate for composition, so like the deductive relations it hangs at AbstractRelationDef and the gap report names it."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires",
+      "@id": "cg:reldef/requires",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/requires"
+          "hasValue": "cg:reldef/requires"
         }
       ],
       "label": "requires",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires/def",
+      "@id": "cg:reldef/requires/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/requires",
+        "cg:reldef/requires",
         "dgb:RelationInstance"
       ],
       "label": "requires",
@@ -362,33 +362,33 @@
         "format": "text/plain",
         "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out",
+      "@id": "cg:reldef/rules_out",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:opposes",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/rules_out"
+          "hasValue": "cg:reldef/rules_out"
         }
       ],
       "label": "rules-out",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out/def",
+      "@id": "cg:reldef/rules_out/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/rules_out",
+        "cg:reldef/rules_out",
         "dgb:RelationInstance"
       ],
       "label": "rules-out",
@@ -397,32 +397,32 @@
         "format": "text/plain",
         "content": "The source evidence eliminates the destination claim as viable."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes",
+      "@id": "cg:reldef/scopes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/scopes"
+          "hasValue": "cg:reldef/scopes"
         }
       ],
       "label": "scopes",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes/def",
+      "@id": "cg:reldef/scopes/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/scopes",
+        "cg:reldef/scopes",
         "dgb:RelationInstance"
       ],
       "label": "scopes",
@@ -431,33 +431,33 @@
         "format": "text/plain",
         "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports",
+      "@id": "cg:reldef/supports",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/supports"
+          "hasValue": "cg:reldef/supports"
         }
       ],
       "label": "supports",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports/def",
+      "@id": "cg:reldef/supports/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/supports",
+        "cg:reldef/supports",
         "dgb:RelationInstance"
       ],
       "label": "supports",
@@ -466,32 +466,32 @@
         "format": "text/plain",
         "content": "The source claim provides support for the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests",
+      "@id": "cg:reldef/tests",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/tests"
+          "hasValue": "cg:reldef/tests"
         }
       ],
       "label": "tests",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests/def",
+      "@id": "cg:reldef/tests/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/tests",
+        "cg:reldef/tests",
         "dgb:RelationInstance"
       ],
       "label": "tests",
@@ -500,33 +500,33 @@
         "format": "text/plain",
         "content": "The source evidence was gathered to test the destination claim. Neither supports nor opposes: it records that a test was run, not how it came out."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates",
+      "@id": "cg:reldef/validates",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/validates"
+          "hasValue": "cg:reldef/validates"
         }
       ],
       "label": "validates",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates/def",
+      "@id": "cg:reldef/validates/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/validates",
+        "cg:reldef/validates",
         "dgb:RelationInstance"
       ],
       "label": "validates",
@@ -535,7 +535,7 @@
         "format": "text/plain",
         "content": "The source evidence validates the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
@@ -1476,926 +1476,926 @@
       }
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/1",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/1",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:2b7d839d-9617-46ad-8d4e-dc19f19a6841",
       "destination": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7",
       "title": "[[among-computational-models-fitted-momentary]] -requires-> [[momentary-happiness-modelled-five-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/2",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/2",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:c9c60ea3-aab4-4225-b151-17d106195f8d",
       "destination": "urn:uuid:7896b58a-0373-452c-9509-613330a94092",
       "title": "[[anterior-insula-neural-substrate-guilt]] -entails-> [[anterior-insula-tracks-guilt-insula]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/3",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/3",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:19f0e43d-1849-4834-91e6-49874132b069",
       "destination": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "title": "[[authors-suggest-left-sts-region]] -interprets-> [[one-cluster-left-sts-responded]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/4",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/4",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:88dab75c-7655-43de-9456-8dc6db9e57d0",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[behavioural-guilt-effect-larger-happiness]] -interprets-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/5",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/5",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:0edf7194-a69c-402e-9183-904e9b279bb9",
       "destination": "urn:uuid:d5ba8e97-1aab-40c4-9351-c441d83c5697",
       "title": "[[bilateral-ventral-striatum-more-active]] -rules-out-> [[alt-imaging-contrast-invalid]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/6",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/6",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:dc8fcf43-bc0c-40c9-bda1-46f2b1cc3f61",
       "destination": "urn:uuid:bc4d0d92-e737-4420-a513-ef9f56164a82",
       "title": "[[connectivity-between-left-anterior-insula]] -interprets-> [[functional-connectivity-between-left-anterior]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/7",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/7",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:077e31a7-4fa3-471e-b1a7-aeba86331dca",
       "destination": "urn:uuid:05e1c77d-80e1-4aab-8b94-1273386a0b33",
       "title": "[[decisions-social-compared-solo-condition]] -requires-> [[each-trial-participants-chose-between]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/8",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/8",
       "@type": [
-        "haak:reldef/part_of"
+        "cg:reldef/part_of"
       ],
       "source": "urn:uuid:49168f37-934f-49b3-bf0b-36194b87610d",
       "destination": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "title": "[[difference-response-between-low-high]] -part-of-> [[insula-rois-responded-more-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/9",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/9",
       "@type": [
-        "haak:reldef/in_tension_with"
+        "cg:reldef/in_tension_with"
       ],
       "source": "urn:uuid:bbcdbc22-6a62-4040-9f0c-60fd0fbbf7f9",
       "destination": "urn:uuid:6cdf645a-3865-433f-ac5f-308630199916",
       "title": "[[dot-products-between-individual-neural]] -in-tension-with-> [[individual-grbs-dot-product-values-not]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/10",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/10",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:bbcdbc22-6a62-4040-9f0c-60fd0fbbf7f9",
       "destination": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "title": "[[dot-products-between-individual-neural]] -validates-> [[insula-rois-responded-more-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/11",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/11",
       "@type": [
-        "haak:reldef/part_of"
+        "cg:reldef/part_of"
       ],
       "source": "urn:uuid:fb95f04d-ed6b-4f14-bbfd-998a574b10dd",
       "destination": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "title": "[[during-outcome-phase-responses-low]] -part-of-> [[insula-rois-responded-more-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/12",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/12",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:05e1c77d-80e1-4aab-8b94-1273386a0b33",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[each-trial-participants-chose-between]] -scopes-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/13",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/13",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:2005532f-b003-46be-827f-5597a232f385",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[findings-rest-two-samples-healthy]] -scopes-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/14",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/14",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:99bfd176-fde5-4e5e-80d4-cf3352cfa3f2",
       "destination": "urn:uuid:32c6eb83-64af-4817-8cae-2a3815939fd6",
       "title": "[[functional-connectivity-between-guilt-responsibility-related]] -entails-> [[connectivity-between-guilt-responsibility-related-outcome-ph]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/15",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/15",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:bc4d0d92-e737-4420-a513-ef9f56164a82",
       "destination": "urn:uuid:32c6eb83-64af-4817-8cae-2a3815939fd6",
       "title": "[[functional-connectivity-between-left-anterior]] -confirms-> [[connectivity-between-guilt-responsibility-related-outcome-ph]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/16",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/16",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:bc4d0d92-e737-4420-a513-ef9f56164a82",
       "destination": "urn:uuid:32c6eb83-64af-4817-8cae-2a3815939fd6",
       "title": "[[functional-connectivity-between-left-anterior]] -tests-> [[connectivity-between-guilt-responsibility-related-outcome-ph]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/17",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/17",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:bc4d0d92-e737-4420-a513-ef9f56164a82",
       "destination": "urn:uuid:99bfd176-fde5-4e5e-80d4-cf3352cfa3f2",
       "title": "[[functional-connectivity-between-left-anterior]] -supports-> [[functional-connectivity-between-guilt-responsibility-related]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/18",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/18",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:be34b7c6-0ed7-4211-9e98-b9ca16df0d51",
       "destination": "urn:uuid:f43ad09b-00ac-4442-820f-b0476e74d25a",
       "title": "[[guilt-effect-occurred-whether-participant]] -rules-out-> [[alt-guilt-effect-driven-by-own-outcome]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/19",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/19",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:be34b7c6-0ed7-4211-9e98-b9ca16df0d51",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[guilt-effect-occurred-whether-participant]] -validates-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/20",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/20",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:40ad0de9-7352-4e66-b192-fdf239643013",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[hold-partner-behaviour-constant-across]] -enables-method-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/21",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/21",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "destination": "urn:uuid:7896b58a-0373-452c-9509-613330a94092",
       "title": "[[insula-rois-responded-more-low]] -confirms-> [[anterior-insula-tracks-guilt-insula]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/22",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/22",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "destination": "urn:uuid:7896b58a-0373-452c-9509-613330a94092",
       "title": "[[insula-rois-responded-more-low]] -tests-> [[anterior-insula-tracks-guilt-insula]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/23",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/23",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "destination": "urn:uuid:c9c60ea3-aab4-4225-b151-17d106195f8d",
       "title": "[[insula-rois-responded-more-low]] -supports-> [[anterior-insula-neural-substrate-guilt]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/24",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/24",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "destination": "urn:uuid:a289523a-8e2b-4a2e-9b5a-c928f689fa07",
       "title": "[[insula-rois-responded-more-low]] -requires-> [[during-receipt-lottery-versus-safe]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/25",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/25",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:a4a93102-d24f-47c6-b78d-57e4bf7a0208",
       "destination": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "title": "[[left-superior-temporal-sulcus-cluster]] -supports-> [[one-cluster-left-sts-responded]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/26",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/26",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "destination": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605",
       "title": "[[likelihood-ratio-test-showed-responsibility]] -confirms-> [[responsibility-partner-outcomes-influences-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/27",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/27",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "destination": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605",
       "title": "[[likelihood-ratio-test-showed-responsibility]] -tests-> [[responsibility-partner-outcomes-influences-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/28",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/28",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "destination": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
       "title": "[[likelihood-ratio-test-showed-responsibility]] -supports-> [[responsibility-social-choice-yields-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/29",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/29",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "destination": "urn:uuid:3139ed2b-ab4c-4ae9-8131-60a86d0203c6",
       "title": "[[likelihood-ratio-test-showed-responsibility]] -requires-> [[model-selection-among-happiness-models]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/30",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/30",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:256f3e8f-87f6-4a84-9fd2-d564243c1eb6",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[linear-mixed-model-containing-all]] -validates-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/31",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/31",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:0a12c97e-06a5-4565-940b-451e9c00ff41",
       "destination": "urn:uuid:9fbb1b24-0d56-4a63-824f-9878838a3f28",
       "title": "[[lower-happiness-when-participant-decision-maker]] -interprets-> [[participant-happiness-lower-when-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/32",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/32",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:9b641e59-dbca-4931-8682-5a8d8eac63e3",
       "destination": "urn:uuid:f5aef1bf-5c3a-43f7-8db7-8f6cac7a0964",
       "title": "[[manipulation-check-bilateral-ventral-striatum]] -rules-out-> [[alt-model-based-glm-invalid]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/33",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/33",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:9b641e59-dbca-4931-8682-5a8d8eac63e3",
       "destination": "urn:uuid:db286450-f335-4e88-b8b2-706b3a36cc98",
       "title": "[[manipulation-check-bilateral-ventral-striatum]] -validates-> [[model-based-glm-entered-best-fitting-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/34",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/34",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:aaddc052-7ff9-4a14-805a-cf9fa8a42d59",
       "destination": "urn:uuid:7896b58a-0373-452c-9509-613330a94092",
       "title": "[[mass-univariate-voxel-wise-analysis-found-small]] -confirms-> [[anterior-insula-tracks-guilt-insula]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/35",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/35",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:aaddc052-7ff9-4a14-805a-cf9fa8a42d59",
       "destination": "urn:uuid:7896b58a-0373-452c-9509-613330a94092",
       "title": "[[mass-univariate-voxel-wise-analysis-found-small]] -tests-> [[anterior-insula-tracks-guilt-insula]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/36",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/36",
       "@type": [
-        "haak:reldef/part_of"
+        "cg:reldef/part_of"
       ],
       "source": "urn:uuid:04a39c08-a886-4f89-bd7d-dc08a9be9cbd",
       "destination": "urn:uuid:f12d294d-eafe-4a6b-9968-8b4d9034ee56",
       "title": "[[mixed-effects-regressions-choices-social-condition]] -part-of-> [[participants-chose-risky-option-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/37",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/37",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:3139ed2b-ab4c-4ae9-8131-60a86d0203c6",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[model-selection-among-happiness-models]] -enables-method-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/38",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/38",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:3482235d-fcd8-4a85-ba76-a7bce9216c63",
       "destination": "urn:uuid:af961744-17b9-414d-b52a-b1451d7816e2",
       "title": "[[neural-substrate-tracks-participant-responsibility]] -entails-> [[neural-substrate-tracks-participant-responsibility-2]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/39",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/39",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2da2c101-3210-4699-8395-b46b11bbe2d5",
       "destination": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f",
       "title": "[[no-significant-interaction-between-difference]] -supports-> [[participants-showed-very-similar-risk]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/40",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/40",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "destination": "urn:uuid:af961744-17b9-414d-b52a-b1451d7816e2",
       "title": "[[one-cluster-left-sts-responded]] -confirms-> [[neural-substrate-tracks-participant-responsibility-2]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/41",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/41",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "destination": "urn:uuid:af961744-17b9-414d-b52a-b1451d7816e2",
       "title": "[[one-cluster-left-sts-responded]] -tests-> [[neural-substrate-tracks-participant-responsibility-2]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/42",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/42",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "destination": "urn:uuid:3482235d-fcd8-4a85-ba76-a7bce9216c63",
       "title": "[[one-cluster-left-sts-responded]] -supports-> [[neural-substrate-tracks-participant-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/43",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/43",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "destination": "urn:uuid:db286450-f335-4e88-b8b2-706b3a36cc98",
       "title": "[[one-cluster-left-sts-responded]] -requires-> [[model-based-glm-entered-best-fitting-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/44",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/44",
       "@type": [
-        "haak:reldef/part_of"
+        "cg:reldef/part_of"
       ],
       "source": "urn:uuid:42388dde-c009-4b8d-9eb8-9bd1c44f0795",
       "destination": "urn:uuid:077e31a7-4fa3-471e-b1a7-aeba86331dca",
       "title": "[[only-precuneus-tpj-showed-positive]] -part-of-> [[decisions-social-compared-solo-condition]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/45",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/45",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:16d67552-5456-47aa-a8e7-b2f8a6dba280",
       "destination": "urn:uuid:22c6b000-90d3-4115-aa71-a7c184345e72",
       "title": "[[parameter-recovery-procedure-synthetic-data-generated]] -enables-method-> [[responsibility-redux-model-incorporating-expected]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/46",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/46",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:16d67552-5456-47aa-a8e7-b2f8a6dba280",
       "destination": "urn:uuid:22c6b000-90d3-4115-aa71-a7c184345e72",
       "title": "[[parameter-recovery-procedure-synthetic-data-generated]] -validates-> [[responsibility-redux-model-incorporating-expected]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/47",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/47",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:9fbb1b24-0d56-4a63-824f-9878838a3f28",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[participant-happiness-lower-when-participant]] -dissociates-with-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/48",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/48",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:9fbb1b24-0d56-4a63-824f-9878838a3f28",
       "destination": "urn:uuid:85137f0a-ebf3-4512-8cb6-d6cb9eb6931e",
       "title": "[[participant-happiness-lower-when-participant]] -rules-out-> [[alt-agency-aversion-not-guilt]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/49",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/49",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:0b0270ec-9c6e-44cd-925a-1cf4d2710b99",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[participant-momentary-happiness-varied-rewards-2]] -supports-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/50",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/50",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:7efedbb1-f561-4b3f-8368-550a1d65f093",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[participant-momentary-happiness-varied-rewards]] -supports-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/51",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/51",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:f12d294d-eafe-4a6b-9968-8b4d9034ee56",
       "destination": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f",
       "title": "[[participants-chose-risky-option-lottery]] -supports-> [[participants-showed-very-similar-risk]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/52",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/52",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:f12d294d-eafe-4a6b-9968-8b4d9034ee56",
       "destination": "urn:uuid:05e1c77d-80e1-4aab-8b94-1273386a0b33",
       "title": "[[participants-chose-risky-option-lottery]] -requires-> [[each-trial-participants-chose-between]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/53",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/53",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:d591bac9-ef83-498d-9b20-a71865d84e92",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[participants-own-reward-prediction-errors]] -supports-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/54",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/54",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:2fc68635-8b12-4013-9f44-5cbc696eb177",
       "destination": "urn:uuid:1f6b6cc4-c9cf-4fe2-a7fa-a0bbad09aeda",
       "title": "[[participants-probability-choosing-risky-option]] -rules-out-> [[alt-participants-insensitive-to-value]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/55",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/55",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:e6a5212c-8f7a-4946-8e3b-9ea75ad954bf",
       "destination": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f",
       "title": "[[participants-slightly-more-risk-averse]] -supports-> [[participants-showed-very-similar-risk]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/56",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/56",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:153a5ccc-6999-4c3b-a0a7-7fa168fda438",
       "destination": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605",
       "title": "[[partner-reward-prediction-errors-resulting]] -confirms-> [[responsibility-partner-outcomes-influences-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/57",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/57",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:153a5ccc-6999-4c3b-a0a7-7fa168fda438",
       "destination": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605",
       "title": "[[partner-reward-prediction-errors-resulting]] -tests-> [[responsibility-partner-outcomes-influences-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/58",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/58",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:153a5ccc-6999-4c3b-a0a7-7fa168fda438",
       "destination": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
       "title": "[[partner-reward-prediction-errors-resulting]] -supports-> [[responsibility-social-choice-yields-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/59",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/59",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:d8cad4fe-5332-4f92-b0ca-12c143e2611e",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[pre-task-icebreaker-succeeded-establishing-positive]] -validates-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/60",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/60",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:cac423cb-4c24-400d-aa4e-833c084c21ac",
       "destination": "urn:uuid:99bfd176-fde5-4e5e-80d4-cf3352cfa3f2",
       "title": "[[prior-functional-connectivity-work-shown]] -supports-> [[functional-connectivity-between-guilt-responsibility-related]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/61",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/61",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:9a8b2e58-dcdf-41bc-a908-c1aadd61c11f",
       "destination": "urn:uuid:c9c60ea3-aab4-4225-b151-17d106195f8d",
       "title": "[[prior-literature-documents-association-between]] -supports-> [[anterior-insula-neural-substrate-guilt]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/62",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/62",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:78bf184d-9af1-4f3a-8c1f-4efc7dbc2a34",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[responsibility-choices-not-influence-happiness]] -validates-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/63",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/63",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:f1812754-4a69-47b9-a5a1-7b464cb7317b",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[responsibility-model-yielded-higher-values]] -supports-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/64",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/64",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:f1812754-4a69-47b9-a5a1-7b464cb7317b",
       "destination": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7",
       "title": "[[responsibility-model-yielded-higher-values]] -requires-> [[momentary-happiness-modelled-five-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/65",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/65",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:22c6b000-90d3-4115-aa71-a7c184345e72",
       "destination": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7",
       "title": "[[responsibility-redux-model-incorporating-expected]] -requires-> [[momentary-happiness-modelled-five-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/66",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/66",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
       "destination": "urn:uuid:52cc08a1-e54c-4fd3-b788-f5057d5c50ef",
       "title": "[[responsibility-social-choice-yields-low]] -entails-> [[responsibility-outcomes-generates-guilt-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/67",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/67",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
       "destination": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605",
       "title": "[[responsibility-social-choice-yields-low]] -entails-> [[responsibility-partner-outcomes-influences-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/68",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/68",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:43b388c8-9d29-4fd4-8c6e-db588f0ba409",
       "destination": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7",
       "title": "[[risk-aversion-parameter-not-differ-between]] -validates-> [[momentary-happiness-modelled-five-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/69",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/69",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:fd564416-51dd-4894-9cd1-02e5af9c8af4",
       "destination": "urn:uuid:51c61d6b-8aee-4a0b-b4fa-da89f129bb8f",
       "title": "[[risk-premiums-not-differ-between]] -rules-out-> [[alt-social-context-shifts-risk-attitude]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/70",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/70",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:fd564416-51dd-4894-9cd1-02e5af9c8af4",
       "destination": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f",
       "title": "[[risk-premiums-not-differ-between]] -supports-> [[participants-showed-very-similar-risk]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/71",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/71",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:136a7088-111c-4b99-bf89-f2f70e66b1ff",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[rutledge-colleagues-established-changes-momentary]] -supports-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/72",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/72",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:846060d5-c556-4a0f-8668-9adfd8937224",
       "destination": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "title": "[[study-reproduced-study-design-inside]] -scopes-> [[insula-rois-responded-more-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/73",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/73",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "destination": "urn:uuid:52cc08a1-e54c-4fd3-b788-f5057d5c50ef",
       "title": "[[when-partner-received-low-lottery]] -confirms-> [[responsibility-outcomes-generates-guilt-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/74",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/74",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "destination": "urn:uuid:52cc08a1-e54c-4fd3-b788-f5057d5c50ef",
       "title": "[[when-partner-received-low-lottery]] -tests-> [[responsibility-outcomes-generates-guilt-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/75",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/75",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "destination": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
       "title": "[[when-partner-received-low-lottery]] -supports-> [[responsibility-social-choice-yields-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/76",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/76",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "destination": "urn:uuid:67792426-bb51-4765-90fc-025d56ad605c",
       "title": "[[when-partner-received-low-lottery]] -supports-> [[both-studies-participants-felt-worse]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/77",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/77",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "destination": "urn:uuid:256f3e8f-87f6-4a84-9fd2-d564243c1eb6",
       "title": "[[when-partner-received-low-lottery]] -requires-> [[linear-mixed-model-containing-all]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     }
