@@ -421,6 +421,15 @@ export function readerData(paperSlug: string) {
       stance: c.stance ?? 'asserts',
       status,
       statusLabel: status === 'na' ? '' : label,
+      // Two separate fields, shown beside each other on the claim, never one over the other:
+      // the warrant (how well the tree's argument supports it) and the verification check (does
+      // a re-run stand behind it). Warrant and warrant_from feed the display's epistemic
+      // fallback and its `unassessed` transform in status.ts; verification is the check verdict,
+      // null until that layer has run on this paper.
+      warrant: c.warrant ?? null,
+      warrantFrom: c.warrant_from ?? [],
+      epistemic: c.epistemic ?? 'unknown',
+      verification: c.check_verification ?? null,
       // The plain wording where the layer has run, the authors' short wording where it has
       // not, and the full claim as a last resort — so a paper without the layer still reads.
       // `||`, not `??`. `short` is a trimmed string, so a claim without one is '' — which
@@ -593,6 +602,9 @@ export function readerData(paperSlug: string) {
     draftRoles: DRAFT_ROLES,
     adjudication,
     counts: { claims: claims.length, rerun, marked, gaps, drafts: drafts.length, undecided },
+    // How far the tree's argument reaches, from corpus-facts (§ruling D). Present only where the
+    // warrant layer has run on this paper; the page states it in words — "reaches R of N claims".
+    warrant: ((corpusFacts as any).warrant?.papers ?? {})[paperSlug] ?? null,
     downloads,
     hasArticle: Boolean(article),
     hasPlain: Object.keys(plain).length > 0,

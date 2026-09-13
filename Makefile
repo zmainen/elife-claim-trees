@@ -97,6 +97,7 @@ check:  ## Gates that are clean on main. A failure here is this change's fault.
 	cd extract && $(PYTHON) tests/test_profiles.py
 	cd extract && $(PYTHON) tests/test_evaluate_precision_and_edges.py
 	cd extract && $(PYTHON) tests/test_verdicts.py
+	cd extract && $(PYTHON) tests/test_verification_check.py
 	$(PYTHON) scripts/test_pipeline_versions.py
 	$(PYTHON) scripts/test_warrant.py
 	$(PYTHON) scripts/test_verification_rows.py

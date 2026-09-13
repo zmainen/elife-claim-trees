@@ -230,7 +230,7 @@ Role is the rhetorical function the claim plays in the paper's argument. The syn
 | `empirical` | A measured or computed result, panel-grounded. The largest role bucket ({{largest_role_n}} of {{claims}}). | `empirical` |
 | `control` | A check ruling out an artefactual or alternative explanation. Carries `scopes:` or `rules-out:` edges. | `empirical` |
 | `scope` | A boundary condition that qualifies a set of claims (single-cell scope, dataset boundary, optogenetic-vs-physiological scope). Often global (`scopes: ["*"]`). | `assessment` |
-| `methodological` | A procedural or analytical capability that warrants a downstream interpretation (manifold-from-pooled-super-session, particular sorting pipeline). Carries `enables-method:`. | `assessment` |
+| `methodological` | A procedural or analytical capability that warrants a downstream interpretation (manifold-from-pooled-super-session, particular sorting pipeline). Carries `enables-method:`. A contrast run only to define a region or a set of trials for a later analysis — a localizer — is `methodological`, not `empirical`, because the paper does not argue from it. | `assessment` |
 | `synthesis` | A claim integrating across multiple empirical claims into a higher-order proposition (the dissociation, the receptor-reconciliation). Top of the within-paper graph. | `synthesis` / `interpretive` |
 | `interpretation` | A reframing of an empirical result through theoretical lens, marked separately from synthesis. Carries `interprets:` edges. | `interpretive` |
 | `literature-context` | A cited prior claim treated as a first-class node. Section 5. | `interpretive` |
