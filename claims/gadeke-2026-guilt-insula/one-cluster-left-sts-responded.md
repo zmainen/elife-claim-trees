@@ -1,5 +1,5 @@
 ---
-uuid: 6d82bb56-0a43-4200-b2cd-15d288f5e004
+uuid: a21f0a58-f5e6-4804-a760-0d07c73233a1
 slug: one-cluster-left-sts-responded
 doi: null
 claim: One cluster in the left STS responded more to partner reward prediction errors resulting from participant
@@ -7,9 +7,11 @@ claim: One cluster in the left STS responded more to partner reward prediction e
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 tests:
+- neural-substrate-tracks-participant-responsibility-2
+confirms:
 - neural-substrate-tracks-participant-responsibility-2
 belongings:
 - relation: supports
@@ -55,6 +57,7 @@ reproductions:
 - `tests` → `neural-substrate-tracks-participant-responsibility-2`: The left-STS cluster responding more to participant-caused partner RPEs tests the responsibility-tracking prediction.
 - `supports` → `neural-substrate-tracks-participant-responsibility`: The left-STS responsibility response supports the responsibility-tracking hypothesis.
 - `requires` → `model-based-glm-entered-best-fitting-computational`: The STS result depends on the model-based GLM that entered the Responsibility-model regressors.
+- `confirms` → `neural-substrate-tracks-participant-responsibility-2`: The left-STS cluster responding more to participant-caused than partner-caused partner RPEs confirms the responsibility-tracking prediction (evidence at span fig4h).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

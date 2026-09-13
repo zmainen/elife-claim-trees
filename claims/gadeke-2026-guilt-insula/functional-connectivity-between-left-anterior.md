@@ -1,5 +1,5 @@
 ---
-uuid: 5d2ef557-c6ec-4052-82c2-0b8e4c297e01
+uuid: 5bd4ed04-9aab-48a1-93a7-29623d82384b
 slug: functional-connectivity-between-left-anterior
 doi: null
 claim: Functional connectivity between the left anterior insula (seed) and a cluster in the right inferior
@@ -9,9 +9,11 @@ claim: Functional connectivity between the left anterior insula (seed) and a clu
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 tests:
+- connectivity-between-guilt-responsibility-related-outcome-ph
+confirms:
 - connectivity-between-guilt-responsibility-related-outcome-ph
 belongings:
 - relation: supports
@@ -33,6 +35,7 @@ reproductions: []
 - `tests` → `connectivity-between-guilt-responsibility-related-outcome-ph`: The insula-IFG connectivity varying with condition and choice tests the connectivity prediction (evidence at span results-142).
 - `supports` → `functional-connectivity-between-guilt-responsibility-related`: The condition- and choice-dependent insula-IFG connectivity supports the connectivity hypothesis (evidence at span results-142).
 - `requires` → `prior-functional-connectivity-work-shown`: The connectivity analysis inherits prior functional-connectivity findings as background (evidence at span results-142).
+- `confirms` → `connectivity-between-guilt-responsibility-related-outcome-ph`: The insula-IFG connectivity varying with condition and choice, surviving FWE correction, confirms the connectivity prediction (evidence at span results-142).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

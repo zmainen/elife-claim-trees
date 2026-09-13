@@ -159,7 +159,7 @@ A relation is a proposition about logical structure between two claims, not a ci
 
 | Relation | Asserts | Direction |
 |:--|:--|:--|
-| `confirms` | the source confirms the target; reciprocal of predicts | from the result to the prediction or hypothesis it confirms; the reciprocal of predicts |
+| `confirms` | an empirical result confirms the prediction it tested — the positive outcome of a test | from the result to the prediction it confirms — the positive outcome of a test, aimed at a prediction only |
 | `contradicts` | the source and target cannot both hold | from either claim to the other; they cannot both hold |
 | `derived-from` | a prediction derived from its hypothesis (inverse of entails) | from the prediction back to its hypothesis; written mechanically as the reciprocal of entails |
 | `dissociates-with` | the source and target jointly establish a dissociation (symmetric) | symmetric: between the two empirical claims that together establish the contrast |
@@ -171,7 +171,7 @@ A relation is a proposition about logical structure between two claims, not a ci
 | `part-of` | a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone | from the component to the claim it is a part of: the source states one comparison, condition, measure or study of what the target states as a whole |
 | `predicts` | the source predicts the target, typically model to experiment | from the model or hypothesis to the observation it predicts |
 | `qualifies` | a claim narrows another's applicability | from the qualifying result to the claim whose applicability it narrows |
-| `refutes` | the source's evidence is incompatible with the target | from the evidence to the prediction, hypothesis or alternative it is incompatible with |
+| `refutes` | an empirical result refutes the prediction it tested — the negative outcome of a test | from the result to the prediction it came out against — the negative outcome of a test, aimed at a prediction only |
 | `replicates` | an independent finding of the same result as the target | from the independent finding to the claim it reproduces |
 | `requires` | a claim depends on another holding | from the dependent claim to its prerequisite: the source would be invalid if the target were false |
 | `rules-out` | the source's evidence eliminates the target as an explanation | from the control or evidence to the alternative explanation it eliminates — a claim the paper entertains or rejects, never one it asserts |
@@ -209,7 +209,9 @@ A relation is a proposition about logical structure between two claims, not a ci
 
 **`entails` versus `tests`.** Both connect a hypothesis's arc, in opposite directions and from different roles. `entails` runs *down* from the hypothesis to a prediction and is deductive: the prediction follows if the hypothesis holds. `tests` runs *up* from an empirical result to the prediction it checks. A result never `entails` anything; a hypothesis never `tests`.
 
-**`rules-out` versus `refutes`.** `rules-out` eliminates an alternative explanation — a claim the paper raises in order to reject, which has a node of its own with stance `entertains` or `rejects`. `refutes` is aimed at one of the paper's own predictions or hypotheses that the evidence came out against; a paper refuting its own prediction is the hypothetico-deductive loop closing. Never aim `rules-out` at a claim the same paper asserts.
+**`rules-out` versus `refutes`.** `rules-out` eliminates an alternative explanation — a claim the paper raises in order to reject, which has a node of its own with stance `entertains` or `rejects`. `refutes` is the negative outcome of a test, aimed at one of the paper's own predictions that the evidence came out against; a paper refuting its own prediction is the hypothetico-deductive loop closing. When a result bears against a hypothesis, do not aim `refutes` at the hypothesis — write the prediction the hypothesis entails and refute that. Never aim `rules-out` at a claim the same paper asserts.
+
+**`confirms` versus `supports`.** `confirms` is the outcome of a stated prediction: an empirical result came out the way the prediction said it would, and the edge runs from the result to that prediction — its negative counterpart is `refutes`. `supports` is evidence for a hypothesis or higher-order claim, making it more credible without being the settling of a prediction. A result that tests a prediction carries `tests` and then `confirms` or `refutes` it; the same result may `supports` the hypothesis that prediction was derived from. Aim `confirms` and `refutes` at predictions only — a result that bears on a hypothesis directly takes `supports`.
 
 **`dissociates-with` versus `contradicts`.** `dissociates-with` joins two results that are both true and *differ*: the contrast between them is the finding, and neither undermines the other. `contradicts` says two claims cannot both hold. Two conditions producing different effects is a dissociation, not a contradiction.
 

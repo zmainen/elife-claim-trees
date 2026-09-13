@@ -1,5 +1,5 @@
 ---
-uuid: d025df31-f489-4b24-bde1-880be8fdbdec
+uuid: 22dc976d-ab70-4f34-aa70-a24778b483a9
 slug: each-trial-participants-chose-between
 doi: null
 claim: 'On each trial participants chose between a safe and a risky monetary option under three conditions:
@@ -8,7 +8,7 @@ claim: 'On each trial participants chose between a safe and a risky monetary opt
 claim-type: assessment
 role: scope
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 scopes:
 - participants-chose-risky-option-lottery

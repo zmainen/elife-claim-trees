@@ -31,10 +31,13 @@ Four conventions matter and are not obvious:
    rule is dropped with a logged reason, never silently kept.
 
 3. **Deduction is reciprocal.** A hypothesis carries `entails:` to its
-   prediction and the prediction carries `derived-from:` back; a hypothesis or
-   result `predicts` an observation and the observation `confirms` it. The model
-   is asked for one direction and forbidden the other; we synthesise it, because
+   prediction and the prediction carries `derived-from:` back. The model is
+   asked for `entails` and forbidden `derived-from`; we synthesise it, because
    the site's hierarchical numbering (H1, H1.P1, H1.P1.E1) walks `derived-from`.
+   The outcome of a test is not reciprocal: under the #28 ruling a `tests` edge
+   from a result to a prediction is stated beside a `confirms` or `refutes` from
+   the same result to that prediction, and the reader emits the outcome directly
+   rather than it being derived from a `predicts`.
 
 4. **Where an edge is stored depends on its type.** The site's build step
    (`site/scripts/build-data.js`) reads `requires` and `supports` from the
@@ -85,16 +88,25 @@ CONTRARY = set(_REL.CONTRARY)
 BELONGINGS_RELATIONS = {"requires", "supports"}
 
 # Deduction is recorded from both ends. The model is asked for the left key and forbidden the
-# right one, which we write mechanically as its reciprocal.
-RECIPROCAL = {"entails": "derived-from", "predicts": "confirms"}
-NEVER_EMITTED = set(RECIPROCAL.values())          # {"derived-from", "confirms"}
+# right one, which we write mechanically as its reciprocal. `confirms` used to be synthesised
+# here as the reciprocal of `predicts`; under the #28 ruling it is an outcome the reader states
+# directly beside a `tests` edge (aimed at a prediction), so it is emitted, not synthesised.
+RECIPROCAL = {"entails": "derived-from"}
+NEVER_EMITTED = set(RECIPROCAL.values())          # {"derived-from"}
 
 # The role a relation's source must have, where the direction rule fixes it. `rules-out` runs
 # from the control or evidence that eliminates a rival, so its source is a control or an
 # empirical claim — the `stance` layer aims one from a named control at the alternative it kills,
 # and a rules-out from anything else is dropped the way a mis-directed `tests` is.
+# The outcome relations run from the result that settled a test to the prediction it tested, so
+# their source is a control or an empirical claim, exactly like `tests`, and their target is a
+# prediction (checked below beside `tests`).
 _SOURCE_ROLE = {"entails": {"hypothesis"}, "scopes": {"scope"}, "tests": {"empirical", "control"},
-                "rules-out": {"empirical", "control"}}
+                "rules-out": {"empirical", "control"}, "confirms": {"empirical", "control"},
+                "refutes": {"empirical", "control"}}
+
+# The relations whose target must be a prediction: the neutral test and its two outcomes.
+_PREDICTION_TARGET = {"tests", "confirms", "refutes"}
 
 
 # The prompt is a file, not a string, so that a committed run can record which version of
@@ -441,8 +453,8 @@ def _validate_edges(parsed: list, claims: list, slugs: list[str], *, source: str
         if need and role_of.get(src) not in need:
             reject(f"{rel} source must be {'/'.join(sorted(need))}, not {role_of.get(src)}")
             continue
-        if rel == "tests" and role_of.get(tgt) != "prediction":
-            reject(f"tests target must be a prediction, not {role_of.get(tgt)}")
+        if rel in _PREDICTION_TARGET and role_of.get(tgt) != "prediction":
+            reject(f"{rel} target must be a prediction, not {role_of.get(tgt)}")
             continue
         if rel in CONTRARY and stance_of.get(tgt) == "asserts":
             reject(f"{rel} cannot target a claim the paper asserts")

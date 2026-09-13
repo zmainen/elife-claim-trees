@@ -1,5 +1,5 @@
 ---
-uuid: 43cd3ce9-8453-4036-8d5e-ad9fd1e963c9
+uuid: fd6b1cdd-a451-4a96-9dca-5bab0e634623
 slug: functional-connectivity-between-guilt-responsibility-related
 doi: null
 claim: Functional connectivity between guilt- and responsibility-related outcome-phase regions and prefrontal
@@ -7,9 +7,8 @@ claim: Functional connectivity between guilt- and responsibility-related outcome
   and on the type of choice (Safe or Risky).
 claim-type: hypothesis
 role: hypothesis
-addresses: q2
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: hypothesis
 entails:
 - connectivity-between-guilt-responsibility-related-outcome-ph

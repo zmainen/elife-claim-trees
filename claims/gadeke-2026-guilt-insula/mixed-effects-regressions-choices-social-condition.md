@@ -1,5 +1,5 @@
 ---
-uuid: 03cc47b1-8acc-4807-8be0-935f841d48f8
+uuid: beeb4829-a8c0-4a25-be7a-d44d1ded8347
 slug: mixed-effects-regressions-choices-social-condition
 doi: null
 claim: In mixed-effects regressions on choices, the Social condition significantly increased choice of
@@ -7,7 +7,7 @@ claim: In mixed-effects regressions on choices, the Social condition significant
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 part-of:
 - participants-chose-risky-option-lottery

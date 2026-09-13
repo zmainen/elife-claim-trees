@@ -1,5 +1,5 @@
 ---
-uuid: 1d1d232b-1364-4271-a415-6300a1bc7ad6
+uuid: 53fb01a4-69f5-4f15-9226-5b7a820042e1
 slug: momentary-happiness-modelled-five-computational
 doi: null
 claim: Momentary happiness was modelled with five computational models (Basic, Inequality, Guilt-envy,
@@ -8,7 +8,7 @@ claim: Momentary happiness was modelled with five computational models (Basic, I
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings:
 - relation: requires

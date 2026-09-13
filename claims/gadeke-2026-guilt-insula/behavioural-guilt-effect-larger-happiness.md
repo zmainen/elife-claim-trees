@@ -1,5 +1,5 @@
 ---
-uuid: ba8c6ab1-a835-422f-937b-65a71ea39b04
+uuid: 54436640-e6be-4ef6-88fb-2248de82a442
 slug: behavioural-guilt-effect-larger-happiness
 doi: null
 claim: The behavioural guilt effect (larger happiness decrease after low partner outcomes following participant
@@ -7,7 +7,7 @@ claim: The behavioural guilt effect (larger happiness decrease after low partner
 claim-type: interpretive
 role: interpretation
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 interprets:
 - when-partner-received-low-lottery

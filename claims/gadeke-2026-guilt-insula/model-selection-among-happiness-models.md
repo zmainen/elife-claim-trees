@@ -1,5 +1,5 @@
 ---
-uuid: e20e6df1-1a69-452d-9051-3d3355132deb
+uuid: aceb1cf8-3a6d-4b2a-8494-d541b4379cc6
 slug: model-selection-among-happiness-models
 doi: null
 claim: Model selection among the happiness models used likelihood-ratio tests comparing the Responsibility
@@ -7,7 +7,7 @@ claim: Model selection among the happiness models used likelihood-ratio tests co
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 enables-method:
 - likelihood-ratio-test-showed-responsibility

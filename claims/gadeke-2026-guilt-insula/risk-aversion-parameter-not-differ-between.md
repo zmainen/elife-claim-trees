@@ -1,5 +1,5 @@
 ---
-uuid: 6f5c63df-fb60-4e84-b0c6-4094ef525062
+uuid: 1024dcd8-db09-42ec-be3c-6de817afccce
 slug: risk-aversion-parameter-not-differ-between
 doi: null
 claim: 'The risk-aversion parameter ρ did not differ between gain and loss trials (Study 1: t(17) = 0.21,
@@ -8,7 +8,7 @@ claim: 'The risk-aversion parameter ρ did not differ between gain and loss tria
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings: []
 assertions:
@@ -17,8 +17,6 @@ assertions:
   panel: null
   confidence: tentative
 reproductions: []
-validates:
-- participants-slightly-more-risk-averse
 ---
 
 **Notes from extraction:** Null result justifying pooling across gain and loss trials.

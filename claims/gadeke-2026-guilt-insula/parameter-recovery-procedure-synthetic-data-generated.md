@@ -1,5 +1,5 @@
 ---
-uuid: 744191f0-c636-4388-887c-cb552e458d9f
+uuid: 0e63be6d-16ea-4e51-9d72-52a9f94f75bf
 slug: parameter-recovery-procedure-synthetic-data-generated
 doi: null
 claim: A parameter-recovery procedure on synthetic data generated from each participant's estimated parameters
@@ -7,7 +7,7 @@ claim: A parameter-recovery procedure on synthetic data generated from each part
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 enables-method:
 - partner-reward-prediction-errors-resulting

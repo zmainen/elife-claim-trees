@@ -1,5 +1,5 @@
 ---
-uuid: 09960051-2473-4a67-b092-89fc6c2b9004
+uuid: d7531503-f518-45a8-983a-bd6256f4430a
 slug: risk-premiums-not-differ-between
 doi: null
 claim: 'Risk premiums did not differ between Solo and Social conditions in either study (Study 1: t(39)
@@ -7,12 +7,10 @@ claim: 'Risk premiums did not differ between Solo and Social conditions in eithe
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 rules-out:
 - alt-social-context-shifts-risk-attitude
-part-of:
-- participants-showed-very-similar-risk
 belongings:
 - relation: supports
   target: participants-showed-very-similar-risk

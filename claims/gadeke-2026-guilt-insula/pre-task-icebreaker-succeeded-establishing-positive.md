@@ -1,5 +1,5 @@
 ---
-uuid: 88e0fcd3-75df-4268-a111-f248d12f8851
+uuid: 2588afab-99d1-4696-8ada-d4da2f81ded1
 slug: pre-task-icebreaker-succeeded-establishing-positive
 doi: null
 claim: 'A pre-task icebreaker succeeded in establishing a positive attitude toward the partner: participants
@@ -8,7 +8,7 @@ claim: 'A pre-task icebreaker succeeded in establishing a positive attitude towa
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 validates:
 - when-partner-received-low-lottery

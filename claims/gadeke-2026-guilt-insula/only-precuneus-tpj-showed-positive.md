@@ -1,5 +1,5 @@
 ---
-uuid: 1ba55a5a-b2c9-4b3d-94ff-48c91db9541f
+uuid: e2e8c5f6-2773-452a-aeb2-fa43495691a4
 slug: only-precuneus-tpj-showed-positive
 doi: null
 claim: Only the precuneus and TPJ showed positive Risky–Safe differences in both the Social>Solo and Social>Partner
@@ -7,7 +7,7 @@ claim: Only the precuneus and TPJ showed positive Risky–Safe differences in bo
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 part-of:
 - decisions-social-compared-solo-condition

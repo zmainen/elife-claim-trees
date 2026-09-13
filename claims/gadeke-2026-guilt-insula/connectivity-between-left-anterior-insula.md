@@ -1,5 +1,5 @@
 ---
-uuid: 0163cde6-d768-4d94-9472-c61e2af36133
+uuid: 6cb9fda7-4831-476d-9c7e-6fdd8d1f5627
 slug: connectivity-between-left-anterior-insula
 doi: null
 claim: Connectivity between the left anterior insula and the right inferior frontal gyrus varied with
@@ -8,7 +8,7 @@ claim: Connectivity between the left anterior insula and the right inferior fron
 claim-type: interpretive
 role: interpretation
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 interprets:
 - functional-connectivity-between-left-anterior
