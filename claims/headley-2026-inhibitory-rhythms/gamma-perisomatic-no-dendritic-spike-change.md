@@ -47,11 +47,15 @@ assertions:
 
 reproductions:
   - agent: mainen-z
-    date: 2026-03-30
+    date: 2026-09-13
     status: partial
+    script: verification/headley-2026-inhibitory-rhythms/verify.py
     original_script: https://github.com/dbheadley/InhibOnDendComp/blob/main/scripts/Fig5.ipynb
-    script_execution: pre-computed
-    script_execution_note: "Static case verified from pre-computed CSV; rhythmic gamma panels require 1.88 GB Dryad data"
+    script_execution: executed
+    script_execution_note: >
+      Automated as verify_gamma_no_dendritic_change(): checks Figure4d/e/f.csv's control-vs-somatic
+      Na/NMDA/Ca spike frequencies (<10% change each). Static case only — rhythmic gamma panels
+      still require the 1.88 GB Dryad archive and aren't checked.
     time_fast: "~2 min"
     time_full: "~6 hrs (NEURON + 1.88 GB Dryad)"
     notes: >

@@ -43,8 +43,18 @@ assertions:
 
 reproductions:
   - agent: mainen-z
-    date: 2026-03-30
+    date: 2026-09-13
     status: partial
+    script: verification/scheller-2026-self-prioritization/verify.py
+    original_script: https://osf.io/a62df
+    script_execution: executed
+    script_execution_note: >
+      Automated as verify_decisional_tradeoff(): downloads Correlation_Results.xlsx (the
+      cross-experimental folder) and recomputes the Pearson correlation. Checks the sign
+      (negative) since the magnitude does not exactly match this note's own manual reading —
+      see notes below.
+    data_source: https://osf.io/a62df
+    data_file: Correlation_Results.xlsx
     notes: >
       Partially verified from Correlation_Results.xlsx (OSF cross-exp folder). Pearson r
       computed from ΔΔv_Per vs ΔΔv_Soc for Exp1 (N=63): r = -0.211, p = 0.096

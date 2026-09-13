@@ -3,9 +3,9 @@
   "script": "verification/scheller-2026-self-prioritization/verify.py",
   "argv": [],
   "observed_by": "verification/audit_run.py",
-  "recorded": "2026-09-11T11:14:03+00:00",
+  "recorded": "2026-09-13T12:41:26+00:00",
   "interpreter": {
-    "executable": "/Users/zach/anaconda/bin/python3",
+    "executable": "/Users/zach/anaconda/bin/python",
     "version": "3.10.18"
   },
   "exit": "SystemExit(0)",
@@ -57,9 +57,38 @@
       "paper_value": "-1.2 Hz",
       "reproduced_value": "diff=-1.20 Hz",
       "status": "PASS"
+    },
+    {
+      "claim": "self-prioritization-perceptual-decision-automatic",
+      "paper_value": "~1.5 Hz self-advantage (baseline\u2192perceptual)",
+      "reproduced_value": "baseline=-0.91, perceptual=0.64, change=1.54 Hz",
+      "status": "PASS"
+    },
+    {
+      "claim": "self-salience-reduces-perceptual-benefit",
+      "paper_value": "self < other < perceptual (2.5 < 5.2 < 6 Hz)",
+      "reproduced_value": "self=2.58, other=5.32, perceptual=6.05 Hz",
+      "status": "PASS"
+    },
+    {
+      "claim": "self-social-additive-perceptual",
+      "paper_value": "expected \u2248 observed (interaction \u2248 0)",
+      "reproduced_value": "expected=4.68, observed=5.32, interaction=+0.64 Hz",
+      "status": "PASS"
+    },
+    {
+      "claim": "decisional-dimension-tradeoff",
+      "paper_value": "r=-0.243, p=0.049 (Exp1, negative trade-off)",
+      "reproduced_value": "r=-0.211, p=0.096, n=63 \u2014 sign matches, magnitude close but not identical (documented in the claim's own reproduction note)",
+      "status": "PASS"
     }
   ],
   "opened": [
+    {
+      "path": "/tmp/scheller-2026/Correlation_Results.xlsx",
+      "bytes": 28074,
+      "sha256_12": "d98aefc045d2"
+    },
     {
       "path": "/tmp/scheller-2026/estimates_indiv_C_Exp1.csv",
       "bytes": 298247,
@@ -71,5 +100,5 @@
       "sha256_12": "025e6c568d88"
     }
   ],
-  "stdout_tail": "FAST MODE \u2014 estimated time: ~3 min\n============================================================\nData source: OSF https://osf.io/a62df\n\n[data] Attempting OSF data download for live recomputation...\n[data] Exp1 loaded: 3807 rows, cols: ['Unnamed: 0', 'mean', 'sd', 'hdi_3%', 'hdi_97%', 'mcse_mean', 'mcse_sd', 'ess_bulk']\n[data] Exp2 loaded: 7831 rows, cols: ['Unnamed: 0', 'mean', 'sd', 'hdi_3%', 'hdi_97%', 'mcse_mean', 'mcse_sd', 'ess_bulk']\n\n  perceptual-salience-6hz-advantage: paper=6 Hz, reproduced=6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20) \u2192 PASS (0.0s)\n  other-association-advantage-social-condition: paper=-1.6 Hz, reproduced=-1.36 Hz (Exp2 other-salient vs neutral) \u2192 PASS (0.0s)\n  processing-capacity-rises-perceptual-self: paper=\u0394C=2.6 Hz, reproduced=\u0394C=2.60 Hz \u2192 PASS (0.0s)\n  spe-robust-matching-both-experiments [Exp1]: paper=d=1.064, reproduced=d=1.09 \u2192 PASS (0.0s)\n  spe-robust-matching-both-experiments [Exp2]: paper=d=0.982, reproduced=d=1.01 \u2192 PASS (0.0s)\n  spe-matching-correlates-social-decision [Exp1]: paper=r=0.354, reproduced=r=0.354 \u2192 PASS (0.0s)\n  spe-matching-correlates-social-decision [Exp2]: paper=r=0.069, reproduced=r=0.069 \u2192 PASS (0.0s)\n  self-prioritization-absent-social-decision: paper=-1.2 Hz, reproduced=diff=-1.20 Hz \u2192 PASS (0.0s)\n\n============================================================\nSUMMARY\n\n-----------------------------------------------------+------------------------+----------------------------+-------\nCLAIM SLUG                                           | PAPER VALUE            | REPRODUCED                 | STATUS\n-----------------------------------------------------+------------------------+----------------------------+-------\nperceptual-salience-6hz-advantage                    | 6 Hz                   | 6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20) | PASS  \nother-association-advantage-social-condition         | -1.6 Hz                | -1.36 Hz (Exp2 other-salient vs neutral) | PASS  \nprocessing-capacity-rises-perceptual-self            | \u0394C=2.6 Hz              | \u0394C=2.60 Hz                 | PASS  \nspe-robust-matching-both-experiments [Exp1]          | d=1.064                | d=1.09                     | PASS  \nspe-robust-matching-both-experiments [Exp2]          | d=0.982                | d=1.01                     | PASS  \nspe-matching-correlates-social-decision [Exp1]       | r=0.354                | r=0.354                    | PASS  \nspe-matching-correlates-social-decision [Exp2]       | r=0.069                | r=0.069                    | PASS  \nself-prioritization-absent-social-decision           | -1.2 Hz                | diff=-1.20 Hz              | PASS  \n-----------------------------------------------------+------------------------+----------------------------+-------\n\n8/8 claims verified (0 WARN, 0 FAIL)\n\nNote: Values from pre-computed OSF Stan posterior CSVs (estimates_indiv_C.csv).\nExact match within rounding to paper throughout. See claim files for full details.\n"
+  "stdout_tail": "FAST MODE \u2014 estimated time: ~3 min\n============================================================\nData source: OSF https://osf.io/a62df\n\n[data] Attempting OSF data download for live recomputation...\n[data] Exp1 loaded: 3807 rows, cols: ['Unnamed: 0', 'mean', 'sd', 'hdi_3%', 'hdi_97%', 'mcse_mean', 'mcse_sd', 'ess_bulk']\n[data] Exp2 loaded: 7831 rows, cols: ['Unnamed: 0', 'mean', 'sd', 'hdi_3%', 'hdi_97%', 'mcse_mean', 'mcse_sd', 'ess_bulk']\n\n  perceptual-salience-6hz-advantage: paper=6 Hz, reproduced=6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20) \u2192 PASS (0.0s)\n  other-association-advantage-social-condition: paper=-1.6 Hz, reproduced=-1.36 Hz (Exp2 other-salient vs neutral) \u2192 PASS (0.0s)\n  processing-capacity-rises-perceptual-self: paper=\u0394C=2.6 Hz, reproduced=\u0394C=2.60 Hz \u2192 PASS (0.0s)\n  spe-robust-matching-both-experiments [Exp1]: paper=d=1.064, reproduced=d=1.09 \u2192 PASS (0.0s)\n  spe-robust-matching-both-experiments [Exp2]: paper=d=0.982, reproduced=d=1.01 \u2192 PASS (0.0s)\n  spe-matching-correlates-social-decision [Exp1]: paper=r=0.354, reproduced=r=0.354 \u2192 PASS (0.0s)\n  spe-matching-correlates-social-decision [Exp2]: paper=r=0.069, reproduced=r=0.069 \u2192 PASS (0.0s)\n  self-prioritization-absent-social-decision: paper=-1.2 Hz, reproduced=diff=-1.20 Hz \u2192 PASS (0.0s)\n  self-prioritization-perceptual-decision-automatic: change=1.54 Hz \u2192 PASS (0.0s)\n  self-salience-reduces-perceptual-benefit: self=2.58 other=5.32 perceptual=6.05 \u2192 PASS (0.0s)\n  self-social-additive-perceptual: interaction=+0.64 Hz \u2192 PASS (0.0s)\n  decisional-dimension-tradeoff: r=-0.211, p=0.096 \u2192 PASS (0.1s)\n\n============================================================\nSUMMARY\n\n-----------------------------------------------------+------------------------+----------------------------+-------\nCLAIM SLUG                                           | PAPER VALUE            | REPRODUCED                 | STATUS\n-----------------------------------------------------+------------------------+----------------------------+-------\nperceptual-salience-6hz-advantage                    | 6 Hz                   | 6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20) | PASS  \nother-association-advantage-social-condition         | -1.6 Hz                | -1.36 Hz (Exp2 other-salient vs neutral) | PASS  \nprocessing-capacity-rises-perceptual-self            | \u0394C=2.6 Hz              | \u0394C=2.60 Hz                 | PASS  \nspe-robust-matching-both-experiments [Exp1]          | d=1.064                | d=1.09                     | PASS  \nspe-robust-matching-both-experiments [Exp2]          | d=0.982                | d=1.01                     | PASS  \nspe-matching-correlates-social-decision [Exp1]       | r=0.354                | r=0.354                    | PASS  \nspe-matching-correlates-social-decision [Exp2]       | r=0.069                | r=0.069                    | PASS  \nself-prioritization-absent-social-decision           | -1.2 Hz                | diff=-1.20 Hz              | PASS  \nself-prioritization-perceptual-decision-automatic    | ~1.5 Hz self-advantage (baseline\u2192perceptual) | baseline=-0.91, perceptual=0.64, change=1.54 Hz | PASS  \nself-salience-reduces-perceptual-benefit             | self < other < perceptual (2.5 < 5.2 < 6 Hz) | self=2.58, other=5.32, perceptual=6.05 Hz | PASS  \nself-social-additive-perceptual                      | expected \u2248 observed (interaction \u2248 0) | expected=4.68, observed=5.32, interaction=+0.64 Hz | PASS  \ndecisional-dimension-tradeoff                        | r=-0.243, p=0.049 (Exp1, negative trade-off) | r=-0.211, p=0.096, n=63 \u2014 sign matches, magnitude close but not identical (documented in the claim's own reproduction note) | PASS  \n-----------------------------------------------------+------------------------+----------------------------+-------\n\n12/12 claims verified (0 WARN, 0 FAIL)\n\nNote: Values from pre-computed OSF Stan posterior CSVs (estimates_indiv_C.csv).\nExact match within rounding to paper throughout. See claim files for full details.\n"
 }

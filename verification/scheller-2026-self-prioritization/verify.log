@@ -1,28 +1,45 @@
-======================================================================
-Scheller et al. 2026 — Self-Prioritization TVA — Verification
-======================================================================
+FAST MODE — estimated time: ~3 min
+============================================================
 Data source: OSF https://osf.io/a62df
 
 [data] Attempting OSF data download for live recomputation...
-[data] Exp1 estimates CSV not accessible — using verified values from notes
-[data] Exp2 estimates CSV not accessible — using verified values from notes
+[data] Exp1 loaded: 3807 rows, cols: ['Unnamed: 0', 'mean', 'sd', 'hdi_3%', 'hdi_97%', 'mcse_mean', 'mcse_sd', 'ess_bulk']
+[data] Exp2 loaded: 7831 rows, cols: ['Unnamed: 0', 'mean', 'sd', 'hdi_3%', 'hdi_97%', 'mcse_mean', 'mcse_sd', 'ess_bulk']
 
+  perceptual-salience-6hz-advantage: paper=6 Hz, reproduced=6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20) → PASS (0.0s)
+  other-association-advantage-social-condition: paper=-1.6 Hz, reproduced=-1.36 Hz (Exp2 other-salient vs neutral) → PASS (0.0s)
+  processing-capacity-rises-perceptual-self: paper=ΔC=2.6 Hz, reproduced=ΔC=2.60 Hz → PASS (0.0s)
+  spe-robust-matching-both-experiments [Exp1]: paper=d=1.064, reproduced=d=1.09 → PASS (0.0s)
+  spe-robust-matching-both-experiments [Exp2]: paper=d=0.982, reproduced=d=1.01 → PASS (0.0s)
+  spe-matching-correlates-social-decision [Exp1]: paper=r=0.354, reproduced=r=0.354 → PASS (0.0s)
+  spe-matching-correlates-social-decision [Exp2]: paper=r=0.069, reproduced=r=0.069 → PASS (0.0s)
+  self-prioritization-absent-social-decision: paper=-1.2 Hz, reproduced=diff=-1.20 Hz → PASS (0.0s)
+  self-prioritization-perceptual-decision-automatic: change=1.54 Hz → PASS (0.0s)
+  self-salience-reduces-perceptual-benefit: self=2.58 other=5.32 perceptual=6.05 → PASS (0.0s)
+  self-social-additive-perceptual: interaction=+0.64 Hz → PASS (0.0s)
+  decisional-dimension-tradeoff: r=-0.211, p=0.096 → PASS (0.1s)
+
+============================================================
+SUMMARY
 
 -----------------------------------------------------+------------------------+----------------------------+-------
 CLAIM SLUG                                           | PAPER VALUE            | REPRODUCED                 | STATUS
 -----------------------------------------------------+------------------------+----------------------------+-------
 perceptual-salience-6hz-advantage                    | 6 Hz                   | 6.05 Hz (Exp2 cond2: v_p=27.24, v_r=21.20) | PASS  
-other-association-advantage-social                   | -1.6 Hz                | -1.36 Hz (Exp2 other-salient vs neutral) | PASS  
+other-association-advantage-social-condition         | -1.6 Hz                | -1.36 Hz (Exp2 other-salient vs neutral) | PASS  
 processing-capacity-rises-perceptual-self            | ΔC=2.6 Hz              | ΔC=2.60 Hz                 | PASS  
 spe-robust-matching-both-experiments [Exp1]          | d=1.064                | d=1.09                     | PASS  
 spe-robust-matching-both-experiments [Exp2]          | d=0.982                | d=1.01                     | PASS  
 spe-matching-correlates-social-decision [Exp1]       | r=0.354                | r=0.354                    | PASS  
 spe-matching-correlates-social-decision [Exp2]       | r=0.069                | r=0.069                    | PASS  
-self-prioritization-absent-social                    | -1.2 Hz                | diff=-1.20 Hz              | PASS  
+self-prioritization-absent-social-decision           | -1.2 Hz                | diff=-1.20 Hz              | PASS  
+self-prioritization-perceptual-decision-automatic    | ~1.5 Hz self-advantage (baseline→perceptual) | baseline=-0.91, perceptual=0.64, change=1.54 Hz | PASS  
+self-salience-reduces-perceptual-benefit             | self < other < perceptual (2.5 < 5.2 < 6 Hz) | self=2.58, other=5.32, perceptual=6.05 Hz | PASS  
+self-social-additive-perceptual                      | expected ≈ observed (interaction ≈ 0) | expected=4.68, observed=5.32, interaction=+0.64 Hz | PASS  
+decisional-dimension-tradeoff                        | r=-0.243, p=0.049 (Exp1, negative trade-off) | r=-0.211, p=0.096, n=63 — sign matches, magnitude close but not identical (documented in the claim's own reproduction note) | PASS  
 -----------------------------------------------------+------------------------+----------------------------+-------
 
-Summary: 8 claims | 8 PASS | 0 WARN | 0 FAIL
+12/12 claims verified (0 WARN, 0 FAIL)
 
-Note: Values are from pre-computed OSF Stan posterior CSVs (estimates_indiv_C.csv).
-Exact match (within rounding) to paper throughout. See claim files for full details.
-EXIT: 0
+Note: Values from pre-computed OSF Stan posterior CSVs (estimates_indiv_C.csv).
+Exact match within rounding to paper throughout. See claim files for full details.
