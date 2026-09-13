@@ -22,8 +22,7 @@ confirms:
 dissociates-with:
   - igabasnfr2n-negative-going-variant
 
-belongings:
-[]
+belongings: []
 
 assertions:
   - paper-slug: kolb-2026-igabasnfr2

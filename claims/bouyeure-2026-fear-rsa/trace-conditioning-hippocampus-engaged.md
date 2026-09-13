@@ -14,8 +14,7 @@ concepts:
 priority: 2026-03-30
 epistemic: weak
 
-belongings:
-[]
+belongings: []
 
 assertions:
   - paper-slug: bouyeure-2026-fear-rsa
