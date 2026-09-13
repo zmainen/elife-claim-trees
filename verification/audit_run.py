@@ -69,6 +69,23 @@ NOISE = ("/site-packages/", "/lib/python", "/dist-packages/", "__pycache__",
          "/System/", "/usr/share/", "/Library/Frameworks/", "/var/folders/")
 
 
+def _local(text: str) -> str:
+    """Strip this machine out of a string that is going to be committed.
+
+    The `path` field already went through `Observer._short`; the error field did not, and
+    a FileNotFoundError carries the absolute path in its message. Three records therefore
+    named the worktree they happened to run in — `.claude/worktrees/<something>` — which
+    is a directory that is gone as soon as that agent finishes, and a location no other
+    reader can look in. The same record is meant to be re-runnable evidence, so re-running
+    it somewhere else rewrote the string and produced a diff that meant nothing.
+
+    The interpreter path gets the same treatment for a smaller reason: which interpreter
+    ran a verification is real provenance and worth keeping, whose home directory it sat
+    in is not.
+    """
+    return text.replace(ROOT + os.sep, "").replace(os.path.expanduser("~"), "~")
+
+
 def interesting(path: str) -> bool:
     p = str(path)
     return not any(n in p for n in NOISE)
@@ -97,7 +114,7 @@ class Observer:
             rec["bytes"] = len(b)
             rec["sha256_12"] = hashlib.sha256(b).hexdigest()[:12]
         except Exception as e:                                        # noqa: BLE001
-            rec["error"] = f"{type(e).__name__}: {e}"
+            rec["error"] = _local(f"{type(e).__name__}: {e}")
         self.opened[p] = rec
 
     @staticmethod
@@ -198,7 +215,7 @@ def run(paper: str, argv: list[str], timeout: int | None):
         "argv": argv,
         "observed_by": "verification/audit_run.py",
         "recorded": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "interpreter": {"executable": sys.executable,
+        "interpreter": {"executable": _local(sys.executable),
                         "version": sys.version.split()[0]},
     }
     missing = missing_dependencies(script)
