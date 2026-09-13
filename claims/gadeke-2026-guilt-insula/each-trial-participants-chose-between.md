@@ -1,5 +1,5 @@
 ---
-uuid: ada5feb9-f9c8-4b85-87ca-855f5617e55b
+uuid: 05e1c77d-80e1-4aab-8b94-1273386a0b33
 slug: each-trial-participants-chose-between
 doi: null
 claim: 'On each trial participants chose between a safe and a risky monetary option under three conditions:
@@ -19,7 +19,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: asserted task description; nothing in the tree's argument bears on it
+warrant_why: a scope statement the tree records nothing bearing on
 check_verification: unrecorded
 ---
 

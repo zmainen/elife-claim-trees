@@ -1,5 +1,5 @@
 ---
-uuid: 907a1b08-2fe3-4389-a651-fac29ccdaff1
+uuid: 153a5ccc-6999-4c3b-a0a7-7fa168fda438
 slug: partner-reward-prediction-errors-resulting
 doi: null
 claim: 'The partner''s reward prediction errors resulting from the participants'' own choices (social_pRPE)
@@ -44,7 +44,7 @@ reproductions:
   status: unattempted
   notes: null
 warrant: moderate
-warrant_why: it confirms responsibility-partner-outcomes-influences-participant (social_pRPE weight > 0)
+warrant_why: confirms the prediction responsibility-partner-outcomes-influences-participant
 warrant_from:
 - confirms
 check_verification: reproduced

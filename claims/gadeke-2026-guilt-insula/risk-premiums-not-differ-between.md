@@ -1,5 +1,5 @@
 ---
-uuid: 111df34a-8b8f-4014-8c9d-d94f29e6af17
+uuid: fd564416-51dd-4894-9cd1-02e5af9c8af4
 slug: risk-premiums-not-differ-between
 doi: null
 claim: 'Risk premiums did not differ between Solo and Social conditions in either study (Study 1: t(39)
@@ -25,7 +25,7 @@ reproductions:
   status: unattempted
   notes: null
 warrant: moderate
-warrant_why: a null that rules out alt-social-context-shifts-risk-attitude — risk premiums did not differ by condition
+warrant_why: a null control that rules out alt-social-context-shifts-risk-attitude
 warrant_from:
 - rules_out
 check_verification: unattempted

@@ -1,5 +1,5 @@
 ---
-uuid: f0987684-4cce-42e6-93de-10389cea62d8
+uuid: c9c60ea3-aab4-4225-b151-17d106195f8d
 slug: anterior-insula-neural-substrate-guilt
 doi: null
 claim: The anterior insula is the neural substrate of the guilt effect, increasing its BOLD response when
@@ -11,7 +11,7 @@ priority: '2026-09-13'
 epistemic: hypothesis
 check_verification: unrecorded
 warrant: strong
-warrant_why: its prediction anterior-insula-tracks-guilt-insula is confirmed, it is supported by insula-rois-responded-more-low and prior-literature-documents-association-between, and no rival stands
+warrant_why: its prediction anterior-insula-tracks-guilt-insula is confirmed and it is supported by insula-rois-responded-more-low; no rival stands
 warrant_from:
 - predictions
 - supported_by

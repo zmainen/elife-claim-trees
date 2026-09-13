@@ -17,7 +17,7 @@ priority: 2026-09-10
 epistemic: weak
 check_verification: unrecorded
 warrant: ruled-out
-warrant_why: 'participants-probability-choosing-risky-option rules it out: choice tracked expected value, so participants were value-sensitive'
+warrant_why: ruled out by participants-probability-choosing-risky-option
 warrant_from:
 - ruled_out_by
 

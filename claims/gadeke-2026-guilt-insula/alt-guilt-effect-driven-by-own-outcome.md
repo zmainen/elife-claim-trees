@@ -17,7 +17,7 @@ priority: 2026-09-10
 epistemic: weak
 check_verification: unrecorded
 warrant: ruled-out
-warrant_why: guilt-effect-occurred-whether-participant rules it out — the effect held for both own-high and own-low outcomes, so it is not self-directed disappointment
+warrant_why: ruled out by guilt-effect-occurred-whether-participant
 warrant_from:
 - ruled_out_by
 

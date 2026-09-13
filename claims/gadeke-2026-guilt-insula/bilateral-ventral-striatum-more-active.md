@@ -1,5 +1,5 @@
 ---
-uuid: d35c82b1-64ad-4973-a1e7-6a8eb58209a4
+uuid: 0edf7194-a69c-402e-9183-904e9b279bb9
 slug: bilateral-ventral-striatum-more-active
 doi: null
 claim: The bilateral ventral striatum was more active when participants chose the risky rather than the
@@ -43,7 +43,7 @@ reproductions:
   notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
     Raw BOLD data available on OpenNeuro but full re-analysis requires SPM12/MATLAB.
 warrant: moderate
-warrant_why: a positive control that replicates the established risky>safe VS effect and rules out alt-imaging-contrast-invalid
+warrant_why: a positive control that rules out alt-imaging-contrast-invalid by replicating the risky>safe ventral-striatum effect
 warrant_from:
 - rules_out
 check_verification: reproduced

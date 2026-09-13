@@ -1,5 +1,5 @@
 ---
-uuid: 55424080-599e-41c2-8241-3822cc99402f
+uuid: 2da2c101-3210-4699-8395-b46b11bbe2d5
 slug: no-significant-interaction-between-difference
 doi: null
 claim: There was no significant interaction between the difference in expected values and experimental
@@ -18,7 +18,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: a null asserted on its own; nothing in the tree's argument bears on it
+warrant_why: the tree records nothing bearing on this null control
 check_verification: unrecorded
 ---
 

@@ -1,5 +1,5 @@
 ---
-uuid: 394bc1b6-98fd-4138-9a49-3e846286df07
+uuid: 32c6eb83-64af-4817-8cae-2a3815939fd6
 slug: connectivity-between-guilt-responsibility-related-outcome-ph
 doi: null
 claim: If connectivity between the guilt- and responsibility-related outcome-phase regions (left insula,
@@ -14,7 +14,7 @@ priority: '2026-09-13'
 epistemic: prediction
 check_verification: unrecorded
 warrant: confirmed
-warrant_why: confirmed by functional-connectivity-between-left-anterior, the PPI cluster with a Condition-by-Choice interaction
+warrant_why: confirmed by functional-connectivity-between-left-anterior
 warrant_from:
 - outcome
 - confirmed_by

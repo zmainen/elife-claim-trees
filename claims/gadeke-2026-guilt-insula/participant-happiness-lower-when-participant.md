@@ -1,5 +1,5 @@
 ---
-uuid: 79972f12-e238-40cd-a72e-0fbd494de585
+uuid: 9fbb1b24-0d56-4a63-824f-9878838a3f28
 slug: participant-happiness-lower-when-participant
 doi: null
 claim: 'Participant happiness was lower when the participant was the decision-maker (Social + Solo vs.
@@ -44,7 +44,7 @@ reproductions:
   status: unattempted
   notes: null
 warrant: moderate
-warrant_why: it rules out the rival alt-agency-aversion-not-guilt by showing the cost is decision-maker-contingent
+warrant_why: an empirical result that rules out alt-agency-aversion-not-guilt
 warrant_from:
 - rules_out
 check_verification: reproduced

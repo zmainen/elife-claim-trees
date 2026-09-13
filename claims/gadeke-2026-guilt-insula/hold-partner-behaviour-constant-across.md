@@ -1,5 +1,5 @@
 ---
-uuid: d69aa510-3094-4017-930b-c7c57c98bdc5
+uuid: 40ad0de9-7352-4e66-b192-fdf239643013
 slug: hold-partner-behaviour-constant-across
 doi: null
 claim: To hold the partner's behaviour constant across participants, the partner's decisions were simulated
@@ -27,7 +27,7 @@ reproductions:
     value". Authors acknowledge this in Discussion as a limitation and note that partner outcomes nonetheless
     influenced participant happiness, arguing the effects could be stronger with genuine interaction.'
 warrant: weak
-warrant_why: asserted procedure; nothing in the tree's argument bears on it
+warrant_why: the tree records nothing bearing on this methodological choice
 check_verification: blocked
 check_verification_from:
 - record:blocked

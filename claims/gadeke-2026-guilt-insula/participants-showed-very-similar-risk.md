@@ -1,5 +1,5 @@
 ---
-uuid: 7e6014b3-ebea-446c-87b1-7a2763a4fcd5
+uuid: c7402514-904a-4748-b305-062e30f8907f
 slug: participants-showed-very-similar-risk
 doi: null
 claim: Participants showed very similar risk preferences whether deciding only for themselves (Solo) or
@@ -17,7 +17,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: moderate
-warrant_why: a synthesis drawing together three converging risk-preference results — no-significant-interaction-between-difference, participants-slightly-more-risk-averse and risk-premiums-not-differ-between
+warrant_why: draws together four converging risk-preference results, including the rival-ruling-out control risk-premiums-not-differ-between and no-significant-interaction-between-difference
 warrant_from:
 - supported_by
 check_verification: unrecorded

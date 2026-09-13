@@ -17,7 +17,7 @@ priority: 2026-09-10
 epistemic: weak
 check_verification: unrecorded
 warrant: ruled-out
-warrant_why: manipulation-check-bilateral-ventral-striatum rules it out — the model-based GLM recovers the known VS reward signal
+warrant_why: ruled out by manipulation-check-bilateral-ventral-striatum
 warrant_from:
 - ruled_out_by
 

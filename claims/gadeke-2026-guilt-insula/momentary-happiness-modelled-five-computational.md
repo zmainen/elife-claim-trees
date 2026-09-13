@@ -1,5 +1,5 @@
 ---
-uuid: fd491827-1f03-43e3-8aee-141ab1de2b95
+uuid: 0694f71a-3833-44b8-92c2-5d4fba1029f7
 slug: momentary-happiness-modelled-five-computational
 doi: null
 claim: Momentary happiness was modelled with five computational models (Basic, Inequality, Guilt-envy,
@@ -17,7 +17,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: moderate
-warrant_why: validated by the risk-aversion-parameter-not-differ-between control that justifies pooling
+warrant_why: validated by the control risk-aversion-parameter-not-differ-between
 warrant_from:
 - validated_by
 check_verification: unrecorded

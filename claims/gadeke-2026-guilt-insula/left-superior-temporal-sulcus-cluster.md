@@ -1,5 +1,5 @@
 ---
-uuid: 36655787-ac92-4346-a23e-8ac38e546957
+uuid: a4a93102-d24f-47c6-b78d-57e4bf7a0208
 slug: left-superior-temporal-sulcus-cluster
 doi: null
 claim: The left superior temporal sulcus cluster responded to model-based regressors coding participant
@@ -18,7 +18,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: asserted; nothing in the tree's argument bears on this responsiveness result
+warrant_why: the tree records nothing bearing on this result
 check_verification: unrecorded
 ---
 

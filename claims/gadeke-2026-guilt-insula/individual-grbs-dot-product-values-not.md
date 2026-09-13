@@ -1,5 +1,5 @@
 ---
-uuid: aa50d537-ccc3-40a4-8b30-48adc2d54783
+uuid: 6cdf645a-3865-433f-ac5f-308630199916
 slug: individual-grbs-dot-product-values-not
 doi: null
 claim: Individual GRBS dot-product values did not correlate with the behavioural guilt responses (Spearman's
@@ -42,7 +42,7 @@ reproductions:
   status: unattempted
   notes: null
 warrant: weak
-warrant_why: a null asserted on its own; nothing in the tree's argument bears on it
+warrant_why: the tree records nothing bearing on this null control
 check_verification: reproduced
 check_verification_from:
 - record:partial

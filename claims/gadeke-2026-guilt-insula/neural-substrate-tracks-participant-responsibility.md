@@ -1,5 +1,5 @@
 ---
-uuid: e28b058b-7ec8-4ec6-8c7a-84352c0cf4e3
+uuid: 3482235d-fcd8-4a85-ba76-a7bce9216c63
 slug: neural-substrate-tracks-participant-responsibility
 doi: null
 claim: 'A neural substrate tracks the participant''s responsibility for the partner''s outcomes: within
@@ -12,7 +12,7 @@ priority: '2026-09-13'
 epistemic: hypothesis
 check_verification: unrecorded
 warrant: strong
-warrant_why: its prediction neural-substrate-tracks-participant-responsibility-2 is confirmed by one-cluster-left-sts-responded and no rival stands
+warrant_why: its prediction neural-substrate-tracks-participant-responsibility-2 is confirmed and it is supported by one-cluster-left-sts-responded
 warrant_from:
 - predictions
 - supported_by

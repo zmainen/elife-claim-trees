@@ -6,7 +6,10 @@ the paper says (`confidence`) and from how many readers agreed (`READER_CONFIDEN
 (the 2026-09-13 rulings, docs/design/2026-09-13-warrant.md) reframes it: warrant reasons only
 from what the paper reports and how its argument hangs together, as the tree records it —
 predictions and their outcomes, the controls that validate a result, the rivals it rules out,
-what supports and requires what. *Checking* is not part of it. A reproduction, a methods
+what supports and requires what. *Checking* is not part of it. Version 3 (same note, second set
+of rulings) uses more of that argument: a graded claim that rules out an alternative the paper
+raises is at least moderate, and a synthesis or an interpretation reads the incoming supports
+and extends it draws on, not only what it interprets. A reproduction, a methods
 assessment, a statistics check, a citation check are each a separate later layer that writes a
 modifier beside the warrant; none of them enters here. There are three mechanical pieces, and
 one model judgement that lives in the `warrant` layer (extract/prompts/warrant.md):
@@ -54,7 +57,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import prediction_outcome  # noqa: E402
 from export_mira import CLAIMS_DIR, first_assertion, load_paper, relations  # noqa: E402
 
-RULE_VERSION = 2
+RULE_VERSION = 3
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -219,22 +222,20 @@ def warrant_rule(d: dict, resolved: dict[str, str] | None = None,
         return "open", ["no-rules-out"]
 
     # An interpretation sits one step below the strongest claim it interprets, capped at
-    # moderate — argument alone never reaches strong.
+    # moderate — argument alone never reaches strong. When it interprets nothing graded it reads
+    # what supports it instead, like a synthesis (§rule v3, B).
     if role == "interpretation":
         levels = [(t, resolved[t]) for t in d.get("interprets", []) if resolved.get(t) in _RANK]
-        if not levels:
-            return "weak", ["interprets-nothing"]
-        top = max((lv for _, lv in levels), key=lambda x: _RANK[x])
-        lvl = _cap(_STEP_DOWN[top], "moderate")
-        return lvl, [f"interprets:{t}={lv}" for t, lv in levels]
+        if levels:
+            top = max((lv for _, lv in levels), key=lambda x: _RANK[x])
+            lvl = _cap(_STEP_DOWN[top], "moderate")
+            return lvl, [f"interprets:{t}={lv}" for t, lv in levels]
+        return _agreement_rule(d, resolved, include_interprets=False)
 
-    # A synthesis reads agreement among what it interprets: moderate if two or more, none weak.
+    # A synthesis reads agreement among what it interprets and the graded claims that support or
+    # extend it: moderate if two or more such inputs and none is weak; weak otherwise (§rule v3, B).
     if role == "synthesis":
-        levels = [(t, resolved[t]) for t in d.get("interprets", []) if resolved.get(t) in _RANK]
-        fired = [f"interprets:{t}={lv}" for t, lv in levels]
-        if len(levels) >= 2 and all(lv != "weak" for _, lv in levels):
-            return "moderate", fired
-        return "weak", (fired or ["interprets-nothing"])
+        return _agreement_rule(d, resolved)
 
     # A hypothesis is warranted by its predictions and its rivals.
     if role == "hypothesis":
@@ -274,26 +275,68 @@ def _standing_rivals(d: dict, resolved: dict[str, str]) -> list[str]:
     return [s for s in _rivals(d, resolved) if resolved.get(s) == "open"]
 
 
+def _agreement_rule(d: dict, resolved: dict[str, str],
+                    include_interprets: bool = True) -> tuple[str, list[str]]:
+    """Agreement among the graded claims a synthesis or interpretation draws on (§rule v3, B).
+
+    The inputs are what it interprets (outgoing) and the graded claims that support or extend it
+    (incoming), each with its resolved level; `moderate` if two or more and none is weak, else
+    `weak`. Never `strong` — a synthesis, and an interpretation on argument alone, are capped at
+    moderate.
+    """
+    inputs = _agreement_inputs(d, resolved, include_interprets)
+    fired = [f"{rel}:{t}={lv}" for rel, t, lv in inputs]
+    if len(inputs) >= 2 and all(lv != "weak" for _, _, lv in inputs):
+        return "moderate", fired
+    return "weak", (fired or ["interprets-nothing"])
+
+
+def _agreement_inputs(d: dict, resolved: dict[str, str],
+                      include_interprets: bool = True) -> list[tuple[str, str, str]]:
+    """(relation, slug, level) for the graded claims a synthesis/interpretation rests on."""
+    out: list[tuple[str, str, str]] = []
+    if include_interprets:
+        for t in d.get("interprets", []):
+            if resolved.get(t) in _RANK:
+                out.append(("interprets", t, resolved[t]))
+    for s in d.get("supported_by", []):
+        if resolved.get(s) in _RANK:
+            out.append(("supported-by", s, resolved[s]))
+    for s in d.get("extended_by", []):
+        if resolved.get(s) in _RANK:
+            out.append(("extended-by", s, resolved[s]))
+    return out
+
+
 def _graded_rule(d: dict) -> tuple[str, list[str]]:
-    """The graded branch: the tree's argument alone (§rule v2). No confidence, no reproduction.
+    """The graded branch: the tree's argument alone (§rule v2, extended v3). No confidence, no
+    reproduction.
 
     `strong` when the claim both tests a prediction that came out as predicted (it is the source
-    of a `confirms`) and is validated by a control; `moderate` when exactly one of those holds,
-    or when two or more distinct claims support it; `weak` otherwise; `contested` when a result
-    in the tree refutes it. An empty dossier is `weak`, flagged `unassessed`.
+    of a `confirms`) and is validated by a control, or when it rules out an alternative and does
+    one of those too (§rule v3, A); `moderate` when exactly one of confirms/control holds, when
+    it rules out an alternative the paper raises, or when two or more distinct claims support it;
+    `weak` otherwise; `contested` when a result in the tree refutes it. An empty dossier is
+    `weak`, flagged `unassessed`.
     """
     if d.get("refuted_by"):
         return "contested", [f"refuted-by:{s}" for s in d["refuted_by"]]
     confirms = d.get("confirms", [])
     validated = d.get("validated_by", [])
     supports = d.get("supported_by", [])
+    # A `rules-out` edge only ever reaches an alternative the paper raises — the validator drops
+    # one aimed at a claim the paper asserts — so a non-empty `rules_out` is exactly rule A's
+    # "rules out an alternative the paper raises".
+    rules_out = d.get("rules_out", [])
     tests = bool(confirms)
     ctrl = bool(validated)
-    if tests and ctrl:
-        return "strong", ([f"confirms:{s}" for s in confirms]
-                          + [f"validated-by:{s}" for s in validated])
-    if (tests != ctrl) or len(supports) >= 2:
-        fired = [f"confirms:{s}" for s in confirms] + [f"validated-by:{s}" for s in validated]
+    cf = [f"confirms:{s}" for s in confirms]
+    vb = [f"validated-by:{s}" for s in validated]
+    ro = [f"rules-out:{s}" for s in rules_out]
+    if (tests and ctrl) or (rules_out and (tests or ctrl)):
+        return "strong", cf + vb + ro
+    if rules_out or (tests != ctrl) or len(supports) >= 2:
+        fired = cf + vb + ro
         if len(supports) >= 2:
             fired += [f"supported-by:{s}" for s in supports]
         return "moderate", fired
@@ -328,10 +371,13 @@ def _propagate(lvl: str, fired: list[str], role: str, d: dict,
 
 
 def _order(doss: dict[str, dict]) -> list[str]:
-    """Slugs in an order where a claim's requires/interprets/part-of targets come first.
+    """Slugs in an order where the claims a claim reads resolve before it.
 
-    A depth-first walk down those edges, tolerant of the cycles the tree should not contain but
-    a checker cannot assume away: a slug already on the stack is left where it is.
+    A depth-first walk down the edges whose resolved level the rule reads: `requires` (propagation),
+    `interprets`, `part-of`, and — for the v3 agreement clause — the incoming `supported_by` and
+    `extended_by` a synthesis or interpretation draws on, so every input is resolved before the
+    "none is weak" test runs over it. Tolerant of the cycles the tree should not contain but a
+    checker cannot assume away: a slug already on the stack is left where it is.
     """
     order: list[str] = []
     seen: set[str] = set()
@@ -342,7 +388,8 @@ def _order(doss: dict[str, dict]) -> list[str]:
             return
         stack.add(slug)
         for t in (doss[slug].get("requires", []) + doss[slug].get("interprets", [])
-                  + doss[slug].get("part_of", [])):
+                  + doss[slug].get("part_of", []) + doss[slug].get("supported_by", [])
+                  + doss[slug].get("extended_by", [])):
             if t in doss and t not in stack:
                 visit(t)
         stack.discard(slug)

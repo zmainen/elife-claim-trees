@@ -1,5 +1,5 @@
 ---
-uuid: a1212a98-0ca1-4b98-a933-adb4b9bd8dbd
+uuid: 7efedbb1-f561-4b3f-8368-550a1d65f093
 slug: participant-momentary-happiness-varied-rewards
 doi: null
 claim: Participant momentary happiness varied with the rewards the participant received in the current
@@ -18,7 +18,7 @@ assertions:
   readers: high
 reproductions: []
 warrant: weak
-warrant_why: asserted; nothing in the tree's argument bears on it
+warrant_why: the tree records nothing bearing on this result
 check_verification: unrecorded
 ---
 

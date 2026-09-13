@@ -1,5 +1,5 @@
 ---
-uuid: f2598175-a3bf-4a3a-bf92-059ebb57324c
+uuid: af961744-17b9-414d-b52a-b1451d7816e2
 slug: neural-substrate-tracks-participant-responsibility-2
 doi: null
 claim: If a neural substrate tracks the participant's responsibility for the partner's outcomes, then

@@ -1,5 +1,5 @@
 ---
-uuid: 9eb1ea63-60cd-4642-83e4-6b8b10939b5a
+uuid: 2005532f-b003-46be-827f-5597a232f385
 slug: findings-rest-two-samples-healthy
 doi: null
 claim: The findings rest on two samples of healthy adults — Study 1 (behaviour only, N = 40) and Study
@@ -28,7 +28,7 @@ reproductions:
     Algorithmic partner confirmed via `partner-algorithm-deception-assumption`. The two-study structure
     is the paper''s principal robustness check against single-sample false positives.'
 warrant: weak
-warrant_why: asserted scope; nothing in the tree's argument bears on the sample composition
+warrant_why: a scope statement the tree records nothing bearing on
 check_verification: blocked
 check_verification_from:
 - record:blocked

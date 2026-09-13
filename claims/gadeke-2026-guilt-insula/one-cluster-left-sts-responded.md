@@ -1,5 +1,5 @@
 ---
-uuid: 6842234d-9e46-414c-ac0b-2c0e66b6d95f
+uuid: d1a0bd7d-2794-484d-a513-848c86aa5578
 slug: one-cluster-left-sts-responded
 doi: null
 claim: One cluster in the left STS responded more to partner reward prediction errors resulting from participant
@@ -48,7 +48,7 @@ reproductions:
   notes: Model-based fMRI analysis requires computational model fitted to behavioral data. Model code
     in GitHub repo. Pre-computed group NIfTI results may be in fMRIresults/. Not yet executed.
 warrant: moderate
-warrant_why: it confirms neural-substrate-tracks-participant-responsibility-2, supported by left-superior-temporal-sulcus-cluster
+warrant_why: confirms the prediction neural-substrate-tracks-participant-responsibility-2 and is supported by left-superior-temporal-sulcus-cluster
 warrant_from:
 - confirms
 - supported_by

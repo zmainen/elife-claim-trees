@@ -1,5 +1,5 @@
 ---
-uuid: 65a8d4fd-6112-4739-9761-ad7966580788
+uuid: d8cad4fe-5332-4f92-b0ca-12c143e2611e
 slug: pre-task-icebreaker-succeeded-establishing-positive
 doi: null
 claim: 'A pre-task icebreaker succeeded in establishing a positive attitude toward the partner: participants
@@ -19,7 +19,7 @@ assertions:
   readers: high
 reproductions: []
 warrant: weak
-warrant_why: asserted manipulation check; its own dossier records no argument behind it
+warrant_why: the tree records nothing bearing on this control
 check_verification: unrecorded
 ---
 

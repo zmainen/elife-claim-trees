@@ -1,5 +1,5 @@
 ---
-uuid: 5f3c3215-e632-499a-bf5a-8c1143b58c29
+uuid: 43b388c8-9d29-4fd4-8c6e-db588f0ba409
 slug: risk-aversion-parameter-not-differ-between
 doi: null
 claim: 'The risk-aversion parameter ρ did not differ between gain and loss trials (Study 1: t(17) = 0.21,
@@ -19,7 +19,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: asserted; its own dossier records no argument behind it
+warrant_why: the tree records nothing bearing on this control
 check_verification: unrecorded
 ---
 

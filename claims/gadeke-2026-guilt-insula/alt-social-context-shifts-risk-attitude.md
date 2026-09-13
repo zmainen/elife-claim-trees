@@ -18,7 +18,7 @@ priority: 2026-09-10
 epistemic: weak
 check_verification: unrecorded
 warrant: ruled-out
-warrant_why: risk-premiums-not-differ-between rules it out — risk premiums did not differ by condition, so a risk-attitude shift cannot explain the effect
+warrant_why: ruled out by risk-premiums-not-differ-between
 warrant_from:
 - ruled_out_by
 

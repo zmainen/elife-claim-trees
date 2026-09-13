@@ -1,5 +1,5 @@
 ---
-uuid: 0bdd6c21-4f32-47ba-94c8-ea47284b0f7c
+uuid: 16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8
 slug: responsibility-social-choice-yields-low
 doi: null
 claim: Responsibility for a social choice that yields a low outcome for a partner produces interpersonal
@@ -12,7 +12,7 @@ priority: '2026-09-13'
 epistemic: hypothesis
 check_verification: unrecorded
 warrant: strong
-warrant_why: both its predictions are confirmed and it is supported by when-partner-received-low-lottery, partner-reward-prediction-errors-resulting and likelihood-ratio-test-showed-responsibility, with every rival ruled out
+warrant_why: both its predictions (responsibility-outcomes-generates-guilt-participant and responsibility-partner-outcomes-influences-participant) are confirmed and it is supported by when-partner-received-low-lottery
 warrant_from:
 - predictions
 - supported_by
