@@ -2,7 +2,7 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "haak": "https://haak.world/schema/claim#",
+      "cg": "https://w3id.org/claim-graphs/schema#",
       "dgb": "https://discoursegraphs.com/schema/dg_base#",
       "owl": "http://www.w3.org/2002/07/owl#",
       "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -18,71 +18,71 @@
       }
     },
     {
-      "haakx": "https://haak.world/schema/claim-extended#"
+      "cgx": "https://w3id.org/claim-graphs/schema-extended#"
     }
   ],
   "@graph": [
     {
-      "@id": "haak:agent/elife-claim-trees",
+      "@id": "urn:claim-graphs:pipeline",
       "@type": "UserAccount",
-      "accountName": "elife-claim-trees pipeline"
+      "accountName": "claim-graphs pipeline"
     },
     {
-      "@id": "haak:type/Claim",
+      "@id": "cg:type/Claim",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Claim"
       ],
       "label": "Claim",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Evidence",
+      "@id": "cg:type/Evidence",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Evidence"
       ],
       "label": "Evidence",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Protocol",
+      "@id": "cg:type/Protocol",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Protocol"
       ],
       "label": "Protocol",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms",
+      "@id": "cg:reldef/confirms",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/confirms"
+          "hasValue": "cg:reldef/confirms"
         }
       ],
       "label": "confirms",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms/def",
+      "@id": "cg:reldef/confirms/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/confirms",
+        "cg:reldef/confirms",
         "dgb:RelationInstance"
       ],
       "label": "confirms",
@@ -91,33 +91,33 @@
         "format": "text/plain",
         "content": "The source evidence confirms the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/derived_from",
+      "@id": "cg:reldef/derived_from",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/derived_from"
+          "hasValue": "cg:reldef/derived_from"
         }
       ],
       "label": "derived-from",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z",
-      "inverseOf": "haak:reldef/entails"
+      "inverseOf": "cg:reldef/entails"
     },
     {
-      "@id": "haak:reldef/derived_from/def",
+      "@id": "cg:reldef/derived_from/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/derived_from",
+        "cg:reldef/derived_from",
         "dgb:RelationInstance"
       ],
       "label": "derived-from",
@@ -126,32 +126,32 @@
         "format": "text/plain",
         "content": "The source claim was derived from the destination claim; the inverse of entails."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with",
+      "@id": "cg:reldef/dissociates_with",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/dissociates_with"
+          "hasValue": "cg:reldef/dissociates_with"
         }
       ],
       "label": "dissociates-with",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with/def",
+      "@id": "cg:reldef/dissociates_with/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/dissociates_with",
+        "cg:reldef/dissociates_with",
         "dgb:RelationInstance"
       ],
       "label": "dissociates-with",
@@ -160,32 +160,32 @@
         "format": "text/plain",
         "content": "The source and destination jointly establish a dissociation — a contrast between two results, neither bearing on the other's truth. MIRA has no predicate for a contrast, so like the deductive relations it hangs at AbstractRelationDef and the gap report names it."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method",
+      "@id": "cg:reldef/enables_method",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/enables_method"
+          "hasValue": "cg:reldef/enables_method"
         }
       ],
       "label": "enables-method",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method/def",
+      "@id": "cg:reldef/enables_method/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Protocol",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Protocol",
       "subClassOf": [
-        "haak:reldef/enables_method",
+        "cg:reldef/enables_method",
         "dgb:RelationInstance"
       ],
       "label": "enables-method",
@@ -194,32 +194,32 @@
         "format": "text/plain",
         "content": "The source result makes the destination method possible."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails",
+      "@id": "cg:reldef/entails",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/entails"
+          "hasValue": "cg:reldef/entails"
         }
       ],
       "label": "entails",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails/def",
+      "@id": "cg:reldef/entails/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/entails",
+        "cg:reldef/entails",
         "dgb:RelationInstance"
       ],
       "label": "entails",
@@ -228,32 +228,32 @@
         "format": "text/plain",
         "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets",
+      "@id": "cg:reldef/interprets",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/interprets"
+          "hasValue": "cg:reldef/interprets"
         }
       ],
       "label": "interprets",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets/def",
+      "@id": "cg:reldef/interprets/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Evidence",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Evidence",
       "subClassOf": [
-        "haak:reldef/interprets",
+        "cg:reldef/interprets",
         "dgb:RelationInstance"
       ],
       "label": "interprets",
@@ -262,33 +262,33 @@
         "format": "text/plain",
         "content": "The source claim offers a theoretical reading of the destination result."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/refutes",
+      "@id": "cg:reldef/refutes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:opposes",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/refutes"
+          "hasValue": "cg:reldef/refutes"
         }
       ],
       "label": "refutes",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/refutes/def",
+      "@id": "cg:reldef/refutes/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/refutes",
+        "cg:reldef/refutes",
         "dgb:RelationInstance"
       ],
       "label": "refutes",
@@ -297,32 +297,32 @@
         "format": "text/plain",
         "content": "The source evidence is incompatible with the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires",
+      "@id": "cg:reldef/requires",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/requires"
+          "hasValue": "cg:reldef/requires"
         }
       ],
       "label": "requires",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires/def",
+      "@id": "cg:reldef/requires/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/requires",
+        "cg:reldef/requires",
         "dgb:RelationInstance"
       ],
       "label": "requires",
@@ -331,32 +331,32 @@
         "format": "text/plain",
         "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes",
+      "@id": "cg:reldef/scopes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/scopes"
+          "hasValue": "cg:reldef/scopes"
         }
       ],
       "label": "scopes",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes/def",
+      "@id": "cg:reldef/scopes/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/scopes",
+        "cg:reldef/scopes",
         "dgb:RelationInstance"
       ],
       "label": "scopes",
@@ -365,33 +365,33 @@
         "format": "text/plain",
         "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports",
+      "@id": "cg:reldef/supports",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/supports"
+          "hasValue": "cg:reldef/supports"
         }
       ],
       "label": "supports",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports/def",
+      "@id": "cg:reldef/supports/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/supports",
+        "cg:reldef/supports",
         "dgb:RelationInstance"
       ],
       "label": "supports",
@@ -400,32 +400,32 @@
         "format": "text/plain",
         "content": "The source claim provides support for the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests",
+      "@id": "cg:reldef/tests",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/tests"
+          "hasValue": "cg:reldef/tests"
         }
       ],
       "label": "tests",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests/def",
+      "@id": "cg:reldef/tests/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/tests",
+        "cg:reldef/tests",
         "dgb:RelationInstance"
       ],
       "label": "tests",
@@ -434,33 +434,33 @@
         "format": "text/plain",
         "content": "The source evidence was gathered to test the destination claim. Neither supports nor opposes: it records that a test was run, not how it came out."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates",
+      "@id": "cg:reldef/validates",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/validates"
+          "hasValue": "cg:reldef/validates"
         }
       ],
       "label": "validates",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates/def",
+      "@id": "cg:reldef/validates/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/validates",
+        "cg:reldef/validates",
         "dgb:RelationInstance"
       ],
       "label": "validates",
@@ -469,7 +469,7 @@
         "format": "text/plain",
         "content": "The source evidence validates the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
@@ -481,8 +481,8 @@
         "format": "text/plain",
         "content": "Is it the case that the mechanism by which self-association enhances perceptual processing is a change in the absolute Theory-of-Visual-Attention processing capacity (the C parameter, which governs total resources available for encoding into aware short-term memory) rather than a pure redistribution of fixed attentional weights (the w parameter) between the two competing stimuli?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47#question",
@@ -492,8 +492,8 @@
         "format": "text/plain",
         "content": "Is it the case that mere arbitrary association of an otherwise neutral perceptual feature (a shape) with the self alters early attentional selection of that feature into aware short-term memory: the self-association acts as an attentional salience signal that shifts processing rates in the Theory of Visual Attention framework?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:72d45d61-25fa-4831-b57e-3a7da5d097e3#question",
@@ -503,8 +503,8 @@
         "format": "text/plain",
         "content": "Is it the case that social salience (driven by self-association or other-association) and perceptual salience (driven by physical properties such as local colour contrast) capture attention via largely independent mechanisms?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:25ad6b4e-1066-424b-b337-98b5188b5553",
@@ -522,10 +522,10 @@
       "observationBase": {
         "@id": "https://osf.io/a62df"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47"
@@ -545,20 +545,20 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-13",
-          "haak:status": "partial",
-          "haak:executed": true,
-          "haak:script": "verification/scheller-2026-self-prioritization/verify.py",
-          "haak:dataSource": "https://osf.io/a62df",
-          "haak:dataFile": "Correlation_Results.xlsx"
+          "cg:status": "partial",
+          "cg:executed": true,
+          "cg:script": "verification/scheller-2026-self-prioritization/verify.py",
+          "cg:dataSource": "https://osf.io/a62df",
+          "cg:dataFile": "Correlation_Results.xlsx"
         }
       ],
-      "haak:panel": "fig9",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig9",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "https://osf.io/a62df",
@@ -573,10 +573,10 @@
         "format": "text/plain",
         "content": "The mechanism by which self-association enhances perceptual processing is a change in the absolute Theory-of-Visual-Attention processing capacity (the C parameter, which governs total resources available for encoding into aware short-term memory) rather than a pure redistribution of fixed attentional weights (the w parameter) between the two competing stimuli. Under a fixed-capacity, weights-only account, the brain would trade off self-related processing against other-related processing within a constant total budget, so a single-C TVA model with condition-specific w should fit the data as well as a model that allows C itself to vary by condition. The capacity-change hypothesis predicts the opposite — that a model in which C changes between baseline, perceptual-decision, and social-decision contexts should fit substantially better."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:047cb8a3-9c95-4241-9dd1-d9c8f6343df0"
@@ -588,8 +588,8 @@
           }
         ]
       },
-      "haak:panel": "hypothesis",
-      "haak:analysis": "paper Methods (TVA model variants) and Discussion",
+      "cg:panel": "hypothesis",
+      "cg:analysis": "paper Methods (TVA model variants) and Discussion",
       "mira:addresses": {
         "@id": "urn:uuid:ffda88f6-50da-4d01-8e5e-739350f96526#question"
       }
@@ -603,10 +603,10 @@
         "format": "text/plain",
         "content": "Mere arbitrary association of an otherwise neutral perceptual feature (a shape) with the self alters early attentional selection of that feature into aware short-term memory: the self-association acts as an attentional salience signal that shifts processing rates in the Theory of Visual Attention framework. This signal operates automatically at the perceptual feature level — it does not require explicit decoding of the social identity of the stimulus to take effect, and it should be detectable in tasks (such as the temporal order judgement) that demand only a perceptual report. A corollary is that requiring an explicit social-identity decision should change, and may even reverse, the signature of the effect, because the decision context redirects the perceptual stream away from the otherwise-automatic self-prioritisation."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:93602413-67f5-47c9-8237-2f94fd6e763f"
@@ -616,8 +616,8 @@
           }
         ]
       },
-      "haak:panel": "hypothesis",
-      "haak:analysis": "paper Introduction; operationalised in Experiments 1 and 2",
+      "cg:panel": "hypothesis",
+      "cg:analysis": "paper Introduction; operationalised in Experiments 1 and 2",
       "mira:addresses": {
         "@id": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47#question"
       }
@@ -631,18 +631,18 @@
         "format": "text/plain",
         "content": "Social salience (driven by self-association or other-association) and perceptual salience (driven by physical properties such as local colour contrast) capture attention via largely independent mechanisms. If true, the two salience signals should combine additively when they co-occur on the same stimulus — the processing rate change for a stimulus that is both socially and perceptually salient should approximately equal the sum of the two signals' individual contributions, with no reliable interaction term. The hypothesis is testable in Experiment 2, where social association (self vs other) is crossed with perceptual salience (high-contrast vs low-contrast) within the same TOJ paradigm."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:60793515-ebbb-4ad0-a8ed-3c5772ad809d"
           }
         ]
       },
-      "haak:panel": "hypothesis",
-      "haak:analysis": "paper Introduction and Experiment 2 design rationale",
+      "cg:panel": "hypothesis",
+      "cg:analysis": "paper Introduction and Experiment 2 design rationale",
       "mira:addresses": {
         "@id": "urn:uuid:72d45d61-25fa-4831-b57e-3a7da5d097e3#question"
       }
@@ -656,10 +656,10 @@
         "format": "text/plain",
         "content": "The Theory of Visual Attention (TVA), formalized by Bundesen (1990, Psychological Review) and developed further by Bundesen, Habekost, Kyllingsbæk and colleagues, decomposes visual attentional selection into a fixed set of parameters — processing capacity (C), attentional weights (w), perceptual threshold (t0), and visual short-term memory capacity (K) — and generates quantitative predictions for whole-report, partial-report, and temporal-order-judgement paradigms. The framework is the canonical quantitative decomposition of attentional selection into absolute resource (C) versus relative weighting (w) components, and its model-fitting machinery is the standard way the C-versus-w distinction is operationalized empirically."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "literature-context",
-      "haak:epistemicStrength": "moderate",
-      "haak:panel": "introduction, methods (TVA model variants), results (fig4, fig5–7), discussion"
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "literature-context",
+      "cg:epistemicStrength": "moderate",
+      "cg:panel": "introduction, methods (TVA model variants), results (fig4, fig5–7), discussion"
     },
     {
       "@id": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
@@ -677,10 +677,10 @@
       "observationBase": {
         "@id": "https://osf.io/a62df"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47"
@@ -710,18 +710,18 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/scheller-2026-self-prioritization/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/scheller-2026-self-prioritization/verify.py"
         }
       ],
-      "haak:panel": "fig6",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig6",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "https://osf.io/a62df",
@@ -743,10 +743,10 @@
       "observationBase": {
         "@id": "https://osf.io/a62df"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69"
@@ -764,18 +764,18 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/scheller-2026-self-prioritization/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/scheller-2026-self-prioritization/verify.py"
         }
       ],
-      "haak:panel": "fig6",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig6",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "https://osf.io/a62df",
@@ -790,18 +790,18 @@
         "format": "text/plain",
         "content": "If social and perceptual salience operate via independent mechanisms, then for stimuli that are simultaneously socially salient (other-associated) and perceptually salient (high local contrast) the observed processing rate change should equal — within statistical uncertainty — the sum of the social-only and perceptual-only effects estimated from the marginal conditions, with the interaction term not reliably distinguishable from zero. The prediction is most cleanly testable in Experiment 2's factorial design, where social association (self / other / neutral) is crossed with perceptual salience (high-contrast / low-contrast). For self-associated stimuli the prediction is held in reserve — any deviation from additivity in the self condition would localise the exception rather than refute the general independence claim."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:72d45d61-25fa-4831-b57e-3a7da5d097e3"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from independent-mechanisms hypothesis; tested in Exp 2 factorial design"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from independent-mechanisms hypothesis; tested in Exp 2 factorial design"
     },
     {
       "@id": "urn:uuid:047cb8a3-9c95-4241-9dd1-d9c8f6343df0",
@@ -812,18 +812,18 @@
         "format": "text/plain",
         "content": "If self-association mobilises additional encoding capacity rather than merely redistributing fixed attentional weights, a hierarchical TVA model in which the C parameter is allowed to take a separate value in each experimental condition should fit the participant-level data substantially better than a single-C model in which capacity is held fixed across conditions and only the relative weights vary. Operationally, on a leave-one-out cross-validation comparison the indiv-C model should win on Δloo and on the model-stacking weight, with the magnitude large enough to be taken seriously after accounting for the standard error of the difference."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:ffda88f6-50da-4d01-8e5e-739350f96526"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from capacity-vs-weights mechanistic hypothesis"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from capacity-vs-weights mechanistic hypothesis"
     },
     {
       "@id": "urn:uuid:6d9a04f9-966e-406b-9dac-19bd7342c50d",
@@ -834,18 +834,18 @@
         "format": "text/plain",
         "content": "If the automatic perceptual self-prioritisation and the deliberate social-identity decoding stages compete for the same finite attentional resource, then requiring an explicit social decision (whose shape flickered first?) should attenuate, eliminate, or even reverse the self-advantage observed in the perceptual decision condition. The reversal direction is non-trivial — naive accounts of self-prioritisation predict that explicit attention to identity should amplify, not diminish, the self-advantage. The prediction here is the opposite: when participants must allocate resources to the social-decoding stage, the upstream perceptual self-prioritisation cannot proceed unimpeded, and the net measured advantage shrinks toward zero or flips toward an other-associated advantage."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the trade-off framing of the automaticity hypothesis"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the trade-off framing of the automaticity hypothesis"
     },
     {
       "@id": "urn:uuid:93602413-67f5-47c9-8237-2f94fd6e763f",
@@ -856,18 +856,18 @@
         "format": "text/plain",
         "content": "If self-association alters early attentional selection automatically, then in a temporal order judgement task that requires only a perceptual report (which shape flickered first?) the self-associated stimulus should show a faster TVA processing rate than the other-associated stimulus, even though the social identity of either shape is irrelevant to the response. The advantage should manifest as a positive shift in (v_self − v_other) relative to the neutral baseline condition and should be present despite participants having no task incentive to attend to social identity."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the automaticity hypothesis"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the automaticity hypothesis"
     },
     {
       "@id": "urn:uuid:e74f5a44-4883-4e68-a9b5-147e0273b2fb",
@@ -885,10 +885,10 @@
       "observationBase": {
         "@id": "https://osf.io/a62df"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:ffda88f6-50da-4d01-8e5e-739350f96526"
@@ -905,18 +905,18 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/scheller-2026-self-prioritization/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/scheller-2026-self-prioritization/verify.py"
         }
       ],
-      "haak:panel": "fig5",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig5",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "https://osf.io/a62df",
@@ -931,10 +931,10 @@
         "format": "text/plain",
         "content": "All claims about self-prioritisation processing rates derive from a specific paradigm envelope: a temporal order judgement task with arbitrarily assigned shape-self/other associations (taught via a preceding shape-label matching task), analysed under a hierarchical Bayesian Theory of Visual Attention model. The empirical sample is N=69 in Experiment 1 (perceptual vs social decision dimension) and N=71 in Experiment 2 (social × perceptual salience factorial), both preregistered (https://osf.io/ehu75) and recruited online with standard attention and exclusion checks. The framework treats processing rate as the sum of capacity C and relative weights w; the per-claim verification path uses pre-computed Stan posterior summaries deposited at https://osf.io/a62df. Generalisation beyond arbitrary self-associations (e.g. to faces, names, or pre-existing identities), beyond TOJ (e.g. to RT-only paradigms), or beyond TVA-based estimation is not established by this paper."
       },
-      "haakx:epistemicStatus": "mira:Assumption",
-      "haak:role": "scope",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Assumption",
+      "cg:role": "scope",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "scopes": [
           {
             "@id": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707"
@@ -980,8 +980,8 @@
           }
         ]
       },
-      "haak:panel": "scope",
-      "haak:analysis": "paper Methods (paradigm, sample, preregistration); OSF deposit https://osf.io/a62df"
+      "cg:panel": "scope",
+      "cg:analysis": "paper Methods (paradigm, sample, preregistration); OSF deposit https://osf.io/a62df"
     },
     {
       "@id": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
@@ -999,10 +999,10 @@
       "observationBase": {
         "@id": "https://osf.io/a62df"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47"
@@ -1032,18 +1032,18 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/scheller-2026-self-prioritization/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/scheller-2026-self-prioritization/verify.py"
         }
       ],
-      "haak:panel": "fig5",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig5",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "https://osf.io/a62df",
@@ -1058,10 +1058,10 @@
         "format": "text/plain",
         "content": "Self-association enhances attentional selection automatically at the perceptual feature level — it emerges without explicit social decoding (perceptual decision condition, Experiment 1) and is reduced or reversed when social identity decoding is required (social decision condition, Experiments 1 and 2), indicating that self-prioritization in attentional selection is an early, pre-conscious process distinct from later social cognition."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "interpretation",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "interpretation",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47"
@@ -1090,16 +1090,16 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "partial",
-          "haak:executed": false
+          "cg:status": "partial",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig5 (synthesis)"
+      "cg:panel": "fig5 (synthesis)"
     },
     {
       "@id": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
@@ -1117,10 +1117,10 @@
       "observationBase": {
         "@id": "https://osf.io/a62df"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47"
@@ -1142,20 +1142,20 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-13",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/scheller-2026-self-prioritization/verify.py",
-          "haak:dataSource": "https://osf.io/a62df",
-          "haak:dataFile": "estimates_indiv_C_Exp1.csv"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/scheller-2026-self-prioritization/verify.py",
+          "cg:dataSource": "https://osf.io/a62df",
+          "cg:dataFile": "estimates_indiv_C_Exp1.csv"
         }
       ],
-      "haak:panel": "fig5",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig5",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "https://osf.io/a62df",
@@ -1170,10 +1170,10 @@
         "format": "text/plain",
         "content": "For perceptually salient self-associated stimuli, social salience effects are the stronger predictor (BFinclusion = 2458.52) while perceptual salience also contributes; for perceptually salient other-associated stimuli, perceptual salience dominates (BFinclusion = 4638.74), with social salience having a weaker role."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "synthesis",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "synthesis",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "interprets": [
           {
             "@id": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69"
@@ -1188,17 +1188,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig9 (Tables 1, 2)",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig9 (Tables 1, 2)",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
@@ -1216,10 +1216,10 @@
       "observationBase": {
         "@id": "https://osf.io/a62df"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526"
@@ -1241,20 +1241,20 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-13",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/scheller-2026-self-prioritization/verify.py",
-          "haak:dataSource": "https://osf.io/a62df",
-          "haak:dataFile": "estimates_indiv_C_Exp2.csv"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/scheller-2026-self-prioritization/verify.py",
+          "cg:dataSource": "https://osf.io/a62df",
+          "cg:dataFile": "estimates_indiv_C_Exp2.csv"
         }
       ],
-      "haak:panel": "fig6, fig7",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig6, fig7",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "https://osf.io/a62df",
@@ -1276,10 +1276,10 @@
       "observationBase": {
         "@id": "https://osf.io/a62df"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:72d45d61-25fa-4831-b57e-3a7da5d097e3"
@@ -1301,20 +1301,20 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-13",
-          "haak:status": "partial",
-          "haak:executed": true,
-          "haak:script": "verification/scheller-2026-self-prioritization/verify.py",
-          "haak:dataSource": "https://osf.io/a62df",
-          "haak:dataFile": "estimates_indiv_C_Exp2.csv"
+          "cg:status": "partial",
+          "cg:executed": true,
+          "cg:script": "verification/scheller-2026-self-prioritization/verify.py",
+          "cg:dataSource": "https://osf.io/a62df",
+          "cg:dataFile": "estimates_indiv_C_Exp2.csv"
         }
       ],
-      "haak:panel": "fig7",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig7",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "https://osf.io/a62df",
@@ -1329,10 +1329,10 @@
         "format": "text/plain",
         "content": "Social salience and perceptual salience operate via largely independent mechanisms in attentional selection: their effects are additive for other-associated stimuli (interaction term -0.54 Hz, HDI includes zero), confirming that arbitrary social association and physical salience capture attention through separate processing streams rather than a single shared resource."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "interpretation",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "interpretation",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:72d45d61-25fa-4831-b57e-3a7da5d097e3"
@@ -1358,16 +1358,16 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "partial",
-          "haak:executed": false
+          "cg:status": "partial",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig7 (synthesis)"
+      "cg:panel": "fig7 (synthesis)"
     },
     {
       "@id": "urn:uuid:7a683a00-fc93-4d25-ae38-48734f0a8789",
@@ -1385,10 +1385,10 @@
       "observationBase": {
         "@id": "https://osf.io/a62df"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "requires": [
           {
             "@id": "urn:uuid:0eef258f-1e89-4298-a762-c0c4a877ab9a"
@@ -1403,18 +1403,18 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/scheller-2026-self-prioritization/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/scheller-2026-self-prioritization/verify.py"
         }
       ],
-      "haak:panel": "fig9",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig9",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "https://osf.io/a62df",
@@ -1436,10 +1436,10 @@
       "observationBase": {
         "@id": "https://osf.io/a62df"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:7a683a00-fc93-4d25-ae38-48734f0a8789"
@@ -1457,18 +1457,18 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/scheller-2026-self-prioritization/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/scheller-2026-self-prioritization/verify.py"
         }
       ],
-      "haak:panel": "fig8",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig8",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
       "@id": "https://osf.io/a62df",
@@ -1483,10 +1483,10 @@
         "format": "text/plain",
         "content": "Model comparison via leave-one-out cross-validation shows that a model with condition-specific processing capacity parameters outperforms a single-capacity model (Δloo=14.2, Δse=6.41, weight=0.86 pooled across N=140 participants), indicating that social salience changes absolute processing rates rather than merely redistributing attentional weights."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:ffda88f6-50da-4d01-8e5e-739350f96526"
@@ -1526,1059 +1526,1059 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4",
-      "haak:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
+      "cg:panel": "fig4",
+      "cg:analysis": "OSF analysis notebooks (https://osf.io/a62df)"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/1",
+      "@id": "cg:edge/scheller-2026-self-prioritization/1",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:25ad6b4e-1066-424b-b337-98b5188b5553",
       "destination": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47",
       "title": "[[decisional-dimension-tradeoff]] -confirms-> [[hypothesis-self-association-alters-attentional-selection]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/2",
+      "@id": "cg:edge/scheller-2026-self-prioritization/2",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:25ad6b4e-1066-424b-b337-98b5188b5553",
       "destination": "urn:uuid:7a683a00-fc93-4d25-ae38-48734f0a8789",
       "title": "[[decisional-dimension-tradeoff]] -dissociates-with-> [[spe-matching-correlates-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/3",
+      "@id": "cg:edge/scheller-2026-self-prioritization/3",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:25ad6b4e-1066-424b-b337-98b5188b5553",
       "destination": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "title": "[[decisional-dimension-tradeoff]] -requires-> [[self-prioritization-perceptual-decision-automatic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/4",
+      "@id": "cg:edge/scheller-2026-self-prioritization/4",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:25ad6b4e-1066-424b-b337-98b5188b5553",
       "destination": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "title": "[[decisional-dimension-tradeoff]] -requires-> [[self-prioritization-absent-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/5",
+      "@id": "cg:edge/scheller-2026-self-prioritization/5",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:ffda88f6-50da-4d01-8e5e-739350f96526",
       "destination": "urn:uuid:047cb8a3-9c95-4241-9dd1-d9c8f6343df0",
       "title": "[[hypothesis-capacity-mechanism-not-weights]] -entails-> [[prediction-capacity-model-outperforms-weights-only]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/6",
+      "@id": "cg:edge/scheller-2026-self-prioritization/6",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:ffda88f6-50da-4d01-8e5e-739350f96526",
       "destination": "urn:uuid:4518f433-c0d6-4313-bbed-2d7357442d4e",
       "title": "[[hypothesis-capacity-mechanism-not-weights]] -interprets-> [[interprets-bundesen-tva-framework]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/7",
+      "@id": "cg:edge/scheller-2026-self-prioritization/7",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47",
       "destination": "urn:uuid:93602413-67f5-47c9-8237-2f94fd6e763f",
       "title": "[[hypothesis-self-association-alters-attentional-selection]] -entails-> [[prediction-self-advantage-perceptual-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/8",
+      "@id": "cg:edge/scheller-2026-self-prioritization/8",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47",
       "destination": "urn:uuid:6d9a04f9-966e-406b-9dac-19bd7342c50d",
       "title": "[[hypothesis-self-association-alters-attentional-selection]] -entails-> [[prediction-self-advantage-attenuated-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/9",
+      "@id": "cg:edge/scheller-2026-self-prioritization/9",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:72d45d61-25fa-4831-b57e-3a7da5d097e3",
       "destination": "urn:uuid:60793515-ebbb-4ad0-a8ed-3c5772ad809d",
       "title": "[[hypothesis-social-perceptual-independent-mechanisms]] -entails-> [[prediction-additive-effects-other-associated]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/10",
+      "@id": "cg:edge/scheller-2026-self-prioritization/10",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "destination": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47",
       "title": "[[other-association-advantage-social-condition]] -confirms-> [[hypothesis-self-association-alters-attentional-selection]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/11",
+      "@id": "cg:edge/scheller-2026-self-prioritization/11",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "destination": "urn:uuid:6d9a04f9-966e-406b-9dac-19bd7342c50d",
       "title": "[[other-association-advantage-social-condition]] -tests-> [[prediction-self-advantage-attenuated-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/12",
+      "@id": "cg:edge/scheller-2026-self-prioritization/12",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "destination": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "title": "[[other-association-advantage-social-condition]] -validates-> [[self-prioritization-absent-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/13",
+      "@id": "cg:edge/scheller-2026-self-prioritization/13",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "destination": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "title": "[[other-association-advantage-social-condition]] -requires-> [[tva-capacity-model-wins]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/14",
+      "@id": "cg:edge/scheller-2026-self-prioritization/14",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "destination": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "title": "[[other-association-advantage-social-condition]] -supports-> [[self-prioritization-automatic-early]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/15",
+      "@id": "cg:edge/scheller-2026-self-prioritization/15",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "destination": "urn:uuid:25ad6b4e-1066-424b-b337-98b5188b5553",
       "title": "[[other-association-advantage-social-condition]] -supports-> [[decisional-dimension-tradeoff]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/16",
+      "@id": "cg:edge/scheller-2026-self-prioritization/16",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:daed2cbb-ce65-4207-9a91-b0160ebf8afa",
       "destination": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "title": "[[perceptual-salience-6hz-advantage]] -validates-> [[self-social-additive-perceptual]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/17",
+      "@id": "cg:edge/scheller-2026-self-prioritization/17",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:daed2cbb-ce65-4207-9a91-b0160ebf8afa",
       "destination": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "title": "[[perceptual-salience-6hz-advantage]] -validates-> [[self-salience-reduces-perceptual-benefit]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/18",
+      "@id": "cg:edge/scheller-2026-self-prioritization/18",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:daed2cbb-ce65-4207-9a91-b0160ebf8afa",
       "destination": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "title": "[[perceptual-salience-6hz-advantage]] -supports-> [[self-salience-reduces-perceptual-benefit]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/19",
+      "@id": "cg:edge/scheller-2026-self-prioritization/19",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:daed2cbb-ce65-4207-9a91-b0160ebf8afa",
       "destination": "urn:uuid:63ea3299-4288-46d1-b563-784d69f364cf",
       "title": "[[perceptual-salience-6hz-advantage]] -supports-> [[social-perceptual-salience-independent-streams]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/20",
+      "@id": "cg:edge/scheller-2026-self-prioritization/20",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:e74f5a44-4883-4e68-a9b5-147e0273b2fb",
       "destination": "urn:uuid:ffda88f6-50da-4d01-8e5e-739350f96526",
       "title": "[[processing-capacity-rises-perceptual-self]] -confirms-> [[hypothesis-capacity-mechanism-not-weights]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/21",
+      "@id": "cg:edge/scheller-2026-self-prioritization/21",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:e74f5a44-4883-4e68-a9b5-147e0273b2fb",
       "destination": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "title": "[[processing-capacity-rises-perceptual-self]] -requires-> [[tva-capacity-model-wins]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/22",
+      "@id": "cg:edge/scheller-2026-self-prioritization/22",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:e74f5a44-4883-4e68-a9b5-147e0273b2fb",
       "destination": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "title": "[[processing-capacity-rises-perceptual-self]] -supports-> [[self-prioritization-perceptual-decision-automatic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/23",
+      "@id": "cg:edge/scheller-2026-self-prioritization/23",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[tva-capacity-model-wins]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/24",
+      "@id": "cg:edge/scheller-2026-self-prioritization/24",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[self-prioritization-perceptual-decision-automatic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/25",
+      "@id": "cg:edge/scheller-2026-self-prioritization/25",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[self-prioritization-absent-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/26",
+      "@id": "cg:edge/scheller-2026-self-prioritization/26",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:e74f5a44-4883-4e68-a9b5-147e0273b2fb",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[processing-capacity-rises-perceptual-self]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/27",
+      "@id": "cg:edge/scheller-2026-self-prioritization/27",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:25ad6b4e-1066-424b-b337-98b5188b5553",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[decisional-dimension-tradeoff]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/28",
+      "@id": "cg:edge/scheller-2026-self-prioritization/28",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:7a683a00-fc93-4d25-ae38-48734f0a8789",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[spe-matching-correlates-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/29",
+      "@id": "cg:edge/scheller-2026-self-prioritization/29",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[other-association-advantage-social-condition]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/30",
+      "@id": "cg:edge/scheller-2026-self-prioritization/30",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:daed2cbb-ce65-4207-9a91-b0160ebf8afa",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[perceptual-salience-6hz-advantage]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/31",
+      "@id": "cg:edge/scheller-2026-self-prioritization/31",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[self-social-additive-perceptual]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/32",
+      "@id": "cg:edge/scheller-2026-self-prioritization/32",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[self-salience-reduces-perceptual-benefit]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/33",
+      "@id": "cg:edge/scheller-2026-self-prioritization/33",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:fcc24782-2506-4c9e-908a-baa03bb791fb",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[self-salience-dominates-other-associated]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/34",
+      "@id": "cg:edge/scheller-2026-self-prioritization/34",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:0eef258f-1e89-4298-a762-c0c4a877ab9a",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[spe-robust-matching-both-experiments]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/35",
+      "@id": "cg:edge/scheller-2026-self-prioritization/35",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[self-prioritization-automatic-early]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/36",
+      "@id": "cg:edge/scheller-2026-self-prioritization/36",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:121d0b37-99b6-459e-8093-bce99c94b708",
       "destination": "urn:uuid:63ea3299-4288-46d1-b563-784d69f364cf",
       "title": "[[scope-toj-tva-paradigm]] -scopes-> [[social-perceptual-salience-independent-streams]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/37",
+      "@id": "cg:edge/scheller-2026-self-prioritization/37",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "destination": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47",
       "title": "[[self-prioritization-absent-social-decision]] -confirms-> [[hypothesis-self-association-alters-attentional-selection]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/38",
+      "@id": "cg:edge/scheller-2026-self-prioritization/38",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "destination": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "title": "[[self-prioritization-absent-social-decision]] -dissociates-with-> [[self-prioritization-perceptual-decision-automatic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/39",
+      "@id": "cg:edge/scheller-2026-self-prioritization/39",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "destination": "urn:uuid:6d9a04f9-966e-406b-9dac-19bd7342c50d",
       "title": "[[self-prioritization-absent-social-decision]] -tests-> [[prediction-self-advantage-attenuated-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/40",
+      "@id": "cg:edge/scheller-2026-self-prioritization/40",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "destination": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "title": "[[self-prioritization-absent-social-decision]] -requires-> [[tva-capacity-model-wins]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/41",
+      "@id": "cg:edge/scheller-2026-self-prioritization/41",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "destination": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "title": "[[self-prioritization-absent-social-decision]] -supports-> [[self-prioritization-automatic-early]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/42",
+      "@id": "cg:edge/scheller-2026-self-prioritization/42",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "destination": "urn:uuid:25ad6b4e-1066-424b-b337-98b5188b5553",
       "title": "[[self-prioritization-absent-social-decision]] -supports-> [[decisional-dimension-tradeoff]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/43",
+      "@id": "cg:edge/scheller-2026-self-prioritization/43",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "destination": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47",
       "title": "[[self-prioritization-automatic-early]] -confirms-> [[hypothesis-self-association-alters-attentional-selection]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/44",
+      "@id": "cg:edge/scheller-2026-self-prioritization/44",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "destination": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "title": "[[self-prioritization-automatic-early]] -interprets-> [[self-prioritization-perceptual-decision-automatic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/45",
+      "@id": "cg:edge/scheller-2026-self-prioritization/45",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "destination": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "title": "[[self-prioritization-automatic-early]] -interprets-> [[self-prioritization-absent-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/46",
+      "@id": "cg:edge/scheller-2026-self-prioritization/46",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "destination": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "title": "[[self-prioritization-automatic-early]] -interprets-> [[other-association-advantage-social-condition]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/47",
+      "@id": "cg:edge/scheller-2026-self-prioritization/47",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "destination": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "title": "[[self-prioritization-automatic-early]] -requires-> [[self-prioritization-perceptual-decision-automatic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/48",
+      "@id": "cg:edge/scheller-2026-self-prioritization/48",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "destination": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "title": "[[self-prioritization-automatic-early]] -requires-> [[self-prioritization-absent-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/49",
+      "@id": "cg:edge/scheller-2026-self-prioritization/49",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "destination": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "title": "[[self-prioritization-automatic-early]] -requires-> [[other-association-advantage-social-condition]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/50",
+      "@id": "cg:edge/scheller-2026-self-prioritization/50",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "destination": "urn:uuid:7602af86-ca7d-4e6e-9c19-22e0e4bf5b47",
       "title": "[[self-prioritization-perceptual-decision-automatic]] -confirms-> [[hypothesis-self-association-alters-attentional-selection]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/51",
+      "@id": "cg:edge/scheller-2026-self-prioritization/51",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "destination": "urn:uuid:93602413-67f5-47c9-8237-2f94fd6e763f",
       "title": "[[self-prioritization-perceptual-decision-automatic]] -tests-> [[prediction-self-advantage-perceptual-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/52",
+      "@id": "cg:edge/scheller-2026-self-prioritization/52",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "destination": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "title": "[[self-prioritization-perceptual-decision-automatic]] -requires-> [[tva-capacity-model-wins]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/53",
+      "@id": "cg:edge/scheller-2026-self-prioritization/53",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "destination": "urn:uuid:74cdf20e-9cfb-42ae-88cc-956527bc4af7",
       "title": "[[self-prioritization-perceptual-decision-automatic]] -supports-> [[self-prioritization-automatic-early]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/54",
+      "@id": "cg:edge/scheller-2026-self-prioritization/54",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:fcc24782-2506-4c9e-908a-baa03bb791fb",
       "destination": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "title": "[[self-salience-dominates-other-associated]] -interprets-> [[self-salience-reduces-perceptual-benefit]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/55",
+      "@id": "cg:edge/scheller-2026-self-prioritization/55",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:fcc24782-2506-4c9e-908a-baa03bb791fb",
       "destination": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "title": "[[self-salience-dominates-other-associated]] -interprets-> [[self-social-additive-perceptual]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/56",
+      "@id": "cg:edge/scheller-2026-self-prioritization/56",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:fcc24782-2506-4c9e-908a-baa03bb791fb",
       "destination": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "title": "[[self-salience-dominates-other-associated]] -requires-> [[self-salience-reduces-perceptual-benefit]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/57",
+      "@id": "cg:edge/scheller-2026-self-prioritization/57",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "destination": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "title": "[[self-salience-reduces-perceptual-benefit]] -dissociates-with-> [[self-social-additive-perceptual]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/58",
+      "@id": "cg:edge/scheller-2026-self-prioritization/58",
       "@type": [
-        "haak:reldef/refutes"
+        "cg:reldef/refutes"
       ],
       "source": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "destination": "urn:uuid:72d45d61-25fa-4831-b57e-3a7da5d097e3",
       "title": "[[self-salience-reduces-perceptual-benefit]] -refutes-> [[hypothesis-social-perceptual-independent-mechanisms]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/59",
+      "@id": "cg:edge/scheller-2026-self-prioritization/59",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "destination": "urn:uuid:daed2cbb-ce65-4207-9a91-b0160ebf8afa",
       "title": "[[self-salience-reduces-perceptual-benefit]] -requires-> [[perceptual-salience-6hz-advantage]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/60",
+      "@id": "cg:edge/scheller-2026-self-prioritization/60",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "destination": "urn:uuid:fcc24782-2506-4c9e-908a-baa03bb791fb",
       "title": "[[self-salience-reduces-perceptual-benefit]] -supports-> [[self-salience-dominates-other-associated]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/61",
+      "@id": "cg:edge/scheller-2026-self-prioritization/61",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "destination": "urn:uuid:72d45d61-25fa-4831-b57e-3a7da5d097e3",
       "title": "[[self-social-additive-perceptual]] -confirms-> [[hypothesis-social-perceptual-independent-mechanisms]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/62",
+      "@id": "cg:edge/scheller-2026-self-prioritization/62",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "destination": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "title": "[[self-social-additive-perceptual]] -dissociates-with-> [[self-salience-reduces-perceptual-benefit]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/63",
+      "@id": "cg:edge/scheller-2026-self-prioritization/63",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "destination": "urn:uuid:60793515-ebbb-4ad0-a8ed-3c5772ad809d",
       "title": "[[self-social-additive-perceptual]] -tests-> [[prediction-additive-effects-other-associated]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/64",
+      "@id": "cg:edge/scheller-2026-self-prioritization/64",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "destination": "urn:uuid:63ea3299-4288-46d1-b563-784d69f364cf",
       "title": "[[self-social-additive-perceptual]] -supports-> [[social-perceptual-salience-independent-streams]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/65",
+      "@id": "cg:edge/scheller-2026-self-prioritization/65",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:63ea3299-4288-46d1-b563-784d69f364cf",
       "destination": "urn:uuid:72d45d61-25fa-4831-b57e-3a7da5d097e3",
       "title": "[[social-perceptual-salience-independent-streams]] -confirms-> [[hypothesis-social-perceptual-independent-mechanisms]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/66",
+      "@id": "cg:edge/scheller-2026-self-prioritization/66",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:63ea3299-4288-46d1-b563-784d69f364cf",
       "destination": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "title": "[[social-perceptual-salience-independent-streams]] -interprets-> [[self-social-additive-perceptual]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/67",
+      "@id": "cg:edge/scheller-2026-self-prioritization/67",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:63ea3299-4288-46d1-b563-784d69f364cf",
       "destination": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "title": "[[social-perceptual-salience-independent-streams]] -interprets-> [[self-salience-reduces-perceptual-benefit]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/68",
+      "@id": "cg:edge/scheller-2026-self-prioritization/68",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:63ea3299-4288-46d1-b563-784d69f364cf",
       "destination": "urn:uuid:daed2cbb-ce65-4207-9a91-b0160ebf8afa",
       "title": "[[social-perceptual-salience-independent-streams]] -interprets-> [[perceptual-salience-6hz-advantage]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/69",
+      "@id": "cg:edge/scheller-2026-self-prioritization/69",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:63ea3299-4288-46d1-b563-784d69f364cf",
       "destination": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "title": "[[social-perceptual-salience-independent-streams]] -requires-> [[self-social-additive-perceptual]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/70",
+      "@id": "cg:edge/scheller-2026-self-prioritization/70",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:63ea3299-4288-46d1-b563-784d69f364cf",
       "destination": "urn:uuid:daed2cbb-ce65-4207-9a91-b0160ebf8afa",
       "title": "[[social-perceptual-salience-independent-streams]] -requires-> [[perceptual-salience-6hz-advantage]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/71",
+      "@id": "cg:edge/scheller-2026-self-prioritization/71",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:7a683a00-fc93-4d25-ae38-48734f0a8789",
       "destination": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "title": "[[spe-matching-correlates-social-decision]] -validates-> [[self-prioritization-absent-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/72",
+      "@id": "cg:edge/scheller-2026-self-prioritization/72",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:7a683a00-fc93-4d25-ae38-48734f0a8789",
       "destination": "urn:uuid:0eef258f-1e89-4298-a762-c0c4a877ab9a",
       "title": "[[spe-matching-correlates-social-decision]] -requires-> [[spe-robust-matching-both-experiments]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/73",
+      "@id": "cg:edge/scheller-2026-self-prioritization/73",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:7a683a00-fc93-4d25-ae38-48734f0a8789",
       "destination": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "title": "[[spe-matching-correlates-social-decision]] -requires-> [[self-prioritization-absent-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/74",
+      "@id": "cg:edge/scheller-2026-self-prioritization/74",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:0eef258f-1e89-4298-a762-c0c4a877ab9a",
       "destination": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "title": "[[spe-robust-matching-both-experiments]] -validates-> [[self-prioritization-perceptual-decision-automatic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/75",
+      "@id": "cg:edge/scheller-2026-self-prioritization/75",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:0eef258f-1e89-4298-a762-c0c4a877ab9a",
       "destination": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "title": "[[spe-robust-matching-both-experiments]] -validates-> [[self-prioritization-absent-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/76",
+      "@id": "cg:edge/scheller-2026-self-prioritization/76",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:0eef258f-1e89-4298-a762-c0c4a877ab9a",
       "destination": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "title": "[[spe-robust-matching-both-experiments]] -validates-> [[other-association-advantage-social-condition]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/77",
+      "@id": "cg:edge/scheller-2026-self-prioritization/77",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:0eef258f-1e89-4298-a762-c0c4a877ab9a",
       "destination": "urn:uuid:7a683a00-fc93-4d25-ae38-48734f0a8789",
       "title": "[[spe-robust-matching-both-experiments]] -supports-> [[spe-matching-correlates-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/78",
+      "@id": "cg:edge/scheller-2026-self-prioritization/78",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "destination": "urn:uuid:ffda88f6-50da-4d01-8e5e-739350f96526",
       "title": "[[tva-capacity-model-wins]] -confirms-> [[hypothesis-capacity-mechanism-not-weights]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/79",
+      "@id": "cg:edge/scheller-2026-self-prioritization/79",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "destination": "urn:uuid:0b72064e-d0fc-43e9-a2d0-2d5044cde51e",
       "title": "[[tva-capacity-model-wins]] -enables-method-> [[self-prioritization-perceptual-decision-automatic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/80",
+      "@id": "cg:edge/scheller-2026-self-prioritization/80",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "destination": "urn:uuid:2189823e-209f-479b-a068-032f5fba3818",
       "title": "[[tva-capacity-model-wins]] -enables-method-> [[self-prioritization-absent-social-decision]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/81",
+      "@id": "cg:edge/scheller-2026-self-prioritization/81",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "destination": "urn:uuid:e74f5a44-4883-4e68-a9b5-147e0273b2fb",
       "title": "[[tva-capacity-model-wins]] -enables-method-> [[processing-capacity-rises-perceptual-self]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/82",
+      "@id": "cg:edge/scheller-2026-self-prioritization/82",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "destination": "urn:uuid:08433979-b40e-4b78-91f6-80537bb4c971",
       "title": "[[tva-capacity-model-wins]] -enables-method-> [[other-association-advantage-social-condition]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/83",
+      "@id": "cg:edge/scheller-2026-self-prioritization/83",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "destination": "urn:uuid:daed2cbb-ce65-4207-9a91-b0160ebf8afa",
       "title": "[[tva-capacity-model-wins]] -enables-method-> [[perceptual-salience-6hz-advantage]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/84",
+      "@id": "cg:edge/scheller-2026-self-prioritization/84",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "destination": "urn:uuid:b32daec4-44c8-409c-8c3c-e7a1d13eb526",
       "title": "[[tva-capacity-model-wins]] -enables-method-> [[self-social-additive-perceptual]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/85",
+      "@id": "cg:edge/scheller-2026-self-prioritization/85",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "destination": "urn:uuid:d5cc37f8-3738-4acf-95de-3c10a177aa69",
       "title": "[[tva-capacity-model-wins]] -enables-method-> [[self-salience-reduces-perceptual-benefit]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/86",
+      "@id": "cg:edge/scheller-2026-self-prioritization/86",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "destination": "urn:uuid:4518f433-c0d6-4313-bbed-2d7357442d4e",
       "title": "[[tva-capacity-model-wins]] -interprets-> [[interprets-bundesen-tva-framework]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/scheller-2026-self-prioritization/87",
+      "@id": "cg:edge/scheller-2026-self-prioritization/87",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:24c24fef-2404-41a6-a0ea-edfe81cd3707",
       "destination": "urn:uuid:047cb8a3-9c95-4241-9dd1-d9c8f6343df0",
       "title": "[[tva-capacity-model-wins]] -tests-> [[prediction-capacity-model-outperforms-weights-only]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-04-20T00:00:00.000Z"
     }

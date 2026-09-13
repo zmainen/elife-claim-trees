@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from pathlib import Path
 import re
 import sys
 from collections import Counter
@@ -420,7 +421,7 @@ def _verdict_counts():
     adjudication fact needs. Empty where no reading has begun, which is every paper today.
     """
     sys.path.insert(0, os.path.join(ROOT, "extract"))
-    from elife_extract import verdicts as vd
+    from claim_graphs import verdicts as vd
     out = {}
     for paper in sorted(os.listdir(os.path.join(ROOT, "runs"))
                         if os.path.isdir(os.path.join(ROOT, "runs")) else []):

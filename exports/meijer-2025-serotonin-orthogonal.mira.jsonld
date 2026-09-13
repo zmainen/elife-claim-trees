@@ -2,7 +2,7 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "haak": "https://haak.world/schema/claim#",
+      "cg": "https://w3id.org/claim-graphs/schema#",
       "dgb": "https://discoursegraphs.com/schema/dg_base#",
       "owl": "http://www.w3.org/2002/07/owl#",
       "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -20,66 +20,66 @@
   ],
   "@graph": [
     {
-      "@id": "haak:agent/elife-claim-trees",
+      "@id": "urn:claim-graphs:pipeline",
       "@type": "UserAccount",
-      "accountName": "elife-claim-trees pipeline"
+      "accountName": "claim-graphs pipeline"
     },
     {
-      "@id": "haak:type/Claim",
+      "@id": "cg:type/Claim",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Claim"
       ],
       "label": "Claim",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Evidence",
+      "@id": "cg:type/Evidence",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Evidence"
       ],
       "label": "Evidence",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Protocol",
+      "@id": "cg:type/Protocol",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Protocol"
       ],
       "label": "Protocol",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms",
+      "@id": "cg:reldef/confirms",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/confirms"
+          "hasValue": "cg:reldef/confirms"
         }
       ],
       "label": "confirms",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms/def",
+      "@id": "cg:reldef/confirms/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/confirms",
+        "cg:reldef/confirms",
         "dgb:RelationInstance"
       ],
       "label": "confirms",
@@ -88,33 +88,33 @@
         "format": "text/plain",
         "content": "The source evidence confirms the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/derived_from",
+      "@id": "cg:reldef/derived_from",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/derived_from"
+          "hasValue": "cg:reldef/derived_from"
         }
       ],
       "label": "derived-from",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z",
-      "inverseOf": "haak:reldef/entails"
+      "inverseOf": "cg:reldef/entails"
     },
     {
-      "@id": "haak:reldef/derived_from/def",
+      "@id": "cg:reldef/derived_from/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/derived_from",
+        "cg:reldef/derived_from",
         "dgb:RelationInstance"
       ],
       "label": "derived-from",
@@ -123,32 +123,32 @@
         "format": "text/plain",
         "content": "The source claim was derived from the destination claim; the inverse of entails."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method",
+      "@id": "cg:reldef/enables_method",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/enables_method"
+          "hasValue": "cg:reldef/enables_method"
         }
       ],
       "label": "enables-method",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method/def",
+      "@id": "cg:reldef/enables_method/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Protocol",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Protocol",
       "subClassOf": [
-        "haak:reldef/enables_method",
+        "cg:reldef/enables_method",
         "dgb:RelationInstance"
       ],
       "label": "enables-method",
@@ -157,32 +157,32 @@
         "format": "text/plain",
         "content": "The source result makes the destination method possible."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails",
+      "@id": "cg:reldef/entails",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/entails"
+          "hasValue": "cg:reldef/entails"
         }
       ],
       "label": "entails",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails/def",
+      "@id": "cg:reldef/entails/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/entails",
+        "cg:reldef/entails",
         "dgb:RelationInstance"
       ],
       "label": "entails",
@@ -191,32 +191,32 @@
         "format": "text/plain",
         "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets",
+      "@id": "cg:reldef/interprets",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/interprets"
+          "hasValue": "cg:reldef/interprets"
         }
       ],
       "label": "interprets",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets/def",
+      "@id": "cg:reldef/interprets/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Evidence",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Evidence",
       "subClassOf": [
-        "haak:reldef/interprets",
+        "cg:reldef/interprets",
         "dgb:RelationInstance"
       ],
       "label": "interprets",
@@ -225,33 +225,33 @@
         "format": "text/plain",
         "content": "The source claim offers a theoretical reading of the destination result."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/predicts",
+      "@id": "cg:reldef/predicts",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/predicts"
+          "hasValue": "cg:reldef/predicts"
         }
       ],
       "label": "predicts",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/predicts/def",
+      "@id": "cg:reldef/predicts/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Evidence",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Evidence",
       "subClassOf": [
-        "haak:reldef/predicts",
+        "cg:reldef/predicts",
         "dgb:RelationInstance"
       ],
       "label": "predicts",
@@ -260,33 +260,33 @@
         "format": "text/plain",
         "content": "The source claim predicts the destination result; inverse of confirms."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/refutes",
+      "@id": "cg:reldef/refutes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:opposes",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/refutes"
+          "hasValue": "cg:reldef/refutes"
         }
       ],
       "label": "refutes",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/refutes/def",
+      "@id": "cg:reldef/refutes/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/refutes",
+        "cg:reldef/refutes",
         "dgb:RelationInstance"
       ],
       "label": "refutes",
@@ -295,32 +295,32 @@
         "format": "text/plain",
         "content": "The source evidence is incompatible with the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires",
+      "@id": "cg:reldef/requires",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/requires"
+          "hasValue": "cg:reldef/requires"
         }
       ],
       "label": "requires",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires/def",
+      "@id": "cg:reldef/requires/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/requires",
+        "cg:reldef/requires",
         "dgb:RelationInstance"
       ],
       "label": "requires",
@@ -329,33 +329,33 @@
         "format": "text/plain",
         "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out",
+      "@id": "cg:reldef/rules_out",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:opposes",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/rules_out"
+          "hasValue": "cg:reldef/rules_out"
         }
       ],
       "label": "rules-out",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out/def",
+      "@id": "cg:reldef/rules_out/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/rules_out",
+        "cg:reldef/rules_out",
         "dgb:RelationInstance"
       ],
       "label": "rules-out",
@@ -364,32 +364,32 @@
         "format": "text/plain",
         "content": "The source evidence eliminates the destination claim as viable."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes",
+      "@id": "cg:reldef/scopes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/scopes"
+          "hasValue": "cg:reldef/scopes"
         }
       ],
       "label": "scopes",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes/def",
+      "@id": "cg:reldef/scopes/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/scopes",
+        "cg:reldef/scopes",
         "dgb:RelationInstance"
       ],
       "label": "scopes",
@@ -398,33 +398,33 @@
         "format": "text/plain",
         "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports",
+      "@id": "cg:reldef/supports",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/supports"
+          "hasValue": "cg:reldef/supports"
         }
       ],
       "label": "supports",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports/def",
+      "@id": "cg:reldef/supports/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/supports",
+        "cg:reldef/supports",
         "dgb:RelationInstance"
       ],
       "label": "supports",
@@ -433,33 +433,33 @@
         "format": "text/plain",
         "content": "The source claim provides support for the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates",
+      "@id": "cg:reldef/validates",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/validates"
+          "hasValue": "cg:reldef/validates"
         }
       ],
       "label": "validates",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates/def",
+      "@id": "cg:reldef/validates/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/validates",
+        "cg:reldef/validates",
         "dgb:RelationInstance"
       ],
       "label": "validates",
@@ -468,7 +468,7 @@
         "format": "text/plain",
         "content": "The source evidence validates the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
@@ -823,7 +823,7 @@
       }
     },
     {
-      "@id": "haak:claim/meijer-2025-serotonin-orthogonal/alternative/1",
+      "@id": "cg:claim/meijer-2025-serotonin-orthogonal/alternative/1",
       "@type": "mira:Claim",
       "title": "light-or-heat-mediated-modulation",
       "description": {
@@ -833,710 +833,710 @@
       }
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/1",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/1",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "destination": "urn:uuid:4a9fe28d-cf62-4539-98f9-0f0e00126047",
       "title": "[[5ht-axis-orthogonal-to-choice-axis]] -confirms-> [[prediction-5ht-axis-orthogonal-to-choice]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/2",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/2",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "destination": "urn:uuid:4f28c881-0692-4fcf-8595-2f4bcd0716af",
       "title": "[[5ht-axis-orthogonal-to-choice-axis]] -confirms-> [[prediction-orthogonality-grows-toward-choice]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/3",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/3",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "destination": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
       "title": "[[5ht-axis-orthogonal-to-choice-axis]] -supports-> [[hypothesis-orthogonal-neuromodulatory-subspace]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/4",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/4",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "destination": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
       "title": "[[5ht-axis-orthogonal-to-choice-axis]] -requires-> [[manifold-from-pooled-super-session]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/5",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/5",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "title": "[[5ht-axis-orthogonal-to-choice-axis]] -requires-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/6",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/6",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "destination": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
       "title": "[[5ht-axis-orthogonal-to-choice-axis]] -supports-> [[hypothesis-orthogonal-neuromodulatory-subspace]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/7",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/7",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "destination": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
       "title": "[[5ht-modulates-all-recorded-regions-bidirectionally]] -requires-> [[wt-controls-rule-out-light-artifact]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/8",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/8",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "destination": "urn:uuid:275ffb65-3c47-4736-9649-2fb33c1934ad",
       "title": "[[5ht-modulates-all-recorded-regions-bidirectionally]] -requires-> [[5ht-modulation-fraction-tracks-chr2-expression]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/9",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/9",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "destination": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
       "title": "[[5ht-modulates-all-recorded-regions-bidirectionally]] -requires-> [[seven-target-trajectories-13-regions-7478-neurons]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/10",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/10",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "destination": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
       "title": "[[5ht-modulates-all-recorded-regions-bidirectionally]] -requires-> [[optogenetic-activation-not-physiological-pattern]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/11",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/11",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:275ffb65-3c47-4736-9649-2fb33c1934ad",
       "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "title": "[[5ht-modulation-fraction-tracks-chr2-expression]] -validates-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/12",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/12",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:e1a5b240-e31b-4ecc-abdc-eaa0437e7067",
       "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "title": "[[5ht-modulation-weaker-during-task]] -requires-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/13",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/13",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:e1a5b240-e31b-4ecc-abdc-eaa0437e7067",
       "destination": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
       "title": "[[5ht-modulation-weaker-during-task]] -requires-> [[seven-target-trajectories-13-regions-7478-neurons]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/14",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/14",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063",
       "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
       "title": "[[5ht-stim-dilates-pupil]] -supports-> [[hypothesis-state-switch-by-5ht]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/15",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/15",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063",
       "destination": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
       "title": "[[5ht-stim-dilates-pupil]] -requires-> [[wt-controls-rule-out-light-artifact]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/16",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/16",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063",
       "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
       "title": "[[5ht-stim-dilates-pupil]] -supports-> [[hypothesis-state-switch-by-5ht]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/17",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/17",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0",
       "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
       "title": "[[5ht-stim-increases-exploratory-behaviors]] -supports-> [[hypothesis-state-switch-by-5ht]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/18",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/18",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0",
       "destination": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
       "title": "[[5ht-stim-increases-exploratory-behaviors]] -requires-> [[wt-controls-rule-out-light-artifact]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/19",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/19",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0",
       "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
       "title": "[[5ht-stim-increases-exploratory-behaviors]] -supports-> [[hypothesis-state-switch-by-5ht]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/20",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/20",
       "@type": [
-        "haak:reldef/refutes"
+        "cg:reldef/refutes"
       ],
       "source": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2",
       "destination": "urn:uuid:984ff53f-048b-4598-a0ef-6293bb0d7158",
       "title": "[[5ht-stim-leaves-decision-behavior-intact]] -refutes-> [[prediction-5ht-shifts-psychometric]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/21",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/21",
       "@type": [
-        "haak:reldef/refutes"
+        "cg:reldef/refutes"
       ],
       "source": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2",
       "destination": "urn:uuid:1a5cd255-9f81-4e90-9fbc-e49873ac4e36",
       "title": "[[5ht-stim-leaves-decision-behavior-intact]] -refutes-> [[prediction-5ht-accelerates-prior-update]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/22",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/22",
       "@type": [
-        "haak:reldef/refutes"
+        "cg:reldef/refutes"
       ],
       "source": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2",
       "destination": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417",
       "title": "[[5ht-stim-leaves-decision-behavior-intact]] -refutes-> [[hypothesis-5ht-codes-surprise]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/23",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/23",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2",
       "destination": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
       "title": "[[5ht-stim-leaves-decision-behavior-intact]] -requires-> [[seven-target-trajectories-13-regions-7478-neurons]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/24",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/24",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449",
       "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
       "title": "[[5ht-stim-suppresses-sharp-wave-ripples]] -supports-> [[hypothesis-state-switch-by-5ht]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/25",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/25",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449",
       "destination": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
       "title": "[[5ht-stim-suppresses-sharp-wave-ripples]] -requires-> [[wt-controls-rule-out-light-artifact]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/26",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/26",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449",
       "destination": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
       "title": "[[5ht-stim-suppresses-sharp-wave-ripples]] -supports-> [[hypothesis-state-switch-by-5ht]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/27",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/27",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:43dc14e4-5475-40a6-b981-fcbd00914ad4",
       "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "title": "[[cortical-layers-show-no-differential-modulation]] -requires-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/28",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/28",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417",
       "destination": "urn:uuid:984ff53f-048b-4598-a0ef-6293bb0d7158",
       "title": "[[hypothesis-5ht-codes-surprise]] -entails-> [[prediction-5ht-shifts-psychometric]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/29",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/29",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:bafb4184-4ce0-472e-a84f-9eba891bd417",
       "destination": "urn:uuid:1a5cd255-9f81-4e90-9fbc-e49873ac4e36",
       "title": "[[hypothesis-5ht-codes-surprise]] -entails-> [[prediction-5ht-accelerates-prior-update]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/30",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/30",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
       "destination": "urn:uuid:4a9fe28d-cf62-4539-98f9-0f0e00126047",
       "title": "[[hypothesis-orthogonal-neuromodulatory-subspace]] -entails-> [[prediction-5ht-axis-orthogonal-to-choice]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/31",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/31",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
       "destination": "urn:uuid:4f28c881-0692-4fcf-8595-2f4bcd0716af",
       "title": "[[hypothesis-orthogonal-neuromodulatory-subspace]] -entails-> [[prediction-orthogonality-grows-toward-choice]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/32",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/32",
       "@type": [
-        "haak:reldef/predicts"
+        "cg:reldef/predicts"
       ],
       "source": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
       "destination": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063",
       "title": "[[hypothesis-state-switch-by-5ht]] -predicts-> [[5ht-stim-dilates-pupil]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/33",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/33",
       "@type": [
-        "haak:reldef/predicts"
+        "cg:reldef/predicts"
       ],
       "source": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
       "destination": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449",
       "title": "[[hypothesis-state-switch-by-5ht]] -predicts-> [[5ht-stim-suppresses-sharp-wave-ripples]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/34",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/34",
       "@type": [
-        "haak:reldef/predicts"
+        "cg:reldef/predicts"
       ],
       "source": "urn:uuid:52941834-c36b-4a96-ae15-1f1b9015ce13",
       "destination": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0",
       "title": "[[hypothesis-state-switch-by-5ht]] -predicts-> [[5ht-stim-increases-exploratory-behaviors]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/35",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/35",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:84677204-94c6-4bc3-928e-93449079091c",
       "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "title": "[[inhibition-fast-excitation-slow]] -requires-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/36",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/36",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:84677204-94c6-4bc3-928e-93449079091c",
       "destination": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
       "title": "[[inhibition-fast-excitation-slow]] -requires-> [[seven-target-trajectories-13-regions-7478-neurons]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/37",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/37",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
       "destination": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "title": "[[manifold-from-pooled-super-session]] -enables-method-> [[5ht-axis-orthogonal-to-choice-axis]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/38",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/38",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
       "destination": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
       "title": "[[manifold-from-pooled-super-session]] -enables-method-> [[orthogonality-significant-in-mpfc-vis-m2]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/39",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/39",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
       "destination": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "title": "[[manifold-from-pooled-super-session]] -scopes-> [[5ht-axis-orthogonal-to-choice-axis]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/40",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/40",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
       "destination": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
       "title": "[[manifold-from-pooled-super-session]] -scopes-> [[orthogonality-significant-in-mpfc-vis-m2]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/41",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/41",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:c4a03387-7441-4430-bffb-d7cfec4e0d75",
       "destination": "urn:uuid:1e7ad84e-d186-4d10-802b-68f9a32c266e",
       "title": "[[narrow-spike-interneurons-not-driver-of-rapid-inhibition]] -rules-out-> [[alt-rapid-fs-interneuron-recruitment]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/42",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/42",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:c4a03387-7441-4430-bffb-d7cfec4e0d75",
       "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "title": "[[narrow-spike-interneurons-not-driver-of-rapid-inhibition]] -requires-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/43",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/43",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
       "destination": "urn:uuid:83d656ca-94ec-4a0f-bfb1-1138605cc136",
       "title": "[[optogenetic-activation-not-physiological-pattern]] -interprets-> [[interprets-paquelet-correlated-ensembles]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/44",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/44",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
       "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "title": "[[optogenetic-activation-not-physiological-pattern]] -scopes-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/45",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/45",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
       "destination": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2",
       "title": "[[optogenetic-activation-not-physiological-pattern]] -scopes-> [[5ht-stim-leaves-decision-behavior-intact]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/46",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/46",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:cbe383df-b2a1-47d6-8337-605fa7c560bc",
       "destination": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "title": "[[optogenetic-activation-not-physiological-pattern]] -scopes-> [[5ht-axis-orthogonal-to-choice-axis]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/47",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/47",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
       "destination": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "title": "[[orthogonality-significant-in-mpfc-vis-m2]] -requires-> [[5ht-axis-orthogonal-to-choice-axis]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/48",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/48",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
       "destination": "urn:uuid:ccfb7993-d675-4598-9858-1bc9f0e12ac2",
       "title": "[[orthogonality-significant-in-mpfc-vis-m2]] -requires-> [[manifold-from-pooled-super-session]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/49",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/49",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:cf85076a-1b1f-462c-ac7a-e6bd64306681",
       "destination": "urn:uuid:677d38e8-8b0f-42cb-a194-293cf4899020",
       "title": "[[orthogonality-significant-in-mpfc-vis-m2]] -supports-> [[hypothesis-orthogonal-neuromodulatory-subspace]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/50",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/50",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
       "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "title": "[[seven-target-trajectories-13-regions-7478-neurons]] -scopes-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/51",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/51",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
       "destination": "urn:uuid:e59d7d03-4f0f-4939-b88a-c604804a7bb2",
       "title": "[[seven-target-trajectories-13-regions-7478-neurons]] -scopes-> [[5ht-stim-leaves-decision-behavior-intact]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/52",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/52",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
       "destination": "urn:uuid:e1a5b240-e31b-4ecc-abdc-eaa0437e7067",
       "title": "[[seven-target-trajectories-13-regions-7478-neurons]] -scopes-> [[5ht-modulation-weaker-during-task]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/53",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/53",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
       "destination": "urn:uuid:edaec7c9-e745-4a84-b73c-aea77cf4550b",
       "title": "[[seven-target-trajectories-13-regions-7478-neurons]] -scopes-> [[5ht-axis-orthogonal-to-choice-axis]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/54",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/54",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a24358b5-0552-472b-8679-3d318d4d702f",
       "destination": "urn:uuid:84677204-94c6-4bc3-928e-93449079091c",
       "title": "[[seven-target-trajectories-13-regions-7478-neurons]] -scopes-> [[inhibition-fast-excitation-slow]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/55",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/55",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
-      "destination": "haak:claim/meijer-2025-serotonin-orthogonal/alternative/1",
+      "destination": "cg:claim/meijer-2025-serotonin-orthogonal/alternative/1",
       "title": "[[wt-controls-rule-out-light-artifact]] -rules-out-> [[light-or-heat-mediated-modulation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/56",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/56",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
       "destination": "urn:uuid:f61028a7-74b3-416f-9df2-cdd8b91d0063",
       "title": "[[wt-controls-rule-out-light-artifact]] -validates-> [[5ht-stim-dilates-pupil]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/57",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/57",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
       "destination": "urn:uuid:e3041ac0-b702-47fc-a127-dbe692110449",
       "title": "[[wt-controls-rule-out-light-artifact]] -validates-> [[5ht-stim-suppresses-sharp-wave-ripples]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/58",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/58",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
       "destination": "urn:uuid:2ce5650a-94bd-4d14-91cd-4fba82bcc7b0",
       "title": "[[wt-controls-rule-out-light-artifact]] -validates-> [[5ht-stim-increases-exploratory-behaviors]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/meijer-2025-serotonin-orthogonal/59",
+      "@id": "cg:edge/meijer-2025-serotonin-orthogonal/59",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:1b98cdbc-4ab1-41f6-932c-7efd46909363",
       "destination": "urn:uuid:6979e5c6-acb6-4083-ba5a-5ad25845f8a0",
       "title": "[[wt-controls-rule-out-light-artifact]] -validates-> [[5ht-modulates-all-recorded-regions-bidirectionally]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-04-19T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     }

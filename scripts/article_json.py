@@ -24,10 +24,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "extract"))
+# The package lives in the machinery checkout now, not under this repository.
+sys.path.insert(0, os.environ.get("CLAIM_GRAPHS_EXTRACT")
+                or str(Path(os.environ.get("CLAIM_GRAPHS", ROOT.parent / "claim-graphs")) / "extract"))
 
 from lxml import etree  # noqa: E402
-from elife_extract.sources import ElifeSource  # noqa: E402
+from claim_graphs.sources import ElifeSource  # noqa: E402
 
 OUT_DIR = ROOT / "site" / "src" / "data" / "article"
 FIGURE_DIR = ROOT / "site" / "public" / "figures"

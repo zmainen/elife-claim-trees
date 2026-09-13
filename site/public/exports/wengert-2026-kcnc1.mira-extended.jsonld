@@ -2,7 +2,7 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "haak": "https://haak.world/schema/claim#",
+      "cg": "https://w3id.org/claim-graphs/schema#",
       "dgb": "https://discoursegraphs.com/schema/dg_base#",
       "owl": "http://www.w3.org/2002/07/owl#",
       "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -18,71 +18,71 @@
       }
     },
     {
-      "haakx": "https://haak.world/schema/claim-extended#"
+      "cgx": "https://w3id.org/claim-graphs/schema-extended#"
     }
   ],
   "@graph": [
     {
-      "@id": "haak:agent/elife-claim-trees",
+      "@id": "urn:claim-graphs:pipeline",
       "@type": "UserAccount",
-      "accountName": "elife-claim-trees pipeline"
+      "accountName": "claim-graphs pipeline"
     },
     {
-      "@id": "haak:type/Claim",
+      "@id": "cg:type/Claim",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Claim"
       ],
       "label": "Claim",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Evidence",
+      "@id": "cg:type/Evidence",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Evidence"
       ],
       "label": "Evidence",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Protocol",
+      "@id": "cg:type/Protocol",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Protocol"
       ],
       "label": "Protocol",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms",
+      "@id": "cg:reldef/confirms",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/confirms"
+          "hasValue": "cg:reldef/confirms"
         }
       ],
       "label": "confirms",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms/def",
+      "@id": "cg:reldef/confirms/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/confirms",
+        "cg:reldef/confirms",
         "dgb:RelationInstance"
       ],
       "label": "confirms",
@@ -91,33 +91,33 @@
         "format": "text/plain",
         "content": "The source evidence confirms the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/derived_from",
+      "@id": "cg:reldef/derived_from",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/derived_from"
+          "hasValue": "cg:reldef/derived_from"
         }
       ],
       "label": "derived-from",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z",
-      "inverseOf": "haak:reldef/entails"
+      "inverseOf": "cg:reldef/entails"
     },
     {
-      "@id": "haak:reldef/derived_from/def",
+      "@id": "cg:reldef/derived_from/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/derived_from",
+        "cg:reldef/derived_from",
         "dgb:RelationInstance"
       ],
       "label": "derived-from",
@@ -126,32 +126,32 @@
         "format": "text/plain",
         "content": "The source claim was derived from the destination claim; the inverse of entails."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with",
+      "@id": "cg:reldef/dissociates_with",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/dissociates_with"
+          "hasValue": "cg:reldef/dissociates_with"
         }
       ],
       "label": "dissociates-with",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with/def",
+      "@id": "cg:reldef/dissociates_with/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/dissociates_with",
+        "cg:reldef/dissociates_with",
         "dgb:RelationInstance"
       ],
       "label": "dissociates-with",
@@ -160,32 +160,32 @@
         "format": "text/plain",
         "content": "The source and destination jointly establish a dissociation — a contrast between two results, neither bearing on the other's truth. MIRA has no predicate for a contrast, so like the deductive relations it hangs at AbstractRelationDef and the gap report names it."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method",
+      "@id": "cg:reldef/enables_method",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/enables_method"
+          "hasValue": "cg:reldef/enables_method"
         }
       ],
       "label": "enables-method",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method/def",
+      "@id": "cg:reldef/enables_method/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Protocol",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Protocol",
       "subClassOf": [
-        "haak:reldef/enables_method",
+        "cg:reldef/enables_method",
         "dgb:RelationInstance"
       ],
       "label": "enables-method",
@@ -194,32 +194,32 @@
         "format": "text/plain",
         "content": "The source result makes the destination method possible."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails",
+      "@id": "cg:reldef/entails",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/entails"
+          "hasValue": "cg:reldef/entails"
         }
       ],
       "label": "entails",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails/def",
+      "@id": "cg:reldef/entails/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/entails",
+        "cg:reldef/entails",
         "dgb:RelationInstance"
       ],
       "label": "entails",
@@ -228,33 +228,33 @@
         "format": "text/plain",
         "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/extends",
+      "@id": "cg:reldef/extends",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/extends"
+          "hasValue": "cg:reldef/extends"
         }
       ],
       "label": "extends",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/extends/def",
+      "@id": "cg:reldef/extends/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/extends",
+        "cg:reldef/extends",
         "dgb:RelationInstance"
       ],
       "label": "extends",
@@ -263,32 +263,32 @@
         "format": "text/plain",
         "content": "The source claim extends the destination claim to new conditions."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets",
+      "@id": "cg:reldef/interprets",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/interprets"
+          "hasValue": "cg:reldef/interprets"
         }
       ],
       "label": "interprets",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets/def",
+      "@id": "cg:reldef/interprets/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Evidence",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Evidence",
       "subClassOf": [
-        "haak:reldef/interprets",
+        "cg:reldef/interprets",
         "dgb:RelationInstance"
       ],
       "label": "interprets",
@@ -297,32 +297,32 @@
         "format": "text/plain",
         "content": "The source claim offers a theoretical reading of the destination result."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires",
+      "@id": "cg:reldef/requires",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/requires"
+          "hasValue": "cg:reldef/requires"
         }
       ],
       "label": "requires",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires/def",
+      "@id": "cg:reldef/requires/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/requires",
+        "cg:reldef/requires",
         "dgb:RelationInstance"
       ],
       "label": "requires",
@@ -331,33 +331,33 @@
         "format": "text/plain",
         "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out",
+      "@id": "cg:reldef/rules_out",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:opposes",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/rules_out"
+          "hasValue": "cg:reldef/rules_out"
         }
       ],
       "label": "rules-out",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out/def",
+      "@id": "cg:reldef/rules_out/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/rules_out",
+        "cg:reldef/rules_out",
         "dgb:RelationInstance"
       ],
       "label": "rules-out",
@@ -366,32 +366,32 @@
         "format": "text/plain",
         "content": "The source evidence eliminates the destination claim as viable."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes",
+      "@id": "cg:reldef/scopes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/scopes"
+          "hasValue": "cg:reldef/scopes"
         }
       ],
       "label": "scopes",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes/def",
+      "@id": "cg:reldef/scopes/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/scopes",
+        "cg:reldef/scopes",
         "dgb:RelationInstance"
       ],
       "label": "scopes",
@@ -400,33 +400,33 @@
         "format": "text/plain",
         "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports",
+      "@id": "cg:reldef/supports",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/supports"
+          "hasValue": "cg:reldef/supports"
         }
       ],
       "label": "supports",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports/def",
+      "@id": "cg:reldef/supports/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/supports",
+        "cg:reldef/supports",
         "dgb:RelationInstance"
       ],
       "label": "supports",
@@ -435,32 +435,32 @@
         "format": "text/plain",
         "content": "The source claim provides support for the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests",
+      "@id": "cg:reldef/tests",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/tests"
+          "hasValue": "cg:reldef/tests"
         }
       ],
       "label": "tests",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests/def",
+      "@id": "cg:reldef/tests/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/tests",
+        "cg:reldef/tests",
         "dgb:RelationInstance"
       ],
       "label": "tests",
@@ -469,33 +469,33 @@
         "format": "text/plain",
         "content": "The source evidence was gathered to test the destination claim. Neither supports nor opposes: it records that a test was run, not how it came out."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates",
+      "@id": "cg:reldef/validates",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/validates"
+          "hasValue": "cg:reldef/validates"
         }
       ],
       "label": "validates",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates/def",
+      "@id": "cg:reldef/validates/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/validates",
+        "cg:reldef/validates",
         "dgb:RelationInstance"
       ],
       "label": "validates",
@@ -504,7 +504,7 @@
         "format": "text/plain",
         "content": "The source evidence validates the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
@@ -516,8 +516,8 @@
         "format": "text/plain",
         "content": "Is it the case that inhibitory dysfunction in Kcnc1-A421V/+ mice is already established at the juvenile stage (P16-21) rather than emerging with age, so the phenotype is developmentally static rather than progressive?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:6b95034b-bded-485f-b080-2e7db1856e34#question",
@@ -527,8 +527,8 @@
         "format": "text/plain",
         "content": "Is it the case that the recurrent missense variant KCNC1-p.Ala421Val (A421V) in the Kv3.1 voltage-gated potassium channel causes a loss of channel function via impaired delivery of channel protein to the plasma membrane (a trafficking defect), rather than via altered gating or conductance of channels that do reach the surface?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb#question",
@@ -538,8 +538,8 @@
         "format": "text/plain",
         "content": "Is it the case that cell-autonomous loss of Kv3.1 function in PV-INs is sufficient to drive the network-level developmental and epileptic encephalopathy phenotype of KCNC1 disease?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3#question",
@@ -549,8 +549,8 @@
         "format": "text/plain",
         "content": "Is it the case that because Kv3.1 is strongly and selectively expressed in fast-spiking neurons that rely on rapid action-potential repolarization to sustain high firing rates, haploinsufficient or dominant-negative loss of Kv3.1 should produce a cell-type- specific impairment that targets parvalbumin-positive (PV+) GABAergic interneurons while leaving excitatory neurons (which do not express Kv3.1 at functionally relevant levels) intact?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:ba388b6b-662d-4f09-b481-11f90f7057dc",
@@ -568,10 +568,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:f80417c3-ece7-4792-9e83-0b3f92d26ac2"
@@ -596,17 +596,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig3H, fig3I",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig3H, fig3I",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -624,10 +624,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:c09c89af-97d8-41f2-9fb7-2aaa6ed339b6"
@@ -637,18 +637,18 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "partial",
-          "haak:executed": false,
-          "haak:script": "verification/wengert-2026-kcnc1/verify.py"
+          "cg:status": "partial",
+          "cg:executed": false,
+          "cg:script": "verification/wengert-2026-kcnc1/verify.py"
         }
       ],
-      "haak:panel": "fig1",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig1",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -670,10 +670,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:3ea91341-e08d-4f0b-86fc-604dd4b1ebd6"
@@ -693,17 +693,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig2B, fig2C, fig2D",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig2B, fig2C, fig2D",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -725,10 +725,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:ae5f131c-edc3-4345-96c1-2f43609dbb3e"
@@ -740,17 +740,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig1—figure supplement 2B, 2C, 2D, 2E",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig1—figure supplement 2B, 2C, 2D, 2E",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -765,10 +765,10 @@
         "format": "text/plain",
         "content": "Inhibitory dysfunction in Kcnc1-A421V/+ mice is already established at the juvenile stage (P16-21) rather than emerging with age, so the phenotype is developmentally static rather than progressive."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:stance": "rejects",
-      "haak:epistemicStrength": "weak",
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:stance": "rejects",
+      "cg:epistemicStrength": "weak",
       "mira:addresses": {
         "@id": "urn:uuid:8f0f1866-b184-4166-8ed7-97af70a45e88#question"
       }
@@ -789,10 +789,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:e216fbcf-8d86-4470-9206-c27a0b4a04f7"
@@ -814,17 +814,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig5—figure supplement 1D, Table 2 (layer IV exc. cells)",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig5—figure supplement 1D, Table 2 (layer IV exc. cells)",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -842,10 +842,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:e216fbcf-8d86-4470-9206-c27a0b4a04f7"
@@ -865,18 +865,18 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/wengert-2026-kcnc1/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/wengert-2026-kcnc1/verify.py"
         }
       ],
-      "haak:panel": "fig5B, fig5C, fig5D, fig5E, fig5F, fig5G, fig5K, Table 1 (layer IV exc.)",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig5B, fig5C, fig5D, fig5E, fig5F, fig5G, fig5K, Table 1 (layer IV exc.)",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -891,10 +891,10 @@
         "format": "text/plain",
         "content": "The recurrent missense variant KCNC1-p.Ala421Val (A421V) in the Kv3.1 voltage-gated potassium channel causes a loss of channel function via impaired delivery of channel protein to the plasma membrane (a trafficking defect), rather than via altered gating or conductance of channels that do reach the surface. The hypothesis predicts that in heterozygous expression — the genetic configuration of human disease — a measurable reduction in surface Kv3.1 should accompany a reduction in voltage-gated K+ current density, while voltage-dependence of activation and activation kinetics of the remaining current should be preserved. The trafficking-deficit account is favoured over a pure gating account because Kv3.1 channels are obligate tetramers: a dominant- negative trafficking effect of the mutant subunit on heteromeric tetramers can parsimoniously explain the larger-than-50% current loss observed in heterozygous cells."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:9205b93d-7a48-40b8-9bbb-290f859eaa61"
@@ -904,8 +904,8 @@
           }
         ]
       },
-      "haak:panel": "hypothesis",
-      "haak:analysis": "paper Introduction; operationalised by patch-clamp K+ current measurement, immunohistochemistry, and HEK heterologous expression",
+      "cg:panel": "hypothesis",
+      "cg:analysis": "paper Introduction; operationalised by patch-clamp K+ current measurement, immunohistochemistry, and HEK heterologous expression",
       "mira:addresses": {
         "@id": "urn:uuid:6b95034b-bded-485f-b080-2e7db1856e34#question"
       }
@@ -919,10 +919,10 @@
         "format": "text/plain",
         "content": "Cell-autonomous loss of Kv3.1 function in PV-INs is sufficient to drive the network-level developmental and epileptic encephalopathy phenotype of KCNC1 disease. Specifically, the impaired fast-spiking capacity of PV-INs reduces effective perisomatic inhibition of cortical excitatory neurons, causing increased excitatory network activity, hypersynchronous discharges, and clinically apparent seizures with premature lethality (SUDEP), as well as cognitive deficits attributable to disrupted PV-IN-dependent learning and plasticity. The hypothesis predicts that the inhibitory failure should manifest in vivo as elevated excitatory firing during low-arousal states, paroxysmal hypersynchronous discharges in mutants only, spontaneous convulsive seizures, and SUDEP — recapitulating the human KCNC1 DEE phenotype. It further predicts that synaptic-level inhibitory dysfunction may emerge progressively, if PV-IN spike output is impaired before terminal release machinery accumulates compensatory or pathological adaptations."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:6830e27e-2b1a-4d64-a35f-cb2ce47f0871"
@@ -938,8 +938,8 @@
           }
         ]
       },
-      "haak:panel": "hypothesis",
-      "haak:analysis": "paper Introduction and Discussion; operationalised across in vivo two-photon imaging, video-EEG, behavioral testing, and survival analysis",
+      "cg:panel": "hypothesis",
+      "cg:analysis": "paper Introduction and Discussion; operationalised across in vivo two-photon imaging, video-EEG, behavioral testing, and survival analysis",
       "mira:addresses": {
         "@id": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb#question"
       }
@@ -953,10 +953,10 @@
         "format": "text/plain",
         "content": "Because Kv3.1 is strongly and selectively expressed in fast-spiking neurons that rely on rapid action-potential repolarization to sustain high firing rates, haploinsufficient or dominant-negative loss of Kv3.1 should produce a cell-type- specific impairment that targets parvalbumin-positive (PV+) GABAergic interneurons while leaving excitatory neurons (which do not express Kv3.1 at functionally relevant levels) intact. Within the population of fast-spiking neurons, the magnitude of impairment should grade with the relative dependence on Kv3.1 versus the partially redundant Kv3.2 subunit: cells with predominant Kv3.1 expression and minimal Kv3.2 compensation (cortical superficial PV-INs, reticular thalamic nucleus PV-INs) should show the largest deficit, while cells with greater Kv3.2 expression (deep-layer cortical PV-INs) should show milder phenotypes."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:26becfa9-773d-48d3-a7ba-b14998a9d145"
@@ -969,8 +969,8 @@
           }
         ]
       },
-      "haak:panel": "hypothesis",
-      "haak:analysis": "paper Introduction and Discussion; operationalised by parallel patch-clamp comparison across cell types and laminar/regional populations",
+      "cg:panel": "hypothesis",
+      "cg:analysis": "paper Introduction and Discussion; operationalised by parallel patch-clamp comparison across cell types and laminar/regional populations",
       "mira:addresses": {
         "@id": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3#question"
       }
@@ -991,10 +991,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:6830e27e-2b1a-4d64-a35f-cb2ce47f0871"
@@ -1014,17 +1014,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig8B, fig8C, fig8D",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig8B, fig8C, fig8D",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -1046,10 +1046,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:6830e27e-2b1a-4d64-a35f-cb2ce47f0871"
@@ -1074,17 +1074,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig8G, fig8H, fig8I, fig8J",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig8G, fig8H, fig8I, fig8J",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -1099,10 +1099,10 @@
         "format": "text/plain",
         "content": "Inhibitory neurotransmission shows no significant alterations at juvenile stage (P16-21) but exhibits altered function by young adulthood (P32-42), indicating progressive deterioration of inhibitory circuit function in Kcnc1-A421V/+ mice."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "synthesis",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "synthesis",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:17e60029-7f39-40d7-b4ea-8b6f83179baa"
@@ -1117,17 +1117,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "figs 2-4",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "figs 2-4",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
@@ -1138,10 +1138,10 @@
         "format": "text/plain",
         "content": "All primary claims about Kcnc1-A421V/+ phenotype (survival, potassium current, firing frequency, inhibitory dysfunction) require the proprietary knock-in mouse model and wet-lab measurements; these claims cannot be reproduced from deposited data alone — they require the mouse colony and associated equipment (patch-clamp, 2P calcium imaging)."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "enables-method": [
           {
             "@id": "urn:uuid:b29d38ec-0fb8-4a7b-863e-470dd3eb378b"
@@ -1193,17 +1193,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false
+          "cg:status": "verified",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "all figures (assessment)",
-      "haak:analysis": "code inspection"
+      "cg:panel": "all figures (assessment)",
+      "cg:analysis": "code inspection"
     },
     {
       "@id": "urn:uuid:d6e81203-d9f1-4344-97d0-48ec7b6afe39",
@@ -1221,10 +1221,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:757e5bfc-b456-48a1-b49a-e662e2e69a30"
@@ -1254,17 +1254,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4—figure supplement 2",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig4—figure supplement 2",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -1279,18 +1279,18 @@
         "format": "text/plain",
         "content": "If PV-IN dysfunction in Kcnc1-A421V/+ mice impairs the inhibitory circuits underlying cortical learning and plasticity, then mutant mice should show measurable cognitive deficits in tasks that depend on PV-IN-supported processes — specifically spatial learning (Barnes maze, with deficits most evident during the acquisition phase) and spatial working memory (Y-maze spontaneous alternation). The deficit should be specific (not attributable to locomotor or exploratory confounds) and should recapitulate the moderate-to-severe developmental delay seen in human KCNC1 DEE patients. Long-term memory retention (Barnes maze probe trial) may or may not be intact, depending on whether the deficit is in learning rate or memory storage."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the disease-mechanism hypothesis; tested by Barnes maze and Y-maze behavioral assays"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the disease-mechanism hypothesis; tested by Barnes maze and Y-maze behavioral assays"
     },
     {
       "@id": "urn:uuid:e216fbcf-8d86-4470-9206-c27a0b4a04f7",
@@ -1301,18 +1301,18 @@
         "format": "text/plain",
         "content": "If the A421V variant exerts its cellular effect specifically through Kv3.1 — which is not expressed at functionally relevant levels in cortical excitatory neurons — then excitatory neurons in Kcnc1-A421V/+ mice should be functionally spared: voltage-gated K+ current density, intrinsic excitability (firing-frequency vs current-injection relationship), AP waveform parameters, and synaptic transmission should not differ significantly from WT. The null result must hold at both juvenile and adult stages to exclude both cell-autonomous and secondary network effects on excitatory cells. This is the negative-control half of the cell-type specificity test."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the cell-type-specificity hypothesis; tested by parallel patch-clamp recording in excitatory neurons at both age windows"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the cell-type-specificity hypothesis; tested by parallel patch-clamp recording in excitatory neurons at both age windows"
     },
     {
       "@id": "urn:uuid:757e5bfc-b456-48a1-b49a-e662e2e69a30",
@@ -1323,18 +1323,18 @@
         "format": "text/plain",
         "content": "If the impairment is specifically Kv3.1-mediated, then within the population of fast-spiking PV-INs the magnitude of phenotype should grade with the relative expression of Kv3.1 versus the partially redundant Kv3.2 subunit. Specifically, superficial neocortical PV-INs (layer II–IV; predominantly Kv3.1) should show the largest deficit; deep neocortical PV-INs (layer V; greater Kv3.2 expression) should show milder deficits confined to the highest current injections; and reticular thalamic nucleus (RTN) PV-INs (predominantly Kv3.1 and Kv3.3, no Kv3.2 compensation) should also show impairment but with a phenotype shaped by their distinctive rebound firing physiology. This graded prediction is a stronger discriminator of mechanism than a single-population test, because alternative mechanisms (generic PV vulnerability, generic neocortical defect) cannot easily produce a Kv3.1:Kv3.2- ratio-aligned gradient."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the cell-type-specificity hypothesis combined with prior expression literature (Chow et al. 1999; Porcello et al. 2002; Espinosa et al. 2008)"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the cell-type-specificity hypothesis combined with prior expression literature (Chow et al. 1999; Porcello et al. 2002; Espinosa et al. 2008)"
     },
     {
       "@id": "urn:uuid:f80417c3-ece7-4792-9e83-0b3f92d26ac2",
@@ -1345,18 +1345,18 @@
         "format": "text/plain",
         "content": "If the A421V variant impairs Kv3.1 surface trafficking — rather than channel gating per se — then heterozygous Kcnc1-A421V/+ PV-INs should show a measurable reduction in the membrane-localized fraction of Kv3.1 protein, accompanied by relative enrichment of cytosolic Kv3.1 (likely in the endoplasmic reticulum). Quantitatively, the membrane:cytosol fluorescence intensity ratio measured by immunohistochemistry should be significantly lower in mutant PV-INs. As a corollary, the voltage-dependence of activation and the activation kinetics of the residual K+ current should not differ between WT and mutant, because the channels that do reach the surface are predominantly WT homotetramers (or contain functional channels with normal gating)."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:6b95034b-bded-485f-b080-2e7db1856e34"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the trafficking-lesion hypothesis; tested by quantitative immunohistochemistry and biophysical analysis of residual current"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the trafficking-lesion hypothesis; tested by quantitative immunohistochemistry and biophysical analysis of residual current"
     },
     {
       "@id": "urn:uuid:6830e27e-2b1a-4d64-a35f-cb2ce47f0871",
@@ -1367,18 +1367,18 @@
         "format": "text/plain",
         "content": "If PV-IN dysfunction reduces effective perisomatic inhibition in vivo, then awake Kcnc1-A421V/+ mice should show measurable signatures of cortical hyperexcitability by two-photon calcium imaging: (i) paroxysmal hypersynchronous neuropil discharges not present in WT, reflecting brief network-wide bursts of activity, and (ii) elevated calcium transient frequency in PV-negative (excitatory) cells during low-arousal states, reflecting tonic disinhibition. These signatures should be state-dependent — present during quiet rest, when tonic inhibition normally dominates — and may be masked or compensated during active arousal states (e.g. running) when other modulatory inputs dominate cortical state."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the disease-mechanism hypothesis; tested by two-photon GCaMP imaging in awake head-fixed mice"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the disease-mechanism hypothesis; tested by two-photon GCaMP imaging in awake head-fixed mice"
     },
     {
       "@id": "urn:uuid:17e60029-7f39-40d7-b4ea-8b6f83179baa",
@@ -1389,18 +1389,18 @@
         "format": "text/plain",
         "content": "If PV-IN spike output is impaired from juvenile stages but the synaptic terminal release machinery requires further developmental maturation (or accumulates pathological adaptations) to manifest a measurable phenotype, then PV-IN→excitatory unitary inhibitory synaptic transmission should be normal at juvenile stages (P16–21) and altered at young adult stages (P32–42). The adult alteration should carry a presynaptic signature consistent with altered release dynamics — for example, increased uIPSC amplitude with reduced paired-pulse ratio (enhanced initial release probability with faster depression). The temporal dissociation is a refinement of the disease-mechanism hypothesis: it specifies that the inhibitory failure is developmentally emergent, not congenital, at the synaptic level."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the disease-mechanism hypothesis; tested by dual whole-cell paired recording at two age windows"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the disease-mechanism hypothesis; tested by dual whole-cell paired recording at two age windows"
     },
     {
       "@id": "urn:uuid:26becfa9-773d-48d3-a7ba-b14998a9d145",
@@ -1411,18 +1411,18 @@
         "format": "text/plain",
         "content": "If Kv3.1 LOF selectively impairs the cell type that depends on it, then PV-INs in Kcnc1-A421V/+ mice should show reduced maximal sustained firing frequency, slower AP downstroke (reflecting impaired repolarization), and prolonged AP half-duration (APD50) under whole-cell current-clamp recording. Passive membrane properties (resting Vm, input resistance) and AP threshold should be preserved, because Kv3 channels operate at suprathreshold voltages and are not the dominant determinants of the resting state. The phenotype should be present at juvenile stages (P16–21), before any secondary network adaptations have occurred, as a cell-autonomous consequence of reduced Kv3.1 current."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the cell-type-specificity hypothesis; tested by current-clamp recording in PV-INs at P16-21"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the cell-type-specificity hypothesis; tested by current-clamp recording in PV-INs at P16-21"
     },
     {
       "@id": "urn:uuid:9205b93d-7a48-40b8-9bbb-290f859eaa61",
@@ -1433,18 +1433,18 @@
         "format": "text/plain",
         "content": "If KCNC1-A421V is a Kv3.1 loss-of-function variant, heterozygous PV-INs in the Kcnc1-A421V/+ knock-in mouse should show a quantitatively measurable reduction in voltage-gated potassium current density relative to WT littermates, measured by whole-cell or nucleated macropatch recording in the voltage range where Kv3 channels carry the dominant outward current (positive to ~0 mV). The reduction should be larger than the 50% expected from simple haploinsufficiency, because Kv3 channels function as obligate tetramers and a dominant-negative mutant subunit incorporated into heteromeric tetramers can disable more than half of channel surface delivery."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:6b95034b-bded-485f-b080-2e7db1856e34"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the Kv3.1 LOF hypothesis; tested by nucleated macropatch K+ current recording in PV-INs"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the Kv3.1 LOF hypothesis; tested by nucleated macropatch K+ current recording in PV-INs"
     },
     {
       "@id": "urn:uuid:c09c89af-97d8-41f2-9fb7-2aaa6ed339b6",
@@ -1455,18 +1455,18 @@
         "format": "text/plain",
         "content": "If the inhibitory failure produced by Kv3.1 LOF is sufficient to drive the encephalopathy phenotype, then Kcnc1-A421V/+ mice should exhibit (i) spontaneous convulsive seizures captured on continuous video-EEG, (ii) seizure-induced sudden death (SUDEP) at high penetrance, and (iii) premature mortality with all mutants dying before reaching natural lifespan endpoints. The seizure types should match the spectrum reported in human KCNC1 DEE (myoclonic events, generalized tonic-clonic), and the SUDEP events should be preceded by tonic-clonic seizures with hindlimb extension — the canonical mouse SUDEP signature."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb"
           }
         ]
       },
-      "haak:panel": "prediction",
-      "haak:analysis": "derived from the disease-mechanism hypothesis; tested by continuous video-EEG and survival cohort"
+      "cg:panel": "prediction",
+      "cg:analysis": "derived from the disease-mechanism hypothesis; tested by continuous video-EEG and survival cohort"
     },
     {
       "@id": "urn:uuid:04db8b33-39ce-43b1-8df4-63a156fbc874",
@@ -1484,10 +1484,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:26becfa9-773d-48d3-a7ba-b14998a9d145"
@@ -1514,19 +1514,19 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-13",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/wengert-2026-kcnc1/verify.py",
-          "haak:dataSource": "https://doi.gin.g-node.org/10.12751/g-node.bqni9h"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/wengert-2026-kcnc1/verify.py",
+          "cg:dataSource": "https://doi.gin.g-node.org/10.12751/g-node.bqni9h"
         }
       ],
-      "haak:panel": "fig4E, fig4J, Table 1, Table 2",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig4E, fig4J, Table 1, Table 2",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -1548,10 +1548,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:17e60029-7f39-40d7-b4ea-8b6f83179baa"
@@ -1576,19 +1576,19 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-13",
-          "haak:status": "partial",
-          "haak:executed": true,
-          "haak:script": "verification/wengert-2026-kcnc1/verify.py",
-          "haak:dataSource": "https://doi.gin.g-node.org/10.12751/g-node.bqni9h"
+          "cg:status": "partial",
+          "cg:executed": true,
+          "cg:script": "verification/wengert-2026-kcnc1/verify.py",
+          "cg:dataSource": "https://doi.gin.g-node.org/10.12751/g-node.bqni9h"
         }
       ],
-      "haak:panel": "fig7F, fig7G, fig7H, fig7I",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig7F, fig7G, fig7H, fig7I",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -1610,10 +1610,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a"
@@ -1635,19 +1635,19 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-13",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/wengert-2026-kcnc1/verify.py",
-          "haak:dataSource": "https://doi.gin.g-node.org/10.12751/g-node.bqni9h"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/wengert-2026-kcnc1/verify.py",
+          "cg:dataSource": "https://doi.gin.g-node.org/10.12751/g-node.bqni9h"
         }
       ],
-      "haak:panel": "fig6F, fig6G, fig6H, fig6I, fig6J, fig6K, fig6L",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig6F, fig6G, fig6H, fig6I, fig6J, fig6K, fig6L",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -1665,10 +1665,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:26becfa9-773d-48d3-a7ba-b14998a9d145"
@@ -1688,18 +1688,18 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "partial",
-          "haak:executed": false,
-          "haak:script": "verification/wengert-2026-kcnc1/verify.py"
+          "cg:status": "partial",
+          "cg:executed": false,
+          "cg:script": "verification/wengert-2026-kcnc1/verify.py"
         }
       ],
-      "haak:panel": "fig2, fig3",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig2, fig3",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -1717,10 +1717,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:9205b93d-7a48-40b8-9bbb-290f859eaa61"
@@ -1735,18 +1735,18 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/wengert-2026-kcnc1/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/wengert-2026-kcnc1/verify.py"
         }
       ],
-      "haak:panel": "fig2",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig2",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -1768,10 +1768,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:757e5bfc-b456-48a1-b49a-e662e2e69a30"
@@ -1791,17 +1791,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4—figure supplement 3",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig4—figure supplement 3",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
@@ -1816,10 +1816,10 @@
         "format": "text/plain",
         "content": "All claims about the cellular, circuit, and behavioral phenotype derive from a specific experimental envelope: a novel transgenic mouse with conditional expression of the Kcnc1-A421V missense variant, used in the global heterozygous configuration (Kcnc1-A421V/+) achieved by crossing to Actb-Cre, and further crossed to Pvalb-tdTomato for PV-IN identification (triple transgenic for ex vivo electrophysiology). Patch-clamp electrophysiology is performed in two age windows (juvenile P16–21, young adult P32–42) on neocortex (predominantly somatosensory), with additional recordings in deep cortical layer V and reticular thalamic nucleus. In vivo two-photon calcium imaging uses AAV9-syn-jGCaMP8m or soma-tagged jGCaMP8m with S5E2-driven tdTomato for PV-ID, in awake head-fixed somatosensory cortex of mice >P50. Continuous video-EEG uses DSI wireless telemetry over 2–7 days at P24–48. Behavioral testing (Barnes maze, Y-maze) is performed at P35–65. Generalisation beyond the heterozygous knock-in configuration (e.g. to homozygous, conditional cell- type-restricted, or human-equivalent allelic series), beyond the C57BL/6J background, or beyond the specific age windows tested is not established by this paper. Verification path: G-Node deposit (https://doi.org/10.12751/g-node.bqni9h) contains the analyzed Excel summary for figs 3-7 electrophysiology; raw data plus other modalities require the 68 GiB ZIP."
       },
-      "haakx:epistemicStatus": "mira:Assumption",
-      "haak:role": "scope",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Assumption",
+      "cg:role": "scope",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "scopes": [
           {
             "@id": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444"
@@ -1877,8 +1877,8 @@
           }
         ]
       },
-      "haak:panel": "scope",
-      "haak:analysis": "paper Methods (mouse line generation, cohort definitions, preparation and recording details); G-Node deposit https://doi.org/10.12751/g-node.bqni9h"
+      "cg:panel": "scope",
+      "cg:analysis": "paper Methods (mouse line generation, cohort definitions, preparation and recording details); G-Node deposit https://doi.org/10.12751/g-node.bqni9h"
     },
     {
       "@id": "urn:uuid:b066dc9f-dd75-43a8-9692-1005de9d2d30",
@@ -1896,10 +1896,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.12751/g-node.bqni9h"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:c09c89af-97d8-41f2-9fb7-2aaa6ed339b6"
@@ -1929,1375 +1929,1375 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig9A, fig9B, fig9C",
-      "haak:analysis": "G-Node analysis code"
+      "cg:panel": "fig9A, fig9B, fig9C",
+      "cg:analysis": "G-Node analysis code"
     },
     {
       "@id": "https://doi.org/10.12751/g-node.bqni9h",
       "@type": "prov:Entity"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/1",
+      "@id": "cg:edge/wengert-2026-kcnc1/1",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:ba388b6b-662d-4f09-b481-11f90f7057dc",
       "destination": "urn:uuid:f80417c3-ece7-4792-9e83-0b3f92d26ac2",
       "title": "[[a421v-kv31-membrane-trafficking-impaired]] -confirms-> [[prediction-kv31-surface-expression-reduced]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/2",
+      "@id": "cg:edge/wengert-2026-kcnc1/2",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:ba388b6b-662d-4f09-b481-11f90f7057dc",
       "destination": "urn:uuid:6b95034b-bded-485f-b080-2e7db1856e34",
       "title": "[[a421v-kv31-membrane-trafficking-impaired]] -confirms-> [[hypothesis-a421v-causes-kv31-lof]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/3",
+      "@id": "cg:edge/wengert-2026-kcnc1/3",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:ba388b6b-662d-4f09-b481-11f90f7057dc",
       "destination": "urn:uuid:f80417c3-ece7-4792-9e83-0b3f92d26ac2",
       "title": "[[a421v-kv31-membrane-trafficking-impaired]] -tests-> [[prediction-kv31-surface-expression-reduced]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/4",
+      "@id": "cg:edge/wengert-2026-kcnc1/4",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:ba388b6b-662d-4f09-b481-11f90f7057dc",
       "destination": "urn:uuid:b29d38ec-0fb8-4a7b-863e-470dd3eb378b",
       "title": "[[a421v-kv31-membrane-trafficking-impaired]] -supports-> [[pv-ins-reduced-k-current-density]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/5",
+      "@id": "cg:edge/wengert-2026-kcnc1/5",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:ba388b6b-662d-4f09-b481-11f90f7057dc",
       "destination": "urn:uuid:b29d38ec-0fb8-4a7b-863e-470dd3eb378b",
       "title": "[[a421v-kv31-membrane-trafficking-impaired]] -extends-> [[pv-ins-reduced-k-current-density]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/6",
+      "@id": "cg:edge/wengert-2026-kcnc1/6",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:e2edfcd1-ec01-4ec7-ba36-01ab26290d69",
       "destination": "urn:uuid:c09c89af-97d8-41f2-9fb7-2aaa6ed339b6",
       "title": "[[a421v-mice-die-before-122d]] -confirms-> [[prediction-seizures-and-sudep]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/7",
+      "@id": "cg:edge/wengert-2026-kcnc1/7",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:e2edfcd1-ec01-4ec7-ba36-01ab26290d69",
       "destination": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb",
       "title": "[[a421v-mice-die-before-122d]] -confirms-> [[hypothesis-pv-dysfunction-drives-encephalopathy]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/8",
+      "@id": "cg:edge/wengert-2026-kcnc1/8",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:ae5f131c-edc3-4345-96c1-2f43609dbb3e",
       "destination": "urn:uuid:3ea91341-e08d-4f0b-86fc-604dd4b1ebd6",
       "title": "[[a421v-spatial-learning-working-memory-impaired]] -confirms-> [[prediction-cognitive-deficits]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/9",
+      "@id": "cg:edge/wengert-2026-kcnc1/9",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:ae5f131c-edc3-4345-96c1-2f43609dbb3e",
       "destination": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb",
       "title": "[[a421v-spatial-learning-working-memory-impaired]] -confirms-> [[hypothesis-pv-dysfunction-drives-encephalopathy]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/10",
+      "@id": "cg:edge/wengert-2026-kcnc1/10",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:ae5f131c-edc3-4345-96c1-2f43609dbb3e",
       "destination": "urn:uuid:3ea91341-e08d-4f0b-86fc-604dd4b1ebd6",
       "title": "[[a421v-spatial-learning-working-memory-impaired]] -tests-> [[prediction-cognitive-deficits]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/11",
+      "@id": "cg:edge/wengert-2026-kcnc1/11",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:ae5f131c-edc3-4345-96c1-2f43609dbb3e",
       "destination": "urn:uuid:a2af2706-be34-44a7-b65b-6a11ae98c2a8",
       "title": "[[a421v-spatial-learning-working-memory-impaired]] -requires-> [[inhibitory-dysfunction-progresses-to-adulthood]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/12",
+      "@id": "cg:edge/wengert-2026-kcnc1/12",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:b7a7c44d-b512-45b8-a790-a1b2c3b216e7",
       "destination": "urn:uuid:ae5f131c-edc3-4345-96c1-2f43609dbb3e",
       "title": "[[a421v-weight-reduced-milestones-normal]] -dissociates-with-> [[a421v-spatial-learning-working-memory-impaired]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/13",
+      "@id": "cg:edge/wengert-2026-kcnc1/13",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:b7a7c44d-b512-45b8-a790-a1b2c3b216e7",
       "destination": "urn:uuid:e2edfcd1-ec01-4ec7-ba36-01ab26290d69",
       "title": "[[a421v-weight-reduced-milestones-normal]] -supports-> [[a421v-mice-die-before-122d]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/14",
+      "@id": "cg:edge/wengert-2026-kcnc1/14",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:3df55d45-b8a0-42c6-9807-0323c08e8815",
       "destination": "urn:uuid:e216fbcf-8d86-4470-9206-c27a0b4a04f7",
       "title": "[[excitatory-neurons-unaffected-adult]] -confirms-> [[prediction-excitatory-neurons-spared]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/15",
+      "@id": "cg:edge/wengert-2026-kcnc1/15",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:3df55d45-b8a0-42c6-9807-0323c08e8815",
       "destination": "urn:uuid:e216fbcf-8d86-4470-9206-c27a0b4a04f7",
       "title": "[[excitatory-neurons-unaffected-adult]] -tests-> [[prediction-excitatory-neurons-spared]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/16",
+      "@id": "cg:edge/wengert-2026-kcnc1/16",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:3df55d45-b8a0-42c6-9807-0323c08e8815",
       "destination": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a",
       "title": "[[excitatory-neurons-unaffected-adult]] -validates-> [[pv-in-inhibitory-synapse-altered-adult]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/17",
+      "@id": "cg:edge/wengert-2026-kcnc1/17",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:3df55d45-b8a0-42c6-9807-0323c08e8815",
       "destination": "urn:uuid:52b1301c-8ece-44c1-b25c-53e20013391d",
       "title": "[[excitatory-neurons-unaffected-adult]] -extends-> [[excitatory-neurons-unaffected-juvenile]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/18",
+      "@id": "cg:edge/wengert-2026-kcnc1/18",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:52b1301c-8ece-44c1-b25c-53e20013391d",
       "destination": "urn:uuid:e216fbcf-8d86-4470-9206-c27a0b4a04f7",
       "title": "[[excitatory-neurons-unaffected-juvenile]] -confirms-> [[prediction-excitatory-neurons-spared]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/19",
+      "@id": "cg:edge/wengert-2026-kcnc1/19",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:52b1301c-8ece-44c1-b25c-53e20013391d",
       "destination": "urn:uuid:e216fbcf-8d86-4470-9206-c27a0b4a04f7",
       "title": "[[excitatory-neurons-unaffected-juvenile]] -tests-> [[prediction-excitatory-neurons-spared]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/20",
+      "@id": "cg:edge/wengert-2026-kcnc1/20",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:52b1301c-8ece-44c1-b25c-53e20013391d",
       "destination": "urn:uuid:b29d38ec-0fb8-4a7b-863e-470dd3eb378b",
       "title": "[[excitatory-neurons-unaffected-juvenile]] -validates-> [[pv-ins-reduced-k-current-density]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/21",
+      "@id": "cg:edge/wengert-2026-kcnc1/21",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:52b1301c-8ece-44c1-b25c-53e20013391d",
       "destination": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "title": "[[excitatory-neurons-unaffected-juvenile]] -validates-> [[pv-ins-impaired-maximal-firing]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/22",
+      "@id": "cg:edge/wengert-2026-kcnc1/22",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:6b95034b-bded-485f-b080-2e7db1856e34",
       "destination": "urn:uuid:9205b93d-7a48-40b8-9bbb-290f859eaa61",
       "title": "[[hypothesis-a421v-causes-kv31-lof]] -entails-> [[prediction-pv-in-k-current-reduced]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/23",
+      "@id": "cg:edge/wengert-2026-kcnc1/23",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:6b95034b-bded-485f-b080-2e7db1856e34",
       "destination": "urn:uuid:f80417c3-ece7-4792-9e83-0b3f92d26ac2",
       "title": "[[hypothesis-a421v-causes-kv31-lof]] -entails-> [[prediction-kv31-surface-expression-reduced]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/24",
+      "@id": "cg:edge/wengert-2026-kcnc1/24",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb",
       "destination": "urn:uuid:6830e27e-2b1a-4d64-a35f-cb2ce47f0871",
       "title": "[[hypothesis-pv-dysfunction-drives-encephalopathy]] -entails-> [[prediction-network-hyperexcitability-in-vivo]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/25",
+      "@id": "cg:edge/wengert-2026-kcnc1/25",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb",
       "destination": "urn:uuid:c09c89af-97d8-41f2-9fb7-2aaa6ed339b6",
       "title": "[[hypothesis-pv-dysfunction-drives-encephalopathy]] -entails-> [[prediction-seizures-and-sudep]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/26",
+      "@id": "cg:edge/wengert-2026-kcnc1/26",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb",
       "destination": "urn:uuid:3ea91341-e08d-4f0b-86fc-604dd4b1ebd6",
       "title": "[[hypothesis-pv-dysfunction-drives-encephalopathy]] -entails-> [[prediction-cognitive-deficits]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/27",
+      "@id": "cg:edge/wengert-2026-kcnc1/27",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb",
       "destination": "urn:uuid:17e60029-7f39-40d7-b4ea-8b6f83179baa",
       "title": "[[hypothesis-pv-dysfunction-drives-encephalopathy]] -entails-> [[prediction-progressive-synaptic-failure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/28",
+      "@id": "cg:edge/wengert-2026-kcnc1/28",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3",
       "destination": "urn:uuid:26becfa9-773d-48d3-a7ba-b14998a9d145",
       "title": "[[hypothesis-pv-in-selective-vulnerability]] -entails-> [[prediction-pv-in-firing-impaired]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/29",
+      "@id": "cg:edge/wengert-2026-kcnc1/29",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3",
       "destination": "urn:uuid:e216fbcf-8d86-4470-9206-c27a0b4a04f7",
       "title": "[[hypothesis-pv-in-selective-vulnerability]] -entails-> [[prediction-excitatory-neurons-spared]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/30",
+      "@id": "cg:edge/wengert-2026-kcnc1/30",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3",
       "destination": "urn:uuid:757e5bfc-b456-48a1-b49a-e662e2e69a30",
       "title": "[[hypothesis-pv-in-selective-vulnerability]] -entails-> [[prediction-impairment-grades-with-kv31-dependence]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/31",
+      "@id": "cg:edge/wengert-2026-kcnc1/31",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:2d6bb516-6c05-4a2f-bb64-9e9142bbf326",
       "destination": "urn:uuid:6830e27e-2b1a-4d64-a35f-cb2ce47f0871",
       "title": "[[in-vivo-hypersynchronous-discharges-mutant-only]] -confirms-> [[prediction-network-hyperexcitability-in-vivo]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/32",
+      "@id": "cg:edge/wengert-2026-kcnc1/32",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:2d6bb516-6c05-4a2f-bb64-9e9142bbf326",
       "destination": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb",
       "title": "[[in-vivo-hypersynchronous-discharges-mutant-only]] -confirms-> [[hypothesis-pv-dysfunction-drives-encephalopathy]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/33",
+      "@id": "cg:edge/wengert-2026-kcnc1/33",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:2d6bb516-6c05-4a2f-bb64-9e9142bbf326",
       "destination": "urn:uuid:6830e27e-2b1a-4d64-a35f-cb2ce47f0871",
       "title": "[[in-vivo-hypersynchronous-discharges-mutant-only]] -tests-> [[prediction-network-hyperexcitability-in-vivo]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/34",
+      "@id": "cg:edge/wengert-2026-kcnc1/34",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2d6bb516-6c05-4a2f-bb64-9e9142bbf326",
       "destination": "urn:uuid:e2edfcd1-ec01-4ec7-ba36-01ab26290d69",
       "title": "[[in-vivo-hypersynchronous-discharges-mutant-only]] -supports-> [[a421v-mice-die-before-122d]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/35",
+      "@id": "cg:edge/wengert-2026-kcnc1/35",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:890a5223-4eb7-4dd0-a112-42e195398da1",
       "destination": "urn:uuid:6830e27e-2b1a-4d64-a35f-cb2ce47f0871",
       "title": "[[in-vivo-pv-minus-transient-frequency-increased]] -confirms-> [[prediction-network-hyperexcitability-in-vivo]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/36",
+      "@id": "cg:edge/wengert-2026-kcnc1/36",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:890a5223-4eb7-4dd0-a112-42e195398da1",
       "destination": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb",
       "title": "[[in-vivo-pv-minus-transient-frequency-increased]] -confirms-> [[hypothesis-pv-dysfunction-drives-encephalopathy]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/37",
+      "@id": "cg:edge/wengert-2026-kcnc1/37",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:890a5223-4eb7-4dd0-a112-42e195398da1",
       "destination": "urn:uuid:6830e27e-2b1a-4d64-a35f-cb2ce47f0871",
       "title": "[[in-vivo-pv-minus-transient-frequency-increased]] -tests-> [[prediction-network-hyperexcitability-in-vivo]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/38",
+      "@id": "cg:edge/wengert-2026-kcnc1/38",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:890a5223-4eb7-4dd0-a112-42e195398da1",
       "destination": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "title": "[[in-vivo-pv-minus-transient-frequency-increased]] -supports-> [[pv-ins-impaired-maximal-firing]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/39",
+      "@id": "cg:edge/wengert-2026-kcnc1/39",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:890a5223-4eb7-4dd0-a112-42e195398da1",
       "destination": "urn:uuid:2d6bb516-6c05-4a2f-bb64-9e9142bbf326",
       "title": "[[in-vivo-pv-minus-transient-frequency-increased]] -extends-> [[in-vivo-hypersynchronous-discharges-mutant-only]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/40",
+      "@id": "cg:edge/wengert-2026-kcnc1/40",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:a2af2706-be34-44a7-b65b-6a11ae98c2a8",
       "destination": "urn:uuid:17e60029-7f39-40d7-b4ea-8b6f83179baa",
       "title": "[[inhibitory-dysfunction-progresses-to-adulthood]] -confirms-> [[prediction-progressive-synaptic-failure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/41",
+      "@id": "cg:edge/wengert-2026-kcnc1/41",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:a2af2706-be34-44a7-b65b-6a11ae98c2a8",
       "destination": "urn:uuid:dbc34885-27d0-4b6e-afbb-6a34befb9b98",
       "title": "[[inhibitory-dysfunction-progresses-to-adulthood]] -interprets-> [[pv-in-inhibitory-synapse-intact-juvenile]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/42",
+      "@id": "cg:edge/wengert-2026-kcnc1/42",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:a2af2706-be34-44a7-b65b-6a11ae98c2a8",
       "destination": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a",
       "title": "[[inhibitory-dysfunction-progresses-to-adulthood]] -interprets-> [[pv-in-inhibitory-synapse-altered-adult]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/43",
+      "@id": "cg:edge/wengert-2026-kcnc1/43",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:b29d38ec-0fb8-4a7b-863e-470dd3eb378b",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[pv-ins-reduced-k-current-density]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/44",
+      "@id": "cg:edge/wengert-2026-kcnc1/44",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[pv-ins-impaired-maximal-firing]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/45",
+      "@id": "cg:edge/wengert-2026-kcnc1/45",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:04db8b33-39ce-43b1-8df4-63a156fbc874",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[pv-in-ap-waveform-altered-downstroke-apd50]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/46",
+      "@id": "cg:edge/wengert-2026-kcnc1/46",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:ba388b6b-662d-4f09-b481-11f90f7057dc",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[a421v-kv31-membrane-trafficking-impaired]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/47",
+      "@id": "cg:edge/wengert-2026-kcnc1/47",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:d6e81203-d9f1-4344-97d0-48ec7b6afe39",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[layer-v-pv-ins-subtle-impairment]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/48",
+      "@id": "cg:edge/wengert-2026-kcnc1/48",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:37d23efe-7e34-48aa-82ff-b7f3ef45751c",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[rtn-neurons-impaired-excitability]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/49",
+      "@id": "cg:edge/wengert-2026-kcnc1/49",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:52b1301c-8ece-44c1-b25c-53e20013391d",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[excitatory-neurons-unaffected-juvenile]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/50",
+      "@id": "cg:edge/wengert-2026-kcnc1/50",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:3df55d45-b8a0-42c6-9807-0323c08e8815",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[excitatory-neurons-unaffected-adult]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/51",
+      "@id": "cg:edge/wengert-2026-kcnc1/51",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:dbc34885-27d0-4b6e-afbb-6a34befb9b98",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[pv-in-inhibitory-synapse-intact-juvenile]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/52",
+      "@id": "cg:edge/wengert-2026-kcnc1/52",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[pv-in-inhibitory-synapse-altered-adult]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/53",
+      "@id": "cg:edge/wengert-2026-kcnc1/53",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:2d6bb516-6c05-4a2f-bb64-9e9142bbf326",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[in-vivo-hypersynchronous-discharges-mutant-only]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/54",
+      "@id": "cg:edge/wengert-2026-kcnc1/54",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:890a5223-4eb7-4dd0-a112-42e195398da1",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[in-vivo-pv-minus-transient-frequency-increased]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/55",
+      "@id": "cg:edge/wengert-2026-kcnc1/55",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:b066dc9f-dd75-43a8-9692-1005de9d2d30",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[spontaneous-seizures-and-sudep-kcnc1]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/56",
+      "@id": "cg:edge/wengert-2026-kcnc1/56",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:e2edfcd1-ec01-4ec7-ba36-01ab26290d69",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[a421v-mice-die-before-122d]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/57",
+      "@id": "cg:edge/wengert-2026-kcnc1/57",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:ae5f131c-edc3-4345-96c1-2f43609dbb3e",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[a421v-spatial-learning-working-memory-impaired]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/58",
+      "@id": "cg:edge/wengert-2026-kcnc1/58",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "destination": "urn:uuid:b7a7c44d-b512-45b8-a790-a1b2c3b216e7",
       "title": "[[kcnc1-wet-lab-primary-claims]] -enables-method-> [[a421v-weight-reduced-milestones-normal]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/59",
+      "@id": "cg:edge/wengert-2026-kcnc1/59",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:d6e81203-d9f1-4344-97d0-48ec7b6afe39",
       "destination": "urn:uuid:757e5bfc-b456-48a1-b49a-e662e2e69a30",
       "title": "[[layer-v-pv-ins-subtle-impairment]] -confirms-> [[prediction-impairment-grades-with-kv31-dependence]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/60",
+      "@id": "cg:edge/wengert-2026-kcnc1/60",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:d6e81203-d9f1-4344-97d0-48ec7b6afe39",
       "destination": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3",
       "title": "[[layer-v-pv-ins-subtle-impairment]] -confirms-> [[hypothesis-pv-in-selective-vulnerability]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/61",
+      "@id": "cg:edge/wengert-2026-kcnc1/61",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:d6e81203-d9f1-4344-97d0-48ec7b6afe39",
       "destination": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "title": "[[layer-v-pv-ins-subtle-impairment]] -dissociates-with-> [[pv-ins-impaired-maximal-firing]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/62",
+      "@id": "cg:edge/wengert-2026-kcnc1/62",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:d6e81203-d9f1-4344-97d0-48ec7b6afe39",
       "destination": "urn:uuid:757e5bfc-b456-48a1-b49a-e662e2e69a30",
       "title": "[[layer-v-pv-ins-subtle-impairment]] -tests-> [[prediction-impairment-grades-with-kv31-dependence]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/63",
+      "@id": "cg:edge/wengert-2026-kcnc1/63",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:d6e81203-d9f1-4344-97d0-48ec7b6afe39",
       "destination": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "title": "[[layer-v-pv-ins-subtle-impairment]] -extends-> [[pv-ins-impaired-maximal-firing]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/64",
+      "@id": "cg:edge/wengert-2026-kcnc1/64",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:d6e81203-d9f1-4344-97d0-48ec7b6afe39",
       "destination": "urn:uuid:a2af2706-be34-44a7-b65b-6a11ae98c2a8",
       "title": "[[layer-v-pv-ins-subtle-impairment]] -supports-> [[inhibitory-dysfunction-progresses-to-adulthood]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/65",
+      "@id": "cg:edge/wengert-2026-kcnc1/65",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:04db8b33-39ce-43b1-8df4-63a156fbc874",
       "destination": "urn:uuid:26becfa9-773d-48d3-a7ba-b14998a9d145",
       "title": "[[pv-in-ap-waveform-altered-downstroke-apd50]] -confirms-> [[prediction-pv-in-firing-impaired]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/66",
+      "@id": "cg:edge/wengert-2026-kcnc1/66",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:04db8b33-39ce-43b1-8df4-63a156fbc874",
       "destination": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "title": "[[pv-in-ap-waveform-altered-downstroke-apd50]] -interprets-> [[pv-ins-impaired-maximal-firing]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/67",
+      "@id": "cg:edge/wengert-2026-kcnc1/67",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:04db8b33-39ce-43b1-8df4-63a156fbc874",
       "destination": "urn:uuid:26becfa9-773d-48d3-a7ba-b14998a9d145",
       "title": "[[pv-in-ap-waveform-altered-downstroke-apd50]] -tests-> [[prediction-pv-in-firing-impaired]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/68",
+      "@id": "cg:edge/wengert-2026-kcnc1/68",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:04db8b33-39ce-43b1-8df4-63a156fbc874",
       "destination": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "title": "[[pv-in-ap-waveform-altered-downstroke-apd50]] -supports-> [[pv-ins-impaired-maximal-firing]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/69",
+      "@id": "cg:edge/wengert-2026-kcnc1/69",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:04db8b33-39ce-43b1-8df4-63a156fbc874",
       "destination": "urn:uuid:b29d38ec-0fb8-4a7b-863e-470dd3eb378b",
       "title": "[[pv-in-ap-waveform-altered-downstroke-apd50]] -requires-> [[pv-ins-reduced-k-current-density]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/70",
+      "@id": "cg:edge/wengert-2026-kcnc1/70",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a",
       "destination": "urn:uuid:17e60029-7f39-40d7-b4ea-8b6f83179baa",
       "title": "[[pv-in-inhibitory-synapse-altered-adult]] -confirms-> [[prediction-progressive-synaptic-failure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/71",
+      "@id": "cg:edge/wengert-2026-kcnc1/71",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a",
       "destination": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb",
       "title": "[[pv-in-inhibitory-synapse-altered-adult]] -confirms-> [[hypothesis-pv-dysfunction-drives-encephalopathy]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/72",
+      "@id": "cg:edge/wengert-2026-kcnc1/72",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a",
       "destination": "urn:uuid:17e60029-7f39-40d7-b4ea-8b6f83179baa",
       "title": "[[pv-in-inhibitory-synapse-altered-adult]] -tests-> [[prediction-progressive-synaptic-failure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/73",
+      "@id": "cg:edge/wengert-2026-kcnc1/73",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a",
       "destination": "urn:uuid:dbc34885-27d0-4b6e-afbb-6a34befb9b98",
       "title": "[[pv-in-inhibitory-synapse-altered-adult]] -extends-> [[pv-in-inhibitory-synapse-intact-juvenile]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/74",
+      "@id": "cg:edge/wengert-2026-kcnc1/74",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a",
       "destination": "urn:uuid:a2af2706-be34-44a7-b65b-6a11ae98c2a8",
       "title": "[[pv-in-inhibitory-synapse-altered-adult]] -supports-> [[inhibitory-dysfunction-progresses-to-adulthood]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/75",
+      "@id": "cg:edge/wengert-2026-kcnc1/75",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:dbc34885-27d0-4b6e-afbb-6a34befb9b98",
       "destination": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a",
       "title": "[[pv-in-inhibitory-synapse-intact-juvenile]] -dissociates-with-> [[pv-in-inhibitory-synapse-altered-adult]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/76",
+      "@id": "cg:edge/wengert-2026-kcnc1/76",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:dbc34885-27d0-4b6e-afbb-6a34befb9b98",
       "destination": "urn:uuid:17e60029-7f39-40d7-b4ea-8b6f83179baa",
       "title": "[[pv-in-inhibitory-synapse-intact-juvenile]] -tests-> [[prediction-progressive-synaptic-failure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/77",
+      "@id": "cg:edge/wengert-2026-kcnc1/77",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:dbc34885-27d0-4b6e-afbb-6a34befb9b98",
       "destination": "urn:uuid:8f0f1866-b184-4166-8ed7-97af70a45e88",
       "title": "[[pv-in-inhibitory-synapse-intact-juvenile]] -rules-out-> [[alt-inhibitory-dysfunction-present-juvenile]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/78",
+      "@id": "cg:edge/wengert-2026-kcnc1/78",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:dbc34885-27d0-4b6e-afbb-6a34befb9b98",
       "destination": "urn:uuid:a2af2706-be34-44a7-b65b-6a11ae98c2a8",
       "title": "[[pv-in-inhibitory-synapse-intact-juvenile]] -supports-> [[inhibitory-dysfunction-progresses-to-adulthood]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/79",
+      "@id": "cg:edge/wengert-2026-kcnc1/79",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "destination": "urn:uuid:26becfa9-773d-48d3-a7ba-b14998a9d145",
       "title": "[[pv-ins-impaired-maximal-firing]] -confirms-> [[prediction-pv-in-firing-impaired]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/80",
+      "@id": "cg:edge/wengert-2026-kcnc1/80",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "destination": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3",
       "title": "[[pv-ins-impaired-maximal-firing]] -confirms-> [[hypothesis-pv-in-selective-vulnerability]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/81",
+      "@id": "cg:edge/wengert-2026-kcnc1/81",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "destination": "urn:uuid:52b1301c-8ece-44c1-b25c-53e20013391d",
       "title": "[[pv-ins-impaired-maximal-firing]] -dissociates-with-> [[excitatory-neurons-unaffected-juvenile]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/82",
+      "@id": "cg:edge/wengert-2026-kcnc1/82",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "destination": "urn:uuid:26becfa9-773d-48d3-a7ba-b14998a9d145",
       "title": "[[pv-ins-impaired-maximal-firing]] -tests-> [[prediction-pv-in-firing-impaired]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/83",
+      "@id": "cg:edge/wengert-2026-kcnc1/83",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:b29d38ec-0fb8-4a7b-863e-470dd3eb378b",
       "destination": "urn:uuid:9205b93d-7a48-40b8-9bbb-290f859eaa61",
       "title": "[[pv-ins-reduced-k-current-density]] -confirms-> [[prediction-pv-in-k-current-reduced]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/84",
+      "@id": "cg:edge/wengert-2026-kcnc1/84",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:b29d38ec-0fb8-4a7b-863e-470dd3eb378b",
       "destination": "urn:uuid:6b95034b-bded-485f-b080-2e7db1856e34",
       "title": "[[pv-ins-reduced-k-current-density]] -confirms-> [[hypothesis-a421v-causes-kv31-lof]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/85",
+      "@id": "cg:edge/wengert-2026-kcnc1/85",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:b29d38ec-0fb8-4a7b-863e-470dd3eb378b",
       "destination": "urn:uuid:9205b93d-7a48-40b8-9bbb-290f859eaa61",
       "title": "[[pv-ins-reduced-k-current-density]] -tests-> [[prediction-pv-in-k-current-reduced]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/86",
+      "@id": "cg:edge/wengert-2026-kcnc1/86",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:37d23efe-7e34-48aa-82ff-b7f3ef45751c",
       "destination": "urn:uuid:757e5bfc-b456-48a1-b49a-e662e2e69a30",
       "title": "[[rtn-neurons-impaired-excitability]] -confirms-> [[prediction-impairment-grades-with-kv31-dependence]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/87",
+      "@id": "cg:edge/wengert-2026-kcnc1/87",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:37d23efe-7e34-48aa-82ff-b7f3ef45751c",
       "destination": "urn:uuid:9b4806b8-4b5f-44cd-a04b-a2acc45cffb3",
       "title": "[[rtn-neurons-impaired-excitability]] -confirms-> [[hypothesis-pv-in-selective-vulnerability]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/88",
+      "@id": "cg:edge/wengert-2026-kcnc1/88",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:37d23efe-7e34-48aa-82ff-b7f3ef45751c",
       "destination": "urn:uuid:757e5bfc-b456-48a1-b49a-e662e2e69a30",
       "title": "[[rtn-neurons-impaired-excitability]] -tests-> [[prediction-impairment-grades-with-kv31-dependence]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/89",
+      "@id": "cg:edge/wengert-2026-kcnc1/89",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:37d23efe-7e34-48aa-82ff-b7f3ef45751c",
       "destination": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "title": "[[rtn-neurons-impaired-excitability]] -extends-> [[pv-ins-impaired-maximal-firing]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/90",
+      "@id": "cg:edge/wengert-2026-kcnc1/90",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:e61d53f9-f821-48eb-8392-f02acef3d444",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[kcnc1-wet-lab-primary-claims]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/91",
+      "@id": "cg:edge/wengert-2026-kcnc1/91",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:e2edfcd1-ec01-4ec7-ba36-01ab26290d69",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[a421v-mice-die-before-122d]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/92",
+      "@id": "cg:edge/wengert-2026-kcnc1/92",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:b7a7c44d-b512-45b8-a790-a1b2c3b216e7",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[a421v-weight-reduced-milestones-normal]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/93",
+      "@id": "cg:edge/wengert-2026-kcnc1/93",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:ae5f131c-edc3-4345-96c1-2f43609dbb3e",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[a421v-spatial-learning-working-memory-impaired]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/94",
+      "@id": "cg:edge/wengert-2026-kcnc1/94",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:b29d38ec-0fb8-4a7b-863e-470dd3eb378b",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[pv-ins-reduced-k-current-density]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/95",
+      "@id": "cg:edge/wengert-2026-kcnc1/95",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:ba388b6b-662d-4f09-b481-11f90f7057dc",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[a421v-kv31-membrane-trafficking-impaired]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/96",
+      "@id": "cg:edge/wengert-2026-kcnc1/96",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:894a5d58-bca8-4b16-b22b-76b64db1e3e5",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[pv-ins-impaired-maximal-firing]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/97",
+      "@id": "cg:edge/wengert-2026-kcnc1/97",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:04db8b33-39ce-43b1-8df4-63a156fbc874",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[pv-in-ap-waveform-altered-downstroke-apd50]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/98",
+      "@id": "cg:edge/wengert-2026-kcnc1/98",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:d6e81203-d9f1-4344-97d0-48ec7b6afe39",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[layer-v-pv-ins-subtle-impairment]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/99",
+      "@id": "cg:edge/wengert-2026-kcnc1/99",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:37d23efe-7e34-48aa-82ff-b7f3ef45751c",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[rtn-neurons-impaired-excitability]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/100",
+      "@id": "cg:edge/wengert-2026-kcnc1/100",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:52b1301c-8ece-44c1-b25c-53e20013391d",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[excitatory-neurons-unaffected-juvenile]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/101",
+      "@id": "cg:edge/wengert-2026-kcnc1/101",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:3df55d45-b8a0-42c6-9807-0323c08e8815",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[excitatory-neurons-unaffected-adult]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/102",
+      "@id": "cg:edge/wengert-2026-kcnc1/102",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:dbc34885-27d0-4b6e-afbb-6a34befb9b98",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[pv-in-inhibitory-synapse-intact-juvenile]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/103",
+      "@id": "cg:edge/wengert-2026-kcnc1/103",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:bd91acf8-a01d-4713-8382-8a0757cbd86a",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[pv-in-inhibitory-synapse-altered-adult]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/104",
+      "@id": "cg:edge/wengert-2026-kcnc1/104",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:a2af2706-be34-44a7-b65b-6a11ae98c2a8",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[inhibitory-dysfunction-progresses-to-adulthood]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/105",
+      "@id": "cg:edge/wengert-2026-kcnc1/105",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:2d6bb516-6c05-4a2f-bb64-9e9142bbf326",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[in-vivo-hypersynchronous-discharges-mutant-only]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/106",
+      "@id": "cg:edge/wengert-2026-kcnc1/106",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:890a5223-4eb7-4dd0-a112-42e195398da1",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[in-vivo-pv-minus-transient-frequency-increased]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/107",
+      "@id": "cg:edge/wengert-2026-kcnc1/107",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:33883d00-c963-41b8-a13d-ca9e2cb8b1b2",
       "destination": "urn:uuid:b066dc9f-dd75-43a8-9692-1005de9d2d30",
       "title": "[[scope-a421v-knockin-mouse]] -scopes-> [[spontaneous-seizures-and-sudep-kcnc1]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/108",
+      "@id": "cg:edge/wengert-2026-kcnc1/108",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:b066dc9f-dd75-43a8-9692-1005de9d2d30",
       "destination": "urn:uuid:c09c89af-97d8-41f2-9fb7-2aaa6ed339b6",
       "title": "[[spontaneous-seizures-and-sudep-kcnc1]] -confirms-> [[prediction-seizures-and-sudep]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/109",
+      "@id": "cg:edge/wengert-2026-kcnc1/109",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:b066dc9f-dd75-43a8-9692-1005de9d2d30",
       "destination": "urn:uuid:61e1a6da-52f8-426d-83bd-dd6f4cfa96fb",
       "title": "[[spontaneous-seizures-and-sudep-kcnc1]] -confirms-> [[hypothesis-pv-dysfunction-drives-encephalopathy]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/110",
+      "@id": "cg:edge/wengert-2026-kcnc1/110",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:b066dc9f-dd75-43a8-9692-1005de9d2d30",
       "destination": "urn:uuid:e2edfcd1-ec01-4ec7-ba36-01ab26290d69",
       "title": "[[spontaneous-seizures-and-sudep-kcnc1]] -interprets-> [[a421v-mice-die-before-122d]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/111",
+      "@id": "cg:edge/wengert-2026-kcnc1/111",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:b066dc9f-dd75-43a8-9692-1005de9d2d30",
       "destination": "urn:uuid:c09c89af-97d8-41f2-9fb7-2aaa6ed339b6",
       "title": "[[spontaneous-seizures-and-sudep-kcnc1]] -tests-> [[prediction-seizures-and-sudep]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/112",
+      "@id": "cg:edge/wengert-2026-kcnc1/112",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:b066dc9f-dd75-43a8-9692-1005de9d2d30",
       "destination": "urn:uuid:e2edfcd1-ec01-4ec7-ba36-01ab26290d69",
       "title": "[[spontaneous-seizures-and-sudep-kcnc1]] -supports-> [[a421v-mice-die-before-122d]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/wengert-2026-kcnc1/113",
+      "@id": "cg:edge/wengert-2026-kcnc1/113",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:b066dc9f-dd75-43a8-9692-1005de9d2d30",
       "destination": "urn:uuid:2d6bb516-6c05-4a2f-bb64-9e9142bbf326",
       "title": "[[spontaneous-seizures-and-sudep-kcnc1]] -extends-> [[in-vivo-hypersynchronous-discharges-mutant-only]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     }

@@ -2,7 +2,7 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "haak": "https://haak.world/schema/claim#",
+      "cg": "https://w3id.org/claim-graphs/schema#",
       "dgb": "https://discoursegraphs.com/schema/dg_base#",
       "owl": "http://www.w3.org/2002/07/owl#",
       "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -18,71 +18,71 @@
       }
     },
     {
-      "haakx": "https://haak.world/schema/claim-extended#"
+      "cgx": "https://w3id.org/claim-graphs/schema-extended#"
     }
   ],
   "@graph": [
     {
-      "@id": "haak:agent/elife-claim-trees",
+      "@id": "urn:claim-graphs:pipeline",
       "@type": "UserAccount",
-      "accountName": "elife-claim-trees pipeline"
+      "accountName": "claim-graphs pipeline"
     },
     {
-      "@id": "haak:type/Claim",
+      "@id": "cg:type/Claim",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Claim"
       ],
       "label": "Claim",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Evidence",
+      "@id": "cg:type/Evidence",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Evidence"
       ],
       "label": "Evidence",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Protocol",
+      "@id": "cg:type/Protocol",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Protocol"
       ],
       "label": "Protocol",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms",
+      "@id": "cg:reldef/confirms",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/confirms"
+          "hasValue": "cg:reldef/confirms"
         }
       ],
       "label": "confirms",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms/def",
+      "@id": "cg:reldef/confirms/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/confirms",
+        "cg:reldef/confirms",
         "dgb:RelationInstance"
       ],
       "label": "confirms",
@@ -91,33 +91,33 @@
         "format": "text/plain",
         "content": "The source evidence confirms the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/derived_from",
+      "@id": "cg:reldef/derived_from",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/derived_from"
+          "hasValue": "cg:reldef/derived_from"
         }
       ],
       "label": "derived-from",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z",
-      "inverseOf": "haak:reldef/entails"
+      "inverseOf": "cg:reldef/entails"
     },
     {
-      "@id": "haak:reldef/derived_from/def",
+      "@id": "cg:reldef/derived_from/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/derived_from",
+        "cg:reldef/derived_from",
         "dgb:RelationInstance"
       ],
       "label": "derived-from",
@@ -126,32 +126,32 @@
         "format": "text/plain",
         "content": "The source claim was derived from the destination claim; the inverse of entails."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with",
+      "@id": "cg:reldef/dissociates_with",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/dissociates_with"
+          "hasValue": "cg:reldef/dissociates_with"
         }
       ],
       "label": "dissociates-with",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with/def",
+      "@id": "cg:reldef/dissociates_with/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/dissociates_with",
+        "cg:reldef/dissociates_with",
         "dgb:RelationInstance"
       ],
       "label": "dissociates-with",
@@ -160,32 +160,32 @@
         "format": "text/plain",
         "content": "The source and destination jointly establish a dissociation — a contrast between two results, neither bearing on the other's truth. MIRA has no predicate for a contrast, so like the deductive relations it hangs at AbstractRelationDef and the gap report names it."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method",
+      "@id": "cg:reldef/enables_method",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/enables_method"
+          "hasValue": "cg:reldef/enables_method"
         }
       ],
       "label": "enables-method",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method/def",
+      "@id": "cg:reldef/enables_method/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Protocol",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Protocol",
       "subClassOf": [
-        "haak:reldef/enables_method",
+        "cg:reldef/enables_method",
         "dgb:RelationInstance"
       ],
       "label": "enables-method",
@@ -194,32 +194,32 @@
         "format": "text/plain",
         "content": "The source result makes the destination method possible."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails",
+      "@id": "cg:reldef/entails",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/entails"
+          "hasValue": "cg:reldef/entails"
         }
       ],
       "label": "entails",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails/def",
+      "@id": "cg:reldef/entails/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/entails",
+        "cg:reldef/entails",
         "dgb:RelationInstance"
       ],
       "label": "entails",
@@ -228,33 +228,33 @@
         "format": "text/plain",
         "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/extends",
+      "@id": "cg:reldef/extends",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/extends"
+          "hasValue": "cg:reldef/extends"
         }
       ],
       "label": "extends",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/extends/def",
+      "@id": "cg:reldef/extends/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/extends",
+        "cg:reldef/extends",
         "dgb:RelationInstance"
       ],
       "label": "extends",
@@ -263,32 +263,32 @@
         "format": "text/plain",
         "content": "The source claim extends the destination claim to new conditions."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets",
+      "@id": "cg:reldef/interprets",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/interprets"
+          "hasValue": "cg:reldef/interprets"
         }
       ],
       "label": "interprets",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets/def",
+      "@id": "cg:reldef/interprets/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Evidence",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Evidence",
       "subClassOf": [
-        "haak:reldef/interprets",
+        "cg:reldef/interprets",
         "dgb:RelationInstance"
       ],
       "label": "interprets",
@@ -297,32 +297,32 @@
         "format": "text/plain",
         "content": "The source claim offers a theoretical reading of the destination result."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires",
+      "@id": "cg:reldef/requires",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/requires"
+          "hasValue": "cg:reldef/requires"
         }
       ],
       "label": "requires",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires/def",
+      "@id": "cg:reldef/requires/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/requires",
+        "cg:reldef/requires",
         "dgb:RelationInstance"
       ],
       "label": "requires",
@@ -331,33 +331,33 @@
         "format": "text/plain",
         "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out",
+      "@id": "cg:reldef/rules_out",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:opposes",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/rules_out"
+          "hasValue": "cg:reldef/rules_out"
         }
       ],
       "label": "rules-out",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out/def",
+      "@id": "cg:reldef/rules_out/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/rules_out",
+        "cg:reldef/rules_out",
         "dgb:RelationInstance"
       ],
       "label": "rules-out",
@@ -366,32 +366,32 @@
         "format": "text/plain",
         "content": "The source evidence eliminates the destination claim as viable."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes",
+      "@id": "cg:reldef/scopes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/scopes"
+          "hasValue": "cg:reldef/scopes"
         }
       ],
       "label": "scopes",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes/def",
+      "@id": "cg:reldef/scopes/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/scopes",
+        "cg:reldef/scopes",
         "dgb:RelationInstance"
       ],
       "label": "scopes",
@@ -400,33 +400,33 @@
         "format": "text/plain",
         "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports",
+      "@id": "cg:reldef/supports",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/supports"
+          "hasValue": "cg:reldef/supports"
         }
       ],
       "label": "supports",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports/def",
+      "@id": "cg:reldef/supports/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/supports",
+        "cg:reldef/supports",
         "dgb:RelationInstance"
       ],
       "label": "supports",
@@ -435,32 +435,32 @@
         "format": "text/plain",
         "content": "The source claim provides support for the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests",
+      "@id": "cg:reldef/tests",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/tests"
+          "hasValue": "cg:reldef/tests"
         }
       ],
       "label": "tests",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests/def",
+      "@id": "cg:reldef/tests/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/tests",
+        "cg:reldef/tests",
         "dgb:RelationInstance"
       ],
       "label": "tests",
@@ -469,33 +469,33 @@
         "format": "text/plain",
         "content": "The source evidence was gathered to test the destination claim. Neither supports nor opposes: it records that a test was run, not how it came out."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates",
+      "@id": "cg:reldef/validates",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/validates"
+          "hasValue": "cg:reldef/validates"
         }
       ],
       "label": "validates",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates/def",
+      "@id": "cg:reldef/validates/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/validates",
+        "cg:reldef/validates",
         "dgb:RelationInstance"
       ],
       "label": "validates",
@@ -504,7 +504,7 @@
         "format": "text/plain",
         "content": "The source evidence validates the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
@@ -516,8 +516,8 @@
         "format": "text/plain",
         "content": "Is it the case that the fluorescence response attributed to iGABASnFR2 reflects binding of, or interference by, compounds structurally related to GABA rather than GABA itself, so the reported sensitivity is not a measure of GABA detection?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe#question",
@@ -527,8 +527,8 @@
         "format": "text/plain",
         "content": "Is it the case that a GABA sensor with sufficiently improved sensitivity, kinetics, and affinity will cross qualitative capability thresholds — not merely improve signal-to-noise on measurements iGABASnFR1 could already make, but enable measurements that iGABASnFR1 cannot make at all?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503#question",
@@ -538,8 +538,8 @@
         "format": "text/plain",
         "content": "Is it the case that targeted near-saturation mutagenesis at sites in and around the Pf622 GABA-binding pocket and the cpGFP-linker interfaces can yield a successor to iGABASnFR1 with substantially improved sensitivity (ΔF/F), increased on-cell affinity within the physiologically relevant range, faster binding kinetics, and improved expression / membrane trafficking — without sacrificing GABA selectivity?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:0b8f6f71-6251-48b6-9cca-738ba83a4942",
@@ -550,10 +550,10 @@
         "format": "text/plain",
         "content": "The fluorescence response attributed to iGABASnFR2 reflects binding of, or interference by, compounds structurally related to GABA rather than GABA itself, so the reported sensitivity is not a measure of GABA detection."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:stance": "rejects",
-      "haak:epistemicStrength": "weak",
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:stance": "rejects",
+      "cg:epistemicStrength": "weak",
       "mira:addresses": {
         "@id": "urn:uuid:0b8f6f71-6251-48b6-9cca-738ba83a4942#question"
       }
@@ -567,28 +567,28 @@
         "format": "text/plain",
         "content": "The crystal structure of iGABASnFR2 is deposited at the Protein Data Bank (accession 9D57), providing atomic-resolution structural information on the binding pocket and cpGFP domain arrangement."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "enables-method": [
           {
             "@id": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc"
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/kolb-2026-igabasnfr2/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/kolb-2026-igabasnfr2/verify.py"
         }
       ],
-      "haak:panel": "fig3 (or structural supplement)",
-      "haak:analysis": "PDB accession 9D57"
+      "cg:panel": "fig3 (or structural supplement)",
+      "cg:analysis": "PDB accession 9D57"
     },
     {
       "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe",
@@ -599,10 +599,10 @@
         "format": "text/plain",
         "content": "A GABA sensor with sufficiently improved sensitivity, kinetics, and affinity will cross qualitative capability thresholds — not merely improve signal-to-noise on measurements iGABASnFR1 could already make, but enable measurements that iGABASnFR1 cannot make at all. Specifically: detection of GABA release from individual inhibitory boutons in slice, single-trial detection of direction-selective GABA release from starburst amacrine cells in retina, and detection of volume-transmitted GABA in vivo following sensory stimulation."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf"
@@ -615,7 +615,7 @@
           }
         ]
       },
-      "haak:panel": "hypothesis",
+      "cg:panel": "hypothesis",
       "mira:addresses": {
         "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe#question"
       }
@@ -629,10 +629,10 @@
         "format": "text/plain",
         "content": "Targeted near-saturation mutagenesis at sites in and around the Pf622 GABA-binding pocket and the cpGFP-linker interfaces can yield a successor to iGABASnFR1 with substantially improved sensitivity (ΔF/F), increased on-cell affinity within the physiologically relevant range, faster binding kinetics, and improved expression / membrane trafficking — without sacrificing GABA selectivity. The performance ceiling of iGABASnFR1 is set by suboptimal residues at a small number of structurally identifiable positions, not by an intrinsic limit of the cpGFP-coupled Venus-flytrap scaffold."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b"
@@ -642,7 +642,7 @@
           }
         ]
       },
-      "haak:panel": "hypothesis",
+      "cg:panel": "hypothesis",
       "mira:addresses": {
         "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503#question"
       }
@@ -659,10 +659,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.5281/zenodo.17971101"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
@@ -679,17 +679,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig1C",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig1C",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "https://doi.org/10.5281/zenodo.17971101",
@@ -704,10 +704,10 @@
         "format": "text/plain",
         "content": "iGABASnFR2 has two-photon excitation spectra similar to its one-photon spectra and is compatible with two-photon imaging; both v2 sensors show reduced pH dependence compared to iGABASnFR1."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
@@ -733,17 +733,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4e, fig4f, fig4-supplement3",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig4e, fig4f, fig4-supplement3",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc",
@@ -754,10 +754,10 @@
         "format": "text/plain",
         "content": "GABA binding to iGABASnFR2 closes the Venus flytrap lobes of the Pf622 domain but produces negligible conformational change in cpGFP and its flanking linkers (RMSD 0.25 Å), contrasting with the large cpGFP interface rearrangement seen in GCaMP upon calcium binding."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "interpretation",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "interpretation",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
@@ -779,17 +779,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "partial",
-          "haak:executed": false
+          "cg:status": "partial",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig3a",
-      "haak:analysis": "PDB structure comparison (9D57 vs 6DGV)"
+      "cg:panel": "fig3a",
+      "cg:analysis": "PDB structure comparison (9D57 vs 6DGV)"
     },
     {
       "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
@@ -803,10 +803,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.5281/zenodo.17971101"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
@@ -823,17 +823,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig1, fig2",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig1, fig2",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "https://doi.org/10.5281/zenodo.17971101",
@@ -855,10 +855,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.5281/zenodo.17971101"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "rules-out": [
           {
             "@id": "urn:uuid:0b8f6f71-6251-48b6-9cca-738ba83a4942"
@@ -876,17 +876,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4-supplement1, fig4-supplement2",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig4-supplement1, fig4-supplement2",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "https://doi.org/10.5281/zenodo.17971101",
@@ -908,10 +908,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.5281/zenodo.17971101"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
@@ -941,17 +941,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig6c, fig6-video1",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig6c, fig6-video1",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "https://doi.org/10.5281/zenodo.17971101",
@@ -973,10 +973,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.5281/zenodo.17971101"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
@@ -993,17 +993,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig2c, fig2d",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig2c, fig2d",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "https://doi.org/10.5281/zenodo.17971101",
@@ -1025,10 +1025,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.5281/zenodo.17971101"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
@@ -1050,17 +1050,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4b",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig4b",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "https://doi.org/10.5281/zenodo.17971101",
@@ -1082,10 +1082,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.5281/zenodo.17971101"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
@@ -1112,17 +1112,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig5",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig5",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "https://doi.org/10.5281/zenodo.17971101",
@@ -1144,10 +1144,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.5281/zenodo.17971101"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
@@ -1174,17 +1174,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig6a, fig6b",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig6a, fig6b",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "https://doi.org/10.5281/zenodo.17971101",
@@ -1206,10 +1206,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.5281/zenodo.17971101"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
@@ -1226,17 +1226,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4c, fig4d",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig4c, fig4d",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "https://doi.org/10.5281/zenodo.17971101",
@@ -1254,10 +1254,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.5281/zenodo.17971101"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
@@ -1279,17 +1279,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig1C, fig1D",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig1C, fig1D",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "https://doi.org/10.5281/zenodo.17971101",
@@ -1304,10 +1304,10 @@
         "format": "text/plain",
         "content": "High-throughput mutagenesis screening generated 3,947 total variants from 39 targeted sites; 93 variants exceeded iGABASnFR1 controls in ΔF/F, and 22 showed improvements in both sensitivity and expression."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "enables-method": [
           {
             "@id": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8"
@@ -1325,17 +1325,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig1B, fig1C",
-      "haak:analysis": "Zenodo analysis code"
+      "cg:panel": "fig1B, fig1C",
+      "cg:analysis": "Zenodo analysis code"
     },
     {
       "@id": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216",
@@ -1346,10 +1346,10 @@
         "format": "text/plain",
         "content": "If iGABASnFR2's improvements (4-fold ΔF/F, 7-fold on-cell affinity, faster rise kinetics, 2P-compatible spectra) cross qualitative capability thresholds, then side-by-side comparison with iGABASnFR1 in three demanding preparations should show: (i) iGABASnFR2 detects single-bouton hippocampal GABA release where iGABASnFR1 yields no signal; (ii) iGABASnFR2 resolves direction-selective starburst GABA release on single trials where iGABASnFR1 cannot resolve direction even after trial-averaging; (iii) iGABASnFR2 detects whisker-evoked volume-transmitted GABA in vivo at cortical layers reachable by 2P imaging."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe"
@@ -1359,7 +1359,7 @@
           }
         ]
       },
-      "haak:panel": "prediction"
+      "cg:panel": "prediction"
     },
     {
       "@id": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b",
@@ -1370,17 +1370,17 @@
         "format": "text/plain",
         "content": "If the v1 performance ceiling is set by suboptimal residues at identifiable structural sites, then near-saturation mutagenesis at those sites should yield (i) multiple variants exceeding iGABASnFR1 in ΔF/F sensitivity, (ii) at least one variant simultaneously improved on sensitivity and expression / responsive-pixel count, and (iii) potentially variants with qualitatively new behaviour (e.g. inverted response). The screen should not be dominated by single-site marginal improvements."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503"
           }
         ]
       },
-      "haak:panel": "prediction"
+      "cg:panel": "prediction"
     },
     {
       "@id": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
@@ -1391,10 +1391,10 @@
         "format": "text/plain",
         "content": "All findings are scoped to a sensor-engineering paper: the screen is wet-lab only (cultured rat primary neurons in 96-well format, evoked synaptic release as the ΔF/F readout); biophysical characterisation uses purified protein expressed in E. coli (stopped-flow, titration, 2P spectra); on-cell measurements use cultured neurons under perfusion; biological demonstrations use ex vivo retina (ChAT-Cre mice + AAV), acute and organotypic hippocampal slice (biolistic and AAV delivery), and in vivo cranial window in mouse barrel cortex (AAV9-hSyn-iGABASnFR2). The paper does not test iGABASnFR2 in non-mammalian preparations, in awake behaving animals at fine temporal resolution, or in genetic backgrounds beyond standard laboratory mouse and rat."
       },
-      "haakx:epistemicStatus": "mira:Assumption",
-      "haak:role": "scope",
-      "haak:epistemicStrength": "weak",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Assumption",
+      "cg:role": "scope",
+      "cg:epistemicStrength": "weak",
+      "cg:relations": {
         "scopes": [
           {
             "@id": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9"
@@ -1440,16 +1440,16 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-04-20",
-          "haak:status": "verified",
-          "haak:executed": false
+          "cg:status": "verified",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "scope"
+      "cg:panel": "scope"
     },
     {
       "@id": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
@@ -1460,10 +1460,10 @@
         "format": "text/plain",
         "content": "The primary claims of iGABASnFR2 performance (sensitivity, kinetics, SNR) are established through wet-lab measurements (fluorescence imaging in cultured neurons, stopped-flow kinetics, two-photon excitation spectroscopy) that cannot be reproduced from deposited code and data alone; computational analysis of deposited source data covers only figure generation, not the underlying measurements."
       },
-      "haakx:epistemicStatus": "mira:Assumption",
-      "haak:role": "scope",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Assumption",
+      "cg:role": "scope",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "scopes": [
           {
             "@id": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9"
@@ -1506,1059 +1506,1059 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false
+          "cg:status": "verified",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "all figures (assessment)",
-      "haak:analysis": "code inspection"
+      "cg:panel": "all figures (assessment)",
+      "cg:analysis": "code inspection"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/1",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/1",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7",
       "destination": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc",
       "title": "[[crystal-structure-pdb-9d57]] -enables-method-> [[igabasnfr2-cpgfp-rigid-on-gaba-binding]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/2",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/2",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe",
       "destination": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "title": "[[hypothesis-improved-sensor-enables-new-biology]] -entails-> [[igabasnfr2-retina-direction-selectivity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/3",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/3",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe",
       "destination": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "title": "[[hypothesis-improved-sensor-enables-new-biology]] -entails-> [[igabasnfr2-single-bouton-hippocampus]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/4",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/4",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe",
       "destination": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "title": "[[hypothesis-improved-sensor-enables-new-biology]] -entails-> [[igabasnfr2-invivo-barrel-cortex]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/5",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/5",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503",
       "destination": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b",
       "title": "[[hypothesis-saturation-mutagenesis-yields-improved-sensor]] -entails-> [[prediction-screen-yields-multiple-improved-variants]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/6",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/6",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503",
       "destination": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216",
       "title": "[[hypothesis-saturation-mutagenesis-yields-improved-sensor]] -entails-> [[prediction-improved-sensor-enables-new-measurements]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/7",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/7",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb",
       "destination": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503",
       "title": "[[igabasnfr2-13fold-expression-increase]] -confirms-> [[hypothesis-saturation-mutagenesis-yields-improved-sensor]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/8",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/8",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-13fold-expression-increase]] -dissociates-with-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/9",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/9",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb",
       "destination": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b",
       "title": "[[igabasnfr2-13fold-expression-increase]] -tests-> [[prediction-screen-yields-multiple-improved-variants]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/10",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/10",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-2p-compatible]] -dissociates-with-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/11",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/11",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "destination": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "title": "[[igabasnfr2-2p-compatible]] -enables-method-> [[igabasnfr2-retina-direction-selectivity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/12",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/12",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "destination": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "title": "[[igabasnfr2-2p-compatible]] -enables-method-> [[igabasnfr2-single-bouton-hippocampus]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/13",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/13",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "destination": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "title": "[[igabasnfr2-2p-compatible]] -enables-method-> [[igabasnfr2-invivo-barrel-cortex]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/14",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/14",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "destination": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "title": "[[igabasnfr2-2p-compatible]] -supports-> [[igabasnfr2-retina-direction-selectivity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/15",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/15",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "destination": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "title": "[[igabasnfr2-2p-compatible]] -supports-> [[igabasnfr2-single-bouton-hippocampus]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/16",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/16",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-cpgfp-rigid-on-gaba-binding]] -dissociates-with-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/17",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/17",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc",
       "destination": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7",
       "title": "[[igabasnfr2-cpgfp-rigid-on-gaba-binding]] -interprets-> [[crystal-structure-pdb-9d57]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/18",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/18",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc",
       "destination": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7",
       "title": "[[igabasnfr2-cpgfp-rigid-on-gaba-binding]] -supports-> [[crystal-structure-pdb-9d57]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/19",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/19",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc",
       "destination": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7",
       "title": "[[igabasnfr2-cpgfp-rigid-on-gaba-binding]] -extends-> [[crystal-structure-pdb-9d57]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/20",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/20",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "destination": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503",
       "title": "[[igabasnfr2-fourfold-sensitivity-gain]] -confirms-> [[hypothesis-saturation-mutagenesis-yields-improved-sensor]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/21",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/21",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "destination": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6",
       "title": "[[igabasnfr2-fourfold-sensitivity-gain]] -dissociates-with-> [[igabasnfr2n-negative-going-variant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/22",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/22",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "destination": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b",
       "title": "[[igabasnfr2-fourfold-sensitivity-gain]] -tests-> [[prediction-screen-yields-multiple-improved-variants]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/23",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/23",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c",
       "destination": "urn:uuid:0b8f6f71-6251-48b6-9cca-738ba83a4942",
       "title": "[[igabasnfr2-gaba-selective-specificity]] -rules-out-> [[alt-signal-from-cross-reactivity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/24",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/24",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c",
       "destination": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "title": "[[igabasnfr2-gaba-selective-specificity]] -validates-> [[igabasnfr2-retina-direction-selectivity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/25",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/25",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c",
       "destination": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "title": "[[igabasnfr2-gaba-selective-specificity]] -validates-> [[igabasnfr2-single-bouton-hippocampus]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/26",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/26",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c",
       "destination": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "title": "[[igabasnfr2-gaba-selective-specificity]] -validates-> [[igabasnfr2-invivo-barrel-cortex]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/27",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/27",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "destination": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe",
       "title": "[[igabasnfr2-invivo-barrel-cortex]] -confirms-> [[hypothesis-improved-sensor-enables-new-biology]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/28",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/28",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "destination": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "title": "[[igabasnfr2-invivo-barrel-cortex]] -dissociates-with-> [[igabasnfr2-retina-direction-selectivity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/29",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/29",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "destination": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "title": "[[igabasnfr2-invivo-barrel-cortex]] -dissociates-with-> [[igabasnfr2-single-bouton-hippocampus]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/30",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/30",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "destination": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216",
       "title": "[[igabasnfr2-invivo-barrel-cortex]] -tests-> [[prediction-improved-sensor-enables-new-measurements]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/31",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/31",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-invivo-barrel-cortex]] -supports-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/32",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/32",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "destination": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "title": "[[igabasnfr2-invivo-barrel-cortex]] -requires-> [[igabasnfr2-2p-compatible]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/33",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/33",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee",
       "destination": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503",
       "title": "[[igabasnfr2-kinetics-rise-decay]] -confirms-> [[hypothesis-saturation-mutagenesis-yields-improved-sensor]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/34",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/34",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-kinetics-rise-decay]] -dissociates-with-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/35",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/35",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-kinetics-rise-decay]] -supports-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/36",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/36",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d",
       "destination": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503",
       "title": "[[igabasnfr2-oncell-affinity-sevenfold]] -confirms-> [[hypothesis-saturation-mutagenesis-yields-improved-sensor]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/37",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/37",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-oncell-affinity-sevenfold]] -dissociates-with-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/38",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/38",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-oncell-affinity-sevenfold]] -supports-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/39",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/39",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-oncell-affinity-sevenfold]] -extends-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/40",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/40",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "destination": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe",
       "title": "[[igabasnfr2-retina-direction-selectivity]] -confirms-> [[hypothesis-improved-sensor-enables-new-biology]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/41",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/41",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "destination": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "title": "[[igabasnfr2-retina-direction-selectivity]] -dissociates-with-> [[igabasnfr2-single-bouton-hippocampus]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/42",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/42",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "destination": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216",
       "title": "[[igabasnfr2-retina-direction-selectivity]] -tests-> [[prediction-improved-sensor-enables-new-measurements]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/43",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/43",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-retina-direction-selectivity]] -supports-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/44",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/44",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "destination": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "title": "[[igabasnfr2-retina-direction-selectivity]] -requires-> [[igabasnfr2-2p-compatible]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/45",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/45",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "destination": "urn:uuid:96510607-0b3e-42ef-8144-79bc0940eefe",
       "title": "[[igabasnfr2-single-bouton-hippocampus]] -confirms-> [[hypothesis-improved-sensor-enables-new-biology]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/46",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/46",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "destination": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "title": "[[igabasnfr2-single-bouton-hippocampus]] -dissociates-with-> [[igabasnfr2-retina-direction-selectivity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/47",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/47",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "destination": "urn:uuid:ba1d6ed5-d8ba-40d2-b255-87315d83c216",
       "title": "[[igabasnfr2-single-bouton-hippocampus]] -tests-> [[prediction-improved-sensor-enables-new-measurements]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/48",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/48",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-single-bouton-hippocampus]] -supports-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/49",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/49",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "destination": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "title": "[[igabasnfr2-single-bouton-hippocampus]] -requires-> [[igabasnfr2-2p-compatible]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/50",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/50",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:837eae22-f6f6-4d29-9696-c998ee633b7f",
       "destination": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503",
       "title": "[[igabasnfr2-single-exponential-kinetics]] -confirms-> [[hypothesis-saturation-mutagenesis-yields-improved-sensor]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/51",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/51",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:837eae22-f6f6-4d29-9696-c998ee633b7f",
       "destination": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee",
       "title": "[[igabasnfr2-single-exponential-kinetics]] -dissociates-with-> [[igabasnfr2-kinetics-rise-decay]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/52",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/52",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:837eae22-f6f6-4d29-9696-c998ee633b7f",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2-single-exponential-kinetics]] -supports-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/53",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/53",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6",
       "destination": "urn:uuid:ac2b204d-13a2-4aec-91b9-4792961bc503",
       "title": "[[igabasnfr2n-negative-going-variant]] -confirms-> [[hypothesis-saturation-mutagenesis-yields-improved-sensor]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/54",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/54",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2n-negative-going-variant]] -dissociates-with-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/55",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/55",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6",
       "destination": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b",
       "title": "[[igabasnfr2n-negative-going-variant]] -tests-> [[prediction-screen-yields-multiple-improved-variants]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/56",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/56",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[igabasnfr2n-negative-going-variant]] -validates-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/57",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/57",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[mutagenesis-3947-variants-screened]] -enables-method-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/58",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/58",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9",
       "destination": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb",
       "title": "[[mutagenesis-3947-variants-screened]] -enables-method-> [[igabasnfr2-13fold-expression-increase]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/59",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/59",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9",
       "destination": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6",
       "title": "[[mutagenesis-3947-variants-screened]] -enables-method-> [[igabasnfr2n-negative-going-variant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/60",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/60",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9",
       "destination": "urn:uuid:bce0de60-5b50-44e1-aafd-5d94c2f06e9b",
       "title": "[[mutagenesis-3947-variants-screened]] -tests-> [[prediction-screen-yields-multiple-improved-variants]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/61",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/61",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[mutagenesis-3947-variants-screened]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/62",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/62",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/63",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/63",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-13fold-expression-increase]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/64",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/64",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2n-negative-going-variant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/65",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/65",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-kinetics-rise-decay]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/66",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/66",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:f7d3b257-5ae5-4122-a122-0184b12b15f7",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[crystal-structure-pdb-9d57]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/67",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/67",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-cpgfp-rigid-on-gaba-binding]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/68",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/68",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-oncell-affinity-sevenfold]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/69",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/69",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:837eae22-f6f6-4d29-9696-c998ee633b7f",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-single-exponential-kinetics]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/70",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/70",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-2p-compatible]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/71",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/71",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-gaba-selective-specificity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/72",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/72",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-retina-direction-selectivity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/73",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/73",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-single-bouton-hippocampus]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/74",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/74",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:a0fb081f-c245-4323-b15a-60d9496f6359",
       "destination": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "title": "[[scope-sensor-engineering-paper]] -scopes-> [[igabasnfr2-invivo-barrel-cortex]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/75",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/75",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:c0396bdd-9084-4a13-8dd8-f616c5cdecd9",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[mutagenesis-3947-variants-screened]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/76",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/76",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:f1d695b7-88cd-49d5-9fdc-f66cad65e1c8",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-fourfold-sensitivity-gain]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/77",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/77",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:a8787aa1-9028-4ed0-827a-cdb38e9f59cb",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-13fold-expression-increase]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/78",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/78",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:305140b5-5720-45d7-8706-593e29243fb6",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2n-negative-going-variant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/79",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/79",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:a56b114d-fbe5-422f-91cd-00a7de8b98ee",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-kinetics-rise-decay]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/80",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/80",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:81a3fe0f-a268-4abf-8ad5-b4abbdb4b2dc",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-cpgfp-rigid-on-gaba-binding]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/81",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/81",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:10eb034c-f5b4-422e-a43b-8375a917111d",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-oncell-affinity-sevenfold]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/82",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/82",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:837eae22-f6f6-4d29-9696-c998ee633b7f",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-single-exponential-kinetics]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/83",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/83",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:8e7427f6-8291-4eac-9f8f-7949b519beff",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-2p-compatible]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/84",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/84",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:669554c3-7a4d-453b-b9bd-893e935e630c",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-gaba-selective-specificity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/85",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/85",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:808a0591-b637-4f1a-9ff9-e05e779644bf",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-retina-direction-selectivity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/86",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/86",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:ff5506c7-eac9-42f7-8643-d38068feafd5",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-single-bouton-hippocampus]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kolb-2026-igabasnfr2/87",
+      "@id": "cg:edge/kolb-2026-igabasnfr2/87",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:0cdf69ab-ffa6-4e8b-a87b-e681ec8c2526",
       "destination": "urn:uuid:f2fccd5f-8ee8-4138-9e97-055ebda75cd8",
       "title": "[[screening-scope-wet-lab-only]] -scopes-> [[igabasnfr2-invivo-barrel-cortex]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-10T00:00:00.000Z"
     }

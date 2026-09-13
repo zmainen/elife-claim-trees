@@ -2,7 +2,7 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "haak": "https://haak.world/schema/claim#",
+      "cg": "https://w3id.org/claim-graphs/schema#",
       "dgb": "https://discoursegraphs.com/schema/dg_base#",
       "owl": "http://www.w3.org/2002/07/owl#",
       "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -18,71 +18,71 @@
       }
     },
     {
-      "haakx": "https://haak.world/schema/claim-extended#"
+      "cgx": "https://w3id.org/claim-graphs/schema-extended#"
     }
   ],
   "@graph": [
     {
-      "@id": "haak:agent/elife-claim-trees",
+      "@id": "urn:claim-graphs:pipeline",
       "@type": "UserAccount",
-      "accountName": "elife-claim-trees pipeline"
+      "accountName": "claim-graphs pipeline"
     },
     {
-      "@id": "haak:type/Claim",
+      "@id": "cg:type/Claim",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Claim"
       ],
       "label": "Claim",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Evidence",
+      "@id": "cg:type/Evidence",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Evidence"
       ],
       "label": "Evidence",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Protocol",
+      "@id": "cg:type/Protocol",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Protocol"
       ],
       "label": "Protocol",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms",
+      "@id": "cg:reldef/confirms",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/confirms"
+          "hasValue": "cg:reldef/confirms"
         }
       ],
       "label": "confirms",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms/def",
+      "@id": "cg:reldef/confirms/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/confirms",
+        "cg:reldef/confirms",
         "dgb:RelationInstance"
       ],
       "label": "confirms",
@@ -91,32 +91,32 @@
         "format": "text/plain",
         "content": "The source evidence confirms the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with",
+      "@id": "cg:reldef/dissociates_with",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/dissociates_with"
+          "hasValue": "cg:reldef/dissociates_with"
         }
       ],
       "label": "dissociates-with",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with/def",
+      "@id": "cg:reldef/dissociates_with/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/dissociates_with",
+        "cg:reldef/dissociates_with",
         "dgb:RelationInstance"
       ],
       "label": "dissociates-with",
@@ -125,32 +125,32 @@
         "format": "text/plain",
         "content": "The source and destination jointly establish a dissociation — a contrast between two results, neither bearing on the other's truth. MIRA has no predicate for a contrast, so like the deductive relations it hangs at AbstractRelationDef and the gap report names it."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method",
+      "@id": "cg:reldef/enables_method",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/enables_method"
+          "hasValue": "cg:reldef/enables_method"
         }
       ],
       "label": "enables-method",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method/def",
+      "@id": "cg:reldef/enables_method/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Protocol",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Protocol",
       "subClassOf": [
-        "haak:reldef/enables_method",
+        "cg:reldef/enables_method",
         "dgb:RelationInstance"
       ],
       "label": "enables-method",
@@ -159,33 +159,33 @@
         "format": "text/plain",
         "content": "The source result makes the destination method possible."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/extends",
+      "@id": "cg:reldef/extends",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/extends"
+          "hasValue": "cg:reldef/extends"
         }
       ],
       "label": "extends",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/extends/def",
+      "@id": "cg:reldef/extends/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/extends",
+        "cg:reldef/extends",
         "dgb:RelationInstance"
       ],
       "label": "extends",
@@ -194,32 +194,32 @@
         "format": "text/plain",
         "content": "The source claim extends the destination claim to new conditions."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets",
+      "@id": "cg:reldef/interprets",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/interprets"
+          "hasValue": "cg:reldef/interprets"
         }
       ],
       "label": "interprets",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets/def",
+      "@id": "cg:reldef/interprets/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Evidence",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Evidence",
       "subClassOf": [
-        "haak:reldef/interprets",
+        "cg:reldef/interprets",
         "dgb:RelationInstance"
       ],
       "label": "interprets",
@@ -228,32 +228,32 @@
         "format": "text/plain",
         "content": "The source claim offers a theoretical reading of the destination result."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires",
+      "@id": "cg:reldef/requires",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/requires"
+          "hasValue": "cg:reldef/requires"
         }
       ],
       "label": "requires",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires/def",
+      "@id": "cg:reldef/requires/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/requires",
+        "cg:reldef/requires",
         "dgb:RelationInstance"
       ],
       "label": "requires",
@@ -262,32 +262,32 @@
         "format": "text/plain",
         "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes",
+      "@id": "cg:reldef/scopes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/scopes"
+          "hasValue": "cg:reldef/scopes"
         }
       ],
       "label": "scopes",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes/def",
+      "@id": "cg:reldef/scopes/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/scopes",
+        "cg:reldef/scopes",
         "dgb:RelationInstance"
       ],
       "label": "scopes",
@@ -296,33 +296,33 @@
         "format": "text/plain",
         "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports",
+      "@id": "cg:reldef/supports",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/supports"
+          "hasValue": "cg:reldef/supports"
         }
       ],
       "label": "supports",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports/def",
+      "@id": "cg:reldef/supports/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/supports",
+        "cg:reldef/supports",
         "dgb:RelationInstance"
       ],
       "label": "supports",
@@ -331,7 +331,7 @@
         "format": "text/plain",
         "content": "The source claim provides support for the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
@@ -351,10 +351,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0"
@@ -374,17 +374,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig11C, fig11D, fig12",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig11C, fig11D, fig12",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -402,27 +402,27 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0"
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig (arcuate body)",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig (arcuate body)",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -437,10 +437,10 @@
         "format": "text/plain",
         "content": "All primary claims in this paper are observational anatomical facts about the presence and distribution of neurotransmitters in identified neuropils; none are statistical in the conventional sense — the evidence is the 3D atlas itself, and reproduction means re-registering the same volumes or inspecting the deposited atlas, not re-computing statistics."
       },
-      "haakx:epistemicStatus": "mira:Assumption",
-      "haak:role": "scope",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Assumption",
+      "cg:role": "scope",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "scopes": [
           {
             "@id": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5"
@@ -489,17 +489,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false
+          "cg:status": "verified",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "all figures (assessment)",
-      "haak:analysis": "code inspection"
+      "cg:panel": "all figures (assessment)",
+      "cg:analysis": "code inspection"
     },
     {
       "@id": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c",
@@ -517,10 +517,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:0f8cb9fa-41a6-4a5d-8634-d8b670609fe8"
@@ -530,17 +530,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4Eiv, fig4Ev, fig4Eiii",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig4Eiv, fig4Ev, fig4Eiii",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -555,10 +555,10 @@
         "format": "text/plain",
         "content": "The anti-GAD antibody (Sigma-Aldrich G5163, rabbit polyclonal) used to detect GABAergic neurons in this atlas shows limited tissue penetration restricted to the periphery of the whole-mount preparation, reducing the utility of the GABAergic immunoreactivity channel for mapping interior neuropil structures; this limitation is acknowledged by the authors and affects interpretation of GABA patterns in deep neuropils such as the protocerebral bridge and arcuate body interior."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "requires": [
           {
             "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0"
@@ -568,17 +568,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false
+          "cg:status": "verified",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "all (assessment — stated in Results introduction)",
-      "haak:analysis": "code inspection + text reading"
+      "cg:panel": "all (assessment — stated in Results introduction)",
+      "cg:analysis": "code inspection + text reading"
     },
     {
       "@id": "urn:uuid:01384854-d4e5-4e8c-bf0b-239409c22675",
@@ -596,10 +596,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:80deef22-24b8-4140-8141-276873993f34"
@@ -611,17 +611,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig7H, fig7I",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig7H, fig7I",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -643,10 +643,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c"
@@ -661,17 +661,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig6Bi, fig6Ci, fig6Di",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig6Bi, fig6Ci, fig6Di",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -693,10 +693,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:a7565a82-5c41-40d9-a3d3-5e9194904515"
@@ -711,17 +711,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig2Bi",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig2Bi",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -739,10 +739,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c"
@@ -752,17 +752,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig2",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig2",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -784,10 +784,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c"
@@ -797,17 +797,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig7A, fig7B, fig7E",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig7A, fig7B, fig7E",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -829,10 +829,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:a527b1e4-3c93-4579-9e3f-4e079a34a78f"
@@ -842,17 +842,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig3Bii, fig3Cii",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig3Bii, fig3Cii",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -874,10 +874,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c"
@@ -887,17 +887,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4Bii, fig4Biii",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig4Bii, fig4Biii",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -912,10 +912,10 @@
         "format": "text/plain",
         "content": "A structure consistent with a protocerebral bridge (potential spider equivalent of the insect central complex) is identified in the atlas, suggesting the spider brain contains a candidate homolog of circuits involved in path integration."
       },
-      "haakx:epistemicStatus": "mira:Assumption",
-      "haak:role": "interpretation",
-      "haak:epistemicStrength": "weak",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Assumption",
+      "cg:role": "interpretation",
+      "cg:epistemicStrength": "weak",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0"
@@ -933,17 +933,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig (central complex candidate)",
-      "haak:analysis": "atlas inspection + comparative anatomy"
+      "cg:panel": "fig (central complex candidate)",
+      "cg:analysis": "atlas inspection + comparative anatomy"
     },
     {
       "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
@@ -961,10 +961,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75"
@@ -979,17 +979,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig10Bi-x",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig10Bi-x",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -1007,10 +1007,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "moderate",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "moderate",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:7498d258-3c0e-4a77-bd98-49b7deff2950"
@@ -1020,17 +1020,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig (tonsillar neuropil)",
-      "haak:analysis": "atlas inspection"
+      "cg:panel": "fig (tonsillar neuropil)",
+      "cg:analysis": "atlas inspection"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -1052,10 +1052,10 @@
       "observationBase": {
         "@id": "https://doi.org/10.35077/ace-owl-gum"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0"
@@ -1075,17 +1075,17 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig9Ci-x",
-      "haak:analysis": "atlas visualization"
+      "cg:panel": "fig9Ci-x",
+      "cg:analysis": "atlas visualization"
     },
     {
       "@id": "https://doi.org/10.35077/ace-owl-gum",
@@ -1100,10 +1100,10 @@
         "format": "text/plain",
         "content": "A three-dimensional immunofluorescence atlas of the Uloborus diversus synganglion is established, mapping the distributions of GABA, acetylcholine, serotonin, octopamine/tyramine, and a subset of neuropeptides across all identified neuropils using elastix-registered confocal volumes."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:epistemicStrength": "strong",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:epistemicStrength": "strong",
+      "cg:relations": {
         "enables-method": [
           {
             "@id": "urn:uuid:b7856315-9b56-4c97-97c7-4f3e2e2a785d"
@@ -1149,795 +1149,795 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "figs 1-13",
-      "haak:analysis": "GordusLab/Artiushin-elastix-eLife (GitHub)"
+      "cg:panel": "figs 1-13",
+      "cg:analysis": "GordusLab/Artiushin-elastix-eLife (GitHub)"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/1",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/1",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526",
       "destination": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
       "title": "[[arcuate-body-four-sublayer-differential]] -dissociates-with-> [[protocerebral-bridge-layered-transmitter-architecture]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/2",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/2",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526",
       "destination": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75",
       "title": "[[arcuate-body-four-sublayer-differential]] -dissociates-with-> [[tonsillar-neuropil-serotonin-core-tdc2-shell]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/3",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/3",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526",
       "destination": "urn:uuid:eb91b6b6-92c0-483d-8f88-d75708ac94c6",
       "title": "[[arcuate-body-four-sublayer-differential]] -supports-> [[arcuate-body-layers-neurotransmitter-distinguished]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/4",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/4",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526",
       "destination": "urn:uuid:eb91b6b6-92c0-483d-8f88-d75708ac94c6",
       "title": "[[arcuate-body-four-sublayer-differential]] -extends-> [[arcuate-body-layers-neurotransmitter-distinguished]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/5",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/5",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:eb91b6b6-92c0-483d-8f88-d75708ac94c6",
       "destination": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
       "title": "[[arcuate-body-layers-neurotransmitter-distinguished]] -dissociates-with-> [[protocerebral-bridge-layered-transmitter-architecture]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/6",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/6",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "title": "[[atlas-observational-scope]] -scopes-> [[uloborus-synganglion-neurotransmitter-atlas]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/7",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/7",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:b7856315-9b56-4c97-97c7-4f3e2e2a785d",
       "title": "[[atlas-observational-scope]] -scopes-> [[leg-neuropils-consistent-innervation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/8",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/8",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:a527b1e4-3c93-4579-9e3f-4e079a34a78f",
       "title": "[[atlas-observational-scope]] -scopes-> [[leg-neuropil-serotonin-bilateral-innervation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/9",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/9",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:a7565a82-5c41-40d9-a3d3-5e9194904515",
       "title": "[[atlas-observational-scope]] -scopes-> [[opisthosomal-neuropil-tdc2-perimeter-ladder]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/10",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/10",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:0f8cb9fa-41a6-4a5d-8634-d8b670609fe8",
       "title": "[[atlas-observational-scope]] -scopes-> [[pedipalpal-neuropil-chat-tdc2-dominant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/11",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/11",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c",
       "title": "[[atlas-observational-scope]] -scopes-> [[cheliceral-neuropil-serotonin-tdc2-dominant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/12",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/12",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:7498d258-3c0e-4a77-bd98-49b7deff2950",
       "title": "[[atlas-observational-scope]] -scopes-> [[hagstone-neuropil-serotonin-defined]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/13",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/13",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:80deef22-24b8-4140-8141-276873993f34",
       "title": "[[atlas-observational-scope]] -scopes-> [[mushroom-bodies-present-asta-exclusive]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/14",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/14",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:01384854-d4e5-4e8c-bf0b-239409c22675",
       "title": "[[atlas-observational-scope]] -scopes-> [[globuli-cells-cholinergic-gabaergic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/15",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/15",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c",
       "title": "[[atlas-observational-scope]] -scopes-> [[tonsillar-neuropil-novel-structure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/16",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/16",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75",
       "title": "[[atlas-observational-scope]] -scopes-> [[tonsillar-neuropil-serotonin-core-tdc2-shell]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/17",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/17",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:b8667945-1d0c-4f6d-973b-b64bb9972ea0",
       "title": "[[atlas-observational-scope]] -scopes-> [[protocerebral-bridge-candidate-central-complex]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/18",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/18",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
       "title": "[[atlas-observational-scope]] -scopes-> [[protocerebral-bridge-layered-transmitter-architecture]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/19",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/19",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:eb91b6b6-92c0-483d-8f88-d75708ac94c6",
       "title": "[[atlas-observational-scope]] -scopes-> [[arcuate-body-layers-neurotransmitter-distinguished]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/20",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/20",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:d4e4b107-1540-4bf3-b4af-4dca938e0d06",
       "destination": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526",
       "title": "[[atlas-observational-scope]] -scopes-> [[arcuate-body-four-sublayer-differential]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/21",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/21",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c",
       "destination": "urn:uuid:0f8cb9fa-41a6-4a5d-8634-d8b670609fe8",
       "title": "[[cheliceral-neuropil-serotonin-tdc2-dominant]] -dissociates-with-> [[pedipalpal-neuropil-chat-tdc2-dominant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/22",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/22",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c",
       "destination": "urn:uuid:b7856315-9b56-4c97-97c7-4f3e2e2a785d",
       "title": "[[cheliceral-neuropil-serotonin-tdc2-dominant]] -dissociates-with-> [[leg-neuropils-consistent-innervation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/23",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/23",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:e2b21b80-fbbc-43ea-81ee-b6631c951e16",
       "destination": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
       "title": "[[gad-antibody-peripheral-penetration-only]] -requires-> [[protocerebral-bridge-layered-transmitter-architecture]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/24",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/24",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:e2b21b80-fbbc-43ea-81ee-b6631c951e16",
       "destination": "urn:uuid:01384854-d4e5-4e8c-bf0b-239409c22675",
       "title": "[[gad-antibody-peripheral-penetration-only]] -requires-> [[globuli-cells-cholinergic-gabaergic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/25",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/25",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:01384854-d4e5-4e8c-bf0b-239409c22675",
       "destination": "urn:uuid:80deef22-24b8-4140-8141-276873993f34",
       "title": "[[globuli-cells-cholinergic-gabaergic]] -confirms-> [[mushroom-bodies-present-asta-exclusive]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/26",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/26",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:01384854-d4e5-4e8c-bf0b-239409c22675",
       "destination": "urn:uuid:80deef22-24b8-4140-8141-276873993f34",
       "title": "[[globuli-cells-cholinergic-gabaergic]] -supports-> [[mushroom-bodies-present-asta-exclusive]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/27",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/27",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:7498d258-3c0e-4a77-bd98-49b7deff2950",
       "destination": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c",
       "title": "[[hagstone-neuropil-serotonin-defined]] -dissociates-with-> [[tonsillar-neuropil-novel-structure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/28",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/28",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:7498d258-3c0e-4a77-bd98-49b7deff2950",
       "destination": "urn:uuid:80deef22-24b8-4140-8141-276873993f34",
       "title": "[[hagstone-neuropil-serotonin-defined]] -dissociates-with-> [[mushroom-bodies-present-asta-exclusive]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/29",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/29",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:7498d258-3c0e-4a77-bd98-49b7deff2950",
       "destination": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c",
       "title": "[[hagstone-neuropil-serotonin-defined]] -extends-> [[tonsillar-neuropil-novel-structure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/30",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/30",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:a527b1e4-3c93-4579-9e3f-4e079a34a78f",
       "destination": "urn:uuid:a7565a82-5c41-40d9-a3d3-5e9194904515",
       "title": "[[leg-neuropil-serotonin-bilateral-innervation]] -dissociates-with-> [[opisthosomal-neuropil-tdc2-perimeter-ladder]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/31",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/31",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:a527b1e4-3c93-4579-9e3f-4e079a34a78f",
       "destination": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c",
       "title": "[[leg-neuropil-serotonin-bilateral-innervation]] -dissociates-with-> [[cheliceral-neuropil-serotonin-tdc2-dominant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/32",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/32",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:a527b1e4-3c93-4579-9e3f-4e079a34a78f",
       "destination": "urn:uuid:b7856315-9b56-4c97-97c7-4f3e2e2a785d",
       "title": "[[leg-neuropil-serotonin-bilateral-innervation]] -supports-> [[leg-neuropils-consistent-innervation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/33",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/33",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:b7856315-9b56-4c97-97c7-4f3e2e2a785d",
       "destination": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c",
       "title": "[[leg-neuropils-consistent-innervation]] -dissociates-with-> [[cheliceral-neuropil-serotonin-tdc2-dominant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/34",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/34",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:b7856315-9b56-4c97-97c7-4f3e2e2a785d",
       "destination": "urn:uuid:0f8cb9fa-41a6-4a5d-8634-d8b670609fe8",
       "title": "[[leg-neuropils-consistent-innervation]] -dissociates-with-> [[pedipalpal-neuropil-chat-tdc2-dominant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/35",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/35",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:80deef22-24b8-4140-8141-276873993f34",
       "destination": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c",
       "title": "[[mushroom-bodies-present-asta-exclusive]] -dissociates-with-> [[tonsillar-neuropil-novel-structure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/36",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/36",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:80deef22-24b8-4140-8141-276873993f34",
       "destination": "urn:uuid:7498d258-3c0e-4a77-bd98-49b7deff2950",
       "title": "[[mushroom-bodies-present-asta-exclusive]] -dissociates-with-> [[hagstone-neuropil-serotonin-defined]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/37",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/37",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:a7565a82-5c41-40d9-a3d3-5e9194904515",
       "destination": "urn:uuid:a527b1e4-3c93-4579-9e3f-4e079a34a78f",
       "title": "[[opisthosomal-neuropil-tdc2-perimeter-ladder]] -dissociates-with-> [[leg-neuropil-serotonin-bilateral-innervation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/38",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/38",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:a7565a82-5c41-40d9-a3d3-5e9194904515",
       "destination": "urn:uuid:0f8cb9fa-41a6-4a5d-8634-d8b670609fe8",
       "title": "[[opisthosomal-neuropil-tdc2-perimeter-ladder]] -dissociates-with-> [[pedipalpal-neuropil-chat-tdc2-dominant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/39",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/39",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:0f8cb9fa-41a6-4a5d-8634-d8b670609fe8",
       "destination": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c",
       "title": "[[pedipalpal-neuropil-chat-tdc2-dominant]] -dissociates-with-> [[cheliceral-neuropil-serotonin-tdc2-dominant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/40",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/40",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:0f8cb9fa-41a6-4a5d-8634-d8b670609fe8",
       "destination": "urn:uuid:b7856315-9b56-4c97-97c7-4f3e2e2a785d",
       "title": "[[pedipalpal-neuropil-chat-tdc2-dominant]] -dissociates-with-> [[leg-neuropils-consistent-innervation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/41",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/41",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:b8667945-1d0c-4f6d-973b-b64bb9972ea0",
       "destination": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
       "title": "[[protocerebral-bridge-candidate-central-complex]] -interprets-> [[protocerebral-bridge-layered-transmitter-architecture]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/42",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/42",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:b8667945-1d0c-4f6d-973b-b64bb9972ea0",
       "destination": "urn:uuid:eb91b6b6-92c0-483d-8f88-d75708ac94c6",
       "title": "[[protocerebral-bridge-candidate-central-complex]] -interprets-> [[arcuate-body-layers-neurotransmitter-distinguished]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/43",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/43",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
       "destination": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75",
       "title": "[[protocerebral-bridge-layered-transmitter-architecture]] -dissociates-with-> [[tonsillar-neuropil-serotonin-core-tdc2-shell]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/44",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/44",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
       "destination": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526",
       "title": "[[protocerebral-bridge-layered-transmitter-architecture]] -dissociates-with-> [[arcuate-body-four-sublayer-differential]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/45",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/45",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
       "destination": "urn:uuid:b8667945-1d0c-4f6d-973b-b64bb9972ea0",
       "title": "[[protocerebral-bridge-layered-transmitter-architecture]] -supports-> [[protocerebral-bridge-candidate-central-complex]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/46",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/46",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c",
       "destination": "urn:uuid:7498d258-3c0e-4a77-bd98-49b7deff2950",
       "title": "[[tonsillar-neuropil-novel-structure]] -dissociates-with-> [[hagstone-neuropil-serotonin-defined]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/47",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/47",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c",
       "destination": "urn:uuid:80deef22-24b8-4140-8141-276873993f34",
       "title": "[[tonsillar-neuropil-novel-structure]] -dissociates-with-> [[mushroom-bodies-present-asta-exclusive]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/48",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/48",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75",
       "destination": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
       "title": "[[tonsillar-neuropil-serotonin-core-tdc2-shell]] -dissociates-with-> [[protocerebral-bridge-layered-transmitter-architecture]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/49",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/49",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75",
       "destination": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526",
       "title": "[[tonsillar-neuropil-serotonin-core-tdc2-shell]] -dissociates-with-> [[arcuate-body-four-sublayer-differential]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/50",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/50",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75",
       "destination": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c",
       "title": "[[tonsillar-neuropil-serotonin-core-tdc2-shell]] -supports-> [[tonsillar-neuropil-novel-structure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/51",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/51",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75",
       "destination": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c",
       "title": "[[tonsillar-neuropil-serotonin-core-tdc2-shell]] -extends-> [[tonsillar-neuropil-novel-structure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/52",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/52",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:b7856315-9b56-4c97-97c7-4f3e2e2a785d",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[leg-neuropils-consistent-innervation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/53",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/53",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:a527b1e4-3c93-4579-9e3f-4e079a34a78f",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[leg-neuropil-serotonin-bilateral-innervation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/54",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/54",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:a7565a82-5c41-40d9-a3d3-5e9194904515",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[opisthosomal-neuropil-tdc2-perimeter-ladder]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/55",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/55",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:0f8cb9fa-41a6-4a5d-8634-d8b670609fe8",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[pedipalpal-neuropil-chat-tdc2-dominant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/56",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/56",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:9cfe689f-623e-43b7-bd49-f7075865ae4c",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[cheliceral-neuropil-serotonin-tdc2-dominant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/57",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/57",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:7498d258-3c0e-4a77-bd98-49b7deff2950",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[hagstone-neuropil-serotonin-defined]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/58",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/58",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:80deef22-24b8-4140-8141-276873993f34",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[mushroom-bodies-present-asta-exclusive]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/59",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/59",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:01384854-d4e5-4e8c-bf0b-239409c22675",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[globuli-cells-cholinergic-gabaergic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/60",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/60",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:7fe2b8d9-167a-4743-93af-6795c3c4f34c",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[tonsillar-neuropil-novel-structure]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/61",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/61",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:6060326d-de93-44c9-a073-379eb2cefb75",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[tonsillar-neuropil-serotonin-core-tdc2-shell]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/62",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/62",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:b8667945-1d0c-4f6d-973b-b64bb9972ea0",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[protocerebral-bridge-candidate-central-complex]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/63",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/63",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:42987256-31b8-4f7d-b81f-8f6976a904f0",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[protocerebral-bridge-layered-transmitter-architecture]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/64",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/64",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:eb91b6b6-92c0-483d-8f88-d75708ac94c6",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[arcuate-body-layers-neurotransmitter-distinguished]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/artiushin-2026-spider-atlas/65",
+      "@id": "cg:edge/artiushin-2026-spider-atlas/65",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:ea4408d1-ec9e-491f-83d8-47edc01122d5",
       "destination": "urn:uuid:be5c4a30-84bd-4867-9990-124635635526",
       "title": "[[uloborus-synganglion-neurotransmitter-atlas]] -enables-method-> [[arcuate-body-four-sublayer-differential]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-03-30T00:00:00.000Z"
     }

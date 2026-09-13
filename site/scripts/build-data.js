@@ -13,6 +13,12 @@ import { parse as parseYaml } from 'yaml';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const claimsRoot = join(__dirname, '../../claims');
 const projectRoot = join(__dirname, '../../');
+
+// The layer declaration belongs to the machinery, which is its own repository now. CLAIM_GRAPHS
+// names that checkout; the Makefile exports it, and the default is the sibling convention.
+const machinery = process.env.CLAIM_GRAPHS
+  ? (process.env.CLAIM_GRAPHS.startsWith('/') ? process.env.CLAIM_GRAPHS : join(projectRoot, process.env.CLAIM_GRAPHS))
+  : join(projectRoot, '../claim-graphs');
 const outDir = join(__dirname, '../src/data');
 const outFile = join(outDir, 'claims.json');
 
@@ -615,7 +621,7 @@ if (existsSync(ttlSrc)) {
 //   absent     declared and never produced. Not a link at all.
 //   set        a path containing `*` is a set rather than a file (claims/{paper}/*.md), and
 //              is counted — a count is what a reader can act on.
-const layersDecl = parseYaml(readFileSync(join(projectRoot, 'pipeline/layers.yaml'), 'utf8'));
+const layersDecl = parseYaml(readFileSync(join(machinery, 'pipeline/layers.yaml'), 'utf8'));
 const publicRoot = join(__dirname, '../public');
 
 // Only text is served by the endpoint: it reads the file at build and hands back the bytes,

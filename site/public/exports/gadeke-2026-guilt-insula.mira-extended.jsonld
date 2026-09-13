@@ -2,7 +2,7 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "haak": "https://haak.world/schema/claim#",
+      "cg": "https://w3id.org/claim-graphs/schema#",
       "dgb": "https://discoursegraphs.com/schema/dg_base#",
       "owl": "http://www.w3.org/2002/07/owl#",
       "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -18,71 +18,71 @@
       }
     },
     {
-      "haakx": "https://haak.world/schema/claim-extended#"
+      "cgx": "https://w3id.org/claim-graphs/schema-extended#"
     }
   ],
   "@graph": [
     {
-      "@id": "haak:agent/elife-claim-trees",
+      "@id": "urn:claim-graphs:pipeline",
       "@type": "UserAccount",
-      "accountName": "elife-claim-trees pipeline"
+      "accountName": "claim-graphs pipeline"
     },
     {
-      "@id": "haak:type/Claim",
+      "@id": "cg:type/Claim",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Claim"
       ],
       "label": "Claim",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Evidence",
+      "@id": "cg:type/Evidence",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Evidence"
       ],
       "label": "Evidence",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Protocol",
+      "@id": "cg:type/Protocol",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Protocol"
       ],
       "label": "Protocol",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms",
+      "@id": "cg:reldef/confirms",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/confirms"
+          "hasValue": "cg:reldef/confirms"
         }
       ],
       "label": "confirms",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/confirms/def",
+      "@id": "cg:reldef/confirms/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/confirms",
+        "cg:reldef/confirms",
         "dgb:RelationInstance"
       ],
       "label": "confirms",
@@ -91,33 +91,33 @@
         "format": "text/plain",
         "content": "The source evidence confirms the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/derived_from",
+      "@id": "cg:reldef/derived_from",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/derived_from"
+          "hasValue": "cg:reldef/derived_from"
         }
       ],
       "label": "derived-from",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z",
-      "inverseOf": "haak:reldef/entails"
+      "inverseOf": "cg:reldef/entails"
     },
     {
-      "@id": "haak:reldef/derived_from/def",
+      "@id": "cg:reldef/derived_from/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/derived_from",
+        "cg:reldef/derived_from",
         "dgb:RelationInstance"
       ],
       "label": "derived-from",
@@ -126,32 +126,32 @@
         "format": "text/plain",
         "content": "The source claim was derived from the destination claim; the inverse of entails."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with",
+      "@id": "cg:reldef/dissociates_with",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/dissociates_with"
+          "hasValue": "cg:reldef/dissociates_with"
         }
       ],
       "label": "dissociates-with",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with/def",
+      "@id": "cg:reldef/dissociates_with/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/dissociates_with",
+        "cg:reldef/dissociates_with",
         "dgb:RelationInstance"
       ],
       "label": "dissociates-with",
@@ -160,32 +160,32 @@
         "format": "text/plain",
         "content": "The source and destination jointly establish a dissociation — a contrast between two results, neither bearing on the other's truth. MIRA has no predicate for a contrast, so like the deductive relations it hangs at AbstractRelationDef and the gap report names it."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method",
+      "@id": "cg:reldef/enables_method",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/enables_method"
+          "hasValue": "cg:reldef/enables_method"
         }
       ],
       "label": "enables-method",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method/def",
+      "@id": "cg:reldef/enables_method/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Protocol",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Protocol",
       "subClassOf": [
-        "haak:reldef/enables_method",
+        "cg:reldef/enables_method",
         "dgb:RelationInstance"
       ],
       "label": "enables-method",
@@ -194,32 +194,32 @@
         "format": "text/plain",
         "content": "The source result makes the destination method possible."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails",
+      "@id": "cg:reldef/entails",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/entails"
+          "hasValue": "cg:reldef/entails"
         }
       ],
       "label": "entails",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails/def",
+      "@id": "cg:reldef/entails/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/entails",
+        "cg:reldef/entails",
         "dgb:RelationInstance"
       ],
       "label": "entails",
@@ -228,33 +228,33 @@
         "format": "text/plain",
         "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/in_tension_with",
+      "@id": "cg:reldef/in_tension_with",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:opposes",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/in_tension_with"
+          "hasValue": "cg:reldef/in_tension_with"
         }
       ],
       "label": "in-tension-with",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/in_tension_with/def",
+      "@id": "cg:reldef/in_tension_with/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/in_tension_with",
+        "cg:reldef/in_tension_with",
         "dgb:RelationInstance"
       ],
       "label": "in-tension-with",
@@ -263,32 +263,32 @@
         "format": "text/plain",
         "content": "The source and destination claims are both asserted yet pull a shared implication in opposite directions."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets",
+      "@id": "cg:reldef/interprets",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/interprets"
+          "hasValue": "cg:reldef/interprets"
         }
       ],
       "label": "interprets",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets/def",
+      "@id": "cg:reldef/interprets/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Evidence",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Evidence",
       "subClassOf": [
-        "haak:reldef/interprets",
+        "cg:reldef/interprets",
         "dgb:RelationInstance"
       ],
       "label": "interprets",
@@ -297,32 +297,32 @@
         "format": "text/plain",
         "content": "The source claim offers a theoretical reading of the destination result."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/part_of",
+      "@id": "cg:reldef/part_of",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/part_of"
+          "hasValue": "cg:reldef/part_of"
         }
       ],
       "label": "part-of",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/part_of/def",
+      "@id": "cg:reldef/part_of/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/part_of",
+        "cg:reldef/part_of",
         "dgb:RelationInstance"
       ],
       "label": "part-of",
@@ -331,32 +331,32 @@
         "format": "text/plain",
         "content": "The source claim is a component of the destination — one comparison, condition, measure or study of a proposition the destination states whole. MIRA has no predicate for composition, so like the deductive relations it hangs at AbstractRelationDef and the gap report names it."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires",
+      "@id": "cg:reldef/requires",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/requires"
+          "hasValue": "cg:reldef/requires"
         }
       ],
       "label": "requires",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires/def",
+      "@id": "cg:reldef/requires/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/requires",
+        "cg:reldef/requires",
         "dgb:RelationInstance"
       ],
       "label": "requires",
@@ -365,33 +365,33 @@
         "format": "text/plain",
         "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out",
+      "@id": "cg:reldef/rules_out",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:opposes",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/rules_out"
+          "hasValue": "cg:reldef/rules_out"
         }
       ],
       "label": "rules-out",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out/def",
+      "@id": "cg:reldef/rules_out/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/rules_out",
+        "cg:reldef/rules_out",
         "dgb:RelationInstance"
       ],
       "label": "rules-out",
@@ -400,32 +400,32 @@
         "format": "text/plain",
         "content": "The source evidence eliminates the destination claim as viable."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes",
+      "@id": "cg:reldef/scopes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/scopes"
+          "hasValue": "cg:reldef/scopes"
         }
       ],
       "label": "scopes",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes/def",
+      "@id": "cg:reldef/scopes/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/scopes",
+        "cg:reldef/scopes",
         "dgb:RelationInstance"
       ],
       "label": "scopes",
@@ -434,33 +434,33 @@
         "format": "text/plain",
         "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports",
+      "@id": "cg:reldef/supports",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/supports"
+          "hasValue": "cg:reldef/supports"
         }
       ],
       "label": "supports",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports/def",
+      "@id": "cg:reldef/supports/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/supports",
+        "cg:reldef/supports",
         "dgb:RelationInstance"
       ],
       "label": "supports",
@@ -469,32 +469,32 @@
         "format": "text/plain",
         "content": "The source claim provides support for the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests",
+      "@id": "cg:reldef/tests",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/tests"
+          "hasValue": "cg:reldef/tests"
         }
       ],
       "label": "tests",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests/def",
+      "@id": "cg:reldef/tests/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/tests",
+        "cg:reldef/tests",
         "dgb:RelationInstance"
       ],
       "label": "tests",
@@ -503,33 +503,33 @@
         "format": "text/plain",
         "content": "The source evidence was gathered to test the destination claim. Neither supports nor opposes: it records that a test was run, not how it came out."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates",
+      "@id": "cg:reldef/validates",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/validates"
+          "hasValue": "cg:reldef/validates"
         }
       ],
       "label": "validates",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates/def",
+      "@id": "cg:reldef/validates/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/validates",
+        "cg:reldef/validates",
         "dgb:RelationInstance"
       ],
       "label": "validates",
@@ -538,7 +538,7 @@
         "format": "text/plain",
         "content": "The source evidence validates the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
@@ -550,8 +550,8 @@
         "format": "text/plain",
         "content": "Is it the case that the happiness cost observed in the Social condition is general agency aversion — the unpleasantness of being the decision-maker as such — and is not contingent on responsibility for a negative outcome befalling the partner?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:f43ad09b-00ac-4442-820f-b0476e74d25a#question",
@@ -561,8 +561,8 @@
         "format": "text/plain",
         "content": "Is it the case that the happiness decrease following negative partner outcomes under participant choice is driven by the participant's own lottery outcome rather than by the partner's, and so reflects self-directed disappointment rather than interpersonal guilt?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:d5ba8e97-1aab-40c4-9351-c441d83c5697#question",
@@ -572,8 +572,8 @@
         "format": "text/plain",
         "content": "Is it the case that the imaging pipeline and condition contrasts do not recover established effects, so differences reported between Social and Partner conditions cannot be attributed to the experimental manipulation?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:f5aef1bf-5c3a-43f7-8db7-8f6cac7a0964#question",
@@ -583,8 +583,8 @@
         "format": "text/plain",
         "content": "Is it the case that the model-based fMRI approach does not recover known neural signals, so parametric modulators derived from the computational model — including the partner reward prediction error regressors — cannot be trusted?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:1f6b6cc4-c9cf-4fe2-a7fa-a0bbad09aeda#question",
@@ -594,8 +594,8 @@
         "format": "text/plain",
         "content": "Is it the case that participants did not engage with the lottery task in a value-sensitive way — choices were inattentive or random — so the behavioural measures carry no information about preference or affect?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:51c61d6b-8aee-4a0b-b4fa-da89f129bb8f#question",
@@ -605,8 +605,8 @@
         "format": "text/plain",
         "content": "Is it the case that the happiness and choice differences between Social and Partner conditions reflect a social-context-driven shift in risk attitude — participants become more or less risk averse when choosing on another person's behalf — rather than responsibility-contingent interpersonal guilt?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:c9c60ea3-aab4-4225-b151-17d106195f8d#question",
@@ -616,8 +616,8 @@
         "format": "text/plain",
         "content": "Is it the case that the anterior insula is the neural substrate of the guilt effect, increasing its BOLD response when participants are responsible for low outcomes affecting their partner?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:99bfd176-fde5-4e5e-80d4-cf3352cfa3f2#question",
@@ -627,8 +627,8 @@
         "format": "text/plain",
         "content": "Is it the case that functional connectivity between guilt- and responsibility-related outcome-phase regions and prefrontal cortex changes depending on whether participants decide for themselves alone or also for their partner, and on the type of choice (Safe or Risky)?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:3482235d-fcd8-4a85-ba76-a7bce9216c63#question",
@@ -638,8 +638,8 @@
         "format": "text/plain",
         "content": "Is it the case that a neural substrate tracks the participant's responsibility for the partner's outcomes: within regions sensitive to choice outcomes, the partner's reward prediction errors are represented more strongly when they arise from the participant's own choice than from the partner's choice?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8#question",
@@ -649,8 +649,8 @@
         "format": "text/plain",
         "content": "Is it the case that responsibility for a social choice that yields a low outcome for a partner produces interpersonal guilt, experienced by the decision-maker as a larger decrease in momentary happiness than when the partner made the same choice?"
       },
-      "haak:autoDerived": true,
-      "haak:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
+      "cg:autoDerived": true,
+      "cg:reviewNote": "Derived mechanically from the hypothesis text; MIRA requires a Question node and the claim tree has none. Needs human review before publication."
     },
     {
       "@id": "urn:uuid:85137f0a-ebf3-4512-8cb6-d6cb9eb6931e",
@@ -661,10 +661,10 @@
         "format": "text/plain",
         "content": "The happiness cost observed in the Social condition is general agency aversion — the unpleasantness of being the decision-maker as such — and is not contingent on responsibility for a negative outcome befalling the partner."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:stance": "rejects",
-      "haak:epistemicStrength": "weak",
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:stance": "rejects",
+      "cg:epistemicStrength": "weak",
       "mira:addresses": {
         "@id": "urn:uuid:85137f0a-ebf3-4512-8cb6-d6cb9eb6931e#question"
       }
@@ -678,10 +678,10 @@
         "format": "text/plain",
         "content": "The happiness decrease following negative partner outcomes under participant choice is driven by the participant's own lottery outcome rather than by the partner's, and so reflects self-directed disappointment rather than interpersonal guilt."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:stance": "rejects",
-      "haak:epistemicStrength": "weak",
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:stance": "rejects",
+      "cg:epistemicStrength": "weak",
       "mira:addresses": {
         "@id": "urn:uuid:f43ad09b-00ac-4442-820f-b0476e74d25a#question"
       }
@@ -695,10 +695,10 @@
         "format": "text/plain",
         "content": "The imaging pipeline and condition contrasts do not recover established effects, so differences reported between Social and Partner conditions cannot be attributed to the experimental manipulation."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:stance": "rejects",
-      "haak:epistemicStrength": "weak",
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:stance": "rejects",
+      "cg:epistemicStrength": "weak",
       "mira:addresses": {
         "@id": "urn:uuid:d5ba8e97-1aab-40c4-9351-c441d83c5697#question"
       }
@@ -712,10 +712,10 @@
         "format": "text/plain",
         "content": "The model-based fMRI approach does not recover known neural signals, so parametric modulators derived from the computational model — including the partner reward prediction error regressors — cannot be trusted."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:stance": "rejects",
-      "haak:epistemicStrength": "weak",
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:stance": "rejects",
+      "cg:epistemicStrength": "weak",
       "mira:addresses": {
         "@id": "urn:uuid:f5aef1bf-5c3a-43f7-8db7-8f6cac7a0964#question"
       }
@@ -729,10 +729,10 @@
         "format": "text/plain",
         "content": "Participants did not engage with the lottery task in a value-sensitive way — choices were inattentive or random — so the behavioural measures carry no information about preference or affect."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:stance": "rejects",
-      "haak:epistemicStrength": "weak",
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:stance": "rejects",
+      "cg:epistemicStrength": "weak",
       "mira:addresses": {
         "@id": "urn:uuid:1f6b6cc4-c9cf-4fe2-a7fa-a0bbad09aeda#question"
       }
@@ -746,10 +746,10 @@
         "format": "text/plain",
         "content": "The happiness and choice differences between Social and Partner conditions reflect a social-context-driven shift in risk attitude — participants become more or less risk averse when choosing on another person's behalf — rather than responsibility-contingent interpersonal guilt."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:stance": "rejects",
-      "haak:epistemicStrength": "weak",
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:stance": "rejects",
+      "cg:epistemicStrength": "weak",
       "mira:addresses": {
         "@id": "urn:uuid:51c61d6b-8aee-4a0b-b4fa-da89f129bb8f#question"
       }
@@ -763,16 +763,16 @@
         "format": "text/plain",
         "content": "Among the computational models fitted to momentary happiness data, the Responsibility Redux model achieved the best (lowest) AIC in both studies (Study 1 AIC –1499; Study 2 AIC –1195)."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:relations": {
         "requires": [
           {
             "@id": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7"
           }
         ]
       },
-      "haak:panel": "table1"
+      "cg:panel": "table1"
     },
     {
       "@id": "urn:uuid:c9c60ea3-aab4-4225-b151-17d106195f8d",
@@ -783,10 +783,10 @@
         "format": "text/plain",
         "content": "The anterior insula is the neural substrate of the guilt effect, increasing its BOLD response when participants are responsible for low outcomes affecting their partner."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:7896b58a-0373-452c-9509-613330a94092"
@@ -806,10 +806,10 @@
         "format": "text/plain",
         "content": "If the anterior insula tracks guilt, then insula BOLD should be higher in the Social than the Partner condition and show a significant Social-by-low-outcome interaction."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:c9c60ea3-aab4-4225-b151-17d106195f8d"
@@ -826,9 +826,9 @@
         "format": "text/plain",
         "content": "The authors suggest this left STS region tracks a partner's unexpected outcomes less when they do not follow from the participant's decisions."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "interpretation",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "interpretation",
+      "cg:relations": {
         "interprets": [
           {
             "@id": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578"
@@ -845,9 +845,9 @@
         "format": "text/plain",
         "content": "The behavioural guilt effect (larger happiness decrease after low partner outcomes following participant rather than partner choices) is compatible with 'simple guilt'."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "interpretation",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "interpretation",
+      "cg:relations": {
         "interprets": [
           {
             "@id": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99"
@@ -868,37 +868,37 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:relations": {
         "rules-out": [
           {
             "@id": "urn:uuid:d5ba8e97-1aab-40c4-9351-c441d83c5697"
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-11",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataFile": "fMRIresults/decision/risky>safe_0p05FWE_clust.nii",
-          "haak:publishedValue": "bilateral VS, risky>safe (d=0.72 / 0.85)",
-          "haak:reproducedValue": "401vox [10, 12, -4] T=7.18 · 390vox [-10, 8, -6] T=6.12"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataFile": "fMRIresults/decision/risky>safe_0p05FWE_clust.nii",
+          "cg:publishedValue": "bilateral VS, risky>safe (d=0.72 / 0.85)",
+          "cg:reproducedValue": "401vox [10, 12, -4] T=7.18 · 390vox [-10, 8, -6] T=6.12"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4a"
+      "cg:panel": "fig4a"
     },
     {
       "@id": "urn:uuid:67792426-bb51-4765-90fc-025d56ad605c",
@@ -909,8 +909,8 @@
         "format": "text/plain",
         "content": "In both studies, participants felt worse after low lottery outcomes for the partner when those outcomes followed their own choice rather than the partner's, which the authors interpret as interpersonal guilt."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "synthesis"
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "synthesis"
     },
     {
       "@id": "urn:uuid:32c6eb83-64af-4817-8cae-2a3815939fd6",
@@ -921,10 +921,10 @@
         "format": "text/plain",
         "content": "If connectivity between the guilt- and responsibility-related outcome-phase regions (left insula, left STS) and prefrontal cortex depends on whether participants decide for themselves alone or also for their partner and on the type of choice, then a seed-to-voxel psychophysiological-interaction analysis seeded in these regions should reveal prefrontal clusters showing a significant Condition-by-Choice interaction."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:99bfd176-fde5-4e5e-80d4-cf3352cfa3f2"
@@ -941,34 +941,34 @@
         "format": "text/plain",
         "content": "Connectivity between the left anterior insula and the right inferior frontal gyrus varied with choice and condition, suggesting this prefrontal region is sensitive to guilt-related information during social choices."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "interpretation",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "interpretation",
+      "cg:relations": {
         "interprets": [
           {
             "@id": "urn:uuid:bc4d0d92-e737-4420-a513-ef9f56164a82"
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-11",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataFile": "fMRIresults/PPI/aIns_seed/Risky>SafeXSolo>Social_0p001u_k30_2IFGs.nii",
-          "haak:publishedValue": "aIns seed, condition-dependent IFG coupling",
-          "haak:reproducedValue": "113vox [46, 16, 22] T=4.34 · 38vox [-38, -2, 26] T=4.08"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataFile": "fMRIresults/PPI/aIns_seed/Risky>SafeXSolo>Social_0p001u_k30_2IFGs.nii",
+          "cg:publishedValue": "aIns seed, condition-dependent IFG coupling",
+          "cg:reproducedValue": "113vox [46, 16, 22] T=4.34 · 38vox [-38, -2, 26] T=4.08"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ]
     },
@@ -985,37 +985,37 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "requires": [
           {
             "@id": "urn:uuid:05e1c77d-80e1-4aab-8b94-1273386a0b33"
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-11",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataFile": "fMRIresults/decision/social>solo_0p05FWE_clust.nii",
-          "haak:publishedValue": "3 clusters: precuneus, left TPJ, mPFC",
-          "haak:reproducedValue": "758vox [0, -62, 38] T=5.72 · 216vox [-34, -58, 26] T=4.5 · 135vox [4, 52, 22] T=3.97"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataFile": "fMRIresults/decision/social>solo_0p05FWE_clust.nii",
+          "cg:publishedValue": "3 clusters: precuneus, left TPJ, mPFC",
+          "cg:reproducedValue": "758vox [0, -62, 38] T=5.72 · 216vox [-34, -58, 26] T=4.5 · 135vox [4, 52, 22] T=3.97"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4b"
+      "cg:panel": "fig4b"
     },
     {
       "@id": "urn:uuid:49168f37-934f-49b3-bf0b-36194b87610d",
@@ -1030,16 +1030,16 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "part-of": [
           {
             "@id": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa"
           }
         ]
       },
-      "haak:panel": "app1table10"
+      "cg:panel": "app1table10"
     },
     {
       "@id": "urn:uuid:bbcdbc22-6a62-4040-9f0c-60fd0fbbf7f9",
@@ -1054,9 +1054,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:relations": {
         "in-tension-with": [
           {
             "@id": "urn:uuid:6cdf645a-3865-433f-ac5f-308630199916"
@@ -1068,31 +1068,31 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "partial",
-          "haak:executed": false,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py"
+          "cg:status": "partial",
+          "cg:executed": false,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-10",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:function": "verify_yu_koban() (verify.py line 278)",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataCommit": "11854fe",
-          "haak:dataFile": [
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:function": "verify_yu_koban() (verify.py line 278)",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataCommit": "11854fe",
+          "cg:dataFile": [
             "fMRIresults/outcome/guiltEffectEachPartic.nii.zip",
             "Code/bin/Yu_guilt_SVM_sxpo_sxpx_EmotionForwardmask.nii"
           ],
-          "haak:publishedValue": "sign test p < 0.05",
-          "haak:reproducedValue": "sign p=0.008, wilcoxon p=0.021 (n_pos=28/40)"
+          "cg:publishedValue": "sign test p < 0.05",
+          "cg:reproducedValue": "sign p=0.008, wilcoxon p=0.021 (n_pos=28/40)"
         }
       ]
     },
@@ -1109,16 +1109,16 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "part-of": [
           {
             "@id": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa"
           }
         ]
       },
-      "haak:panel": "app1table9"
+      "cg:panel": "app1table9"
     },
     {
       "@id": "urn:uuid:a289523a-8e2b-4a2e-9b5a-c928f689fa07",
@@ -1133,9 +1133,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:panel": "fig4d"
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:panel": "fig4d"
     },
     {
       "@id": "urn:uuid:05e1c77d-80e1-4aab-8b94-1273386a0b33",
@@ -1146,9 +1146,9 @@
         "format": "text/plain",
         "content": "On each trial participants chose between a safe and a risky monetary option under three conditions: choosing for oneself (Solo), for oneself and the partner (Social), and having the partner choose for both (Partner)."
       },
-      "haakx:epistemicStatus": "mira:Assumption",
-      "haak:role": "scope",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Assumption",
+      "cg:role": "scope",
+      "cg:relations": {
         "scopes": [
           {
             "@id": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99"
@@ -1165,22 +1165,22 @@
         "format": "text/plain",
         "content": "The findings rest on two samples of healthy adults — Study 1 (behaviour only, N = 40) and Study 2 (fMRI, N = 44); all BOLD/fMRI results derive from Study 2, while the behavioural results come from both studies."
       },
-      "haakx:epistemicStatus": "mira:Assumption",
-      "haak:role": "scope",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Assumption",
+      "cg:role": "scope",
+      "cg:relations": {
         "scopes": [
           {
             "@id": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99"
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-04-20",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ]
     },
@@ -1193,10 +1193,10 @@
         "format": "text/plain",
         "content": "Functional connectivity between guilt- and responsibility-related outcome-phase regions and prefrontal cortex changes depending on whether participants decide for themselves alone or also for their partner, and on the type of choice (Safe or Risky)."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:32c6eb83-64af-4817-8cae-2a3815939fd6"
@@ -1220,9 +1220,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:32c6eb83-64af-4817-8cae-2a3815939fd6"
@@ -1239,7 +1239,7 @@
           }
         ]
       },
-      "haak:panel": "fig5"
+      "cg:panel": "fig5"
     },
     {
       "@id": "urn:uuid:be34b7c6-0ed7-4211-9e98-b9ca16df0d51",
@@ -1254,9 +1254,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:relations": {
         "rules-out": [
           {
             "@id": "urn:uuid:f43ad09b-00ac-4442-820f-b0476e74d25a"
@@ -1268,25 +1268,25 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-11",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataFile": "Code/csv/Behav - Happiness_singleTrialData_socialRiskyChoicesOnly.csv",
-          "haak:publishedValue": "own-win t(39)=-3.58 p<0.001 · own-loss t(39)=-3.39 p=0.002",
-          "haak:reproducedValue": "own-win t(39)=-3.57 p=0.0010 · own-loss t(36)=-3.59 p=0.0010"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataFile": "Code/csv/Behav - Happiness_singleTrialData_socialRiskyChoicesOnly.csv",
+          "cg:publishedValue": "own-win t(39)=-3.58 p<0.001 · own-loss t(39)=-3.39 p=0.002",
+          "cg:reproducedValue": "own-win t(39)=-3.57 p=0.0010 · own-loss t(36)=-3.59 p=0.0010"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ]
     },
@@ -1299,22 +1299,22 @@
         "format": "text/plain",
         "content": "To hold the partner's behaviour constant across participants, the partner's decisions were simulated by an algorithm that always selected the option with the highest expected value."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:relations": {
         "enables-method": [
           {
             "@id": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99"
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ]
     },
@@ -1331,27 +1331,27 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:verification": [
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-11",
-          "haak:status": "partial",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataFile": "fMRIresults/outcome/guiltEffectEachPartic.nii",
-          "haak:publishedValue": "Spearman rho=-0.058, p=0.725",
-          "haak:reproducedValue": "rho=0.088, p=0.588, n=40 — null reproduces, coefficient differs from the reported -0.058. Volume i is assumed to be row i: the deposit ships no participant order for the 4D map, so"
+          "cg:status": "partial",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataFile": "fMRIresults/outcome/guiltEffectEachPartic.nii",
+          "cg:publishedValue": "Spearman rho=-0.058, p=0.725",
+          "cg:reproducedValue": "rho=0.088, p=0.588, n=40 — null reproduces, coefficient differs from the reported -0.058. Volume i is assumed to be row i: the deposit ships no participant order for the 4D map, so"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ]
     },
@@ -1368,9 +1368,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:7896b58a-0373-452c-9509-613330a94092"
@@ -1392,7 +1392,7 @@
           }
         ]
       },
-      "haak:panel": "fig4e"
+      "cg:panel": "fig4e"
     },
     {
       "@id": "urn:uuid:1d1c47d0-28f9-4c6f-93b5-eae6e8f62688",
@@ -1407,9 +1407,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:panel": "fig5s1"
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:panel": "fig5s1"
     },
     {
       "@id": "urn:uuid:a4a93102-d24f-47c6-b78d-57e4bf7a0208",
@@ -1424,16 +1424,16 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578"
           }
         ]
       },
-      "haak:panel": "fig4i"
+      "cg:panel": "fig4i"
     },
     {
       "@id": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
@@ -1448,9 +1448,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605"
@@ -1472,16 +1472,16 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "table1"
+      "cg:panel": "table1"
     },
     {
       "@id": "urn:uuid:256f3e8f-87f6-4a84-9fd2-d564243c1eb6",
@@ -1492,16 +1492,16 @@
         "format": "text/plain",
         "content": "The linear mixed model containing all three two-way interaction terms (Model 5, Equation 10) explained the happiness data significantly better than simpler models without interactions (p < 2e−5) and no worse than the model with all interactions (p > 0.5), warranting reporting the crucial partnerHigh:participantDecided (guilt) interaction from it."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:relations": {
         "validates": [
           {
             "@id": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99"
           }
         ]
       },
-      "haak:panel": "app1table2"
+      "cg:panel": "app1table2"
     },
     {
       "@id": "urn:uuid:0a12c97e-06a5-4565-940b-451e9c00ff41",
@@ -1512,9 +1512,9 @@
         "format": "text/plain",
         "content": "The lower happiness when the participant is the decision-maker may reflect responsibility aversion — a cost of the 'weight of the responsibility'."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "interpretation",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "interpretation",
+      "cg:relations": {
         "interprets": [
           {
             "@id": "urn:uuid:9fbb1b24-0d56-4a63-824f-9878838a3f28"
@@ -1535,9 +1535,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:relations": {
         "rules-out": [
           {
             "@id": "urn:uuid:f5aef1bf-5c3a-43f7-8db7-8f6cac7a0964"
@@ -1549,28 +1549,28 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-11",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataFile": "fMRIresults/model-based/CR+EV_0p001u_k70_0p05FWE.nii",
-          "haak:publishedValue": "L 110vox [-14 8 -8] T=5.63 · R 80vox [10 10 -4] T=5.46",
-          "haak:reproducedValue": "110vox [-14, 8, -8] T=5.63 · 80vox [10, 10, -4] T=5.46"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataFile": "fMRIresults/model-based/CR+EV_0p001u_k70_0p05FWE.nii",
+          "cg:publishedValue": "L 110vox [-14 8 -8] T=5.63 · R 80vox [10 10 -4] T=5.46",
+          "cg:reproducedValue": "110vox [-14, 8, -8] T=5.63 · 80vox [10, 10, -4] T=5.46"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4g"
+      "cg:panel": "fig4g"
     },
     {
       "@id": "urn:uuid:aaddc052-7ff9-4a14-805a-cf9fa8a42d59",
@@ -1585,9 +1585,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:7896b58a-0373-452c-9509-613330a94092"
@@ -1599,31 +1599,31 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-06",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:function": "verify_insula_peak() (verify.py line 235)",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataCommit": "11854fe",
-          "haak:dataFile": "fMRIresults/outcome/guiltEffect_0p05FWE_SVC_aIns.nii",
-          "haak:publishedValue": "peak MNI [-28, 24, -4]",
-          "haak:reproducedValue": "peak MNI [-28, 24, -4]"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:function": "verify_insula_peak() (verify.py line 235)",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataCommit": "11854fe",
+          "cg:dataFile": "fMRIresults/outcome/guiltEffect_0p05FWE_SVC_aIns.nii",
+          "cg:publishedValue": "peak MNI [-28, 24, -4]",
+          "cg:reproducedValue": "peak MNI [-28, 24, -4]"
         }
       ],
-      "haak:panel": "fig4f"
+      "cg:panel": "fig4f"
     },
     {
       "@id": "urn:uuid:04a39c08-a886-4f89-bd7d-dc08a9be9cbd",
@@ -1638,16 +1638,16 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "part-of": [
           {
             "@id": "urn:uuid:f12d294d-eafe-4a6b-9968-8b4d9034ee56"
           }
         ]
       },
-      "haak:panel": "app1table1"
+      "cg:panel": "app1table1"
     },
     {
       "@id": "urn:uuid:db286450-f335-4e88-b8b2-706b3a36cc98",
@@ -1658,8 +1658,8 @@
         "format": "text/plain",
         "content": "A model-based GLM (GLM2) entered the best-fitting computational (Responsibility) model's variables — certain rewards (CR), expected value (EV), participant RPE (sRPE), and partner RPE from participant choices (social_pRPE) and from partner choices (partner_pRPE) — as regressors to locate brain regions reflecting them."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological"
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological"
     },
     {
       "@id": "urn:uuid:3139ed2b-ab4c-4ae9-8131-60a86d0203c6",
@@ -1670,9 +1670,9 @@
         "format": "text/plain",
         "content": "Model selection among the happiness models used likelihood-ratio tests comparing the Responsibility model pairwise against each other model, supplementing the AIC, BIC, R² and adjusted R² values."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:relations": {
         "enables-method": [
           {
             "@id": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30"
@@ -1689,8 +1689,8 @@
         "format": "text/plain",
         "content": "Momentary happiness was modelled with five computational models (Basic, Inequality, Guilt-envy, Responsibility, and Responsibility Redux) sharing separate, exponentially decaying terms for certain rewards, expected value, and reward prediction errors."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological"
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological"
     },
     {
       "@id": "urn:uuid:af961744-17b9-414d-b52a-b1451d7816e2",
@@ -1701,10 +1701,10 @@
         "format": "text/plain",
         "content": "If a neural substrate tracks the participant's responsibility for the partner's outcomes, then within regions sensitive to the outcomes of risky choices, BOLD should respond more strongly to the partner's reward prediction errors resulting from the participant's own choices than from the partner's choices."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:3482235d-fcd8-4a85-ba76-a7bce9216c63"
@@ -1721,10 +1721,10 @@
         "format": "text/plain",
         "content": "A neural substrate tracks the participant's responsibility for the partner's outcomes: within regions sensitive to choice outcomes, the partner's reward prediction errors are represented more strongly when they arise from the participant's own choice than from the partner's choice."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:af961744-17b9-414d-b52a-b1451d7816e2"
@@ -1748,9 +1748,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f"
@@ -1771,9 +1771,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:af961744-17b9-414d-b52a-b1451d7816e2"
@@ -1795,28 +1795,28 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-11",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataFile": "fMRIresults/model-based/pRPEsocial>pRPEpartner_0p001u_k70.nii",
-          "haak:publishedValue": "left STS, pRPEsocial > pRPEpartner",
-          "haak:reproducedValue": "99vox [-52, -32, 0] T=4.7"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataFile": "fMRIresults/model-based/pRPEsocial>pRPEpartner_0p001u_k70.nii",
+          "cg:publishedValue": "left STS, pRPEsocial > pRPEpartner",
+          "cg:reproducedValue": "99vox [-52, -32, 0] T=4.7"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "blocked",
-          "haak:executed": false
+          "cg:status": "blocked",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig4h"
+      "cg:panel": "fig4h"
     },
     {
       "@id": "urn:uuid:42388dde-c009-4b8d-9eb8-9bd1c44f0795",
@@ -1831,16 +1831,16 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "part-of": [
           {
             "@id": "urn:uuid:077e31a7-4fa3-471e-b1a7-aeba86331dca"
           }
         ]
       },
-      "haak:panel": "fig4c"
+      "cg:panel": "fig4c"
     },
     {
       "@id": "urn:uuid:16d67552-5456-47aa-a8e7-b2f8a6dba280",
@@ -1851,9 +1851,9 @@
         "format": "text/plain",
         "content": "A parameter-recovery procedure on synthetic data generated from each participant's estimated parameters showed the happiness-model parameters could be reliably recovered, verifying their stability."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "methodological",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "methodological",
+      "cg:relations": {
         "enables-method": [
           {
             "@id": "urn:uuid:22c6b000-90d3-4115-aa71-a7c184345e72"
@@ -1865,7 +1865,7 @@
           }
         ]
       },
-      "haak:panel": "fig3s1"
+      "cg:panel": "fig3s1"
     },
     {
       "@id": "urn:uuid:9fbb1b24-0d56-4a63-824f-9878838a3f28",
@@ -1880,9 +1880,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "dissociates-with": [
           {
             "@id": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99"
@@ -1894,25 +1894,25 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-11",
-          "haak:status": "partial",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataFile": "Code/csv/Behav - Happiness_singleTrialData_socialRiskyChoicesOnly.csv",
-          "haak:publishedValue": "t(3600)=-3.92, p<0.0001, beta=-0.14",
-          "haak:reproducedValue": "decided=-0.048 vs not=0.122, t(39)=-2.60 p=0.0131 — direction reproduces on the deposited subset (social risky choices, 1216 trials); the paper's model covers ~3600"
+          "cg:status": "partial",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataFile": "Code/csv/Behav - Happiness_singleTrialData_socialRiskyChoicesOnly.csv",
+          "cg:publishedValue": "t(3600)=-3.92, p<0.0001, beta=-0.14",
+          "cg:reproducedValue": "decided=-0.048 vs not=0.122, t(39)=-2.60 p=0.0131 — direction reproduces on the deposited subset (social risky choices, 1216 trials); the paper's model covers ~3600"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ]
     },
@@ -1929,40 +1929,40 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30"
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-06",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:function": "verify_happiness_partner() (verify.py line 147)",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataCommit": "11854fe",
-          "haak:dataFile": "Code/csv/",
-          "haak:publishedValue": "R2 = 0.185 (fMRI cohort), 0.147 (behavioural cohort)",
-          "haak:reproducedValue": "R2 = 0.184, 0.145"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:function": "verify_happiness_partner() (verify.py line 147)",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataCommit": "11854fe",
+          "cg:dataFile": "Code/csv/",
+          "cg:publishedValue": "R2 = 0.185 (fMRI cohort), 0.147 (behavioural cohort)",
+          "cg:reproducedValue": "R2 = 0.184, 0.145"
         }
       ],
-      "haak:panel": "fig3b,fig3f"
+      "cg:panel": "fig3b,fig3f"
     },
     {
       "@id": "urn:uuid:7efedbb1-f561-4b3f-8368-550a1d65f093",
@@ -1977,16 +1977,16 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30"
           }
         ]
       },
-      "haak:panel": "fig3a,fig3e"
+      "cg:panel": "fig3a,fig3e"
     },
     {
       "@id": "urn:uuid:f12d294d-eafe-4a6b-9968-8b4d9034ee56",
@@ -2001,9 +2001,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "requires": [
           {
             "@id": "urn:uuid:05e1c77d-80e1-4aab-8b94-1273386a0b33"
@@ -2015,28 +2015,28 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-11",
-          "haak:status": "partial",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataFile": "Code/csv/Behav - Choices_singleTrialData.csv",
-          "haak:publishedValue": "t(4796)=2.54, p=0.011 (weak, not replicated in Study 2)",
-          "haak:reproducedValue": "cond0=0.518 vs cond1=0.536, t(39)=-1.06 p=0.297 per participant — the deposit does not document which level is Solo, and a per-participant test has far less power than the paper's trial-level model"
+          "cg:status": "partial",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataFile": "Code/csv/Behav - Choices_singleTrialData.csv",
+          "cg:publishedValue": "t(4796)=2.54, p=0.011 (weak, not replicated in Study 2)",
+          "cg:reproducedValue": "cond0=0.518 vs cond1=0.536, t(39)=-1.06 p=0.297 per participant — the deposit does not document which level is Solo, and a per-participant test has far less power than the paper's trial-level model"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig2a,fig2d"
+      "cg:panel": "fig2a,fig2d"
     },
     {
       "@id": "urn:uuid:d591bac9-ef83-498d-9b20-a71865d84e92",
@@ -2051,9 +2051,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30"
@@ -2074,40 +2074,40 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:relations": {
         "rules-out": [
           {
             "@id": "urn:uuid:1f6b6cc4-c9cf-4fe2-a7fa-a0bbad09aeda"
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "partial",
-          "haak:executed": false,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py"
+          "cg:status": "partial",
+          "cg:executed": false,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-06",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:function": "verify_lottery_ev() (verify.py line 74)",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataCommit": "11854fe",
-          "haak:dataFile": "Code/csv/fMRI - Choices_singleTrialData.csv",
-          "haak:publishedValue": "beta > 0, p < 0.05",
-          "haak:reproducedValue": "beta = 0.032, p = 9.55e-68, n = 2400"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:function": "verify_lottery_ev() (verify.py line 74)",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataCommit": "11854fe",
+          "cg:dataFile": "Code/csv/fMRI - Choices_singleTrialData.csv",
+          "cg:publishedValue": "beta > 0, p < 0.05",
+          "cg:reproducedValue": "beta = 0.032, p = 9.55e-68, n = 2400"
         }
       ],
-      "haak:panel": "fig2a,fig2d"
+      "cg:panel": "fig2a,fig2d"
     },
     {
       "@id": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f",
@@ -2118,8 +2118,8 @@
         "format": "text/plain",
         "content": "Participants showed very similar risk preferences whether deciding only for themselves (Solo) or for themselves and their partner (Social), with only a tendency toward higher risk aversion in the Social condition in Study 1."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "synthesis"
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "synthesis"
     },
     {
       "@id": "urn:uuid:e6a5212c-8f7a-4946-8e3b-9ea75ad954bf",
@@ -2134,16 +2134,16 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f"
           }
         ]
       },
-      "haak:panel": "fig2c,fig2f"
+      "cg:panel": "fig2c,fig2f"
     },
     {
       "@id": "urn:uuid:153a5ccc-6999-4c3b-a0a7-7fa168fda438",
@@ -2158,9 +2158,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605"
@@ -2177,25 +2177,25 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-11",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataFile": "Code/csv/Behav - Responsibility - fittedParameters.csv",
-          "haak:publishedValue": "Z=2.85, p=0.004 (social_pRPE > 0)",
-          "haak:reproducedValue": "median=0.197, wilcoxon p=0.0037, 27/40 above zero"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataFile": "Code/csv/Behav - Responsibility - fittedParameters.csv",
+          "cg:publishedValue": "Z=2.85, p=0.004 (social_pRPE > 0)",
+          "cg:reproducedValue": "median=0.197, wilcoxon p=0.0037, 27/40 above zero"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ]
     },
@@ -2212,16 +2212,16 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:relations": {
         "validates": [
           {
             "@id": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99"
           }
         ]
       },
-      "haak:panel": "app1table11"
+      "cg:panel": "app1table11"
     },
     {
       "@id": "urn:uuid:cac423cb-4c24-400d-aa4e-833c084c21ac",
@@ -2232,9 +2232,9 @@
         "format": "text/plain",
         "content": "Prior functional connectivity work has shown network differences between social and self-only choices, midbrain–anterior cingulate interactions during guilt compensation, and links between insula connectivity and responsibility aversion."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "literature-context",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "literature-context",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:99bfd176-fde5-4e5e-80d4-cf3352cfa3f2"
@@ -2251,9 +2251,9 @@
         "format": "text/plain",
         "content": "Prior literature documents an association between the anterior insula and guilt."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "literature-context",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "literature-context",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:c9c60ea3-aab4-4225-b151-17d106195f8d"
@@ -2274,9 +2274,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:relations": {
         "validates": [
           {
             "@id": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99"
@@ -2297,9 +2297,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "requires": [
           {
             "@id": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7"
@@ -2311,7 +2311,7 @@
           }
         ]
       },
-      "haak:panel": "table1"
+      "cg:panel": "table1"
     },
     {
       "@id": "urn:uuid:52cc08a1-e54c-4fd3-b788-f5057d5c50ef",
@@ -2322,10 +2322,10 @@
         "format": "text/plain",
         "content": "If responsibility for outcomes generates guilt, then participant happiness should decrease more after low lottery outcomes for the partner when the participant rather than the partner chose the lottery."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8"
@@ -2342,10 +2342,10 @@
         "format": "text/plain",
         "content": "If responsibility for the partner's outcomes influences the participant's momentary happiness, then a computational model that includes the partner's reward prediction errors arising from the participant's own choices (social_pRPE) should explain the happiness data better than models omitting them, and social_pRPE weights should be reliably greater than zero."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "prediction",
-      "haak:epistemicStrength": "prediction",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "prediction",
+      "cg:epistemicStrength": "prediction",
+      "cg:relations": {
         "derived-from": [
           {
             "@id": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8"
@@ -2366,16 +2366,16 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "requires": [
           {
             "@id": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7"
           }
         ]
       },
-      "haak:panel": "fig3c,fig3g"
+      "cg:panel": "fig3c,fig3g"
     },
     {
       "@id": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
@@ -2386,10 +2386,10 @@
         "format": "text/plain",
         "content": "Responsibility for a social choice that yields a low outcome for a partner produces interpersonal guilt, experienced by the decision-maker as a larger decrease in momentary happiness than when the partner made the same choice."
       },
-      "haakx:epistemicStatus": "mira:Hypothesis",
-      "haak:role": "hypothesis",
-      "haak:epistemicStrength": "hypothesis",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Hypothesis",
+      "cg:role": "hypothesis",
+      "cg:epistemicStrength": "hypothesis",
+      "cg:relations": {
         "entails": [
           {
             "@id": "urn:uuid:52cc08a1-e54c-4fd3-b788-f5057d5c50ef"
@@ -2416,9 +2416,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:relations": {
         "validates": [
           {
             "@id": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7"
@@ -2439,9 +2439,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "control",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "control",
+      "cg:relations": {
         "rules-out": [
           {
             "@id": "urn:uuid:51c61d6b-8aee-4a0b-b4fa-da89f129bb8f"
@@ -2453,16 +2453,16 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "unattempted",
-          "haak:executed": false
+          "cg:status": "unattempted",
+          "cg:executed": false
         }
       ],
-      "haak:panel": "fig2b,fig2e"
+      "cg:panel": "fig2b,fig2e"
     },
     {
       "@id": "urn:uuid:136a7088-111c-4b99-bf89-f2f70e66b1ff",
@@ -2473,9 +2473,9 @@
         "format": "text/plain",
         "content": "Rutledge and colleagues established that changes in momentary happiness during a probabilistic reward task are explained by recent reward expectations and the prediction errors arising from them."
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "literature-context",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "literature-context",
+      "cg:relations": {
         "supports": [
           {
             "@id": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30"
@@ -2492,9 +2492,9 @@
         "format": "text/plain",
         "content": "Study 2 reproduced the Study 1 design inside the fMRI scanner with identical parameters except for longer inter-stimulus intervals (3–11 s) and partners who were experimenters positioned outside the scanner."
       },
-      "haakx:epistemicStatus": "mira:Assumption",
-      "haak:role": "scope",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Assumption",
+      "cg:role": "scope",
+      "cg:relations": {
         "scopes": [
           {
             "@id": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa"
@@ -2515,9 +2515,9 @@
         "@id": "https://doi.org/10.7554/eLife.105391",
         "@type": "SourceDocument"
       },
-      "haakx:epistemicStatus": "mira:Claim",
-      "haak:role": "empirical",
-      "haak:relations": {
+      "cgx:epistemicStatus": "mira:Claim",
+      "cg:role": "empirical",
+      "cg:relations": {
         "confirms": [
           {
             "@id": "urn:uuid:52cc08a1-e54c-4fd3-b788-f5057d5c50ef"
@@ -2542,953 +2542,953 @@
           }
         ]
       },
-      "haak:verification": [
+      "cg:verification": [
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-03-30",
-          "haak:status": "verified",
-          "haak:executed": false,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py"
+          "cg:status": "verified",
+          "cg:executed": false,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py"
         },
         {
-          "@type": "haak:VerificationRecord",
-          "haak:agent": "mainen-z",
+          "@type": "cg:VerificationRecord",
+          "cg:agent": "mainen-z",
           "schema:date": "2026-09-06",
-          "haak:status": "verified",
-          "haak:executed": true,
-          "haak:script": "verification/gadeke-2026-guilt-insula/verify.py",
-          "haak:function": "verify_guilt_happiness() (verify.py line 197)",
-          "haak:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
-          "haak:dataCommit": "11854fe",
-          "haak:dataFile": "Code/csv/",
-          "haak:publishedValue": "beta = 0.33 (fMRI cohort), 0.39 (behavioural cohort)",
-          "haak:reproducedValue": "beta = 0.34, 0.40"
+          "cg:status": "verified",
+          "cg:executed": true,
+          "cg:script": "verification/gadeke-2026-guilt-insula/verify.py",
+          "cg:function": "verify_guilt_happiness() (verify.py line 197)",
+          "cg:dataSource": "https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment",
+          "cg:dataCommit": "11854fe",
+          "cg:dataFile": "Code/csv/",
+          "cg:publishedValue": "beta = 0.33 (fMRI cohort), 0.39 (behavioural cohort)",
+          "cg:reproducedValue": "beta = 0.34, 0.40"
         }
       ],
-      "haak:panel": "fig3d,fig3h"
+      "cg:panel": "fig3d,fig3h"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/1",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/1",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:2b7d839d-9617-46ad-8d4e-dc19f19a6841",
       "destination": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7",
       "title": "[[among-computational-models-fitted-momentary]] -requires-> [[momentary-happiness-modelled-five-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/2",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/2",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:c9c60ea3-aab4-4225-b151-17d106195f8d",
       "destination": "urn:uuid:7896b58a-0373-452c-9509-613330a94092",
       "title": "[[anterior-insula-neural-substrate-guilt]] -entails-> [[anterior-insula-tracks-guilt-insula]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/3",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/3",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:19f0e43d-1849-4834-91e6-49874132b069",
       "destination": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "title": "[[authors-suggest-left-sts-region]] -interprets-> [[one-cluster-left-sts-responded]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/4",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/4",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:88dab75c-7655-43de-9456-8dc6db9e57d0",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[behavioural-guilt-effect-larger-happiness]] -interprets-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/5",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/5",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:0edf7194-a69c-402e-9183-904e9b279bb9",
       "destination": "urn:uuid:d5ba8e97-1aab-40c4-9351-c441d83c5697",
       "title": "[[bilateral-ventral-striatum-more-active]] -rules-out-> [[alt-imaging-contrast-invalid]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/6",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/6",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:dc8fcf43-bc0c-40c9-bda1-46f2b1cc3f61",
       "destination": "urn:uuid:bc4d0d92-e737-4420-a513-ef9f56164a82",
       "title": "[[connectivity-between-left-anterior-insula]] -interprets-> [[functional-connectivity-between-left-anterior]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/7",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/7",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:077e31a7-4fa3-471e-b1a7-aeba86331dca",
       "destination": "urn:uuid:05e1c77d-80e1-4aab-8b94-1273386a0b33",
       "title": "[[decisions-social-compared-solo-condition]] -requires-> [[each-trial-participants-chose-between]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/8",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/8",
       "@type": [
-        "haak:reldef/part_of"
+        "cg:reldef/part_of"
       ],
       "source": "urn:uuid:49168f37-934f-49b3-bf0b-36194b87610d",
       "destination": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "title": "[[difference-response-between-low-high]] -part-of-> [[insula-rois-responded-more-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/9",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/9",
       "@type": [
-        "haak:reldef/in_tension_with"
+        "cg:reldef/in_tension_with"
       ],
       "source": "urn:uuid:bbcdbc22-6a62-4040-9f0c-60fd0fbbf7f9",
       "destination": "urn:uuid:6cdf645a-3865-433f-ac5f-308630199916",
       "title": "[[dot-products-between-individual-neural]] -in-tension-with-> [[individual-grbs-dot-product-values-not]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/10",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/10",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:bbcdbc22-6a62-4040-9f0c-60fd0fbbf7f9",
       "destination": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "title": "[[dot-products-between-individual-neural]] -validates-> [[insula-rois-responded-more-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/11",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/11",
       "@type": [
-        "haak:reldef/part_of"
+        "cg:reldef/part_of"
       ],
       "source": "urn:uuid:fb95f04d-ed6b-4f14-bbfd-998a574b10dd",
       "destination": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "title": "[[during-outcome-phase-responses-low]] -part-of-> [[insula-rois-responded-more-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/12",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/12",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:05e1c77d-80e1-4aab-8b94-1273386a0b33",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[each-trial-participants-chose-between]] -scopes-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/13",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/13",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:2005532f-b003-46be-827f-5597a232f385",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[findings-rest-two-samples-healthy]] -scopes-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/14",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/14",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:99bfd176-fde5-4e5e-80d4-cf3352cfa3f2",
       "destination": "urn:uuid:32c6eb83-64af-4817-8cae-2a3815939fd6",
       "title": "[[functional-connectivity-between-guilt-responsibility-related]] -entails-> [[connectivity-between-guilt-responsibility-related-outcome-ph]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/15",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/15",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:bc4d0d92-e737-4420-a513-ef9f56164a82",
       "destination": "urn:uuid:32c6eb83-64af-4817-8cae-2a3815939fd6",
       "title": "[[functional-connectivity-between-left-anterior]] -confirms-> [[connectivity-between-guilt-responsibility-related-outcome-ph]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/16",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/16",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:bc4d0d92-e737-4420-a513-ef9f56164a82",
       "destination": "urn:uuid:32c6eb83-64af-4817-8cae-2a3815939fd6",
       "title": "[[functional-connectivity-between-left-anterior]] -tests-> [[connectivity-between-guilt-responsibility-related-outcome-ph]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/17",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/17",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:bc4d0d92-e737-4420-a513-ef9f56164a82",
       "destination": "urn:uuid:99bfd176-fde5-4e5e-80d4-cf3352cfa3f2",
       "title": "[[functional-connectivity-between-left-anterior]] -supports-> [[functional-connectivity-between-guilt-responsibility-related]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/18",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/18",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:be34b7c6-0ed7-4211-9e98-b9ca16df0d51",
       "destination": "urn:uuid:f43ad09b-00ac-4442-820f-b0476e74d25a",
       "title": "[[guilt-effect-occurred-whether-participant]] -rules-out-> [[alt-guilt-effect-driven-by-own-outcome]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/19",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/19",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:be34b7c6-0ed7-4211-9e98-b9ca16df0d51",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[guilt-effect-occurred-whether-participant]] -validates-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/20",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/20",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:40ad0de9-7352-4e66-b192-fdf239643013",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[hold-partner-behaviour-constant-across]] -enables-method-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/21",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/21",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "destination": "urn:uuid:7896b58a-0373-452c-9509-613330a94092",
       "title": "[[insula-rois-responded-more-low]] -confirms-> [[anterior-insula-tracks-guilt-insula]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/22",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/22",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "destination": "urn:uuid:7896b58a-0373-452c-9509-613330a94092",
       "title": "[[insula-rois-responded-more-low]] -tests-> [[anterior-insula-tracks-guilt-insula]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/23",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/23",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "destination": "urn:uuid:c9c60ea3-aab4-4225-b151-17d106195f8d",
       "title": "[[insula-rois-responded-more-low]] -supports-> [[anterior-insula-neural-substrate-guilt]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/24",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/24",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "destination": "urn:uuid:a289523a-8e2b-4a2e-9b5a-c928f689fa07",
       "title": "[[insula-rois-responded-more-low]] -requires-> [[during-receipt-lottery-versus-safe]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/25",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/25",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:a4a93102-d24f-47c6-b78d-57e4bf7a0208",
       "destination": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "title": "[[left-superior-temporal-sulcus-cluster]] -supports-> [[one-cluster-left-sts-responded]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/26",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/26",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "destination": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605",
       "title": "[[likelihood-ratio-test-showed-responsibility]] -confirms-> [[responsibility-partner-outcomes-influences-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/27",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/27",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "destination": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605",
       "title": "[[likelihood-ratio-test-showed-responsibility]] -tests-> [[responsibility-partner-outcomes-influences-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/28",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/28",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "destination": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
       "title": "[[likelihood-ratio-test-showed-responsibility]] -supports-> [[responsibility-social-choice-yields-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/29",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/29",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "destination": "urn:uuid:3139ed2b-ab4c-4ae9-8131-60a86d0203c6",
       "title": "[[likelihood-ratio-test-showed-responsibility]] -requires-> [[model-selection-among-happiness-models]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/30",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/30",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:256f3e8f-87f6-4a84-9fd2-d564243c1eb6",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[linear-mixed-model-containing-all]] -validates-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/31",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/31",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:0a12c97e-06a5-4565-940b-451e9c00ff41",
       "destination": "urn:uuid:9fbb1b24-0d56-4a63-824f-9878838a3f28",
       "title": "[[lower-happiness-when-participant-decision-maker]] -interprets-> [[participant-happiness-lower-when-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/32",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/32",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:9b641e59-dbca-4931-8682-5a8d8eac63e3",
       "destination": "urn:uuid:f5aef1bf-5c3a-43f7-8db7-8f6cac7a0964",
       "title": "[[manipulation-check-bilateral-ventral-striatum]] -rules-out-> [[alt-model-based-glm-invalid]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/33",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/33",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:9b641e59-dbca-4931-8682-5a8d8eac63e3",
       "destination": "urn:uuid:db286450-f335-4e88-b8b2-706b3a36cc98",
       "title": "[[manipulation-check-bilateral-ventral-striatum]] -validates-> [[model-based-glm-entered-best-fitting-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/34",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/34",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:aaddc052-7ff9-4a14-805a-cf9fa8a42d59",
       "destination": "urn:uuid:7896b58a-0373-452c-9509-613330a94092",
       "title": "[[mass-univariate-voxel-wise-analysis-found-small]] -confirms-> [[anterior-insula-tracks-guilt-insula]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/35",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/35",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:aaddc052-7ff9-4a14-805a-cf9fa8a42d59",
       "destination": "urn:uuid:7896b58a-0373-452c-9509-613330a94092",
       "title": "[[mass-univariate-voxel-wise-analysis-found-small]] -tests-> [[anterior-insula-tracks-guilt-insula]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/36",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/36",
       "@type": [
-        "haak:reldef/part_of"
+        "cg:reldef/part_of"
       ],
       "source": "urn:uuid:04a39c08-a886-4f89-bd7d-dc08a9be9cbd",
       "destination": "urn:uuid:f12d294d-eafe-4a6b-9968-8b4d9034ee56",
       "title": "[[mixed-effects-regressions-choices-social-condition]] -part-of-> [[participants-chose-risky-option-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/37",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/37",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:3139ed2b-ab4c-4ae9-8131-60a86d0203c6",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[model-selection-among-happiness-models]] -enables-method-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/38",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/38",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:3482235d-fcd8-4a85-ba76-a7bce9216c63",
       "destination": "urn:uuid:af961744-17b9-414d-b52a-b1451d7816e2",
       "title": "[[neural-substrate-tracks-participant-responsibility]] -entails-> [[neural-substrate-tracks-participant-responsibility-2]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/39",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/39",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:2da2c101-3210-4699-8395-b46b11bbe2d5",
       "destination": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f",
       "title": "[[no-significant-interaction-between-difference]] -supports-> [[participants-showed-very-similar-risk]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/40",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/40",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "destination": "urn:uuid:af961744-17b9-414d-b52a-b1451d7816e2",
       "title": "[[one-cluster-left-sts-responded]] -confirms-> [[neural-substrate-tracks-participant-responsibility-2]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/41",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/41",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "destination": "urn:uuid:af961744-17b9-414d-b52a-b1451d7816e2",
       "title": "[[one-cluster-left-sts-responded]] -tests-> [[neural-substrate-tracks-participant-responsibility-2]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/42",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/42",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "destination": "urn:uuid:3482235d-fcd8-4a85-ba76-a7bce9216c63",
       "title": "[[one-cluster-left-sts-responded]] -supports-> [[neural-substrate-tracks-participant-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/43",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/43",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:d1a0bd7d-2794-484d-a513-848c86aa5578",
       "destination": "urn:uuid:db286450-f335-4e88-b8b2-706b3a36cc98",
       "title": "[[one-cluster-left-sts-responded]] -requires-> [[model-based-glm-entered-best-fitting-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/44",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/44",
       "@type": [
-        "haak:reldef/part_of"
+        "cg:reldef/part_of"
       ],
       "source": "urn:uuid:42388dde-c009-4b8d-9eb8-9bd1c44f0795",
       "destination": "urn:uuid:077e31a7-4fa3-471e-b1a7-aeba86331dca",
       "title": "[[only-precuneus-tpj-showed-positive]] -part-of-> [[decisions-social-compared-solo-condition]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/45",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/45",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:16d67552-5456-47aa-a8e7-b2f8a6dba280",
       "destination": "urn:uuid:22c6b000-90d3-4115-aa71-a7c184345e72",
       "title": "[[parameter-recovery-procedure-synthetic-data-generated]] -enables-method-> [[responsibility-redux-model-incorporating-expected]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/46",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/46",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:16d67552-5456-47aa-a8e7-b2f8a6dba280",
       "destination": "urn:uuid:22c6b000-90d3-4115-aa71-a7c184345e72",
       "title": "[[parameter-recovery-procedure-synthetic-data-generated]] -validates-> [[responsibility-redux-model-incorporating-expected]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/47",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/47",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:9fbb1b24-0d56-4a63-824f-9878838a3f28",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[participant-happiness-lower-when-participant]] -dissociates-with-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/48",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/48",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:9fbb1b24-0d56-4a63-824f-9878838a3f28",
       "destination": "urn:uuid:85137f0a-ebf3-4512-8cb6-d6cb9eb6931e",
       "title": "[[participant-happiness-lower-when-participant]] -rules-out-> [[alt-agency-aversion-not-guilt]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/49",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/49",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:0b0270ec-9c6e-44cd-925a-1cf4d2710b99",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[participant-momentary-happiness-varied-rewards-2]] -supports-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/50",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/50",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:7efedbb1-f561-4b3f-8368-550a1d65f093",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[participant-momentary-happiness-varied-rewards]] -supports-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/51",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/51",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:f12d294d-eafe-4a6b-9968-8b4d9034ee56",
       "destination": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f",
       "title": "[[participants-chose-risky-option-lottery]] -supports-> [[participants-showed-very-similar-risk]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/52",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/52",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:f12d294d-eafe-4a6b-9968-8b4d9034ee56",
       "destination": "urn:uuid:05e1c77d-80e1-4aab-8b94-1273386a0b33",
       "title": "[[participants-chose-risky-option-lottery]] -requires-> [[each-trial-participants-chose-between]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/53",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/53",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:d591bac9-ef83-498d-9b20-a71865d84e92",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[participants-own-reward-prediction-errors]] -supports-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/54",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/54",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:2fc68635-8b12-4013-9f44-5cbc696eb177",
       "destination": "urn:uuid:1f6b6cc4-c9cf-4fe2-a7fa-a0bbad09aeda",
       "title": "[[participants-probability-choosing-risky-option]] -rules-out-> [[alt-participants-insensitive-to-value]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/55",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/55",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:e6a5212c-8f7a-4946-8e3b-9ea75ad954bf",
       "destination": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f",
       "title": "[[participants-slightly-more-risk-averse]] -supports-> [[participants-showed-very-similar-risk]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/56",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/56",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:153a5ccc-6999-4c3b-a0a7-7fa168fda438",
       "destination": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605",
       "title": "[[partner-reward-prediction-errors-resulting]] -confirms-> [[responsibility-partner-outcomes-influences-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/57",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/57",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:153a5ccc-6999-4c3b-a0a7-7fa168fda438",
       "destination": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605",
       "title": "[[partner-reward-prediction-errors-resulting]] -tests-> [[responsibility-partner-outcomes-influences-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/58",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/58",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:153a5ccc-6999-4c3b-a0a7-7fa168fda438",
       "destination": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
       "title": "[[partner-reward-prediction-errors-resulting]] -supports-> [[responsibility-social-choice-yields-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/59",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/59",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:d8cad4fe-5332-4f92-b0ca-12c143e2611e",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[pre-task-icebreaker-succeeded-establishing-positive]] -validates-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/60",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/60",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:cac423cb-4c24-400d-aa4e-833c084c21ac",
       "destination": "urn:uuid:99bfd176-fde5-4e5e-80d4-cf3352cfa3f2",
       "title": "[[prior-functional-connectivity-work-shown]] -supports-> [[functional-connectivity-between-guilt-responsibility-related]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/61",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/61",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:9a8b2e58-dcdf-41bc-a908-c1aadd61c11f",
       "destination": "urn:uuid:c9c60ea3-aab4-4225-b151-17d106195f8d",
       "title": "[[prior-literature-documents-association-between]] -supports-> [[anterior-insula-neural-substrate-guilt]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/62",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/62",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:78bf184d-9af1-4f3a-8c1f-4efc7dbc2a34",
       "destination": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "title": "[[responsibility-choices-not-influence-happiness]] -validates-> [[when-partner-received-low-lottery]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/63",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/63",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:f1812754-4a69-47b9-a5a1-7b464cb7317b",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[responsibility-model-yielded-higher-values]] -supports-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/64",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/64",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:f1812754-4a69-47b9-a5a1-7b464cb7317b",
       "destination": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7",
       "title": "[[responsibility-model-yielded-higher-values]] -requires-> [[momentary-happiness-modelled-five-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/65",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/65",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:22c6b000-90d3-4115-aa71-a7c184345e72",
       "destination": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7",
       "title": "[[responsibility-redux-model-incorporating-expected]] -requires-> [[momentary-happiness-modelled-five-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/66",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/66",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
       "destination": "urn:uuid:52cc08a1-e54c-4fd3-b788-f5057d5c50ef",
       "title": "[[responsibility-social-choice-yields-low]] -entails-> [[responsibility-outcomes-generates-guilt-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/67",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/67",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
       "destination": "urn:uuid:ebfa6051-f9ac-4e76-987d-c007a88f4605",
       "title": "[[responsibility-social-choice-yields-low]] -entails-> [[responsibility-partner-outcomes-influences-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/68",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/68",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:43b388c8-9d29-4fd4-8c6e-db588f0ba409",
       "destination": "urn:uuid:0694f71a-3833-44b8-92c2-5d4fba1029f7",
       "title": "[[risk-aversion-parameter-not-differ-between]] -validates-> [[momentary-happiness-modelled-five-computational]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/69",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/69",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:fd564416-51dd-4894-9cd1-02e5af9c8af4",
       "destination": "urn:uuid:51c61d6b-8aee-4a0b-b4fa-da89f129bb8f",
       "title": "[[risk-premiums-not-differ-between]] -rules-out-> [[alt-social-context-shifts-risk-attitude]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/70",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/70",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:fd564416-51dd-4894-9cd1-02e5af9c8af4",
       "destination": "urn:uuid:c7402514-904a-4748-b305-062e30f8907f",
       "title": "[[risk-premiums-not-differ-between]] -supports-> [[participants-showed-very-similar-risk]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/71",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/71",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:136a7088-111c-4b99-bf89-f2f70e66b1ff",
       "destination": "urn:uuid:2b3e78d5-e3a7-4e42-9281-8594e67b4e30",
       "title": "[[rutledge-colleagues-established-changes-momentary]] -supports-> [[likelihood-ratio-test-showed-responsibility]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/72",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/72",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:846060d5-c556-4a0f-8668-9adfd8937224",
       "destination": "urn:uuid:2a3eeb46-8619-4df2-8111-6e94460538aa",
       "title": "[[study-reproduced-study-design-inside]] -scopes-> [[insula-rois-responded-more-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/73",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/73",
       "@type": [
-        "haak:reldef/confirms"
+        "cg:reldef/confirms"
       ],
       "source": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "destination": "urn:uuid:52cc08a1-e54c-4fd3-b788-f5057d5c50ef",
       "title": "[[when-partner-received-low-lottery]] -confirms-> [[responsibility-outcomes-generates-guilt-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/74",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/74",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "destination": "urn:uuid:52cc08a1-e54c-4fd3-b788-f5057d5c50ef",
       "title": "[[when-partner-received-low-lottery]] -tests-> [[responsibility-outcomes-generates-guilt-participant]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/75",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/75",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "destination": "urn:uuid:16aa2ef1-fc68-44bf-a82a-9dc377dc8ed8",
       "title": "[[when-partner-received-low-lottery]] -supports-> [[responsibility-social-choice-yields-low]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/76",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/76",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "destination": "urn:uuid:67792426-bb51-4765-90fc-025d56ad605c",
       "title": "[[when-partner-received-low-lottery]] -supports-> [[both-studies-participants-felt-worse]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/gadeke-2026-guilt-insula/77",
+      "@id": "cg:edge/gadeke-2026-guilt-insula/77",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:8762076c-4ce2-46c7-9537-7af8ba43fa99",
       "destination": "urn:uuid:256f3e8f-87f6-4a84-9fd2-d564243c1eb6",
       "title": "[[when-partner-received-low-lottery]] -requires-> [[linear-mixed-model-containing-all]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-09-10T00:00:00.000Z",
       "modified": "2026-09-13T00:00:00.000Z"
     }
