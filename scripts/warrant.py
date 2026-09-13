@@ -371,10 +371,13 @@ def _propagate(lvl: str, fired: list[str], role: str, d: dict,
 
 
 def _order(doss: dict[str, dict]) -> list[str]:
-    """Slugs in an order where a claim's requires/interprets/part-of targets come first.
+    """Slugs in an order where the claims a claim reads resolve before it.
 
-    A depth-first walk down those edges, tolerant of the cycles the tree should not contain but
-    a checker cannot assume away: a slug already on the stack is left where it is.
+    A depth-first walk down the edges whose resolved level the rule reads: `requires` (propagation),
+    `interprets`, `part-of`, and — for the v3 agreement clause — the incoming `supported_by` and
+    `extended_by` a synthesis or interpretation draws on, so every input is resolved before the
+    "none is weak" test runs over it. Tolerant of the cycles the tree should not contain but a
+    checker cannot assume away: a slug already on the stack is left where it is.
     """
     order: list[str] = []
     seen: set[str] = set()
@@ -385,7 +388,8 @@ def _order(doss: dict[str, dict]) -> list[str]:
             return
         stack.add(slug)
         for t in (doss[slug].get("requires", []) + doss[slug].get("interprets", [])
-                  + doss[slug].get("part_of", [])):
+                  + doss[slug].get("part_of", []) + doss[slug].get("supported_by", [])
+                  + doss[slug].get("extended_by", [])):
             if t in doss and t not in stack:
                 visit(t)
         stack.discard(slug)
