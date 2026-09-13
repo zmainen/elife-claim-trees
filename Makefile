@@ -90,8 +90,9 @@ check:  ## Gates that are clean on main. A failure here is this change's fault.
 	cd extract && $(PYTHON) -m elife_extract.cli contract
 	# PR #95 deleted a name from edges.py and left a reference — the package failed to import
 	# on main while `make check` stayed green because contract reaches it through deferred paths.
-	cd extract && $(PYTHON) -c "import elife_extract.cli, elife_extract.edges, elife_extract.layers, elife_extract.write"
+	cd extract && $(PYTHON) -c "import elife_extract.cli, elife_extract.edges, elife_extract.layers, elife_extract.write, elife_extract.sources"
 	cd extract && $(PYTHON) tests/test_layer_contract.py
+	cd extract && $(PYTHON) tests/test_sources.py
 	cd extract && $(PYTHON) tests/test_prompt_contract.py
 	cd extract && $(PYTHON) tests/test_profiles.py
 	cd extract && $(PYTHON) tests/test_evaluate_precision_and_edges.py
