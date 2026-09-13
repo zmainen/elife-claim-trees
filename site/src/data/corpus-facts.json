@@ -800,6 +800,14 @@
         "scheme": "open",
         "version": "8f199958cdfb"
       },
+      "verification-check": {
+        "provisional_on": [
+          "claim-format",
+          "relation-vocab"
+        ],
+        "scheme": "proposed",
+        "version": "5033b8e2e1bd"
+      },
       "warrant": {
         "provisional_on": [
           "claim-format",
@@ -1681,6 +1689,32 @@
         "scope": "paper",
         "status": "proposed",
         "title": "Warrant",
+        "views": [
+          "table"
+        ]
+      },
+      {
+        "added": "2026-09-13",
+        "command": "cd extract && python3 -m elife_extract.cli verification-check --paper {paper}",
+        "group": "measures",
+        "how": "For every claim it reads the reproduction records the claim carries and the verification provenance the audited run wrote (`verification/<paper>/provenance.json`), and writes one verdict into `check_verification:`: `reproduced` (a record marked verified whose provenance shows the script ran and measured the value), `partial` (recorded verified but not observed running, or a run that executed without measuring the value), `mismatch` (a re-run that disagreed with the paper \u2014 the site shows it as contested-by-verification), `blocked`, `unattempted`, or `unrecorded` (no record at all). `check_verification_from:` lists the record statuses and provenance it read. It never touches `warrant:`.\nMechanical: no model and no prompt. The rule is precedence over the evidence a claim carries \u2014 the most adverse informative verdict winning \u2014 so a claim with both a blocked and a mismatch record reads `mismatch`. The dopamine paper's single dSTORM mismatch is the first real case. Export mapping \u2014 how a check reaches the MIRA and OXA encodings \u2014 follows.\n",
+        "id": "verification-check",
+        "issue": 126,
+        "kind": "feature",
+        "needs": [
+          "claim-tree",
+          "verification"
+        ],
+        "produces": [
+          "runs/{paper}/verification-check.output.json"
+        ],
+        "question": "Does a re-run stand behind each claim, read beside its warrant?",
+        "reads": [
+          "extract/elife_extract/verification_check.py"
+        ],
+        "scope": "paper",
+        "status": "proposed",
+        "title": "Verification check",
         "views": [
           "table"
         ]
@@ -43114,6 +43148,12 @@
         "verification": {
           "state": "absent"
         },
+        "verification-check": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "verification"
+          ]
+        },
         "warrant": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -43355,6 +43395,9 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "state": "absent"
+        },
         "warrant": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -43588,6 +43631,9 @@
           "ran": "2026-09-10T17:20:18Z",
           "state": "unrecorded",
           "v": 1
+        },
+        "verification-check": {
+          "state": "absent"
         },
         "warrant": {
           "state": "absent",
@@ -44955,6 +45001,9 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "state": "absent"
+        },
         "warrant": {
           "appeared": [],
           "blocked_by": [
@@ -45213,6 +45262,9 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "state": "absent"
+        },
         "warrant": {
           "state": "absent"
         }
@@ -45462,6 +45514,12 @@
         "verification": {
           "state": "absent"
         },
+        "verification-check": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "verification"
+          ]
+        },
         "warrant": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -45709,6 +45767,9 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "state": "absent"
+        },
         "warrant": {
           "state": "absent"
         }
@@ -45938,6 +45999,12 @@
         },
         "verification": {
           "state": "absent"
+        },
+        "verification-check": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "verification"
+          ]
         },
         "warrant": {
           "state": "absent"
@@ -46181,6 +46248,9 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "state": "absent"
+        },
         "warrant": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -46420,6 +46490,9 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "state": "absent"
+        },
         "warrant": {
           "state": "absent"
         }
@@ -46530,5 +46603,33 @@
     "scheller-2026-self-prioritization",
     "wengert-2026-kcnc1"
   ],
-  "verify_scripts": 7
+  "verify_scripts": 7,
+  "warrant": {
+    "counts": {
+      "confirmed": 5,
+      "moderate": 17,
+      "ruled-out": 6,
+      "strong": 5,
+      "unassessed": 30,
+      "weak": 5
+    },
+    "papers": {
+      "gadeke-2026-guilt-insula": {
+        "counts": {
+          "confirmed": 5,
+          "moderate": 17,
+          "ruled-out": 6,
+          "strong": 5,
+          "unassessed": 30,
+          "weak": 5
+        },
+        "reached": 38,
+        "total": 68,
+        "unassessed": 30
+      }
+    },
+    "reached": 38,
+    "total": 68,
+    "unassessed": 30
+  }
 }
