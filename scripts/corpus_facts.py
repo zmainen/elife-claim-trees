@@ -251,14 +251,21 @@ def layers(site):
     for s in site:
         has_tree = os.path.isdir(os.path.join(CLAIMS, s))
         prov = os.path.join(ROOT, "verification", s, "provenance.json")
-        verified = 0
+        # A PASS whose value the run did not measure is not a verified result. It was counted
+        # as one until the runs began saying which was which, and the two are not the same
+        # thing to publish: one paper's script reported PASS on every claim it lists whether
+        # or not its data downloaded. `recalled` is kept beside the count rather than folded
+        # into it, so the number that dropped can be seen rather than merely be smaller.
+        verified = recalled = 0
         if os.path.isfile(prov):
             try:
                 with open(prov, encoding="utf-8") as fh:
-                    verified = sum(1 for r in json.load(fh).get("results", [])
-                                   if r.get("status") == "PASS")
+                    results = json.load(fh).get("results", [])
+                passes = [r for r in results if r.get("status") == "PASS"]
+                recalled = sum(1 for r in passes if r.get("measured") is False)
+                verified = len(passes) - recalled
             except Exception:                                         # noqa: BLE001
-                verified = 0
+                verified = recalled = 0
         st = stances(s)
         ev_quotes = ev_verified = 0
         rec = os.path.join(ROOT, "runs", s, "reconciler.output.json")
@@ -278,6 +285,7 @@ def layers(site):
                 os.path.join(ROOT, "verification", s, "verify.py")),
             "verification_observed": os.path.isfile(prov),
             "verified_results": verified,
+            "recalled_results": recalled,
             "formats": os.path.isfile(os.path.join(ROOT, "exports", f"{s}.mira.jsonld")),
             "coverage": os.path.isfile(os.path.join(ROOT, "mappings", f"{s}.json")),
             "marked": os.path.isfile(os.path.join(ROOT, "marked", f"{s}.marked.md")),

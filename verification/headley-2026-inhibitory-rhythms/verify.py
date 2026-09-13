@@ -36,8 +36,15 @@ REPO_DIR = "/tmp/headley"
 
 ROWS = []
 
-def row(slug, paper_val, repro_val, status):
-    ROWS.append((slug, paper_val, repro_val, status))
+def row(slug, paper_val, repro_val, status, measured=True):
+    """`measured=False` when repro_val is a remembered observation this run did not make.
+
+    The status still says what the evidence would mean if it held; the flag says whether this
+    run is the thing that found it. Downstream needs to tell those apart, and the status field
+    alone cannot: a PASS carrying numbers copied from notes is indistinguishable from a PASS
+    carrying numbers a simulation just produced.
+    """
+    ROWS.append((slug, paper_val, repro_val, status, measured))
 
 def print_table():
     col_w = [48, 26, 40, 6]
@@ -47,8 +54,15 @@ def print_table():
     print(" | ".join(h.ljust(w) for h, w in zip(header, col_w)))
     print(sep)
     for r in ROWS:
-        print(" | ".join(str(v).ljust(w) for v, w in zip(r, col_w)))
-    print(sep + "\n")
+        cells = list(r[:4])
+        if len(r) >= 5 and not r[4]:
+            cells[3] = f"{cells[3]}*"
+        print(" | ".join(str(v).ljust(w) for v, w in zip(cells, col_w)))
+    print(sep)
+    if any(len(r) >= 5 and not r[4] for r in ROWS):
+        print("* not measured in this run — the value is from notes taken when the "
+              "analysis was first done.")
+    print()
 
 # ── Repo clone ─────────────────────────────────────────────────────────────────
 
@@ -81,10 +95,10 @@ def verify_figure4a():
     if not csvs:
         row("distal-inhib-drops-firing-02hz",
             "control=5.5 Hz, distal×2=0.2 Hz",
-            "control=5.5±0.86, dendritic=0.2±0.15 Hz (from notes)", "PASS")
+            "control=5.5±0.86, dendritic=0.2±0.15 Hz (from notes)", "PASS", measured=False)
         row("perisomatic-inhib-drops-firing-07hz",
             "control=5.5 Hz, perisomatic×2=0.7 Hz",
-            "control=5.5±0.86, somatic=0.7±0.31 Hz (from notes)", "PASS")
+            "control=5.5±0.86, somatic=0.7±0.31 Hz (from notes)", "PASS", measured=False)
         print(f"  firing-rate claims: CSV not found, using notes ({time.time()-t0:.1f}s)")
         return 2
 
@@ -136,7 +150,7 @@ def verify_na_spikes():
     csvs = find_csv("Figure2b") or find_csv("Fig2b") or find_csv("Figure3b")
     if not csvs:
         row(slug, "Na+ spike peak -1 to -3 ms before AP (proximal)",
-            "dist=0→-2ms, dist=1→-3ms, dist=2→-1ms (from notes)", "PASS")
+            "dist=0→-2ms, dist=1→-3ms, dist=2→-1ms (from notes)", "PASS", measured=False)
         print(f"  {slug}: using notes ({time.time()-t0:.1f}s)")
         return 1
 
@@ -180,7 +194,7 @@ def verify_nmda_spikes():
     csvs = find_csv("Figure3a") or find_csv("Fig3a")
     if not csvs:
         row(slug, "NMDA peak -15 to -25 ms before AP (distal)",
-            "dist=6→-15ms, dist=7→-20ms before AP (from notes)", "PASS")
+            "dist=6→-15ms, dist=7→-20ms before AP (from notes)", "PASS", measured=False)
         print(f"  {slug}: using notes ({time.time()-t0:.1f}s)")
         return 1
 
@@ -225,7 +239,7 @@ def verify_ca_spikes():
     csvs = find_csv("Figure3c") or find_csv("Fig3c")
     if not csvs:
         row(slug, "~20 ms before AP (distal apical tuft)",
-            "dist=9→-25ms, dist 2-7→-5ms (from notes)", "PASS")
+            "dist=9→-25ms, dist 2-7→-5ms (from notes)", "PASS", measured=False)
         print(f"  {slug}: using notes ({time.time()-t0:.1f}s)")
         return 1
 
@@ -314,7 +328,7 @@ def verify_subtractive_divisive():
     csvs = find_csv("Figure4b") or find_csv("Fig4b")
     if not csvs:
         row(slug, "threshold 100→400 pA, max rate 19→15 Hz",
-            "threshold 100→400 pA, max 19→15 Hz (from notes)", "PASS")
+            "threshold 100→400 pA, max 19→15 Hz (from notes)", "PASS", measured=False)
         print(f"  {slug}: using notes ({time.time()-t0:.1f}s)")
         return 1
 
@@ -408,13 +422,13 @@ def main():
     if not clone_repo():
         for r in [
             ("distal-inhib-drops-firing-02hz", "control=5.5, distal=0.2 Hz",
-             "control=5.5±0.86, dendritic=0.2±0.15 Hz (from notes)", "PASS"),
+             "control=5.5±0.86, dendritic=0.2±0.15 Hz (from notes)", "PASS", False),
             ("perisomatic-inhib-drops-firing-07hz", "control=5.5, peri=0.7 Hz",
-             "control=5.5±0.86, somatic=0.7±0.31 Hz (from notes)", "PASS"),
+             "control=5.5±0.86, somatic=0.7±0.31 Hz (from notes)", "PASS", False),
             ("na-spikes-couple-2to3ms-before-ap", "Na+ peak -1 to -3 ms",
-             "dist=0→-2ms, dist=1→-3ms (from notes)", "PASS"),
+             "dist=0→-2ms, dist=1→-3ms (from notes)", "PASS", False),
             ("nmda-spikes-couple-25ms-before-ap", "NMDA peak -15 to -25 ms",
-             "dist=6→-15ms, dist=7→-20ms (from notes)", "PASS"),
+             "dist=6→-15ms, dist=7→-20ms (from notes)", "PASS", False),
         ]:
             ROWS.append(r)
         print_table()
@@ -456,9 +470,9 @@ def main():
     print("SUMMARY")
     print_table()
 
-    n_pass = sum(1 for _, _, _, s in ROWS if s == "PASS")
-    n_warn = sum(1 for _, _, _, s in ROWS if s == "WARN")
-    n_fail = sum(1 for _, _, _, s in ROWS if s == "FAIL")
+    n_pass = sum(1 for r in ROWS if r[3] == "PASS")
+    n_warn = sum(1 for r in ROWS if r[3] == "WARN")
+    n_fail = sum(1 for r in ROWS if r[3] == "FAIL")
     print(f"{n_pass}/{len(ROWS)} claims verified ({n_warn} WARN, {n_fail} FAIL)")
     return 0 if n_fail == 0 else 1
 

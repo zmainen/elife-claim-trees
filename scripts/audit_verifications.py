@@ -15,6 +15,7 @@ two and reports every disagreement:
   data_file      the record names a file the run never opened
   unrecorded     the run produced a verdict for a claim that has no reproduction record
   no_run         the paper has a verify.py but no provenance -- it has never been observed
+  unmeasured     every result backing the claim carries a value the run did not measure
   self_contradiction  the record says `verified` while its own notes say it was partial
 
 Exit status is non-zero if any disagreement is found, so this can gate a release.
@@ -160,6 +161,19 @@ def audit(paper):
                                  "detail": f"`{status}` by reading, not by running — a "
                                            f"{role} claim, which no script settles"})
         elif runs:
+            # A result can carry a value the run did not produce: the script found no data, or
+            # timed out, or merely checked that a process exited, and recorded the number it
+            # was told to expect. Such a row says what the claim would mean if the value held,
+            # not that this run found it holding. When every result for a claim is of that
+            # kind, its status rests on nothing this run did, and the status field alone cannot
+            # show it -- which is why the runs carry `measured` separately.
+            recalled = [r for r in runs if r.get("measured") is False]
+            if status in SETTLED and len(recalled) == len(runs):
+                findings.append({
+                    "kind": "unmeasured", "level": "error", "claim": slug,
+                    "detail": (f"recorded `{status}`, and the run produced "
+                               f"{len(runs)} result(s) for it, none of them measured here "
+                               f"({'; '.join(r['reproduced_value'][:60] for r in recalled)})")})
             verdicts = {VERDICT.get(r["status"], r["status"].lower()) for r in runs}
             if status not in verdicts:
                 best = max((STRENGTH.get(v, 0) for v in verdicts), default=0)
