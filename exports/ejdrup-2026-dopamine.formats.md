@@ -13,23 +13,24 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 | `scopes` | 8 | `haak:scopes`, neutral | kept | dropped |
 | `validates` | 6 | `haak:validates`, under `mira:supports` | kept | kept |
 | `rules-out` | 5 | `haak:rules-out`, under `mira:opposes` | kept | kept |
-| `dissociates-with` | 4 | `haak:dissociates-with`, under `mira:opposes` | kept | kept |
+| `dissociates-with` | 4 | `haak:dissociates-with`, neutral | kept | dropped |
 | `interprets` | 2 | `haak:interprets`, neutral | kept | dropped |
 
 ## What MIRA has no predicate for — and what happens instead
 
-**51 of 95 relations (54%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
+**55 of 95 relations (58%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
 - `haak:requires` (20) — a claim depends on another holding
 - `haak:entails` (11) — a hypothesis entails its prediction — the deductive step
 - `haak:scopes` (8) — a scope constraint governs another claim's validity
+- `haak:dissociates-with` (4) — the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric)
 - `haak:interprets` (2) — one claim interprets another
 
 Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.
 
 ## What a reader who knows only core MIRA sees
 
-Every relation keeps its own type — nothing is flattened into `supports`. 43 of the 94 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
+Every relation keeps its own type — nothing is flattened into `supports`. 39 of the 94 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
 - `supports` (28) — under `mira:supports`
 - `requires` (20) — neutral
@@ -38,7 +39,7 @@ Every relation keeps its own type — nothing is flattened into `supports`. 43 o
 - `scopes` (7) — neutral
 - `validates` (6) — under `mira:supports`
 - `rules-out` (5) — under `mira:opposes`
-- `dissociates-with` (4) — under `mira:opposes`
+- `dissociates-with` (4) — neutral
 - `interprets` (2) — neutral
 
 ## What MIRA genuinely cannot carry

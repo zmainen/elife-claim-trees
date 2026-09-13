@@ -1,5 +1,5 @@
 ---
-uuid: e2e8c5f6-2773-452a-aeb2-fa43495691a4
+uuid: 05d723fa-3228-4f73-b106-6964b88f3c86
 slug: only-precuneus-tpj-showed-positive
 doi: null
 claim: Only the precuneus and TPJ showed positive Risky–Safe differences in both the Social>Solo and Social>Partner
@@ -9,8 +9,6 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
-part-of:
-- decisions-social-compared-solo-condition
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -21,10 +19,6 @@ reproductions: []
 ---
 
 **Notes from extraction:** Caption states all coefficients and differences are significantly different from 0 (see Appendix 1—table 4).
-
-**Relations.** Why each outgoing edge was inferred:
-
-- `part-of` → `decisions-social-compared-solo-condition`: The precuneus/TPJ subset is one component of the Social-greater-than-Solo cluster result.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

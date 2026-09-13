@@ -79,3 +79,7 @@ extraction-path: jats
 - per-agent counts: {'results': 44, 'caption': 25, 'structure': 16}
 - reconciliation strategy: confidence-tagged
 - prompt variant: default
+
+## Unsupported parts of the argument
+
+- [left-ifg-cluster-showed-opposite](left-ifg-cluster-showed-opposite.md) — the second PPI leg of the connectivity hypothesis - the left-IFG cluster with the STS seed - did not survive correction for multiple comparisons (p uncorrected = 0.001), so the STS half of the connectivity claim rests on an uncorrected result

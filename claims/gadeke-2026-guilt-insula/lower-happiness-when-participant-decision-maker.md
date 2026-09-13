@@ -1,5 +1,5 @@
 ---
-uuid: b0fad57c-46f9-4a12-9363-a74891518c0c
+uuid: 97e9a49d-aab6-431f-b12a-fc1d430d5e58
 slug: lower-happiness-when-participant-decision-maker
 doi: null
 claim: The lower happiness when the participant is the decision-maker may reflect responsibility aversion
@@ -24,7 +24,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `interprets` → `participant-happiness-lower-when-participant`: The responsibility-aversion reading reframes the lower happiness when the participant decides (evidence at span results-073).
+- `interprets` → `participant-happiness-lower-when-participant`: responsibility aversion is offered as a reading of the agency effect (results-073)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

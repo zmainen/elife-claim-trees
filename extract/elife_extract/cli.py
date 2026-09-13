@@ -205,17 +205,22 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
 
     supplied = args.answer or args.edges_json
     if supplied:
-        from .edges import edges_from_raw
+        from .edges import edges_from_raw, unsupported_from_raw
         from .layers import _write_json, answer_file
         draft, _ = best_draft(args.paper, cfg)
+        slugs = _unique_slugs(draft.claims)
         p, label = answer_file(supplied, cfg)
         # A directory of per-arc answers merges into one reply; validation de-duplicates.
         raw = ("\n".join(f.read_text(encoding="utf-8") for f in sorted(p.glob("*.json")))
                if p.is_dir() else p.read_text(encoding="utf-8"))
-        edges = edges_from_raw(raw, draft.claims, _unique_slugs(draft.claims), source=label)
-        path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), {
-            "paper_slug": args.paper, "model": label, "edges": edges,
-        })
+        edges = edges_from_raw(raw, draft.claims, slugs, source=label)
+        # The reader is asked to surface unsupported parts of the argument (#125); they ride in
+        # the same answer and the claim-tree writer carries them into the paper's notes.
+        unsupported = unsupported_from_raw(raw, slugs)
+        payload = {"paper_slug": args.paper, "model": label, "edges": edges}
+        if unsupported:
+            payload["unsupported"] = unsupported
+        path = _write_json(run_file(args.paper, "edge-inference.output.json", cfg), payload)
     elif per_arc:
         from .edges import infer_edges
         from .layers import _write_json
@@ -243,12 +248,13 @@ def cmd_edge_inference(args: argparse.Namespace) -> int:
 
 def cmd_write(args: argparse.Namespace) -> int:
     """Layer `claim-tree` — the claim files, from the best draft and the inferred edges."""
-    from .layers import best_draft, read_edges
+    from .layers import best_draft, read_edges, read_unsupported
     from .write import archive_dir, carry_over, write_claim_files, write_oxa_document
 
     cfg = _cfg(args)
     draft, source = best_draft(args.paper, cfg)
     edges = read_edges(args.paper, cfg)
+    unsupported = read_unsupported(args.paper, cfg)
 
     print(f"=== claim-tree — {args.paper} ===")
     print(f"  draft  = {source} ({len(draft.claims)} claims)")
@@ -265,7 +271,8 @@ def cmd_write(args: argparse.Namespace) -> int:
             path = write_oxa_document(draft, cfg)
             print(f"  written: {path}")
             return 0
-        written = write_claim_files(draft, cfg, edges=edges, replace=args.replace)
+        written = write_claim_files(draft, cfg, edges=edges, replace=args.replace,
+                                    unsupported=unsupported)
     except FileExistsError as e:
         print(f"error: {e}", file=sys.stderr)
         return 7

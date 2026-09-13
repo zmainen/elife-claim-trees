@@ -1,5 +1,5 @@
 ---
-uuid: 5985a78b-f0cc-4315-954b-d585b439d127
+uuid: f6e89490-9237-427d-bea1-cc17fc6d0d21
 slug: during-outcome-phase-responses-low
 doi: null
 claim: During the outcome phase, responses to low lottery outcomes were higher in the Social than the
@@ -25,7 +25,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `part-of` → `insula-rois-responded-more-low`: The low-outcome Social-versus-Partner insula contrast is one measure of the insula guilt result.
+- `part-of` → `insula-rois-responded-more-low`: the outcome-phase table is one measure of the insula guilt response the whole result states
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

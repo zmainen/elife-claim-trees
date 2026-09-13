@@ -32,7 +32,7 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Relations flattened
 
-`tests`, `confirms`, `validates`, `extends` and `replicates` all become `mira:supports`; `contradicts`, `rules-out` and `dissociates-with` all become `mira:opposes`. Both directions of collapse lose real distinctions — most sharply, evidence *designed* to test a prediction becomes indistinguishable from evidence that merely agrees with it after the fact.
+`tests`, `confirms`, `validates`, `extends` and `replicates` all become `mira:supports`; `contradicts`, `rules-out` and `in-tension-with` all become `mira:opposes`. Both directions of collapse lose real distinctions — most sharply, evidence *designed* to test a prediction becomes indistinguishable from evidence that merely agrees with it after the fact. `in-tension-with` under `mira:opposes` says more than the relation means: a tension holds between two claims the paper *asserts*, both of which stand, so `mira:opposes` overstates it as one claim standing against the other. `dissociates-with` is no longer flattened here — it is a neutral contrast with no MIRA predicate and is dropped instead (see above).
 
 ## Verification records dropped
 

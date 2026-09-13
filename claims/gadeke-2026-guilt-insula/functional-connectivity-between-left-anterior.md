@@ -1,5 +1,5 @@
 ---
-uuid: 5bd4ed04-9aab-48a1-93a7-29623d82384b
+uuid: bd115e8c-ec7a-4e6f-8b10-9ee16c17f4b1
 slug: functional-connectivity-between-left-anterior
 doi: null
 claim: Functional connectivity between the left anterior insula (seed) and a cluster in the right inferior
@@ -18,8 +18,6 @@ confirms:
 belongings:
 - relation: supports
   target: functional-connectivity-between-guilt-responsibility-related
-- relation: requires
-  target: prior-functional-connectivity-work-shown
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -32,10 +30,9 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `tests` → `connectivity-between-guilt-responsibility-related-outcome-ph`: The insula-IFG connectivity varying with condition and choice tests the connectivity prediction (evidence at span results-142).
-- `supports` → `functional-connectivity-between-guilt-responsibility-related`: The condition- and choice-dependent insula-IFG connectivity supports the connectivity hypothesis (evidence at span results-142).
-- `requires` → `prior-functional-connectivity-work-shown`: The connectivity analysis inherits prior functional-connectivity findings as background (evidence at span results-142).
-- `confirms` → `connectivity-between-guilt-responsibility-related-outcome-ph`: The insula-IFG connectivity varying with condition and choice, surviving FWE correction, confirms the connectivity prediction (evidence at span results-142).
+- `tests` → `connectivity-between-guilt-responsibility-related-outcome-ph`: the insula-seed PPI tests the prefrontal Condition-by-Choice interaction prediction (results-142)
+- `confirms` → `connectivity-between-guilt-responsibility-related-outcome-ph`: a right-IFG cluster's insula connectivity varied with condition and choice and survived FWE correction
+- `supports` → `functional-connectivity-between-guilt-responsibility-related`: condition/choice-dependent insula connectivity supports the connectivity hypothesis
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

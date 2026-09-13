@@ -1,5 +1,5 @@
 ---
-uuid: 72114d1e-9b20-4cc2-98cf-a253536a1ee3
+uuid: 590e6ace-238b-418a-84f7-620b2e0e5645
 slug: participants-own-reward-prediction-errors
 doi: null
 claim: 'Participants'' own reward prediction errors (sRPE) influenced happiness more than the partner''s
@@ -10,7 +10,9 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
-belongings: []
+belongings:
+- relation: supports
+  target: likelihood-ratio-test-showed-responsibility
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -18,6 +20,10 @@ assertions:
   confidence: tentative
 reproductions: []
 ---
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `supports` → `likelihood-ratio-test-showed-responsibility`: the ordering of RPE weights corroborates the Responsibility model structure
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

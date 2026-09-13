@@ -1,5 +1,5 @@
 ---
-uuid: 4f185a47-7c28-4f3c-be2d-f18302ae2ad1
+uuid: 9560b688-25bc-48f9-873b-45ef6d861e93
 slug: participant-happiness-lower-when-participant
 doi: null
 claim: 'Participant happiness was lower when the participant was the decision-maker (Social + Solo vs.
@@ -50,7 +50,7 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `dissociates-with` → `when-partner-received-low-lottery`: The outcome-independent agency cost and the low-outcome-specific guilt effect come apart as two distinct effects.
+- `dissociates-with` → `when-partner-received-low-lottery`: two effects both present and distinct: agency lowers happiness regardless of outcome, guilt only after the partner's loss
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

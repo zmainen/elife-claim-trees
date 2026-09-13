@@ -1,5 +1,5 @@
 ---
-uuid: 31053639-b20e-4ac7-a70e-576aad413eef
+uuid: 3e9f0864-10bf-471e-957d-0f18f6eccec4
 slug: responsibility-outcomes-generates-guilt-participant
 doi: null
 claim: If responsibility for outcomes generates guilt, then participant happiness should decrease more

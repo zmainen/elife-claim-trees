@@ -1,5 +1,5 @@
 ---
-uuid: 9b55e86e-4d32-4df9-93ec-38c18798143f
+uuid: 5656e398-7d59-4c95-86dd-51e3ced41315
 slug: study-reproduced-study-design-inside
 doi: null
 claim: Study 2 reproduced the Study 1 design inside the fMRI scanner with identical parameters except
@@ -12,8 +12,6 @@ priority: '2026-09-13'
 epistemic: tentative
 scopes:
 - insula-rois-responded-more-low
-- one-cluster-left-sts-responded
-- functional-connectivity-between-left-anterior
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -27,9 +25,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `scopes` → `insula-rois-responded-more-low`: The in-scanner Study 2 design bounds the insula ROI result.
-- `scopes` → `one-cluster-left-sts-responded`: The in-scanner Study 2 design bounds the STS result.
-- `scopes` → `functional-connectivity-between-left-anterior`: The in-scanner Study 2 design bounds the connectivity result.
+- `scopes` → `insula-rois-responded-more-low`: the neural results are bounded to the fMRI reproduction of the design in Study 2
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -1,5 +1,5 @@
 ---
-uuid: 275c84e2-74c2-4a16-aaf1-764ae57dbe20
+uuid: b31ce5bc-a274-4986-a45b-7e18a736aa14
 slug: prior-functional-connectivity-work-shown
 doi: null
 claim: Prior functional connectivity work has shown network differences between social and self-only choices,
@@ -10,7 +10,9 @@ role: literature-context
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
-belongings: []
+belongings:
+- relation: supports
+  target: functional-connectivity-between-guilt-responsibility-related
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -20,6 +22,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** Prior-work premises motivating the connectivity analysis.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `supports` → `functional-connectivity-between-guilt-responsibility-related`: prior functional-connectivity work motivates the connectivity hypothesis
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

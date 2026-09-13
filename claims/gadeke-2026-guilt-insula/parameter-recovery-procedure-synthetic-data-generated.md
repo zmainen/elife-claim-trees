@@ -1,5 +1,5 @@
 ---
-uuid: 0e63be6d-16ea-4e51-9d72-52a9f94f75bf
+uuid: cf5b5030-9e1a-4771-a165-1d98a0955fe9
 slug: parameter-recovery-procedure-synthetic-data-generated
 doi: null
 claim: A parameter-recovery procedure on synthetic data generated from each participant's estimated parameters
@@ -10,7 +10,7 @@ concepts: []
 priority: '2026-09-13'
 epistemic: tentative
 enables-method:
-- partner-reward-prediction-errors-resulting
+- responsibility-redux-model-incorporating-expected
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -24,7 +24,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `enables-method` → `partner-reward-prediction-errors-resulting`: Parameter recovery warrants trusting the estimated social_pRPE weights (evidence at span results-068).
+- `enables-method` → `responsibility-redux-model-incorporating-expected`: parameter recovery establishes the model estimates are stable enough to trust the fit
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

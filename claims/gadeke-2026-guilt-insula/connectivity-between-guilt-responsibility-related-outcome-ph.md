@@ -1,5 +1,5 @@
 ---
-uuid: 2345b524-de06-4af1-9d80-082ba00f1541
+uuid: f7190424-29cd-4ad9-b5d6-eef07541fcfb
 slug: connectivity-between-guilt-responsibility-related-outcome-ph
 doi: null
 claim: If connectivity between the guilt- and responsibility-related outcome-phase regions (left insula,

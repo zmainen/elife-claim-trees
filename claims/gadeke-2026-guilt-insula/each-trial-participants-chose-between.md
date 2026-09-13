@@ -1,5 +1,5 @@
 ---
-uuid: 22dc976d-ab70-4f34-aa70-a24778b483a9
+uuid: cb6eb7ff-3062-471b-afaf-d4062b47c419
 slug: each-trial-participants-chose-between
 doi: null
 claim: 'On each trial participants chose between a safe and a risky monetary option under three conditions:
@@ -11,8 +11,7 @@ concepts: []
 priority: '2026-09-13'
 epistemic: tentative
 scopes:
-- participants-chose-risky-option-lottery
-- risk-premiums-not-differ-between
+- when-partner-received-low-lottery
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -26,8 +25,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `scopes` → `participants-chose-risky-option-lottery`: The three-condition choice design bounds the lottery-choice comparison.
-- `scopes` → `risk-premiums-not-differ-between`: The three-condition choice design bounds the risk-premium comparison.
+- `scopes` → `when-partner-received-low-lottery`: the effect is bounded to the three-condition safe/risky choice paradigm
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

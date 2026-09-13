@@ -1,5 +1,5 @@
 ---
-uuid: 1024dcd8-db09-42ec-be3c-6de817afccce
+uuid: 75187541-3b2b-4f38-92fa-2971d7c44708
 slug: risk-aversion-parameter-not-differ-between
 doi: null
 claim: 'The risk-aversion parameter ρ did not differ between gain and loss trials (Study 1: t(17) = 0.21,
@@ -10,6 +10,8 @@ role: control
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+validates:
+- momentary-happiness-modelled-five-computational
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -20,6 +22,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** Null result justifying pooling across gain and loss trials.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `validates` → `momentary-happiness-modelled-five-computational`: equal risk-aversion across gain/loss trials justifies pooling in the models
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

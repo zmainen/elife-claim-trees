@@ -1,5 +1,5 @@
 ---
-uuid: e2b1e071-e2e9-4ecf-b598-4b4b117d707c
+uuid: b30d5a18-6ea7-4f61-a79e-b880e5cac898
 slug: among-computational-models-fitted-momentary
 doi: null
 claim: Among the computational models fitted to momentary happiness data, the Responsibility Redux model

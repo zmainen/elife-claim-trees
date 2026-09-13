@@ -465,7 +465,7 @@ def main():
         "literature_context_doi_in_assertions": lc_assert,
         "role_counts": dict(roles.most_common()),
         # Every defined relation, including the ones at zero. A page documenting the
-        # vocabulary has to name all 17; leaving the unused ones out of the map meant any
+        # vocabulary has to name every one; leaving the unused ones out of the map meant any
         # page that showed them had to type "0" beside a column generated from this file.
         "relation_counts": {k: rels.get(k, 0)
                             for k in sorted(EDGE_KEYS, key=lambda k: (-rels.get(k, 0), k))},

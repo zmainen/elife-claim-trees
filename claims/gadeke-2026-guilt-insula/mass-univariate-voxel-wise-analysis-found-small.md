@@ -1,5 +1,5 @@
 ---
-uuid: 9b9cb740-6b26-4ed2-b987-91fea132dcb7
+uuid: 88c906cb-a32f-46a9-8ad9-ea5cb2ec59c2
 slug: mass-univariate-voxel-wise-analysis-found-small
 doi: null
 claim: A mass-univariate voxel-wise analysis found a small left anterior insula cluster (peak T = 3.95,
@@ -14,13 +14,7 @@ tests:
 - anterior-insula-tracks-guilt-insula
 confirms:
 - anterior-insula-tracks-guilt-insula
-belongings:
-- relation: supports
-  target: anterior-insula-neural-substrate-guilt
-- relation: requires
-  target: prior-literature-documents-association-between
-- relation: requires
-  target: during-receipt-lottery-versus-safe
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -70,11 +64,8 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `tests` → `anterior-insula-tracks-guilt-insula`: The voxel-wise left-insula cluster surviving small-volume correction tests the insula prediction at the voxel level (evidence at span results-129).
-- `supports` → `anterior-insula-neural-substrate-guilt`: The voxel-wise left-insula cluster independently supports the insula-substrate claim (evidence at span results-129).
-- `requires` → `prior-literature-documents-association-between`: The small-volume correction on the left insula rests on the prior insula-guilt association (evidence at span results-129).
-- `requires` → `during-receipt-lottery-versus-safe`: The voxel-wise insula cluster lies within the outcome-phase insula region (evidence at span results-129).
-- `confirms` → `anterior-insula-tracks-guilt-insula`: The voxel-wise left-insula cluster surviving small-volume correction confirms the insula prediction at the voxel level (evidence at span results-129).
+- `tests` → `anterior-insula-tracks-guilt-insula`: the mass-univariate voxel-wise search tests the insula BOLD prediction (results-129)
+- `confirms` → `anterior-insula-tracks-guilt-insula`: a small left anterior insula cluster survived small-volume FWE correction (p = 0.024)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

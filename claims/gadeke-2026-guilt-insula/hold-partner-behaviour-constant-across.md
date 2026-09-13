@@ -1,5 +1,5 @@
 ---
-uuid: 45d2124b-feaa-4d7b-b644-9ba003b734a3
+uuid: 1f8168fc-149d-4876-ad38-6dc8625e24cb
 slug: hold-partner-behaviour-constant-across
 doi: null
 claim: To hold the partner's behaviour constant across participants, the partner's decisions were simulated
@@ -33,7 +33,7 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `enables-method` → `when-partner-received-low-lottery`: Holding the simulated partner's behaviour constant is what lets the guilt contrast be interpreted.
+- `enables-method` → `when-partner-received-low-lottery`: simulating the partner's choices holds behaviour constant, making the guilt comparison possible
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

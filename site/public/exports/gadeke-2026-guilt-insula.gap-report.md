@@ -2,7 +2,7 @@
 
 **Paper:** `gadeke-2026-guilt-insula` · **Claims registered:** 2026-09-10 – 2026-09-13
 
-68 claims, 84 typed relations between them.
+68 claims, 71 typed relations between them.
 
 ## Claims by role
 
@@ -18,24 +18,24 @@
 
 ## Relations dropped
 
-**42 of 84 relations (50%) have no MIRA predicate and are absent from the strict export.**
+**27 of 71 relations (38%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
-| `requires` | 10 | a claim depends on another holding |
-| `scopes` | 9 | a scope constraint governs another claim's validity |
 | `derived-from` | 5 | a prediction derived from its hypothesis (inverse of entails) |
 | `entails` | 5 | a hypothesis entails its prediction — the deductive step |
-| `part-of` | 5 | a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone |
 | `interprets` | 4 | one claim interprets another |
+| `requires` | 4 | a claim depends on another holding |
 | `enables-method` | 3 | a result makes a downstream method possible |
-| `qualifies` | 1 | a claim narrows another's applicability |
+| `scopes` | 3 | a scope constraint governs another claim's validity |
+| `part-of` | 2 | a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone |
+| `dissociates-with` | 1 | the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric) |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.
 
 ## Relations flattened
 
-`tests`, `confirms`, `validates`, `extends` and `replicates` all become `mira:supports`; `contradicts`, `rules-out` and `dissociates-with` all become `mira:opposes`. Both directions of collapse lose real distinctions — most sharply, evidence *designed* to test a prediction becomes indistinguishable from evidence that merely agrees with it after the fact.
+`tests`, `confirms`, `validates`, `extends` and `replicates` all become `mira:supports`; `contradicts`, `rules-out` and `in-tension-with` all become `mira:opposes`. Both directions of collapse lose real distinctions — most sharply, evidence *designed* to test a prediction becomes indistinguishable from evidence that merely agrees with it after the fact. `in-tension-with` under `mira:opposes` says more than the relation means: a tension holds between two claims the paper *asserts*, both of which stand, so `mira:opposes` overstates it as one claim standing against the other. `dissociates-with` is no longer flattened here — it is a neutral contrast with no MIRA predicate and is dropped instead (see above).
 
 ## Verification records dropped
 

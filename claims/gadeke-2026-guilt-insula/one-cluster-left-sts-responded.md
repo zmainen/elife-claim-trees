@@ -1,5 +1,5 @@
 ---
-uuid: a21f0a58-f5e6-4804-a760-0d07c73233a1
+uuid: c9af8e4b-cce9-4023-9ed8-a6ed4e79f916
 slug: one-cluster-left-sts-responded
 doi: null
 claim: One cluster in the left STS responded more to partner reward prediction errors resulting from participant
@@ -54,10 +54,10 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `tests` → `neural-substrate-tracks-participant-responsibility-2`: The left-STS cluster responding more to participant-caused partner RPEs tests the responsibility-tracking prediction.
-- `supports` → `neural-substrate-tracks-participant-responsibility`: The left-STS responsibility response supports the responsibility-tracking hypothesis.
-- `requires` → `model-based-glm-entered-best-fitting-computational`: The STS result depends on the model-based GLM that entered the Responsibility-model regressors.
-- `confirms` → `neural-substrate-tracks-participant-responsibility-2`: The left-STS cluster responding more to participant-caused than partner-caused partner RPEs confirms the responsibility-tracking prediction (evidence at span fig4h).
+- `tests` → `neural-substrate-tracks-participant-responsibility-2`: the left-STS search tests the partner-pRPE-from-own-choice prediction (fig4h)
+- `confirms` → `neural-substrate-tracks-participant-responsibility-2`: one left-STS cluster responded more to partner pRPE from participant than partner choices (pFWE = 0.022)
+- `supports` → `neural-substrate-tracks-participant-responsibility`: the left-STS responsibility signal supports the responsibility-tracking hypothesis
+- `requires` → `model-based-glm-entered-best-fitting-computational`: the STS responsibility result depends on the model-based GLM2 regressors
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -1,5 +1,5 @@
 ---
-uuid: 94347cec-bb54-4763-b2a7-b321c8ebe58d
+uuid: d2eacfbd-b9a8-4e92-b304-041d20f7a635
 slug: model-based-glm-entered-best-fitting-computational
 doi: null
 claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsibility) model's variables

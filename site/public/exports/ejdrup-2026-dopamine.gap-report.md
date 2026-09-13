@@ -15,20 +15,21 @@
 
 ## Relations dropped
 
-**41 of 95 relations (43%) have no MIRA predicate and are absent from the strict export.**
+**45 of 95 relations (47%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
 | `requires` | 20 | a claim depends on another holding |
 | `entails` | 11 | a hypothesis entails its prediction — the deductive step |
 | `scopes` | 8 | a scope constraint governs another claim's validity |
+| `dissociates-with` | 4 | the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric) |
 | `interprets` | 2 | one claim interprets another |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.
 
 ## Relations flattened
 
-`tests`, `confirms`, `validates`, `extends` and `replicates` all become `mira:supports`; `contradicts`, `rules-out` and `dissociates-with` all become `mira:opposes`. Both directions of collapse lose real distinctions — most sharply, evidence *designed* to test a prediction becomes indistinguishable from evidence that merely agrees with it after the fact.
+`tests`, `confirms`, `validates`, `extends` and `replicates` all become `mira:supports`; `contradicts`, `rules-out` and `in-tension-with` all become `mira:opposes`. Both directions of collapse lose real distinctions — most sharply, evidence *designed* to test a prediction becomes indistinguishable from evidence that merely agrees with it after the fact. `in-tension-with` under `mira:opposes` says more than the relation means: a tension holds between two claims the paper *asserts*, both of which stand, so `mira:opposes` overstates it as one claim standing against the other. `dissociates-with` is no longer flattened here — it is a neutral contrast with no MIRA predicate and is dropped instead (see above).
 
 ## Verification records dropped
 

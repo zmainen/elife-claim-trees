@@ -87,6 +87,11 @@ CONTRARY = set(_REL.CONTRARY)
 # top-level list key. See module docstring.
 BELONGINGS_RELATIONS = {"requires", "supports"}
 
+# Symmetric relations: the same unordered pair written both ways is one edge, not two. Both
+# are declared symmetric in `relations.py` — `dissociates-with` a neutral contrast,
+# `in-tension-with` the tension the #125 ruling split from it.
+SYMMETRIC = {"dissociates-with", "in-tension-with"}
+
 # Deduction is recorded from both ends. The model is asked for the left key and forbidden the
 # right one, which we write mechanically as its reciprocal. `confirms` used to be synthesised
 # here as the reciprocal of `predicts`; under the #28 ruling it is an outcome the reader states
@@ -370,6 +375,28 @@ def edges_from_raw(raw: str, claims: list, slugs: list[str], *,
     return _validate_edges(parsed, claims, slugs, source=source)
 
 
+def unsupported_from_raw(raw: str, slugs: list[str]) -> list[dict]:
+    """The unsupported parts of the argument the reader surfaced (#125), validated to real slugs.
+
+    The edge answer carries no free-text field, so a reader that finds a hypothesis with no
+    tested prediction, a prediction with no test, or an empirical claim resting on nothing marks
+    each in its own object among the edge lines: `{"unsupported": <slug or number>, "reason": …}`.
+    Each names a claim in this paper; an unresolvable one is dropped, as an edge would be.
+    """
+    parsed = _parse_edges(raw) or []
+    out: list[dict] = []
+    seen: set[str] = set()
+    for obj in parsed:
+        if not isinstance(obj, dict) or obj.get("unsupported") is None:
+            continue
+        slug = _resolve(obj.get("unsupported"), slugs)
+        reason = " ".join(str(obj.get("reason") or obj.get("why") or "").split())
+        if slug and slug not in seen:
+            seen.add(slug)
+            out.append({"slug": slug, "reason": reason})
+    return out
+
+
 def infer_edges(draft: DraftClaimTable, slugs: list[str], cfg: Config, *,
                 per_arc: bool = False) -> tuple[list[dict], dict]:
     """Ask the configured backend for typed relations between the claims.
@@ -419,7 +446,7 @@ def _validate_edges(parsed: list, claims: list, slugs: list[str], *, source: str
     edges: list[dict] = []
     seen: set[tuple[str, str, str]] = set()
     part_whole: dict[str, str] = {}                 # part slug → its whole, for cycle detection
-    dissociate_pairs: set[frozenset] = set()        # symmetric: one edge per unordered pair
+    symmetric_pairs: set[tuple[str, frozenset]] = set()   # (relation, unordered pair): one edge each
     rejected: dict[str, int] = {}
 
     def reject(reason: str) -> None:
@@ -477,12 +504,12 @@ def _validate_edges(parsed: list, claims: list, slugs: list[str], *, source: str
                 continue
             part_whole[src] = tgt
 
-        if rel == "dissociates-with":
-            pair = frozenset((src, tgt))
-            if pair in dissociate_pairs:
-                reject("dissociates-with: symmetric, already recorded for this pair")
+        if rel in SYMMETRIC:
+            key_sym = (rel, frozenset((src, tgt)))
+            if key_sym in symmetric_pairs:
+                reject(f"{rel}: symmetric, already recorded for this pair")
                 continue
-            dissociate_pairs.add(pair)
+            symmetric_pairs.add(key_sym)
 
         key = (src, tgt, rel)
         if key in seen:
