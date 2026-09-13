@@ -186,6 +186,21 @@ def missing_dependencies(script):
     return out
 
 
+def result_row(r) -> dict:
+    """One row of a script's ROWS list, as it is recorded.
+
+    A row's fifth element, when the script provides one, says whether the reproduced value was
+    obtained by this run or recalled from notes taken when the analysis was first done. Absent
+    means the script has not been instrumented to say, which is not the same as false:
+    `measured` is omitted rather than defaulted, so a consumer can tell "no" from "unstated".
+    """
+    out = {"claim": r[0], "paper_value": str(r[1]), "reproduced_value": str(r[2]),
+           "status": str(r[3])}
+    if len(r) >= 5:
+        out["measured"] = bool(r[4])
+    return out
+
+
 def run(paper: str, argv: list[str], timeout: int | None):
     script = os.path.join(HERE, paper, "verify.py")
     if not os.path.isfile(script):
@@ -242,11 +257,8 @@ def run(paper: str, argv: list[str], timeout: int | None):
     # The results the printed table is built from, read out of the module rather than
     # scraped from its output.
     rows = mod_globals.get("ROWS") if isinstance(mod_globals, dict) else None
-    prov["results"] = [
-        {"claim": r[0], "paper_value": str(r[1]), "reproduced_value": str(r[2]),
-         "status": str(r[3])}
-        for r in (rows or []) if isinstance(r, (list, tuple)) and len(r) >= 4
-    ]
+    prov["results"] = [result_row(r) for r in (rows or [])
+                       if isinstance(r, (list, tuple)) and len(r) >= 4]
     if rows is None:
         prov["results_note"] = ("no ROWS list found in the module — results could not be "
                                 "read; the script may have exited before defining it")
@@ -364,7 +376,9 @@ def main():
         for r in results:
             counts[r["status"]] = counts.get(r["status"], 0) + 1
         tally = " ".join(f"{v}×{k}" for k, v in sorted(counts.items())) or "no results"
-        print(f"  {p:38} {exit_ or '?':16} {nfiles:>3} file(s)  {tally}")
+        recalled = sum(1 for r in results if r.get("measured") is False)
+        note = f"  ({recalled} recalled, not measured)" if recalled else ""
+        print(f"  {p:38} {exit_ or '?':16} {nfiles:>3} file(s)  {tally}{note}")
         if exc:
             print(f"      raised {exc['type']}: {exc['message'][:90]}")
     return 0

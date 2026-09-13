@@ -44,8 +44,15 @@ EXCEL_PATH = os.path.join(CACHE_DIR, "electrophysiology.xlsx")
 
 ROWS = []
 
-def row(slug, paper_val, repro_val, status):
-    ROWS.append((slug, paper_val, repro_val, status))
+def row(slug, paper_val, repro_val, status, measured=True):
+    """`measured=False` when repro_val is a remembered observation this run did not make.
+
+    The status still says what the evidence would mean if it held; the flag says whether this
+    run is the thing that found it. Downstream needs to tell those apart, and the status field
+    alone cannot: a PASS carrying numbers copied from notes is indistinguishable from a PASS
+    carrying numbers a simulation just produced.
+    """
+    ROWS.append((slug, paper_val, repro_val, status, measured))
 
 def print_table():
     col_w = [50, 26, 32, 6]
@@ -55,8 +62,15 @@ def print_table():
     print(" | ".join(h.ljust(w) for h, w in zip(header, col_w)))
     print(sep)
     for r in ROWS:
-        print(" | ".join(str(v).ljust(w) for v, w in zip(r, col_w)))
-    print(sep + "\n")
+        cells = list(r[:4])
+        if len(r) >= 5 and not r[4]:
+            cells[3] = f"{cells[3]}*"
+        print(" | ".join(str(v).ljust(w) for v, w in zip(cells, col_w)))
+    print(sep)
+    if any(len(r) >= 5 and not r[4] for r in ROWS):
+        print("* not measured in this run — the value is from notes taken when the "
+              "analysis was first done.")
+    print()
 
 # ── Data download ──────────────────────────────────────────────────────────────
 
@@ -173,7 +187,7 @@ def verify_maximal_firing():
 
     if df_wt is None or df_ki is None:
         row(slug, "WT≈201, KI≈126 APs, p<0.001",
-            "WT=200.8 (n=20), KI=125.9 (n=37), p<0.001 (from notes)", "PASS")
+            "WT=200.8 (n=20), KI=125.9 (n=37), p<0.001 (from notes)", "PASS", measured=False)
         print(f"  {slug}: sheets not found, using notes ({time.time()-t0:.1f}s)")
         return 1
 
@@ -190,7 +204,7 @@ def verify_maximal_firing():
 
     if len(wt_maxes) < 3 or len(ki_maxes) < 3:
         row(slug, "WT≈201, KI≈126 APs, p<0.001",
-            "WT=200.8 (n=20), KI=125.9 (n=37), p<0.001 (from notes)", "PASS")
+            "WT=200.8 (n=20), KI=125.9 (n=37), p<0.001 (from notes)", "PASS", measured=False)
         return 1
 
     wt_mean = wt_maxes.mean()
@@ -218,7 +232,7 @@ def verify_excitatory_ns():
 
     if df_wt is None or df_ki is None:
         row(slug, "p=0.66 NS (WT=343, KI=307 pA/pF)",
-            "WT=343, KI=307 pA/pF, p=0.66 (from notes)", "PASS")
+            "WT=343, KI=307 pA/pF, p=0.66 (from notes)", "PASS", measured=False)
         print(f"  {slug}: sheets not found, using notes ({time.time()-t0:.1f}s)")
         return 1
 
@@ -248,7 +262,7 @@ def verify_excitatory_ns():
         return 1 if ok else 0
     except Exception as e:
         row(slug, "p=0.66 NS (WT=343, KI=307 pA/pF)",
-            f"WT=343, KI=307 pA/pF, p=0.66 (from notes; parse error: {e})", "PASS")
+            f"WT=343, KI=307 pA/pF, p=0.66 (from notes; parse error: {e})", "PASS", measured=False)
         return 1
 
 # ── Claim 4: a421v-mice-die-before-122d ───────────────────────────────────────
@@ -261,7 +275,7 @@ def verify_survival():
     df = load_sheet_raw("Survival")
     if df is None:
         row(slug, "n=33 KI, n=46 WT, max KI age ≤122d",
-            "n_KI=33, n_WT=46, max_KI_age=122d (from notes)", "PASS")
+            "n_KI=33, n_WT=46, max_KI_age=122d (from notes)", "PASS", measured=False)
         print(f"  {slug}: sheet not found, using notes ({time.time()-t0:.1f}s)")
         return 1
 
@@ -285,7 +299,7 @@ def verify_survival():
         return 1 if ok else 0
     except Exception as e:
         row(slug, "n=33 KI, n=46 WT, max KI age ≤122d",
-            f"n_KI=33, n_WT=46, max_KI_age=122d (from notes; parse: {e})", "PASS")
+            f"n_KI=33, n_WT=46, max_KI_age=122d (from notes; parse: {e})", "PASS", measured=False)
         return 1
 
 # ── Claim 5: pv-in-ap-waveform-altered-downstroke-apd50 ───────────────────────
@@ -514,8 +528,11 @@ def main():
              "no significant amplitude or PPR difference (juvenile, 20 Hz)",
              "amp WT=-66.1 KI=-99.0 p=0.22; PPR WT=0.774 KI=0.659 p=0.24", "PASS"),
         ]
+        # Nothing here was measured: the download failed, so every value is a remembered one.
+        # These strings are the reason the flag has to be carried separately -- they read
+        # exactly like fresh measurements ("t-test p=0.000033") and none of them say "notes".
         for r in note_claims:
-            ROWS.append(r)
+            ROWS.append(r + (False,))
         print_table()
         print("Note: Values from verified notes (data download failed). See claim files.")
         return 0
@@ -551,9 +568,9 @@ def main():
     print("SUMMARY")
     print_table()
 
-    n_pass = sum(1 for _, _, _, s in ROWS if s == "PASS")
-    n_warn = sum(1 for _, _, _, s in ROWS if s == "WARN")
-    n_fail = sum(1 for _, _, _, s in ROWS if s == "FAIL")
+    n_pass = sum(1 for r in ROWS if r[3] == "PASS")
+    n_warn = sum(1 for r in ROWS if r[3] == "WARN")
+    n_fail = sum(1 for r in ROWS if r[3] == "FAIL")
     print(f"{n_pass}/{len(ROWS)} claims verified ({n_warn} WARN, {n_fail} FAIL)")
     return 0 if n_fail == 0 else 1
 
