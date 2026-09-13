@@ -16,8 +16,25 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: elife-claim-trees
     steps:
+      # Two checkouts, in the layout the Makefile documents as its default. See the note in
+      # checks.yml: the machinery is a separate repository now, and it is checked out at the
+      # SHA this corpus pins.
       - uses: actions/checkout@v4
+        with:
+          path: elife-claim-trees
+      - name: Read the machinery pin
+        id: pin
+        run: echo "sha=$(cat .claim-graphs-sha)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          repository: zmainen/claim-graphs
+          ref: ${{ steps.pin.outputs.sha }}
+          path: claim-graphs
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -25,11 +42,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: site/package-lock.json
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          cd site && npm ci
+          cache-dependency-path: elife-claim-trees/site/package-lock.json
+      - run: pip install -r requirements.txt -r ../claim-graphs/requirements.txt
+
+      # The pin is guaranteed by the checkout above, so this asserts the checkout did what it
+      # says rather than discovering a drift. Cheap, and this is the job that publishes: the
+      # site should never be built by machinery the corpus does not claim.
+      - run: make machinery-check
+
       # Regenerates every data file, then builds. Previously this ran build-data.js twice —
       # once with CORPUS=elife, then again inside `npm run build`, which has no CORPUS set
       # and so discarded the first run's filter. It happened to be harmless because `elife`
@@ -40,9 +60,10 @@ jobs:
       # committed by hand, and the published site could describe a corpus that had moved on.
       - name: Build
         run: make build CORPUS=elife
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site/dist
+          path: elife-claim-trees/site/dist
 
   deploy:
     needs: build

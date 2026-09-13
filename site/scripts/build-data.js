@@ -621,7 +621,15 @@ if (existsSync(ttlSrc)) {
 //   absent     declared and never produced. Not a link at all.
 //   set        a path containing `*` is a set rather than a file (claims/{paper}/*.md), and
 //              is counted — a count is what a reader can act on.
-const layersDecl = parseYaml(readFileSync(join(machinery, 'pipeline/layers.yaml'), 'utf8'));
+const layersPath = join(machinery, 'pipeline/layers.yaml');
+// Without this the failure is a bare ENOENT stack from fs, forty lines into a build, naming a
+// path the reader has no reason to recognise. The Makefile's machinery-check says this in the
+// same words; `npm run dev` does not go through the Makefile, so it has to say it itself.
+if (!existsSync(layersPath)) {
+  console.error(`no machinery at ${machinery} — clone zmainen/claim-graphs there, or set CLAIM_GRAPHS`);
+  process.exit(1);
+}
+const layersDecl = parseYaml(readFileSync(layersPath, 'utf8'));
 const publicRoot = join(__dirname, '../public');
 
 // Only text is served by the endpoint: it reads the file at build and hands back the bytes,

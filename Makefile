@@ -48,7 +48,7 @@ export PYTHONPATH := $(CG)/extract:$(CG)/scripts$(if $(PYTHONPATH),:$(PYTHONPATH
 
 .DEFAULT_GOAL := help
 
-.PHONY: help data validate build preview check contract report fresh deps publishable machinery-check
+.PHONY: help data validate build preview check contract report fresh deps publishable machinery-check env
 
 help:  ## Show this help
 	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -108,6 +108,18 @@ validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 # the pull request did not cause, so they run for their numbers and do not block.
 publishable:  ## What the site is about to publish that the ledger says is out of date
 	$(PYTHON) $(CG)/scripts/publishable.py
+
+# Running a layer by hand needs the same environment the targets below run under. Rather than
+# repeat it in the README — where it would rot the first time a variable changed — print it
+# from the one place that defines it:
+#
+#   eval "$$(make env)"
+#   python3 $$CLAIM_GRAPHS/scripts/pipeline.py run <paper> claim-tree
+env:  ## Print the machinery environment, for `eval "$(make env)"`
+	@echo 'export CLAIM_GRAPHS=$(abspath $(CG))'
+	@echo 'export CLAIM_GRAPHS_ROOT=$(CURDIR)'
+	@echo 'export CLAIM_GRAPHS_CORPUS_DIR=$(CURDIR)/claims'
+	@echo 'export PYTHONPATH=$(abspath $(CG))/extract:$(abspath $(CG))/scripts'
 
 machinery-check:  ## Fail if the machinery checkout is not the pinned version
 	@test -d "$(CG)" || { echo "no machinery at $(CG) — clone zmainen/claim-graphs there, or set CLAIM_GRAPHS"; exit 1; }
