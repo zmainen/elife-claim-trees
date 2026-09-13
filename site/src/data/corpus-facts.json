@@ -560,7 +560,7 @@
       },
       "caption-reader": {
         "scheme": "open",
-        "version": "1b35c25202f0"
+        "version": "60faae5187be"
       },
       "claim-format": {
         "approved": {
@@ -603,7 +603,7 @@
           "relation-vocab"
         ],
         "scheme": "open",
-        "version": "f8e55022985d"
+        "version": "567082052da2"
       },
       "edge-review": {
         "provisional_on": [
@@ -611,7 +611,7 @@
           "relation-vocab"
         ],
         "scheme": "open",
-        "version": "02e04322b9d7"
+        "version": "56b5121aa491"
       },
       "epistemic-vocab": {
         "provisional_on": [
@@ -626,11 +626,11 @@
           "relation-vocab"
         ],
         "scheme": "open",
-        "version": "f3a33b4c9cb4"
+        "version": "57cd6b68ff75"
       },
       "external-review": {
         "scheme": "open",
-        "version": "97dd31d97eb9"
+        "version": "553ba6168ce8"
       },
       "formats-report": {
         "provisional_on": [
@@ -685,7 +685,7 @@
           "relation-vocab"
         ],
         "scheme": "proposed",
-        "version": "2bc0c19fab6e"
+        "version": "18b329752f48"
       },
       "plain-claim": {
         "provisional_on": [
@@ -726,11 +726,11 @@
           "relation-vocab"
         ],
         "scheme": "proposed",
-        "version": "948fdbb95c0c"
+        "version": "880af487ef04"
       },
       "reconcile": {
         "scheme": "open",
-        "version": "f382a4fb7117"
+        "version": "4a3d6961af57"
       },
       "reference-check": {
         "provisional_on": [
@@ -764,7 +764,7 @@
       },
       "results-reader": {
         "scheme": "open",
-        "version": "26733bf53a5a"
+        "version": "ecdafed5bfca"
       },
       "stance": {
         "provisional_on": [
@@ -772,11 +772,11 @@
           "relation-vocab"
         ],
         "scheme": "open",
-        "version": "27ab13284e83"
+        "version": "785dcbd1d44c"
       },
       "structure-reader": {
         "scheme": "open",
-        "version": "d38f67b22ffd"
+        "version": "8e5a7753ce66"
       },
       "summaries": {
         "provisional_on": [
@@ -784,7 +784,7 @@
           "relation-vocab"
         ],
         "scheme": "open",
-        "version": "34281c14dc52"
+        "version": "faefc339462c"
       },
       "synthesis": {
         "provisional_on": [
@@ -792,7 +792,7 @@
           "relation-vocab"
         ],
         "scheme": "open",
-        "version": "d4b75f5de26d"
+        "version": "fe2aa6f3736e"
       },
       "verification": {
         "provisional_on": [
@@ -802,13 +802,21 @@
         "scheme": "open",
         "version": "8f199958cdfb"
       },
+      "verification-check": {
+        "provisional_on": [
+          "claim-format",
+          "relation-vocab"
+        ],
+        "scheme": "proposed",
+        "version": "e6f1d724b889"
+      },
       "warrant": {
         "provisional_on": [
           "claim-format",
           "relation-vocab"
         ],
         "scheme": "proposed",
-        "version": "c099e7ac56bc"
+        "version": "d2dd9e38a75b"
       }
     },
     "groups": {
@@ -1662,20 +1670,19 @@
         "by_from": "model",
         "command": "cd extract && python3 -m claim_graphs.cli warrant --paper {paper}",
         "group": "tree",
-        "how": "Assembles, for each claim, a dossier of what the tree holds about its support \u2014 its role and stance, the outcomes on its predictions, the controls that validate it, the alternatives it rules out, its reproduction records and their verification provenance, what it requires and is part of, the claims that support or extend it, and the paper's own confidence. It shows a reader every claim with its sentence and that dossier, and asks for a warrant level from the vocabulary the claim's role allows \u2014 a prediction's confirmed/refuted/untested, an alternative's ruled-out/open, everything else's strong/moderate/weak/contested \u2014 a one-line why that cites the dossier, and an `unsupported` flag where the tree records nothing.\nThe basis is the tree's evidence, not the paper's confidence, and a `verified` reproduction checks a number, not the inference drawn from it. The prompt shows the dossier and the vocabulary, never the mechanical rule: scripts/warrant.py carries a rule floor the reading is scored against afterwards, and the ruling puts that floor after the judgement, not before.\n`--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through the same validation \u2014 a slug not in the tree, or a level outside the role's vocabulary, is dropped \u2014 so a model with no backend here can still answer it.\n",
+        "how": "Assembles, for each claim, a dossier of what the tree's argument holds about its support \u2014 its role and stance, the outcomes on its predictions, the controls that validate it, the rivals it rules out, what it requires and is part of (with their roles), and the claims that support, extend, confirm or refute it. It shows a reader every claim with its sentence and that dossier, and asks for a warrant level from the vocabulary the claim's role allows \u2014 a prediction's confirmed/refuted/untested, an alternative's ruled-out/open, everything else's strong/moderate/weak/contested \u2014 a one-line why that cites the dossier, and an `unsupported` flag where the tree's argument records nothing.\nThe basis is the argument the tree records, not the paper's confidence and not any reproduction, which a later checking layer assesses and may then modify. The prompt shows the dossier and the vocabulary, never the mechanical rule: scripts/warrant.py carries a rule floor the reading is scored against afterwards, and the ruling puts that floor after the judgement, not before.\n`--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through the same validation \u2014 a slug not in the tree, or a level outside the role's vocabulary, is dropped \u2014 so a model with no backend here can still answer it.\n",
         "id": "warrant",
         "issue": 126,
         "kind": "feature",
         "needs": [
           "claim-tree",
           "stance",
-          "prediction-outcome",
-          "verification"
+          "prediction-outcome"
         ],
         "produces": [
           "runs/{paper}/warrant.json"
         ],
-        "question": "How well does the tree support each claim, judged from its evidence?",
+        "question": "How well does the tree's argument support each claim?",
         "reads": [
           "extract/prompts/warrant.md",
           "extract/prompts/contract/vocabulary.md",
@@ -1684,6 +1691,32 @@
         "scope": "paper",
         "status": "proposed",
         "title": "Warrant",
+        "views": [
+          "table"
+        ]
+      },
+      {
+        "added": "2026-09-13",
+        "command": "cd extract && python3 -m claim_graphs.cli verification-check --paper {paper}",
+        "group": "measures",
+        "how": "For every claim it reads the reproduction records the claim carries and the verification provenance the audited run wrote (`verification/<paper>/provenance.json`), and writes one verdict into `check_verification:`: `reproduced` (a record marked verified whose provenance shows the script ran and measured the value), `partial` (recorded verified but not observed running, or a run that executed without measuring the value), `mismatch` (a re-run that disagreed with the paper \u2014 the site shows it as contested-by-verification), `blocked`, `unattempted`, or `unrecorded` (no record at all). `check_verification_from:` lists the record statuses and provenance it read. It never touches `warrant:`.\nMechanical: no model and no prompt. The rule is precedence over the evidence a claim carries \u2014 the most adverse informative verdict winning \u2014 so a claim with both a blocked and a mismatch record reads `mismatch`. The dopamine paper's single dSTORM mismatch is the first real case. Export mapping \u2014 how a check reaches the MIRA and OXA encodings \u2014 follows.\n",
+        "id": "verification-check",
+        "issue": 126,
+        "kind": "feature",
+        "needs": [
+          "claim-tree",
+          "verification"
+        ],
+        "produces": [
+          "runs/{paper}/verification-check.output.json"
+        ],
+        "question": "Does a re-run stand behind each claim, read beside its warrant?",
+        "reads": [
+          "extract/claim_graphs/verification_check.py"
+        ],
+        "scope": "paper",
+        "status": "proposed",
+        "title": "Verification check",
         "views": [
           "table"
         ]
@@ -45950,11 +45983,16 @@
         "verification": {
           "state": "absent"
         },
+        "verification-check": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "verification"
+          ]
+        },
         "warrant": {
           "state": "absent",
           "unrecorded_upstream": [
-            "stance",
-            "verification"
+            "stance"
           ]
         }
       },
@@ -46220,6 +46258,9 @@
           "ran": "2026-09-10T17:20:18Z",
           "state": "unrecorded",
           "v": 1
+        },
+        "verification-check": {
+          "state": "absent"
         },
         "warrant": {
           "state": "absent",
@@ -46612,6 +46653,20 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "absent": [
+            "extract/elife_extract/verification_check.py"
+          ],
+          "appeared": [],
+          "by": "scripts/pipeline.py run",
+          "drift": [],
+          "lost": [],
+          "moved": [],
+          "note": "ran via scripts/pipeline.py",
+          "ran": "2026-09-13T16:39:37Z",
+          "state": "stale",
+          "v": 1
+        },
         "warrant": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -46875,7 +46930,6 @@
           "appeared": [],
           "by": "Claude Opus (subagent, via --answer)",
           "drift": [
-            "extract/prompts/edge-inference.md",
             "extract/prompts/contract/vocabulary.md"
           ],
           "lost": [],
@@ -48061,12 +48115,25 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "absent": [
+            "extract/elife_extract/verification_check.py"
+          ],
+          "appeared": [],
+          "by": "scripts/pipeline.py run",
+          "drift": [],
+          "lost": [],
+          "moved": [],
+          "note": "re-run on tree v7 after edge completion + warrant v3",
+          "ran": "2026-09-13T16:48:47Z",
+          "state": "stale",
+          "v": 2
+        },
         "warrant": {
           "absent": [],
           "appeared": [],
           "by": "Claude Opus (subagent, via --answer)",
           "drift": [
-            "extract/prompts/warrant.md",
             "extract/prompts/contract/vocabulary.md",
             "scripts/warrant.py"
           ],
@@ -48424,6 +48491,9 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "state": "absent"
+        },
         "warrant": {
           "state": "absent"
         }
@@ -48705,11 +48775,16 @@
         "verification": {
           "state": "absent"
         },
+        "verification-check": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "verification"
+          ]
+        },
         "warrant": {
           "state": "absent",
           "unrecorded_upstream": [
-            "stance",
-            "verification"
+            "stance"
           ]
         }
       },
@@ -48982,6 +49057,9 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "state": "absent"
+        },
         "warrant": {
           "state": "absent"
         }
@@ -49242,11 +49320,14 @@
         "verification": {
           "state": "absent"
         },
-        "warrant": {
+        "verification-check": {
           "state": "absent",
           "unrecorded_upstream": [
             "verification"
           ]
+        },
+        "warrant": {
+          "state": "absent"
         }
       },
       "scheller-2026-self-prioritization": {
@@ -49512,6 +49593,9 @@
           "state": "unrecorded",
           "v": 1
         },
+        "verification-check": {
+          "state": "absent"
+        },
         "warrant": {
           "state": "absent",
           "unrecorded_upstream": [
@@ -49774,6 +49858,9 @@
           "ran": "2026-09-10T17:20:18Z",
           "state": "unrecorded",
           "v": 1
+        },
+        "verification-check": {
+          "state": "absent"
         },
         "warrant": {
           "state": "absent"
