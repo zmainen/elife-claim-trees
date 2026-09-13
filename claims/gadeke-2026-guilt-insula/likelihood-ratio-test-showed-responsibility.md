@@ -1,5 +1,5 @@
 ---
-uuid: 982ae364-a8a2-4ee6-8f94-30ebbe71a1e3
+uuid: 3161ff4b-59d3-4fae-a466-17299dd3ba78
 slug: likelihood-ratio-test-showed-responsibility
 doi: null
 claim: 'A likelihood ratio test showed the Responsibility model fitted the happiness data better than
@@ -8,9 +8,11 @@ claim: 'A likelihood ratio test showed the Responsibility model fitted the happi
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 tests:
+- responsibility-partner-outcomes-influences-participant
+confirms:
 - responsibility-partner-outcomes-influences-participant
 belongings:
 - relation: requires
@@ -35,6 +37,7 @@ reproductions:
 
 - `tests` → `responsibility-partner-outcomes-influences-participant`: The likelihood-ratio result that the Responsibility model fits best tests the prediction that social_pRPE improves the fit.
 - `requires` → `momentary-happiness-modelled-five-computational`: The likelihood-ratio comparison depends on the set of five happiness models.
+- `confirms` → `responsibility-partner-outcomes-influences-participant`: The Responsibility model fitting the happiness data better than all others confirms the prediction that a model carrying social_pRPE explains happiness best.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

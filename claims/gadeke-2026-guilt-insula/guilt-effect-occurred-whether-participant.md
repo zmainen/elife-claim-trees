@@ -1,5 +1,5 @@
 ---
-uuid: db58b24c-22dd-45c9-aaa6-656fe937a3d0
+uuid: 6d806e03-c634-4e1d-8d58-bb00fe115f3f
 slug: guilt-effect-occurred-whether-participant
 doi: null
 claim: 'The guilt effect occurred whether the participant received the high lottery outcome (Study 1:
@@ -8,12 +8,10 @@ claim: 'The guilt effect occurred whether the participant received the high lott
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 rules-out:
 - alt-guilt-effect-driven-by-own-outcome
-part-of:
-- both-studies-participants-felt-worse
 belongings:
 - relation: supports
   target: when-partner-received-low-lottery

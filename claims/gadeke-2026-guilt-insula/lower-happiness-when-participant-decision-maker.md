@@ -1,5 +1,5 @@
 ---
-uuid: ade25ae5-a368-4d4c-9d1a-9e9c1201a4e5
+uuid: b0fad57c-46f9-4a12-9363-a74891518c0c
 slug: lower-happiness-when-participant-decision-maker
 doi: null
 claim: The lower happiness when the participant is the decision-maker may reflect responsibility aversion
@@ -7,7 +7,7 @@ claim: The lower happiness when the participant is the decision-maker may reflec
 claim-type: interpretive
 role: interpretation
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 interprets:
 - participant-happiness-lower-when-participant

@@ -1,5 +1,5 @@
 ---
-uuid: 8eccf358-8cda-4fec-b608-34581e8afbe7
+uuid: 8a529928-5d85-4e07-83d1-78138ef48363
 slug: bilateral-ventral-striatum-more-active
 doi: null
 claim: The bilateral ventral striatum was more active when participants chose the risky rather than the
@@ -8,7 +8,7 @@ claim: The bilateral ventral striatum was more active when participants chose th
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 rules-out:
 - alt-imaging-contrast-invalid

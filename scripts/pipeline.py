@@ -392,10 +392,17 @@ def read_approvals(paper: str) -> list[dict]:
     return out
 
 
-def approve(paper: str, layer_id: str, v: int, *, by: str, note: str = "") -> dict:
-    """Record that a person approved one version of one layer."""
+def approve(paper: str, layer_id: str, v: int, *, by: str, note: str = "",
+            procedure: int | None = None) -> dict:
+    """Record that a person approved one version of one layer.
+
+    `procedure` names the adjudication procedure version the reading was made under, for a
+    claim-tree approval bound to a verdict file; it is omitted for a plain output approval.
+    """
     rec = {"layer": layer_id, "v": v, "by": by, "note": note,
            "when": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    if procedure is not None:
+        rec["procedure"] = procedure
     p = approvals_path(paper)
     os.makedirs(os.path.dirname(p), exist_ok=True)
     with open(p, "a", encoding="utf-8") as fh:
@@ -415,6 +422,11 @@ def approve(paper: str, layer_id: str, v: int, *, by: str, note: str = "") -> di
 # corpus-level ledger, in the same shape as a per-paper approval.
 
 ACCEPTED, PROPOSED = "accepted", "proposed"
+
+# A declaration that is not a layer: a design note ruled on and versioned, keyed on the note's
+# own content hash the way a layer's declaration is keyed on `digest`. The adjudication procedure
+# — the steps and verdict vocabulary in this note — is one such scheme, ruled on under #108.
+DOC_DECLARATIONS = {"procedure": "docs/design/2026-09-12-kinds-of-decision.md"}
 
 
 def corpus_approvals_path() -> str:
@@ -1012,17 +1024,27 @@ def cmd_approve(args) -> int:
 
 
 def cmd_approve_declaration(args) -> int:
-    """Record a scheme ruling: a person accepts what a layer means, for every paper."""
-    decl = load()
+    """Record a scheme ruling: a person accepts what a layer — or a versioned design note — means.
+
+    A layer is keyed on its declaration version; a design note in `DOC_DECLARATIONS` (the
+    adjudication procedure) is keyed on the note's own content hash, the same `digest`.
+    """
     lid = args.declaration
-    if lid not in decl["by_id"]:
-        print(f"error: no layer {lid!r}", file=sys.stderr)
-        return 2
-    ver = declaration_version(decl["by_id"][lid])
-    was = declaration_state(decl)[lid]
-    if was["scheme"] == ACCEPTED:
-        print(f"{lid}: declaration {ver} is already accepted by {was['approved']['by']} — "
-              f"recording another ruling on the same version")
+    if lid in DOC_DECLARATIONS:
+        ver = digest(DOC_DECLARATIONS[lid])
+        if ver is None:
+            print(f"error: {DOC_DECLARATIONS[lid]} does not exist", file=sys.stderr)
+            return 2
+    else:
+        decl = load()
+        if lid not in decl["by_id"]:
+            print(f"error: no layer {lid!r}", file=sys.stderr)
+            return 2
+        ver = declaration_version(decl["by_id"][lid])
+        was = declaration_state(decl)[lid]
+        if was["scheme"] == ACCEPTED:
+            print(f"{lid}: declaration {ver} is already accepted by {was['approved']['by']} — "
+                  f"recording another ruling on the same version")
     rec = approve_declaration(lid, ver, by=args.by, note=args.note or "")
     print(f"{lid} declaration {ver} accepted by {rec['by']}")
     if rec["note"]:

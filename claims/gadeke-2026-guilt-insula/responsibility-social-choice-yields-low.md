@@ -1,5 +1,5 @@
 ---
-uuid: 24f2ba86-7238-4940-a76d-5d6eed151429
+uuid: fb3de23c-ec4c-43e5-a740-8e955dfdc183
 slug: responsibility-social-choice-yields-low
 doi: null
 claim: Responsibility for a social choice that yields a low outcome for a partner produces interpersonal
@@ -7,9 +7,8 @@ claim: Responsibility for a social choice that yields a low outcome for a partne
   made the same choice.
 claim-type: hypothesis
 role: hypothesis
-addresses: q1
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: hypothesis
 entails:
 - responsibility-outcomes-generates-guilt-participant

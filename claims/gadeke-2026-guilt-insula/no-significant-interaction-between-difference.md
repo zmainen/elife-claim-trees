@@ -1,5 +1,5 @@
 ---
-uuid: 630e2396-70a6-46dc-93cd-5e49a3a8b472
+uuid: 768aacc7-3dda-4c6f-abee-07592d8f56e4
 slug: no-significant-interaction-between-difference
 doi: null
 claim: There was no significant interaction between the difference in expected values and experimental
@@ -7,7 +7,7 @@ claim: There was no significant interaction between the difference in expected v
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings:
 - relation: supports

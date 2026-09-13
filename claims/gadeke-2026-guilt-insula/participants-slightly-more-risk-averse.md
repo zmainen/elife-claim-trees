@@ -1,5 +1,5 @@
 ---
-uuid: b4cfe28f-8a72-4aeb-9d52-b405c160af07
+uuid: a213496f-3fb9-4c9a-bb80-d6e8b4a95980
 slug: participants-slightly-more-risk-averse
 doi: null
 claim: Participants were slightly more risk averse (higher ρ) in the Social than the Solo condition in
@@ -8,10 +8,8 @@ claim: Participants were slightly more risk averse (higher ρ) in the Social tha
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
-part-of:
-- participants-showed-very-similar-risk
 belongings:
 - relation: supports
   target: participants-showed-very-similar-risk

@@ -1,5 +1,5 @@
 ---
-uuid: 98c01f4a-1be8-4bbc-b094-ae0b92cac054
+uuid: 94347cec-bb54-4763-b2a7-b321c8ebe58d
 slug: model-based-glm-entered-best-fitting-computational
 doi: null
 claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsibility) model's variables
@@ -9,7 +9,7 @@ claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsi
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings: []
 assertions:

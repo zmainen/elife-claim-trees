@@ -4,23 +4,9 @@ title: Contributions of insula and superior temporal sulcus to interpersonal gui
   and responsibility in social decisions
 doi: 10.7554/eLife.105391
 url: https://doi.org/10.7554/eLife.105391
-added: '2026-09-12'
+added: '2026-09-13'
 claim-count: 62
 extraction-path: jats
-questions:
-- id: q1
-  text: Does the larger decrease in momentary happiness after a low outcome for the partner when the participant
-    made the choice reflect responsibility-contingent interpersonal guilt, rather than general agency
-    aversion, disappointment over the participant's own outcome, a social shift in risk attitude, or inattentive
-    task engagement?
-- id: q2
-  text: Is the anterior insula, together with its condition- and choice-dependent connectivity to prefrontal
-    cortex, the neural substrate of this interpersonal guilt, responding more when the participant is
-    responsible for a partner's low outcome?
-- id: q3
-  text: Does a neural substrate track the participant's responsibility for the partner's outcomes, representing
-    partner reward prediction errors more strongly when they arise from the participant's own choice than
-    from the partner's choice?
 ---
 
 ## Claims

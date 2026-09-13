@@ -1,5 +1,5 @@
 ---
-uuid: 3d98c046-68f2-491d-97c0-2b75571e838c
+uuid: fd3007fb-a50a-404d-b806-fa4b6837463e
 slug: insula-rois-responded-more-low
 doi: null
 claim: The insula ROIs responded more to low lottery outcomes for the partner in the Social than the Partner
@@ -7,9 +7,11 @@ claim: The insula ROIs responded more to low lottery outcomes for the partner in
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 tests:
+- anterior-insula-tracks-guilt-insula
+confirms:
 - anterior-insula-tracks-guilt-insula
 belongings:
 - relation: supports
@@ -31,6 +33,7 @@ reproductions: []
 - `tests` → `anterior-insula-tracks-guilt-insula`: The insula ROI responding more to low partner outcomes in Social than Partner tests the insula prediction (evidence at span results-127).
 - `supports` → `anterior-insula-neural-substrate-guilt`: The insula ROI guilt response supports the claim that the anterior insula is the substrate of the guilt effect (evidence at span results-127).
 - `requires` → `during-receipt-lottery-versus-safe`: The insula ROIs are drawn from the outcome-phase lottery-versus-safe cluster (evidence at span results-127).
+- `confirms` → `anterior-insula-tracks-guilt-insula`: The insula ROIs responding more to low partner outcomes in Social than Partner confirm the prediction of a Social-by-low-outcome insula response (evidence at span results-127).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

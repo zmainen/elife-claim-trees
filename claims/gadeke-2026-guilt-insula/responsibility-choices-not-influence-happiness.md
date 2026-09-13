@@ -1,5 +1,5 @@
 ---
-uuid: a22c0bd0-79d3-4ae6-b9d5-8227716b52f4
+uuid: 29bc91a8-1c04-450a-b3b7-c1fcb91d2c70
 slug: responsibility-choices-not-influence-happiness
 doi: null
 claim: Responsibility for choices did not influence happiness following positive (high) lottery outcomes
@@ -7,10 +7,8 @@ claim: Responsibility for choices did not influence happiness following positive
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
-part-of:
-- both-studies-participants-felt-worse
 belongings:
 - relation: supports
   target: behavioural-guilt-effect-larger-happiness

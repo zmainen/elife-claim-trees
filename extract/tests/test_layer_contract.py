@@ -800,13 +800,29 @@ def test_edge_rejects_unknown_relation_reference_and_self():
     assert _triples(edges) == {("e", "p", "tests")}
 
 
-def test_edge_rejects_the_mechanically_written_reciprocals():
-    """`derived-from` and `confirms` are synthesised, never emitted; emitting them is dropped."""
+def test_edge_derived_from_is_the_only_mechanically_written_reciprocal():
+    """`derived-from` is synthesised, never emitted; emitting it is dropped. `confirms` used to
+    be too, but under the #28 ruling it is an outcome the reader states directly (result →
+    prediction), so it is now kept rather than dropped."""
     edges = _validate([
-        {"source": 2, "target": 1, "relation": "derived-from"},
-        {"source": 3, "target": 2, "relation": "confirms"},
+        {"source": 2, "target": 1, "relation": "derived-from"},   # mechanical → drop
+        {"source": 3, "target": 2, "relation": "confirms"},       # outcome, result → prediction → kept
     ])
-    assert edges == []
+    assert _triples(edges) == {("e", "p", "confirms")}
+
+
+def test_edge_outcomes_target_a_prediction_from_a_result():
+    """`confirms`/`refutes` are outcomes aimed at a prediction, from a result or control (#28).
+    A source that is not empirical/control, or a target that is not a prediction, is dropped."""
+    edges = _validate([
+        {"source": 3, "target": 2, "relation": "confirms"},   # result → prediction → kept
+        {"source": 4, "target": 2, "relation": "refutes"},    # control → prediction → kept
+        {"source": 3, "target": 1, "relation": "confirms"},   # target hypothesis → drop
+        {"source": 3, "target": 1, "relation": "refutes"},    # target hypothesis → drop
+        {"source": 1, "target": 2, "relation": "confirms"},   # source hypothesis → drop
+    ])
+    t = _triples(edges)
+    assert t == {("e", "p", "confirms"), ("c", "p", "refutes")}
 
 
 def test_edge_direction_tests_entails_scopes():
@@ -861,15 +877,16 @@ def test_edge_dissociates_with_is_symmetric_and_written_once():
 
 
 def test_edge_reciprocals_are_synthesised():
-    """`entails` synthesises `derived-from`; `predicts` synthesises `confirms`. The site's
-    hierarchical numbering walks the reciprocal, so it must be written."""
+    """`entails` synthesises `derived-from`; the site's hierarchical numbering walks it, so it
+    must be written. `predicts` no longer synthesises `confirms` — under the #28 ruling the
+    outcome is stated directly by the reader, not derived."""
     edges = _validate([
         {"source": 1, "target": 2, "relation": "entails", "why": "h implies p"},
         {"source": 1, "target": 2, "relation": "predicts", "why": "h predicts p"},
     ])
     t = _triples(edges)
-    assert {("h", "p", "entails"), ("p", "h", "derived-from"),
-            ("h", "p", "predicts"), ("p", "h", "confirms")} <= t
+    assert {("h", "p", "entails"), ("p", "h", "derived-from"), ("h", "p", "predicts")} <= t
+    assert ("p", "h", "confirms") not in t
 
 
 def test_edge_why_is_carried_through_to_the_output():

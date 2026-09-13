@@ -1,5 +1,5 @@
 ---
-uuid: e9cd9eb3-192b-4547-9016-1a77c2d4036d
+uuid: 275c84e2-74c2-4a16-aaf1-764ae57dbe20
 slug: prior-functional-connectivity-work-shown
 doi: null
 claim: Prior functional connectivity work has shown network differences between social and self-only choices,
@@ -8,7 +8,7 @@ claim: Prior functional connectivity work has shown network differences between 
 claim-type: interpretive
 role: literature-context
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings: []
 assertions:

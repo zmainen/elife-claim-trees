@@ -1,5 +1,5 @@
 ---
-uuid: 5aef637e-66fa-4292-83f4-b6c850227d27
+uuid: 910e0721-f42c-4468-8cfd-ee97384aaedb
 slug: anterior-insula-tracks-guilt-insula
 doi: null
 claim: If the anterior insula tracks guilt, then insula BOLD should be higher in the Social than the Partner
@@ -7,7 +7,7 @@ claim: If the anterior insula tracks guilt, then insula BOLD should be higher in
 claim-type: prediction
 role: prediction
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: prediction
 derived-from:
 - anterior-insula-neural-substrate-guilt
