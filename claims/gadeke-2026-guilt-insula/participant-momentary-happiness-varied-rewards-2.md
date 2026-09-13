@@ -8,6 +8,11 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the R^2 in both cohorts (0.185->0.184, 0.147->0.145)
+warrant_from:
+- reproductions
+- verification
 belongings:
 - relation: supports
   target: likelihood-ratio-test-showed-responsibility

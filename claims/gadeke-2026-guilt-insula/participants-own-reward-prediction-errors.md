@@ -10,6 +10,8 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the tree records no reproduction, control or test bearing on this weighting comparison
 belongings:
 - relation: supports
   target: likelihood-ratio-test-showed-responsibility

@@ -9,6 +9,8 @@ role: control
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the tree records nothing that checks this null result
 validates:
 - when-partner-received-low-lottery
 belongings: []

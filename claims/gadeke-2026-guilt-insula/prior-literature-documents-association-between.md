@@ -8,6 +8,8 @@ role: literature-context
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: prior-literature context; the tree records nothing that checks it
 belongings:
 - relation: supports
   target: anterior-insula-neural-substrate-guilt

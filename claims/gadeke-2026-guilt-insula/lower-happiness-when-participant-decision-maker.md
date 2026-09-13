@@ -9,6 +9,10 @@ role: interpretation
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: interprets participant-happiness-lower-when-participant, which only partially reproduced, and is itself a 'may reflect' interpretation
+warrant_from:
+- interprets
 interprets:
 - participant-happiness-lower-when-participant
 belongings: []

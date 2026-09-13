@@ -10,6 +10,12 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: its only reproduction is partial — the direction reproduced on the deposited 1216-trial subset while the paper's t(3600) model could not be re-run
+warrant_from:
+- rules_out
+- reproductions
+- verification
 rules-out:
 - alt-agency-aversion-not-guilt
 dissociates-with:

@@ -10,6 +10,11 @@ role: control
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: the convergent-validity sign test is a verified reproduction (sign p=0.008); the partial record is a secondary value
+warrant_from:
+- reproductions
+- verification
 validates:
 - insula-rois-responded-more-low
 in-tension-with:

@@ -10,6 +10,8 @@ role: control
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the tree records no reproduction, control or test bearing on this manipulation check
 validates:
 - when-partner-received-low-lottery
 belongings: []

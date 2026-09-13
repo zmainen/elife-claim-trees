@@ -10,6 +10,12 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: a testing result confirming responsibility-partner-outcomes-influences-participant, supported by several happiness-model results, but its own reproduction is unattempted
+warrant_from:
+- reproductions
+- requires
+- supported_by
 tests:
 - responsibility-partner-outcomes-influences-participant
 confirms:

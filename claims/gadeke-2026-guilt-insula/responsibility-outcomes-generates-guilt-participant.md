@@ -9,6 +9,10 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
+warrant: confirmed
+warrant_why: confirmed by when-partner-received-low-lottery, whose interaction reproduced
+warrant_from:
+- outcome
 derived-from:
 - responsibility-social-choice-yields-low
 belongings: []

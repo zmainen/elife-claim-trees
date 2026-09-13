@@ -9,6 +9,10 @@ role: methodological
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: its only reproduction is blocked, so nothing in the tree actually checks the simulated-partner procedure
+warrant_from:
+- reproductions
 enables-method:
 - when-partner-received-low-lottery
 belongings: []

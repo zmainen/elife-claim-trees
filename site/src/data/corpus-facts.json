@@ -689,6 +689,10 @@
       "verification": {
         "scheme": "open",
         "version": "669700b9bef6"
+      },
+      "warrant": {
+        "scheme": "proposed",
+        "version": "d8dc23ea2062"
       }
     },
     "groups": {
@@ -1535,6 +1539,37 @@
         "views": [
           "table",
           "comparison"
+        ]
+      },
+      {
+        "added": "2026-09-13",
+        "by_from": "model",
+        "command": "cd extract && python3 -m elife_extract.cli warrant --paper {paper}",
+        "group": "tree",
+        "how": "Assembles, for each claim, a dossier of what the tree holds about its support \u2014 its role and stance, the outcomes on its predictions, the controls that validate it, the alternatives it rules out, its reproduction records and their verification provenance, what it requires and is part of, the claims that support or extend it, and the paper's own confidence. It shows a reader every claim with its sentence and that dossier, and asks for a warrant level from the vocabulary the claim's role allows \u2014 a prediction's confirmed/refuted/untested, an alternative's ruled-out/open, everything else's strong/moderate/weak/contested \u2014 a one-line why that cites the dossier, and an `unsupported` flag where the tree records nothing.\nThe basis is the tree's evidence, not the paper's confidence, and a `verified` reproduction checks a number, not the inference drawn from it. The prompt shows the dossier and the vocabulary, never the mechanical rule: scripts/warrant.py carries a rule floor the reading is scored against afterwards, and the ruling puts that floor after the judgement, not before.\n`--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through the same validation \u2014 a slug not in the tree, or a level outside the role's vocabulary, is dropped \u2014 so a model with no backend here can still answer it.\n",
+        "id": "warrant",
+        "issue": 126,
+        "kind": "feature",
+        "needs": [
+          "claim-tree",
+          "stance",
+          "prediction-outcome",
+          "verification"
+        ],
+        "produces": [
+          "runs/{paper}/warrant.json"
+        ],
+        "question": "How well does the tree support each claim, judged from its evidence?",
+        "reads": [
+          "extract/prompts/warrant.md",
+          "extract/prompts/contract/vocabulary.md",
+          "scripts/warrant.py"
+        ],
+        "scope": "paper",
+        "status": "proposed",
+        "title": "Warrant",
+        "views": [
+          "table"
         ]
       }
     ],
@@ -26553,6 +26588,357 @@
           ],
           "ran": "2026-09-13T13:01:13Z",
           "v": 7
+        },
+        {
+          "answer": {
+            "path": "runs/gadeke-2026-guilt-insula/warrant.answer.v1.json",
+            "sha": "e2bff26faf2c"
+          },
+          "by": "Claude Opus (subagent, via --answer)",
+          "cmd": "cd extract && python3 -m elife_extract.cli warrant --paper gadeke-2026-guilt-insula --answer runs/gadeke-2026-guilt-insula/warrant.answer.v1.json",
+          "in": [
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+              "sha": "d2ffb615ac6a"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+              "sha": "b11124ac28c5"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+              "sha": "422af414d1f6"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+              "sha": "b0b03a4a5bb9"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+              "sha": "7e670726404d"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+              "sha": "449d44725068"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
+              "sha": "bc54dce627af"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
+              "sha": "28ab885f08ca"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
+              "sha": "7184fb985422"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/authors-suggest-left-sts-region.md",
+              "sha": "401cb61fe612"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/behavioural-guilt-effect-larger-happiness.md",
+              "sha": "29c6f49bdad7"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/bilateral-ventral-striatum-more-active.md",
+              "sha": "33e93cc50d4b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/both-studies-participants-felt-worse.md",
+              "sha": "1d5040f463b1"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/connectivity-between-guilt-responsibility-related-outcome-ph.md",
+              "sha": "49540689cf9a"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/connectivity-between-left-anterior-insula.md",
+              "sha": "14cd931f88c0"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/decisions-social-compared-solo-condition.md",
+              "sha": "fa7c91c0279b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/difference-response-between-low-high.md",
+              "sha": "18978f937c3b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/dot-products-between-individual-neural.md",
+              "sha": "c16af240455b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/during-outcome-phase-responses-low.md",
+              "sha": "7d90745abfdc"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/during-receipt-lottery-versus-safe.md",
+              "sha": "18f2d126a2f9"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/each-trial-participants-chose-between.md",
+              "sha": "72e59898e365"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/findings-rest-two-samples-healthy.md",
+              "sha": "c34eada7da4f"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/functional-connectivity-between-guilt-responsibility-related.md",
+              "sha": "23b8adce1554"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/functional-connectivity-between-left-anterior.md",
+              "sha": "696bd6eb6daa"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+              "sha": "cd7b934244df"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/hold-partner-behaviour-constant-across.md",
+              "sha": "bf3ccf8afd36"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/index.md",
+              "sha": "8cee12840d05"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/individual-grbs-dot-product-values-not.md",
+              "sha": "9980770ccdd9"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/insula-rois-responded-more-low.md",
+              "sha": "ae280b76d421"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/left-ifg-cluster-showed-opposite.md",
+              "sha": "5ef72c5301a8"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/left-superior-temporal-sulcus-cluster.md",
+              "sha": "67dffd9853e6"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/likelihood-ratio-test-showed-responsibility.md",
+              "sha": "19b29cd80257"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/linear-mixed-model-containing-all.md",
+              "sha": "8ce51474c267"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/lower-happiness-when-participant-decision-maker.md",
+              "sha": "007b24318918"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/manipulation-check-bilateral-ventral-striatum.md",
+              "sha": "fd592d3f4665"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/mass-univariate-voxel-wise-analysis-found-small.md",
+              "sha": "cfc7884c3ddd"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/mixed-effects-regressions-choices-social-condition.md",
+              "sha": "0102fa4b8b5b"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/model-based-glm-entered-best-fitting-computational.md",
+              "sha": "34155dd09471"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/model-selection-among-happiness-models.md",
+              "sha": "13c977e72095"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/momentary-happiness-modelled-five-computational.md",
+              "sha": "0955e9d76c16"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/neural-substrate-tracks-participant-responsibility-2.md",
+              "sha": "30eda8e834eb"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/neural-substrate-tracks-participant-responsibility.md",
+              "sha": "6f87531b7036"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/no-significant-interaction-between-difference.md",
+              "sha": "e54caccb4515"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/one-cluster-left-sts-responded.md",
+              "sha": "8539ed866fc4"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/only-precuneus-tpj-showed-positive.md",
+              "sha": "fdb1950f1935"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/parameter-recovery-procedure-synthetic-data-generated.md",
+              "sha": "c9212368edaf"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participant-happiness-lower-when-participant.md",
+              "sha": "cfc04de70972"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participant-momentary-happiness-varied-rewards-2.md",
+              "sha": "d505bed6a103"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participant-momentary-happiness-varied-rewards.md",
+              "sha": "1746189b863c"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participants-chose-risky-option-lottery.md",
+              "sha": "90d3f94b07a3"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participants-own-reward-prediction-errors.md",
+              "sha": "75dc9baa4dbd"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participants-probability-choosing-risky-option.md",
+              "sha": "0fbb209d8ff5"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participants-showed-very-similar-risk.md",
+              "sha": "2a7b92d7031a"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/participants-slightly-more-risk-averse.md",
+              "sha": "d45d620397dd"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/partner-reward-prediction-errors-resulting.md",
+              "sha": "792f93e7869f"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/pre-task-icebreaker-succeeded-establishing-positive.md",
+              "sha": "1d2e836d0def"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/prior-functional-connectivity-work-shown.md",
+              "sha": "659defdbb72c"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/prior-literature-documents-association-between.md",
+              "sha": "359171410c80"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-choices-not-influence-happiness.md",
+              "sha": "2d73389dcecb"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-model-yielded-higher-values.md",
+              "sha": "5e834509ac79"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-outcomes-generates-guilt-participant.md",
+              "sha": "73fecc9f081f"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-partner-outcomes-influences-participant.md",
+              "sha": "390cc09626b7"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-redux-model-incorporating-expected.md",
+              "sha": "2f4453a187b4"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/responsibility-social-choice-yields-low.md",
+              "sha": "9d31baf124fd"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/risk-aversion-parameter-not-differ-between.md",
+              "sha": "e956b6b00045"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md",
+              "sha": "91032c7c89a7"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/rutledge-colleagues-established-changes-momentary.md",
+              "sha": "56e38b53b9a0"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/study-reproduced-study-design-inside.md",
+              "sha": "fec7a5024dbd"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/when-partner-received-low-lottery.md",
+              "sha": "4621d5d6e45c"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+              "sha": "d2ffb615ac6a"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+              "sha": "b11124ac28c5"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+              "sha": "422af414d1f6"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+              "sha": "b0b03a4a5bb9"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+              "sha": "7e670726404d"
+            },
+            {
+              "path": "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+              "sha": "449d44725068"
+            },
+            {
+              "path": "review/prediction-outcome.json",
+              "sha": "919845962f4f"
+            },
+            {
+              "path": "verification/gadeke-2026-guilt-insula/provenance.json",
+              "sha": "0e2256596fd2"
+            },
+            {
+              "path": "extract/prompts/warrant.md",
+              "sha": "fb1f1402b240"
+            },
+            {
+              "path": "extract/prompts/contract/vocabulary.md",
+              "sha": "134253cddeae"
+            },
+            {
+              "path": "scripts/warrant.py",
+              "sha": "052716ce9e5a"
+            }
+          ],
+          "in_sets": [
+            {
+              "pat": "claims/gadeke-2026-guilt-insula/*.md",
+              "sha": "59d5df7c0226"
+            },
+            {
+              "pat": "claims/gadeke-2026-guilt-insula/alt-*.md",
+              "sha": "d217ea17cc70"
+            }
+          ],
+          "kind": "feature",
+          "layer": "warrant",
+          "note": "draft warrant per #126 ruling; floor shown after; re-run on v5 tree after merging main",
+          "out": [
+            {
+              "path": "runs/gadeke-2026-guilt-insula/warrant.json",
+              "sha": "7089af073183"
+            }
+          ],
+          "ran": "2026-09-13T14:01:51Z",
+          "v": 1
         }
       ],
       "headley-2026-inhibitory-rhythms": [
@@ -37927,6 +38313,13 @@
         },
         "verification": {
           "state": "absent"
+        },
+        "warrant": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "stance",
+            "verification"
+          ]
         }
       },
       "bouyeure-2026-fear-rsa": {
@@ -38161,6 +38554,12 @@
           "ran": "2026-09-10T17:20:18Z",
           "state": "unrecorded",
           "v": 1
+        },
+        "warrant": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "stance"
+          ]
         }
       },
       "ejdrup-2026-dopamine": {
@@ -38390,6 +38789,12 @@
           "ran": "2026-09-10T17:20:18Z",
           "state": "unrecorded",
           "v": 1
+        },
+        "warrant": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "stance"
+          ]
         }
       },
       "gadeke-2026-guilt-insula": {
@@ -38400,6 +38805,12 @@
           "by": "Claude Opus 5 (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -38533,6 +38944,12 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -38638,6 +39055,12 @@
           "by": "supplied:runs/gadeke-2026-guilt-insula/edge-review.answer.json",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -38758,6 +39181,12 @@
           "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -38835,6 +39264,12 @@
           "by": "scripts/pipeline.py run",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -38909,30 +39344,172 @@
         },
         "mira-export": {
           "appeared": [],
-          "blocked_by": [
-            "claim-tree",
-            "stance"
-          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+            "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
+            "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
+            "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
+            "claims/gadeke-2026-guilt-insula/authors-suggest-left-sts-region.md",
+            "claims/gadeke-2026-guilt-insula/behavioural-guilt-effect-larger-happiness.md",
+            "claims/gadeke-2026-guilt-insula/bilateral-ventral-striatum-more-active.md",
+            "claims/gadeke-2026-guilt-insula/both-studies-participants-felt-worse.md",
+            "claims/gadeke-2026-guilt-insula/connectivity-between-guilt-responsibility-related-outcome-ph.md",
+            "claims/gadeke-2026-guilt-insula/connectivity-between-left-anterior-insula.md",
+            "claims/gadeke-2026-guilt-insula/decisions-social-compared-solo-condition.md",
+            "claims/gadeke-2026-guilt-insula/difference-response-between-low-high.md",
+            "claims/gadeke-2026-guilt-insula/dot-products-between-individual-neural.md",
+            "claims/gadeke-2026-guilt-insula/during-outcome-phase-responses-low.md",
+            "claims/gadeke-2026-guilt-insula/during-receipt-lottery-versus-safe.md",
+            "claims/gadeke-2026-guilt-insula/each-trial-participants-chose-between.md",
+            "claims/gadeke-2026-guilt-insula/findings-rest-two-samples-healthy.md",
+            "claims/gadeke-2026-guilt-insula/functional-connectivity-between-guilt-responsibility-related.md",
+            "claims/gadeke-2026-guilt-insula/functional-connectivity-between-left-anterior.md",
+            "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+            "claims/gadeke-2026-guilt-insula/hold-partner-behaviour-constant-across.md",
+            "claims/gadeke-2026-guilt-insula/individual-grbs-dot-product-values-not.md",
+            "claims/gadeke-2026-guilt-insula/insula-rois-responded-more-low.md",
+            "claims/gadeke-2026-guilt-insula/left-ifg-cluster-showed-opposite.md",
+            "claims/gadeke-2026-guilt-insula/left-superior-temporal-sulcus-cluster.md",
+            "claims/gadeke-2026-guilt-insula/likelihood-ratio-test-showed-responsibility.md",
+            "claims/gadeke-2026-guilt-insula/linear-mixed-model-containing-all.md",
+            "claims/gadeke-2026-guilt-insula/lower-happiness-when-participant-decision-maker.md",
+            "claims/gadeke-2026-guilt-insula/manipulation-check-bilateral-ventral-striatum.md",
+            "claims/gadeke-2026-guilt-insula/mass-univariate-voxel-wise-analysis-found-small.md",
+            "claims/gadeke-2026-guilt-insula/mixed-effects-regressions-choices-social-condition.md",
+            "claims/gadeke-2026-guilt-insula/model-based-glm-entered-best-fitting-computational.md",
+            "claims/gadeke-2026-guilt-insula/model-selection-among-happiness-models.md",
+            "claims/gadeke-2026-guilt-insula/momentary-happiness-modelled-five-computational.md",
+            "claims/gadeke-2026-guilt-insula/neural-substrate-tracks-participant-responsibility-2.md",
+            "claims/gadeke-2026-guilt-insula/neural-substrate-tracks-participant-responsibility.md",
+            "claims/gadeke-2026-guilt-insula/no-significant-interaction-between-difference.md",
+            "claims/gadeke-2026-guilt-insula/one-cluster-left-sts-responded.md",
+            "claims/gadeke-2026-guilt-insula/only-precuneus-tpj-showed-positive.md",
+            "claims/gadeke-2026-guilt-insula/parameter-recovery-procedure-synthetic-data-generated.md",
+            "claims/gadeke-2026-guilt-insula/participant-happiness-lower-when-participant.md",
+            "claims/gadeke-2026-guilt-insula/participant-momentary-happiness-varied-rewards-2.md",
+            "claims/gadeke-2026-guilt-insula/participant-momentary-happiness-varied-rewards.md",
+            "claims/gadeke-2026-guilt-insula/participants-chose-risky-option-lottery.md",
+            "claims/gadeke-2026-guilt-insula/participants-own-reward-prediction-errors.md",
+            "claims/gadeke-2026-guilt-insula/participants-probability-choosing-risky-option.md",
+            "claims/gadeke-2026-guilt-insula/participants-showed-very-similar-risk.md",
+            "claims/gadeke-2026-guilt-insula/participants-slightly-more-risk-averse.md",
+            "claims/gadeke-2026-guilt-insula/partner-reward-prediction-errors-resulting.md",
+            "claims/gadeke-2026-guilt-insula/pre-task-icebreaker-succeeded-establishing-positive.md",
+            "claims/gadeke-2026-guilt-insula/prior-functional-connectivity-work-shown.md",
+            "claims/gadeke-2026-guilt-insula/prior-literature-documents-association-between.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-choices-not-influence-happiness.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-model-yielded-higher-values.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-outcomes-generates-guilt-participant.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-partner-outcomes-influences-participant.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-redux-model-incorporating-expected.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-social-choice-yields-low.md",
+            "claims/gadeke-2026-guilt-insula/risk-aversion-parameter-not-differ-between.md",
+            "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md",
+            "claims/gadeke-2026-guilt-insula/rutledge-colleagues-established-changes-momentary.md",
+            "claims/gadeke-2026-guilt-insula/study-reproduced-study-design-inside.md",
+            "claims/gadeke-2026-guilt-insula/when-partner-received-low-lottery.md",
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md"
+          ],
           "note": "regenerate after edge re-answer (#125)",
           "ran": "2026-09-13T13:01:12Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 7
         },
         "oxa-export": {
           "appeared": [],
-          "blocked_by": [
-            "claim-tree",
-            "stance"
-          ],
           "by": "scripts/pipeline.py run",
           "lost": [],
-          "moved": [],
+          "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
+            "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
+            "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
+            "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
+            "claims/gadeke-2026-guilt-insula/authors-suggest-left-sts-region.md",
+            "claims/gadeke-2026-guilt-insula/behavioural-guilt-effect-larger-happiness.md",
+            "claims/gadeke-2026-guilt-insula/bilateral-ventral-striatum-more-active.md",
+            "claims/gadeke-2026-guilt-insula/both-studies-participants-felt-worse.md",
+            "claims/gadeke-2026-guilt-insula/connectivity-between-guilt-responsibility-related-outcome-ph.md",
+            "claims/gadeke-2026-guilt-insula/connectivity-between-left-anterior-insula.md",
+            "claims/gadeke-2026-guilt-insula/decisions-social-compared-solo-condition.md",
+            "claims/gadeke-2026-guilt-insula/difference-response-between-low-high.md",
+            "claims/gadeke-2026-guilt-insula/dot-products-between-individual-neural.md",
+            "claims/gadeke-2026-guilt-insula/during-outcome-phase-responses-low.md",
+            "claims/gadeke-2026-guilt-insula/during-receipt-lottery-versus-safe.md",
+            "claims/gadeke-2026-guilt-insula/each-trial-participants-chose-between.md",
+            "claims/gadeke-2026-guilt-insula/findings-rest-two-samples-healthy.md",
+            "claims/gadeke-2026-guilt-insula/functional-connectivity-between-guilt-responsibility-related.md",
+            "claims/gadeke-2026-guilt-insula/functional-connectivity-between-left-anterior.md",
+            "claims/gadeke-2026-guilt-insula/guilt-effect-occurred-whether-participant.md",
+            "claims/gadeke-2026-guilt-insula/hold-partner-behaviour-constant-across.md",
+            "claims/gadeke-2026-guilt-insula/individual-grbs-dot-product-values-not.md",
+            "claims/gadeke-2026-guilt-insula/insula-rois-responded-more-low.md",
+            "claims/gadeke-2026-guilt-insula/left-ifg-cluster-showed-opposite.md",
+            "claims/gadeke-2026-guilt-insula/left-superior-temporal-sulcus-cluster.md",
+            "claims/gadeke-2026-guilt-insula/likelihood-ratio-test-showed-responsibility.md",
+            "claims/gadeke-2026-guilt-insula/linear-mixed-model-containing-all.md",
+            "claims/gadeke-2026-guilt-insula/lower-happiness-when-participant-decision-maker.md",
+            "claims/gadeke-2026-guilt-insula/manipulation-check-bilateral-ventral-striatum.md",
+            "claims/gadeke-2026-guilt-insula/mass-univariate-voxel-wise-analysis-found-small.md",
+            "claims/gadeke-2026-guilt-insula/mixed-effects-regressions-choices-social-condition.md",
+            "claims/gadeke-2026-guilt-insula/model-based-glm-entered-best-fitting-computational.md",
+            "claims/gadeke-2026-guilt-insula/model-selection-among-happiness-models.md",
+            "claims/gadeke-2026-guilt-insula/momentary-happiness-modelled-five-computational.md",
+            "claims/gadeke-2026-guilt-insula/neural-substrate-tracks-participant-responsibility-2.md",
+            "claims/gadeke-2026-guilt-insula/neural-substrate-tracks-participant-responsibility.md",
+            "claims/gadeke-2026-guilt-insula/no-significant-interaction-between-difference.md",
+            "claims/gadeke-2026-guilt-insula/one-cluster-left-sts-responded.md",
+            "claims/gadeke-2026-guilt-insula/only-precuneus-tpj-showed-positive.md",
+            "claims/gadeke-2026-guilt-insula/parameter-recovery-procedure-synthetic-data-generated.md",
+            "claims/gadeke-2026-guilt-insula/participant-happiness-lower-when-participant.md",
+            "claims/gadeke-2026-guilt-insula/participant-momentary-happiness-varied-rewards-2.md",
+            "claims/gadeke-2026-guilt-insula/participant-momentary-happiness-varied-rewards.md",
+            "claims/gadeke-2026-guilt-insula/participants-chose-risky-option-lottery.md",
+            "claims/gadeke-2026-guilt-insula/participants-own-reward-prediction-errors.md",
+            "claims/gadeke-2026-guilt-insula/participants-probability-choosing-risky-option.md",
+            "claims/gadeke-2026-guilt-insula/participants-showed-very-similar-risk.md",
+            "claims/gadeke-2026-guilt-insula/participants-slightly-more-risk-averse.md",
+            "claims/gadeke-2026-guilt-insula/partner-reward-prediction-errors-resulting.md",
+            "claims/gadeke-2026-guilt-insula/pre-task-icebreaker-succeeded-establishing-positive.md",
+            "claims/gadeke-2026-guilt-insula/prior-functional-connectivity-work-shown.md",
+            "claims/gadeke-2026-guilt-insula/prior-literature-documents-association-between.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-choices-not-influence-happiness.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-model-yielded-higher-values.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-outcomes-generates-guilt-participant.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-partner-outcomes-influences-participant.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-redux-model-incorporating-expected.md",
+            "claims/gadeke-2026-guilt-insula/responsibility-social-choice-yields-low.md",
+            "claims/gadeke-2026-guilt-insula/risk-aversion-parameter-not-differ-between.md",
+            "claims/gadeke-2026-guilt-insula/risk-premiums-not-differ-between.md",
+            "claims/gadeke-2026-guilt-insula/rutledge-colleagues-established-changes-momentary.md",
+            "claims/gadeke-2026-guilt-insula/study-reproduced-study-design-inside.md",
+            "claims/gadeke-2026-guilt-insula/when-partner-received-low-lottery.md",
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md"
+          ],
           "note": "regenerate after edge re-answer (#125)",
           "ran": "2026-09-13T13:01:13Z",
-          "state": "blocked",
+          "state": "stale",
           "v": 5
         },
         "parts": {
@@ -38940,6 +39517,12 @@
           "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -39017,6 +39600,12 @@
           "by": "supplied:runs/gadeke-2026-guilt-insula/plain-claim.answer.json",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -39108,6 +39697,12 @@
           "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -39217,6 +39812,12 @@
           "by": "Claude Opus 4.8 (1M context) (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -39306,6 +39907,12 @@
           "by": "Claude Opus 5 (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -39386,6 +39993,12 @@
           "by": "Claude Opus 5 (subagent, via --answer)",
           "lost": [],
           "moved": [
+            "claims/gadeke-2026-guilt-insula/alt-agency-aversion-not-guilt.md",
+            "claims/gadeke-2026-guilt-insula/alt-guilt-effect-driven-by-own-outcome.md",
+            "claims/gadeke-2026-guilt-insula/alt-imaging-contrast-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-model-based-glm-invalid.md",
+            "claims/gadeke-2026-guilt-insula/alt-participants-insensitive-to-value.md",
+            "claims/gadeke-2026-guilt-insula/alt-social-context-shifts-risk-attitude.md",
             "claims/gadeke-2026-guilt-insula/among-computational-models-fitted-momentary.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-neural-substrate-guilt.md",
             "claims/gadeke-2026-guilt-insula/anterior-insula-tracks-guilt-insula.md",
@@ -39465,6 +40078,20 @@
           "note": "backfilled from the artifact on disk",
           "ran": "2026-09-11T08:07:29Z",
           "state": "unrecorded",
+          "v": 1
+        },
+        "warrant": {
+          "appeared": [],
+          "blocked_by": [
+            "claim-tree",
+            "stance"
+          ],
+          "by": "Claude Opus (subagent, via --answer)",
+          "lost": [],
+          "moved": [],
+          "note": "draft warrant per #126 ruling; floor shown after; re-run on v5 tree after merging main",
+          "ran": "2026-09-13T14:01:51Z",
+          "state": "blocked",
           "v": 1
         }
       },
@@ -39709,6 +40336,9 @@
           "ran": "2026-09-10T17:20:18Z",
           "state": "unrecorded",
           "v": 1
+        },
+        "warrant": {
+          "state": "absent"
         }
       },
       "kammer-2026-foveal-feedback": {
@@ -39956,6 +40586,13 @@
         },
         "verification": {
           "state": "absent"
+        },
+        "warrant": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "stance",
+            "verification"
+          ]
         }
       },
       "kolb-2026-igabasnfr2": {
@@ -40201,6 +40838,9 @@
           "ran": "2026-09-10T17:20:18Z",
           "state": "unrecorded",
           "v": 1
+        },
+        "warrant": {
+          "state": "absent"
         }
       },
       "rozak-2026-neurovascular-dl": {
@@ -40421,6 +41061,12 @@
         },
         "verification": {
           "state": "absent"
+        },
+        "warrant": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "verification"
+          ]
         }
       },
       "scheller-2026-self-prioritization": {
@@ -40659,6 +41305,12 @@
           "ran": "2026-09-10T17:20:18Z",
           "state": "unrecorded",
           "v": 1
+        },
+        "warrant": {
+          "state": "absent",
+          "unrecorded_upstream": [
+            "stance"
+          ]
         }
       },
       "wengert-2026-kcnc1": {
@@ -40892,6 +41544,9 @@
           "ran": "2026-09-10T17:20:18Z",
           "state": "unrecorded",
           "v": 1
+        },
+        "warrant": {
+          "state": "absent"
         }
       }
     },

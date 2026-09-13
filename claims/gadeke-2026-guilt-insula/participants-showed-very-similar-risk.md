@@ -10,6 +10,10 @@ role: synthesis
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: a synthesis backed by three converging results — no-significant-interaction-between-difference, participants-slightly-more-risk-averse, risk-premiums-not-differ-between
+warrant_from:
+- supported_by
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula

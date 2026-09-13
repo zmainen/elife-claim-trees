@@ -10,6 +10,8 @@ role: scope
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the tree records nothing bearing on this design-reproduction scope claim
 scopes:
 - insula-rois-responded-more-low
 belongings: []

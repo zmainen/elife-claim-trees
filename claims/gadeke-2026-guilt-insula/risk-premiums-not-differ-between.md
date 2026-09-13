@@ -9,6 +9,11 @@ role: control
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: its only reproduction is unattempted; a null with no completed check
+warrant_from:
+- rules_out
+- reproductions
 rules-out:
 - alt-social-context-shifts-risk-attitude
 belongings:

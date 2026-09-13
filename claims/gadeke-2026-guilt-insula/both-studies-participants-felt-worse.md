@@ -10,6 +10,10 @@ role: synthesis
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: a synthesis supported by when-partner-received-low-lottery, whose guilt interaction reproduced verified
+warrant_from:
+- supported_by
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula

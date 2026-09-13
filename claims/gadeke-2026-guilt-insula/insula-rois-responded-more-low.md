@@ -9,6 +9,11 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: validated by the dot-products-between-individual-neural control (convergent GRBS validity, verified); the ROI numbers themselves are not directly reproduced
+warrant_from:
+- validated_by
+- requires
 tests:
 - anterior-insula-tracks-guilt-insula
 confirms:

@@ -12,6 +12,10 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
+warrant: confirmed
+warrant_why: confirmed by functional-connectivity-between-left-anterior
+warrant_from:
+- outcome
 derived-from:
 - functional-connectivity-between-guilt-responsibility-related
 belongings: []

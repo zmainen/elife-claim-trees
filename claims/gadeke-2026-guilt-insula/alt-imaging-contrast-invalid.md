@@ -15,6 +15,10 @@ concepts:
   - validity threat
 priority: 2026-09-10
 epistemic: weak
+warrant: ruled-out
+warrant_why: 'bilateral-ventral-striatum-more-active rules it out: a verified reproduction recovering the expected VS risk effect shows the pipeline recovers established contrasts'
+warrant_from:
+- ruled_out_by
 
 assertions:
   - paper-slug: gadeke-2026-guilt-insula

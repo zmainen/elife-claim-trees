@@ -10,6 +10,8 @@ role: literature-context
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: prior-literature context; the tree records no reproduction, control or test bearing on it
 belongings:
 - relation: supports
   target: functional-connectivity-between-guilt-responsibility-related

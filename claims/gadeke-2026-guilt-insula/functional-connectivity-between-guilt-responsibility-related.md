@@ -10,6 +10,11 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+warrant: moderate
+warrant_why: its prediction is confirmed, but support rests on the single surviving PPI cluster functional-connectivity-between-left-anterior plus prior-functional-connectivity-work-shown
+warrant_from:
+- predictions
+- supported_by
 entails:
 - connectivity-between-guilt-responsibility-related-outcome-ph
 belongings: []

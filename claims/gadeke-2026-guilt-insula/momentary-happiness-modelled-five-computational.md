@@ -10,6 +10,10 @@ role: methodological
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: validated by the risk-aversion-parameter-not-differ-between control, though that control bears only on the pooling assumption rather than the choice of models
+warrant_from:
+- validated_by
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
