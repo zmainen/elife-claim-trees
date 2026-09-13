@@ -1,5 +1,5 @@
 ---
-uuid: 8a2fcf5d-5473-4f45-b060-506f4d3d95d9
+uuid: 4f185a47-7c28-4f3c-be2d-f18302ae2ad1
 slug: participant-happiness-lower-when-participant
 doi: null
 claim: 'Participant happiness was lower when the participant was the decision-maker (Social + Solo vs.
@@ -8,7 +8,7 @@ claim: 'Participant happiness was lower when the participant was the decision-ma
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 rules-out:
 - alt-agency-aversion-not-guilt

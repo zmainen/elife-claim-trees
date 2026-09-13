@@ -1,5 +1,5 @@
 ---
-uuid: b93b8fe6-6cbb-49a7-b6ce-b86ceb9c839c
+uuid: caa42126-4fad-4352-8e4f-0e540855cf6c
 slug: responsibility-redux-model-incorporating-expected
 doi: null
 claim: The Responsibility Redux model — incorporating expected, previous and current rewards, reward prediction
@@ -8,7 +8,7 @@ claim: The Responsibility Redux model — incorporating expected, previous and c
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings:
 - relation: supports

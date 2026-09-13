@@ -1,5 +1,5 @@
 ---
-uuid: 432a2e60-c0ca-4477-8a99-1bf20cb819cc
+uuid: cdbc1eed-d7c4-43a7-9113-80cbae6ed7a0
 slug: rutledge-colleagues-established-changes-momentary
 doi: null
 claim: Rutledge and colleagues established that changes in momentary happiness during a probabilistic
@@ -7,7 +7,7 @@ claim: Rutledge and colleagues established that changes in momentary happiness d
 claim-type: interpretive
 role: literature-context
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings: []
 assertions:

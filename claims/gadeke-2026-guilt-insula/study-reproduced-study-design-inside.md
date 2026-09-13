@@ -1,5 +1,5 @@
 ---
-uuid: 217ef0d5-aa20-41e9-95d9-53d8ae3dfdc2
+uuid: 9b55e86e-4d32-4df9-93ec-38c18798143f
 slug: study-reproduced-study-design-inside
 doi: null
 claim: Study 2 reproduced the Study 1 design inside the fMRI scanner with identical parameters except
@@ -8,7 +8,7 @@ claim: Study 2 reproduced the Study 1 design inside the fMRI scanner with identi
 claim-type: assessment
 role: scope
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 scopes:
 - insula-rois-responded-more-low

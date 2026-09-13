@@ -1,5 +1,5 @@
 ---
-uuid: 071373be-51ef-4d9f-8101-1379e5fae233
+uuid: 9b9cb740-6b26-4ed2-b987-91fea132dcb7
 slug: mass-univariate-voxel-wise-analysis-found-small
 doi: null
 claim: A mass-univariate voxel-wise analysis found a small left anterior insula cluster (peak T = 3.95,
@@ -8,9 +8,11 @@ claim: A mass-univariate voxel-wise analysis found a small left anterior insula 
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 tests:
+- anterior-insula-tracks-guilt-insula
+confirms:
 - anterior-insula-tracks-guilt-insula
 belongings:
 - relation: supports
@@ -72,6 +74,7 @@ reproductions:
 - `supports` → `anterior-insula-neural-substrate-guilt`: The voxel-wise left-insula cluster independently supports the insula-substrate claim (evidence at span results-129).
 - `requires` → `prior-literature-documents-association-between`: The small-volume correction on the left insula rests on the prior insula-guilt association (evidence at span results-129).
 - `requires` → `during-receipt-lottery-versus-safe`: The voxel-wise insula cluster lies within the outcome-phase insula region (evidence at span results-129).
+- `confirms` → `anterior-insula-tracks-guilt-insula`: The voxel-wise left-insula cluster surviving small-volume correction confirms the insula prediction at the voxel level (evidence at span results-129).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

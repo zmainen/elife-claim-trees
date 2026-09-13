@@ -1,5 +1,5 @@
 ---
-uuid: c6a31726-78b5-45f6-861c-b2a3b8ac3249
+uuid: a30d341d-cef4-41fa-8df4-0dcd5f3d53ff
 slug: left-ifg-cluster-showed-opposite
 doi: null
 claim: A left IFG cluster showed the opposite pattern of connectivity with the left STS seed — highest
@@ -8,9 +8,11 @@ claim: A left IFG cluster showed the opposite pattern of connectivity with the l
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 tests:
+- connectivity-between-guilt-responsibility-related-outcome-ph
+confirms:
 - connectivity-between-guilt-responsibility-related-outcome-ph
 belongings: []
 assertions:
@@ -26,6 +28,7 @@ reproductions: []
 **Relations.** Why each outgoing edge was inferred:
 
 - `tests` → `connectivity-between-guilt-responsibility-related-outcome-ph`: The left-IFG/STS cluster with the opposite pattern is a further, uncorrected test of the connectivity prediction (evidence at span results-144).
+- `confirms` → `connectivity-between-guilt-responsibility-related-outcome-ph`: The left-IFG/STS cluster showing the condition-by-choice connectivity pattern is a further, uncorrected corroboration of the connectivity prediction (evidence at span results-144).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

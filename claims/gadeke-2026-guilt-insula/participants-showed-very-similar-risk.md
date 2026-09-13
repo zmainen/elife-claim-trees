@@ -1,5 +1,5 @@
 ---
-uuid: 26c73aee-3f30-40fe-8132-875fd7538b9a
+uuid: f00585d2-756f-42f7-b394-be54173c1f31
 slug: participants-showed-very-similar-risk
 doi: null
 claim: Participants showed very similar risk preferences whether deciding only for themselves (Solo) or
@@ -8,7 +8,7 @@ claim: Participants showed very similar risk preferences whether deciding only f
 claim-type: synthesis
 role: synthesis
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings: []
 assertions:

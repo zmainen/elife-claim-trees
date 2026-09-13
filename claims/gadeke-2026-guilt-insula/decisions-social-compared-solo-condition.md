@@ -1,5 +1,5 @@
 ---
-uuid: ee017229-e215-452e-a719-932af2d716f2
+uuid: d01d92ca-6fe9-49ac-b6ee-0fff322dd121
 slug: decisions-social-compared-solo-condition
 doi: null
 claim: Decisions in the Social compared with the Solo condition engaged three clusters — the precuneus
@@ -7,7 +7,7 @@ claim: Decisions in the Social compared with the Solo condition engaged three cl
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings: []
 assertions:

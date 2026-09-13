@@ -1,5 +1,5 @@
 ---
-uuid: 0248969b-e2f4-4d2b-bddb-6536f7de95b9
+uuid: 7da2c430-ffcf-438b-9bcb-6a68ab8f2229
 slug: during-receipt-lottery-versus-safe
 doi: null
 claim: During receipt of lottery versus safe outcomes (across all conditions), clusters were more active
@@ -8,7 +8,7 @@ claim: During receipt of lottery versus safe outcomes (across all conditions), c
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings: []
 assertions:

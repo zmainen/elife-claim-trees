@@ -43,6 +43,8 @@ export interface Adjudication {
   /** For a partial reading: verdicts considered, of the total the skeleton pre-filled. */
   considered?: number;
   total?: number;
+  /** The adjudication procedure version the reading was made under (#108). */
+  procedure?: number;
 }
 
 export interface LayerDecl {
@@ -142,8 +144,8 @@ export const corpusLayers = layers.filter(l => l.scope === 'corpus');
 export const papers: string[] = Object.keys(P?.state ?? {}).sort();
 const LEDGER: Record<string, any[]> = P?.ledger ?? {};
 const DECLS: Record<string, any> = P?.declarations ?? {};
-const VERDICTS: Record<string, Record<string, { considered: number; total: number }>> =
-  P?.verdicts ?? {};
+const VERDICTS: Record<string, Record<string,
+  { considered: number; total: number; procedure?: number }>> = P?.verdicts ?? {};
 
 /** A layer's scheme, or null when the declaration state was not computed. */
 export function scheme(layerId: string): Scheme | null {
@@ -159,7 +161,9 @@ export function scheme(layerId: string): Scheme | null {
 function adjudicationOf(paper: string, layerId: string,
                         v: number | undefined, approved: Cell['approved']): Adjudication {
   const vinfo = v != null ? VERDICTS[paper]?.[String(v)] : undefined;
-  const partial = vinfo ? { considered: vinfo.considered, total: vinfo.total } : {};
+  const partial = vinfo
+    ? { considered: vinfo.considered, total: vinfo.total, procedure: vinfo.procedure }
+    : {};
   if (approved?.applies) {
     const incomplete = vinfo && vinfo.considered < vinfo.total;
     return { kind: incomplete ? 'partial' : 'approved',
@@ -414,9 +418,12 @@ export const ADJUDICATION_LABEL: Record<Adjudication['kind'], string> = {
 
 /** The adjudication fact as one line — the "approved v3 by X", "partial, 4 of 30", the rest. */
 export function adjudicationText(a: Adjudication): string {
-  if (a.kind === 'approved') return `approved v${a.v}${a.by ? ` by ${a.by}` : ''}`;
+  // The procedure version the reading was made under, appended to a reading that stands (#108).
+  const proc = a.procedure != null ? ` · read under procedure v${a.procedure}` : '';
+  if (a.kind === 'approved') return `approved v${a.v}${a.by ? ` by ${a.by}` : ''}${proc}`;
   if (a.kind === 'partial')
-    return a.considered != null ? `partial — ${a.considered} of ${a.total} considered` : 'partial reading';
+    return (a.considered != null
+      ? `partial — ${a.considered} of ${a.total} considered` : 'partial reading') + proc;
   if (a.kind === 'superseded') return `v${a.v} approved, then the layer ran again`;
   return 'unread';
 }

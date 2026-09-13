@@ -1,5 +1,5 @@
 ---
-uuid: c46dee52-5335-46f9-8545-de650b13359e
+uuid: 45d2124b-feaa-4d7b-b644-9ba003b734a3
 slug: hold-partner-behaviour-constant-across
 doi: null
 claim: To hold the partner's behaviour constant across participants, the partner's decisions were simulated
@@ -7,7 +7,7 @@ claim: To hold the partner's behaviour constant across participants, the partner
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 enables-method:
 - when-partner-received-low-lottery

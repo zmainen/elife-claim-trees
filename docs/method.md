@@ -231,7 +231,7 @@ Role is the rhetorical function the claim plays in the paper's argument. The syn
 
 ### 4.3 Edges — the edge inventory
 
-Edges are propositions about logical structure between claim entities, not citations. Each is a top-level YAML key whose value is a list of target slugs. Reciprocal edges (`predicts` / `confirms`) are populated symmetrically at build.
+Edges are propositions about logical structure between claim entities, not citations. Each is a top-level YAML key whose value is a list of target slugs. The deductive pair `entails` / `derived-from` is populated symmetrically at build (the reader emits `entails`; `derived-from` is written as its reciprocal). `confirms` and `refutes` are not reciprocals — they are the two outcomes of a test, stated directly from the result to the prediction it settled (§ 4.3, issue #28).
 
 | Edge | Reasoning form | Meaning | Count in corpus |
 |:-----|:---------------|:--------|---:|
@@ -240,12 +240,12 @@ Edges are propositions about logical structure between claim entities, not citat
 | `entails` | deduction | A (typically a hypothesis) deductively implies B (typically a prediction). | {{relation_counts.entails}} |
 | `derived-from` | deduction | A is the deductive consequence of B; reciprocal of `entails`. | {{relation_counts.derived-from}} |
 | `tests` | deduction → empirical loop | Empirical claim A tests prediction B (closes the hypothesis-prediction-test loop). | {{relation_counts.tests}} |
-| `refutes` | abduction (negative) | A's evidence is incompatible with B (B is the prediction, hypothesis, or alternative being refuted). | {{relation_counts.refutes}} |
+| `refutes` | test outcome (negative) | A's result came out against prediction B — the negative outcome of a test, aimed at a prediction (parallel to `confirms`; distinct from `contradicts`/`rules-out`, which assert B is false). | {{relation_counts.refutes}} |
 | `rules-out` | elimination | A's evidence eliminates an alternative explanation B. | {{relation_counts.rules-out}} |
 | `dissociates-with` | dissociation | A and B jointly establish a dissociation (symmetric edge between two empirical claims that together form a contrast). | {{relation_counts.dissociates-with}} |
 | `validates` | disconfirmation control | A is a control or sign-flip whose specific result strengthens the warrant for B. | {{relation_counts.validates}} |
 | `predicts` | predictive validation | A predicts B (typically model-to-experiment). | {{relation_counts.predicts}} |
-| `confirms` | predictive validation | Reciprocal of `predicts`; populated at build. | {{relation_counts.confirms}} |
+| `confirms` | test outcome (positive) | A's result came out as prediction B said it would — the positive outcome of a test, aimed at a prediction (parallel to `refutes`). | {{relation_counts.confirms}} |
 | `interprets` | reframing | A reframes empirical B through theoretical lens (this is an act of mapping, not a derivation). | {{relation_counts.interprets}} |
 | `enables-method` | methodological warrant | A is the methodological capability that warrants B's interpretability. | {{relation_counts.enables-method}} |
 | `scopes` | scope qualification | A is a boundary condition on B (or, if `["*"]`, on every empirical claim in the paper). | {{relation_counts.scopes}} |
@@ -259,7 +259,7 @@ The edge inventory operationalises six argumentative moves:
 
 2. **Induction (hierarchical support).** `requires` and `supports` carry mechanistic dependency and inductive support. Standalone empirical claims that are not themselves predictions tested in a hypothesis loop nonetheless carry `supports:` edges to higher-order claims via inductive accumulation. The Headley `ca-spikes-couple-20ms-before-ap` `supports` `beta-bidirectional-dendritic-control` and `beta-gates-distal-apical-inputs` — the timescale measurement is the inductive ground for the period-matching argument.
 
-3. **Abduction.** `supports` and `refutes` from empirical claims back to hypotheses close the abductive loop. The Meijer R1 `near-zero-choice-by-stim-interaction` `supports: hypothesis-additive-modulation` and `refutes: prediction-multiplicative-gain-yields-significant-interaction` — abduction to additivity by elimination of the alternative.
+3. **Abduction.** `supports` from an empirical claim back to a hypothesis, and `refutes` from a result to the prediction it came out against, close the abductive loop. The Meijer R1 `near-zero-choice-by-stim-interaction` `supports: hypothesis-additive-modulation` and `refutes: prediction-multiplicative-gain-yields-significant-interaction` — abduction to additivity by elimination of the alternative. `confirms` and `refutes` are the two outcomes a tested prediction can carry, and aim at predictions only; a result bearing on a hypothesis takes `supports` (issue #28).
 
 4. **Elimination.** `rules-out` carries the eliminative move: A's evidence eliminates an explicit alternative B. The Meijer R1 paper's `rules-out-multiplicative-gain-control` synthesis claim explicitly aggregates this move at the discussion level. The corpus carries 15 `rules-out` edges, scattered across papers, and the `synthesis` layer shows they are diagnostically interesting because they are scrubbed by abstracts.
 

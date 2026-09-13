@@ -1,5 +1,5 @@
 ---
-uuid: e1559c09-fc85-4120-91bb-ea7fb25b4694
+uuid: 6f0aa717-4e29-4a6f-ac3f-7fc11a5c3631
 slug: neural-substrate-tracks-participant-responsibility
 doi: null
 claim: 'A neural substrate tracks the participant''s responsibility for the partner''s outcomes: within
@@ -7,9 +7,8 @@ claim: 'A neural substrate tracks the participant''s responsibility for the part
   when they arise from the participant''s own choice than from the partner''s choice.'
 claim-type: hypothesis
 role: hypothesis
-addresses: q3
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: hypothesis
 entails:
 - neural-substrate-tracks-participant-responsibility-2

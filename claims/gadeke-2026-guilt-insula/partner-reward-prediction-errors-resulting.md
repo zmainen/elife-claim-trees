@@ -1,5 +1,5 @@
 ---
-uuid: 31dbdf89-fbc1-47e0-88ff-e01183873dbd
+uuid: a74c1284-06da-46d1-a105-bf3373c857c6
 slug: partner-reward-prediction-errors-resulting
 doi: null
 claim: 'The partner''s reward prediction errors resulting from the participants'' own choices (social_pRPE)
@@ -8,9 +8,11 @@ claim: 'The partner''s reward prediction errors resulting from the participants'
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 tests:
+- responsibility-partner-outcomes-influences-participant
+confirms:
 - responsibility-partner-outcomes-influences-participant
 belongings:
 - relation: requires
@@ -48,6 +50,7 @@ reproductions:
 
 - `tests` → `responsibility-partner-outcomes-influences-participant`: The finding that social_pRPE weights exceed zero tests the prediction's weight claim.
 - `requires` → `momentary-happiness-modelled-five-computational`: The social_pRPE weight estimate depends on the Responsibility model specification.
+- `confirms` → `responsibility-partner-outcomes-influences-participant`: social_pRPE weights greater than zero confirm the prediction's weight claim, the second half of the computational prediction.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

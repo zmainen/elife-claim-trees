@@ -1,15 +1,13 @@
 ---
-uuid: a246d73e-44f4-4bee-aff2-96388949b76a
+uuid: b2246afd-a9c3-42b8-862e-aaca3885e168
 slug: participant-momentary-happiness-varied-rewards-2
 doi: null
 claim: Participant momentary happiness varied with the rewards the partner received in the current trial.
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
-part-of:
-- responsibility-redux-model-incorporating-expected
 belongings:
 - relation: supports
   target: responsibility-partner-outcomes-influences-participant

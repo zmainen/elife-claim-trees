@@ -1,5 +1,5 @@
 ---
-uuid: 84c4be17-6129-424a-bfc3-5c04b90608a0
+uuid: b564c1cc-4b79-440e-bc78-895f00b3ea50
 slug: participant-momentary-happiness-varied-rewards
 doi: null
 claim: Participant momentary happiness varied with the rewards the participant received in the current
@@ -7,10 +7,8 @@ claim: Participant momentary happiness varied with the rewards the participant r
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
-part-of:
-- responsibility-redux-model-incorporating-expected
 belongings:
 - relation: supports
   target: responsibility-partner-outcomes-influences-participant
