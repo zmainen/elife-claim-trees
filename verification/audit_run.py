@@ -99,8 +99,18 @@ class Observer:
         self.errors: list[dict] = []
 
     def note(self, path, mode="r"):
+        # `open()` also accepts an already-open file descriptor, and `str(3)` is "3", so an
+        # fd was recorded as a file named 3 in the working directory — then failed to hash,
+        # and the failure was written into the record as a FileNotFoundError. Six such
+        # entries reached three committed provenance files: fabricated evidence of missing
+        # data, in the one artifact whose whole job is to say what was really read.
+        # An fd is not a path, and there is nothing here to record.
+        if isinstance(path, int):
+            return
         try:
-            p = os.path.abspath(str(path))
+            # fsdecode, not str: a bytes path stringifies to "b'/data/x'", which would have
+            # been recorded, and failed, in the same way.
+            p = os.path.abspath(os.fsdecode(path))
         except Exception:
             return
         if not interesting(p) or "w" in str(mode) or "a" in str(mode):
