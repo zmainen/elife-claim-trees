@@ -1,5 +1,5 @@
 ---
-uuid: 3485d7a7-8269-4462-94b0-5a788855920b
+uuid: 6f1b3e16-b580-4ee8-95c4-09318cb9f71c
 slug: manipulation-check-bilateral-ventral-striatum
 doi: null
 claim: 'As a manipulation check, bilateral ventral striatum activation increased with expected certain
@@ -50,7 +50,7 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `validates` → `model-based-glm-entered-best-fitting-computational`: The ventral-striatum manipulation check validates the model-based GLM (evidence at span results-134).
+- `validates` → `model-based-glm-entered-best-fitting-computational`: the ventral-striatum manipulation check confirms the model-based GLM recovers reward signals
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -1,5 +1,5 @@
 ---
-uuid: 2588afab-99d1-4696-8ada-d4da2f81ded1
+uuid: 21f204da-538c-4e83-8422-54188af2e9ed
 slug: pre-task-icebreaker-succeeded-establishing-positive
 doi: null
 claim: 'A pre-task icebreaker succeeded in establishing a positive attitude toward the partner: participants
@@ -25,7 +25,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `validates` → `when-partner-received-low-lottery`: The icebreaker manipulation check validates that a positive partner attitude underlies the guilt effect.
+- `validates` → `when-partner-received-low-lottery`: the icebreaker established a positive partner attitude, warranting that the effect reflects guilt toward a valued partner
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

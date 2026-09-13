@@ -1,5 +1,5 @@
 ---
-uuid: 6d806e03-c634-4e1d-8d58-bb00fe115f3f
+uuid: bb0523ca-0d4c-485f-9736-8a7340aade67
 slug: guilt-effect-occurred-whether-participant
 doi: null
 claim: 'The guilt effect occurred whether the participant received the high lottery outcome (Study 1:
@@ -12,9 +12,9 @@ priority: '2026-09-13'
 epistemic: tentative
 rules-out:
 - alt-guilt-effect-driven-by-own-outcome
-belongings:
-- relation: supports
-  target: when-partner-received-low-lottery
+validates:
+- when-partner-received-low-lottery
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -48,7 +48,7 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `supports` → `when-partner-received-low-lottery`: The guilt effect holding whether the participant received the high or low outcome supports the guilt-effect result.
+- `validates` → `when-partner-received-low-lottery`: the guilt effect held whether the participant's own outcome was high or low, ruling out own-outcome confounds
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

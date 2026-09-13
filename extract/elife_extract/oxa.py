@@ -477,7 +477,6 @@ EDGE_MAP: dict[str, str] = {
     # CiTO close matches
     "derived-from": "cito:citesAsSourceDocument",
     "enables-method": "cito:usesMethodIn",
-    "dissociates-with": "cito:disagreesWith",
     # Claim-relations extensions (CiTO subproperties)
     "requires": "claimrel:requires",
     "tests": "claimrel:tests",
@@ -487,6 +486,13 @@ EDGE_MAP: dict[str, str] = {
     "rules-out": "claimrel:rulesOut",
     "replicates": "claimrel:replicates",
     "contradicts": "claimrel:contradicts",
+    # A tension maps as `contradicts` does — the nearest oppositional predicate CiTO offers
+    # (#125). It overstates, as `mira:opposes` does in the MIRA export.
+    "in-tension-with": "claimrel:contradicts",
+    # `dissociates-with` is omitted deliberately (#125): it is a neutral, symmetric contrast,
+    # and `cito:disagreesWith` — which it carried until this ruling — misstates it as
+    # disagreement. CiTO offers no neutral predicate for a contrast, so it is dropped, and the
+    # formats report records the omission.
 }
 
 

@@ -16,7 +16,7 @@
 
 ## Relations dropped
 
-**58 of 122 relations (48%) have no MIRA predicate and are absent from the strict export.**
+**62 of 122 relations (51%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
@@ -24,6 +24,7 @@
 | `enables-method` | 16 | a result makes a downstream method possible |
 | `derived-from` | 9 | a prediction derived from its hypothesis (inverse of entails) |
 | `entails` | 9 | a hypothesis entails its prediction — the deductive step |
+| `dissociates-with` | 4 | the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric) |
 | `interprets` | 4 | one claim interprets another |
 | `requires` | 2 | a claim depends on another holding |
 
@@ -31,7 +32,7 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Relations flattened
 
-`tests`, `confirms`, `validates`, `extends` and `replicates` all become `mira:supports`; `contradicts`, `rules-out` and `dissociates-with` all become `mira:opposes`. Both directions of collapse lose real distinctions — most sharply, evidence *designed* to test a prediction becomes indistinguishable from evidence that merely agrees with it after the fact.
+`tests`, `confirms`, `validates`, `extends` and `replicates` all become `mira:supports`; `contradicts`, `rules-out` and `in-tension-with` all become `mira:opposes`. Both directions of collapse lose real distinctions — most sharply, evidence *designed* to test a prediction becomes indistinguishable from evidence that merely agrees with it after the fact. `in-tension-with` under `mira:opposes` says more than the relation means: a tension holds between two claims the paper *asserts*, both of which stand, so `mira:opposes` overstates it as one claim standing against the other. `dissociates-with` is no longer flattened here — it is a neutral contrast with no MIRA predicate and is dropped instead (see above).
 
 ## Verification records dropped
 

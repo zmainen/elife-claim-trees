@@ -314,6 +314,7 @@ def _format_paper_index(
     draft: DraftClaimTable,
     claim_slugs: list[str],
     questions: list[dict] | None = None,
+    unsupported: list[dict] | None = None,
 ) -> str:
     """Render <paper_slug>/index.md with title, DOI, authors, summary."""
     fm = {
@@ -342,6 +343,17 @@ def _format_paper_index(
     body.append(f"- reconciliation strategy: {draft.config_snapshot.get('reconcile_strategy', '?')}")
     body.append(f"- prompt variant: {draft.config_snapshot.get('prompt_variant', '?')}")
     body.append("")
+    # The unsupported parts of the argument the edge-inference reader surfaced (#125): a
+    # hypothesis with no tested prediction, a prediction with no test, an empirical claim
+    # resting on nothing. Recorded here so they are not lost — the ruling asks that we not fail
+    # to surface them.
+    if unsupported:
+        body.append("## Unsupported parts of the argument")
+        body.append("")
+        for u in unsupported:
+            reason = u.get("reason")
+            body.append(f"- [{u['slug']}]({u['slug']}.md)" + (f" — {reason}" if reason else ""))
+        body.append("")
     return f"---\n{fm_yaml}---\n\n" + "\n".join(body)
 
 
@@ -514,7 +526,8 @@ def _archive_tree(paper_dir: Path, dest: Path) -> None:
 
 def write_claim_files(draft: DraftClaimTable, cfg: Config,
                       edges: list[dict] | None = None, *,
-                      replace: bool = False) -> list[Path]:
+                      replace: bool = False,
+                      unsupported: list[dict] | None = None) -> list[Path]:
     """Emit claim files into <corpus_dir>/<paper_slug>/.
 
     Returns the list of paths written (the index plus one per claim).
@@ -568,7 +581,7 @@ def write_claim_files(draft: DraftClaimTable, cfg: Config,
 
     # Paper index.md
     index_path = paper_dir / "index.md"
-    index_path.write_text(_format_paper_index(draft, slugs, questions))
+    index_path.write_text(_format_paper_index(draft, slugs, questions, unsupported))
     written.append(index_path)
 
     return written

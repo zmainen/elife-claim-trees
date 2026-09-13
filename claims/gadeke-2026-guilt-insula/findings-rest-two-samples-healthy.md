@@ -1,5 +1,5 @@
 ---
-uuid: 36f83c0a-b6f3-486e-b89f-85c1eb6c63d0
+uuid: 969a9486-68dd-4163-8a30-315ee77abdcd
 slug: findings-rest-two-samples-healthy
 doi: null
 claim: The findings rest on two samples of healthy adults — Study 1 (behaviour only, N = 40) and Study
@@ -12,9 +12,6 @@ priority: '2026-09-13'
 epistemic: tentative
 scopes:
 - when-partner-received-low-lottery
-- insula-rois-responded-more-low
-- one-cluster-left-sts-responded
-- functional-connectivity-between-left-anterior
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -37,10 +34,7 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `scopes` → `when-partner-received-low-lottery`: The two-sample design bounds the behavioural guilt effect (evidence at span results-087).
-- `scopes` → `insula-rois-responded-more-low`: All fMRI results, including the insula ROI, come from Study 2's sample (evidence at span results-087).
-- `scopes` → `one-cluster-left-sts-responded`: The STS fMRI result is bounded by the Study 2 sample (evidence at span results-087).
-- `scopes` → `functional-connectivity-between-left-anterior`: The connectivity fMRI result is bounded by the Study 2 sample (evidence at span results-087).
+- `scopes` → `when-partner-received-low-lottery`: the guilt effect is bounded to two samples of healthy adults
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

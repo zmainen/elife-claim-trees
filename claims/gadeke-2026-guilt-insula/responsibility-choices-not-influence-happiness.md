@@ -1,5 +1,5 @@
 ---
-uuid: 29bc91a8-1c04-450a-b3b7-c1fcb91d2c70
+uuid: c7acd769-7f8d-493c-9c72-5138baa0bf28
 slug: responsibility-choices-not-influence-happiness
 doi: null
 claim: Responsibility for choices did not influence happiness following positive (high) lottery outcomes
@@ -9,9 +9,9 @@ role: control
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
-belongings:
-- relation: supports
-  target: behavioural-guilt-effect-larger-happiness
+validates:
+- when-partner-received-low-lottery
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -24,7 +24,7 @@ reproductions: []
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `supports` → `behavioural-guilt-effect-larger-happiness`: The absence of a responsibility effect after high outcomes supports the reading of the effect as simple guilt (evidence at span results-083).
+- `validates` → `when-partner-received-low-lottery`: no responsibility effect after high partner outcomes shows the effect is specific to low outcomes (guilt)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

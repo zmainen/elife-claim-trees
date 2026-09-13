@@ -281,6 +281,15 @@ def read_edges(paper: str, cfg: Config) -> list[dict]:
     return data if isinstance(data, list) else data.get("edges", [])
 
 
+def read_unsupported(paper: str, cfg: Config) -> list[dict]:
+    """The unsupported parts of the argument the edge-inference reader surfaced (#125)."""
+    p = run_file(paper, "edge-inference.output.json", cfg)
+    if not p.is_file():
+        return []
+    data = json.loads(p.read_text(encoding="utf-8"))
+    return [] if isinstance(data, list) else (data.get("unsupported") or [])
+
+
 # ── questions ────────────────────────────────────────────────────────────
 # A retrofit for papers that already have trees: read the paper's questions off the abstract
 # (and the Introduction, once prepare carries it) and the hypotheses and rejected alternatives

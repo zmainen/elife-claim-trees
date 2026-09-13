@@ -888,6 +888,16 @@ def test_edge_dissociates_with_is_symmetric_and_written_once():
     assert len([e for e in edges if e["relation"] == "dissociates-with"]) == 1
 
 
+def test_edge_in_tension_with_is_symmetric_and_written_once():
+    """`in-tension-with` (the #125 split) is symmetric like `dissociates-with`; the same pair
+    written both ways keeps one edge. It holds between two asserted results — e and e2."""
+    edges = _validate([
+        {"source": 3, "target": 6, "relation": "in-tension-with"},
+        {"source": 6, "target": 3, "relation": "in-tension-with"},   # same pair → drop
+    ])
+    assert len([e for e in edges if e["relation"] == "in-tension-with"]) == 1
+
+
 def test_edge_reciprocals_are_synthesised():
     """`entails` synthesises `derived-from`; the site's hierarchical numbering walks it, so it
     must be written. `predicts` no longer synthesises `confirms` — under the #28 ruling the

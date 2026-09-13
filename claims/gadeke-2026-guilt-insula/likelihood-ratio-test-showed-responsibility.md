@@ -1,5 +1,5 @@
 ---
-uuid: 3161ff4b-59d3-4fae-a466-17299dd3ba78
+uuid: ca73aff9-03a3-4724-9a14-ec6f0c9414e4
 slug: likelihood-ratio-test-showed-responsibility
 doi: null
 claim: 'A likelihood ratio test showed the Responsibility model fitted the happiness data better than
@@ -15,8 +15,10 @@ tests:
 confirms:
 - responsibility-partner-outcomes-influences-participant
 belongings:
+- relation: supports
+  target: responsibility-social-choice-yields-low
 - relation: requires
-  target: momentary-happiness-modelled-five-computational
+  target: model-selection-among-happiness-models
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -35,9 +37,10 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `tests` → `responsibility-partner-outcomes-influences-participant`: The likelihood-ratio result that the Responsibility model fits best tests the prediction that social_pRPE improves the fit.
-- `requires` → `momentary-happiness-modelled-five-computational`: The likelihood-ratio comparison depends on the set of five happiness models.
-- `confirms` → `responsibility-partner-outcomes-influences-participant`: The Responsibility model fitting the happiness data better than all others confirms the prediction that a model carrying social_pRPE explains happiness best.
+- `tests` → `responsibility-partner-outcomes-influences-participant`: the likelihood-ratio comparison tests whether the Responsibility model (with social_pRPE) fits best
+- `confirms` → `responsibility-partner-outcomes-influences-participant`: the Responsibility model fitted better than all other models in both studies
+- `supports` → `responsibility-social-choice-yields-low`: the Responsibility model's superior fit supports the responsibility/guilt account
+- `requires` → `model-selection-among-happiness-models`: the model-comparison result depends on the likelihood-ratio selection procedure
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

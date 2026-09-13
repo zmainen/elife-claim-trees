@@ -25,8 +25,7 @@ interprets:
   - ifg-reinstates-reversal-traces-item-specific
   - dmpfc-reinstates-acquisition-traces-generalized
 
-belongings:
-[]
+belongings: []
 
 assertions:
   - paper-slug: bouyeure-2026-fear-rsa

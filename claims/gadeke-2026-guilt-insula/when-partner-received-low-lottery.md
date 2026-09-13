@@ -1,5 +1,5 @@
 ---
-uuid: 6a9637ff-f357-4f07-aaf3-a6fb6fab2416
+uuid: 6c3a5d6b-5ee5-4884-aa7a-ba1318eafb2e
 slug: when-partner-received-low-lottery
 doi: null
 claim: 'When the partner received the low lottery outcome, participant happiness was lower when the participant
@@ -18,6 +18,8 @@ confirms:
 belongings:
 - relation: supports
   target: responsibility-social-choice-yields-low
+- relation: supports
+  target: both-studies-participants-felt-worse
 - relation: requires
   target: linear-mixed-model-containing-all
 assertions:
@@ -78,10 +80,11 @@ reproductions:
 
 **Relations.** Why each outgoing edge was inferred:
 
-- `tests` → `responsibility-outcomes-generates-guilt-participant`: The significant partner-outcome by decision-maker interaction on happiness is the empirical test of the guilt prediction.
-- `supports` → `responsibility-social-choice-yields-low`: The behavioural guilt effect is the central evidence for the guilt hypothesis.
-- `requires` → `linear-mixed-model-containing-all`: The reported guilt interaction is taken from the best-fitting linear mixed model (Model 5).
-- `confirms` → `responsibility-outcomes-generates-guilt-participant`: The significant partner-outcome by decision-maker interaction came out as the guilt prediction said: happiness fell more after low partner outcomes the participant chose (evidence at span results-085).
+- `tests` → `responsibility-outcomes-generates-guilt-participant`: the partner-outcome x decision-maker interaction tests the happiness prediction
+- `confirms` → `responsibility-outcomes-generates-guilt-participant`: the interaction was significant in both studies: happiness lower after low partner outcomes from own choice
+- `supports` → `responsibility-social-choice-yields-low`: the behavioural guilt effect is evidence for the guilt hypothesis
+- `supports` → `both-studies-participants-felt-worse`: the guilt interaction is the evidence for the synthesis that participants felt worse from their own choices
+- `requires` → `linear-mixed-model-containing-all`: the reported guilt interaction depends on Model 5's LMM being the warranted model
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

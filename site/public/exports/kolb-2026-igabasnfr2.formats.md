@@ -7,7 +7,7 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
 | `scopes` | 27 | `haak:scopes`, neutral | kept | dropped |
-| `dissociates-with` | 12 | `haak:dissociates-with`, under `mira:opposes` | kept | kept |
+| `dissociates-with` | 12 | `haak:dissociates-with`, neutral | kept | dropped |
 | `confirms` | 9 | `haak:confirms`, under `mira:supports` | kept | kept |
 | `supports` | 9 | `haak:supports`, under `mira:supports` | kept | kept |
 | `enables-method` | 7 | `haak:enables-method`, neutral | kept | dropped |
@@ -22,9 +22,10 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 
 ## What MIRA has no predicate for — and what happens instead
 
-**50 of 90 relations (56%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
+**62 of 90 relations (69%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
 - `haak:scopes` (27) — a scope constraint governs another claim's validity
+- `haak:dissociates-with` (12) — the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric)
 - `haak:enables-method` (7) — a result makes a downstream method possible
 - `haak:entails` (5) — a hypothesis entails its prediction — the deductive step
 - `haak:requires` (3) — a claim depends on another holding
@@ -35,10 +36,10 @@ Declaring them under `mira:supports` would have been worse than dropping them: i
 
 ## What a reader who knows only core MIRA sees
 
-Every relation keeps its own type — nothing is flattened into `supports`. 37 of the 87 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
+Every relation keeps its own type — nothing is flattened into `supports`. 25 of the 87 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
 - `scopes` (27) — neutral
-- `dissociates-with` (12) — under `mira:opposes`
+- `dissociates-with` (12) — neutral
 - `confirms` (9) — under `mira:supports`
 - `supports` (9) — under `mira:supports`
 - `enables-method` (7) — neutral

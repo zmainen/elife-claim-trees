@@ -1,5 +1,5 @@
 ---
-uuid: f00585d2-756f-42f7-b394-be54173c1f31
+uuid: 27f533ad-bcb5-46df-991e-753bf40fed9f
 slug: participants-showed-very-similar-risk
 doi: null
 claim: Participants showed very similar risk preferences whether deciding only for themselves (Solo) or

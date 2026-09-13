@@ -1,5 +1,5 @@
 ---
-uuid: c3afe028-3b80-4834-8659-672f4b61b749
+uuid: 8521b374-e125-4aea-85ed-7429dc9af6ec
 slug: responsibility-partner-outcomes-influences-participant
 doi: null
 claim: If responsibility for the partner's outcomes influences the participant's momentary happiness,
