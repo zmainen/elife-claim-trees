@@ -1,5 +1,5 @@
 ---
-uuid: 11e3f780-8786-4264-b23c-8354fbd5b79f
+uuid: a289523a-8e2b-4a2e-9b5a-c928f689fa07
 slug: during-receipt-lottery-versus-safe
 doi: null
 claim: During receipt of lottery versus safe outcomes (across all conditions), clusters were more active
@@ -17,7 +17,7 @@ assertions:
   readers: high
 reproductions: []
 warrant: weak
-warrant_why: asserted localizer contrast; nothing in the tree's argument bears on it
+warrant_why: the tree records nothing bearing on this localizer contrast
 ---
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->

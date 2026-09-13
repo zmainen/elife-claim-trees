@@ -1,5 +1,5 @@
 ---
-uuid: 4092abaf-43d6-450d-9474-f3639b895d71
+uuid: cac423cb-4c24-400d-aa4e-833c084c21ac
 slug: prior-functional-connectivity-work-shown
 doi: null
 claim: Prior functional connectivity work has shown network differences between social and self-only choices,
@@ -19,7 +19,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: background literature asserted; nothing in the tree's argument bears on it
+warrant_why: prior-literature context the tree records nothing bearing on
 ---
 
 **Notes from extraction:** Prior-work premises motivating the connectivity analysis.

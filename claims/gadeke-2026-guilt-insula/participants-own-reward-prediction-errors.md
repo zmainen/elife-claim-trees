@@ -1,5 +1,5 @@
 ---
-uuid: 746cc68f-0134-47eb-a257-9b8aca38873a
+uuid: d591bac9-ef83-498d-9b20-a71865d84e92
 slug: participants-own-reward-prediction-errors
 doi: null
 claim: 'Participants'' own reward prediction errors (sRPE) influenced happiness more than the partner''s
@@ -19,7 +19,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: asserted; the tree's argument records nothing behind this weighting comparison
+warrant_why: the tree records nothing bearing on this result
 ---
 
 **Relations.** Why each outgoing edge was inferred:

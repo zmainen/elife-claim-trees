@@ -1,5 +1,5 @@
 ---
-uuid: 898aa8b6-d872-47b3-a3ef-d1a7f608c1a4
+uuid: 846060d5-c556-4a0f-8668-9adfd8937224
 slug: study-reproduced-study-design-inside
 doi: null
 claim: Study 2 reproduced the Study 1 design inside the fMRI scanner with identical parameters except
@@ -19,7 +19,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: asserted scope; nothing in the tree's argument bears on it
+warrant_why: a scope statement the tree records nothing bearing on
 ---
 
 **Notes from extraction:** In Study 2 the partner was experimenter MG or TW rather than another participant, so any replication of the Study 1 guilt effect holds under this changed social pairing.

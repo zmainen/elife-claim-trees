@@ -1,5 +1,5 @@
 ---
-uuid: f32921d6-4787-4075-844d-3f876827d831
+uuid: bc4d0d92-e737-4420-a513-ef9f56164a82
 slug: functional-connectivity-between-left-anterior
 doi: null
 claim: Functional connectivity between the left anterior insula (seed) and a cluster in the right inferior
@@ -24,7 +24,7 @@ assertions:
   readers: high
 reproductions: []
 warrant: moderate
-warrant_why: it confirms connectivity-between-guilt-responsibility-related-outcome-ph, the single surviving PPI cluster
+warrant_why: confirms the prediction connectivity-between-guilt-responsibility-related-outcome-ph
 warrant_from:
 - confirms
 ---

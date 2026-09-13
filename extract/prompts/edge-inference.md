@@ -91,6 +91,37 @@ alongside the edge lines:
 `unsupported` is the claim's number (or slug); keep each reason to one clause. This is the other
 half of the reading the ruling asks for: we do not want to fail to surface these.
 
+## Complete the tree: every claim rests on something, or stands alone
+
+Now go back over the whole tree one more time. This is a completion pass, not a fresh reading:
+the spine is written, the outcomes are on it, the tensions are marked — what is left is to
+account for every claim that the reading so far has not connected to any other.
+
+For **every** claim that has no `supports`, `extends`, `validates`, `confirms`, `refutes`,
+`tests`, `rules-out`, `part-of` or `interprets` edge in *either* direction — nothing pointing at
+it and nothing it points at, across all of those relations — do one of two things:
+
+- **Write the edge.** Say what the claim rests on, or what rests on it: the result that a
+  methodological choice makes interpretable, the finding a claim supports, the whole a
+  measurement is a part of, the prediction a result tests. Name the relation from the vocabulary,
+  point it the way the vocabulary's direction rule states, and cite the span that shows it — a
+  completion edge is held to the same standard as any other. Most unconnected claims have a real
+  place in the argument that the spine reading simply did not reach: a control validating a
+  result, a scope bounding one, an empirical finding supporting the hypothesis it was run under.
+- **List it as unsupported.** If, having looked, the claim genuinely rests on nothing the paper
+  says and nothing rests on it, mark it on its own line, exactly as in the section above, with a
+  reason of one line saying it stands alone in the paper's argument:
+
+```
+{"unsupported": 9, "reason": "stands alone — no claim in the paper bears on it or rests on it"}
+```
+
+This is a pass to *find the edges the tree already has and did not write down*, not a licence to
+invent connections. An edge you cannot cite a span for is an edge you should not write; when the
+honest answer is that a claim stands alone, that absence is itself a finding, and listing it
+under `unsupported` is the right move. It is better to mark a claim unsupported than to wire it
+to a neighbour it has no real relation to.
+
 ## The rules the direction checks enforce
 
 These are checked mechanically after you answer; an edge that breaks one is dropped rather than

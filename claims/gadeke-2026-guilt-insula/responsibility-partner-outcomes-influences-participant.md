@@ -1,5 +1,5 @@
 ---
-uuid: 656a6629-b515-4661-af80-e7bf08bfdf9a
+uuid: ebfa6051-f9ac-4e76-987d-c007a88f4605
 slug: responsibility-partner-outcomes-influences-participant
 doi: null
 claim: If responsibility for the partner's outcomes influences the participant's momentary happiness,
@@ -12,7 +12,7 @@ concepts: []
 priority: '2026-09-13'
 epistemic: prediction
 warrant: confirmed
-warrant_why: confirmed by likelihood-ratio-test-showed-responsibility and partner-reward-prediction-errors-resulting (social_pRPE weights > 0)
+warrant_why: confirmed by likelihood-ratio-test-showed-responsibility and partner-reward-prediction-errors-resulting
 warrant_from:
 - outcome
 - confirmed_by

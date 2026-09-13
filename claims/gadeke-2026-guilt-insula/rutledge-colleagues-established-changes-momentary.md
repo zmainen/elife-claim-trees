@@ -1,5 +1,5 @@
 ---
-uuid: 93a0019d-dc74-49fb-ae74-6a219e98c276
+uuid: 136a7088-111c-4b99-bf89-f2f70e66b1ff
 slug: rutledge-colleagues-established-changes-momentary
 doi: null
 claim: Rutledge and colleagues established that changes in momentary happiness during a probabilistic
@@ -18,7 +18,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: background literature asserted; nothing in the tree's argument bears on it
+warrant_why: prior-literature context the tree records nothing bearing on
 ---
 
 **Notes from extraction:** Prior-work premise the happiness-modelling approach inherits.

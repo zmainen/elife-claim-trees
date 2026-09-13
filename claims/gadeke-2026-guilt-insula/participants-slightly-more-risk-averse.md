@@ -1,5 +1,5 @@
 ---
-uuid: 7ce3f159-7f63-4a51-a306-17083026b4f6
+uuid: e6a5212c-8f7a-4946-8e3b-9ea75ad954bf
 slug: participants-slightly-more-risk-averse
 doi: null
 claim: Participants were slightly more risk averse (higher ρ) in the Social than the Solo condition in
@@ -19,7 +19,7 @@ assertions:
   readers: high
 reproductions: []
 warrant: weak
-warrant_why: asserted, weak and unreplicated in Study 2; nothing in the tree's argument bears on it
+warrant_why: the tree records nothing bearing on this result
 ---
 
 **Relations.** Why each outgoing edge was inferred:

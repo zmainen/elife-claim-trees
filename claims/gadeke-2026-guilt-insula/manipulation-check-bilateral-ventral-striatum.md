@@ -1,5 +1,5 @@
 ---
-uuid: 967ee5e0-b99e-4525-a9d3-8e9f3f6ac8fd
+uuid: 9b641e59-dbca-4931-8682-5a8d8eac63e3
 slug: manipulation-check-bilateral-ventral-striatum
 doi: null
 claim: 'As a manipulation check, bilateral ventral striatum activation increased with expected certain
@@ -44,7 +44,7 @@ reproductions:
   blocked_by: compute-infeasible
   notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
 warrant: moderate
-warrant_why: a manipulation check recovering the VS reward signal that rules out alt-model-based-glm-invalid
+warrant_why: a manipulation-check control that rules out alt-model-based-glm-invalid
 warrant_from:
 - rules_out
 ---

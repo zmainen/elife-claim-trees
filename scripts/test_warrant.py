@@ -6,7 +6,9 @@ dossier assembles the tree's *argument* about a claim — no reproduction, no ve
 confidence — and `warrant_rule` grades that argument by role. The synthetic cases exercise one
 claim per role: predictions and alternatives unchanged, the graded branch on the argument alone,
 the cap on an interpretation, the agreement rule for a synthesis, same-kind propagation, and an
-empty dossier coming out weak and flagged `unassessed`. The corpus case checks the dossier reads
+empty dossier coming out weak and flagged `unassessed`. The version-3 clauses are pinned too: a
+graded claim that rules out a rival is moderate (strong with a validating control), and a
+synthesis or interpretation reads the incoming supports it draws on. The corpus case checks the dossier reads
 a real tree without judgement in it, and that resolving the whole tree stays inside each role's
 vocabulary.
 
@@ -85,6 +87,17 @@ def test_a_result_refuted_in_the_tree_is_contested():
     assert lvl == "contested" and "refuted-by:a-result" in fired
 
 
+def test_a_graded_claim_that_rules_out_a_rival_is_at_least_moderate():
+    """§rule v3, A: a control that rules out an alternative is moderate on that alone; with a
+    validating control (or a confirmed prediction) it is strong."""
+    lvl, fired = warrant.warrant_rule(_d("control", rules_out=["alt-a"]))
+    assert lvl == "moderate" and "rules-out:alt-a" in fired
+    lvl, fired = warrant.warrant_rule(_d("control", rules_out=["alt-a"], validated_by=["c"]))
+    assert lvl == "strong" and "rules-out:alt-a" in fired and "validated-by:c" in fired
+    # A confirmed prediction lifts it to strong just as a control does.
+    assert _lvl(_d("empirical", rules_out=["alt-a"], confirms=["p"])) == "strong"
+
+
 def test_an_empty_dossier_is_weak_and_unassessed():
     for role in ("empirical", "control", "methodological", "scope"):
         lvl, fired = warrant.warrant_rule(_d(role))
@@ -153,6 +166,27 @@ def test_synthesis_is_moderate_when_it_interprets_two_or_more_none_weak():
                 {"a": "moderate", "b": "weak"}) == "weak"
     # Fewer than two is weak.
     assert _lvl(_d("synthesis", interprets=["a"]), {"a": "moderate"}) == "weak"
+
+
+def test_synthesis_reads_incoming_supports_as_well_as_interprets():
+    """§rule v3, B: a synthesis wired with two graded supporters, none weak, is moderate; with a
+    single weak supporter it is weak."""
+    lvl, fired = warrant.warrant_rule(_d("synthesis", supported_by=["a", "b"]),
+                                      {"a": "moderate", "b": "strong"})
+    assert lvl == "moderate" and "supported-by:a=moderate" in fired
+    # extends counts as a support input too.
+    assert _lvl(_d("synthesis", supported_by=["a"], extended_by=["b"]),
+                {"a": "moderate", "b": "moderate"}) == "moderate"
+    # One weak supporter: both too few and weak.
+    assert _lvl(_d("synthesis", supported_by=["a"]), {"a": "weak"}) == "weak"
+
+
+def test_interpretation_reads_incoming_supports_when_it_interprets_nothing_graded():
+    """§rule v3, B: an interpretation that interprets nothing graded falls back to what supports
+    it — two graded supporters none weak is moderate, otherwise weak."""
+    assert _lvl(_d("interpretation", supported_by=["a", "b"]),
+                {"a": "moderate", "b": "strong"}) == "moderate"
+    assert _lvl(_d("interpretation", supported_by=["a"]), {"a": "moderate"}) == "weak"
 
 
 # ── propagation: bounded by the weakest same-kind claim required ──────────

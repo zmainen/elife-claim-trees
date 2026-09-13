@@ -1,5 +1,5 @@
 ---
-uuid: b3588e7f-3944-4061-878b-3cdb900eb8c5
+uuid: 9a8b2e58-dcdf-41bc-a908-c1aadd61c11f
 slug: prior-literature-documents-association-between
 doi: null
 claim: Prior literature documents an association between the anterior insula and guilt.
@@ -17,7 +17,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: background literature asserted; nothing in the tree's argument bears on it
+warrant_why: prior-literature context the tree records nothing bearing on
 ---
 
 **Notes from extraction:** Inherited premise motivating the insula small-volume correction.

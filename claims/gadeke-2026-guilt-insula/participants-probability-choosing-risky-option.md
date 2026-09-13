@@ -1,5 +1,5 @@
 ---
-uuid: 83c23e5c-b65b-4e40-9292-18bb9fce0284
+uuid: 2fc68635-8b12-4013-9f44-5cbc696eb177
 slug: participants-probability-choosing-risky-option
 doi: null
 claim: 'Participants'' probability of choosing the risky option (lottery) increased with the difference
@@ -64,7 +64,7 @@ reproductions:
 
     '
 warrant: moderate
-warrant_why: 'it rules out alt-participants-insensitive-to-value: choice probability tracked the expected-value difference strongly'
+warrant_why: a control that rules out alt-participants-insensitive-to-value
 warrant_from:
 - rules_out
 ---

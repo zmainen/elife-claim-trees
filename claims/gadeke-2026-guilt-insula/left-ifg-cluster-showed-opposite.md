@@ -1,5 +1,5 @@
 ---
-uuid: d5a239db-f607-4dcf-afc2-807f4e1c176e
+uuid: 1d1c47d0-28f9-4c6f-93b5-eae6e8f62688
 slug: left-ifg-cluster-showed-opposite
 doi: null
 claim: A left IFG cluster showed the opposite pattern of connectivity with the left STS seed — highest
@@ -17,7 +17,7 @@ assertions:
   readers: high
 reproductions: []
 warrant: weak
-warrant_why: the claim itself notes it did not survive correction, and the tree's argument records nothing behind it
+warrant_why: an uncorrected result the tree records nothing bearing on
 ---
 
 **Notes from extraction:** Reported at an uncorrected threshold; did not survive multiple-comparison correction. The caption reader classified it as a control while the results reader classified it as empirical; both agree on panel and direction, resolved to empirical.

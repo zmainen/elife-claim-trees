@@ -1,5 +1,5 @@
 ---
-uuid: bc72e5d5-0f8b-4754-9db0-33608131f6fb
+uuid: 7896b58a-0373-452c-9509-613330a94092
 slug: anterior-insula-tracks-guilt-insula
 doi: null
 claim: If the anterior insula tracks guilt, then insula BOLD should be higher in the Social than the Partner
@@ -10,7 +10,7 @@ concepts: []
 priority: '2026-09-13'
 epistemic: prediction
 warrant: confirmed
-warrant_why: confirmed by insula-rois-responded-more-low and the independent mass-univariate-voxel-wise-analysis-found-small
+warrant_why: confirmed by insula-rois-responded-more-low and mass-univariate-voxel-wise-analysis-found-small
 warrant_from:
 - outcome
 - confirmed_by

@@ -1,5 +1,5 @@
 ---
-uuid: 4cb25073-d1b7-487b-8df2-87ccfb96be30
+uuid: aaddc052-7ff9-4a14-805a-cf9fa8a42d59
 slug: mass-univariate-voxel-wise-analysis-found-small
 doi: null
 claim: A mass-univariate voxel-wise analysis found a small left anterior insula cluster (peak T = 3.95,
@@ -58,7 +58,7 @@ reproductions:
   notes: Loads the authors' deposited thresholded contrast map, finds the peak voxel, and applies the
     image affine to convert voxel indices to MNI millimetres. Exact match to the published coordinates.
 warrant: moderate
-warrant_why: it confirms anterior-insula-tracks-guilt-insula via an independent whole-brain analysis surviving SVC
+warrant_why: confirms the prediction anterior-insula-tracks-guilt-insula
 warrant_from:
 - confirms
 ---

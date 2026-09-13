@@ -1,5 +1,5 @@
 ---
-uuid: 10243ff4-f67a-4024-a845-118a466902b5
+uuid: 8762076c-4ce2-46c7-9537-7af8ba43fa99
 slug: when-partner-received-low-lottery
 doi: null
 claim: 'When the partner received the low lottery outcome, participant happiness was lower when the participant
@@ -74,7 +74,7 @@ reproductions:
     and matching on column names rather than by a pinned filename, so this row of the chain is not yet
     independently auditable. Pinning the exact filename is an open task.'
 warrant: strong
-warrant_why: it confirms responsibility-outcomes-generates-guilt-participant and is validated by the controls guilt-effect-occurred-whether-participant, pre-task-icebreaker-succeeded-establishing-positive and responsibility-choices-not-influence-happiness
+warrant_why: confirms the prediction responsibility-outcomes-generates-guilt-participant and is validated by four controls including guilt-effect-occurred-whether-participant
 warrant_from:
 - validated_by
 - confirms

@@ -1,5 +1,5 @@
 ---
-uuid: ad3a8c1e-4f40-4484-9d17-4492a8821880
+uuid: db286450-f335-4e88-b8b2-706b3a36cc98
 slug: model-based-glm-entered-best-fitting-computational
 doi: null
 claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsibility) model's variables
@@ -18,7 +18,7 @@ assertions:
   readers: high
 reproductions: []
 warrant: moderate
-warrant_why: validated by the manipulation-check-bilateral-ventral-striatum control
+warrant_why: validated by the control manipulation-check-bilateral-ventral-striatum
 warrant_from:
 - validated_by
 ---

@@ -1,5 +1,5 @@
 ---
-uuid: 335dd7e2-e500-4bb4-96a8-ec99837bc3bb
+uuid: 3139ed2b-ab4c-4ae9-8131-60a86d0203c6
 slug: model-selection-among-happiness-models
 doi: null
 claim: Model selection among the happiness models used likelihood-ratio tests comparing the Responsibility
@@ -18,7 +18,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: asserted method; nothing in the tree's argument bears on it
+warrant_why: the tree records nothing bearing on this methodological choice
 ---
 
 **Notes from extraction:** The model-comparison method that licenses treating the best-fitting model's variables as the regressors entered into the model-based fMRI GLM (GLM2). Kept distinct from the results reader's report of the likelihood-ratio outcome, which is an empirical result rather than a method.

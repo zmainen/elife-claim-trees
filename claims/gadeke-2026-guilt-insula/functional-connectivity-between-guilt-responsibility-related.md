@@ -1,5 +1,5 @@
 ---
-uuid: 0957b990-be15-48c5-a041-adfe6044b9ba
+uuid: 99bfd176-fde5-4e5e-80d4-cf3352cfa3f2
 slug: functional-connectivity-between-guilt-responsibility-related
 doi: null
 claim: Functional connectivity between guilt- and responsibility-related outcome-phase regions and prefrontal
@@ -11,7 +11,7 @@ concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
 warrant: strong
-warrant_why: its prediction connectivity-between-guilt-responsibility-related-outcome-ph is confirmed and no rival stands
+warrant_why: its prediction connectivity-between-guilt-responsibility-related-outcome-ph is confirmed and it is supported by functional-connectivity-between-left-anterior
 warrant_from:
 - predictions
 - supported_by

@@ -1,5 +1,5 @@
 ---
-uuid: 63b08f16-464f-432d-ba9d-7cece203ffcc
+uuid: 67792426-bb51-4765-90fc-025d56ad605c
 slug: both-studies-participants-felt-worse
 doi: null
 claim: In both studies, participants felt worse after low lottery outcomes for the partner when those
@@ -16,8 +16,8 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: moderate
-warrant_why: a cross-study synthesis of the main guilt effect, resting on the strong when-partner-received-low-lottery result
+warrant: weak
+warrant_why: rests on a single result, when-partner-received-low-lottery; a synthesis needs two or more converging claims
 warrant_from:
 - supported_by
 ---

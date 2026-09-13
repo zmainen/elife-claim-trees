@@ -1,5 +1,5 @@
 ---
-uuid: 520c89b7-e784-4eb3-8b07-de063f625782
+uuid: dc8fcf43-bc0c-40c9-bda1-46f2b1cc3f61
 slug: connectivity-between-left-anterior-insula
 doi: null
 claim: Connectivity between the left anterior insula and the right inferior frontal gyrus varied with
@@ -43,7 +43,7 @@ reproductions:
   notes: gPPI analysis requires individual-level GLM outputs from OpenNeuro raw data. gPPI toolbox dependency.
     Group-level results may be in fMRIresults/ NIfTI files. Not yet executed.
 warrant: weak
-warrant_why: it interprets functional-connectivity-between-left-anterior (moderate), reading a guilt-sensitivity into a single connectivity result
+warrant_why: interprets functional-connectivity-between-left-anterior, itself only moderate
 warrant_from:
 - interprets
 ---

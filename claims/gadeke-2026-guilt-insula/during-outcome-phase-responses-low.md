@@ -1,5 +1,5 @@
 ---
-uuid: 306862c9-33d0-40a1-ae34-99755cce42e4
+uuid: fb95f04d-ed6b-4f14-bbfd-998a574b10dd
 slug: during-outcome-phase-responses-low
 doi: null
 claim: During the outcome phase, responses to low lottery outcomes were higher in the Social than the
@@ -19,7 +19,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: part of insula-rois-responded-more-low; the outcome-phase contrast is not itself argued in the tree
+warrant_why: one measure that is part of insula-rois-responded-more-low
 warrant_from:
 - part_of
 ---

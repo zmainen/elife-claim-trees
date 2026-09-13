@@ -1,5 +1,5 @@
 ---
-uuid: 38ca5d5e-16b9-4e0d-b0f0-ccf8f3970b79
+uuid: be34b7c6-0ed7-4211-9e98-b9ca16df0d51
 slug: guilt-effect-occurred-whether-participant
 doi: null
 claim: 'The guilt effect occurred whether the participant received the high lottery outcome (Study 1:
@@ -42,7 +42,7 @@ reproductions:
   status: unattempted
   notes: null
 warrant: moderate
-warrant_why: it rules out alt-guilt-effect-driven-by-own-outcome by dissociating the guilt effect from the participant's own outcome
+warrant_why: a control that rules out alt-guilt-effect-driven-by-own-outcome
 warrant_from:
 - rules_out
 ---

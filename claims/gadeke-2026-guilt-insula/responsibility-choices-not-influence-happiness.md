@@ -1,5 +1,5 @@
 ---
-uuid: 07c4ab73-7a1e-4d91-860d-9f44f913270e
+uuid: 78bf184d-9af1-4f3a-8c1f-4efc7dbc2a34
 slug: responsibility-choices-not-influence-happiness
 doi: null
 claim: Responsibility for choices did not influence happiness following positive (high) lottery outcomes
@@ -18,7 +18,7 @@ assertions:
   readers: single-source
 reproductions: []
 warrant: weak
-warrant_why: a null asserted on its own; nothing in the tree's argument bears on it
+warrant_why: the tree records nothing bearing on this null control
 ---
 
 **Notes from extraction:** Null result establishing that the guilt effect is specific to negative partner outcomes.
