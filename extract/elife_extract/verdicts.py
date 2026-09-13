@@ -23,6 +23,12 @@ A ruling answers one of the disputes the tree cannot settle claim-by-claim:
 
     {"kind": "ruling", "question": "...", "answer": "...", "why"?: "...", "by": "...", "when": "..."}
 
+The file's first line names the adjudication procedure it was read under — the steps and verdict
+vocabulary, a scheme with a version (docs/design/2026-09-12-kinds-of-decision.md) — so a reading
+made under an earlier procedure stays a valid record rather than an undocumented one:
+
+    {"kind": "procedure", "version": 1, "when": "..."}
+
 The reading is *editing*, not authoring: `skeleton` writes a `keep` for every claim and an `ok`
 for every edge before the reader starts, so a claim they never look at stays `keep` and a claim
 they consider carries `considered: true` — the one flag that tells a decision apart from a
@@ -38,6 +44,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # ── the vocabulary ────────────────────────────────────────────────────────────
+
+# The adjudication procedure's version. The steps and the verdict vocabulary below are a scheme,
+# accepted under #108 as procedure v1; a verdict file's `procedure` header names the version it
+# was read under. Bump this when the steps or the vocabulary change (a scheme ruling under #31).
+PROCEDURE_VERSION = 1
 
 CLAIM_VERDICTS = ("keep", "strike", "merge-into", "part-of")
 EDGE_VERDICTS = ("ok", "wrong-direction", "wrong-relation", "strike", "missing")
@@ -112,7 +123,11 @@ class Resolved:
         self.claims: dict[str, dict] = {}
         self.edges: dict[tuple[str, str, str], dict] = {}
         self.rulings: dict[str, dict] = {}
+        self.procedure: int | None = None
         for rec in records:
+            if rec.get("kind") == "procedure":
+                self.procedure = rec.get("version")
+                continue
             key = key_of(rec)
             if key is None:
                 continue
@@ -202,8 +217,18 @@ def validate(records: list[dict], *, claim_slugs, edge_triples=None) -> list[str
                 problems.append("a ruling needs a question")
             if not rec.get("answer"):
                 problems.append(f"ruling {rec.get('question')!r} has no answer")
+        elif kind == "procedure":
+            if not isinstance(rec.get("version"), int):
+                problems.append("a procedure line needs an integer version")
         else:
-            problems.append(f"a verdict line has kind {kind!r}, which is not claim, edge or ruling")
+            problems.append(f"a verdict line has kind {kind!r}, which is not claim, edge, ruling "
+                            "or procedure")
+
+    # A reading names the procedure it was read under, so an older reading stays a valid record
+    # rather than an undocumented one (#108).
+    if res.procedure is None:
+        problems.append('the verdict file names no procedure version — its first line should be '
+                        '{"kind": "procedure", "version": ...}')
 
     # A merge-into whose target is itself struck: the duplicate would fold into nothing.
     for slug, target in res.merged.items():
@@ -235,10 +260,11 @@ def skeleton(claim_slugs, edge_triples, *, by: str = "skeleton",
 
     So the reading is editing a file rather than authoring one: a claim the reader never opens
     stays `keep`, and `considered` tells the two apart. Edges are the tree's relations; `part-of`
-    is a claim verdict, not an edge, so it is not enumerated here.
+    is a claim verdict, not an edge, so it is not enumerated here. The first line names the
+    procedure version the reading is made under.
     """
     when = when or now()
-    out: list[dict] = []
+    out: list[dict] = [{"kind": "procedure", "version": PROCEDURE_VERSION, "when": when}]
     for slug in sorted(set(claim_slugs)):
         out.append({"kind": "claim", "slug": slug, "verdict": "keep",
                     "considered": False, "by": by, "when": when})

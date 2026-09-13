@@ -371,6 +371,9 @@ def _verdict_counts():
             vers[m.group(1)] = {
                 "considered": len(res.claims_considered()) + len(res.edges_considered()),
                 "total": len(res.claims) + len(res.edges),
+                # The procedure version the reading was made under (#108), for the badge's
+                # "read under procedure v<N>". None on a file written before procedure v1.
+                "procedure": res.procedure,
             }
         if vers:
             out[paper] = vers
