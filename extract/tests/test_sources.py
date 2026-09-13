@@ -20,8 +20,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from elife_extract import prepare as prepare_mod
+from elife_extract import segment as segment_mod
 from elife_extract import sources
 from elife_extract.prepare import PreparedPaper, parse_jats, prepare
+from elife_extract.segment import segment
 from elife_extract.sources import ElifeSource, FileSource, Resolved
 
 DOI = "10.7554/eLife.95562"
@@ -285,6 +287,67 @@ def test_prepare_module_names_no_publisher_in_its_logic():
 
     assert not offenders, "eLife in prepare.py's logic:\n" + "\n".join(offenders)
     assert "cdn.elifesciences.org" not in src, "the CDN belongs in sources.py"
+
+
+# ── the section vocabulary is declared once ───────────────────────────────
+
+
+def _paper(**over) -> PreparedPaper:
+    base = dict(doi=DOI, article_id="95562", paper_slug="p", title="T", authors=["A"],
+                abstract="An abstract.", results_text="A result.", captions_text="A caption.",
+                methods_text="A method.", extraction_path="jats",
+                introduction_text="An intro.", discussion_text="A discussion.",
+                appendix_text="An appendix.",
+                supplementary_text="Figure 1—source code 1. Source code for A and F.")
+    return PreparedPaper(**{**base, **over})
+
+
+def test_every_text_field_on_the_type_is_in_the_section_vocabulary():
+    """The bug this guards: supplementary_text existed on PreparedPaper and was missing from
+    segment()'s list, so it was stored and never segmented. Any future text field added to the
+    type without a SECTIONS entry fails here rather than going quietly unread (#137)."""
+    from dataclasses import fields
+    declared = {attr for _, attr, _ in prepare_mod.SECTIONS}
+    text_fields = {f.name for f in fields(PreparedPaper)
+                   if f.name.endswith("_text") or f.name == "abstract"}
+    missing = text_fields - declared
+    assert not missing, f"text fields on PreparedPaper with no SECTIONS entry: {sorted(missing)}"
+    # And the reverse: a SECTIONS entry naming something the type cannot supply.
+    paper = _paper()
+    unreachable = [attr for _, attr, _ in prepare_mod.SECTIONS if not hasattr(paper, attr)]
+    assert not unreachable, f"SECTIONS names attributes PreparedPaper has not got: {unreachable}"
+
+
+def test_supplementary_is_segmented_and_kept_out_of_the_coverage_denominator():
+    """Both halves matter. It must reach the readers, because its lines map source code to
+    figure panels. It must not reach coverage, because a file manifest asserts nothing and
+    would lower measured coverage with spans nothing should ever claim."""
+    read_by_agents = {s.section for s in segment(_paper(), include_methods=True)}
+    measured_by_coverage = {s.section for s in segment(_paper(), include_methods=False)}
+    assert "supplementary" in read_by_agents
+    assert "supplementary" not in measured_by_coverage
+    assert {"methods", "appendix"} <= read_by_agents
+    assert not {"methods", "appendix"} & measured_by_coverage
+    assert {"abstract", "introduction", "results", "discussion"} <= measured_by_coverage
+
+
+def test_sections_drops_empties_rather_than_emitting_blank_spans():
+    paper = _paper(supplementary_text="", appendix_text="   ")
+    names = [name for name, _ in paper.sections()]
+    assert "supplementary" not in names and "appendix" not in names
+    assert "results" in names
+
+
+def test_segment_reads_the_vocabulary_rather_than_restating_it():
+    """The duplication itself is what regressed. Pin that segment.py holds no section-name
+    literals: it must go through PreparedPaper.sections()."""
+    import re
+    src = Path(segment_mod.__file__).read_text(encoding="utf-8")
+    body = src[src.index("def segment("):]
+    body = body[:body.index("\ndef ", 1)] if "\ndef " in body[1:] else body
+    for name, _, _ in prepare_mod.SECTIONS:
+        assert not re.search(rf'["\']{name}["\']', body), (
+            f"segment() names the section {name!r} itself; it should read SECTIONS")
 
 
 if __name__ == "__main__":

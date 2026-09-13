@@ -80,6 +80,38 @@ FIG_CAPTION_START = re.compile(
 PANEL_GROUP_RE = re.compile(r"(?:^|[^A-Za-z])\(\s*([A-Za-z][^()]{0,24}?)\s*\)")
 
 
+# The document's sections, in reading order: the name a span carries, the attribute holding the
+# text, and whether the section is procedural — described method rather than asserted finding.
+#
+# Declared once, here. It used to be declared twice: as these field names, and again as string
+# literals in segment.segment(). The two disagreed — `supplementary_text` was among the fields
+# and absent from the list — so every paper's supplementary text was fetched, parsed, stored in
+# prepared.json and never segmented. No reader was given it and coverage could not see it (#137).
+#
+# `procedural` is what the `include_methods` flag gates. The flag's name predates appendix and
+# supplementary joining methods behind it; what it actually selects is "sections the corpus is
+# expected to make claims about" (coverage.py), which is the distinction that matters.
+#
+# Supplementary is procedural because of what it holds: a manifest of supplementary files, one
+# caption per line — "Figure 1—source code 1. Source code used to generate data in A, D, E, and
+# F." Nothing in it is a proposition, so it must stay out of the coverage denominator or it
+# would lower measured coverage with spans nothing should ever claim. It is worth segmenting
+# anyway: those lines map source code and source data to figure panels, which is the evidence a
+# claim's `analysis` and `dataset` fields are populated from and the hardest to recover later.
+SECTIONS: tuple[tuple[str, str, bool], ...] = (
+    #  span name        attribute             procedural
+    ("abstract",      "abstract",           False),
+    ("introduction",  "introduction_text",  False),
+    ("results",       "results_text",       False),
+    ("discussion",    "discussion_text",    False),
+    ("captions",      "captions_text",      False),
+    ("tables",        "tables_text",        False),
+    ("methods",       "methods_text",       True),
+    ("appendix",      "appendix_text",      True),
+    ("supplementary", "supplementary_text", True),
+)
+
+
 # ── Data class ───────────────────────────────────────────────────────────
 
 
@@ -115,6 +147,17 @@ class PreparedPaper:
     @property
     def tables_text(self) -> str:
         return "\n\n".join(t.text for t in self.tables)
+
+    def sections(self, *, include_methods: bool = True) -> list[tuple[str, str]]:
+        """The document's sections as (span name, text), in reading order, empties dropped.
+
+        The one place the section vocabulary is read from, so a section cannot be added to the
+        type and forgotten by the segmenter. `include_methods=False` drops the procedural ones,
+        which is what coverage measures against.
+        """
+        return [(name, text) for name, attr, procedural in SECTIONS
+                if include_methods or not procedural
+                for text in [getattr(self, attr, "") or ""] if text.strip()]
 
     @property
     def panel_ids(self) -> list[str]:
