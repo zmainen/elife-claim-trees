@@ -10,6 +10,11 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+warrant: strong
+warrant_why: its prediction connectivity-between-guilt-responsibility-related-outcome-ph is confirmed and no rival stands
+warrant_from:
+- predictions
+- supported_by
 entails:
 - connectivity-between-guilt-responsibility-related-outcome-ph
 belongings: []

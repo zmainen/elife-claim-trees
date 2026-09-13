@@ -41,6 +41,8 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: null
+warrant: weak
+warrant_why: a null asserted on its own; nothing in the tree's argument bears on it
 ---
 
 **Notes from extraction:** Null result: the neural signature does not track individual differences in behavioural guilt sensitivity.

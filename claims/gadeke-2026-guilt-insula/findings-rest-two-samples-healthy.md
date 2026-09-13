@@ -27,6 +27,8 @@ reproductions:
     condition); Study 2 (N=44, behavioural replication with identical task structure outside scanner).
     Algorithmic partner confirmed via `partner-algorithm-deception-assumption`. The two-study structure
     is the paper''s principal robustness check against single-sample false positives.'
+warrant: weak
+warrant_why: asserted scope; nothing in the tree's argument bears on the sample composition
 ---
 
 **Notes from extraction:** Global scope condition bounding the empirical claims; distinguishes the behavioural study from the fMRI study. The results reader emphasised that BOLD results come only from Study 2; the structure reader gave the two sample sizes.

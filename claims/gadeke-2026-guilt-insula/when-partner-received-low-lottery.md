@@ -73,6 +73,12 @@ reproductions:
     auditability: as with the partner-reward check, the script locates its input by globbing the CSV directory
     and matching on column names rather than by a pinned filename, so this row of the chain is not yet
     independently auditable. Pinning the exact filename is an open task.'
+warrant: strong
+warrant_why: it confirms responsibility-outcomes-generates-guilt-participant and is validated by the controls guilt-effect-occurred-whether-participant, pre-task-icebreaker-succeeded-establishing-positive and responsibility-choices-not-influence-happiness
+warrant_from:
+- validated_by
+- confirms
+- requires
 ---
 
 **Notes from extraction:** The core behavioural 'guilt effect'; this is the empirical result that tests the guilt prediction.

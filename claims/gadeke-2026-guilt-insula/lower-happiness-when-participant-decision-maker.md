@@ -17,6 +17,10 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: a 'may reflect' interpretation over participant-happiness-lower-when-participant, speculating responsibility aversion
+warrant_from:
+- interprets
 ---
 
 **Notes from extraction:** Interpretation of the agency effect through the responsibility-aversion literature.

@@ -882,13 +882,16 @@ def _apply_stance(paper: str, data: dict, cfg: Config) -> list[dict]:
 
 
 # ── warrant ────────────────────────────────────────────────────────────────
-# How well the tree supports each claim, as distinct from what the paper says (`confidence`) and
-# how it stands toward the claim (`stance`). A `feature`, like `stance` and `parts`: it revises a
-# tree rather than making a new kind of thing, writing `warrant:`, `warrant_why:` and
-# `warrant_from:` onto each claim file and leaving `epistemic` untouched (#126). The dossier the
-# model reads — and the rule floor the reading is later scored against — live in scripts/warrant.py,
-# so the layer, the rule and the comparison read one definition of what a claim's support is. Per
-# the ruling, the prompt shows the reader the dossier and the vocabulary, never the rule.
+# How well the tree's *argument* supports each claim, as distinct from what the paper says
+# (`confidence`) and how it stands toward the claim (`stance`). Checking — a reproduction, a
+# methods or statistics or citation check — is a separate later layer that writes a modifier
+# beside the warrant, and none of it enters here (the 2026-09-13 v2 rulings). A `feature`, like
+# `stance` and `parts`: it revises a tree rather than making a new kind of thing, writing
+# `warrant:`, `warrant_why:` and `warrant_from:` onto each claim file and leaving `epistemic`
+# untouched (#126). The dossier the model reads — and the rule floor the reading is later scored
+# against — live in scripts/warrant.py, so the layer, the rule and the comparison read one
+# definition of what a claim's support is. Per the ruling, the prompt shows the reader the
+# dossier and the vocabulary, never the rule.
 
 
 def _warrant_module():
@@ -921,8 +924,7 @@ def warrant_request(paper: str, cfg: Config) -> tuple[str, str]:
     lines = ["# The claim tree, with each claim's dossier\n"]
     for slug in sorted(doss):
         d = doss[slug]
-        conf = f", the paper's confidence: {d['confidence']}" if d.get("confidence") else ""
-        lines.append(f"## `{slug}` — {d['role']}, stance {d['stance']}{conf}\n")
+        lines.append(f"## `{slug}` — {d['role']}, stance {d['stance']}\n")
         lines.append(f"{d['sentence']}\n")
         lines.append("Dossier:")
         lines.append(w.render_dossier(d))

@@ -17,6 +17,8 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: a null asserted on its own; nothing in the tree's argument bears on it
 ---
 
 **Notes from extraction:** Null result establishing that the guilt effect is specific to negative partner outcomes.

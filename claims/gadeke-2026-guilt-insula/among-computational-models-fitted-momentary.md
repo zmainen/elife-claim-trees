@@ -15,6 +15,8 @@ assertions:
   panel: table1
   readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: asserted; nothing in the tree's argument bears on the AIC comparison
 ---
 
 **Notes from extraction:** Best-fitting model inferred from the lowest AIC values (Study 2 Responsibility Redux AIC –1195). Note the apparent tension: the results reader instead reported the (non-Redux) Responsibility model as the best fit by likelihood-ratio test and R²; which model is 'best' depends on the metric, and the two readers anchored different models to Table 1, so they are not merged.

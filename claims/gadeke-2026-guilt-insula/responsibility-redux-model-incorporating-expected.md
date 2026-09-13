@@ -16,6 +16,8 @@ assertions:
   panel: fig3c,fig3g
   readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: asserted; nothing in the tree's argument bears on it
 ---
 
 **Notes from extraction:** The model-based regressors used in the fMRI analyses depend on this fit.

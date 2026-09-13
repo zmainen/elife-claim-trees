@@ -30,6 +30,12 @@ reproductions:
   status: unattempted
   notes: Computational model code in GitHub repo. Behavioral data in BehaviouralData/ directory (.mat
     files). MATLAB required. Not yet executed.
+warrant: moderate
+warrant_why: it confirms responsibility-partner-outcomes-influences-participant and is supported by several happiness-model results, but no control validates it
+warrant_from:
+- confirms
+- supported_by
+- requires
 ---
 
 **Notes from extraction:** Kept separate from the R² comparison to preserve the results reader's distinct verbatim quote for each statistic.

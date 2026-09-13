@@ -18,6 +18,8 @@ assertions:
   panel: fig2c,fig2f
   readers: high
 reproductions: []
+warrant: weak
+warrant_why: asserted, weak and unreplicated in Study 2; nothing in the tree's argument bears on it
 ---
 
 **Relations.** Why each outgoing edge was inferred:

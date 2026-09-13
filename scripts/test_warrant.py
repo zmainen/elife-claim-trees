@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""The warrant dossier and the version-1 rule floor.
+"""The warrant dossier and the version-2 rule floor.
 
-What these pin is the two mechanical pieces of #126: the dossier assembles what the tree holds
-about a claim's support, and `warrant_rule` grades it by role. The synthetic cases exercise one
-claim per role — including the single fact the note requires, that a `mismatch` reproduction
-comes out `contested`. The corpus case checks the dossier reads a real tree without judgement in
-it, and that resolving the whole tree stays inside each role's vocabulary.
+What these pin is the two mechanical pieces of #126 as the 2026-09-13 rulings reframe them: the
+dossier assembles the tree's *argument* about a claim — no reproduction, no verification, no
+confidence — and `warrant_rule` grades that argument by role. The synthetic cases exercise one
+claim per role: predictions and alternatives unchanged, the graded branch on the argument alone,
+the cap on an interpretation, the agreement rule for a synthesis, same-kind propagation, and an
+empty dossier coming out weak and flagged `unassessed`. The corpus case checks the dossier reads
+a real tree without judgement in it, and that resolving the whole tree stays inside each role's
+vocabulary.
 
 No network. Runs under pytest or standalone.
 """
@@ -24,17 +27,17 @@ PAPER = "gadeke-2026-guilt-insula"
 def _d(role, **kw):
     """A dossier dict for one claim, evidence keys empty unless overridden."""
     base = {"slug": kw.get("slug", "x"), "role": role, "stance": kw.get("stance", "asserts"),
-            "confidence": kw.get("confidence"), "sentence": "s", "outcome": None,
-            "predictions": [], "validated_by": [], "rules_out": [], "ruled_out_by": [],
-            "reproductions": [], "verification": [], "requires": [], "part_of": [],
-            "interprets": [], "supported_by": [], "extended_by": [], "rivals": [],
-            "refuted_by_other_paper": []}
+            "sentence": "s", "outcome": None, "predictions": [], "validated_by": [],
+            "confirms": [], "confirmed_by": [], "rules_out": [], "ruled_out_by": [],
+            "supported_by": [], "extended_by": [], "refuted_by": [], "requires": [],
+            "part_of": [], "interprets": [], "require_roles": {}, "part_of_roles": {},
+            "rivals": []}
     base.update({k: v for k, v in kw.items() if k in base})
     return base
 
 
-def _lvl(d, resolved=None):
-    return warrant.warrant_rule(d, resolved)[0]
+def _lvl(d, resolved=None, unassessed=None):
+    return warrant.warrant_rule(d, resolved, unassessed)[0]
 
 
 # ── predictions: an outcome, not a warrant ────────────────────────────────
@@ -56,50 +59,46 @@ def test_alternative_is_ruled_out_when_an_edge_reaches_it():
     assert _lvl(_d("hypothesis", stance="entertains", ruled_out_by=[])) == "open"
 
 
-# ── the graded branch: empirical, control, methodological, scope ──────────
+# ── the graded branch: the argument alone ─────────────────────────────────
 
 
-def test_a_mismatch_reproduction_is_contested():
-    """The one fact the note's §evaluation requires the rule to get right."""
+def test_strong_needs_a_confirmed_prediction_and_a_control():
     for role in ("empirical", "control", "methodological", "scope"):
-        lvl, fired = warrant.warrant_rule(_d(role, reproductions=[{"status": "mismatch"}]))
-        assert lvl == "contested", f"{role} with a mismatch should be contested, got {lvl}"
-        assert "reproduction:mismatch" in fired
+        lvl, fired = warrant.warrant_rule(_d(role, confirms=["p"], validated_by=["c"]))
+        assert lvl == "strong", f"{role} that confirms and is validated should be strong, got {lvl}"
+        assert "confirms:p" in fired and "validated-by:c" in fired
 
 
-def test_a_result_refuted_by_another_paper_is_contested():
-    assert _lvl(_d("empirical", refuted_by_other_paper=["other/claim"])) == "contested"
+def test_exactly_one_of_confirms_or_control_is_moderate():
+    assert _lvl(_d("empirical", confirms=["p"])) == "moderate"
+    assert _lvl(_d("empirical", validated_by=["c"])) == "moderate"
 
 
-def test_a_verified_reproduction_is_strong():
-    assert _lvl(_d("empirical", reproductions=[{"status": "verified"}])) == "strong"
+def test_two_or_more_supporters_is_moderate():
+    assert _lvl(_d("empirical", supported_by=["a", "b"])) == "moderate"
+    # A single supporter is not enough.
+    assert _lvl(_d("empirical", supported_by=["a"])) == "weak"
 
 
-def test_a_control_that_validates_with_no_partial_is_strong():
-    assert _lvl(_d("empirical", validated_by=["ctrl"])) == "strong"
-    # A partial alongside pulls it off strong.
-    assert _lvl(_d("empirical", validated_by=["ctrl"],
-                   reproductions=[{"status": "partial"}])) == "weak"
+def test_a_result_refuted_in_the_tree_is_contested():
+    lvl, fired = warrant.warrant_rule(_d("empirical", refuted_by=["a-result"]))
+    assert lvl == "contested" and "refuted-by:a-result" in fired
 
 
-def test_only_a_partial_reproduction_is_weak():
-    assert _lvl(_d("empirical", reproductions=[{"status": "partial"}])) == "weak"
+def test_an_empty_dossier_is_weak_and_unassessed():
+    for role in ("empirical", "control", "methodological", "scope"):
+        lvl, fired = warrant.warrant_rule(_d(role))
+        assert lvl == "weak" and "unassessed" in fired, f"{role}: {lvl}, {fired}"
 
 
-def test_weak_confidence_and_unchecked_is_weak():
-    assert _lvl(_d("scope", confidence="weak")) == "weak"
-
-
-def test_absent_confidence_is_unassessed_not_weak():
-    # The writer no longer stamps a made-up `tentative`; absent confidence is unassessed.
-    assert _lvl(_d("empirical")) == "moderate"
-
-
-def test_asserted_with_only_a_blocked_or_unattempted_check_is_moderate():
-    assert _lvl(_d("methodological",
-                   reproductions=[{"status": "blocked"}])) == "moderate"
-    assert _lvl(_d("control",
-                   reproductions=[{"status": "unattempted"}])) == "moderate"
+def test_no_clause_reads_confidence_or_reproductions():
+    """The reframe: warrant reasons from the argument, never from what the paper said or a
+    reproduction re-ran. A dossier carrying those keys grades the same as one without them."""
+    plain = _d("empirical", confirms=["p"], validated_by=["c"])
+    noisy = dict(plain, confidence="weak", reproductions=[{"status": "mismatch"}],
+                 verification=[{"status": "verified"}])
+    assert warrant.warrant_rule(noisy) == warrant.warrant_rule(plain) == ("strong",
+                                                                          ["confirms:p", "validated-by:c"])
 
 
 # ── hypotheses: their predictions and their rivals ────────────────────────
@@ -128,39 +127,75 @@ def test_hypothesis_is_weak_with_no_prediction_outcome():
     assert _lvl(d) == "weak"
 
 
-# ── synthesis and interpretation: the minimum over what they interpret ────
+# ── interpretation: one step below the strongest it interprets, capped at moderate ──
 
 
-def test_interpretation_takes_the_minimum_over_what_it_interprets():
-    d = _d("interpretation", interprets=["a", "b"])
-    assert _lvl(d, {"a": "strong", "b": "weak"}) == "weak"
-    assert _lvl(_d("synthesis", interprets=["a"]), {"a": "moderate"}) == "moderate"
+def test_interpretation_steps_below_the_strongest_and_caps_at_moderate():
+    # A strong parent yields moderate — argument alone never reaches strong.
+    assert _lvl(_d("interpretation", interprets=["a"]), {"a": "strong"}) == "moderate"
+    # A moderate parent yields weak.
+    assert _lvl(_d("interpretation", interprets=["a"]), {"a": "moderate"}) == "weak"
+    # The strongest of several sets the step.
+    assert _lvl(_d("interpretation", interprets=["a", "b"]),
+                {"a": "strong", "b": "weak"}) == "moderate"
+    # Interpreting nothing is weak.
+    assert _lvl(_d("interpretation", interprets=[])) == "weak"
 
 
-# ── propagation: bounded by the weakest claim required ────────────────────
+# ── synthesis: agreement among what it interprets ─────────────────────────
 
 
-def test_a_graded_claim_is_capped_by_the_weakest_claim_it_requires():
-    d = _d("empirical", reproductions=[{"status": "verified"}], requires=["dep"])
+def test_synthesis_is_moderate_when_it_interprets_two_or_more_none_weak():
+    assert _lvl(_d("synthesis", interprets=["a", "b"]),
+                {"a": "moderate", "b": "strong"}) == "moderate"
+    # A weak member pulls it to weak.
+    assert _lvl(_d("synthesis", interprets=["a", "b"]),
+                {"a": "moderate", "b": "weak"}) == "weak"
+    # Fewer than two is weak.
+    assert _lvl(_d("synthesis", interprets=["a"]), {"a": "moderate"}) == "weak"
+
+
+# ── propagation: bounded by the weakest same-kind claim required ──────────
+
+
+def test_a_claim_is_capped_by_the_weakest_same_kind_claim_it_requires():
+    d = _d("empirical", confirms=["p"], validated_by=["c"], requires=["dep"],
+           require_roles={"dep": "control"})
     lvl, fired = warrant.warrant_rule(d, {"dep": "weak"})
     assert lvl == "weak" and any("bounded-by-requires:dep" in f for f in fired)
     # A stronger prerequisite does not lower it.
     assert _lvl(d, {"dep": "strong"}) == "strong"
 
 
+def test_a_prerequisite_of_another_kind_does_not_bound_but_is_noted_when_unassessed():
+    d = _d("empirical", confirms=["p"], validated_by=["c"], requires=["m"],
+           require_roles={"m": "methodological"})
+    lvl, fired = warrant.warrant_rule(d, {"m": "weak"}, {"m"})
+    assert lvl == "strong", "a methodological prerequisite must not bound a result"
+    assert "prerequisite-unassessed:m" in fired
+
+
+def test_methodological_and_scope_are_never_bounded():
+    for role in ("methodological", "scope"):
+        d = _d(role, confirms=["p"], validated_by=["c"], requires=["dep"],
+               require_roles={"dep": "empirical"})
+        assert _lvl(d, {"dep": "weak"}) == "strong", f"{role} must not be bounded"
+
+
 # ── the dossier over a real tree: plain data, and resolution stays in vocab ──
 
 
-def test_dossier_reads_the_tree_as_plain_data():
+def test_dossier_reads_the_tree_as_argument_only():
     doss = warrant.dossier(PAPER)
     assert len(doss) > 40, "the Gädeke tree should have many claims"
     alt = doss.get("alt-agency-aversion-not-guilt")
     assert alt and alt["ruled_out_by"], "an alternative should record what rules it out"
-    # A verified empirical result should carry its reproduction, unjudged.
+    # A result that both confirms a prediction and is validated should carry both, unjudged.
     ins = doss.get("insula-rois-responded-more-low")
-    assert ins and "validated_by" in warrant.fired_keys(ins)
-    # No warrant/level is written into the dossier — it is data, not judgement.
-    assert "warrant" not in alt and "level" not in alt
+    assert ins and "validated_by" in warrant.fired_keys(ins) and "confirms" in warrant.fired_keys(ins)
+    # No checking record, no confidence, no judgement lives in the dossier.
+    for key in ("reproductions", "verification", "confidence", "warrant", "level"):
+        assert key not in alt and key not in ins, f"{key} must not be in a v2 dossier"
 
 
 def test_resolving_the_tree_stays_inside_each_role_s_vocabulary():
@@ -170,18 +205,6 @@ def test_resolving_the_tree_stays_inside_each_role_s_vocabulary():
         role, stance = f["dossier"]["role"], f["dossier"]["stance"]
         assert f["level"] in warrant.vocabulary_for(role, stance), \
             f"{slug} ({role}) resolved to {f['level']}, outside its vocabulary"
-
-
-def test_the_corpus_mismatch_resolves_contested_where_the_tree_holds_it():
-    """The note's single fact, checked where the corpus actually holds the `mismatch`."""
-    paper = "ejdrup-2026-dopamine"
-    if not os.path.isdir(os.path.join(warrant.CLAIMS_DIR, paper)):
-        return  # a checkout without the private tree cannot exercise it
-    floor = warrant.resolve(paper)
-    hits = [s for s, f in floor.items()
-            if any(r.get("status") == "mismatch" for r in f["dossier"]["reproductions"])]
-    for s in hits:
-        assert floor[s]["level"] == "contested", f"{s} holds a mismatch but resolved {floor[s]['level']}"
 
 
 if __name__ == "__main__":

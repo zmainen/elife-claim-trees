@@ -1037,41 +1037,45 @@ layers:
     views: [table, comparison]
     command: "python3 scripts/formats_report.py {paper}"
 
-  # How well the tree supports each claim, as distinct from what the paper says (`confidence`)
-  # and how it stands toward it (`stance`). Accepted as a new layer on the #126 ruling
-  # (2026-09-13): a warrant is derived from the evidence, it requires model reasoning rather
+  # How well the tree's argument supports each claim, as distinct from what the paper says
+  # (`confidence`) and how it stands toward it (`stance`). Accepted as a new layer on the #126
+  # ruling (2026-09-13), then reframed by the v2 rulings the same day: warrant reasons from the
+  # argument the tree records, never from the paper's confidence and never from a reproduction —
+  # checking (a reproduction, a methods or statistics or citation assessment) is each a separate
+  # later layer that writes a modifier beside the warrant. It requires model reasoning rather
   # than strict rule application, and the mechanical rule's floor is shown to the reader only
   # AFTER it judges. A `feature`, like `stance`, `parts` and `questions`: it revises the tree
   # rather than making a new kind of thing, writing `warrant:`, `warrant_why:` and
   # `warrant_from:` onto each claim and leaving `epistemic` untouched while the draft is tried.
-  # It runs last, so it goes stale whenever the tree, the stances, the prediction outcomes or
-  # the verification move — the behaviour docs/claim-format.md asked for by hand and never got.
+  # It runs last, so it goes stale whenever the tree, the stances or the prediction outcomes
+  # move — the behaviour docs/claim-format.md asked for by hand and never got.
   - id: warrant
     group: tree
     kind: feature
     scope: paper
     status: proposed
     title: Warrant
-    question: How well does the tree support each claim, judged from its evidence?
+    question: How well does the tree's argument support each claim?
     how: >
-      Assembles, for each claim, a dossier of what the tree holds about its support — its role and
-      stance, the outcomes on its predictions, the controls that validate it, the alternatives it
-      rules out, its reproduction records and their verification provenance, what it requires and
-      is part of, the claims that support or extend it, and the paper's own confidence. It shows a
-      reader every claim with its sentence and that dossier, and asks for a warrant level from the
-      vocabulary the claim's role allows — a prediction's confirmed/refuted/untested, an
-      alternative's ruled-out/open, everything else's strong/moderate/weak/contested — a one-line
-      why that cites the dossier, and an `unsupported` flag where the tree records nothing.
+      Assembles, for each claim, a dossier of what the tree's argument holds about its support —
+      its role and stance, the outcomes on its predictions, the controls that validate it, the
+      rivals it rules out, what it requires and is part of (with their roles), and the claims that
+      support, extend, confirm or refute it. It shows a reader every claim with its sentence and
+      that dossier, and asks for a warrant level from the vocabulary the claim's role allows — a
+      prediction's confirmed/refuted/untested, an alternative's ruled-out/open, everything else's
+      strong/moderate/weak/contested — a one-line why that cites the dossier, and an `unsupported`
+      flag where the tree's argument records nothing.
 
-      The basis is the tree's evidence, not the paper's confidence, and a `verified` reproduction
-      checks a number, not the inference drawn from it. The prompt shows the dossier and the
-      vocabulary, never the mechanical rule: scripts/warrant.py carries a rule floor the reading is
-      scored against afterwards, and the ruling puts that floor after the judgement, not before.
+      The basis is the argument the tree records, not the paper's confidence and not any
+      reproduction, which a later checking layer assesses and may then modify. The prompt shows
+      the dossier and the vocabulary, never the mechanical rule: scripts/warrant.py carries a rule
+      floor the reading is scored against afterwards, and the ruling puts that floor after the
+      judgement, not before.
 
       `--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through
       the same validation — a slug not in the tree, or a level outside the role's vocabulary, is
       dropped — so a model with no backend here can still answer it.
-    needs: [claim-tree, stance, prediction-outcome, verification]
+    needs: [claim-tree, stance, prediction-outcome]
     reads: [extract/prompts/warrant.md, extract/prompts/contract/vocabulary.md, scripts/warrant.py]
     produces: ["runs/{paper}/warrant.json"]
     views: [table]

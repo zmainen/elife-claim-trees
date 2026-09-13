@@ -23,6 +23,12 @@ assertions:
   panel: fig4e
   readers: high
 reproductions: []
+warrant: moderate
+warrant_why: it confirms anterior-insula-tracks-guilt-insula and is validated by the dot-products-between-individual-neural control, but rests on the localizer during-receipt-lottery-versus-safe, which the tree does not support
+warrant_from:
+- validated_by
+- confirms
+- requires
 ---
 
 **Notes from extraction:** Caption states all coefficients and differences are significantly different from 0 (see Appendix 1—table 6).
