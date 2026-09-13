@@ -31,10 +31,12 @@ jobs:
   gate:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
-    # `report` is not a gate. It is non-zero on main today — 16 verification records assert
-    # more than their run supports — and that is a corpus problem, not something a pull
-    # request should be blocked by. Surfaced so the numbers are visible on every change
-    # rather than only when someone remembers to look.
+    # `report` is not a gate. It is non-zero on main today — 72 of 197 reproduction records do
+    # not meet check_reproductions' strict gate — and that is a corpus problem, not something a
+    # pull request should be blocked by. Surfaced so the numbers are visible on every change
+    # rather than only when someone remembers to look. (An earlier version of this comment
+    # blamed 16 records asserting more than their run supports; audit_verifications reports 0
+    # of those now.)
     continue-on-error: ${{ matrix.soft || false }}
     strategy:
       fail-fast: false

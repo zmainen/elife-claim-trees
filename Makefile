@@ -102,10 +102,13 @@ validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 # Split by whether a non-zero exit should stop a merge.
 #
 # `check` is clean on main today, so a failure means this change broke something.
-# `report` is not: audit_verifications finds 16 records asserting more than their run
-# supports, and check_reproductions surfaces the corpus-wide status spread. Those are real
-# and they predate this file. Gating on them would make every pull request red for reasons
-# the pull request did not cause, so they run for their numbers and do not block.
+# `report` is not, and the reason has changed since this was written. It said
+# audit_verifications finds 16 records asserting more than their run supports; that is now 0 —
+# the records were fixed and the comment was not. What makes the target non-zero is
+# check_reproductions --strict: 72 of 197 reproduction records do not meet the gate, 125 do.
+# That is the corpus-wide status spread, it is real, and it predates this file. Gating on it
+# would make every pull request red for reasons the pull request did not cause, so these run
+# for their numbers and do not block.
 publishable:  ## What the site is about to publish that the ledger says is out of date
 	$(PYTHON) $(CG)/scripts/publishable.py
 
