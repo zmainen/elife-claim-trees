@@ -10,6 +10,10 @@ role: scope
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: its only reproduction is blocked; the sample scope is unchecked
+warrant_from:
+- reproductions
 scopes:
 - when-partner-received-low-lottery
 belongings: []

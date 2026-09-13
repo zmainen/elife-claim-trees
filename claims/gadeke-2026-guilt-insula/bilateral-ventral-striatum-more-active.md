@@ -10,6 +10,12 @@ role: control
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the bilateral VS risk clusters
+warrant_from:
+- rules_out
+- reproductions
+- verification
 rules-out:
 - alt-imaging-contrast-invalid
 belongings: []

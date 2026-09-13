@@ -11,6 +11,10 @@ role: methodological
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: validated by manipulation-check-bilateral-ventral-striatum, a verified control showing the GLM recovers the known VS reward signal
+warrant_from:
+- validated_by
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula

@@ -9,6 +9,11 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+warrant: strong
+warrant_why: its prediction anterior-insula-tracks-guilt-insula is confirmed, supported by the verified insula-rois-responded-more-low result and by prior-literature-documents-association-between
+warrant_from:
+- predictions
+- supported_by
 entails:
 - anterior-insula-tracks-guilt-insula
 belongings: []

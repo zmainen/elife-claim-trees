@@ -9,6 +9,10 @@ role: interpretation
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: interprets when-partner-received-low-lottery (verified), but reads the effect as compatible with 'simple guilt' — an interpretation, not a test
+warrant_from:
+- interprets
 interprets:
 - when-partner-received-low-lottery
 belongings: []

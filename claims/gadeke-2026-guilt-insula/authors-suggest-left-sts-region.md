@@ -9,6 +9,10 @@ role: interpretation
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: interprets the verified one-cluster-left-sts-responded, but is itself a suggestion the authors advance rather than a tested claim
+warrant_from:
+- interprets
 interprets:
 - one-cluster-left-sts-responded
 belongings: []

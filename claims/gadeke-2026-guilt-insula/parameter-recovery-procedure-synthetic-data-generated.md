@@ -9,6 +9,8 @@ role: methodological
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the tree records no reproduction, control or test bearing on the recovery procedure
 enables-method:
 - responsibility-redux-model-incorporating-expected
 belongings: []

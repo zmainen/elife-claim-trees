@@ -10,6 +10,10 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: part of insula-rois-responded-more-low; the outcome-phase contrast is not itself checked by anything in the tree
+warrant_from:
+- part_of
 part-of:
 - insula-rois-responded-more-low
 belongings: []

@@ -9,6 +9,13 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the left STS cluster; it is also supported by left-superior-temporal-sulcus-cluster
+warrant_from:
+- reproductions
+- verification
+- requires
+- supported_by
 tests:
 - neural-substrate-tracks-participant-responsibility-2
 confirms:

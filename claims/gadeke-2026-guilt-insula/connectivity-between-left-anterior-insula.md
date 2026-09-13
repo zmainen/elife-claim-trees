@@ -10,6 +10,12 @@ role: interpretation
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: interprets functional-connectivity-between-left-anterior and carries its own verified reproduction of the aIns-IFG coupling, though the guilt-sensitivity reading is interpretive
+warrant_from:
+- reproductions
+- verification
+- interprets
 interprets:
 - functional-connectivity-between-left-anterior
 belongings: []

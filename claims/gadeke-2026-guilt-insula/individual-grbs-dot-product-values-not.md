@@ -10,6 +10,11 @@ role: control
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: moderate
+warrant_why: the null (no correlation) reproduces per the partial record, though the coefficient differs and participant pairing could not be confirmed
+warrant_from:
+- reproductions
+- verification
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula

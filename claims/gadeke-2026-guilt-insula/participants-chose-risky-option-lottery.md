@@ -10,6 +10,11 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: its only reproduction is partial and did not reach significance per-participant; the paper itself notes it was weak and not replicated in Study 2
+warrant_from:
+- reproductions
+- verification
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula

@@ -10,6 +10,11 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+warrant: strong
+warrant_why: its prediction is confirmed by one-cluster-left-sts-responded, a verified STS cluster it is also supported by
+warrant_from:
+- predictions
+- supported_by
 entails:
 - neural-substrate-tracks-participant-responsibility-2
 belongings: []

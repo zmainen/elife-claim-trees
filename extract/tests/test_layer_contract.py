@@ -157,6 +157,7 @@ def test_model_answered_layers_declare_where_to_find_the_model():
                 "external-review", "edge-inference", "questions", "parts", "stance",
                 "summaries", "synthesis", "abstract-map"):
         assert decl[lid].get("by_from") == "model", f"{lid} does not declare by_from"
+    assert decl["warrant"].get("by_from") == "model", "warrant does not declare by_from"
 
 
 # ── each runner lands on its declared path ───────────────────────────────
@@ -350,7 +351,7 @@ def test_every_model_answered_layer_can_be_dumped_and_answered():
     choices = cli.build_parser()._subparsers._group_actions[0].choices
     for name in ("results-reader", "caption-reader", "structure-reader",
                  "reconcile", "external-review", "edge-inference", "questions", "parts",
-                 "stance", "summaries", "synthesis", "abstract-map"):
+                 "stance", "warrant", "summaries", "synthesis", "abstract-map"):
         opts = {o for a in choices[name]._actions for o in a.option_strings}
         assert "--dump-prompt" in opts, f"{name} cannot be asked for its prompt"
         assert "--answer" in opts, f"{name} cannot be given an answer"
@@ -610,6 +611,17 @@ def test_parts_validator_rejects_cycle_self_edge_and_two_wholes():
         ]}
         data = layers._validate_parts(raw, SLUG, cfg)
         assert data["parts"] == [{"part": "b", "whole": "a", "why": ""}]
+
+
+def test_warrant_is_answerable_and_its_declared_command_exists():
+    """`warrant` can be dumped and answered, and the command its declaration names is a real
+    subcommand — the seam every model-answered layer has, on the warrant layer (#126)."""
+    choices = cli.build_parser()._subparsers._group_actions[0].choices
+    opts = {o for a in choices["warrant"]._actions for o in a.option_strings}
+    assert "--dump-prompt" in opts and "--answer" in opts
+    cmd = _declaration()["warrant"]["command"]
+    m = re.search(r"elife_extract\.cli\s+([a-z-]+)", cmd)
+    assert m and m.group(1) in choices, "warrant's command names a subcommand the CLI does not have"
 
 
 def test_parts_is_answerable_and_its_declared_command_exists():

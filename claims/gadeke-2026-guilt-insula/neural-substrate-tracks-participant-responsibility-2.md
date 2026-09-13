@@ -11,6 +11,10 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
+warrant: confirmed
+warrant_why: confirmed by one-cluster-left-sts-responded (a verified STS cluster)
+warrant_from:
+- outcome
 derived-from:
 - neural-substrate-tracks-participant-responsibility
 belongings: []

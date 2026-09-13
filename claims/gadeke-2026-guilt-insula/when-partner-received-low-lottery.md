@@ -11,6 +11,13 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the guilt interaction beta in both cohorts (0.33->0.34, 0.39->0.40), and it is validated by guilt-effect-occurred-whether-participant and pre-task-icebreaker-succeeded-establishing-positive
+warrant_from:
+- validated_by
+- reproductions
+- verification
+- requires
 tests:
 - responsibility-outcomes-generates-guilt-participant
 confirms:

@@ -9,6 +9,8 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the tree records no reproduction, control or test bearing on this R^2 comparison
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula

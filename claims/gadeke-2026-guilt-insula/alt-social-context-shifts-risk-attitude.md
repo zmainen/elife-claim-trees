@@ -16,6 +16,10 @@ concepts:
   - alternative explanation
 priority: 2026-09-10
 epistemic: weak
+warrant: ruled-out
+warrant_why: risk-premiums-not-differ-between rules it out — risk premiums did not differ by condition, so a risk-attitude shift cannot explain the effect
+warrant_from:
+- ruled_out_by
 
 assertions:
   - paper-slug: gadeke-2026-guilt-insula

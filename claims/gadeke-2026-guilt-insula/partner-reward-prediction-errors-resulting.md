@@ -10,6 +10,11 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the social_pRPE weight above zero (wilcoxon p=0.0037)
+warrant_from:
+- reproductions
+- verification
 tests:
 - responsibility-partner-outcomes-influences-participant
 confirms:

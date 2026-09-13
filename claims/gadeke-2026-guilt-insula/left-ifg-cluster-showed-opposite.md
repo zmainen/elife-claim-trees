@@ -10,6 +10,8 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the claim itself states it did not survive correction, and the tree records nothing that checks it
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula

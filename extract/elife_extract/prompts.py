@@ -41,6 +41,10 @@ ROLES: dict[str, tuple[str, list[str]]] = {
     # relation that aims a control at the rival it kills — but not the claim schema: the runner
     # builds the alt- claim files itself from what it returns.
     "stance": ("stance.md", [_VOCAB]),
+    # Warrant judges how well the tree supports each claim, reasoning about the claims by role
+    # — it needs the vocabulary that defines a role — but not the claim schema: it returns a
+    # warrant level per slug, not claims. The dossier it reasons over is built by the runner.
+    "warrant": ("warrant.md", [_VOCAB]),
     # Summaries and synthesis reason about the claims by role — hypothesis, empirical, synthesis
     # — so they get the vocabulary that defines a role, but not the claim schema: they return
     # prose, not claims.

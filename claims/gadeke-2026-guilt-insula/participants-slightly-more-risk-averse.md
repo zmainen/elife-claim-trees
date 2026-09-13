@@ -10,6 +10,8 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: weak
+warrant_why: the tree records nothing that checks it, and the paper's own BF10 (1.69 / 0.41) is weak and not replicated in Study 2
 belongings:
 - relation: supports
   target: participants-showed-very-similar-risk

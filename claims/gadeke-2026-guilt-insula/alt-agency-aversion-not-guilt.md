@@ -15,6 +15,10 @@ concepts:
   - alternative explanation
 priority: 2026-09-10
 epistemic: weak
+warrant: ruled-out
+warrant_why: 'participant-happiness-lower-when-participant rules it out: the happiness cost is decision-maker-contingent, which agency-aversion-as-such does not predict'
+warrant_from:
+- ruled_out_by
 
 assertions:
   - paper-slug: gadeke-2026-guilt-insula

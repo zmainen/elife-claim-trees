@@ -10,6 +10,11 @@ role: empirical
 concepts: []
 priority: '2026-09-13'
 epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the insula peak MNI [-28, 24, -4]
+warrant_from:
+- reproductions
+- verification
 tests:
 - anterior-insula-tracks-guilt-insula
 confirms:

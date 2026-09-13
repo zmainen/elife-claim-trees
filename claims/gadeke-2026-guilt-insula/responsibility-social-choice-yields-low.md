@@ -10,6 +10,11 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+warrant: strong
+warrant_why: both its predictions are confirmed and it is supported by when-partner-received-low-lottery, partner-reward-prediction-errors-resulting and likelihood-ratio-test-showed-responsibility
+warrant_from:
+- predictions
+- supported_by
 entails:
 - responsibility-outcomes-generates-guilt-participant
 - responsibility-partner-outcomes-influences-participant
