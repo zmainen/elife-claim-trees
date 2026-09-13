@@ -2,7 +2,7 @@
 
 **Paper:** `meijer-2025-serotonin-additive-r1` · **Claims registered:** 2026-04-19 – 2026-04-20
 
-41 claims, 86 typed relations between them.
+41 claims, 85 typed relations between them.
 
 ## Claims by role
 
@@ -17,12 +17,12 @@
 
 ## Relations dropped
 
-**68 of 86 relations (79%) have no MIRA predicate and are absent from the strict export.**
+**67 of 85 relations (79%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
 | `requires` | 30 | a claim depends on another holding |
-| `scopes` | 17 | a scope constraint governs another claim's validity |
+| `scopes` | 16 | a scope constraint governs another claim's validity |
 | `derived-from` | 9 | a prediction derived from its hypothesis (inverse of entails) |
 | `entails` | 6 | a hypothesis entails its prediction — the deductive step |
 | `interprets` | 4 | one claim interprets another |
@@ -59,9 +59,7 @@ The strict export still carries the `rules-out` edge that eliminated each one, d
 
 ## Alternatives materialised as claims
 
-**1 relation targets name something no claim file asserts.** They are alternative explanations the paper argues against, so the target exists only as the thing being excluded. Each is minted as a `mira:Claim` so the edge has a destination, and flagged `haak:materialisedFrom: relation-target` in the extended file. **None of these is an authored claim.**
-
-- inhibition-fast-excitation-slow
+None: every relation in this paper points at a claim the tree asserts.
 
 ## Paper-level scopes with no MIRA target
 

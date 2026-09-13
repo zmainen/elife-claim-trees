@@ -27,7 +27,6 @@ scopes:
   - 5ht-stim-leaves-decision-behavior-intact
   - 5ht-modulation-weaker-during-task
   - 5ht-axis-orthogonal-to-choice-axis
-  - inhibition-fast-excitation-slow
   - near-zero-choice-by-stim-interaction
   - glm-significant-choice-and-5ht-coefficients
 
