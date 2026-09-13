@@ -43,8 +43,16 @@ assertions:
 
 reproductions:
   - agent: mainen-z
-    date: 2026-03-30
+    date: 2026-09-13
     status: verified
+    script: verification/scheller-2026-self-prioritization/verify.py
+    original_script: https://osf.io/a62df
+    script_execution: executed
+    script_execution_note: >
+      Automated as verify_perceptual_automatic(): recomputes mean(v_p - v_r) from the
+      deposited posterior summary CSV for Exp1's baseline and perceptual conditions.
+    data_source: https://osf.io/a62df
+    data_file: estimates_indiv_C_Exp1.csv
     notes: >
       Verified from estimates_indiv_C.csv (Exp1, OSF https://osf.io/a62df). The 1.5 Hz
       self-advantage is the change in (v_p - v_r) from baseline to perceptual condition:

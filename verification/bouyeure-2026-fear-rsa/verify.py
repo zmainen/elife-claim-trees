@@ -40,6 +40,10 @@ MAPS = {
     "acquisition": "CSplus-minus_TFCE_nlog10p.nii.gz",
     "reversal_current": "run2_currentvalencecontrast_TFCE_nlog10p.nii.gz",
     "reversal_prior": "run2_previousvalencecontrast_TFCE_nlog10p.nii.gz",
+    # The claim's reproduction note named this file with single underscores; NeuroVault's
+    # collection listing (api/collections/23032/images/) gives the real one, double
+    # underscores after "s1r1" and after "vs" — the single-underscore name 404s.
+    "cue_generalization": "s1r1__CSplus_s1r1_between_vs__CSminus_s1r1_between_logpmax_size025.nii.gz",
 }
 OSF_BEHAV = "https://osf.io/download/ngwka/"
 
@@ -130,6 +134,32 @@ def verify_acquisition():
         f"total={n_sig} voxels, dACC/SFG={dacc_count}, peak={[round(x,1) for x in peak] if peak else 'none'}",
         "PASS" if ok else "FAIL")
     print(f"  {slug}: n_sig={n_sig}, dACC={dacc_count} → {'PASS' if ok else 'FAIL'} ({time.time()-t0:.1f}s)")
+    return 1 if ok else 0
+
+# ── Claim: cue-generalization-increases-acquisition ────────────────────────────
+
+def verify_cue_generalization():
+    """RSA between-item CS++ similarity, session 1 run 1 (early acquisition).
+    Recorded by hand in the claim's reproduction note: 2283 sig voxels at
+    -log10(p)>1.301, peak -log10(p)=2.959, peaks in dACC/SFG territory. The map is a
+    fixed deposit, so this checks the exact figures rather than a threshold."""
+    slug = "cue-generalization-increases-acquisition"
+    t0 = time.time()
+    img = load_nifti(MAPS["cue_generalization"])
+    if img is None:
+        row(slug, "2283 sig voxels, peak 2.959 in dACC/SFG", "NIfTI unavailable", "WARN")
+        return 0
+
+    n_sig = count_sig_voxels(img)
+    peak, peak_val = peak_mni(img)
+    peak_in_dacc = (peak is not None
+                     and -15 <= peak[0] <= 15 and 5 <= peak[1] <= 40 and 20 <= peak[2] <= 55)
+
+    ok = n_sig == 2283 and abs(peak_val - 2.959) < 0.01 and peak_in_dacc
+    row(slug, "2283 sig voxels, peak -log10(p)=2.959 in dACC/SFG",
+        f"n_sig={n_sig}, peak={[round(x,1) for x in peak] if peak else 'none'}, peak_val={round(peak_val,3)}",
+        "PASS" if ok else "FAIL")
+    print(f"  {slug}: n_sig={n_sig}, peak_val={round(peak_val,3)} → {'PASS' if ok else 'FAIL'} ({time.time()-t0:.1f}s)")
     return 1 if ok else 0
 
 # ── Claim 2: current-threat-activates-fear-network-reversal ───────────────────
@@ -271,6 +301,7 @@ def main():
 
     claim_fns = {
         "cs-plus-univariate-fear-network-acquisition": verify_acquisition,
+        "cue-generalization-increases-acquisition": verify_cue_generalization,
         "current-threat-activates-fear-network-reversal": verify_reversal_current,
         "prior-threat-activates-fear-network-weakly": verify_reversal_prior,
         "behavioral-learning-confirms-contingencies": verify_behavioral,

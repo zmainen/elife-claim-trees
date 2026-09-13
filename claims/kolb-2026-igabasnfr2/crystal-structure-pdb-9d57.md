@@ -18,8 +18,7 @@ epistemic: strong
 enables-method:
   - igabasnfr2-cpgfp-rigid-on-gaba-binding
 
-belongings:
-[]
+belongings: []
 
 assertions:
   - paper-slug: kolb-2026-igabasnfr2

@@ -24,8 +24,7 @@ dissociates-with:
 validates:
   - igabasnfr2-fourfold-sensitivity-gain
 
-belongings:
-[]
+belongings: []
 
 assertions:
   - paper-slug: kolb-2026-igabasnfr2

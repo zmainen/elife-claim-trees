@@ -43,8 +43,18 @@ assertions:
 
 reproductions:
   - agent: mainen-z
-    date: 2026-03-30
+    date: 2026-09-13
     status: partial
+    script: verification/scheller-2026-self-prioritization/verify.py
+    original_script: https://osf.io/a62df
+    script_execution: executed
+    script_execution_note: >
+      Automated as verify_additivity(): recomputes mean(v_p - v_r) for the perceptual and
+      other-associated-social conditions from the deposited posterior summary CSV, sums them,
+      and compares to the combined other-salient condition. HDI bounds on the interaction
+      term still require posterior samples this script doesn't have, hence `partial`.
+    data_source: https://osf.io/a62df
+    data_file: estimates_indiv_C_Exp2.csv
     notes: >
       Partially verified from estimates_indiv_C.csv (Exp2, OSF https://osf.io/a62df).
       The additivity test can be computed from v_p/v_r per condition: other-associated
