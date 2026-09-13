@@ -11,6 +11,7 @@ wording, which is why `evaluate` makes the matcher a model call rather than a st
 """
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -18,7 +19,11 @@ from pathlib import Path
 import yaml
 
 HERE = Path(__file__).resolve().parent
-REPO = Path("/Users/zach/Projects/mainenlab/elife-claim-trees/.claude/worktrees/issue-30-c7cd56")
+# The repository root, found by walking up from this file: a copy of this script works from
+# wherever it is filed, and nothing has to be true of the machine. This was an absolute path
+# into a `.claude/worktrees/…` directory, which stops existing when that agent finishes.
+REPO = Path(os.environ.get("CLAIM_TREES_ROOT") or next(
+    p for p in Path(__file__).resolve().parents if (p / "corpus.yaml").exists()))
 PAPER = "gadeke-2026-guilt-insula"
 COMMITTED = REPO / "claims" / PAPER
 

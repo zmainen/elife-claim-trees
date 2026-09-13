@@ -1,7 +1,7 @@
 # Aggregate round-trip scorecard
 
 **Generated:** 2026-05-11
-**Reference corpus:** `/Users/zach/Projects/mainenlab/elife-claim-trees/claims`
+**Reference corpus:** `claims`
 **Work directory:** `/private/tmp/elife-eval-v2`
 **Review mode:** `external`
 **Papers attempted:** 10 (10 succeeded, 0 failed)
