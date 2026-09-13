@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generate reproduced figure panels for Gadeke et al. 2026 — Guilt and Anterior Insula.
-Data source: /tmp/gadeke-repo/
+Data source: /tmp/gadeke/
 """
 
 import matplotlib
@@ -15,7 +15,8 @@ import os
 
 plt.style.use('seaborn-v0_8-whitegrid')
 
-REPO_DIR = "/tmp/gadeke-repo"
+# Matches verify.py's REPO_DIR — the clone this script reads is the one verify.py made.
+REPO_DIR = "/tmp/gadeke"
 CSV_DIR = os.path.join(REPO_DIR, "Code", "csv")
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 DPI = 150
@@ -69,7 +70,7 @@ def fig_lottery_choice_ev():
     out_path = os.path.join(OUT_DIR, "fig-lottery-choice-ev.png")
     fig.savefig(out_path, dpi=DPI, bbox_inches='tight')
     plt.close(fig)
-    print(f"[saved] {out_path}  ({os.path.getsize(out_path) // 1024} KB)")
+    print(f"[saved] {os.path.relpath(out_path)}  ({os.path.getsize(out_path) // 1024} KB)")
     return out_path
 
 
@@ -100,7 +101,7 @@ def fig_happiness_partner_reward():
     out_path = os.path.join(OUT_DIR, "fig-happiness-partner-reward.png")
     fig.savefig(out_path, dpi=DPI, bbox_inches='tight')
     plt.close(fig)
-    print(f"[saved] {out_path}  ({os.path.getsize(out_path) // 1024} KB)")
+    print(f"[saved] {os.path.relpath(out_path)}  ({os.path.getsize(out_path) // 1024} KB)")
     return out_path
 
 
@@ -163,7 +164,7 @@ def fig_insula_peak():
     out_path = os.path.join(OUT_DIR, "fig-insula-peak.png")
     fig.savefig(out_path, dpi=DPI, bbox_inches='tight')
     plt.close(fig)
-    print(f"[saved] {out_path}  ({os.path.getsize(out_path) // 1024} KB)")
+    print(f"[saved] {os.path.relpath(out_path)}  ({os.path.getsize(out_path) // 1024} KB)")
     return out_path
 
 

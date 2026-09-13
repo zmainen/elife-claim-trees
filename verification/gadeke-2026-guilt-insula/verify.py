@@ -91,7 +91,7 @@ def write_provenance():
     with open(out, "w", encoding="utf-8") as fh:
         _json.dump(PROV, fh, indent=2)
     print(f"[prov] {len(PROV['opened'])} file(s) opened, "
-          f"{len(PROV['results'])} result(s) → {out}")
+          f"{len(PROV['results'])} result(s) → {os.path.relpath(out)}")
 
 def print_table():
     col_w = [55, 22, 22, 6]
@@ -777,7 +777,7 @@ def generate_figures():
     if not os.path.exists(fig_script):
         print("[figures] generate_figures.py not found — skipping.")
         return
-    print(f"\n[figures] Running {fig_script} ...")
+    print(f"\n[figures] Running {os.path.relpath(fig_script)} ...")
     result = subprocess.run([sys.executable, fig_script], capture_output=True, text=True)
     if result.stdout:
         print(result.stdout.rstrip())
