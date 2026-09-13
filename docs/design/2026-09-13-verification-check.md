@@ -1,12 +1,14 @@
 # The verification check sits beside the warrant, never over it
 
-**Status:** the ruling stands and the layer ran; its code is now in neither working tree
+**Status:** the ruling stands; the layer ran here, then moved to the machinery, where its outputs
+reproduce byte-for-byte
 **Issue:** [claim-graphs#27](https://github.com/zmainen/claim-graphs/issues/27), the port. Filed
 here as #126, which moved with the machinery.
 **Frames:** [#36](https://github.com/zmainen/elife-claim-trees/issues/36) · [claim-graphs#20](https://github.com/zmainen/claim-graphs/issues/20)
 **Depends on:** the `warrant` layer, the `verification` layer, `docs/claim-format.md`. The layer's
-own code was `extract/elife_extract/verification_check.py`, which the split removed from this
-repository without it arriving in the machinery — see *What this repository still holds*.
+code is `claim_graphs.cli verification-check` in the machinery; it was
+`extract/elife_extract/verification_check.py` here — see *The corpus side* below for what the
+committed runs still pin down.
 
 The v2 warrant rulings (`docs/design/2026-09-13-warrant.md`) drew a line this note builds on:
 warrant reasons only from what the paper reports and how its argument hangs together, as the
@@ -84,16 +86,18 @@ contested-by-verification. The two facts stand side by side. Neither is allowed 
 other, which is exactly what would have happened had the mismatch been written into the warrant,
 or the warrant been left to imply the re-run agreed.
 
-## What this repository still holds
+## The corpus side, and how the port was checked against it
 
-The split moved the machinery to `zmainen/claim-graphs` and took everything under `extract/` with
-it, but this layer's declaration never arrived there. So the layer exists in neither working tree,
-and the corpus is left holding the evidence of runs that nothing can currently reproduce. Porting
-it is machinery work ([claim-graphs#27](https://github.com/zmainen/claim-graphs/issues/27), which
-names all six pieces); what follows is the corpus side a port has to satisfy.
+For a short while this layer existed in neither working tree. The split moved the machinery to
+`zmainen/claim-graphs` and took everything under `extract/` with it, and the layer's declaration
+did not arrive there, so the corpus was left holding the evidence of runs that nothing could
+reproduce. The port has since landed
+([claim-graphs#27](https://github.com/zmainen/claim-graphs/issues/27)) and the pin moved to it.
+What follows is the corpus side, which is worth keeping written down: it is what the port was
+checked against, and it is what the next reimplementation would have to satisfy.
 
-**The code survives in history.** `extract/elife_extract/verification_check.py` — 77 lines, no
-model and no prompt — is readable at `e8a2aa5^`:
+**The original code survives in history.** `extract/elife_extract/verification_check.py` — 77
+lines, no model and no prompt — is readable at `e8a2aa5^`:
 
 ```
 git show e8a2aa5^:extract/elife_extract/verification_check.py
@@ -118,21 +122,33 @@ regenerated artifacts against what is committed, so a reimplementation that chan
 verdict or of `check_verification_from:` fails the gate rather than quietly publishing a second
 opinion.
 
-**The ledger describes commands that no longer resolve.** `runs/ejdrup-2026-dopamine/ledger.jsonl`
-and `runs/gadeke-2026-guilt-insula/ledger.jsonl` carry three `verification-check` records whose
-`cmd` reads `cd extract && python3 -m elife_extract.cli verification-check --paper <paper>` and
-whose declared input is `extract/elife_extract/verification_check.py`. Both were true of the runs
-that happened and neither is true of this repository now. They are left as written, because a
-ledger record is a statement about a past run, and editing it to match today's layout would make it
-a worse record rather than a better one.
+The port passes it. Re-running `claim_graphs.cli verification-check` on both papers left both files
+at the md5 they were committed with — `52a0f0c6299c04542214560b29b8228a` for the dopamine paper,
+`dba9d9e48ccf3d4f695ad15f0b34ad7f` for Gädeke — the mismatch verdict on the dSTORM claim included.
 
-**No declaration accounts for any of it, so nothing flags it.** `verification-check` is absent from
-the machinery's `pipeline/layers.yaml`, and therefore from `pipeline.layers`,
-`pipeline.declarations` and `pipeline.state` in `site/src/data/corpus-facts.json`. Two consequences
-a porter should know. `audit_layers.py` reports nothing here — it looks for inputs a layer reads
-without declaring, and has no check for the converse, a committed output that no declaration claims
-— so this orphan is silent rather than surfaced. And the site generates its layer pages from the
-declarations, so there is no `/papers/<paper>/verification-check` page: the three ledger records,
-dead `cmd` included, are rendered nowhere and reach a reader only inside the shipped
-`corpus-facts.json`. Restoring the declaration is what makes the outputs legible again, and it
-belongs with the code.
+**The ledger describes a command that no longer resolves, and is left that way.**
+`runs/ejdrup-2026-dopamine/ledger.jsonl` and `runs/gadeke-2026-guilt-insula/ledger.jsonl` carry
+three `verification-check` records whose `cmd` reads `cd extract && python3 -m
+elife_extract.cli verification-check --paper <paper>` and whose declared input is
+`extract/elife_extract/verification_check.py`. The port spells both differently — the module is
+`claim_graphs.cli` now, in the other repository — so neither string is true of anything today,
+and both were true of the runs that happened. They stay as written, because a ledger record is a
+statement about a past run: editing it to match the current layout would make it a worse record of
+what occurred, not a better one.
+
+This is why both cells read `stale` rather than `current` now that the layer is declared again.
+Staleness here is not a claim that the verdicts are wrong — they reproduce exactly — but that the
+recorded inputs of the run cannot be confirmed, because one of them no longer exists at the path
+the record names. That is the correct reading of the evidence, and the honest cost of having moved
+the code out from under a committed run.
+
+**While the declaration was missing, nothing could flag any of it.** Worth recording, because it
+is a general hole rather than an incident. With `verification-check` absent from
+`pipeline/layers.yaml` it was absent from `pipeline.layers`, `pipeline.declarations` and
+`pipeline.state`, and two things followed. `audit_layers.py` said nothing: it checks for inputs a
+layer reads without declaring, and has no converse check for a committed output that no declaration
+claims, so five committed files sat in `runs/` with no layer accounting for them and every gate
+green. And because the site generates its layer pages from the declarations, there was no
+`/papers/<paper>/verification-check` page — the three ledger records, dead `cmd` included, were
+rendered nowhere and reached a reader only inside the shipped `corpus-facts.json`. An orphaned
+output is therefore silent by construction, which is the argument for the converse check existing.
