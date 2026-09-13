@@ -15,6 +15,7 @@ concepts:
   - validity threat
 priority: 2026-09-10
 epistemic: weak
+check_verification: unrecorded
 warrant: ruled-out
 warrant_why: ruled out by participants-probability-choosing-risky-option
 warrant_from:

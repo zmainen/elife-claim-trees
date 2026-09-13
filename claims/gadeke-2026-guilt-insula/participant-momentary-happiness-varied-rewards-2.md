@@ -63,6 +63,10 @@ reproductions:
     is an open task.'
 warrant: weak
 warrant_why: the tree records nothing bearing on this result
+check_verification: partial
+check_verification_from:
+- record:verified
+- record:verified
 ---
 
 **Notes from extraction:** The results reader stated the participant- and partner-reward correlations jointly; the caption reader anchored the partner-reward correlation to fig3b/fig3f specifically, so it is split from the participant-reward claim by panel.

@@ -20,6 +20,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: prior-literature context the tree records nothing bearing on
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Prior-work premises motivating the connectivity analysis.

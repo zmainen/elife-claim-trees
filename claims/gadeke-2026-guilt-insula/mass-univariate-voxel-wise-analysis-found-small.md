@@ -61,6 +61,11 @@ warrant: moderate
 warrant_why: confirms the prediction anterior-insula-tracks-guilt-insula
 warrant_from:
 - confirms
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:verified
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** The caption reader treated this as a control — convergent voxel-wise confirmation of the ROI-based insula guilt effect in panel E; the results reader treated it as the empirical voxel-wise guilt result. The small-volume FWE correction (p = 0.024) is reported in a following sentence by the results reader. Both are empirical measurements agreeing on panel and direction; resolved to empirical.

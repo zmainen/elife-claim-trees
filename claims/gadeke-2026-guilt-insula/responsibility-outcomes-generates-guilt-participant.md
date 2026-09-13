@@ -9,6 +9,7 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
+check_verification: unrecorded
 warrant: confirmed
 warrant_why: confirmed by when-partner-received-low-lottery
 warrant_from:

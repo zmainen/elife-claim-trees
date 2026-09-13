@@ -12,6 +12,7 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
+check_verification: unrecorded
 warrant: confirmed
 warrant_why: confirmed by functional-connectivity-between-left-anterior
 warrant_from:

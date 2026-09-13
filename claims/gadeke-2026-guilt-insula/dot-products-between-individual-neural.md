@@ -80,6 +80,11 @@ reproductions:
     '
 warrant: weak
 warrant_why: the tree records nothing bearing on this convergent-validity control
+check_verification: reproduced
+check_verification_from:
+- record:partial
+- record:verified
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** [reviewer] role: empirical → control. The comparison against an independent, previously published neural guilt signature (Yu et al., 2020) is a convergent-validity check: its specific outcome - positive dot products - strengthens the warrant for the anterior insula as a guilt-tracking substrate rather than establishing a new primary finding, so its work in the argument is to validate the insula/guilt result. Provides convergent validity with a previously published neural guilt signature.

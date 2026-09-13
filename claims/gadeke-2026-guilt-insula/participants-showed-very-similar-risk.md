@@ -20,6 +20,7 @@ warrant: moderate
 warrant_why: draws together four converging risk-preference results, including the rival-ruling-out control risk-premiums-not-differ-between and no-significant-interaction-between-difference
 warrant_from:
 - supported_by
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Integrates the choice, risk-premium and ρ results across both studies; synthesis is expected to be single-source (results reader only).

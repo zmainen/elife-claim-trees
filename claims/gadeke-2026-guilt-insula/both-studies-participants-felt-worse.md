@@ -20,6 +20,7 @@ warrant: weak
 warrant_why: rests on a single result, when-partner-received-low-lottery; a synthesis needs two or more converging claims
 warrant_from:
 - supported_by
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Integrates the guilt-effect results across both studies; synthesis is expected to be single-source (results reader only).

@@ -19,6 +19,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: the tree records nothing bearing on this result
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Caption describes what is plotted (coefficients with 95% confidence intervals) rather than stating a directional result; the caption reader marked it tentative.

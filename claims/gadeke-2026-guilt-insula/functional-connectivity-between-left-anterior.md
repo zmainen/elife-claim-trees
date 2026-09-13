@@ -27,6 +27,7 @@ warrant: moderate
 warrant_why: confirms the prediction connectivity-between-guilt-responsibility-related-outcome-ph
 warrant_from:
 - confirms
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** The caption reader (tentative) stated the analysis but not the direction; the results reader supplied the direction and statistics.

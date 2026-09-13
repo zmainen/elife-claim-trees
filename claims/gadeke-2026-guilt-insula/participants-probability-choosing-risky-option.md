@@ -67,6 +67,10 @@ warrant: moderate
 warrant_why: a control that rules out alt-participants-insensitive-to-value
 warrant_from:
 - rules_out
+check_verification: partial
+check_verification_from:
+- record:partial
+- record:verified
 ---
 
 **Notes from extraction:** Manipulation check that choices tracked expected value as intended.

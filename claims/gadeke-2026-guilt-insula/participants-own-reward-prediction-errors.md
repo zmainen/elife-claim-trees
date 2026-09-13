@@ -20,6 +20,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: the tree records nothing bearing on this result
+check_verification: unrecorded
 ---
 
 **Relations.** Why each outgoing edge was inferred:

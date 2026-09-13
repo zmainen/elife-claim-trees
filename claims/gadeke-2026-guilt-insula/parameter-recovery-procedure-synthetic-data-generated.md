@@ -21,6 +21,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: the tree records nothing bearing on this methodological check
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** All three readers surfaced this and agree on the substance and panel (fig3s1), but disagree on role/type: the results and caption readers classified it as a methodological assessment (a capability warranting the model-based analysis), while the structure reader classified it as an empirical control (claim_type empirical) validating parameter stability. Resolved to methodological by majority; recorded as contested because they disagree on whether it is an assessment or a result.

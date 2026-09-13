@@ -23,6 +23,7 @@ warrant_why: validated by the control parameter-recovery-procedure-synthetic-dat
 warrant_from:
 - validated_by
 - requires
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** The model-based regressors used in the fMRI analyses depend on this fit.

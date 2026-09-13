@@ -9,6 +9,7 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
+check_verification: unrecorded
 warrant: confirmed
 warrant_why: confirmed by insula-rois-responded-more-low and mass-univariate-voxel-wise-analysis-found-small
 warrant_from:

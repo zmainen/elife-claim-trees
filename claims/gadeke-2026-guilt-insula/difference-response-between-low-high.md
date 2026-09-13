@@ -22,6 +22,7 @@ warrant: weak
 warrant_why: one measure that is part of insula-rois-responded-more-low, not independently warranted
 warrant_from:
 - part_of
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Columns are InsulaL (0.44***), InsulaR (0.19***) and MidTempR (0.67***). Table-level breakdown supplementing the fig4e insula ROI result; kept separate by panel.

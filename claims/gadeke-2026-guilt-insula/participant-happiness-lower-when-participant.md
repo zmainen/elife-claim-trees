@@ -47,6 +47,11 @@ warrant: moderate
 warrant_why: an empirical result that rules out alt-agency-aversion-not-guilt
 warrant_from:
 - rules_out
+check_verification: reproduced
+check_verification_from:
+- record:partial
+- record:unattempted
+- provenance:WARN measured
 ---
 
 **Notes from extraction:** The agency effect on happiness, distinct from the guilt (partner-outcome-contingent) effect.

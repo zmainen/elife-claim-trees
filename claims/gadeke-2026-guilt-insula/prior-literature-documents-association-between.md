@@ -18,6 +18,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: prior-literature context the tree records nothing bearing on
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Inherited premise motivating the insula small-volume correction.

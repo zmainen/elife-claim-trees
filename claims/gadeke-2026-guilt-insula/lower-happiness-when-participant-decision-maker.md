@@ -21,6 +21,7 @@ warrant: weak
 warrant_why: interprets participant-happiness-lower-when-participant, itself only moderate
 warrant_from:
 - interprets
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Interpretation of the agency effect through the responsibility-aversion literature.

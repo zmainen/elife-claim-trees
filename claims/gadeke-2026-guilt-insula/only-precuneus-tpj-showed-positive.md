@@ -21,6 +21,7 @@ warrant: weak
 warrant_why: one analysis that is part of decisions-social-compared-solo-condition
 warrant_from:
 - part_of
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Caption states all coefficients and differences are significantly different from 0 (see Appendix 1—table 4).

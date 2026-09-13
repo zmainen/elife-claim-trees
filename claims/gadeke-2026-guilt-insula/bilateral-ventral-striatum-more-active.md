@@ -46,6 +46,11 @@ warrant: moderate
 warrant_why: a positive control that rules out alt-imaging-contrast-invalid by replicating the risky>safe ventral-striatum effect
 warrant_from:
 - rules_out
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:blocked
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** The results reader treated this as a control replicating a known risk-related effect and validating the imaging analysis; the caption reader described it as a plain empirical result. Both are empirical measurements agreeing on panel and direction; resolved to control.

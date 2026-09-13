@@ -44,6 +44,11 @@ warrant: weak
 warrant_why: an fMRI contrast that requires the paradigm each-trial-participants-chose-between; no control or support bears on it
 warrant_from:
 - requires
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:blocked
+- provenance:PASS measured
 ---
 
 **Relations.** Why each outgoing edge was inferred:

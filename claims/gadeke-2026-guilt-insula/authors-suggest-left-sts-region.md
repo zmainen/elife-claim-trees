@@ -21,6 +21,7 @@ warrant: weak
 warrant_why: interprets the single moderate result one-cluster-left-sts-responded, so sits below it
 warrant_from:
 - interprets
+check_verification: unrecorded
 ---
 
 **Relations.** Why each outgoing edge was inferred:

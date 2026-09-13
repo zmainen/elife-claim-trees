@@ -48,6 +48,11 @@ warrant: weak
 warrant_why: a choice result that requires the paradigm each-trial-participants-chose-between; no control or support bears on it
 warrant_from:
 - requires
+check_verification: reproduced
+check_verification_from:
+- record:partial
+- record:unattempted
+- provenance:WARN measured
 ---
 
 **Relations.** Why each outgoing edge was inferred:

@@ -21,6 +21,7 @@ warrant: moderate
 warrant_why: interprets the strongly-warranted guilt interaction when-partner-received-low-lottery
 warrant_from:
 - interprets
+check_verification: unrecorded
 ---
 
 **Relations.** Why each outgoing edge was inferred:

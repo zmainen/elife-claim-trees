@@ -28,6 +28,9 @@ reproductions:
     influenced participant happiness, arguing the effects could be stronger with genuine interaction.'
 warrant: weak
 warrant_why: the tree records nothing bearing on this methodological choice
+check_verification: blocked
+check_verification_from:
+- record:blocked
 ---
 
 **Notes from extraction:** The partner was not a free agent; partner choices in the Partner condition were deterministic, which the responsibility/guilt contrasts rely on.

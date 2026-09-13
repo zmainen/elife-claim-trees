@@ -20,6 +20,7 @@ warrant: moderate
 warrant_why: validated by the control risk-aversion-parameter-not-differ-between
 warrant_from:
 - validated_by
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** The Basic, Inequality and Guilt-envy models are identical to those in Rutledge et al., 2016.

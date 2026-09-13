@@ -18,6 +18,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: an uncorrected result the tree records nothing bearing on
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Reported at an uncorrected threshold; did not survive multiple-comparison correction. The caption reader classified it as a control while the results reader classified it as empirical; both agree on panel and direction, resolved to empirical.

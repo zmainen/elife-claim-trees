@@ -47,6 +47,11 @@ warrant: moderate
 warrant_why: confirms the prediction responsibility-partner-outcomes-influences-participant
 warrant_from:
 - confirms
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:unattempted
+- provenance:PASS measured
 ---
 
 **Relations.** Why each outgoing edge was inferred:

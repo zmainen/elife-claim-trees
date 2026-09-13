@@ -29,6 +29,9 @@ reproductions:
     is the paper''s principal robustness check against single-sample false positives.'
 warrant: weak
 warrant_why: a scope statement the tree records nothing bearing on
+check_verification: blocked
+check_verification_from:
+- record:blocked
 ---
 
 **Notes from extraction:** Global scope condition bounding the empirical claims; distinguishes the behavioural study from the fMRI study. The results reader emphasised that BOLD results come only from Study 2; the structure reader gave the two sample sizes.

@@ -20,6 +20,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: the tree records nothing bearing on this control
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Null result justifying pooling across gain and loss trials.

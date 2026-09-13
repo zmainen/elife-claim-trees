@@ -36,6 +36,9 @@ warrant_from:
 - confirms
 - supported_by
 - requires
+check_verification: unattempted
+check_verification_from:
+- record:unattempted
 ---
 
 **Notes from extraction:** Kept separate from the R² comparison to preserve the results reader's distinct verbatim quote for each statistic.

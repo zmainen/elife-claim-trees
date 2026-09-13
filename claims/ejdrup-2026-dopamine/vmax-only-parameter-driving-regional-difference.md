@@ -15,6 +15,10 @@ concepts:
   - dopamine dynamics
 priority: 2026-03-29
 epistemic: strong
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- provenance:PASS measured
 
 tests:
   - hypothesis-vmax-explains-regional-difference

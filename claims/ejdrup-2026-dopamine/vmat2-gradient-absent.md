@@ -16,6 +16,9 @@ concepts:
   - immunostaining
 priority: 2026-03-29
 epistemic: moderate
+check_verification: blocked
+check_verification_from:
+- record:blocked
 
 rules-out:
   - "differential VMAT2 expression / vesicular release capacity as the explanation for the DS/VS DA difference"

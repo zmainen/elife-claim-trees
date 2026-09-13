@@ -19,6 +19,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: the tree records nothing bearing on this null control
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Null result establishing that the guilt effect is specific to negative partner outcomes.

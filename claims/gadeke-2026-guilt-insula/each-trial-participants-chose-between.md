@@ -20,6 +20,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: a scope statement the tree records nothing bearing on
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** The within-subject responsibility manipulation on which the guilt and agency contrasts depend.

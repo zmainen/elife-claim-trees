@@ -10,6 +10,7 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+check_verification: unrecorded
 warrant: strong
 warrant_why: both its predictions (responsibility-outcomes-generates-guilt-participant and responsibility-partner-outcomes-influences-participant) are confirmed and it is supported by when-partner-received-low-lottery
 warrant_from:
