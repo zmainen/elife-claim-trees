@@ -3,9 +3,15 @@
 Verification script for Ejdrup et al. 2026 — Striatal Dopamine Model.
 eLife | doi:10.7554/eLife.ejdrup2026
 
-FAST MODE (default, ~5 min):
+FAST MODE (default, ~18 min):
   Clones GitHub repo, applies matplotlib compatibility fix, and runs
   Figure 1 and Figure 2 scripts with a timeout to check for clean exit.
+
+  It said ~5 min for a long time and does not take 5 min. Each of the two figure
+  scripts is allowed 600s here, so the worst case is 1200s before the clone is
+  counted, and a measured uncontended run took 1064s. The observer's timeout was
+  set against the 5-minute figure, so it killed this script every time and
+  reported the paper as a failed run when nothing had failed.
   Requirements: pandas, numpy, matplotlib, tqdm
   Data: https://github.com/Gether-Lab/striatal-dopamine-model (~30 MB)
 
@@ -35,8 +41,15 @@ REPO_DIR = "/tmp/ejdrup"
 
 ROWS = []
 
-def row(slug, paper_val, repro_val, status):
-    ROWS.append((slug, paper_val, repro_val, status))
+def row(slug, paper_val, repro_val, status, measured=True):
+    """`measured=False` when repro_val is a remembered observation this run did not make.
+
+    The status still says what the evidence would mean if it held; the flag says whether this
+    run is the thing that found it. Downstream needs to tell those apart, and the status field
+    alone cannot: a PASS carrying numbers copied from notes is indistinguishable from a PASS
+    carrying numbers a simulation just produced.
+    """
+    ROWS.append((slug, paper_val, repro_val, status, measured))
 
 def print_table():
     col_w = [52, 26, 36, 6]
@@ -46,8 +59,15 @@ def print_table():
     print(" | ".join(h.ljust(w) for h, w in zip(header, col_w)))
     print(sep)
     for r in ROWS:
-        print(" | ".join(str(v).ljust(w) for v, w in zip(r, col_w)))
-    print(sep + "\n")
+        cells = list(r[:4])
+        if len(r) >= 5 and not r[4]:
+            cells[3] = f"{cells[3]}*"
+        print(" | ".join(str(v).ljust(w) for v, w in zip(cells, col_w)))
+    print(sep)
+    if any(len(r) >= 5 and not r[4] for r in ROWS):
+        print("* not measured in this run — the value is from notes taken when the "
+              "analysis was first done.")
+    print()
 
 # ── Repo clone ─────────────────────────────────────────────────────────────────
 
@@ -112,7 +132,8 @@ def verify_vmax_only(full=False):
         )
     except subprocess.TimeoutExpired:
         row(slug, "EXIT:0, Vmax sweep completes",
-            "Timed out after 600s. EXIT:0, 111 tqdm 100% runs confirmed (from notes)", "WARN")
+            "Timed out after 600s. EXIT:0, 111 tqdm 100% runs confirmed (from notes)", "WARN",
+            measured=False)
         print(f"  {slug}: TIMEOUT ({time.time()-t0:.1f}s)")
         return 0
 
@@ -133,7 +154,8 @@ def verify_ds_hotspot(full=False):
     script = find_script("1a, d, e, f") or find_script("Fig 1-Fig 1a")
     if script is None:
         row(slug, "DS median~5.4nM, right-skewed hotspot pattern",
-            "median=5.4 nM, P10=2.4, P75=8.9, max=8788 nM (from notes)", "PASS")
+            "median=5.4 nM, P10=2.4, P75=8.9, max=8788 nM (from notes)", "PASS",
+            measured=False)
         print(f"  {slug}: script not found, using notes ({time.time()-t0:.1f}s)")
         return 1
 
@@ -150,14 +172,15 @@ def verify_ds_hotspot(full=False):
         )
     except subprocess.TimeoutExpired:
         row(slug, "DS median~5.4 nM, hotspot pattern",
-            "Timed out. median=5.4 nM, hotspot confirmed (from notes)", "WARN")
+            "Timed out. median=5.4 nM, hotspot confirmed (from notes)", "WARN", measured=False)
         print(f"  {slug}: TIMEOUT ({time.time()-t0:.1f}s)")
         return 0
 
     exit_ok = result.returncode == 0
     if exit_ok:
         row(slug, "DS median~5.4 nM, hotspot pattern",
-            "Script exited 0. DS median=5.4 nM, right-skewed (verified in notes)", "PASS")
+            "Script exited 0. DS median=5.4 nM, right-skewed (verified in notes)", "PASS",
+            measured=False)
     else:
         err_short = (result.stderr or "")[-200:]
         row(slug, "DS median~5.4 nM, hotspot pattern",
@@ -174,7 +197,8 @@ def verify_vs_tonic(full=False):
     script = find_script("2a-f") or find_script("Fig 2-Fig 2a")
     if script is None:
         row(slug, "VS min 8.1 nM, median 20.9 nM, diffuse",
-            "VS min=8.1 nM, median=20.9 nM, P2.5=12.6 nM (from notes)", "PASS")
+            "VS min=8.1 nM, median=20.9 nM, P2.5=12.6 nM (from notes)", "PASS",
+            measured=False)
         print(f"  {slug}: script not found, using notes ({time.time()-t0:.1f}s)")
         return 1
 
@@ -191,14 +215,15 @@ def verify_vs_tonic(full=False):
         )
     except subprocess.TimeoutExpired:
         row(slug, "VS min≥8.1 nM, median≈20.9 nM",
-            "Timed out. VS min=8.1, median=20.9 nM confirmed (from notes)", "WARN")
+            "Timed out. VS min=8.1, median=20.9 nM confirmed (from notes)", "WARN", measured=False)
         print(f"  {slug}: TIMEOUT ({time.time()-t0:.1f}s)")
         return 0
 
     exit_ok = result.returncode == 0
     if exit_ok:
         row(slug, "VS min≥8.1 nM, median≈20.9 nM",
-            "Script exited 0. VS min=8.1, median=20.9 nM (verified in notes)", "PASS")
+            "Script exited 0. VS min=8.1, median=20.9 nM (verified in notes)", "PASS",
+            measured=False)
     else:
         err_short = (result.stderr or "")[-200:]
         row(slug, "VS min≥8.1 nM, median≈20.9 nM",
@@ -236,7 +261,7 @@ def main():
     parser.add_argument('--claim', help='Verify a single claim by slug')
     args = parser.parse_args()
 
-    print(f"{'FULL' if args.full else 'FAST'} MODE — estimated time: {'~8 hrs' if args.full else '~5 min'}")
+    print(f"{'FULL' if args.full else 'FAST'} MODE — estimated time: {'~8 hrs' if args.full else '~18 min'}")
     print("=" * 60)
     print("NOTE: matplotlib fix (w_xaxis → xaxis) applied automatically.")
     print()
@@ -246,19 +271,22 @@ def main():
         print("\n" + "=" * 60)
         print("SUMMARY")
         print_table()
-        n_pass = sum(1 for _, _, _, s in ROWS if s == "PASS")
-        n_fail = sum(1 for _, _, _, s in ROWS if s == "FAIL")
+        n_pass = sum(1 for r in ROWS if r[3] == "PASS")
+        n_fail = sum(1 for r in ROWS if r[3] == "FAIL")
         print(f"{n_pass}/{len(ROWS)} claims verified")
         return rc
 
     if not clone_repo():
         for r in [
             ("vmax-only-parameter-driving-regional-difference",
-             "EXIT:0, Vmax sweep complete", "Verified EXIT:0, 111 tqdm completions (from notes)", "PASS"),
+             "EXIT:0, Vmax sweep complete",
+             "Verified EXIT:0, 111 tqdm completions (from notes)", "PASS", False),
             ("ds-lacks-pervasive-tonic-da",
-             "DS median~5.4 nM, hotspot", "median=5.4 nM, right-skewed (from notes)", "PASS"),
+             "DS median~5.4 nM, hotspot",
+             "median=5.4 nM, right-skewed (from notes)", "PASS", False),
             ("vs-maintains-pervasive-tonic-da",
-             "VS min≥8.1, median≈20.9 nM", "min=8.1, median=20.9 nM, diffuse (from notes)", "PASS"),
+             "VS min≥8.1, median≈20.9 nM",
+             "min=8.1, median=20.9 nM, diffuse (from notes)", "PASS", False),
         ]:
             ROWS.append(r)
         print_table()
@@ -290,9 +318,9 @@ def main():
     print("SUMMARY")
     print_table()
 
-    n_pass = sum(1 for _, _, _, s in ROWS if s == "PASS")
-    n_warn = sum(1 for _, _, _, s in ROWS if s == "WARN")
-    n_fail = sum(1 for _, _, _, s in ROWS if s == "FAIL")
+    n_pass = sum(1 for r in ROWS if r[3] == "PASS")
+    n_warn = sum(1 for r in ROWS if r[3] == "WARN")
+    n_fail = sum(1 for r in ROWS if r[3] == "FAIL")
     print(f"{n_pass}/{len(ROWS)} claims verified ({n_warn} WARN, {n_fail} FAIL)")
     return 0 if n_fail == 0 else 1
 

@@ -1,10 +1,54 @@
 {
   "paper": "ejdrup-2026-dopamine",
-  "exit": "timeout",
-  "exception": {
-    "type": "Timeout",
-    "message": "killed after 900s"
+  "script": "verification/ejdrup-2026-dopamine/verify.py",
+  "argv": [],
+  "observed_by": "verification/audit_run.py",
+  "recorded": "2026-09-13T15:44:00+00:00",
+  "interpreter": {
+    "executable": "~/anaconda/bin/python",
+    "version": "3.10.18"
   },
-  "results": [],
-  "opened": []
+  "exit": "SystemExit(0)",
+  "results": [
+    {
+      "claim": "vmax-only-parameter-driving-regional-difference",
+      "paper_value": "EXIT:0, Vmax sweep completes (DS \u2260 VS at all Vmax values)",
+      "reproduced_value": "exit=0, tqdm_100pct=92",
+      "status": "PASS",
+      "measured": true
+    },
+    {
+      "claim": "ds-lacks-pervasive-tonic-da",
+      "paper_value": "DS median~5.4 nM, hotspot pattern",
+      "reproduced_value": "Script exited 0. DS median=5.4 nM, right-skewed (verified in notes)",
+      "status": "PASS",
+      "measured": false
+    },
+    {
+      "claim": "vs-maintains-pervasive-tonic-da",
+      "paper_value": "VS min\u22658.1 nM, median\u224820.9 nM",
+      "reproduced_value": "Timed out. VS min=8.1, median=20.9 nM confirmed (from notes)",
+      "status": "WARN",
+      "measured": false
+    }
+  ],
+  "opened": [
+    {
+      "path": "/tmp/ejdrup/Figure 1-Fig 1a, d, e, f-Source code.py",
+      "bytes": 10171,
+      "sha256_12": "b368d8f6d8f8"
+    },
+    {
+      "path": "/tmp/ejdrup/Figure 2-Fig 2a-f-Source code.py",
+      "bytes": 38676,
+      "sha256_12": "1be58385e15e"
+    },
+    {
+      "path": "/tmp/ejdrup/Figure 3-Fig 3k, l-Source code.py",
+      "bytes": 10811,
+      "sha256_12": "90826c6d28bc"
+    }
+  ],
+  "stdout_tail": "FAST MODE \u2014 estimated time: ~18 min\n============================================================\nNOTE: matplotlib fix (w_xaxis \u2192 xaxis) applied automatically.\n\n[data] Repo already present at /tmp/ejdrup\n[data] Found 18 Python scripts in repo\n\n[run] Executing Figure 3-Fig 3k, l-Source code.py (600s timeout)...\n  vmax-only-parameter-driving-regional-difference: exit=0 \u2192 PASS (367.1s)\n[run] Executing Figure 1-Fig 1a, d, e, f-Source code.py (DS simulation, 300s timeout)...\n  ds-lacks-pervasive-tonic-da: exit=0 \u2192 PASS (78.9s)\n[run] Executing Figure 2-Fig 2a-f-Source code.py (VS simulation, 600s timeout)...\n  vs-maintains-pervasive-tonic-da: TIMEOUT (600.2s)\n\n============================================================\nSUMMARY\n\n-----------------------------------------------------+----------------------------+--------------------------------------+-------\nCLAIM SLUG                                           | PAPER VALUE                | REPRODUCED                           | STATUS\n-----------------------------------------------------+----------------------------+--------------------------------------+-------\nvmax-only-parameter-driving-regional-difference      | EXIT:0, Vmax sweep completes (DS \u2260 VS at all Vmax values) | exit=0, tqdm_100pct=92               | PASS  \nds-lacks-pervasive-tonic-da                          | DS median~5.4 nM, hotspot pattern | Script exited 0. DS median=5.4 nM, right-skewed (verified in notes) | PASS* \nvs-maintains-pervasive-tonic-da                      | VS min\u22658.1 nM, median\u224820.9 nM | Timed out. VS min=8.1, median=20.9 nM confirmed (from notes) | WARN* \n-----------------------------------------------------+----------------------------+--------------------------------------+-------\n* not measured in this run \u2014 the value is from notes taken when the analysis was first done.\n\n2/3 claims verified (1 WARN, 0 FAIL)\n",
+  "data_commit": "7d981fe"
 }

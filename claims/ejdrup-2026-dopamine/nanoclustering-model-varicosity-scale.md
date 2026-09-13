@@ -17,6 +17,9 @@ concepts:
   - spatial scale
 priority: 2026-03-29
 epistemic: moderate
+check_verification: partial
+check_verification_from:
+- record:verified
 
 scopes:
   - dat-nanoclustering-slows-clearance

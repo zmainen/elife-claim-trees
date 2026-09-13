@@ -15,6 +15,9 @@ concepts:
   - dopamine coverage
 priority: 2026-03-29
 epistemic: moderate
+check_verification: blocked
+check_verification_from:
+- record:blocked
 
 tests:
   - hypothesis-vmax-explains-regional-difference

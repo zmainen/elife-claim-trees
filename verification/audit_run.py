@@ -27,7 +27,17 @@ What it emits, beside the script it ran:
 Usage:
   python3 verification/audit_run.py <paper-slug> [-- script args]
   python3 verification/audit_run.py --all
-  python3 verification/audit_run.py --all --timeout 900
+  python3 verification/audit_run.py --all --timeout 1800
+
+`--timeout` now defaults to 1800s rather than to no limit. The documented example used to say
+900, which is shorter than the slowest verification script's own internal budget: Ejdrup's fast
+mode runs two figure scripts and allows each 600s, so its worst case is 1200s before the clone
+is counted, and an uncontended run measured 1064s. A run killed at 900s writes no results, and
+`audit_verifications` then reports the paper as a failed run — which it was not. The script had
+been working the whole time and the observer was giving up first.
+
+A default that cannot accommodate the slowest thing it observes is a fault in the observer, and
+one that reads as a fault in the observed, which is the worst way for it to be wrong.
 """
 
 from __future__ import annotations
@@ -59,6 +69,23 @@ NOISE = ("/site-packages/", "/lib/python", "/dist-packages/", "__pycache__",
          "/System/", "/usr/share/", "/Library/Frameworks/", "/var/folders/")
 
 
+def _local(text: str) -> str:
+    """Strip this machine out of a string that is going to be committed.
+
+    The `path` field already went through `Observer._short`; the error field did not, and
+    a FileNotFoundError carries the absolute path in its message. Three records therefore
+    named the worktree they happened to run in — `.claude/worktrees/<something>` — which
+    is a directory that is gone as soon as that agent finishes, and a location no other
+    reader can look in. The same record is meant to be re-runnable evidence, so re-running
+    it somewhere else rewrote the string and produced a diff that meant nothing.
+
+    The interpreter path gets the same treatment for a smaller reason: which interpreter
+    ran a verification is real provenance and worth keeping, whose home directory it sat
+    in is not.
+    """
+    return text.replace(ROOT + os.sep, "").replace(os.path.expanduser("~"), "~")
+
+
 def interesting(path: str) -> bool:
     p = str(path)
     return not any(n in p for n in NOISE)
@@ -72,8 +99,18 @@ class Observer:
         self.errors: list[dict] = []
 
     def note(self, path, mode="r"):
+        # `open()` also accepts an already-open file descriptor, and `str(3)` is "3", so an
+        # fd was recorded as a file named 3 in the working directory — then failed to hash,
+        # and the failure was written into the record as a FileNotFoundError. Six such
+        # entries reached three committed provenance files: fabricated evidence of missing
+        # data, in the one artifact whose whole job is to say what was really read.
+        # An fd is not a path, and there is nothing here to record.
+        if isinstance(path, int):
+            return
         try:
-            p = os.path.abspath(str(path))
+            # fsdecode, not str: a bytes path stringifies to "b'/data/x'", which would have
+            # been recorded, and failed, in the same way.
+            p = os.path.abspath(os.fsdecode(path))
         except Exception:
             return
         if not interesting(p) or "w" in str(mode) or "a" in str(mode):
@@ -87,7 +124,7 @@ class Observer:
             rec["bytes"] = len(b)
             rec["sha256_12"] = hashlib.sha256(b).hexdigest()[:12]
         except Exception as e:                                        # noqa: BLE001
-            rec["error"] = f"{type(e).__name__}: {e}"
+            rec["error"] = _local(f"{type(e).__name__}: {e}")
         self.opened[p] = rec
 
     @staticmethod
@@ -176,6 +213,21 @@ def missing_dependencies(script):
     return out
 
 
+def result_row(r) -> dict:
+    """One row of a script's ROWS list, as it is recorded.
+
+    A row's fifth element, when the script provides one, says whether the reproduced value was
+    obtained by this run or recalled from notes taken when the analysis was first done. Absent
+    means the script has not been instrumented to say, which is not the same as false:
+    `measured` is omitted rather than defaulted, so a consumer can tell "no" from "unstated".
+    """
+    out = {"claim": r[0], "paper_value": str(r[1]), "reproduced_value": str(r[2]),
+           "status": str(r[3])}
+    if len(r) >= 5:
+        out["measured"] = bool(r[4])
+    return out
+
+
 def run(paper: str, argv: list[str], timeout: int | None):
     script = os.path.join(HERE, paper, "verify.py")
     if not os.path.isfile(script):
@@ -188,7 +240,7 @@ def run(paper: str, argv: list[str], timeout: int | None):
         "argv": argv,
         "observed_by": "verification/audit_run.py",
         "recorded": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "interpreter": {"executable": sys.executable,
+        "interpreter": {"executable": _local(sys.executable),
                         "version": sys.version.split()[0]},
     }
     missing = missing_dependencies(script)
@@ -232,11 +284,8 @@ def run(paper: str, argv: list[str], timeout: int | None):
     # The results the printed table is built from, read out of the module rather than
     # scraped from its output.
     rows = mod_globals.get("ROWS") if isinstance(mod_globals, dict) else None
-    prov["results"] = [
-        {"claim": r[0], "paper_value": str(r[1]), "reproduced_value": str(r[2]),
-         "status": str(r[3])}
-        for r in (rows or []) if isinstance(r, (list, tuple)) and len(r) >= 4
-    ]
+    prov["results"] = [result_row(r) for r in (rows or [])
+                       if isinstance(r, (list, tuple)) and len(r) >= 4]
     if rows is None:
         prov["results_note"] = ("no ROWS list found in the module — results could not be "
                                 "read; the script may have exited before defining it")
@@ -301,7 +350,9 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paper", nargs="?")
     ap.add_argument("--all", action="store_true")
-    ap.add_argument("--timeout", type=int, default=None)
+    ap.add_argument("--timeout", type=int, default=1800,
+                    help="seconds before a run is killed (default 1800: the slowest "
+                         "script in the corpus measured 1064s). Pass 0 for no limit.")
     ap.add_argument("--single", action="store_true",
                     help="internal: audit one script in this interpreter")
     ap.add_argument("args", nargs="*", help="arguments passed through to verify.py")
@@ -317,6 +368,11 @@ def main():
     # library was left holding. One script could then change the numbers another produces --
     # which is precisely the class of error this tool exists to catch, so it must not be able
     # to commit it. Each audit gets a clean interpreter.
+    # `subprocess.run(timeout=0)` kills instantly rather than waiting forever, so the flag's
+    # promise that 0 removes the limit has to be made true here.
+    if a.timeout == 0:
+        a.timeout = None
+
     if a.single:
         prov = run(papers[0], a.args, a.timeout)
         return 0 if not prov.get("exception") else 0
@@ -347,7 +403,9 @@ def main():
         for r in results:
             counts[r["status"]] = counts.get(r["status"], 0) + 1
         tally = " ".join(f"{v}×{k}" for k, v in sorted(counts.items())) or "no results"
-        print(f"  {p:38} {exit_ or '?':16} {nfiles:>3} file(s)  {tally}")
+        recalled = sum(1 for r in results if r.get("measured") is False)
+        note = f"  ({recalled} recalled, not measured)" if recalled else ""
+        print(f"  {p:38} {exit_ or '?':16} {nfiles:>3} file(s)  {tally}{note}")
         if exc:
             print(f"      raised {exc['type']}: {exc['message'][:90]}")
     return 0

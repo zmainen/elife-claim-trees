@@ -45,7 +45,7 @@ Reading a script tells you what it appears to do. Running it under observation t
 it did:
 
 ```bash
-python3 verification/audit_run.py --all --timeout 900     # observe every script
+python3 verification/audit_run.py --all                   # observe every script
 python3 scripts/audit_verifications.py                    # reconcile against the claims
 ```
 
@@ -53,6 +53,35 @@ python3 scripts/audit_verifications.py                    # reconcile against th
 and writes `verification/<paper>/provenance.json`: every file opened with its size and
 content hash, every result produced, any exception raised, and the interpreter used. Nothing
 is taken from the script's own account of itself.
+
+### A result that was not measured
+
+A script can emit a result whose value it did not obtain: the data would not download, the
+figure script timed out, the parse failed, or the check was only that a process exited zero.
+In every such case the script recorded the number it expected to see, taken from notes made
+when the analysis was first done. Those rows carried the same `PASS` as a freshly computed
+one and nothing downstream could tell them apart. Wengert's was the plainest case — when the
+G-Node download fails, seven claims are recorded `PASS` with strings like `t-test p=0.000033`
+that read exactly like measurements and never mention notes.
+
+A row therefore carries a fifth field:
+
+```python
+row(slug, paper_value, reproduced_value, status, measured=False)
+```
+
+which reaches `provenance.json` as `"measured": false`. The status is left alone: it still
+says what the evidence would mean if it held. The flag says whether this run is the thing
+that found it. The printed table marks such rows `PASS*` with a footnote, `audit_run.py`
+counts them beside the tally, `audit_verifications.py` reports an `unmeasured` finding for
+any claim whose every result is recalled, and `corpus_facts.py` keeps them out of
+`verified_results` and beside it as `recalled_results`.
+
+Absent is not false. A row from a script that has not been instrumented to say omits the key
+entirely, so "this run did not measure it" stays distinguishable from "nobody has said".
+
+Fixing the underlying scripts so they measure what they report is a separate and larger job
+than labelling what they do now, tracked in #149.
 
 `audit_verifications.py` then compares that record against the `reproductions:` blocks in the
 claim files and reports every disagreement — a claim recorded `verified` that the run never

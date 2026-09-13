@@ -1,5 +1,5 @@
 ---
-uuid: 0a8b2666-94ce-4a7f-9242-067a47ee0134
+uuid: e6a5212c-8f7a-4946-8e3b-9ea75ad954bf
 slug: participants-slightly-more-risk-averse
 doi: null
 claim: Participants were slightly more risk averse (higher ρ) in the Social than the Solo condition in
@@ -9,7 +9,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 belongings:
 - relation: supports
   target: participants-showed-very-similar-risk
@@ -17,8 +16,11 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig2c,fig2f
-  confidence: tentative
+  readers: high
 reproductions: []
+warrant: weak
+warrant_why: the tree records nothing bearing on this result
+check_verification: unrecorded
 ---
 
 **Relations.** Why each outgoing edge was inferred:

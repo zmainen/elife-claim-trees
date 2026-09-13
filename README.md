@@ -60,34 +60,68 @@ go stale; `python3 scripts/corpus_facts.py --print` is authoritative.
 Full methodology at `docs/method.md`, claim format at `docs/claim-format.md`, cost estimate
 for 3000-paper scaling at `docs/cost-estimate.md`.
 
-## Producing and exporting a claim tree
+## Setup
 
-The code that produces the corpus is in the repository alongside the corpus it produces.
-
-A layer is run by `scripts/pipeline.py`, which walks the declaration in
-`pipeline/layers.yaml` to find what the layer you asked for still needs, runs each one, and
-records every run in `runs/<paper>/ledger.jsonl` with the content hash of what it read. Run
-the layers by hand and nothing records it; there is no second path that produces the corpus.
+This repository is the corpus. The code that produces it is
+[zmainen/claim-graphs](https://github.com/zmainen/claim-graphs), which knows nothing about
+eLife, and which this repository checks out beside itself:
 
 ```bash
+git clone https://github.com/zmainen/elife-claim-trees
+git clone https://github.com/zmainen/claim-graphs      # a sibling, not a submodule
+cd elife-claim-trees
+pip install -r requirements.txt -r ../claim-graphs/requirements.txt
+make check
+```
+
+`../claim-graphs` is the default; `make CLAIM_GRAPHS=/elsewhere` overrides it, and every
+target and script honours that. If the checkout is missing, the error says so by name rather
+than failing somewhere downstream.
+
+`.claim-graphs-sha` records the machinery commit this corpus's committed artifacts were
+produced by. `make machinery-check` compares it with what is checked out and fails on a
+mismatch, so upgrading the machinery is a deliberate act — re-run the layers and update the
+pin in the same commit — rather than a diff nobody can explain. CI checks the machinery out
+at that SHA, so the pin is tested on every pull request.
+
+## Producing and exporting a claim tree
+
+A layer is run by the machinery's `scripts/pipeline.py`, which walks the declaration in the
+machinery's `pipeline/layers.yaml` to find what the layer you asked for still needs, runs each
+one, and records every run in this repository's `runs/<paper>/ledger.jsonl` with the content
+hash of what it read. Run the layers by hand and nothing records it; there is no second path
+that produces the corpus.
+
+The runners are loose scripts rather than installed commands
+([claim-graphs#26](https://github.com/zmainen/claim-graphs/issues/26)), so they need the
+machinery on `PYTHONPATH` and the graph named explicitly. `make env` prints that environment
+from the one place that defines it:
+
+```bash
+eval "$(make env)"          # CLAIM_GRAPHS, CLAIM_GRAPHS_ROOT, CLAIM_GRAPHS_CORPUS_DIR, PYTHONPATH
+CG=$CLAIM_GRAPHS
+
 # induce a claim tree, running whatever it still needs first
-python3 scripts/pipeline.py run gadeke-2026-guilt-insula claim-tree
+python3 $CG/scripts/pipeline.py run gadeke-2026-guilt-insula claim-tree
 
 # what would that do? — the commands, in dependency order, running none of them
-python3 scripts/pipeline.py run gadeke-2026-guilt-insula claim-tree --dry-run
+python3 $CG/scripts/pipeline.py run gadeke-2026-guilt-insula claim-tree --dry-run
 
 # what does the paper assert that no claim accounts for? (no model calls)
-python3 scripts/pipeline.py run gadeke-2026-guilt-insula coverage
+python3 $CG/scripts/pipeline.py run gadeke-2026-guilt-insula coverage
 
 # record that a person read a version and approved it
-python3 scripts/pipeline.py approve gadeke-2026-guilt-insula claim-tree --by "your name"
+python3 $CG/scripts/pipeline.py approve gadeke-2026-guilt-insula claim-tree --by "your name"
 
 # where every paper stands against every layer
-python3 scripts/pipeline.py state
+python3 $CG/scripts/pipeline.py state
 
 # export every paper to MIRA JSON-LD, with a gap report per paper
-python3 scripts/export_mira.py --all
+python3 $CG/scripts/export_mira.py --all
 ```
+
+The commands a dry run prints are relative to the machinery checkout, which is where they run;
+the graph they read and write reaches them as `CLAIM_GRAPHS_ROOT`.
 
 `mappings/` holds the adjudicated coverage verdicts per paper. The mechanical match answers
 "does a claim restate this statistic or name this panel", which is a proxy for the question
@@ -109,6 +143,11 @@ npm install
 npm run dev          # eLife papers only (public)
 npm run dev:all      # all papers including private lab papers
 ```
+
+`build-data.js` reads the layer declaration from the machinery, so these need the sibling
+checkout too — set `CLAIM_GRAPHS` if it is somewhere else. `make data` from the root does this
+for you and runs the Python generators the site's data depends on; `npm run dev` alone rebuilds
+only what JavaScript can.
 
 ### Sharing a review build
 

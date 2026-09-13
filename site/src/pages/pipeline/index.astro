@@ -6,6 +6,7 @@
 import Layout from '../../layouts/Layout.astro';
 import PipelineExplorer from '../../components/PipelineExplorer';
 import { corpusExplorer } from '../../lib/explorer';
+import corpusFacts from '../../data/corpus-facts.json';
 import {
   layers, groups, papers, cells, titleOf, fill_of, inState, byId,
   corpusLayers, paperLayers, STATE_LABEL, SCHEME_LABEL, ADJUDICATION_LABEL,
@@ -32,6 +33,12 @@ const TONE: Record<string, string> = {
   unrecorded: 'bg-gray-300 dark:bg-gray-600',
 };
 const totalCells = papers.reduce((n, p) => n + cells(p).length, 0);
+// How far each tree's argument reaches, from corpus-facts (§ruling D). Only papers whose warrant
+// layer has run appear; `unassessed` is counted apart from `weak`, so the reach is honest.
+const warrantFacts = (corpusFacts as any).warrant ?? { papers: {} };
+const warrantReach = Object.entries(warrantFacts.papers ?? {})
+  .map(([slug, w]: [string, any]) => ({ slug, ...w }))
+  .sort((a, b) => a.slug.localeCompare(b.slug));
 
 // The three facts, folded into one hover: mechanism (the colour), scheme (the declaration),
 // adjudication (whether a person has read this version). The mark below carries adjudication
@@ -232,6 +239,32 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
         ))}
       </div>
     </section>
+
+    {warrantReach.length > 0 && (
+      <!-- ── how far each tree's argument reaches ──────────────────────
+           The warrant layer grades each claim from the tree's argument alone. A claim the
+           argument reaches nothing for is `unassessed`, counted apart from `weak` (§ruling D),
+           so the reach is honest: it is the claims the argument bears on, of all the claims. -->
+      <section class="mb-12">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">How far each tree’s argument reaches</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-5 max-w-2xl">
+          The warrant layer grades each claim from the tree’s argument. A claim it reaches
+          nothing for is <em>unassessed</em> — counted apart from <em>weak</em>, which is a claim
+          the argument reaches and finds weakly supported. Only papers whose warrant layer has run appear.
+        </p>
+        <div class="flex flex-col gap-2 max-w-2xl">
+          {warrantReach.map(w => (
+            <a href={url(`/papers/${w.slug}/warrant`)} class="flex items-baseline justify-between gap-4 text-sm no-underline group">
+              <span class="text-gray-800 dark:text-gray-200 group-hover:text-amber-700 dark:group-hover:text-amber-400">{shortOf(w.slug)}</span>
+              <span class="text-gray-500 dark:text-gray-400">
+                the argument reaches <span class="font-medium text-gray-800 dark:text-gray-200">{w.reached} of {w.total}</span> claims
+                {w.unassessed > 0 && <span> · {w.unassessed} unassessed</span>}
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
 
     <!-- ── what the ledger can and cannot vouch for ──────────────────
          "Out of date: 0" was true and misleading. Staleness is computed by comparing a run's

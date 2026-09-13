@@ -1,5 +1,5 @@
 ---
-uuid: 969a9486-68dd-4163-8a30-315ee77abdcd
+uuid: 2005532f-b003-46be-827f-5597a232f385
 slug: findings-rest-two-samples-healthy
 doi: null
 claim: The findings rest on two samples of healthy adults — Study 1 (behaviour only, N = 40) and Study
@@ -9,7 +9,6 @@ claim-type: assessment
 role: scope
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 scopes:
 - when-partner-received-low-lottery
 belongings: []
@@ -17,7 +16,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: scope-two-study-design
   agent: mainen-z
@@ -28,6 +27,11 @@ reproductions:
     condition); Study 2 (N=44, behavioural replication with identical task structure outside scanner).
     Algorithmic partner confirmed via `partner-algorithm-deception-assumption`. The two-study structure
     is the paper''s principal robustness check against single-sample false positives.'
+warrant: weak
+warrant_why: a scope statement the tree records nothing bearing on
+check_verification: blocked
+check_verification_from:
+- record:blocked
 ---
 
 **Notes from extraction:** Global scope condition bounding the empirical claims; distinguishes the behavioural study from the fMRI study. The results reader emphasised that BOLD results come only from Study 2; the structure reader gave the two sample sizes.

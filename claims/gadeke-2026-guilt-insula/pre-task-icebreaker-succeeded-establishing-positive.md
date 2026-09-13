@@ -1,5 +1,5 @@
 ---
-uuid: 21f204da-538c-4e83-8422-54188af2e9ed
+uuid: d8cad4fe-5332-4f92-b0ca-12c143e2611e
 slug: pre-task-icebreaker-succeeded-establishing-positive
 doi: null
 claim: 'A pre-task icebreaker succeeded in establishing a positive attitude toward the partner: participants
@@ -9,7 +9,6 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 validates:
 - when-partner-received-low-lottery
 belongings: []
@@ -17,8 +16,11 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: app1table11
-  confidence: tentative
+  readers: high
 reproductions: []
+warrant: weak
+warrant_why: the tree records nothing bearing on this control
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Manipulation check that the social relationship was positive and non-competitive; the caption reader anchored it to Appendix 1—table 11 (ratings across the five items range roughly 8.35–9.34 across Studies 1 and 2).

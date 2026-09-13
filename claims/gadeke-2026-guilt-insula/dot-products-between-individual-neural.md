@@ -1,5 +1,5 @@
 ---
-uuid: 8439bd99-f01d-40a9-9b7a-c390ebff1a46
+uuid: bbcdbc22-6a62-4040-9f0c-60fd0fbbf7f9
 slug: dot-products-between-individual-neural
 doi: null
 claim: Dot products between individual neural guilt responses and the Yu et al. (2020) guilt-related brain
@@ -9,7 +9,6 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 validates:
 - insula-rois-responded-more-low
 in-tension-with:
@@ -19,7 +18,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions:
 - carried_from: insula-guilt-replicates-yu-koban-signature
   agent: mainen-z
@@ -79,6 +78,13 @@ reproductions:
     than one replacing the other.
 
     '
+warrant: weak
+warrant_why: the tree records nothing bearing on this convergent-validity control
+check_verification: reproduced
+check_verification_from:
+- record:partial
+- record:verified
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** [reviewer] role: empirical → control. The comparison against an independent, previously published neural guilt signature (Yu et al., 2020) is a convergent-validity check: its specific outcome - positive dot products - strengthens the warrant for the anterior insula as a guilt-tracking substrate rather than establishing a new primary finding, so its work in the argument is to validate the insula/guilt result. Provides convergent validity with a previously published neural guilt signature.

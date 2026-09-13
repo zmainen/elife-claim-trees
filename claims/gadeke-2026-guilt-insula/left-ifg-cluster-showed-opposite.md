@@ -1,5 +1,5 @@
 ---
-uuid: 8e5d3637-d31d-4d89-889b-9056cf7c460d
+uuid: 1d1c47d0-28f9-4c6f-93b5-eae6e8f62688
 slug: left-ifg-cluster-showed-opposite
 doi: null
 claim: A left IFG cluster showed the opposite pattern of connectivity with the left STS seed — highest
@@ -9,14 +9,16 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig5s1
-  confidence: tentative
+  readers: high
 reproductions: []
+warrant: weak
+warrant_why: an uncorrected result the tree records nothing bearing on
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Reported at an uncorrected threshold; did not survive multiple-comparison correction. The caption reader classified it as a control while the results reader classified it as empirical; both agree on panel and direction, resolved to empirical.

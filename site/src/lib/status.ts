@@ -111,6 +111,73 @@ export const ROLE_COLOR: Record<string, string> = {
   'control': '#64748b',
 };
 
+// ── Warrant: how well the tree's argument supports a claim ──────────────────
+// Distinct from `epistemic` (which conflates support strength with role) and from a
+// verification check (which re-runs the code). The warrant layer (#126) grades a claim from its
+// argument alone: graded claims take strong/moderate/weak/contested, a graded claim the argument
+// reaches nothing for is `unassessed`, and predictions and alternatives carry their own words.
+// Only Gädeke carries warrant today, so the display falls back to `epistemic` where it is absent.
+
+const GRADED_WARRANT = new Set(['strong', 'moderate', 'weak', 'contested']);
+
+/** The word to show for a claim's warrant: `unassessed` where a graded claim's argument reaches
+ *  nothing (empty `warrant_from`), the stored level otherwise. */
+export function warrantDisplay(warrant: string, warrantFrom?: string[] | null): string {
+  if (GRADED_WARRANT.has(warrant) && !(warrantFrom && warrantFrom.length)) return 'unassessed';
+  return warrant;
+}
+
+/** What to render where the site shows a claim's support. Warrant when the layer has run on this
+ *  claim, `epistemic` as the fallback — the one rule the whole site reads (§ruling D). Returns the
+ *  word, its palette, and whether it is a warrant or the epistemic fallback (for a tooltip). */
+export function warrantOf(claim: { warrant?: string | null; warrant_from?: string[] | null; epistemic?: string })
+    : { label: string; tailwind: string; source: 'warrant' | 'epistemic' } {
+  if (claim.warrant) {
+    const label = warrantDisplay(claim.warrant, claim.warrant_from);
+    return { label, tailwind: WARRANT_TAILWIND[label] ?? 'bg-gray-50 text-gray-500', source: 'warrant' };
+  }
+  const e = claim.epistemic ?? 'unknown';
+  return { label: e, tailwind: EPISTEMIC_TAILWIND[e] ?? 'bg-gray-50 text-gray-500', source: 'epistemic' };
+}
+
+export const WARRANT_TAILWIND: Record<string, string> = {
+  'strong': 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
+  'moderate': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300',
+  'weak': 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300',
+  // Argument reaches nothing: grey, not a grade — "not assessed" rather than "assessed as weak".
+  'unassessed': 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
+  // A refuted prediction or a contested claim is a finding: the one warm warrant colour.
+  'contested': 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+  'refuted': 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+  'confirmed': 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
+  'untested': 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
+  'ruled-out': 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+  'open': 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
+};
+
+// ── The verification check, beside the warrant ──────────────────────────────
+// A separate field the check layer (#126) writes: does a re-run stand behind the claim? Shown
+// beside the warrant, never over it. `mismatch` is the one a reader must see — a re-run that
+// disagreed with the paper — so it earns the warm colour; `unrecorded` renders as nothing.
+
+export const VERIFICATION_CHECK_LABEL: Record<string, string> = {
+  'reproduced': 're-run · reproduced',
+  'partial': 're-run · partial',
+  'mismatch': 're-run · contested',
+  'blocked': 'couldn’t re-run',
+  'unattempted': 'not re-run',
+  'unrecorded': '',
+};
+
+export const VERIFICATION_CHECK_TAILWIND: Record<string, string> = {
+  'reproduced': 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+  'partial': 'bg-slate-50 text-slate-600 dark:bg-slate-800/60 dark:text-slate-400',
+  'mismatch': 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+  'blocked': 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+  'unattempted': 'bg-transparent text-gray-400 dark:text-gray-600',
+  'unrecorded': 'bg-transparent text-gray-400 dark:text-gray-600',
+};
+
 export const EPISTEMIC_TAILWIND: Record<string, string> = {
   'strong': 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
   'moderate': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300',

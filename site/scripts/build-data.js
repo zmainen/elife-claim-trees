@@ -13,6 +13,12 @@ import { parse as parseYaml } from 'yaml';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const claimsRoot = join(__dirname, '../../claims');
 const projectRoot = join(__dirname, '../../');
+
+// The layer declaration belongs to the machinery, which is its own repository now. CLAIM_GRAPHS
+// names that checkout; the Makefile exports it, and the default is the sibling convention.
+const machinery = process.env.CLAIM_GRAPHS
+  ? (process.env.CLAIM_GRAPHS.startsWith('/') ? process.env.CLAIM_GRAPHS : join(projectRoot, process.env.CLAIM_GRAPHS))
+  : join(projectRoot, '../claim-graphs');
 const outDir = join(__dirname, '../src/data');
 const outFile = join(outDir, 'claims.json');
 
@@ -250,6 +256,16 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
       displayClaim: (fm.displayClaim || '').trim() || null,
       shortClaim: (fm.shortClaim || '').trim() || null,
       epistemic: fm.epistemic || 'unknown',
+      // How well the tree's argument supports the claim (the warrant layer, #126), distinct from
+      // `epistemic`. Only Gädeke carries it today; the site renders warrant where present and
+      // falls back to epistemic otherwise. `warrant_from` is the dossier keys that fired — empty
+      // means the argument reaches nothing, which the site shows as `unassessed`.
+      warrant: fm.warrant || null,
+      warrant_from: fm.warrant_from || [],
+      // A check that sits beside the warrant, never over it (the verification-check layer, #126):
+      // does a re-run stand behind the claim? Absent until that layer runs on a paper.
+      check_verification: fm.check_verification || null,
+      check_verification_from: fm.check_verification_from || [],
       status,
       discrepancy: fm.discrepancy || null,
       'claim-type': fm['claim-type'] || 'empirical',
@@ -605,7 +621,15 @@ if (existsSync(ttlSrc)) {
 //   absent     declared and never produced. Not a link at all.
 //   set        a path containing `*` is a set rather than a file (claims/{paper}/*.md), and
 //              is counted — a count is what a reader can act on.
-const layersDecl = parseYaml(readFileSync(join(projectRoot, 'pipeline/layers.yaml'), 'utf8'));
+const layersPath = join(machinery, 'pipeline/layers.yaml');
+// Without this the failure is a bare ENOENT stack from fs, forty lines into a build, naming a
+// path the reader has no reason to recognise. The Makefile's machinery-check says this in the
+// same words; `npm run dev` does not go through the Makefile, so it has to say it itself.
+if (!existsSync(layersPath)) {
+  console.error(`no machinery at ${machinery} — clone zmainen/claim-graphs there, or set CLAIM_GRAPHS`);
+  process.exit(1);
+}
+const layersDecl = parseYaml(readFileSync(layersPath, 'utf8'));
 const publicRoot = join(__dirname, '../public');
 
 // Only text is served by the endpoint: it reads the file at build and hands back the bytes,

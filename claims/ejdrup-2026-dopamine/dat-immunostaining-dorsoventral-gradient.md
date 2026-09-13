@@ -15,6 +15,9 @@ concepts:
   - protein expression
 priority: 2026-03-29
 epistemic: moderate
+check_verification: blocked
+check_verification_from:
+- record:blocked
 
 validates:
   - ds-vs-vmax-ratio-assumed

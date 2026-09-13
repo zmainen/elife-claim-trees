@@ -35,7 +35,7 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Verification records dropped
 
-**16 verification records across 16 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `haak:VerificationRecord`.
+**16 verification records across 16 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `cg:VerificationRecord`.
 
 ## Questions synthesized
 
@@ -52,13 +52,13 @@ Override any of these by adding a `question:` field to the hypothesis's frontmat
 
 **1 of this paper's claims are not asserted by it.** They are alternative explanations it entertains, rejects, or attributes to others. MIRA has no vocabulary for that distinction: it types a node as `Claim` and says nothing about who stands behind it.
 
-The strict export still carries the `rules-out` edge that eliminated each one, declared under `mira:opposes`, so a MIRA-only reader can see the direction of the argument. What that reader cannot see is that the paper **denies** these propositions — so it will over-read them as assertions. The stance travels in the extended file as `haak:stance`.
+The strict export still carries the `rules-out` edge that eliminated each one, declared under `mira:opposes`, so a MIRA-only reader can see the direction of the argument. What that reader cannot see is that the paper **denies** these propositions — so it will over-read them as assertions. The stance travels in the extended file as `cg:stance`.
 
 - `alt-rapid-fs-interneuron-recruitment` — rejects
 
 ## Alternatives materialised as claims
 
-**1 relation targets name something no claim file asserts.** They are alternative explanations the paper argues against, so the target exists only as the thing being excluded. Each is minted as a `mira:Claim` so the edge has a destination, and flagged `haak:materialisedFrom: relation-target` in the extended file. **None of these is an authored claim.**
+**1 relation targets name something no claim file asserts.** They are alternative explanations the paper argues against, so the target exists only as the thing being excluded. Each is minted as a `mira:Claim` so the edge has a destination, and flagged `cg:materialisedFrom: relation-target` in the extended file. **None of these is an authored claim.**
 
 - light-or-heat-mediated-modulation
 

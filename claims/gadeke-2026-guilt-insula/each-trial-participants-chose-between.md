@@ -1,5 +1,5 @@
 ---
-uuid: cb6eb7ff-3062-471b-afaf-d4062b47c419
+uuid: 05e1c77d-80e1-4aab-8b94-1273386a0b33
 slug: each-trial-participants-chose-between
 doi: null
 claim: 'On each trial participants chose between a safe and a risky monetary option under three conditions:
@@ -9,7 +9,6 @@ claim-type: assessment
 role: scope
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 scopes:
 - when-partner-received-low-lottery
 belongings: []
@@ -17,8 +16,11 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: a scope statement the tree records nothing bearing on
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** The within-subject responsibility manipulation on which the guilt and agency contrasts depend.

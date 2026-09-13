@@ -2,7 +2,7 @@
   "@context": [
     "https://purl.org/mira-science/mira.jsonld",
     {
-      "haak": "https://haak.world/schema/claim#",
+      "cg": "https://w3id.org/claim-graphs/schema#",
       "dgb": "https://discoursegraphs.com/schema/dg_base#",
       "owl": "http://www.w3.org/2002/07/owl#",
       "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -20,66 +20,66 @@
   ],
   "@graph": [
     {
-      "@id": "haak:agent/elife-claim-trees",
+      "@id": "urn:claim-graphs:pipeline",
       "@type": "UserAccount",
-      "accountName": "elife-claim-trees pipeline"
+      "accountName": "claim-graphs pipeline"
     },
     {
-      "@id": "haak:type/Claim",
+      "@id": "cg:type/Claim",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Claim"
       ],
       "label": "Claim",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Evidence",
+      "@id": "cg:type/Evidence",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Evidence"
       ],
       "label": "Evidence",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:type/Protocol",
+      "@id": "cg:type/Protocol",
       "@type": "NodeSchema",
       "subClassOf": [
         "mira:Protocol"
       ],
       "label": "Protocol",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/derived_from",
+      "@id": "cg:reldef/derived_from",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/derived_from"
+          "hasValue": "cg:reldef/derived_from"
         }
       ],
       "label": "derived-from",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z",
-      "inverseOf": "haak:reldef/entails"
+      "inverseOf": "cg:reldef/entails"
     },
     {
-      "@id": "haak:reldef/derived_from/def",
+      "@id": "cg:reldef/derived_from/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/derived_from",
+        "cg:reldef/derived_from",
         "dgb:RelationInstance"
       ],
       "label": "derived-from",
@@ -88,32 +88,32 @@
         "format": "text/plain",
         "content": "The source claim was derived from the destination claim; the inverse of entails."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with",
+      "@id": "cg:reldef/dissociates_with",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/dissociates_with"
+          "hasValue": "cg:reldef/dissociates_with"
         }
       ],
       "label": "dissociates-with",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/dissociates_with/def",
+      "@id": "cg:reldef/dissociates_with/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/dissociates_with",
+        "cg:reldef/dissociates_with",
         "dgb:RelationInstance"
       ],
       "label": "dissociates-with",
@@ -122,32 +122,32 @@
         "format": "text/plain",
         "content": "The source and destination jointly establish a dissociation — a contrast between two results, neither bearing on the other's truth. MIRA has no predicate for a contrast, so like the deductive relations it hangs at AbstractRelationDef and the gap report names it."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method",
+      "@id": "cg:reldef/enables_method",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/enables_method"
+          "hasValue": "cg:reldef/enables_method"
         }
       ],
       "label": "enables-method",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/enables_method/def",
+      "@id": "cg:reldef/enables_method/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Protocol",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Protocol",
       "subClassOf": [
-        "haak:reldef/enables_method",
+        "cg:reldef/enables_method",
         "dgb:RelationInstance"
       ],
       "label": "enables-method",
@@ -156,32 +156,32 @@
         "format": "text/plain",
         "content": "The source result makes the destination method possible."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails",
+      "@id": "cg:reldef/entails",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/entails"
+          "hasValue": "cg:reldef/entails"
         }
       ],
       "label": "entails",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/entails/def",
+      "@id": "cg:reldef/entails/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/entails",
+        "cg:reldef/entails",
         "dgb:RelationInstance"
       ],
       "label": "entails",
@@ -190,33 +190,33 @@
         "format": "text/plain",
         "content": "The source claim logically entails the destination claim: the deductive step from a hypothesis to a prediction it commits to."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/extends",
+      "@id": "cg:reldef/extends",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/extends"
+          "hasValue": "cg:reldef/extends"
         }
       ],
       "label": "extends",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/extends/def",
+      "@id": "cg:reldef/extends/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/extends",
+        "cg:reldef/extends",
         "dgb:RelationInstance"
       ],
       "label": "extends",
@@ -225,32 +225,32 @@
         "format": "text/plain",
         "content": "The source claim extends the destination claim to new conditions."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets",
+      "@id": "cg:reldef/interprets",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/interprets"
+          "hasValue": "cg:reldef/interprets"
         }
       ],
       "label": "interprets",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/interprets/def",
+      "@id": "cg:reldef/interprets/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Evidence",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Evidence",
       "subClassOf": [
-        "haak:reldef/interprets",
+        "cg:reldef/interprets",
         "dgb:RelationInstance"
       ],
       "label": "interprets",
@@ -259,32 +259,32 @@
         "format": "text/plain",
         "content": "The source claim offers a theoretical reading of the destination result."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires",
+      "@id": "cg:reldef/requires",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/requires"
+          "hasValue": "cg:reldef/requires"
         }
       ],
       "label": "requires",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/requires/def",
+      "@id": "cg:reldef/requires/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/requires",
+        "cg:reldef/requires",
         "dgb:RelationInstance"
       ],
       "label": "requires",
@@ -293,33 +293,33 @@
         "format": "text/plain",
         "content": "The source claim depends on the destination holding. If the destination fails, the source is undermined."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out",
+      "@id": "cg:reldef/rules_out",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:opposes",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/rules_out"
+          "hasValue": "cg:reldef/rules_out"
         }
       ],
       "label": "rules-out",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/rules_out/def",
+      "@id": "cg:reldef/rules_out/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/rules_out",
+        "cg:reldef/rules_out",
         "dgb:RelationInstance"
       ],
       "label": "rules-out",
@@ -328,32 +328,32 @@
         "format": "text/plain",
         "content": "The source evidence eliminates the destination claim as viable."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes",
+      "@id": "cg:reldef/scopes",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/scopes"
+          "hasValue": "cg:reldef/scopes"
         }
       ],
       "label": "scopes",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/scopes/def",
+      "@id": "cg:reldef/scopes/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/scopes",
+        "cg:reldef/scopes",
         "dgb:RelationInstance"
       ],
       "label": "scopes",
@@ -362,33 +362,33 @@
         "format": "text/plain",
         "content": "The source states a boundary condition governing where the destination claim is valid. Neither supports nor opposes."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports",
+      "@id": "cg:reldef/supports",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/supports"
+          "hasValue": "cg:reldef/supports"
         }
       ],
       "label": "supports",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/supports/def",
+      "@id": "cg:reldef/supports/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Claim",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Claim",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/supports",
+        "cg:reldef/supports",
         "dgb:RelationInstance"
       ],
       "label": "supports",
@@ -397,32 +397,32 @@
         "format": "text/plain",
         "content": "The source claim provides support for the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests",
+      "@id": "cg:reldef/tests",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/tests"
+          "hasValue": "cg:reldef/tests"
         }
       ],
       "label": "tests",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/tests/def",
+      "@id": "cg:reldef/tests/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/tests",
+        "cg:reldef/tests",
         "dgb:RelationInstance"
       ],
       "label": "tests",
@@ -431,33 +431,33 @@
         "format": "text/plain",
         "content": "The source evidence was gathered to test the destination claim. Neither supports nor opposes: it records that a test was run, not how it came out."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates",
+      "@id": "cg:reldef/validates",
       "@type": "AbstractRelationDef",
       "subClassOf": [
         "mira:supports",
         {
           "@type": "owl:Restriction",
           "onProperty": "rdf:predicate",
-          "hasValue": "haak:reldef/validates"
+          "hasValue": "cg:reldef/validates"
         }
       ],
       "label": "validates",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:reldef/validates/def",
+      "@id": "cg:reldef/validates/def",
       "@type": "RelationDef",
-      "domain": "haak:type/Evidence",
-      "range": "haak:type/Claim",
+      "domain": "cg:type/Evidence",
+      "range": "cg:type/Claim",
       "subClassOf": [
-        "haak:reldef/validates",
+        "cg:reldef/validates",
         "dgb:RelationInstance"
       ],
       "label": "validates",
@@ -466,7 +466,7 @@
         "format": "text/plain",
         "content": "The source evidence validates the destination claim."
       },
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
@@ -810,7 +810,7 @@
       "@type": "prov:Entity"
     },
     {
-      "@id": "haak:claim/kammer-2026-foveal-feedback/alternative/1",
+      "@id": "cg:claim/kammer-2026-foveal-feedback/alternative/1",
       "@type": "mira:Claim",
       "title": "FEF as candidate driver of foveal feedback",
       "description": {
@@ -820,7 +820,7 @@
       }
     },
     {
-      "@id": "haak:claim/kammer-2026-foveal-feedback/alternative/2",
+      "@id": "cg:claim/kammer-2026-foveal-feedback/alternative/2",
       "@type": "mira:Claim",
       "title": "LO as candidate driver of foveal feedback",
       "description": {
@@ -830,7 +830,7 @@
       }
     },
     {
-      "@id": "haak:claim/kammer-2026-foveal-feedback/alternative/3",
+      "@id": "cg:claim/kammer-2026-foveal-feedback/alternative/3",
       "@type": "mira:Claim",
       "title": "generic brain-state or arousal explanation of IPS-foveal-decoding coupling",
       "description": {
@@ -840,7 +840,7 @@
       }
     },
     {
-      "@id": "haak:claim/kammer-2026-foveal-feedback/alternative/4",
+      "@id": "cg:claim/kammer-2026-foveal-feedback/alternative/4",
       "@type": "mira:Claim",
       "title": "passive spillover from large peripheral receptive fields",
       "description": {
@@ -850,686 +850,686 @@
       }
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/1",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/1",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa",
       "destination": "urn:uuid:5d4e5f6a-7b8c-4d01-9e02-4f5a6b7c8d9e",
       "title": "[[cross-decoding-experimental-to-control]] -tests-> [[prediction-cross-decoding-generalizes]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/2",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/2",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa",
       "destination": "urn:uuid:6c3d4e5f-7a8b-4c01-9d02-3e4f5a6b7c8d",
       "title": "[[cross-decoding-experimental-to-control]] -supports-> [[hypothesis-shared-representational-format]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/3",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/3",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
       "destination": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
       "title": "[[decoding-shape-sensitive-not-semantic]] -interprets-> [[hypothesis-feedback-carries-shape-not-category]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/4",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/4",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
-      "destination": "haak:claim/kammer-2026-foveal-feedback/alternative/1",
+      "destination": "cg:claim/kammer-2026-foveal-feedback/alternative/1",
       "title": "[[fef-lo-nonsignificant-after-correction]] -rules-out-> [[FEF as candidate driver of foveal feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/5",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/5",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
-      "destination": "haak:claim/kammer-2026-foveal-feedback/alternative/2",
+      "destination": "cg:claim/kammer-2026-foveal-feedback/alternative/2",
       "title": "[[fef-lo-nonsignificant-after-correction]] -rules-out-> [[LO as candidate driver of foveal feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/6",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/6",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
       "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
       "title": "[[fef-lo-nonsignificant-after-correction]] -supports-> [[ips-candidate-driver-foveal-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/7",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/7",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
       "destination": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a",
       "title": "[[hypothesis-feedback-carries-shape-not-category]] -entails-> [[prediction-v1-category-drops-shape-preserved]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/8",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/8",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
       "destination": "urn:uuid:2a7b8c9d-0e1f-4a01-b002-7c8d9e0f1a2b",
       "title": "[[hypothesis-feedback-carries-shape-not-category]] -entails-> [[prediction-lo-inverse-pattern]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/9",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/9",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c",
       "destination": "urn:uuid:7b2c3d4e-5f6a-4b01-9c02-2d3e4f5a6b7c",
       "title": "[[hypothesis-feedback-not-spillover]] -entails-> [[prediction-u-shape-eccentricity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/10",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/10",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c",
       "destination": "urn:uuid:9713afa8-c74b-413e-916e-b8ff811ca2ea",
       "title": "[[hypothesis-feedback-not-spillover]] -interprets-> [[interprets-williams-2008-peripheral-spillover]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/11",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/11",
       "@type": [
-        "haak:reldef/entails"
+        "cg:reldef/entails"
       ],
       "source": "urn:uuid:6c3d4e5f-7a8b-4c01-9d02-3e4f5a6b7c8d",
       "destination": "urn:uuid:5d4e5f6a-7b8c-4d01-9e02-4f5a6b7c8d9e",
       "title": "[[hypothesis-shared-representational-format]] -entails-> [[prediction-cross-decoding-generalizes]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/12",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/12",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
       "destination": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c",
       "title": "[[ips-candidate-driver-foveal-feedback]] -requires-> [[parametric-modulation-exploratory-not-preregistered]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/13",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/13",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
-      "destination": "haak:claim/kammer-2026-foveal-feedback/alternative/3",
+      "destination": "cg:claim/kammer-2026-foveal-feedback/alternative/3",
       "title": "[[ips-foveal-effect-reverses-in-control]] -rules-out-> [[generic brain-state or arousal explanation of IPS-foveal-decoding coupling]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/14",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/14",
       "@type": [
-        "haak:reldef/validates"
+        "cg:reldef/validates"
       ],
       "source": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
       "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
       "title": "[[ips-foveal-effect-reverses-in-control]] -validates-> [[ips-candidate-driver-foveal-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/15",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/15",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
       "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
       "title": "[[ips-foveal-effect-reverses-in-control]] -supports-> [[ips-candidate-driver-foveal-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/16",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/16",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
       "destination": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
       "title": "[[ips-foveal-effect-reverses-in-control]] -extends-> [[fef-lo-nonsignificant-after-correction]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/17",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/17",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
       "destination": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
       "title": "[[lo-shows-reversed-specificity]] -dissociates-with-> [[v1-category-decoding-drops-in-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/18",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/18",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
       "destination": "urn:uuid:2a7b8c9d-0e1f-4a01-b002-7c8d9e0f1a2b",
       "title": "[[lo-shows-reversed-specificity]] -tests-> [[prediction-lo-inverse-pattern]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/19",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/19",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
       "destination": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
       "title": "[[lo-shows-reversed-specificity]] -supports-> [[hypothesis-feedback-carries-shape-not-category]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/20",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/20",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
       "destination": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
       "title": "[[lo-shows-reversed-specificity]] -supports-> [[decoding-shape-sensitive-not-semantic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/21",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/21",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
       "destination": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
       "title": "[[lo-shows-reversed-specificity]] -extends-> [[v1-category-decoding-drops-in-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/22",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/22",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:0dd0e9db-3fe4-4173-8a6f-90e9e0b10270",
       "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
       "title": "[[parametric-effects-not-global-fluctuations]] -supports-> [[ips-candidate-driver-foveal-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/23",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/23",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c",
       "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
       "title": "[[parametric-modulation-exploratory-not-preregistered]] -scopes-> [[ips-candidate-driver-foveal-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/24",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/24",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c",
       "destination": "urn:uuid:3190bd67-2477-4174-b65f-7e70b8128535",
       "title": "[[parametric-modulation-exploratory-not-preregistered]] -scopes-> [[fef-lo-nonsignificant-after-correction]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/25",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/25",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:59c5e057-e281-4d1f-9e14-c7e7557c453c",
       "destination": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
       "title": "[[parametric-modulation-exploratory-not-preregistered]] -scopes-> [[ips-foveal-effect-reverses-in-control]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/26",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/26",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "destination": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df",
       "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[foveal-v1-decodes-peripheral-saccade-target]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/27",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/27",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "destination": "urn:uuid:6271606c-1989-4bb6-a6da-a14145a46145",
       "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[foveal-feedback-below-direct-stimulation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/28",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/28",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "destination": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa",
       "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[cross-decoding-experimental-to-control]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/29",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/29",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "destination": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
       "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[decoding-shape-sensitive-not-semantic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/30",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/30",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "destination": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
       "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[v1-category-decoding-drops-in-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/31",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/31",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "destination": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
       "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[lo-shows-reversed-specificity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/32",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/32",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "destination": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
       "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[v2-v3-generalize-shape-not-category]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/33",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/33",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "destination": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
       "title": "[[preregistered-design-validates-mvpa]] -enables-method-> [[u-shaped-eccentricity-rejects-spillover]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/34",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/34",
       "@type": [
-        "haak:reldef/requires"
+        "cg:reldef/requires"
       ],
       "source": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "destination": "urn:uuid:1f206f40-a766-4818-ba18-73042a082df9",
       "title": "[[preregistered-design-validates-mvpa]] -requires-> [[preregistration-submitted-after-manuscript]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/35",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/35",
       "@type": [
-        "haak:reldef/scopes"
+        "cg:reldef/scopes"
       ],
       "source": "urn:uuid:1f206f40-a766-4818-ba18-73042a082df9",
       "destination": "urn:uuid:80b476c0-6aca-4e39-9094-687cbb3a6756",
       "title": "[[preregistration-submitted-after-manuscript]] -scopes-> [[preregistered-design-validates-mvpa]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/36",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/36",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "destination": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df",
       "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[foveal-v1-decodes-peripheral-saccade-target]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/37",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/37",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "destination": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
       "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[decoding-shape-sensitive-not-semantic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/38",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/38",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "destination": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
       "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[v1-category-decoding-drops-in-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/39",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/39",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "destination": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
       "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[v2-v3-generalize-shape-not-category]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/40",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/40",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "destination": "urn:uuid:b5f7aa26-4228-4741-8680-93ebd04474fa",
       "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[cross-decoding-experimental-to-control]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/41",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/41",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "destination": "urn:uuid:6271606c-1989-4bb6-a6da-a14145a46145",
       "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[foveal-feedback-below-direct-stimulation]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/42",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/42",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "destination": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
       "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[u-shaped-eccentricity-rejects-spillover]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/43",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/43",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "destination": "urn:uuid:3af0625b-efea-46a1-93d6-60b55f7506e9",
       "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[ips-foveal-effect-reverses-in-control]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/44",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/44",
       "@type": [
-        "haak:reldef/enables_method"
+        "cg:reldef/enables_method"
       ],
       "source": "urn:uuid:fe6f5cc9-f01d-4c96-89fa-9932ae396b77",
       "destination": "urn:uuid:49adf84d-f957-4524-a9e4-0caf34bebe13",
       "title": "[[target-excluded-fovea-in-99pct-saccades]] -enables-method-> [[ips-candidate-driver-foveal-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/45",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/45",
       "@type": [
-        "haak:reldef/interprets"
+        "cg:reldef/interprets"
       ],
       "source": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
       "destination": "urn:uuid:9713afa8-c74b-413e-916e-b8ff811ca2ea",
       "title": "[[u-shaped-eccentricity-rejects-spillover]] -interprets-> [[interprets-williams-2008-peripheral-spillover]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/46",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/46",
       "@type": [
-        "haak:reldef/rules_out"
+        "cg:reldef/rules_out"
       ],
       "source": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
-      "destination": "haak:claim/kammer-2026-foveal-feedback/alternative/4",
+      "destination": "cg:claim/kammer-2026-foveal-feedback/alternative/4",
       "title": "[[u-shaped-eccentricity-rejects-spillover]] -rules-out-> [[passive spillover from large peripheral receptive fields]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/47",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/47",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
       "destination": "urn:uuid:7b2c3d4e-5f6a-4b01-9c02-2d3e4f5a6b7c",
       "title": "[[u-shaped-eccentricity-rejects-spillover]] -tests-> [[prediction-u-shape-eccentricity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/48",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/48",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
       "destination": "urn:uuid:a4af1338-dbef-4dad-ba5d-699735dc08df",
       "title": "[[u-shaped-eccentricity-rejects-spillover]] -supports-> [[foveal-v1-decodes-peripheral-saccade-target]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/49",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/49",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:5e63c146-b0e8-457b-8fdc-5751afaefb2a",
       "destination": "urn:uuid:8a1c2d4e-9b3f-4a01-bc02-1d2e3f4a5b6c",
       "title": "[[u-shaped-eccentricity-rejects-spillover]] -supports-> [[hypothesis-feedback-not-spillover]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/50",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/50",
       "@type": [
-        "haak:reldef/dissociates_with"
+        "cg:reldef/dissociates_with"
       ],
       "source": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
       "destination": "urn:uuid:99ca4e8a-6fac-41f6-b901-5b63c1802a66",
       "title": "[[v1-category-decoding-drops-in-feedback]] -dissociates-with-> [[lo-shows-reversed-specificity]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/51",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/51",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
       "destination": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a",
       "title": "[[v1-category-decoding-drops-in-feedback]] -tests-> [[prediction-v1-category-drops-shape-preserved]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/52",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/52",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
       "destination": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
       "title": "[[v1-category-decoding-drops-in-feedback]] -supports-> [[hypothesis-feedback-carries-shape-not-category]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/53",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/53",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
       "destination": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
       "title": "[[v1-category-decoding-drops-in-feedback]] -supports-> [[decoding-shape-sensitive-not-semantic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/54",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/54",
       "@type": [
-        "haak:reldef/tests"
+        "cg:reldef/tests"
       ],
       "source": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
       "destination": "urn:uuid:3f6a7b8c-9d0e-4f01-a002-6b7c8d9e0f1a",
       "title": "[[v2-v3-generalize-shape-not-category]] -tests-> [[prediction-v1-category-drops-shape-preserved]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/55",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/55",
       "@type": [
-        "haak:reldef/supports"
+        "cg:reldef/supports"
       ],
       "source": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
       "destination": "urn:uuid:4e5f6a7b-8c9d-4e01-9f02-5a6b7c8d9e0f",
       "title": "[[v2-v3-generalize-shape-not-category]] -supports-> [[hypothesis-feedback-carries-shape-not-category]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/56",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/56",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
       "destination": "urn:uuid:5476d15d-5249-43b3-a1db-ec0fa4ede39b",
       "title": "[[v2-v3-generalize-shape-not-category]] -extends-> [[decoding-shape-sensitive-not-semantic]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     },
     {
-      "@id": "haak:edge/kammer-2026-foveal-feedback/57",
+      "@id": "cg:edge/kammer-2026-foveal-feedback/57",
       "@type": [
-        "haak:reldef/extends"
+        "cg:reldef/extends"
       ],
       "source": "urn:uuid:0219a626-2c4e-48d5-b2e2-2fbd53cbbb38",
       "destination": "urn:uuid:96991fa1-856f-4b2e-875d-715d254696d0",
       "title": "[[v2-v3-generalize-shape-not-category]] -extends-> [[v1-category-decoding-drops-in-feedback]]",
-      "creator": "haak:agent/elife-claim-trees",
+      "creator": "urn:claim-graphs:pipeline",
       "created": "2026-03-30T00:00:00.000Z",
       "modified": "2026-09-12T00:00:00.000Z"
     }

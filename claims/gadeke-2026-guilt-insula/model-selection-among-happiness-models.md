@@ -1,5 +1,5 @@
 ---
-uuid: 973ba1c8-7a3e-4e36-a78a-10fbd38c45b2
+uuid: 3139ed2b-ab4c-4ae9-8131-60a86d0203c6
 slug: model-selection-among-happiness-models
 doi: null
 claim: Model selection among the happiness models used likelihood-ratio tests comparing the Responsibility
@@ -8,7 +8,6 @@ claim-type: assessment
 role: methodological
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 enables-method:
 - likelihood-ratio-test-showed-responsibility
 belongings: []
@@ -16,8 +15,11 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: the tree records nothing bearing on this methodological choice
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** The model-comparison method that licenses treating the best-fitting model's variables as the regressors entered into the model-based fMRI GLM (GLM2). Kept distinct from the results reader's report of the likelihood-ratio outcome, which is an empirical result rather than a method.

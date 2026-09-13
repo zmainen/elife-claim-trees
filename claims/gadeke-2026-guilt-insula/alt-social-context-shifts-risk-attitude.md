@@ -16,6 +16,11 @@ concepts:
   - alternative explanation
 priority: 2026-09-10
 epistemic: weak
+check_verification: unrecorded
+warrant: ruled-out
+warrant_why: ruled out by risk-premiums-not-differ-between
+warrant_from:
+- ruled_out_by
 
 assertions:
   - paper-slug: gadeke-2026-guilt-insula

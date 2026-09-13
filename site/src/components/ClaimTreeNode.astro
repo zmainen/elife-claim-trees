@@ -1,5 +1,6 @@
 ---
-import { EPISTEMIC_TAILWIND, outcomeOf, OUTCOME_SHORT, OUTCOME_TAILWIND } from '../lib/status';
+import { outcomeOf, OUTCOME_SHORT, OUTCOME_TAILWIND, warrantOf,
+         VERIFICATION_CHECK_LABEL, VERIFICATION_CHECK_TAILWIND } from '../lib/status';
 
 type Claim = {
   slug: string;
@@ -8,6 +9,9 @@ type Claim = {
   panel?: string;
   status: string;
   epistemic: string;
+  warrant?: string | null;
+  warrant_from?: string[] | null;
+  check_verification?: string | null;
   isAssessment?: boolean;
   requires?: string[];
   figureUrl?: string | null;
@@ -67,9 +71,19 @@ const cardBg = isSecondaryRoot
               {OUTCOME_SHORT[outcomeOf(claim.status)]}
             </span>
           )}
-          <span class={`text-xs px-1.5 py-0.5 rounded ${EPISTEMIC_TAILWIND[claim.epistemic] ?? 'bg-gray-50 text-gray-500'}`}>
-            {claim.epistemic}
-          </span>
+          {/* Warrant and the verification check sit side by side — warrant · verification —
+              never one over the other. Warrant falls back to `epistemic` where the layer has
+              not run; the check chip appears only once a re-run has been recorded. */}
+          {(() => { const w = warrantOf(claim); return (
+            <span class={`text-xs px-1.5 py-0.5 rounded ${w.tailwind}`} title={w.source === 'warrant' ? 'warrant' : 'epistemic'}>
+              {w.label}
+            </span>
+          ); })()}
+          {claim.check_verification && VERIFICATION_CHECK_LABEL[claim.check_verification] && (
+            <span class={`text-xs px-1.5 py-0.5 rounded ${VERIFICATION_CHECK_TAILWIND[claim.check_verification]}`} title="verification">
+              {VERIFICATION_CHECK_LABEL[claim.check_verification]}
+            </span>
+          )}
           {claim.isAssessment && (
             <span class="text-xs text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">assessment</span>
           )}

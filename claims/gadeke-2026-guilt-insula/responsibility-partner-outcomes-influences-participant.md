@@ -1,5 +1,5 @@
 ---
-uuid: 8521b374-e125-4aea-85ed-7429dc9af6ec
+uuid: ebfa6051-f9ac-4e76-987d-c007a88f4605
 slug: responsibility-partner-outcomes-influences-participant
 doi: null
 claim: If responsibility for the partner's outcomes influences the participant's momentary happiness,
@@ -11,6 +11,12 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
+check_verification: unrecorded
+warrant: confirmed
+warrant_why: confirmed by likelihood-ratio-test-showed-responsibility and partner-reward-prediction-errors-resulting
+warrant_from:
+- outcome
+- confirmed_by
 derived-from:
 - responsibility-social-choice-yields-low
 belongings: []
@@ -18,7 +24,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

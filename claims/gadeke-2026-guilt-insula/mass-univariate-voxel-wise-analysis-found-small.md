@@ -1,5 +1,5 @@
 ---
-uuid: 88c906cb-a32f-46a9-8ad9-ea5cb2ec59c2
+uuid: aaddc052-7ff9-4a14-805a-cf9fa8a42d59
 slug: mass-univariate-voxel-wise-analysis-found-small
 doi: null
 claim: A mass-univariate voxel-wise analysis found a small left anterior insula cluster (peak T = 3.95,
@@ -9,7 +9,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 tests:
 - anterior-insula-tracks-guilt-insula
 confirms:
@@ -19,7 +18,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4f
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: insula-tracks-guilt-effect
   agent: mainen-z
@@ -58,6 +57,15 @@ reproductions:
   reproduced_value: peak MNI [-28, 24, -4]
   notes: Loads the authors' deposited thresholded contrast map, finds the peak voxel, and applies the
     image affine to convert voxel indices to MNI millimetres. Exact match to the published coordinates.
+warrant: moderate
+warrant_why: confirms the prediction anterior-insula-tracks-guilt-insula
+warrant_from:
+- confirms
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:verified
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** The caption reader treated this as a control — convergent voxel-wise confirmation of the ROI-based insula guilt effect in panel E; the results reader treated it as the empirical voxel-wise guilt result. The small-volume FWE correction (p = 0.024) is reported in a following sentence by the results reader. Both are empirical measurements agreeing on panel and direction; resolved to empirical.

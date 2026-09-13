@@ -22,9 +22,33 @@ PYTHON ?= python3
 CORPUS ?= elife
 SITE   := site
 
+# The machinery lives in its own repository now (zmainen/claim-graphs). Two things follow.
+#
+# It is a sibling checkout rather than a pip dependency, because 28 of its runners are loose
+# scripts under `scripts/` and pip installs only the `claim_graphs` package and one console
+# script. Seventeen of the nineteen commands below are such scripts, so `pip install
+# claim-graphs` would not make this Makefile work. Publishing them as entry points is the
+# eventual fix (claim-graphs#26); a named checkout is what works today, and it is what the
+# runner was already built for — `pipeline.py` resolves the machinery from its own location and
+# the graph from CLAIM_GRAPHS_ROOT.
+#
+# CLAIM_GRAPHS_SHA is the version this corpus's committed artifacts were produced by. `make
+# machinery-check` compares it with what is actually checked out, so a silent upgrade shows up
+# as a failing gate rather than as a diff nobody can explain.
+CLAIM_GRAPHS     ?= ../claim-graphs
+CLAIM_GRAPHS_SHA ?= $(shell cat .claim-graphs-sha 2>/dev/null)
+CG               := $(CLAIM_GRAPHS)
+export CLAIM_GRAPHS_ROOT = $(CURDIR)
+export CLAIM_GRAPHS_CORPUS_DIR = $(CURDIR)/claims
+
+# The package is importable from the checkout rather than installed, so `make` works on a fresh
+# clone of both repositories with no pip step. `pip install -e $(CG)/extract` also works and
+# takes precedence; this is the floor, not the recommendation.
+export PYTHONPATH := $(CG)/extract:$(CG)/scripts$(if $(PYTHONPATH),:$(PYTHONPATH))
+
 .DEFAULT_GOAL := help
 
-.PHONY: help data validate build preview check contract report fresh deps publishable
+.PHONY: help data validate build preview check contract report fresh deps publishable machinery-check env
 
 help:  ## Show this help
 	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -60,20 +84,20 @@ deps: $(SITE)/node_modules  ## Install the site's node modules
 # formats_report reads both, so after a claim change its report is computed partly from stale
 # inputs. The pipeline state flags oxa and dg as stale, so it surfaces rather than hiding.
 data: $(SITE)/node_modules  ## Regenerate every artifact the site is built from
-	$(PYTHON) scripts/prediction_outcome.py --write
-	$(PYTHON) scripts/evaluation_report.py --write
-	$(PYTHON) scripts/export_mira.py --all
-	$(PYTHON) scripts/formats_report.py --all
+	$(PYTHON) $(CG)/scripts/prediction_outcome.py --write
+	$(PYTHON) $(CG)/scripts/evaluation_report.py --write
+	$(PYTHON) $(CG)/scripts/export_mira.py --all
+	$(PYTHON) $(CG)/scripts/formats_report.py --all
 	$(MAKE) validate PYTHON=$(PYTHON)
 	$(PYTHON) scripts/corpus_facts.py
-	$(PYTHON) scripts/agents_report.py
-	$(PYTHON) scripts/review_queue.py
-	cd $(SITE) && CORPUS=$(CORPUS) node scripts/build-data.js
+	$(PYTHON) $(CG)/scripts/agents_report.py
+	$(PYTHON) $(CG)/scripts/review_queue.py
+	cd $(SITE) && CORPUS=$(CORPUS) CLAIM_GRAPHS=$(abspath $(CG)) node scripts/build-data.js
 
 validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 	@command -v pyshacl >/dev/null 2>&1 || { \
 	  echo "pyshacl not found — pip install pyshacl"; exit 1; }
-	$(PYTHON) scripts/validate_mira.py
+	$(PYTHON) $(CG)/scripts/validate_mira.py
 
 # Split by whether a non-zero exit should stop a merge.
 #
@@ -83,24 +107,50 @@ validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 # and they predate this file. Gating on them would make every pull request red for reasons
 # the pull request did not cause, so they run for their numbers and do not block.
 publishable:  ## What the site is about to publish that the ledger says is out of date
-	$(PYTHON) scripts/publishable.py
+	$(PYTHON) $(CG)/scripts/publishable.py
 
-check:  ## Gates that are clean on main. A failure here is this change's fault.
-	$(PYTHON) scripts/check_relations.py
-	cd extract && $(PYTHON) -m elife_extract.cli contract
+# Running a layer by hand needs the same environment the targets below run under. Rather than
+# repeat it in the README — where it would rot the first time a variable changed — print it
+# from the one place that defines it:
+#
+#   eval "$$(make env)"
+#   python3 $$CLAIM_GRAPHS/scripts/pipeline.py run <paper> claim-tree
+env:  ## Print the machinery environment, for `eval "$(make env)"`
+	@echo 'export CLAIM_GRAPHS=$(abspath $(CG))'
+	@echo 'export CLAIM_GRAPHS_ROOT=$(CURDIR)'
+	@echo 'export CLAIM_GRAPHS_CORPUS_DIR=$(CURDIR)/claims'
+	@echo 'export PYTHONPATH=$(abspath $(CG))/extract:$(abspath $(CG))/scripts'
+
+machinery-check:  ## Fail if the machinery checkout is not the pinned version
+	@test -d "$(CG)" || { echo "no machinery at $(CG) — clone zmainen/claim-graphs there, or set CLAIM_GRAPHS"; exit 1; }
+	@have=$$(git -C "$(CG)" rev-parse HEAD); want="$(CLAIM_GRAPHS_SHA)"; \
+	 if [ -z "$$want" ]; then echo "no pin recorded in .claim-graphs-sha"; exit 1; fi; \
+	 if [ "$$have" != "$$want" ]; then \
+	   echo "machinery is $$have"; echo "corpus expects $$want"; \
+	   echo "The committed artifacts were produced by the pinned version. Either check that out"; \
+	   echo "in $(CG), or re-run the layers and update .claim-graphs-sha in the same commit."; \
+	   exit 1; fi
+	@echo "machinery: $(CLAIM_GRAPHS_SHA) (pinned)"
+
+check: machinery-check  ## Gates that are clean on main. A failure here is this change's fault.
+	$(PYTHON) $(CG)/scripts/check_relations.py
+	$(PYTHON) -m claim_graphs.cli contract
 	# PR #95 deleted a name from edges.py and left a reference — the package failed to import
 	# on main while `make check` stayed green because contract reaches it through deferred paths.
-	cd extract && $(PYTHON) -c "import elife_extract.cli, elife_extract.edges, elife_extract.layers, elife_extract.write"
-	cd extract && $(PYTHON) tests/test_layer_contract.py
-	cd extract && $(PYTHON) tests/test_prompt_contract.py
-	cd extract && $(PYTHON) tests/test_profiles.py
-	cd extract && $(PYTHON) tests/test_evaluate_precision_and_edges.py
-	cd extract && $(PYTHON) tests/test_verdicts.py
-	$(PYTHON) scripts/test_pipeline_versions.py
-	$(PYTHON) scripts/audit_layers.py
+	$(PYTHON) -c "import claim_graphs.cli, claim_graphs.edges, claim_graphs.layers, claim_graphs.write, claim_graphs.sources"
+	$(PYTHON) $(CG)/extract/tests/test_layer_contract.py
+	$(PYTHON) $(CG)/extract/tests/test_sources.py
+	$(PYTHON) $(CG)/extract/tests/test_prompt_contract.py
+	$(PYTHON) $(CG)/extract/tests/test_profiles.py
+	$(PYTHON) $(CG)/extract/tests/test_evaluate_precision_and_edges.py
+	$(PYTHON) $(CG)/extract/tests/test_verdicts.py
+	$(PYTHON) $(CG)/scripts/test_pipeline_versions.py
+	$(PYTHON) $(CG)/scripts/test_warrant.py
+	$(PYTHON) scripts/test_verification_rows.py
+	$(PYTHON) $(CG)/scripts/audit_layers.py
 
 contract:  ## Regenerate the prompt contract from vocabulary.py, relations.py and schema.py
-	cd extract && $(PYTHON) -m elife_extract.cli contract --write
+	$(PYTHON) -m claim_graphs.cli contract --write
 
 # Both run, and the target still exits non-zero.
 #
@@ -111,12 +161,12 @@ contract:  ## Regenerate the prompt contract from vocabulary.py, relations.py an
 # never printed. Collect the worst status, run everything, then fail with it.
 report:  ## Standing corpus measurements. Expected to be non-zero; informational.
 	@s=0; \
-	$(PYTHON) scripts/check_reproductions.py --corpus --strict || s=$$?; \
-	$(PYTHON) scripts/audit_verifications.py || s=$$?; \
+	$(PYTHON) $(CG)/scripts/check_reproductions.py --corpus --strict || s=$$?; \
+	$(PYTHON) $(CG)/scripts/audit_verifications.py || s=$$?; \
 	exit $$s
 
 build: data  ## Regenerate data, then build the site
-	$(PYTHON) scripts/publishable.py
+	$(PYTHON) $(CG)/scripts/publishable.py
 	cd $(SITE) && CORPUS=$(CORPUS) npx astro build
 
 preview: build  ## Build and serve locally

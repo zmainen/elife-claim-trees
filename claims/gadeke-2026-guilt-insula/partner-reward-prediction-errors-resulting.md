@@ -1,5 +1,5 @@
 ---
-uuid: 2e7b6fa2-a2ee-4143-b083-4eaffc3a5876
+uuid: 153a5ccc-6999-4c3b-a0a7-7fa168fda438
 slug: partner-reward-prediction-errors-resulting
 doi: null
 claim: 'The partner''s reward prediction errors resulting from the participants'' own choices (social_pRPE)
@@ -9,7 +9,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 tests:
 - responsibility-partner-outcomes-influences-participant
 confirms:
@@ -21,7 +20,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions:
 - carried_from: social-prpe-weight-positive
   agent: mainen-z
@@ -44,6 +43,15 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: null
+warrant: moderate
+warrant_why: confirms the prediction responsibility-partner-outcomes-influences-participant
+warrant_from:
+- confirms
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:unattempted
+- provenance:PASS measured
 ---
 
 **Relations.** Why each outgoing edge was inferred:

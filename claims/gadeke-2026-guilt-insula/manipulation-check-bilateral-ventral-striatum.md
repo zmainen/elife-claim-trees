@@ -1,5 +1,5 @@
 ---
-uuid: 6f1b3e16-b580-4ee8-95c4-09318cb9f71c
+uuid: 9b641e59-dbca-4931-8682-5a8d8eac63e3
 slug: manipulation-check-bilateral-ventral-striatum
 doi: null
 claim: 'As a manipulation check, bilateral ventral striatum activation increased with expected certain
@@ -9,9 +9,6 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-rules-out:
-- alt-model-based-glm-invalid
 validates:
 - model-based-glm-entered-best-fitting-computational
 belongings: []
@@ -19,7 +16,9 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4g
-  confidence: tentative
+  readers: high
+rules-out:
+- alt-model-based-glm-invalid
 reproductions:
 - carried_from: ventral-striatum-tracks-computational-reward
   agent: mainen-z
@@ -44,6 +43,15 @@ reproductions:
   status: blocked
   blocked_by: compute-infeasible
   notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
+warrant: moderate
+warrant_why: a manipulation-check control that rules out alt-model-based-glm-invalid
+warrant_from:
+- rules_out
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:blocked
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** The results reader treated this as a manipulation check validating the model-based BOLD analysis; the caption reader described it as a plain empirical result. Both agree on panel and direction; resolved to control.

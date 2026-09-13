@@ -1,5 +1,5 @@
 ---
-uuid: f452b291-30ac-4466-88a1-4eeb8cb3ad80
+uuid: 2a3eeb46-8619-4df2-8111-6e94460538aa
 slug: insula-rois-responded-more-low
 doi: null
 claim: The insula ROIs responded more to low lottery outcomes for the partner in the Social than the Partner
@@ -8,7 +8,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 tests:
 - anterior-insula-tracks-guilt-insula
 confirms:
@@ -22,8 +21,15 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4e
-  confidence: tentative
+  readers: high
 reproductions: []
+warrant: moderate
+warrant_why: confirms anterior-insula-tracks-guilt-insula and is validated by dot-products-between-individual-neural, but rests on the unsupported localizer during-receipt-lottery-versus-safe, so not strong
+warrant_from:
+- validated_by
+- confirms
+- requires
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Caption states all coefficients and differences are significantly different from 0 (see Appendix 1—table 6).

@@ -1,5 +1,5 @@
 ---
-uuid: d7b20c94-63f7-4c6e-b62d-7c6988ee3bce
+uuid: f12d294d-eafe-4a6b-9968-8b4d9034ee56
 slug: participants-chose-risky-option-lottery
 doi: null
 claim: Participants chose the risky option (lottery) more often in the Solo than the Social condition
@@ -9,13 +9,16 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-belongings: []
+belongings:
+- relation: supports
+  target: participants-showed-very-similar-risk
+- relation: requires
+  target: each-trial-participants-chose-between
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig2a,fig2d
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: solo-vs-social-choice-difference
   agent: mainen-z
@@ -41,7 +44,21 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: Behavioral result from Study 1. Not yet executed.
+warrant: weak
+warrant_why: a choice result that requires the paradigm each-trial-participants-chose-between; no control or support bears on it
+warrant_from:
+- requires
+check_verification: reproduced
+check_verification_from:
+- record:partial
+- record:unattempted
+- provenance:WARN measured
 ---
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `supports` → `participants-showed-very-similar-risk`: the Solo>Social lottery-choice difference (fig2a,fig2d) is one of the risk-preference results the synthesis draws together
+- `requires` → `each-trial-participants-chose-between`: the Solo/Social choice-proportion result requires the three-condition choice paradigm to have been run
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

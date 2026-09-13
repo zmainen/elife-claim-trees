@@ -1,5 +1,5 @@
 ---
-uuid: c9af8e4b-cce9-4023-9ed8-a6ed4e79f916
+uuid: d1a0bd7d-2794-484d-a513-848c86aa5578
 slug: one-cluster-left-sts-responded
 doi: null
 claim: One cluster in the left STS responded more to partner reward prediction errors resulting from participant
@@ -8,7 +8,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 tests:
 - neural-substrate-tracks-participant-responsibility-2
 confirms:
@@ -22,7 +21,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4h
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: sts-tracks-partner-reward-prediction-errors
   agent: mainen-z
@@ -48,6 +47,17 @@ reproductions:
   blocked_by: compute-infeasible
   notes: Model-based fMRI analysis requires computational model fitted to behavioral data. Model code
     in GitHub repo. Pre-computed group NIfTI results may be in fMRIresults/. Not yet executed.
+warrant: moderate
+warrant_why: confirms the prediction neural-substrate-tracks-participant-responsibility-2 and is supported by left-superior-temporal-sulcus-cluster
+warrant_from:
+- confirms
+- supported_by
+- requires
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:blocked
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** Caption notes this is restricted to brain regions sensitive to outcomes of risky choices.

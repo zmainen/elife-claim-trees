@@ -83,3 +83,4 @@ extraction-path: jats
 ## Unsupported parts of the argument
 
 - [left-ifg-cluster-showed-opposite](left-ifg-cluster-showed-opposite.md) — the second PPI leg of the connectivity hypothesis - the left-IFG cluster with the STS seed - did not survive correction for multiple comparisons (p uncorrected = 0.001), so the STS half of the connectivity claim rests on an uncorrected result
+- [during-receipt-lottery-versus-safe](during-receipt-lottery-versus-safe.md) — a localizer contrast defining the outcome-responsive regions; the insula ROI result requires it, but no result supports it and it settles no prediction - it stands alone as evidence

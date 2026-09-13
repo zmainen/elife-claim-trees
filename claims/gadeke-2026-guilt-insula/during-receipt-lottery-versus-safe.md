@@ -1,5 +1,5 @@
 ---
-uuid: e487874e-9732-4870-a142-ed980e51be97
+uuid: a289523a-8e2b-4a2e-9b5a-c928f689fa07
 slug: during-receipt-lottery-versus-safe
 doi: null
 claim: During receipt of lottery versus safe outcomes (across all conditions), clusters were more active
@@ -9,14 +9,16 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4d
-  confidence: tentative
+  readers: high
 reproductions: []
+warrant: weak
+warrant_why: the tree records nothing bearing on this localizer contrast
+check_verification: unrecorded
 ---
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->

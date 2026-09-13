@@ -1,5 +1,5 @@
 ---
-uuid: 62ebe5fc-9d62-4ad9-9846-e90a024f9f26
+uuid: 49168f37-934f-49b3-bf0b-36194b87610d
 slug: difference-response-between-low-high
 doi: null
 claim: The difference in response between low and high lottery outcomes was greater in the Social than
@@ -9,7 +9,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 part-of:
 - insula-rois-responded-more-low
 belongings: []
@@ -17,8 +16,13 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: app1table10
-  confidence: tentative
+  readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: one measure that is part of insula-rois-responded-more-low, not independently warranted
+warrant_from:
+- part_of
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Columns are InsulaL (0.44***), InsulaR (0.19***) and MidTempR (0.67***). Table-level breakdown supplementing the fig4e insula ROI result; kept separate by panel.

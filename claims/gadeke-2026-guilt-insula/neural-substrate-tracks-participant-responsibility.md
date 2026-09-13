@@ -1,5 +1,5 @@
 ---
-uuid: 6ca5f92c-bc58-4b76-93a8-96926ff375de
+uuid: 3482235d-fcd8-4a85-ba76-a7bce9216c63
 slug: neural-substrate-tracks-participant-responsibility
 doi: null
 claim: 'A neural substrate tracks the participant''s responsibility for the partner''s outcomes: within
@@ -10,6 +10,12 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+check_verification: unrecorded
+warrant: strong
+warrant_why: its prediction neural-substrate-tracks-participant-responsibility-2 is confirmed and it is supported by one-cluster-left-sts-responded
+warrant_from:
+- predictions
+- supported_by
 entails:
 - neural-substrate-tracks-participant-responsibility-2
 belongings: []
@@ -17,7 +23,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

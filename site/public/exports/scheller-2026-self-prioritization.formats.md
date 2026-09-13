@@ -6,30 +6,30 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
-| `requires` | 15 | `haak:requires`, neutral | kept | dropped |
-| `scopes` | 14 | `haak:scopes`, neutral | kept | dropped |
-| `supports` | 11 | `haak:supports`, under `mira:supports` | kept | kept |
-| `interprets` | 10 | `haak:interprets`, neutral | kept | dropped |
-| `confirms` | 9 | `haak:confirms`, under `mira:supports` | kept | kept |
-| `validates` | 7 | `haak:validates`, under `mira:supports` | kept | kept |
-| `enables-method` | 7 | `haak:enables-method`, neutral | kept | dropped |
-| `tests` | 5 | `haak:tests`, neutral | kept | kept |
-| `dissociates-with` | 4 | `haak:dissociates-with`, neutral | kept | dropped |
-| `entails` | 4 | `haak:entails`, neutral | kept | dropped |
+| `requires` | 15 | `cg:requires`, neutral | kept | dropped |
+| `scopes` | 14 | `cg:scopes`, neutral | kept | dropped |
+| `supports` | 11 | `cg:supports`, under `mira:supports` | kept | kept |
+| `interprets` | 10 | `cg:interprets`, neutral | kept | dropped |
+| `confirms` | 9 | `cg:confirms`, under `mira:supports` | kept | kept |
+| `validates` | 7 | `cg:validates`, under `mira:supports` | kept | kept |
+| `enables-method` | 7 | `cg:enables-method`, neutral | kept | dropped |
+| `tests` | 5 | `cg:tests`, neutral | kept | kept |
+| `dissociates-with` | 4 | `cg:dissociates-with`, neutral | kept | dropped |
+| `entails` | 4 | `cg:entails`, neutral | kept | dropped |
 | `derived-from` | 4 | — | kept | dropped |
-| `refutes` | 1 | `haak:refutes`, under `mira:opposes` | kept | kept |
+| `refutes` | 1 | `cg:refutes`, under `mira:opposes` | kept | kept |
 
 ## What MIRA has no predicate for — and what happens instead
 
 **59 of 91 relations (65%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
-- `haak:requires` (15) — a claim depends on another holding
-- `haak:scopes` (14) — a scope constraint governs another claim's validity
-- `haak:interprets` (10) — one claim interprets another
-- `haak:enables-method` (7) — a result makes a downstream method possible
-- `haak:dissociates-with` (4) — the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric)
-- `haak:entails` (4) — a hypothesis entails its prediction — the deductive step
-- `haak:derived-from` (4) — a prediction derived from its hypothesis (inverse of entails)
+- `cg:requires` (15) — a claim depends on another holding
+- `cg:scopes` (14) — a scope constraint governs another claim's validity
+- `cg:interprets` (10) — one claim interprets another
+- `cg:enables-method` (7) — a result makes a downstream method possible
+- `cg:dissociates-with` (4) — the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric)
+- `cg:entails` (4) — a hypothesis entails its prediction — the deductive step
+- `cg:derived-from` (4) — a prediction derived from its hypothesis (inverse of entails)
 
 Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.
 

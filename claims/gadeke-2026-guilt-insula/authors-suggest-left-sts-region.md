@@ -1,5 +1,5 @@
 ---
-uuid: 8fc127d0-2fa2-4cb9-a337-89d34d734772
+uuid: 19f0e43d-1849-4834-91e6-49874132b069
 slug: authors-suggest-left-sts-region
 doi: null
 claim: The authors suggest this left STS region tracks a partner's unexpected outcomes less when they
@@ -8,7 +8,6 @@ claim-type: interpretive
 role: interpretation
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 interprets:
 - one-cluster-left-sts-responded
 belongings: []
@@ -16,8 +15,13 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: interprets the single moderate result one-cluster-left-sts-responded, so sits below it
+warrant_from:
+- interprets
+check_verification: unrecorded
 ---
 
 **Relations.** Why each outgoing edge was inferred:

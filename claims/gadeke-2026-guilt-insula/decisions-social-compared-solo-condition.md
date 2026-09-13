@@ -1,5 +1,5 @@
 ---
-uuid: 370dd7d3-1e14-4a15-b30d-698b7270dec9
+uuid: 077e31a7-4fa3-471e-b1a7-aeba86331dca
 slug: decisions-social-compared-solo-condition
 doi: null
 claim: Decisions in the Social compared with the Solo condition engaged three clusters — the precuneus
@@ -8,13 +8,14 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-belongings: []
+belongings:
+- relation: requires
+  target: each-trial-participants-chose-between
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4b
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: precuneus-tpj-mpfc-social-decisions
   agent: mainen-z
@@ -39,7 +40,20 @@ reproductions:
   status: blocked
   blocked_by: compute-infeasible
   notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
+warrant: weak
+warrant_why: an fMRI contrast that requires the paradigm each-trial-participants-chose-between; no control or support bears on it
+warrant_from:
+- requires
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:blocked
+- provenance:PASS measured
 ---
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `requires` → `each-trial-participants-chose-between`: the Social>Solo contrast requires the three-condition (Solo/Social/Partner) choice paradigm to have been run
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

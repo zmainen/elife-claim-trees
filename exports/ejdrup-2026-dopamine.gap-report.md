@@ -33,7 +33,7 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Verification records dropped
 
-**25 verification records across 20 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `haak:VerificationRecord`.
+**25 verification records across 20 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `cg:VerificationRecord`.
 
 ## Questions synthesized
 
@@ -51,7 +51,7 @@ Every claim in this paper is asserted by it.
 
 ## Alternatives materialised as claims
 
-**5 relation targets name something no claim file asserts.** They are alternative explanations the paper argues against, so the target exists only as the thing being excluded. Each is minted as a `mira:Claim` so the edge has a destination, and flagged `haak:materialisedFrom: relation-target` in the extended file. **None of these is an authored claim.**
+**5 relation targets name something no claim file asserts.** They are alternative explanations the paper argues against, so the target exists only as the thing being excluded. Each is minted as a `mira:Claim` so the edge has a destination, and flagged `cg:materialisedFrom: relation-target` in the extended file. **None of these is an authored claim.**
 
 - differential VMAT2 expression / vesicular release capacity as the explanation for the DS/VS DA difference
 - differential active terminal fraction as the explanation for the DS/VS DA difference

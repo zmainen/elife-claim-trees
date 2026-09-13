@@ -1,5 +1,5 @@
 ---
-uuid: d2eacfbd-b9a8-4e92-b304-041d20f7a635
+uuid: db286450-f335-4e88-b8b2-706b3a36cc98
 slug: model-based-glm-entered-best-fitting-computational
 doi: null
 claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsibility) model's variables
@@ -10,14 +10,18 @@ claim-type: assessment
 role: methodological
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: high
 reproductions: []
+warrant: moderate
+warrant_why: validated by the control manipulation-check-bilateral-ventral-striatum
+warrant_from:
+- validated_by
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** The neural claims about tracking social_pRPE versus partner_pRPE depend on this model-based GLM being interpretable, which in turn depends on the model comparison.

@@ -2,7 +2,7 @@
 
 **Paper:** `gadeke-2026-guilt-insula` · **Claims registered:** 2026-09-10 – 2026-09-13
 
-68 claims, 71 typed relations between them.
+68 claims, 82 typed relations between them.
 
 ## Claims by role
 
@@ -18,17 +18,17 @@
 
 ## Relations dropped
 
-**27 of 71 relations (38%) have no MIRA predicate and are absent from the strict export.**
+**34 of 82 relations (41%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
+| `requires` | 9 | a claim depends on another holding |
 | `derived-from` | 5 | a prediction derived from its hypothesis (inverse of entails) |
 | `entails` | 5 | a hypothesis entails its prediction — the deductive step |
 | `interprets` | 4 | one claim interprets another |
-| `requires` | 4 | a claim depends on another holding |
+| `part-of` | 4 | a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone |
 | `enables-method` | 3 | a result makes a downstream method possible |
 | `scopes` | 3 | a scope constraint governs another claim's validity |
-| `part-of` | 2 | a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone |
 | `dissociates-with` | 1 | the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric) |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.
@@ -39,7 +39,7 @@ The `entails` / `derived-from` pair is the most consequential: together they are
 
 ## Verification records dropped
 
-**34 verification records across 19 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `haak:VerificationRecord`.
+**34 verification records across 19 claims are absent from the strict export.** MIRA has no node type for the fact that a claim was independently checked, by what code, against what data, with what result. They are carried in the extended file as `cg:VerificationRecord`.
 
 ## Questions synthesized
 
@@ -62,7 +62,7 @@ Override any of these by adding a `question:` field to the hypothesis's frontmat
 
 **6 of this paper's claims are not asserted by it.** They are alternative explanations it entertains, rejects, or attributes to others. MIRA has no vocabulary for that distinction: it types a node as `Claim` and says nothing about who stands behind it.
 
-The strict export still carries the `rules-out` edge that eliminated each one, declared under `mira:opposes`, so a MIRA-only reader can see the direction of the argument. What that reader cannot see is that the paper **denies** these propositions — so it will over-read them as assertions. The stance travels in the extended file as `haak:stance`.
+The strict export still carries the `rules-out` edge that eliminated each one, declared under `mira:opposes`, so a MIRA-only reader can see the direction of the argument. What that reader cannot see is that the paper **denies** these propositions — so it will over-read them as assertions. The stance travels in the extended file as `cg:stance`.
 
 - `alt-agency-aversion-not-guilt` — rejects
 - `alt-guilt-effect-driven-by-own-outcome` — rejects

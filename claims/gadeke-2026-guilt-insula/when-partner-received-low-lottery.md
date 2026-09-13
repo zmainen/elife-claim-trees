@@ -1,5 +1,5 @@
 ---
-uuid: 6c3a5d6b-5ee5-4884-aa7a-ba1318eafb2e
+uuid: 8762076c-4ce2-46c7-9537-7af8ba43fa99
 slug: when-partner-received-low-lottery
 doi: null
 claim: 'When the partner received the low lottery outcome, participant happiness was lower when the participant
@@ -10,7 +10,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 tests:
 - responsibility-outcomes-generates-guilt-participant
 confirms:
@@ -26,7 +25,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig3d,fig3h
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: guilt-reduces-happiness-after-partner-loss
   agent: mainen-z
@@ -74,6 +73,16 @@ reproductions:
     auditability: as with the partner-reward check, the script locates its input by globbing the CSV directory
     and matching on column names rather than by a pinned filename, so this row of the chain is not yet
     independently auditable. Pinning the exact filename is an open task.'
+warrant: strong
+warrant_why: confirms the prediction responsibility-outcomes-generates-guilt-participant and is validated by four controls including guilt-effect-occurred-whether-participant
+warrant_from:
+- validated_by
+- confirms
+- requires
+check_verification: partial
+check_verification_from:
+- record:verified
+- record:verified
 ---
 
 **Notes from extraction:** The core behavioural 'guilt effect'; this is the empirical result that tests the guilt prediction.

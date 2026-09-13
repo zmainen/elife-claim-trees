@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from pathlib import Path
 import re
 import sys
 from collections import Counter
@@ -42,6 +43,12 @@ CLAIMS = os.path.join(ROOT, "claims")
 OUT = os.path.join(ROOT, "site", "src", "data", "corpus-facts.json")
 
 ELIGIBLE_ROLES = {"empirical", "control"}
+
+# The graded warrant levels. A graded claim whose `warrant_from` is empty is `unassessed` — the
+# tree's argument records nothing that bears on it — and is counted apart from `weak`, which is a
+# claim the argument reaches and finds weakly supported (§ruling D, 2026-09-13). Predictions and
+# alternatives carry their own vocabularies and are never re-labelled unassessed.
+GRADED_WARRANT = {"strong", "moderate", "weak", "contested"}
 
 
 def loadable(body):
@@ -128,6 +135,57 @@ def scan(slugs):
             if cur:
                 repro[cur.get("status", "—")] += 1
     return claims, parts, rels, roles, repro, eligible, with_record, lc, lc_top, lc_assert
+
+
+def warrant_states(site):
+    """Per paper (and the corpus), how many claims the warrant layer reaches, by state.
+
+    Only Gädeke carries `warrant` today, so a paper with no warrant layer appears with no entry —
+    a reader is not told "0 of 68 reached" for a layer that has not run, which would read as a
+    failing grade rather than as work not begun. `unassessed` is a graded claim whose
+    `warrant_from` is empty (the argument records nothing) or one flagged `unsupported` where the
+    file carries that flag; it is counted apart from `weak`. `reached` is the claims the argument
+    reaches — the total that carry a warrant, minus the unassessed — and the fraction the paper
+    page states in words comes from these two numbers, not from prose.
+    """
+    per = {}
+    tot = Counter()
+    for s in site:
+        d = os.path.join(CLAIMS, s)
+        if not os.path.isdir(d):
+            continue
+        counts = Counter()
+        total = unassessed = 0
+        for fn in sorted(os.listdir(d)):
+            if not fn.endswith(".md") or fn == "index.md":
+                continue
+            fm = frontmatter(os.path.join(d, fn))
+            if not fm or not fm.get("slug"):
+                continue
+            w = fm.get("warrant")
+            if w is None:
+                continue
+            total += 1
+            flag = fm.get("unsupported")
+            empty = not (fm.get("warrant_from") or [])
+            if w in GRADED_WARRANT and (flag is True or empty):
+                counts["unassessed"] += 1
+                unassessed += 1
+            else:
+                counts[w] += 1
+        if total:
+            per[s] = {"counts": dict(counts.most_common()), "total": total,
+                      "unassessed": unassessed, "reached": total - unassessed}
+            tot.update(counts)
+    corpus_total = sum(p["total"] for p in per.values())
+    corpus_unassessed = sum(p["unassessed"] for p in per.values())
+    return {
+        "papers": per,
+        "counts": dict(tot.most_common()),
+        "total": corpus_total,
+        "unassessed": corpus_unassessed,
+        "reached": corpus_total - corpus_unassessed,
+    }
 
 
 def mira_facts(site):
@@ -251,14 +309,21 @@ def layers(site):
     for s in site:
         has_tree = os.path.isdir(os.path.join(CLAIMS, s))
         prov = os.path.join(ROOT, "verification", s, "provenance.json")
-        verified = 0
+        # A PASS whose value the run did not measure is not a verified result. It was counted
+        # as one until the runs began saying which was which, and the two are not the same
+        # thing to publish: one paper's script reported PASS on every claim it lists whether
+        # or not its data downloaded. `recalled` is kept beside the count rather than folded
+        # into it, so the number that dropped can be seen rather than merely be smaller.
+        verified = recalled = 0
         if os.path.isfile(prov):
             try:
                 with open(prov, encoding="utf-8") as fh:
-                    verified = sum(1 for r in json.load(fh).get("results", [])
-                                   if r.get("status") == "PASS")
+                    results = json.load(fh).get("results", [])
+                passes = [r for r in results if r.get("status") == "PASS"]
+                recalled = sum(1 for r in passes if r.get("measured") is False)
+                verified = len(passes) - recalled
             except Exception:                                         # noqa: BLE001
-                verified = 0
+                verified = recalled = 0
         st = stances(s)
         ev_quotes = ev_verified = 0
         rec = os.path.join(ROOT, "runs", s, "reconciler.output.json")
@@ -278,6 +343,7 @@ def layers(site):
                 os.path.join(ROOT, "verification", s, "verify.py")),
             "verification_observed": os.path.isfile(prov),
             "verified_results": verified,
+            "recalled_results": recalled,
             "formats": os.path.isfile(os.path.join(ROOT, "exports", f"{s}.mira.jsonld")),
             "coverage": os.path.isfile(os.path.join(ROOT, "mappings", f"{s}.json")),
             "marked": os.path.isfile(os.path.join(ROOT, "marked", f"{s}.marked.md")),
@@ -355,7 +421,7 @@ def _verdict_counts():
     adjudication fact needs. Empty where no reading has begun, which is every paper today.
     """
     sys.path.insert(0, os.path.join(ROOT, "extract"))
-    from elife_extract import verdicts as vd
+    from claim_graphs import verdicts as vd
     out = {}
     for paper in sorted(os.listdir(os.path.join(ROOT, "runs"))
                         if os.path.isdir(os.path.join(ROOT, "runs")) else []):
@@ -482,6 +548,10 @@ def main():
         "method_example_claims": ex_claims,
         "site_corpus": site,
         "method_examples": examples,
+        # Per paper and corpus, how far the tree's argument reaches (§ruling D): each warrant
+        # state counted, `unassessed` apart from `weak`, and the reached fraction the paper page
+        # states in words. Only papers whose warrant layer has run appear.
+        "warrant": warrant_states(site),
         "mira": mira_facts(site),
         "mira_mapping": mira_mapping(),
         "layers": layers(site),

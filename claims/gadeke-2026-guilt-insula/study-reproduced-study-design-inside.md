@@ -1,5 +1,5 @@
 ---
-uuid: 5656e398-7d59-4c95-86dd-51e3ced41315
+uuid: 846060d5-c556-4a0f-8668-9adfd8937224
 slug: study-reproduced-study-design-inside
 doi: null
 claim: Study 2 reproduced the Study 1 design inside the fMRI scanner with identical parameters except
@@ -9,7 +9,6 @@ claim-type: assessment
 role: scope
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
 scopes:
 - insula-rois-responded-more-low
 belongings: []
@@ -17,8 +16,11 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: a scope statement the tree records nothing bearing on
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** In Study 2 the partner was experimenter MG or TW rather than another participant, so any replication of the Study 1 guilt effect holds under this changed social pairing.

@@ -1,5 +1,5 @@
 ---
-uuid: a85b6a55-80fd-400c-a20e-e6c542e56af6
+uuid: 256f3e8f-87f6-4a84-9fd2-d564243c1eb6
 slug: linear-mixed-model-containing-all
 doi: null
 claim: The linear mixed model containing all three two-way interaction terms (Model 5, Equation 10) explained
@@ -10,17 +10,25 @@ claim-type: assessment
 role: methodological
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
+validates:
+- when-partner-received-low-lottery
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: app1table2
-  confidence: tentative
+  readers: contested
 reproductions: []
+warrant: weak
+warrant_why: the tree records nothing bearing on this methodological result
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Contested role/type: the caption reader classified this as an empirical result (Model 5 best-fitting, with its partnerHigh:participantDecided guilt coefficient significant — 0.39*** Study 1, 0.31** Study 2), while the structure reader classified it as a methodological warrant licensing the reported interaction. Resolved to methodological.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `validates` → `when-partner-received-low-lottery`: Model 5 with all two-way interactions fits best (app1table2), validating that the reported guilt interaction is drawn from the warranted model
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 
