@@ -1,5 +1,5 @@
 ---
-uuid: 37937db1-e635-46d4-ac0a-f482400668e5
+uuid: 36f83c0a-b6f3-486e-b89f-85c1eb6c63d0
 slug: findings-rest-two-samples-healthy
 doi: null
 claim: The findings rest on two samples of healthy adults — Study 1 (behaviour only, N = 40) and Study
@@ -8,7 +8,7 @@ claim: The findings rest on two samples of healthy adults — Study 1 (behaviour
 claim-type: assessment
 role: scope
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 scopes:
 - when-partner-received-low-lottery

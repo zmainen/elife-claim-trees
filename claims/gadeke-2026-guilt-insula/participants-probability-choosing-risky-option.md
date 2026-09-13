@@ -1,5 +1,5 @@
 ---
-uuid: 86ccf2d0-0182-4d14-a72d-183c27d73310
+uuid: 56bf1148-c460-4adf-aab8-73b43562f53e
 slug: participants-probability-choosing-risky-option
 doi: null
 claim: 'Participants'' probability of choosing the risky option (lottery) increased with the difference
@@ -8,7 +8,7 @@ claim: 'Participants'' probability of choosing the risky option (lottery) increa
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 rules-out:
 - alt-participants-insensitive-to-value

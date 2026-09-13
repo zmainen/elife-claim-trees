@@ -1,12 +1,12 @@
 ---
-uuid: c78a9ac7-55d7-4d63-915e-324a40885b26
+uuid: 119aa7c3-af4b-4478-a147-78dcd7b6ddf6
 slug: prior-literature-documents-association-between
 doi: null
 claim: Prior literature documents an association between the anterior insula and guilt.
 claim-type: interpretive
 role: literature-context
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings: []
 assertions:

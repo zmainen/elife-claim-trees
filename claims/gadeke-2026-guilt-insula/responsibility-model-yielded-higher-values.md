@@ -1,5 +1,5 @@
 ---
-uuid: 59ea6ccb-75b3-4756-9a5d-d19542972a93
+uuid: d257d87e-829e-4afe-b347-979696de1faa
 slug: responsibility-model-yielded-higher-values
 doi: null
 claim: 'The Responsibility model yielded higher R² values than all other models (Study 1: all t > 3.6,
@@ -7,10 +7,8 @@ claim: 'The Responsibility model yielded higher R² values than all other models
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
-part-of:
-- likelihood-ratio-test-showed-responsibility
 belongings:
 - relation: supports
   target: responsibility-partner-outcomes-influences-participant

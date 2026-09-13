@@ -1,5 +1,5 @@
 ---
-uuid: 4802ca6d-d5f5-40ab-9f8c-49c6ea91f5f6
+uuid: cb181020-025b-4008-ae9d-8386e26383be
 slug: authors-suggest-left-sts-region
 doi: null
 claim: The authors suggest this left STS region tracks a partner's unexpected outcomes less when they
@@ -7,7 +7,7 @@ claim: The authors suggest this left STS region tracks a partner's unexpected ou
 claim-type: interpretive
 role: interpretation
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 interprets:
 - one-cluster-left-sts-responded

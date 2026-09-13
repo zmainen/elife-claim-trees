@@ -1,5 +1,5 @@
 ---
-uuid: d2189d9d-2aea-4cff-bff6-d1ace9b9fa33
+uuid: 72114d1e-9b20-4cc2-98cf-a253536a1ee3
 slug: participants-own-reward-prediction-errors
 doi: null
 claim: 'Participants'' own reward prediction errors (sRPE) influenced happiness more than the partner''s
@@ -8,7 +8,7 @@ claim: 'Participants'' own reward prediction errors (sRPE) influenced happiness 
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 belongings: []
 assertions:
@@ -17,8 +17,6 @@ assertions:
   panel: null
   confidence: tentative
 reproductions: []
-qualifies:
-- partner-reward-prediction-errors-resulting
 ---
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->

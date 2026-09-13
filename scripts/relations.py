@@ -29,7 +29,7 @@ _SUPPORTS = {
     "supports": "the source provides evidence for the target",
     "tests": "an empirical result tests the target prediction, closing the loop",
     "validates": "a control whose specific result strengthens the target's warrant",
-    "confirms": "the source confirms the target; reciprocal of predicts",
+    "confirms": "an empirical result confirms the prediction it tested — the positive outcome of a test",
     "predicts": "the source predicts the target, typically model to experiment",
     "extends": "the source extends the target beyond its original conditions",
     "replicates": "an independent finding of the same result as the target",
@@ -44,7 +44,7 @@ _SUPPORTS = {
 _OPPOSES = {
     "contradicts": "the source and target cannot both hold",
     "opposes": "the source stands against the target",
-    "refutes": "the source's evidence is incompatible with the target",
+    "refutes": "an empirical result refutes the prediction it tested — the negative outcome of a test",
     "rules-out": "the source's evidence eliminates the target as an explanation",
     "dissociates-with": "the source and target jointly establish a dissociation (symmetric)",
 }
@@ -82,13 +82,13 @@ DIRECTION = {
     "supports": "from the evidence to the claim it is evidence for",
     "tests": "from the empirical result to the prediction it tests",
     "validates": "from the control to the claim whose warrant it strengthens",
-    "confirms": "from the result to the prediction or hypothesis it confirms; the reciprocal of predicts",
+    "confirms": "from the result to the prediction it confirms — the positive outcome of a test, aimed at a prediction only",
     "predicts": "from the model or hypothesis to the observation it predicts",
     "extends": "from the later or broader result to the claim it extends",
     "replicates": "from the independent finding to the claim it reproduces",
     "contradicts": "from either claim to the other; they cannot both hold",
     "opposes": "from the claim that stands against to the one it stands against",
-    "refutes": "from the evidence to the prediction, hypothesis or alternative it is incompatible with",
+    "refutes": "from the result to the prediction it came out against — the negative outcome of a test, aimed at a prediction only",
     "rules-out": "from the control or evidence to the alternative explanation it eliminates — a claim "
                  "the paper entertains or rejects, never one it asserts",
     "dissociates-with": "symmetric: between the two empirical claims that together establish the contrast",
@@ -164,9 +164,19 @@ CONFUSABLE = [
     ("rules-out", "refutes",
      "`rules-out` eliminates an alternative explanation — a claim the paper raises in order to "
      "reject, which has a node of its own with stance `entertains` or `rejects`. `refutes` is "
-     "aimed at one of the paper's own predictions or hypotheses that the evidence came out "
-     "against; a paper refuting its own prediction is the hypothetico-deductive loop closing. "
-     "Never aim `rules-out` at a claim the same paper asserts."),
+     "the negative outcome of a test, aimed at one of the paper's own predictions that the "
+     "evidence came out against; a paper refuting its own prediction is the hypothetico-deductive "
+     "loop closing. When a result bears against a hypothesis, do not aim `refutes` at the "
+     "hypothesis — write the prediction the hypothesis entails and refute that. Never aim "
+     "`rules-out` at a claim the same paper asserts."),
+    ("confirms", "supports",
+     "`confirms` is the outcome of a stated prediction: an empirical result came out the way the "
+     "prediction said it would, and the edge runs from the result to that prediction — its "
+     "negative counterpart is `refutes`. `supports` is evidence for a hypothesis or higher-order "
+     "claim, making it more credible without being the settling of a prediction. A result that "
+     "tests a prediction carries `tests` and then `confirms` or `refutes` it; the same result may "
+     "`supports` the hypothesis that prediction was derived from. Aim `confirms` and `refutes` at "
+     "predictions only — a result that bears on a hypothesis directly takes `supports`."),
     ("dissociates-with", "contradicts",
      "`dissociates-with` joins two results that are both true and *differ*: the contrast between "
      "them is the finding, and neither undermines the other. `contradicts` says two claims cannot "
@@ -201,11 +211,13 @@ CONFUSABLE = [
 # node, and the edge found the nearest claim that does.
 #
 # `refutes` is not in that group, and the distinction is the substance rather than a detail.
-# docs/method.md § 4.3 defines its target as "the prediction, hypothesis, or alternative being
-# refuted": a paper refuting its own prediction is the hypothetico-deductive loop closing, not
-# a mis-aimed edge. Scheller's `self-salience-reduces-perceptual-benefit` refutes that paper's
-# own independence hypothesis, which is what the experiment was for. Grouping `refutes` with
-# `rules-out` reported eight such cases as errors.
+# Under the #28 ruling `refutes` is an outcome aimed at a prediction only: a paper refuting its
+# own prediction is the hypothetico-deductive loop closing, not opposing a claim it asserts, so
+# it stays out of CONTRARY. A `refutes` (or `confirms`) that lands on a hypothesis is the
+# shortcut the ruling retires — the fix is to write the prediction the hypothesis entails and
+# aim the outcome there — and `check_relations.py` flags it as "outcome aimed at a hypothesis"
+# rather than this set doing so. Grouping `refutes` with `rules-out` reported the loop-closing
+# cases as errors.
 #
 # `dissociates-with` is excluded for a different reason: whether it opposes anything at all is
 # the open question, and a checker that assumed it does would report it as an error 65 times
@@ -213,6 +225,12 @@ CONFUSABLE = [
 CONTRARY = {"contradicts", "opposes", "rules-out"}
 REFUTES_OWN = {"refutes"}
 DISTINGUISHES = {"dissociates-with"}
+
+# The outcome relations: how a test came out, aimed at a prediction only (issue #28). `confirms`
+# is the positive outcome, `refutes` the negative; `tests` is the neutral edge whose verdict
+# they record. Declared here so the checker and the prediction-outcome layer read one set.
+OUTCOME = {"confirms", "refutes"}
+NEUTRAL_TEST = {"tests"}
 
 # What a paper may do with a proposition, per docs/claim-format.md § 2.
 STANCES = {"asserts", "entertains", "rejects", "attributes"}

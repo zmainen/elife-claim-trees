@@ -1,5 +1,5 @@
 ---
-uuid: f729d68c-9755-4802-b9b3-0f6494375e36
+uuid: c3afe028-3b80-4834-8659-672f4b61b749
 slug: responsibility-partner-outcomes-influences-participant
 doi: null
 claim: If responsibility for the partner's outcomes influences the participant's momentary happiness,
@@ -9,7 +9,7 @@ claim: If responsibility for the partner's outcomes influences the participant's
 claim-type: prediction
 role: prediction
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: prediction
 derived-from:
 - responsibility-social-choice-yields-low

@@ -1,5 +1,5 @@
 ---
-uuid: eff3fbf5-c0c4-46e8-b43e-7b5e6208a969
+uuid: 3485d7a7-8269-4462-94b0-5a788855920b
 slug: manipulation-check-bilateral-ventral-striatum
 doi: null
 claim: 'As a manipulation check, bilateral ventral striatum activation increased with expected certain
@@ -8,7 +8,7 @@ claim: 'As a manipulation check, bilateral ventral striatum activation increased
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 rules-out:
 - alt-model-based-glm-invalid

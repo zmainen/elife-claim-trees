@@ -20,8 +20,25 @@ relation types mean.
   3. Attributing a claim to someone without saying to whom.
      `stance: attributes` without a `source` is indistinguishable from an invented rival.
 
+Two more come from the issue #28 ruling that every tested prediction carries an outcome:
+
+  4. A tested prediction with no outcome.
+     A `tests` edge points at the prediction and no `confirms` or `refutes` does, so the graph
+     records that the prediction was tested and never how the test came out.
+
+  5. An outcome aimed at a hypothesis.
+     `confirms`/`refutes` are outcomes of a stated prediction and aim at predictions only. Aimed
+     at a hypothesis they are the shortcut the ruling retires -- the fix is to write the
+     prediction the hypothesis entails and aim the outcome there.
+
+Rules 4 and 5 need to know which papers' edge-inference is current under the post-ruling
+contract, which is a fact about the ledger this script cannot see -- it reads claim files, not
+run state. So it follows the ruling's stated fallback: they are errors for Gaedeke, whose
+edge-inference is re-answered under the new contract in the same change, and warnings for every
+other paper, whose trees the ruling does not re-run. `--warnings` lists the warnings.
+
 A dangling target -- a relation naming something that is not a claim in the paper -- is
-reported separately as a warning, not a failure. Some are genuine gaps awaiting the
+reported the same way, as a warning, not a failure. Some are genuine gaps awaiting the
 alternative claims of issue #3; `scopes: '*'` is deliberate and means the whole paper.
 
 Usage:
@@ -40,8 +57,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from export_mira import (CLAIMS_DIR, load_paper, public_papers,  # noqa: E402
                          relations)
 
-from relations import (CONTRARY, DISTINGUISHES, OPPOSES,  # noqa: E402
-                       STANCES, SUPPORTS)
+from relations import (CONTRARY, DISTINGUISHES, NEUTRAL_TEST,  # noqa: E402
+                       OPPOSES, OUTCOME, STANCES, SUPPORTS)
+
+# The paper whose edge-inference is re-answered under the post-#28 contract in this change, so
+# its outcome rules fail rather than warn. See the module docstring.
+CURRENT_UNDER_CONTRACT = {"gadeke-2026-guilt-insula"}
 
 # `dissociates-with` is held apart from the rest of OPPOSES deliberately. It is declared under
 # `mira:opposes`, but it is used more than the other opposing relations combined and many of
@@ -105,6 +126,27 @@ def check(paper_slug):
                   f"({', '.join(sorted(keys))})"
             (errors if keys & CONTRARY else review).append(msg)
 
+    # Rules 4 and 5, from the issue #28 ruling. Errors for the paper re-answered under the new
+    # contract, warnings for the rest -- the script cannot see which trees are current, so it
+    # follows the ruling's fallback (see the module docstring).
+    bucket = errors if paper_slug in CURRENT_UNDER_CONTRACT else warnings
+    incoming: dict[str, set] = {}
+    for c in claims:
+        for key, target in relations(c):
+            if key in OUTCOME or key in NEUTRAL_TEST:
+                incoming.setdefault(target, set()).add(key)
+        for key, target in relations(c):        # 5. an outcome aimed at a hypothesis
+            if key in OUTCOME and by_slug.get(target, {}).get("role") == "hypothesis":
+                bucket.append(f"{c['slug']} -{key}-> {target}: outcome aimed at a hypothesis; "
+                              f"write the prediction the hypothesis entails and aim it there")
+    for c in claims:                            # 4. a tested prediction with no outcome
+        if c.get("role") != "prediction":
+            continue
+        keys = incoming.get(c["slug"], set())
+        if keys & NEUTRAL_TEST and not keys & OUTCOME:
+            bucket.append(f"{c['slug']}: tested prediction with no outcome edge "
+                          f"(a `tests` points at it, no `confirms`/`refutes` does)")
+
     return errors, warnings, review
 
 
@@ -139,7 +181,7 @@ def main():
                     print(f"  review  {r}")
 
     print(f"\n{total_e} error(s) across {len(slugs)} paper(s)")
-    print(f"{total_w} dangling target(s)"
+    print(f"{total_w} warning(s) — dangling targets and issue #28 outcome gaps"
           + ("" if a.warnings else " — --warnings to list"))
     print(f"{total_r} dissociates-with case(s) awaiting issue #19"
           + ("" if a.review else " — --review to list"))

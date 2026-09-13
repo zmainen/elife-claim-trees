@@ -1,5 +1,5 @@
 ---
-uuid: 4dc9ae47-d845-475f-931c-7428487c66de
+uuid: 732259a0-d087-41a6-8e67-c6d64e555662
 slug: individual-grbs-dot-product-values-not
 doi: null
 claim: Individual GRBS dot-product values did not correlate with the behavioural guilt responses (Spearman's
@@ -8,7 +8,7 @@ claim: Individual GRBS dot-product values did not correlate with the behavioural
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-12'
+priority: '2026-09-13'
 epistemic: tentative
 qualifies:
 - dot-products-between-individual-neural
