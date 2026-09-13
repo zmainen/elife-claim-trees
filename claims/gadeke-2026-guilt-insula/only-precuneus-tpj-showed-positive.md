@@ -1,5 +1,5 @@
 ---
-uuid: 05d723fa-3228-4f73-b106-6964b88f3c86
+uuid: c2d71dbd-671e-4a6c-86a7-f7fa6946d183
 slug: only-precuneus-tpj-showed-positive
 doi: null
 claim: Only the precuneus and TPJ showed positive Risky–Safe differences in both the Social>Solo and Social>Partner
@@ -8,15 +8,12 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: the tree records no reproduction, control or test bearing on this sub-contrast
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4c
-  confidence: tentative
+  readers: high
 reproductions: []
 ---
 

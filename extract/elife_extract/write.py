@@ -209,11 +209,10 @@ def _claim_frontmatter(
         **({"addresses": addresses} if addresses else {}),
         "concepts": [],  # § 4.1 — analyst fills in at review or in a later pass
         "priority": today,
-        # Roles that are not empirical carry their role as the epistemic
-        # value in the curated corpus; the rest start unassessed.
-        "epistemic": (
-            claim.role if claim.role in ("hypothesis", "prediction") else "tentative"
-        ),
+        # hypothesis and prediction carry their role as the epistemic value, as the
+        # curated corpus expects; every other role starts unassessed, so the field is
+        # omitted rather than stamped with an invented value.
+        **({"epistemic": claim.role} if claim.role in ("hypothesis", "prediction") else {}),
     }
 
     # Step 6 — dependency mapping. `requires`/`supports` live under
@@ -223,25 +222,18 @@ def _claim_frontmatter(
     fm.update(top)
     fm["belongings"] = belongings
 
-    # Assertions block — link the claim to its panel and source paper
-    if claim.panel:
-        fm["assertions"] = [
-            {
-                "paper-slug": paper_slug,
-                "doi": paper_doi,
-                "panel": claim.panel,
-                "confidence": "tentative",
-            }
-        ]
-    else:
-        fm["assertions"] = [
-            {
-                "paper-slug": paper_slug,
-                "doi": paper_doi,
-                "panel": None,
-                "confidence": "tentative",
-            }
-        ]
+    # Assertions block — link the claim to its panel and source paper. `readers`
+    # carries the reconciled reader-agreement value verbatim (high / contested /
+    # single-source); `confidence` is the paper's own strength (§2) and is left for
+    # the analyst rather than invented here.
+    fm["assertions"] = [
+        {
+            "paper-slug": paper_slug,
+            "doi": paper_doi,
+            "panel": claim.panel or None,
+            "readers": claim.confidence,
+        }
+    ]
 
     # Reproductions — empty list; verification is per-paper and not
     # something extract produces. Analyst or verify.py downstream fills.

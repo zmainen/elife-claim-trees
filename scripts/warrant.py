@@ -280,7 +280,7 @@ def _graded_rule(d: dict) -> tuple[str, list[str]]:
         return "strong", [f"validated-by:{s}" for s in d["validated_by"]]
     if statuses == {"partial"} or (statuses and statuses <= {"partial"}):
         return "weak", ["reproduction:partial"]
-    if d.get("confidence") in ("weak", "tentative") and not _has_check(d):
+    if d.get("confidence") == "weak" and not _has_check(d):
         return "weak", [f"confidence:{d['confidence']}", "unchecked"]
     checks = sorted(s for s in statuses if s) or ["asserted"]
     return "moderate", [f"reproduction:{s}" for s in checks] if statuses else ["asserted"]

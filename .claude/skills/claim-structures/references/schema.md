@@ -102,7 +102,8 @@ assertions:
     dataset: https://datadryad.org/dataset/doi:10.5061/dryad.v6wwpzhb8
     dataset-doi: 10.5061/dryad.v6wwpzhb8
     method: compartmental modelling — inhibition magnitude sweep
-    confidence: strong             # this paper's own confidence
+    confidence: strong             # this paper's own confidence (analyst judgement; writer leaves absent)
+    readers: high                  # reader agreement at extraction: high | contested | single-source
     stance: asserts                # asserts | entertains | rejects | attributes
     source: "Servan-Schreiber et al. 1990"   # required when stance is `attributes`
 ```

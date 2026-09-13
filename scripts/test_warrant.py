@@ -86,15 +86,19 @@ def test_only_a_partial_reproduction_is_weak():
     assert _lvl(_d("empirical", reproductions=[{"status": "partial"}])) == "weak"
 
 
-def test_tentative_and_unchecked_is_weak():
-    assert _lvl(_d("empirical", confidence="tentative")) == "weak"
+def test_weak_confidence_and_unchecked_is_weak():
     assert _lvl(_d("scope", confidence="weak")) == "weak"
 
 
+def test_absent_confidence_is_unassessed_not_weak():
+    # The writer no longer stamps a made-up `tentative`; absent confidence is unassessed.
+    assert _lvl(_d("empirical")) == "moderate"
+
+
 def test_asserted_with_only_a_blocked_or_unattempted_check_is_moderate():
-    assert _lvl(_d("methodological", confidence="tentative",
+    assert _lvl(_d("methodological",
                    reproductions=[{"status": "blocked"}])) == "moderate"
-    assert _lvl(_d("control", confidence="tentative",
+    assert _lvl(_d("control",
                    reproductions=[{"status": "unattempted"}])) == "moderate"
 
 

@@ -68,7 +68,8 @@ A claim can carry multiple assertion blocks, one per paper that asserts it. Each
 - `analysis` — the notebook or script that generates the result from data
 - `dataset` / `dataset-doi` — the data deposit used
 - `method` — the computational or experimental method
-- `confidence` — the paper's own confidence level (strong / moderate / weak)
+- `confidence` — the paper's own confidence level (strong / moderate / weak). An analyst judgement; the extraction writer leaves it absent rather than guessing.
+- `readers` — reader agreement at extraction (high / contested / single-source): a fact about how many extraction readers surfaced the proposition and whether they agreed, not about the world. Written by the pipeline; distinct from `confidence`, which is the paper's own strength.
 - `stance` — the paper's epistemic position toward the proposition (below)
 
 ### Stance
@@ -303,7 +304,8 @@ assertions:
     dataset: https://zenodo.org/record/XXXXXXX
     dataset-doi: 10.5281/zenodo.XXXXXXX
     method: mathematical modelling
-    confidence: strong
+    confidence: strong             # the paper's own strength (analyst judgement)
+    readers: high                  # reader agreement at extraction: high | contested | single-source
 
 reproductions:
   - agent: mainen-z

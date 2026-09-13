@@ -1,5 +1,5 @@
 ---
-uuid: ddcd7b1f-248d-4fea-a0de-a75005db47c7
+uuid: 520c89b7-e784-4eb3-8b07-de063f625782
 slug: connectivity-between-left-anterior-insula
 doi: null
 claim: Connectivity between the left anterior insula and the right inferior frontal gyrus varied with
@@ -9,13 +9,6 @@ claim-type: interpretive
 role: interpretation
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: moderate
-warrant_why: interprets functional-connectivity-between-left-anterior and carries its own verified reproduction of the aIns-IFG coupling, though the guilt-sensitivity reading is interpretive
-warrant_from:
-- reproductions
-- verification
-- interprets
 interprets:
 - functional-connectivity-between-left-anterior
 belongings: []
@@ -23,7 +16,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions:
 - carried_from: insula-ifg-connectivity-guilt
   agent: mainen-z

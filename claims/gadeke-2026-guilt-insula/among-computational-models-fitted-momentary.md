@@ -1,5 +1,5 @@
 ---
-uuid: b30d5a18-6ea7-4f61-a79e-b880e5cac898
+uuid: e57d6adb-c8f9-45de-b323-b7a1ef98c302
 slug: among-computational-models-fitted-momentary
 doi: null
 claim: Among the computational models fitted to momentary happiness data, the Responsibility Redux model
@@ -8,15 +8,12 @@ claim-type: assessment
 role: methodological
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: the tree records no reproduction, control or test bearing on this AIC comparison
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: table1
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

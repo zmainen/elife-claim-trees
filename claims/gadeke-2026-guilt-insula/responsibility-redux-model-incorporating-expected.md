@@ -1,5 +1,5 @@
 ---
-uuid: e930562a-5b97-4d46-b566-b2fb3f9dafcf
+uuid: 7e4d9dfe-82ce-4aa3-83bf-c00ef044c293
 slug: responsibility-redux-model-incorporating-expected
 doi: null
 claim: The Responsibility Redux model — incorporating expected, previous and current rewards, reward prediction
@@ -9,15 +9,12 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: the tree records no reproduction, control or test bearing on this model-fit claim
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig3c,fig3g
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

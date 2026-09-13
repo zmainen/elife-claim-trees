@@ -1,5 +1,5 @@
 ---
-uuid: 9e066bb4-d0c2-4bf4-934b-5259542d561e
+uuid: e8f6c26e-48e5-4487-8960-9c96936a2231
 slug: mixed-effects-regressions-choices-social-condition
 doi: null
 claim: In mixed-effects regressions on choices, the Social condition significantly increased choice of
@@ -8,15 +8,12 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: the tree records no reproduction, control or test bearing on this regression result
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: app1table1
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

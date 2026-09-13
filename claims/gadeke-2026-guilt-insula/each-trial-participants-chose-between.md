@@ -1,5 +1,5 @@
 ---
-uuid: cb6eb7ff-3062-471b-afaf-d4062b47c419
+uuid: ada5feb9-f9c8-4b85-87ca-855f5617e55b
 slug: each-trial-participants-chose-between
 doi: null
 claim: 'On each trial participants chose between a safe and a risky monetary option under three conditions:
@@ -9,9 +9,6 @@ claim-type: assessment
 role: scope
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: the tree records nothing bearing on this design description
 scopes:
 - when-partner-received-low-lottery
 belongings: []
@@ -19,7 +16,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 
