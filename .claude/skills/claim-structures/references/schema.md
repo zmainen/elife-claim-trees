@@ -62,6 +62,8 @@ Notes that matter in practice:
   analysis block, it is probably a synthesis or an interpretation.
 - **control** vs **empirical** is functional, not contentful: the same proposition is `control`
   here and `empirical` in a paper that reports it as a finding.
+- A **localizer** — a contrast run only to define a region or a set of trials for a later
+  analysis — is `methodological`, not `empirical`, because the paper does not argue from it.
 - **scope** is often global: `scopes: ["*"]` qualifies every empirical claim in the paper.
 - **synthesis** stays inside the paper's own evidence; **interpretation** maps onto outside
   theory. Reading an interpretation as a derivation is the commonest way a reconstruction
