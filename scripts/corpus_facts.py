@@ -44,14 +44,23 @@ OUT = os.path.join(ROOT, "site", "src", "data", "corpus-facts.json")
 ELIGIBLE_ROLES = {"empirical", "control"}
 
 
+def loadable(body):
+    """Frontmatter text YAML can parse: `key:` with `[]` or `{}` on the next line is not valid.
+
+    Thirteen claim files in the corpus carry that shape — every one written by a layer that
+    templated its frontmatter rather than dumping it — so anything that reads or rewrites a
+    claim file goes through here rather than discovering it one crash at a time.
+    """
+    return re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2", body, flags=re.M)
+
+
 def frontmatter(path):
     t = open(path, encoding="utf-8").read()
     m = re.match(r"^---\n(.*?)\n---", t, re.S)
     if not m:
         return None
-    body = re.sub(r"^([A-Za-z0-9_-]+):\n(\[\]|\{\})\s*$", r"\1: \2", m.group(1), flags=re.M)
     try:
-        return yaml.safe_load(body)
+        return yaml.safe_load(loadable(m.group(1)))
     except yaml.YAMLError:
         return None
 
@@ -322,6 +331,13 @@ def pipeline_state():
             "layers": decl["layers"],
             "groups": decl.get("groups") or {},
             "state": pipeline.state(decl),
+            # The scheme fact: per layer, whether its declaration is accepted, proposed or
+            # open, and which corpus-scope decisions a tree built now is still provisional on.
+            # Read here rather than in the site so the badge is fed the way every other one is.
+            "declarations": pipeline.declaration_state(decl),
+            # The adjudication fact: per paper, the verdict-file reading of each claim-tree
+            # version — how many claims and edges a reader considered, of how many.
+            "verdicts": _verdict_counts(),
             # The ledger itself, not only the latest state. A version history is the list of
             # runs, so the site can show one without a separate changelog to keep in step.
             "ledger": {p: pipeline.read_ledger(p) for p in pipeline.papers()},
@@ -329,6 +345,36 @@ def pipeline_state():
     except Exception as e:                                            # noqa: BLE001
         print(f"  warning: pipeline state unavailable — {e}")
         return None
+
+
+def _verdict_counts():
+    """Per paper, per claim-tree version, the reading recorded in its verdict file.
+
+    `runs/<paper>/claim-tree.v<N>.verdicts.jsonl` is what #110's tooling writes; the count of
+    verdicts a reader `considered`, of the total the skeleton pre-filled, is the "k of n" the
+    adjudication fact needs. Empty where no reading has begun, which is every paper today.
+    """
+    sys.path.insert(0, os.path.join(ROOT, "extract"))
+    from elife_extract import verdicts as vd
+    out = {}
+    for paper in sorted(os.listdir(os.path.join(ROOT, "runs"))
+                        if os.path.isdir(os.path.join(ROOT, "runs")) else []):
+        rd = os.path.join(ROOT, "runs", paper)
+        if not os.path.isdir(rd):
+            continue
+        vers = {}
+        for fn in sorted(os.listdir(rd)):
+            m = re.match(r"claim-tree\.v(\d+)\.verdicts\.jsonl$", fn)
+            if not m:
+                continue
+            res = vd.resolve(vd.load(os.path.join(rd, fn)))
+            vers[m.group(1)] = {
+                "considered": len(res.claims_considered()) + len(res.edges_considered()),
+                "total": len(res.claims) + len(res.edges),
+            }
+        if vers:
+            out[paper] = vers
+    return out
 
 
 def prediction_outcomes():
@@ -362,6 +408,32 @@ def prediction_outcomes():
         "conventions": conv,
         "convention_kinds": len(kinds),
         "abstained": sum(v for k, v in b.items() if k.startswith("abstain")),
+    }
+
+
+def evaluation():
+    """The evaluation layer's numbers, read from the manifest it produces.
+
+    Read rather than recomputed, for the same reason prediction_outcomes() is: the manifest is
+    the layer's output, and scoring the trees a second time here would be a second answer to
+    the question `evaluate` already answers. Absent manifest means the layer has not run, and
+    the facts say so with zeroes that read as "nothing scored yet" rather than as findings.
+    """
+    path = os.path.join(ROOT, "review", "evaluation.json")
+    if not os.path.isfile(path):
+        return {"n_rows": 0, "n_scored": 0, "n_not_run": 0, "best_recovery": 0}
+    with open(path, encoding="utf-8") as fh:
+        d = json.load(fh)
+    return {
+        # Flat scalars the site's one-level {{token}} resolver reaches from `found` prose.
+        "n_papers": d.get("n_papers", 0),
+        "n_rows": d.get("n_rows", 0),
+        "n_scored": d.get("n_scored", 0),
+        "n_not_run": d.get("n_not_run", 0),
+        "best_recovery": d.get("best_recovery", 0),
+        # The rows themselves, for any page that renders the table without re-reading the file.
+        "rows": d.get("rows", []),
+        "profiles": d.get("profiles", []),
     }
 
 
@@ -416,6 +488,7 @@ def main():
         # answer; this says *current / stale / absent / blocked*, which presence cannot.
         "pipeline": pipeline_state(),
         "prediction_outcome": prediction_outcomes(),
+        "evaluation": evaluation(),
     }
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)

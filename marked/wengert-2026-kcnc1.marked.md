@@ -24,6 +24,43 @@ We found alterations in PV-IN-mediated inhibitory neurotransmission in young adu
 Together, these results establish the specific impact of the recurrent Kv3.1-A421V variant on neuronal excitability and synaptic physiology across development to drive network dysfunction underlying KCNC1 epileptic encephalopathy.
 
 
+## introduction
+
+Introduction Variants in KCNC1 , which encodes the voltage-gated potassium (K + ) channel subunit Kv3.1, cause KCNC1 -related neurological disorders, a spectrum of clinical phenotypes ranging from nonspecific intellectual disability to progressive myoclonus epilepsy and developmental and epileptic encephalopathy (DEE) ( Oliver et al., 2017 ; Cameron et al., 2019 ; Park et al., 2019 ; Li et al., 2021 ; Clatot et al., 2023 ; Feng et al., 2024 ).
+
+Kv3.1 is one of four members (Kv3.1-Kv3.4) of the Kv3 subfamily of voltage-gated K + channels.
+
+Kv3 channels show unique biophysical properties relative to other voltage-gated K + channels, including a depolarized voltage dependence of activation, fast rates of activation and deactivation, and little/no inactivation, properties that are exquisitely tuned to generate brief spikes and limit inter-spike interval, and thereby support rapid cycling required for reliable fast-spiking in Kv3-expressing neurons ( Weiser et al., 1995 ; Massengill et al., 1997 ; Sekirnjak et al., 1997 ; Gan and Kaczmarek, 1998 ; Martina et al., 1998 ; Wang et al., 1998 ; Erisir et al., 1999 ; Rudy and McBain, 2001 ; Lien and Jonas, 2003 ; Akemann and Knöpfel, 2006 ; Sacco et al., 2006 ; Martina et al., 2007 ).
+
+Thus, Kv3 channels are highly and specifically expressed in cellular populations throughout the brain known to generate action potentials (APs) at high frequency, including cerebellar granule and Purkinje cells, neurons of the reticular thalamus, as well as parvalbumin-positive fast-spiking GABAergic inhibitory interneurons (PV-INs) in the neocortex, hippocampus, amygdala, and basal ganglia ( Rudy et al., 1999 ; Kaczmarek and Zhang, 2017 ).
+
+Alterations in Kv3.1 function would be expected to have a profound impact on neuronal excitability of fast-spiking neurons with downstream effects on circuits containing Kv3.1-expressing cells.
+
+Our previous study using a novel mouse model of Progressive Myoclonus Epilepsy Type 7 (PME7 or EPM7) harboring the recurrent missense variant KCNC1- p.Arg320His (R320H) indicated that loss of Kv3.1 function alters excitability and synaptic neurotransmission in cerebral cortex PV-INs and cerebellar granule cells in adult heterozygous Kcnc1- p.R320H/+ mice ( Feng et al., 2024 ).
+
+In contrast to EPM7, patients harboring de novo heterozygous KCNC1- p.Ala421Val (A421V) variants exhibit DEE, with moderate to severe developmental delay/intellectual disability without regression, variable but mild nonprogressive ataxia, and treatment-resistant epilepsy onset in infancy with multiple seizure types, including myoclonic seizures ( Oliver et al., 2017 ; Cameron et al., 2019 ; Park et al., 2019 ; Li et al., 2021 ).
+
+Examination of the function of voltage-gated K + channels containing variant vs. wild-type (WT) Kv3.1 in heterologous systems has indicated that the A421V variant is a near-complete loss of function at the level of the channel, generating K + currents that are significantly reduced in magnitude relative to WT ( Cameron et al., 2019 ; Park et al., 2019 ).
+
+Hence, while both the R320H and A421V variants are loss of function with a proposed dominant-negative action on tetrameric Kv3 channels composed of WT and variant subunits in heterologous systems, the A421V variant is a more severe loss of function, consistent with the associated clinical phenotype with earlier age of onset and treatment-resistant epilepsy.
+
+The A421 residue is localized between the selectivity filter and the PVP motif of Kv3.1. Molecular modeling shows that the A421V variant does not lead to obvious steric hindrance in the channel, yet could possibly influence gating and selectivity through the addition of hydrophobic carbon atoms in the Kv3.1 pore ( Li et al., 2021 ).
+
+Yet, the precise mechanisms underlying how the A421V variant impacts native neuronal Kv3 currents, neuronal physiology, and ultimately results in DEE, and how this differs from other disease-associated variants in KCNC1, remain unclear.
+
+In this study, we generated a novel mouse model of KCNC1 DEE – Kcnc1 -Flox(p.Ala421Val)/+ (i.e. Kcnc1 -A421V/+) mice – to determine the impact of heterozygous expression of the Kcnc1- p.A421V variant as seen in patients on native voltage-gated K + channel currents, intrinsic excitability of Kv3.1-expressing neurons, inhibitory synaptic neurotransmission and function in cortical microcircuits, and epilepsy phenotype.
+
+Our results indicate that global heterozygous expression of the Kcnc1 -p.A421V allele results in developmental impairment, cognitive dysfunction, epilepsy including prominent myoclonic seizures, and premature lethality due to seizure-induced sudden death.
+
+Patch-clamp electrophysiological recordings demonstrate that Kv3-like voltage-gated K + current density is significantly reduced in PV-INs driven at least in part by impaired trafficking and cell surface expression of Kv3.1, with resulting alterations in AP waveform and impaired intrinsic excitability.
+
+Excitatory cell physiology was unchanged in the Kcnc1 -A421V/+ mice, suggesting that the phenotype is related to inhibitory neuron dysfunction.
+
+Investigation of synaptic neurotransmission revealed no significant differences between WT and Kcnc1 -A421V/+ PV-IN-mediated inhibitory neurotransmission at the early juvenile time window (postnatal day [P]16–21), but significantly altered properties at the young adult time point (P32–42), consistent with the observed progressive worsening of epilepsy in the mouse model and suggesting that altered Kv3.1 function leads to impairments in PV-IN synaptic function in a developmentally regulated manner.
+
+Overall, these results indicate that the Kcnc1 -A421V variant is physiologically loss of function in native neurons with resulting impairment of intrinsic excitability and synaptic transmission of Kv3.1-expressing parvalbumin-positive fast-spiking cells, yielding epilepsy and cognitive impairment.
+
+
 ## results
 
 Results Generation of the Kcnc1-A421V/+ mouse model of KCNC1 epilepsy We generated a novel transgenic mouse (see Materials and methods) that conditionally expresses Kcnc1- p.A421V/+ ( Kcnc1- p.A421V/+ mice) homologous to a recurrent KCNC1 variant previously identified in human patients with DEE ( Oliver et al., 2017 ; Cameron et al., 2019 ; Park et al., 2019 ).
@@ -537,6 +574,155 @@ After the seizure-related spike-wave discharges, there are large spikes that are
 Recordings in wild-type (WT) (N = 4) control mice did not show epileptic seizures or runs of spikes.⟦>zach claim=b066dc9f-dd75-43a8-9692-1005de9d2d30: @{Recordings in wild-type (WT) (N = 4) control mice did not show epileptic seizures or runs of spikes.} spontaneous-seizures-and-sudep-kcnc1 — The claim states that all four WT controls showed zero seizures on video-EEG.⟧
 
 Video 2. Example seizure with myoclonic jerks.
+
+
+## discussion
+
+Discussion The recurrent pathogenic variant KCNC1 -p.A421V leads to DEE characterized by treatment-resistant epilepsy with onset in the first year of life with multiple seizure types, including myoclonic seizures, moderate to severe global developmental delay/intellectual disability, and variably present but mild nonprogressive ataxia.
+
+Further elucidation of the mechanistic links between KCNC1 variants, Kv3.1 subunit-containing K + channel dysfunction, impairments in the intrinsic excitability of Kv3.1-expressing neurons, and synaptic and circuit neurophysiology is critical toward clarification of underlying disease pathomechanisms and development of potential therapeutic intervention.
+
+Our study reports the generation of a mouse model of KCNC1 DEE and determines the physiological mechanisms of disease at the level of ion channels, single neuron intrinsic excitability, and synaptic neurotransmission, as well as in circuits in vivo , within epilepsy-related brain regions.
+
+Kv3.1 expression and function Kv3.1 is specifically expressed in high-frequency firing neurons throughout the nervous system, including PV-INs in the neocortex, hippocampus, amygdala, and basal ganglia, as well as cells of the reticular thalamic nucleus, and Purkinje cells, granule cells, and molecular layer interneurons of the cerebellum ( Chow et al., 1999 ).
+
+Due to rapid activation and deactivation kinetics and unique voltage dependence (more positively shifted than any other K + channel), Kv3.1 and other members of the Kv3 family (Kv3.2, Kv3.3) are associated with neurons that generate APs at particularly high frequencies > 200 Hz ( Erisir et al., 1999 ; Kaczmarek and Zhang, 2017 ).
+
+Kv3.1 knockout (Kv3.1 –/– ) animals have previously been used to investigate the functional contribution of Kv3.1 to neuronal spiking.
+
+These mice have reduced body weight and altered sensory/motor function, as we observed in Kcnc1 -A421V/+ mice, but do not display spontaneous seizures ( Ho et al., 1997 ).
+
+The identified impairments in intrinsic neuronal excitability of Kv3.1-expressing neurons were relatively subtle in Kv3.1 knockout mice: RTN neurons from Kv3.1 –/– mice exhibited slightly wider APs and a use-dependent spike broadening that produced a mild impairment in AP frequency, but, overall, there seemed to be functional and/or genetic compensatory upregulation of other Kv3 subfamily members in response to Kv3.1 deletion ( Porcello et al., 2002 ).
+
+Mice lacking Kv3.2 (Kv3.2 –/– ), the other Kv3 family member highly expressed in PV-INs and which has near-identical biophysical properties, perhaps exhibit a somewhat more similar phenotype to that identified in the Kcnc1 -A421V/+ mice, with impaired excitability of neocortical PV-INs and spontaneous seizures observed in a subset of mice ( Lau et al., 2000 ).
+
+Overall, for mechanistic reasons that are not yet completely clear, it seems that the heterozygous Kcnc1 -A421V/+ mice reported here have a more severe phenotype than either Kv3.1 or Kv3.2 null mice.
+
+One possibility is that compensation shown to occur in knockout mice might not occur with heterozygous expression of a missense variant (i.e. the variant ‘escapes’ compensation).
+
+Our data further supports the conclusion that the Kv3.1-A421V variant exerts a dominant-negative action on trafficking, as well as a possible additional effect on gating of Kv3.1/Kv3.2 heteromultimeric channels that do successfully traffic to the membrane.
+
+In contrast, Kv3.1 and Kv3.2 knockout mice influence only one Kv3 subfamily member (and drive compensatory upregulation of each other).
+
+Our results show that the A421V variant leads to decreased Kv3-like current in nucleated macropatches from neocortical PV-INs, as well as impaired cell surface expression of Kv3.1 in neocortical PV-INs.
+
+Future studies should further clarify the precise mechanism whereby this missense variant impacts trafficking of and incorporation into heteromultimeric Kv3 channels in various subcellular compartments of PV-INs and other Kv3.1-expressing cells.
+
+We found that Kv3.1-expressing neocortical PV-INs and cells of the RTN, but not excitatory cells (which do not express Kv3.1), were hypoexcitable in Kcnc1- A421V/+ relative to WT mice, generating fewer APs in response to depolarizing current injections.
+
+At P16-21, PV-INs exhibited a small but significant depolarization in resting membrane potential, which may reflect delayed development of PV-INs in Kcnc1 -A421V/+ mice ( Goldberg et al., 2011 ), be a direct result of altered potassium channel function, and/or could represent a compensatory response to intrinsic hypoexcitability.
+
+Beyond a role for PV-positive Kv3.1-expressing fast-spiking neurons, the extent to which specific cellular populations (e.g. cerebral cortex interneurons vs. neurons of the RTN) contributes to the overall epileptic/behavioral phenotype of the Kcnc1 -A421V/+ mice remains unclear.
+
+Future studies using focal Cre injection or region-specific Cre drivers to express the A421V variant in a cell-type and/or region-specific restricted manner could be helpful for addressing these remaining questions.
+
+Hypofunction of PV-INs has been associated with various types of epilepsy, including, most notably, Dravet syndrome, a DEE driven by loss-of-function variants in SCN1A encoding the voltage-gated sodium channel subunit Na V 1.1. Hence, Dravet syndrome and KCNC1 DEE converge on specific impairment of cerebral cortex GABAergic inhibitory interneurons, and on PV-INs in particular.
+
+Yet, there are likely important differences between these syndromes which may explain the divergent clinical presentation in patients ( Clatot et al., 2024 ).
+
+For one, deficits in Kv3.1 in KCNC1 DEE may be differentially compensated by other Kv3 isoforms (perhaps remaining uncompensated) when compared to a possible compensation for reduced Na V 1.1 in Dravet syndrome by other voltage-gated sodium channel α subunits.
+
+Second, there is a differential cell type-specific expression pattern between Kv3.1 and Na V 1.1 in the cerebral cortex, with Na V 1.1 being also expressed in non-fast-spiking interneurons such as somatostatin and VIP-expressing interneurons ( Tai et al., 2014 ; Rubinstein et al., 2015 ; Goff and Goldberg, 2019 ), whereas Kv3.1 is largely specific for PV-INs.
+
+Yet, Kv3.1 is more prominently expressed in superficial layers of mouse neocortex, with Kv3.2 more prominently expressed in deep layer PV-INs, while Na V 1.1 appears to be expressed in PV-INs across layers of the neocortex.
+
+Our results here also indicate another point of divergence between mechanisms of Dravet syndrome and KCNC1 DEE: in adult Kcnc1 -A421V/+ mice, we observed an increase in the magnitude and altered paired-pulse ratio of PV-IN-mediated inhibitory postsynaptic currents relative to WT mice accompanied by no change in failure rate, which contrasts with the increased rate of failure and prolonged synaptic latency that we previously observed in PV-IN-mediated neurotransmission in Dravet syndrome ( Scn1a +/– ) mice ( Kaneko et al., 2022 ).
+
+We interpret the augmentation in postsynaptic current magnitude alongside reduced paired-pulse ratio observed in young adult (P32–42, after epilepsy onset) Kcnc1 -A421V/+ mice to be generally consistent with a role for Kv3.1 in regulating neurotransmitter release by controlling spike-evoked calcium via presynaptic AP width, as shown previously ( Goldberg et al., 2005 ), although there could also be roles for secondary dysregulation of or compensatory alterations in other determinants of synaptic transmission (such as GABA receptor expression).
+
+We did not find alterations in inhibitory synaptic neurotransmission at the P16–21 time point, despite the fact that PV-INs already exhibited markedly impaired intrinsic excitability and reduced magnitude of somatic voltage-gated K + currents.
+
+These results may indicate that the physiological contribution of Kv3.1 in different subcellular regions (i.e. soma, dendrite, axon, synaptic terminal, etc.) and its corresponding role in regulating the associated physiological phenomena (AP generation, propagation, and neurotransmitter release) evolves over development.
+
+For example, the demonstrated impairment in trafficking of Kv3.1-A421V variant subunit containing Kv3 channels implies that distal synaptically localized Kv3 channels may not contain variant subunits at early time points and hence local AP waveform at the synapse might remain largely normal via residual Kv3 channels containing WT Kv3.1 and/or Kv3.2 (or Kv3.3) subunits.
+
+A more detailed mechanistic explanation for this age-dependent effect would provide further insight into disease pathomechanisms and could explain why the epilepsy phenotype appears at/around the time of weaning and increases in severity in this mouse model (in stark contrast to Scn1a +/– mice, where epilepsy severity decreases with age).
+
+However, this would require a detailed exploration of the specific composition of heterotetrameric Kv3 channels in WT vs. Kcnc1 -A421V/+ mice in various subcellular compartments and across development, as suggested above.
+
+In this study, we focused on PV-INs and excitatory neurons in somatosensory neocortical layer II-IV, PV-INs of layer V, and PV-positive neurons of the reticular thalamic nucleus – epilepsy-linked brain regions – due to the prominent epilepsy phenotype and seizure-related early mortality observed in Kcnc1- A421V/+ mice.
+
+However, there are many other cellular populations across various brain regions that express Kv3.1, which could also be examined in future studies.
+
+As noted above, given that our mouse model expresses the knock-in A421V variant under the control of Cre recombinase, we are well positioned to explore how cell type and developmental timing of altered Kv3.1 function might contribute to overall behavior phenotype.
+
+Kcnc1 -A421V/+ mice recapitulate the core phenotype of KCNC1 epilepsy seen in human patients Patients harboring the KCNC1 -p.A421V variant exhibit treatment-resistant epilepsy with various seizure types, including myoclonic, focal, atypical absence, and generalized tonic-clonic seizures with onset in the first year of life ( Cameron et al., 2019 ; Park et al., 2019 ).
+
+The novel Kcnc1 -A421V/+ mouse model well captured the range of seizure phenotypes seen in human patients: spontaneous seizures with different behavioral manifestations were observed, including myoclonic seizures, focal convulsive seizures, and generalized tonic-clonic seizures (those associated with hindlimb extension leading to sudden death).
+
+We directly observed abnormal neocortical neural activity in the Kcnc1 -A421V/+ mice in our in vivo 2P calcium imaging experiments accompanied by behavioral correlates of myoclonic seizures, demonstrating this mouse represents a potentially useful model for study of mechanisms of spontaneous seizures – including myoclonic seizures – using 2P calcium imaging in awake, behaving mice.
+
+These experiments revealed that apparent myoclonic seizures were associated with hypersynchronous paroxysmal discharges seen across all neurons within the field of view, with prominent activation of the neuropil.
+
+Although we separately labeled fast-spiking PV-INs and other cells in our in vivo imaging experiments, we did not observe cell type-specific differences in recruitment of PV-INs and non-PV cells, which might indicate a causal relationship between aberrant PV-IN activity and the hypersynchronous discharge.
+
+However, it is perhaps more likely that such seizures engaged diffuse brain networks, and the observed hypersynchronous discharges (and neuropil signal) were driven by abnormal distal activity.
+
+Nevertheless, these otherwise brief and intermittent events were clearly identified via 2P imaging which led to subsequent EEG studies confirming such events to be seizures.
+
+All Kcnc1 -A421V/+ mice exhibited hypersynchronous discharges in our initial 2P experiments; yet, we did not observe such hypersynchronous discharges in all mice in which GCaMP expression was restricted to the soma.
+
+The basis of this apparent discrepancy remains unclear but may support the conclusion that such events are generated distally and recruit the neurites of cells in the imaging field.
+
+Future studies should expand on the in vivo imaging and EEG completed here to more thoroughly investigate the cellular and network architecture of the neural activity underlying the spontaneously occurring myoclonic seizures.
+
+Kcnc1 -A421V/+ mice may prove to be a particularly tractable model for the study of myoclonic seizures.
+
+Beyond seizures, human patients harboring KCNC1 variants show moderate to severe developmental delay and intellectual disability ( Cameron et al., 2019 ; Park et al., 2019 ).
+
+Young Kcnc1 -A421V/+ mice showed developmental differences in body/brain weights, and although we did not detect other gross impairments in developmental milestones between P5 and P15, which aligns with the expected developmental expression pattern of Kv3.1 and onset of fast-spiking around P15 ( Okaty et al., 2009 ; Goldberg et al., 2011 ), adult (>P35) Kcnc1 -A421V/+ mice exhibited cognitive impairment in both the Y-maze and Barnes maze test.
+
+These early developmental tests may have limited sensitivity to detect early subtle differences, and future studies should expand on this work with additional testing of cognitive, motor, social, and other behaviors.
+
+The A421V Kcnc1 variant leads to a loss of voltage-gated potassium channel function in PV-INs Previous studies have reported that A421V is a loss-of-function variant when examined in cell systems ( Cameron et al., 2019 ; Park et al., 2019 ).
+
+However, such work is conflicting as to the exact mechanism, with one paper showing evidence for a dominant-negative effect and another paper finding no evidence for dominant-negative action of the A421V variant.
+
+Differences in results obtained in Xenopus oocytes vs. mammalian cells may relate to culture conditions such as temperature, which is known to affect protein folding and trafficking.
+
+Our outside-out nucleated macropatch recordings of somatic voltage-gated K + currents in brain slice showed clear ∼50% reduction in K + current density in PV-INs (but not excitatory cells) without changes in the biophysical properties of gating.
+
+In our examination of surface Kv3.1, we found a reduction in the amount of Kv3.1 that reaches the membrane in PV-INs from Kcnc1 -A421V/+ mice.
+
+While we cannot rule out the possibility that some Kv3 tetramers at the cell surface contain Kv3.1-A421V subunits and act to decrease channel conductance (as suggested by our HEK cell recordings), our data is consistent with the view that the variant acts at least in part via incorporation of Kv3.1-A421V subunits into heterotetrameric Kv3 channels (likely in the endoplasmic reticulum) with impaired trafficking to the membrane.
+
+Consistent with this, a previous study identified A421V as exerting only slight steric hindrance relative to other developmental encephalopathy-causing KCNC1 variants, supporting the conclusion that the profound impact of this variant on recorded currents is likely due mainly to impaired trafficking, potentially with some contribution via an impact on gating ( Li et al., 2021 ).
+
+Similar structural approaches may also help better determine the mechanism of trafficking deficiency and the extent to which A421V channels impair the trafficking of heteromultimeric Kv3 channels containing WT Kv3.1 and/or Kv3.2 subunits.
+
+Kv3.1 as a drug target in epilepsy Given the powerful influence of Kv3 channels on the excitability of neocortical PV-INs and neurons of the cerebellum, pharmacological modulators of Kv3.1 have been proposed as potential treatment for a range of neurological and psychiatric conditions, including in a mechanistically targeted fashion for patients with KCNC1 -related disorders such as EPM7 ( Rosato-Siri et al., 2015 ; Brown et al., 2016 ; Boddum et al., 2017 ; Chambers et al., 2017 ; Munch et al., 2018 ; Feng et al., 2024 ).
+
+Previous reports showed that the Kv3 positive modulator AUT-1 and related compounds facilitate greater firing frequency and spiking reliability of fast-spiking cells ( Rosato-Siri et al., 2015 ; Brown et al., 2016 ; Boddum et al., 2017 ; Chambers et al., 2017 ; Munch et al., 2018 ; Feng et al., 2024 ).
+
+Our study did not investigate the impact of Kv3.1 modulators in Kcnc1 -A421V/+ mice.
+
+Yet, considering the decreased cell surface expression of Kv3.1 in PV-INs from Kcnc1 -A421V/+ mice, one might predict limited efficacy of a small-molecule channel activator, unless such compounds could exert therapeutic effect via action on WT Kv3 channels not containing variant Kv3.1-A421V subunits.
+
+On the other hand, genetic approaches to either knock down expression of the A421V variant (perhaps using an antisense oligonucleotide) or boost expression levels of the WT Kv3.1 could be explored.
+
+Limitations of the study We provide evidence for a strong loss of total potassium current density and deficits in excitability in Kcnc1 -A421V/+ PV-INs relative to WT, with the most severe alterations to excitability observed for PV-INs in superficial neocortical layers likely driven by a high relative expression of Kv3.1 vs. Kv3.2 in these cells ( Chow et al., 1999 ).
+
+While we also provided immunohistochemical evidence that variant Kv3.1 leads to impaired membrane trafficking of Kv3.1, the molecular details underlying how the variant induces an overall loss of potassium channel function remain to be definitively determined.
+
+For example, it is unknown what relative proportion of A421V-containing heterotetramers reach the cell surface, and, for any channels that do, it is yet unclear the extent to which such channels functionally gate and flux potassium.
+
+Considering that the Kcnc1 -A421V/+ mouse is significantly more severely affected in cellular and behavioral phenotype than Kv3.1 and 3.2 knockout mice, and that layer V PV-INs exhibit less severe impairment than layer II-IV PV-INs, we suspect that Kv3.1 A421V variant subunits exert a dominant-negative influence on Kv3 channel cell surface expression and function, i.e., such variants impact all PV-IN Kv3.1/Kv3.2 heteromultimeric channels containing one or more Kv3.1 A421V variant subunits.
+
+This could be compounded by potential electrophysiological dysfunction of Kv3 channels containing Kv3.1 A421V variants that do traffic to the membrane.
+
+We focused our study on the global impact of the Kcnc1 -A421V variant on mouse development, epilepsy, and neuronal physiology of selected neuron types in epilepsy-linked brain regions, using Actb-Cre to drive global expression from the blastocyst stage so as to best model the human condition.
+
+Future work using cell type-specific Cre drivers or Cre delivery to restricted cell types and/or brain regions will enable greater mechanistic clarity in linking cell type and brain region to specific aspects of the mouse phenotype, including epilepsy and non-epilepsy comorbidities of cognitive and motor impairment.
+
+However, given the early onset of neurological dysfunction in our mice, specific expression of the variant using, for example, PV-Cre mice might not yield greater mechanistic insight, as PV itself is not expressed at appreciable levels until at/beyond P10 in mice and hence efficient recombination and expression of the Kcnc1 -p.A421V variant in PV-INs will likely not faithfully reproduce the appropriate developmental expression pattern.
+
+Conclusion In summary, we report a mouse model that recapitulates the core features of KCNC1 DEE due to the recurrent K + channel variant KCNC1 -p.A421V.
+
+Kcnc1 -A421V/+ mice exhibit epilepsy with multiple seizure types, including myoclonic seizures, as well as cognitive impairment.
+
+This was associated with a pattern of specific impairments in intrinsic excitability and synaptic transmission consistent with Kv3 dysfunction, observed in Kv3.1-expressing neurons linked to epilepsy, including neocortical PV-INs and neurons of the reticular thalamic nucleus, but not excitatory cells.
+
+Future studies and ongoing therapeutic development promise to expand this mechanistic understanding in pursuit of improved outcomes for patients with this severe yet currently incurable and untreatable disorder.
 
 
 ## captions

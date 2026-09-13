@@ -1,8 +1,8 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `kammer-2026-foveal-feedback` · **Claims registered:** 2026-03-30 – 2026-04-20
+**Paper:** `kammer-2026-foveal-feedback` · **Claims registered:** 2026-03-30 – 2026-09-12
 
-23 claims, 65 typed relations between them.
+24 claims, 66 typed relations between them.
 
 ## Claims by role
 
@@ -13,11 +13,12 @@
 - **methodological** — 2
 - **scope** — 2
 - **synthesis** — 2
+- **interpretation** — 1
 - **literature-context** — 1
 
 ## Relations dropped
 
-**39 of 65 relations (60%) have no MIRA predicate and are absent from the strict export.**
+**39 of 66 relations (59%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|

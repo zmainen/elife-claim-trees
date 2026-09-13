@@ -1,5 +1,5 @@
 ---
-uuid: e487a147-4921-45f0-9617-26fc269673e6
+uuid: 630e2396-70a6-46dc-93cd-5e49a3a8b472
 slug: no-significant-interaction-between-difference
 doi: null
 claim: There was no significant interaction between the difference in expected values and experimental
@@ -7,9 +7,11 @@ claim: There was no significant interaction between the difference in expected v
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
-belongings: []
+belongings:
+- relation: supports
+  target: participants-showed-very-similar-risk
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -19,6 +21,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** Null result.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `supports` → `participants-showed-very-similar-risk`: The absent EVdiff-by-condition interaction supports the similar-risk-preferences synthesis (evidence at span results-007).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

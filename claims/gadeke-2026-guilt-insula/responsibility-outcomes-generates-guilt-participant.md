@@ -1,5 +1,5 @@
 ---
-uuid: e4703f54-da29-4d2d-b334-89feeac416b4
+uuid: 36008d49-c54a-48af-af35-bb97606c7427
 slug: responsibility-outcomes-generates-guilt-participant
 doi: null
 claim: If responsibility for outcomes generates guilt, then participant happiness should decrease more
@@ -7,7 +7,7 @@ claim: If responsibility for outcomes generates guilt, then participant happines
 claim-type: prediction
 role: prediction
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: prediction
 derived-from:
 - responsibility-social-choice-yields-low
@@ -21,6 +21,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** The conditional deduced from the guilt hypothesis; the paper states it as an operational definition and then tests it. Kept distinct from the result that tests it (the guilt-effect interaction).
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `derived-from` → `responsibility-social-choice-yields-low`: reciprocal of entails (responsibility-social-choice-yields-low → responsibility-outcomes-generates-guilt-participant)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -1,5 +1,5 @@
 ---
-uuid: e48ffc16-36c1-4e5d-8bb0-53cb866dc6d8
+uuid: e1559c09-fc85-4120-91bb-ea7fb25b4694
 slug: neural-substrate-tracks-participant-responsibility
 doi: null
 claim: 'A neural substrate tracks the participant''s responsibility for the partner''s outcomes: within
@@ -9,7 +9,7 @@ claim-type: hypothesis
 role: hypothesis
 addresses: q3
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: hypothesis
 entails:
 - neural-substrate-tracks-participant-responsibility-2
@@ -23,6 +23,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** [reviewer] added: the paper's second organizing proposition, parallel to the insula/guilt hypothesis and named alongside it in the title and abstract - a neural substrate tracking the participant's responsibility for the partner (partner reward prediction errors arising from the participant's own choices). The results reader surfaced only the empirical STS result, not the hypothesis it tests.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `entails` → `neural-substrate-tracks-participant-responsibility-2`: The responsibility-tracking hypothesis implies stronger BOLD to the partner's RPEs from the participant's own choices within outcome-sensitive regions.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

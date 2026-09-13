@@ -1,5 +1,5 @@
 ---
-uuid: 7e9f8e74-5d4e-489d-9a0c-39b2c691b161
+uuid: 3531ed17-66ac-4b50-8bc8-1bcf3c035e9e
 slug: when-partner-received-low-lottery
 doi: null
 claim: 'When the partner received the low lottery outcome, participant happiness was lower when the participant
@@ -9,17 +9,15 @@ claim: 'When the partner received the low lottery outcome, participant happiness
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 tests:
 - responsibility-outcomes-generates-guilt-participant
 belongings:
+- relation: supports
+  target: responsibility-social-choice-yields-low
 - relation: requires
   target: linear-mixed-model-containing-all
-- relation: requires
-  target: hold-partner-behaviour-constant-across
-- relation: supports
-  target: both-studies-participants-felt-worse
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -75,6 +73,12 @@ reproductions:
 ---
 
 **Notes from extraction:** The core behavioural 'guilt effect'; this is the empirical result that tests the guilt prediction.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `tests` → `responsibility-outcomes-generates-guilt-participant`: The significant partner-outcome by decision-maker interaction on happiness is the empirical test of the guilt prediction.
+- `supports` → `responsibility-social-choice-yields-low`: The behavioural guilt effect is the central evidence for the guilt hypothesis.
+- `requires` → `linear-mixed-model-containing-all`: The reported guilt interaction is taken from the best-fitting linear mixed model (Model 5).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -1,5 +1,5 @@
 ---
-uuid: b8adb37a-c795-473d-94b5-4728854870c0
+uuid: 1ba55a5a-b2c9-4b3d-94ff-48c91db9541f
 slug: only-precuneus-tpj-showed-positive
 doi: null
 claim: Only the precuneus and TPJ showed positive Risky–Safe differences in both the Social>Solo and Social>Partner
@@ -7,11 +7,11 @@ claim: Only the precuneus and TPJ showed positive Risky–Safe differences in bo
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
-belongings:
-- relation: requires
-  target: all-reported-clusters-survive-whole-brain
+part-of:
+- decisions-social-compared-solo-condition
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -21,6 +21,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** Caption states all coefficients and differences are significantly different from 0 (see Appendix 1—table 4).
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `part-of` → `decisions-social-compared-solo-condition`: The precuneus/TPJ subset is one component of the Social-greater-than-Solo cluster result.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

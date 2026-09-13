@@ -1,5 +1,5 @@
 ---
-uuid: 3fe431fa-f991-44b1-8b80-c6c041ce7ebd
+uuid: b4cfe28f-8a72-4aeb-9d52-b405c160af07
 slug: participants-slightly-more-risk-averse
 doi: null
 claim: Participants were slightly more risk averse (higher ρ) in the Social than the Solo condition in
@@ -8,13 +8,11 @@ claim: Participants were slightly more risk averse (higher ρ) in the Social tha
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 part-of:
 - participants-showed-very-similar-risk
 belongings:
-- relation: requires
-  target: risk-attitude-quantified-risk-premium
 - relation: supports
   target: participants-showed-very-similar-risk
 assertions:
@@ -24,6 +22,10 @@ assertions:
   confidence: tentative
 reproductions: []
 ---
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `supports` → `participants-showed-very-similar-risk`: The slight extra risk aversion in Social in Study 1 is the tendency the synthesis notes.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

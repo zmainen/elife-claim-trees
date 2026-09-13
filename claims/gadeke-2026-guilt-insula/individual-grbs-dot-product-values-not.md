@@ -1,5 +1,5 @@
 ---
-uuid: ef118f95-d615-47ef-9e7c-b195a4961447
+uuid: 4dc9ae47-d845-475f-931c-7428487c66de
 slug: individual-grbs-dot-product-values-not
 doi: null
 claim: Individual GRBS dot-product values did not correlate with the behavioural guilt responses (Spearman's
@@ -8,8 +8,10 @@ claim: Individual GRBS dot-product values did not correlate with the behavioural
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
+qualifies:
+- dot-products-between-individual-neural
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -45,6 +47,10 @@ reproductions:
 ---
 
 **Notes from extraction:** Null result: the neural signature does not track individual differences in behavioural guilt sensitivity.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `qualifies` → `dot-products-between-individual-neural`: The absent correlation with behavioural guilt narrows what the positive GRBS convergence can claim (evidence at span results-153).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

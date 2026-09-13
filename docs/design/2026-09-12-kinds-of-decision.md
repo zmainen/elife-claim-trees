@@ -61,6 +61,38 @@ acceptance rather than standing beside it.
    successors are not, but the verdicts travel to them through the matcher pairs as
    evidence, and the badge says how many carried.
 
+## The procedure is itself a scheme
+
+The four steps above, the verdict vocabulary (`keep`, `strike`, `merge-into`, `part-of`, a
+corrected role or panel; `ok`, `wrong-direction`, `wrong-relation`, `strike`, `missing`) and the
+rule that a partial reading is a state are not given. They are a proposal, and the right way to
+treat them is the way this note treats every other general question: as a declaration with a
+version, ruled on once, and scored on real papers before it is accepted. A verdict file names
+the procedure version it was read under, the way a run names the prompt hash it ran under, so
+a reading made under an earlier procedure stays a valid record rather than becoming an
+undocumented one.
+
+What makes the procedure evaluable is that its output is structured. Four measurements need
+nothing the repository does not already have:
+
+- **Agreement.** Two readings of the same version, by two people or by a person and a model,
+  scored with the matcher that `evaluate score` already uses: the fraction of claims and edges
+  on which the verdicts coincide, by verdict kind. A procedure whose readers disagree about
+  what `part-of` means has a vocabulary problem, not a reader problem.
+- **Yield.** How long a reading takes, and what fraction of verdicts are anything other than
+  `keep` and `ok`. A procedure under which every verdict is `keep` is cheap and blind; one
+  under which half are corrections is measuring the pipeline, not the reader.
+- **Persistence.** How many verdicts carry to the next version through the matcher pairs.
+  This is the badge's "k carried" counter, read as a property of the procedure rather than of
+  one paper.
+- **Effect.** Whether applying the verdicts moves the evaluation scores against the reference
+  in the direction the reader intended, and whether an adjudicated version used as the
+  reference ranks candidate runs differently from the unadjudicated one.
+
+Changing the procedure is a scheme ruling and goes through #31 like any other. This
+separates three things that #82 has been carrying together: the surface is code, the
+procedure is scheme, and the reading of Gädeke v3 is the adjudication.
+
 ## What the site shows
 
 A cell has three facts, and today's badge folds them into one word. It should show three:
@@ -99,6 +131,8 @@ Consequences for the current tracker, applied with this note:
 - #82 is renamed to the paper and the version it adjudicates; its tooling half (the surface
   and gold scoring, in flight) is a code sub-issue of #56.
 - #36 is an adjudication of the verification layer and is labelled so.
+- The adjudication procedure gets its own scheme issue under #31, so that a change to the
+  verdict vocabulary or the steps is ruled on and versioned rather than edited in passing.
 
 ## What this does not decide
 

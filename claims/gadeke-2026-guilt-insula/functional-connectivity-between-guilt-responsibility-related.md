@@ -1,5 +1,5 @@
 ---
-uuid: 41f217bf-1630-4f6d-b554-1d4dd742c318
+uuid: 43cd3ce9-8453-4036-8d5e-ad9fd1e963c9
 slug: functional-connectivity-between-guilt-responsibility-related
 doi: null
 claim: Functional connectivity between guilt- and responsibility-related outcome-phase regions and prefrontal
@@ -9,7 +9,7 @@ claim-type: hypothesis
 role: hypothesis
 addresses: q2
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: hypothesis
 entails:
 - connectivity-between-guilt-responsibility-related-outcome-ph
@@ -21,6 +21,10 @@ assertions:
   confidence: tentative
 reproductions: []
 ---
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `entails` → `connectivity-between-guilt-responsibility-related-outcome-ph`: The connectivity hypothesis implies a seed-to-voxel PPI should reveal prefrontal clusters with a Condition-by-Choice interaction (evidence at span results-140).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -1,5 +1,5 @@
 ---
-uuid: 463f4ba8-21dd-47cd-86bf-380cceef9c8a
+uuid: 071373be-51ef-4d9f-8101-1379e5fae233
 slug: mass-univariate-voxel-wise-analysis-found-small
 doi: null
 claim: A mass-univariate voxel-wise analysis found a small left anterior insula cluster (peak T = 3.95,
@@ -8,13 +8,17 @@ claim: A mass-univariate voxel-wise analysis found a small left anterior insula 
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 tests:
 - anterior-insula-tracks-guilt-insula
 belongings:
+- relation: supports
+  target: anterior-insula-neural-substrate-guilt
 - relation: requires
-  target: all-reported-clusters-survive-whole-brain
+  target: prior-literature-documents-association-between
+- relation: requires
+  target: during-receipt-lottery-versus-safe
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -61,6 +65,13 @@ reproductions:
 ---
 
 **Notes from extraction:** The caption reader treated this as a control — convergent voxel-wise confirmation of the ROI-based insula guilt effect in panel E; the results reader treated it as the empirical voxel-wise guilt result. The small-volume FWE correction (p = 0.024) is reported in a following sentence by the results reader. Both are empirical measurements agreeing on panel and direction; resolved to empirical.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `tests` → `anterior-insula-tracks-guilt-insula`: The voxel-wise left-insula cluster surviving small-volume correction tests the insula prediction at the voxel level (evidence at span results-129).
+- `supports` → `anterior-insula-neural-substrate-guilt`: The voxel-wise left-insula cluster independently supports the insula-substrate claim (evidence at span results-129).
+- `requires` → `prior-literature-documents-association-between`: The small-volume correction on the left insula rests on the prior insula-guilt association (evidence at span results-129).
+- `requires` → `during-receipt-lottery-versus-safe`: The voxel-wise insula cluster lies within the outcome-phase insula region (evidence at span results-129).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

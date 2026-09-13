@@ -1,5 +1,5 @@
 ---
-uuid: 0db0ddab-4b3b-4f4b-acc3-4ead816fb58b
+uuid: f6f99ff6-9e65-4a97-86cc-c9a05a66d8da
 slug: neural-substrate-tracks-participant-responsibility-2
 doi: null
 claim: If a neural substrate tracks the participant's responsibility for the partner's outcomes, then
@@ -9,7 +9,7 @@ claim: If a neural substrate tracks the participant's responsibility for the par
 claim-type: prediction
 role: prediction
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: prediction
 derived-from:
 - neural-substrate-tracks-participant-responsibility
@@ -23,6 +23,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** [reviewer] added: the conditional the responsibility-tracking hypothesis commits the paper to, tested by the left-STS model-based result; kept distinct from that empirical result.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `derived-from` → `neural-substrate-tracks-participant-responsibility`: reciprocal of entails (neural-substrate-tracks-participant-responsibility → neural-substrate-tracks-participant-responsibility-2)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

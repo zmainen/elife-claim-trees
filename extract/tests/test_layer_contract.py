@@ -122,6 +122,18 @@ def test_every_declared_command_names_a_real_subcommand():
             assert m.group(1) in choices, f"{lid}: command names missing subcommand {m.group(1)!r}"
 
 
+def test_every_layer_has_a_title():
+    """A layer without `title:` renders its cell page with a `<title>` of "undefined — pipeline".
+
+    The dynamic route site/src/pages/pipeline/[layer].astro interpolates `layer.title`
+    directly into the HTML title tag; a missing field produces the string "undefined" rather
+    than an error, so the omission only surfaces as a broken page title rather than a build
+    failure.
+    """
+    for lid, layer in _declaration().items():
+        assert layer.get("title"), f"{lid}: missing required `title:` field"
+
+
 def test_induction_layers_all_have_runners():
     """The five layers `pipeline.py run` used to refuse, and the two added with them.
 

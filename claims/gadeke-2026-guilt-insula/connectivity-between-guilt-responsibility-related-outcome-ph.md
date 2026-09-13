@@ -1,5 +1,5 @@
 ---
-uuid: e1bffca8-c175-4d13-bca5-13ee34bf2010
+uuid: 08d968fa-9076-4621-8023-96a9c1eedf9f
 slug: connectivity-between-guilt-responsibility-related-outcome-ph
 doi: null
 claim: If connectivity between the guilt- and responsibility-related outcome-phase regions (left insula,
@@ -10,7 +10,7 @@ claim: If connectivity between the guilt- and responsibility-related outcome-pha
 claim-type: prediction
 role: prediction
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: prediction
 derived-from:
 - functional-connectivity-between-guilt-responsibility-related
@@ -24,6 +24,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** [reviewer] added: the observable the connectivity hypothesis commits the paper to; tested by the insula-IFG and STS-IFG PPI results.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `derived-from` → `functional-connectivity-between-guilt-responsibility-related`: reciprocal of entails (functional-connectivity-between-guilt-responsibility-related → connectivity-between-guilt-responsibility-related-outcome-ph)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

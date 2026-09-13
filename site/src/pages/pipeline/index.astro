@@ -8,7 +8,8 @@ import PipelineExplorer from '../../components/PipelineExplorer';
 import { corpusExplorer } from '../../lib/explorer';
 import {
   layers, groups, papers, cells, titleOf, fill_of, inState, byId,
-  corpusLayers, paperLayers, STATE_LABEL, allHistory, shortOf,
+  corpusLayers, paperLayers, STATE_LABEL, SCHEME_LABEL, ADJUDICATION_LABEL,
+  adjudicationText, allHistory, shortOf, type Cell,
 } from '../../lib/pipeline';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -31,6 +32,21 @@ const TONE: Record<string, string> = {
   unrecorded: 'bg-gray-300 dark:bg-gray-600',
 };
 const totalCells = papers.reduce((n, p) => n + cells(p).length, 0);
+
+// The three facts, folded into one hover: mechanism (the colour), scheme (the declaration),
+// adjudication (whether a person has read this version). The mark below carries adjudication
+// at a glance; the title carries all three for a reader who stops on a cell.
+const cellTitle = (c: Cell) => {
+  const parts = [`${c.layer.title} — ${STATE_LABEL[c.state]}${c.v ? ` v${c.v}` : ''}`];
+  if (c.scheme) parts.push(`scheme: ${SCHEME_LABEL[c.scheme.state]}${
+    c.scheme.provisionalOn && c.layer.scope !== 'corpus' ? ' (provisional)' : ''}`);
+  parts.push(`read: ${adjudicationText(c.adjudication)}`);
+  return parts.join(' · ');
+};
+// How many papers a person has read, at all, across the corpus — the fact the mark makes
+// visible at this altitude, and which has never been shown here before.
+const adjudicated = papers.reduce(
+  (n, p) => n + cells(p).filter(c => c.adjudication.kind !== 'unread').length, 0);
 
 // The matrix columns run in layer order, which is phase order, so a layer's group is a
 // contiguous span of columns. Grouping the rotated labels under a phase header turns
@@ -66,7 +82,9 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
       </p>
       <p class="text-gray-600 dark:text-gray-400 mt-3 m-0 leading-relaxed">
         {papers.length} papers, {paperLayers.length} layers each. {(counts.current ?? 0) + (counts.unrecorded ?? 0)} of
-        the {totalCells} cells hold an answer. None of them has been read and approved by a person.
+        the {totalCells} cells hold an answer. {adjudicated === 0
+          ? 'None of them has been read by a person.'
+          : `${adjudicated} ${adjudicated === 1 ? 'has' : 'have'} been read by a person.`}
       </p>
       <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 m-0">
         <a href={url('/method')} class="text-amber-700 dark:text-amber-400 no-underline hover:underline">How a paper is taken apart</a>,
@@ -141,8 +159,18 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
                 {cells(p).map((c, i) => (
                   <td class={`py-1.5 px-1 text-center${edge(i)}`}>
                     <a href={`#layer=${c.layer.id}`}
-                       title={`${c.layer.title} — ${STATE_LABEL[c.state]}${c.v ? ` (v${c.v})` : ''}`}
-                       class={`inline-block w-3.5 h-3.5 rounded-sm ${TONE[c.state] ?? TONE.absent}`}></a>
+                       title={cellTitle(c)}
+                       class={`relative inline-block w-3.5 h-3.5 rounded-sm ${TONE[c.state] ?? TONE.absent}`}>
+                      {/* Adjudication as a mark over the mechanism colour: a filled dot where a
+                          person has approved this version, a ring where the reading is partial.
+                          Nothing where nobody has read it — which is every cell today. */}
+                      {c.adjudication.kind === 'approved' && (
+                        <i class="absolute inset-0 m-auto w-1.5 h-1.5 rounded-full bg-white dark:bg-gray-950 ring-1 ring-gray-900/40"></i>
+                      )}
+                      {c.adjudication.kind === 'partial' && (
+                        <i class="absolute inset-0 m-auto w-1.5 h-1.5 rounded-full border border-white dark:border-gray-950"></i>
+                      )}
+                    </a>
                   </td>
                 ))}
                 <td class="py-1.5 pl-2 text-right font-mono text-xs text-gray-500 dark:text-gray-400 tabular-nums">
@@ -155,13 +183,26 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
       </table>
     </div>
 
-    <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-500 dark:text-gray-400 mb-12">
+    <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-500 dark:text-gray-400 mb-3">
       {Object.entries(counts).sort().map(([s, n]) => (
         <span class="flex items-center gap-2">
           <i class={`inline-block w-3 h-3 rounded-sm ${TONE[s] ?? TONE.absent}`}></i>
           {STATE_LABEL[s as keyof typeof STATE_LABEL] ?? s} {n}
         </span>
       ))}
+    </div>
+    {/* The colour is the mechanism; the mark is adjudication. Kept as its own line so the two
+        facts are not read as one — the whole point of the change. */}
+    <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-500 dark:text-gray-400 mb-12">
+      <span class="flex items-center gap-2">
+        <i class="relative inline-block w-3.5 h-3.5 rounded-sm bg-gray-200 dark:bg-gray-700"><i class="absolute inset-0 m-auto w-1.5 h-1.5 rounded-full bg-white dark:bg-gray-950 ring-1 ring-gray-900/40"></i></i>
+        {ADJUDICATION_LABEL.approved} — a person read and approved this version
+      </span>
+      <span class="flex items-center gap-2">
+        <i class="relative inline-block w-3.5 h-3.5 rounded-sm bg-gray-200 dark:bg-gray-700"><i class="absolute inset-0 m-auto w-1.5 h-1.5 rounded-full border border-white dark:border-gray-950"></i></i>
+        {ADJUDICATION_LABEL.partial} — a reading is under way
+      </span>
+      <span>no mark — {ADJUDICATION_LABEL.unread}</span>
     </div>
 
     <!-- ── approval, which is not a state ────────────────────────── -->

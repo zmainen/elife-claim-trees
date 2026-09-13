@@ -6,7 +6,8 @@
 // own — MIRA has schema requirements no generic view can generate — and those pages should
 // carry the same head as the rest rather than reinventing it. A bespoke page is depth behind
 // the general surface, not an escape from it.
-import { byId, groups, dependents, resolve, type LayerDecl } from '../lib/pipeline';
+import { byId, groups, dependents, resolve, scheme, adjudicatedCount,
+         SCHEME_LABEL, SCHEME_NOTE, papers, type LayerDecl } from '../lib/pipeline';
 
 interface Props { layer: LayerDecl }
 const { layer } = Astro.props;
@@ -15,6 +16,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const url = (p: string) => `${base}${p}/`;
 const feeds = dependents(layer.id);
 const needs = (layer.needs ?? []).map(n => byId[n]).filter(Boolean);
+
+// The scheme fact: what this layer's declaration means, and who ruled on it. The counter
+// beside it is how many papers a person has read under the layer — a scheme is accepted for
+// every paper at once, so the two belong together.
+const sch = scheme(layer.id);
+const read = adjudicatedCount(layer.id);
+const SCHEME_TONE: Record<string, string> = {
+  accepted: 'border-emerald-500 text-emerald-700 dark:text-emerald-400',
+  proposed: 'border-dashed border-amber-500 text-amber-700 dark:text-amber-400',
+  open: 'border-blue-400 text-blue-700 dark:text-blue-400',
+};
 
 const KIND_NOTE: Record<string, string> = {
   step: 'Mechanical: re-runnable from its declared inputs.',
@@ -43,13 +55,25 @@ const paras = (s: string) =>
   <div class="flex flex-wrap items-baseline gap-3 mb-2">
     <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight m-0">{layer.title}</h1>
     <span class="font-mono text-xs text-gray-500 dark:text-gray-400">{layer.kind} · {layer.scope}</span>
-    {layer.status === 'proposed' && (
-      <span class="text-xs font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border border-dashed border-amber-500 text-amber-700 dark:text-amber-400"
-            title="This layer's declaration is a proposal. It runs, but nothing about it has been accepted.">provisional</span>
+    {sch && (
+      <span class={`text-xs font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border ${SCHEME_TONE[sch.state]}`}
+            title={SCHEME_NOTE[sch.state]}>{SCHEME_LABEL[sch.state]}</span>
     )}
-    {layer.open && <span class="text-xs font-mono uppercase tracking-wider text-blue-700 dark:text-blue-400">undecided</span>}
     {layer.requires_human && <span class="text-xs font-mono uppercase tracking-wider text-amber-700 dark:text-amber-400">needs a person</span>}
   </div>
+  {sch && (
+    <p class="text-sm text-gray-500 dark:text-gray-400 m-0 mb-2">
+      {sch.state === 'accepted' && sch.approved ? (
+        <span>Declaration <span class="font-mono text-xs">{sch.version}</span> accepted by {sch.approved.by}{sch.approved.when ? ` on ${sch.approved.when.slice(0, 10)}` : ''}.</span>
+      ) : sch.approved?.superseded ? (
+        <span>An earlier declaration was accepted by {sch.approved.by}; it has moved since — this is <span class="font-mono text-xs">{sch.version}</span>, unaccepted.</span>
+      ) : (
+        <span>Declaration <span class="font-mono text-xs">{sch.version}</span> has not been accepted by anyone.</span>
+      )}
+      <span class="mx-1">·</span>
+      {read === 0 ? 'no paper read under it' : `${read} of ${papers.length} papers read under it`}
+    </p>
+  )}
   <p class="text-lg text-gray-700 dark:text-gray-300 italic m-0 mb-3 leading-snug">{layer.question}</p>
   <p class="text-sm text-gray-600 dark:text-gray-400 m-0">{KIND_NOTE[layer.kind]}</p>
   {layer.group && groups[layer.group] && (

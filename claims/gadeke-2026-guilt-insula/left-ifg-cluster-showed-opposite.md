@@ -1,5 +1,5 @@
 ---
-uuid: a78b9dee-a5bc-4f54-a5ee-a1dabf97abb5
+uuid: c6a31726-78b5-45f6-861c-b2a3b8ac3249
 slug: left-ifg-cluster-showed-opposite
 doi: null
 claim: A left IFG cluster showed the opposite pattern of connectivity with the left STS seed — highest
@@ -8,13 +8,11 @@ claim: A left IFG cluster showed the opposite pattern of connectivity with the l
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 tests:
 - connectivity-between-guilt-responsibility-related-outcome-ph
-belongings:
-- relation: requires
-  target: two-gppi-seed-to-voxel-connectivity-analyses
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -24,6 +22,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** Reported at an uncorrected threshold; did not survive multiple-comparison correction. The caption reader classified it as a control while the results reader classified it as empirical; both agree on panel and direction, resolved to empirical.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `tests` → `connectivity-between-guilt-responsibility-related-outcome-ph`: The left-IFG/STS cluster with the opposite pattern is a further, uncorrected test of the connectivity prediction (evidence at span results-144).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

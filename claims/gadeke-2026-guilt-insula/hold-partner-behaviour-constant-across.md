@@ -1,5 +1,5 @@
 ---
-uuid: 98c02d85-e6ea-4ae1-95bc-dc0148e1fc47
+uuid: c46dee52-5335-46f9-8545-de650b13359e
 slug: hold-partner-behaviour-constant-across
 doi: null
 claim: To hold the partner's behaviour constant across participants, the partner's decisions were simulated
@@ -7,8 +7,10 @@ claim: To hold the partner's behaviour constant across participants, the partner
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
+enables-method:
+- when-partner-received-low-lottery
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -28,6 +30,10 @@ reproductions:
 ---
 
 **Notes from extraction:** The partner was not a free agent; partner choices in the Partner condition were deterministic, which the responsibility/guilt contrasts rely on.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `enables-method` → `when-partner-received-low-lottery`: Holding the simulated partner's behaviour constant is what lets the guilt contrast be interpreted.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

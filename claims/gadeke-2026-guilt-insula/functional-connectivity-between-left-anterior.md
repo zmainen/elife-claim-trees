@@ -1,5 +1,5 @@
 ---
-uuid: 41fa9a5b-c5a7-424d-8c0a-3ae006b9fc8f
+uuid: 5d2ef557-c6ec-4052-82c2-0b8e4c297e01
 slug: functional-connectivity-between-left-anterior
 doi: null
 claim: Functional connectivity between the left anterior insula (seed) and a cluster in the right inferior
@@ -9,15 +9,15 @@ claim: Functional connectivity between the left anterior insula (seed) and a clu
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 tests:
 - connectivity-between-guilt-responsibility-related-outcome-ph
 belongings:
+- relation: supports
+  target: functional-connectivity-between-guilt-responsibility-related
 - relation: requires
-  target: two-gppi-seed-to-voxel-connectivity-analyses
-- relation: requires
-  target: all-reported-clusters-survive-whole-brain
+  target: prior-functional-connectivity-work-shown
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -27,6 +27,12 @@ reproductions: []
 ---
 
 **Notes from extraction:** The caption reader (tentative) stated the analysis but not the direction; the results reader supplied the direction and statistics.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `tests` → `connectivity-between-guilt-responsibility-related-outcome-ph`: The insula-IFG connectivity varying with condition and choice tests the connectivity prediction (evidence at span results-142).
+- `supports` → `functional-connectivity-between-guilt-responsibility-related`: The condition- and choice-dependent insula-IFG connectivity supports the connectivity hypothesis (evidence at span results-142).
+- `requires` → `prior-functional-connectivity-work-shown`: The connectivity analysis inherits prior functional-connectivity findings as background (evidence at span results-142).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

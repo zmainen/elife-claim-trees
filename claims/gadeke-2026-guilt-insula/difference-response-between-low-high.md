@@ -1,5 +1,5 @@
 ---
-uuid: ad5ece2d-f6f8-457c-bfa6-b1aa63405a9b
+uuid: 25a91132-88d8-461c-82bf-d857cc4c9e72
 slug: difference-response-between-low-high
 doi: null
 claim: The difference in response between low and high lottery outcomes was greater in the Social than
@@ -8,13 +8,11 @@ claim: The difference in response between low and high lottery outcomes was grea
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 part-of:
 - insula-rois-responded-more-low
-belongings:
-- relation: supports
-  target: insula-rois-responded-more-low
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -24,6 +22,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** Columns are InsulaL (0.44***), InsulaR (0.19***) and MidTempR (0.67***). Table-level breakdown supplementing the fig4e insula ROI result; kept separate by panel.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `part-of` → `insula-rois-responded-more-low`: The larger low-minus-high difference in Social is one measure of the insula guilt result.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

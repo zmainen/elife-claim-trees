@@ -1,13 +1,13 @@
 # kammer-2026-foveal-feedback — what each format carries
 
-23 claims, 65 typed relations between them.
+24 claims, 66 typed relations between them.
 
 One source, three targets. Each row is a relation type the paper's claim tree uses; each column is what became of it.
 
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
 | `enables-method` | 17 | `haak:enables-method`, neutral | kept | dropped |
-| `supports` | 10 | `haak:supports`, under `mira:supports` | kept | kept |
+| `supports` | 11 | `haak:supports`, under `mira:supports` | kept | kept |
 | `derived-from` | 9 | — | kept | dropped |
 | `tests` | 5 | `haak:tests`, neutral | kept | kept |
 | `rules-out` | 4 | `haak:rules-out`, under `mira:opposes` | kept | kept |
@@ -21,7 +21,7 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 
 ## What MIRA has no predicate for — and what happens instead
 
-**35 of 65 relations (54%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
+**35 of 66 relations (53%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
 - `haak:enables-method` (17) — a result makes a downstream method possible
 - `haak:derived-from` (9) — a prediction derived from its hypothesis (inverse of entails)
@@ -34,10 +34,10 @@ Declaring them under `mira:supports` would have been worse than dropping them: i
 
 ## What a reader who knows only core MIRA sees
 
-Every relation keeps its own type — nothing is flattened into `supports`. 21 of the 56 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
+Every relation keeps its own type — nothing is flattened into `supports`. 22 of the 57 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
 - `enables-method` (17) — neutral
-- `supports` (10) — under `mira:supports`
+- `supports` (11) — under `mira:supports`
 - `tests` (5) — neutral
 - `rules-out` (4) — under `mira:opposes`
 - `entails` (4) — neutral

@@ -1,16 +1,14 @@
 ---
-uuid: eb333f0d-da8d-4da3-b8a6-29e8765851e8
+uuid: c78a9ac7-55d7-4d63-915e-324a40885b26
 slug: prior-literature-documents-association-between
 doi: null
 claim: Prior literature documents an association between the anterior insula and guilt.
 claim-type: interpretive
 role: literature-context
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
-belongings:
-- relation: supports
-  target: anterior-insula-neural-substrate-guilt
+belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391

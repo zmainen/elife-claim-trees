@@ -1,5 +1,5 @@
 ---
-uuid: c33f1aac-46b9-43bb-8b13-37da2606ec57
+uuid: 9815af84-e8cd-48c9-a058-0a1c16d28cb5
 slug: linear-mixed-model-containing-all
 doi: null
 claim: The linear mixed model containing all three two-way interaction terms (Model 5, Equation 10) explained
@@ -9,7 +9,7 @@ claim: The linear mixed model containing all three two-way interaction terms (Mo
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 belongings: []
 assertions:

@@ -1,5 +1,5 @@
 ---
-uuid: 38d92b73-9746-4cf3-8af0-30e8686b671f
+uuid: b93b8fe6-6cbb-49a7-b6ce-b86ceb9c839c
 slug: responsibility-redux-model-incorporating-expected
 doi: null
 claim: The Responsibility Redux model — incorporating expected, previous and current rewards, reward prediction
@@ -8,15 +8,11 @@ claim: The Responsibility Redux model — incorporating expected, previous and c
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
-tests:
-- responsibility-partner-outcomes-influences-participant
 belongings:
-- relation: requires
-  target: momentary-happiness-modelled-five-computational
-- relation: requires
-  target: happiness-ratings-z-scored-per-participant
+- relation: supports
+  target: responsibility-partner-outcomes-influences-participant
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -26,6 +22,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** The model-based regressors used in the fMRI analyses depend on this fit.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `supports` → `responsibility-partner-outcomes-influences-participant`: The Responsibility Redux model predicting happiness well supports the responsibility-model prediction.
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -24,7 +24,7 @@ SITE   := site
 
 .DEFAULT_GOAL := help
 
-.PHONY: help data validate build preview check contract report fresh deps
+.PHONY: help data validate build preview check contract report fresh deps publishable
 
 help:  ## Show this help
 	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -47,8 +47,9 @@ deps: $(SITE)/node_modules  ## Install the site's node modules
 # claims' own `priority` fields, so the export is a function of its inputs and running it
 # twice is a no-op — which is what lets it live here instead of in a target run by hand.
 #
-# Order is dependency order, and four edges in it are real:
+# Order is dependency order, and these edges in it are real:
 #   prediction_outcome writes review/prediction-outcome.json, which corpus_facts reads
+#   evaluation_report  writes review/evaluation.json, which corpus_facts reads
 #   export_mira        writes the .mira.jsonld files formats_report and validate_mira read
 #   formats_report     writes the .formats.json files corpus_facts reads
 #   validate_mira      writes site/src/data/mira-validation.json, which corpus_facts reads
@@ -60,6 +61,7 @@ deps: $(SITE)/node_modules  ## Install the site's node modules
 # inputs. The pipeline state flags oxa and dg as stale, so it surfaces rather than hiding.
 data: $(SITE)/node_modules  ## Regenerate every artifact the site is built from
 	$(PYTHON) scripts/prediction_outcome.py --write
+	$(PYTHON) scripts/evaluation_report.py --write
 	$(PYTHON) scripts/export_mira.py --all
 	$(PYTHON) scripts/formats_report.py --all
 	$(MAKE) validate PYTHON=$(PYTHON)
@@ -80,6 +82,9 @@ validate:  ## SHACL-validate the MIRA exports (needs pyshacl)
 # supports, and check_reproductions surfaces the corpus-wide status spread. Those are real
 # and they predate this file. Gating on them would make every pull request red for reasons
 # the pull request did not cause, so they run for their numbers and do not block.
+publishable:  ## What the site is about to publish that the ledger says is out of date
+	$(PYTHON) scripts/publishable.py
+
 check:  ## Gates that are clean on main. A failure here is this change's fault.
 	$(PYTHON) scripts/check_relations.py
 	cd extract && $(PYTHON) -m elife_extract.cli contract
@@ -88,6 +93,10 @@ check:  ## Gates that are clean on main. A failure here is this change's fault.
 	cd extract && $(PYTHON) -c "import elife_extract.cli, elife_extract.edges, elife_extract.layers, elife_extract.write"
 	cd extract && $(PYTHON) tests/test_layer_contract.py
 	cd extract && $(PYTHON) tests/test_prompt_contract.py
+	cd extract && $(PYTHON) tests/test_profiles.py
+	cd extract && $(PYTHON) tests/test_evaluate_precision_and_edges.py
+	cd extract && $(PYTHON) tests/test_verdicts.py
+	$(PYTHON) scripts/test_pipeline_versions.py
 	$(PYTHON) scripts/audit_layers.py
 
 contract:  ## Regenerate the prompt contract from vocabulary.py, relations.py and schema.py
@@ -107,6 +116,7 @@ report:  ## Standing corpus measurements. Expected to be non-zero; informational
 	exit $$s
 
 build: data  ## Regenerate data, then build the site
+	$(PYTHON) scripts/publishable.py
 	cd $(SITE) && CORPUS=$(CORPUS) npx astro build
 
 preview: build  ## Build and serve locally

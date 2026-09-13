@@ -1,18 +1,18 @@
 ---
-uuid: 89bad16c-2454-429e-8ecd-c350d5e5f05c
+uuid: a246d73e-44f4-4bee-aff2-96388949b76a
 slug: participant-momentary-happiness-varied-rewards-2
 doi: null
 claim: Participant momentary happiness varied with the rewards the partner received in the current trial.
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 part-of:
 - responsibility-redux-model-incorporating-expected
 belongings:
 - relation: supports
-  target: responsibility-redux-model-incorporating-expected
+  target: responsibility-partner-outcomes-influences-participant
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
@@ -67,6 +67,10 @@ reproductions:
 ---
 
 **Notes from extraction:** The results reader stated the participant- and partner-reward correlations jointly; the caption reader anchored the partner-reward correlation to fig3b/fig3f specifically, so it is split from the participant-reward claim by panel.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `supports` → `responsibility-partner-outcomes-influences-participant`: Happiness tracking the partner's rewards supports a model that carries partner reward prediction errors (evidence at span results-029).
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

@@ -1,5 +1,5 @@
 ---
-uuid: 4b9470ee-42a3-4e37-92f6-645be74ea609
+uuid: f729d68c-9755-4802-b9b3-0f6494375e36
 slug: responsibility-partner-outcomes-influences-participant
 doi: null
 claim: If responsibility for the partner's outcomes influences the participant's momentary happiness,
@@ -9,7 +9,7 @@ claim: If responsibility for the partner's outcomes influences the participant's
 claim-type: prediction
 role: prediction
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: prediction
 derived-from:
 - responsibility-social-choice-yields-low
@@ -23,6 +23,10 @@ reproductions: []
 ---
 
 **Notes from extraction:** [reviewer] added: the computational-route prediction the behavioural guilt/responsibility hypothesis commits the paper to, tested by the model comparison (Responsibility / Responsibility Redux best fit) and by the positive social_pRPE weights; kept distinct from the behavioural happiness-comparison prediction.
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `derived-from` → `responsibility-social-choice-yields-low`: reciprocal of entails (responsibility-social-choice-yields-low → responsibility-partner-outcomes-influences-participant)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

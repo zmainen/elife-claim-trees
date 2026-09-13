@@ -1,5 +1,5 @@
 ---
-uuid: 40581b14-649e-45a1-bac3-de501a309455
+uuid: a2e7521f-86cd-472a-9b5e-a23659cce62a
 slug: among-computational-models-fitted-momentary
 doi: null
 claim: Among the computational models fitted to momentary happiness data, the Responsibility Redux model
@@ -7,7 +7,7 @@ claim: Among the computational models fitted to momentary happiness data, the Re
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-11'
+priority: '2026-09-12'
 epistemic: tentative
 belongings: []
 assertions:
@@ -16,6 +16,8 @@ assertions:
   panel: table1
   confidence: tentative
 reproductions: []
+part-of:
+- responsibility-redux-model-incorporating-expected
 ---
 
 **Notes from extraction:** Best-fitting model inferred from the lowest AIC values (Study 2 Responsibility Redux AIC –1195). Note the apparent tension: the results reader instead reported the (non-Redux) Responsibility model as the best fit by likelihood-ratio test and R²; which model is 'best' depends on the metric, and the two readers anchored different models to Table 1, so they are not merged.

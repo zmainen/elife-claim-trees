@@ -405,23 +405,6 @@ def reset_client():
     _client_cache = None
 
 
-# Labels that warrant high inference effort (complex synthesis or graph tasks).
-_HIGH_EFFORT_LABELS: frozenset[str] = frozenset(
-    {"reconciler", "external-reviewer", "parts"}
-)
-
-
-def _effort_for(label: str | None) -> str:
-    """Map a call label to an effort level for output_config.
-
-    High: reconciler, external-reviewer, edge-inference*, parts.
-    Medium: readers and everything else.
-    """
-    if label and (label in _HIGH_EFFORT_LABELS or label.startswith("edge-inference")):
-        return "high"
-    return "medium"
-
-
 def _supports_adaptive_thinking(model: str) -> bool:
     """True for Claude 4.6+ and 5+ models that use thinking: {type: adaptive}.
 
@@ -485,12 +468,19 @@ def stream_text(
             system=system_blocks,
             messages=[{"role": "user", "content": user}],
         )
-        # Adaptive thinking for 4.6+ models. budget_tokens is rejected on these.
-        if _supports_adaptive_thinking(model):
+        # Adaptive thinking for 4.6+ models, when the profile leaves it on. budget_tokens is
+        # rejected on these.
+        if cfg.thinking and _supports_adaptive_thinking(model):
             stream_kwargs["thinking"] = {"type": "adaptive"}
-        # Effort and structured output live in output_config.
-        out_cfg: dict = {"effort": _effort_for(label)}
-        if output_schema is not None:
+        # Effort and structured output live in output_config. Effort follows the profile's
+        # reader/reasoner split; enforcement follows its output_format.
+        out_cfg: dict = {"effort": cfg.effort_for(label)}
+        enforce = output_schema is not None and cfg.output_format != "none"
+        if enforce and cfg.output_format == "json_object":
+            out_cfg["format"] = {"type": "json"}
+            logger.info("  %s: sending %dc to %s (%s), json mode (no schema)",
+                        tag, len(system) + len(user), model, cfg.backend)
+        elif enforce:
             out_cfg["format"] = {
                 "type": "json",
                 "json_schema": {"name": label or "output", "schema": output_schema},
@@ -532,7 +522,13 @@ def stream_text(
             "max_tokens": max_tokens,
             "stream": True,
         }
-        if output_schema is not None:
+        enforce = output_schema is not None and cfg.output_format != "none"
+        if enforce and cfg.output_format == "json_object":
+            # json mode: valid JSON, no schema. What the `open` tier's providers reliably do.
+            kwargs["response_format"] = {"type": "json_object"}
+            logger.info("  %s: sending %dc to %s (%s), json mode (no schema)",
+                        tag, len(system) + len(user), kwargs["model"], cfg.backend)
+        elif enforce:
             # json_schema is supported by OpenAI-compatible and Gemini backends.
             # Providers that don't support it fall back to json_object (best effort).
             kwargs["response_format"] = {
