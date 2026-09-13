@@ -1033,6 +1033,73 @@ def _apply_warrant(paper: str, data: dict, cfg: Config) -> None:
             _write_key(f, "warrant_from", block, after="warrant_why" if e["why"] else "warrant")
 
 
+# ── verification-check ─────────────────────────────────────────────────────
+# The first checking layer. Warrant reads the tree's argument; this reads what a re-run found and
+# writes it beside the warrant, never into it. Mechanical — no model, no prompt — so it has no
+# `--dump-prompt`/`--answer` seam: the rule (extract/elife_extract/verification_check.py) is
+# precedence over the reproduction records a claim carries and the provenance the audited run
+# wrote. It writes `check_verification:` and `check_verification_from:` and leaves `warrant:`
+# alone. See docs/design/2026-09-13-verification-check.md.
+
+
+def _provenance_results(paper: str, cfg: Config) -> dict[str, dict]:
+    """`verification/<paper>/provenance.json`'s per-claim results, keyed by claim slug."""
+    p = cfg.root / "verification" / paper / "provenance.json"
+    if not p.is_file():
+        return {}
+    try:
+        doc = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return {r["claim"]: r for r in (doc.get("results") or [])
+            if isinstance(r, dict) and r.get("claim")}
+
+
+def verification_check_layer(paper: str, cfg: Config) -> tuple[Path, dict]:
+    """Write each claim's verification verdict, read from its records and the audited run."""
+    from . import verification_check as vc
+
+    prov = _provenance_results(paper, cfg)
+    d = cfg.corpus_dir / paper
+    checks: list[dict] = []
+    for f in sorted(d.glob("*.md")):
+        if f.name == "index.md":
+            continue
+        fm = _read_frontmatter(f)
+        slug = fm.get("slug")
+        if not slug:
+            continue
+        records = [r for r in (fm.get("reproductions") or []) if isinstance(r, dict)]
+        v, fired = vc.verdict(records, prov.get(slug))
+        checks.append({"slug": slug, "check_verification": v, "check_verification_from": fired})
+    payload = {"paper_slug": paper, "checks": checks}
+    path = _write_json(run_file(paper, "verification-check.output.json", cfg), payload)
+    _apply_verification_check(paper, checks, cfg)
+    return path, payload
+
+
+def _apply_verification_check(paper: str, checks: list[dict], cfg: Config) -> None:
+    """Write `check_verification:` and `check_verification_from:` into each claim file.
+
+    After `epistemic`, where warrant and the other retrofits put their keys, so a check sits
+    beside the warrant. `warrant:` is never read or written here.
+    """
+    import yaml
+
+    d = cfg.corpus_dir / paper
+    for e in checks:
+        f = d / f"{e['slug']}.md"
+        if not f.is_file():
+            continue
+        _write_key(f, "check_verification", f"check_verification: {e['check_verification']}",
+                   after="epistemic")
+        if e["check_verification_from"]:
+            block = yaml.safe_dump({"check_verification_from": e["check_verification_from"]},
+                                   sort_keys=False, allow_unicode=True,
+                                   default_flow_style=False, width=10 ** 6).rstrip("\n")
+            _write_key(f, "check_verification_from", block, after="check_verification")
+
+
 # ── the measures: prose written from the graph, on disk under site/src/data ──
 # summaries, synthesis and abstract-map were declared with outputs the site renders and no
 # runner or committed prompt, so their artifacts could not be regenerated and no version could
