@@ -29,8 +29,7 @@ scopes:
   - igabasnfr2-single-bouton-hippocampus
   - igabasnfr2-invivo-barrel-cortex
 
-belongings:
-[]
+belongings: []
 
 assertions:
   - paper-slug: kolb-2026-igabasnfr2
