@@ -8,12 +8,17 @@
 // Design note: docs/design/2026-09-11-the-reader.html. The data is assembled in lib/reader.ts.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { warrantOf, VERIFICATION_CHECK_LABEL, VERIFICATION_CHECK_TAILWIND } from '../lib/status';
 
 type Claim = {
   slug: string; number: string | null; kind: string; role: string; stance: string;
   partOf: string | null; parts: string[];
   status: 'matches' | 'partly' | 'differs' | 'blocked' | 'none' | 'na';
   statusLabel: string; plain: string; hasPlain: boolean; full: string;
+  // Warrant and the verification check: two separate fields, shown beside each other. Warrant
+  // (with warrantFrom and the epistemic fallback) is how well the tree's argument supports the
+  // claim; verification is whether a re-run stands behind it, null until that layer has run.
+  warrant: string | null; warrantFrom: string[]; epistemic: string; verification: string | null;
   panel: string | null; panels: [string, string][]; method: string | null; dataset: string | null;
   check: { paper?: string; reproduced?: string; date?: string; how?: string } | null;
   script: string | null; scriptSource: string | null;
@@ -979,6 +984,15 @@ export default function Reader({ data, base }: Props) {
             ? `The paper asks ${hyps.length} question${hyps.length === 1 ? '' : 's'}. Each makes a prediction, and each prediction is tested by one or more results.`
             : 'This paper tests no stated hypothesis. Its findings stand on their own, and what they rest on is below.'}
         </p>
+        {/* How far the argument reaches, in words (§ruling D). Shown only where the warrant layer
+            has run: the rest of the claims are unassessed — the argument records nothing that
+            bears on them — not weakly supported. */}
+        {data.warrant && (
+          <p className="rd-reach">
+            The tree’s argument reaches {data.warrant.reached} of {data.warrant.total} claims;
+            the other {data.warrant.unassessed} are unassessed — the argument records nothing that bears on them.
+          </p>
+        )}
 
         {hyps.map((h: Claim, i: number) => {
           const preds = h.out.filter(r => r.rel === 'entails').map(r => C[r.slug]).filter(Boolean);
@@ -1211,6 +1225,17 @@ export default function Reader({ data, base }: Props) {
         <p className="rd-kind">
           {c.kind}
           {c.status !== 'na' && <span className={`rd-verdict-inline rd-${c.status}`}>{c.statusLabel}</span>}
+          {/* Warrant and the verification check, side by side — warrant · verification. Warrant
+              falls back to the claim's epistemic mark where the layer has not run; the check
+              chip appears only once a re-run has been recorded, and never sits over the warrant. */}
+          {(() => { const w = warrantOf(c); return (
+            <span className={`rd-chip ${w.tailwind}`} title={w.source === 'warrant' ? 'warrant' : 'epistemic'}>{w.label}</span>
+          ); })()}
+          {c.verification && VERIFICATION_CHECK_LABEL[c.verification] && (
+            <span className={`rd-chip ${VERIFICATION_CHECK_TAILWIND[c.verification]}`} title="verification">
+              {VERIFICATION_CHECK_LABEL[c.verification]}
+            </span>
+          )}
         </p>
         <p className="rd-cshort">{c.plain}</p>
         {c.hasPlain && c.full && <p className="rd-cwords">{c.full}</p>}
@@ -1528,6 +1553,11 @@ export default function Reader({ data, base }: Props) {
         .rd-table th { font-weight: 600; color: var(--card-head); background: var(--card-sunk); }
         .rd-table td { color: var(--card-body); font-variant-numeric: tabular-nums; }
 
+        /* Warrant and verification chips: the colour comes from status.ts (the one palette),
+           this only sizes them to sit inline beside the kind. */
+        .rd-chip { font-family: Inter, system-ui, sans-serif; font-size: 11px; margin-left: 0.5rem;
+                   padding: 1px 6px; border-radius: 4px; white-space: nowrap; vertical-align: middle; }
+
         /* ── the outcome of a re-run, and nothing else ────────────────── */
         .rd-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ran-none); flex: none; }
         .rd-dot.rd-matches { background: var(--ran-ok); }
@@ -1611,6 +1641,7 @@ export default function Reader({ data, base }: Props) {
         .rd-rpart:hover { color: var(--card-head); }
         .rd-partstoggle { font-size: 12px; color: var(--claim-strong); margin: 0 0 0.4rem; text-decoration: underline; text-underline-offset: 2px; }
         .rd-partstoggle:hover { color: var(--card-head); }
+        .rd-reach { font-size: 13px; color: var(--card-muted); margin: 0.4rem 0 0.8rem; }
         .rd-gaps { font-size: 12px; color: var(--card-muted); margin-top: 1.2rem; border-top: 1px solid var(--card-border); padding-top: 0.6rem; }
         .rd-gaps a { color: var(--claim-strong); }
 

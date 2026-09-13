@@ -1083,3 +1083,41 @@ layers:
     added: "2026-09-13"
     by_from: model
     command: "cd extract && python3 -m elife_extract.cli warrant --paper {paper}"
+
+  # The first checking layer, and the counterpart to `warrant` the v2 rulings called for: warrant
+  # reads what the tree's argument gives a reader grounds to believe, and a check reads what a
+  # re-run actually found, written BESIDE the warrant and never into it (2026-09-13-verification-
+  # check.md, framing #36 and #20). A `feature`, like `warrant`, `stance` and `parts`: it revises
+  # the tree rather than making a new kind of thing. Mechanical — no model, no prompt, so no
+  # `--dump-prompt`/`--answer` seam — the verdict is precedence over the reproduction records a
+  # claim carries and the provenance the audited run wrote. It needs both `claim-tree` (the claim
+  # files it edits) and `verification` (the provenance it reads), so it goes stale when either
+  # moves. Only an adjudication verdict overwrites a check.
+  - id: verification-check
+    group: measures
+    kind: feature
+    scope: paper
+    status: proposed
+    title: Verification check
+    question: Does a re-run stand behind each claim, read beside its warrant?
+    how: >
+      For every claim it reads the reproduction records the claim carries and the verification
+      provenance the audited run wrote (`verification/<paper>/provenance.json`), and writes one
+      verdict into `check_verification:`: `reproduced` (a record marked verified whose provenance
+      shows the script ran and measured the value), `partial` (recorded verified but not observed
+      running, or a run that executed without measuring the value), `mismatch` (a re-run that
+      disagreed with the paper — the site shows it as contested-by-verification), `blocked`,
+      `unattempted`, or `unrecorded` (no record at all). `check_verification_from:` lists the
+      record statuses and provenance it read. It never touches `warrant:`.
+
+      Mechanical: no model and no prompt. The rule is precedence over the evidence a claim carries
+      — the most adverse informative verdict winning — so a claim with both a blocked and a
+      mismatch record reads `mismatch`. The dopamine paper's single dSTORM mismatch is the first
+      real case. Export mapping — how a check reaches the MIRA and OXA encodings — follows.
+    needs: [claim-tree, verification]
+    reads: [extract/elife_extract/verification_check.py]
+    produces: ["runs/{paper}/verification-check.output.json"]
+    views: [table]
+    issue: 126
+    added: "2026-09-13"
+    command: "cd extract && python3 -m elife_extract.cli verification-check --paper {paper}"

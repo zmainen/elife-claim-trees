@@ -38,8 +38,15 @@ REPO_DIR = "/tmp/serotonin-stim2"
 ROWS = []
 
 
-def row(slug, paper_val, repro_val, status):
-    ROWS.append((slug, paper_val, repro_val, status))
+def row(slug, paper_val, repro_val, status, measured=True):
+    """`measured=False` when repro_val is a remembered observation this run did not make.
+
+    The status still says what the evidence would mean if it held; the flag says whether this
+    run is the thing that found it. Downstream needs to tell those apart, and the status field
+    alone cannot: a PASS carrying numbers copied from notes is indistinguishable from a PASS
+    carrying numbers a simulation just produced.
+    """
+    ROWS.append((slug, paper_val, repro_val, status, measured))
 
 
 def print_table():
@@ -50,8 +57,15 @@ def print_table():
     print(" | ".join(h.ljust(w) for h, w in zip(header, col_w)))
     print(sep)
     for r in ROWS:
-        print(" | ".join(str(v).ljust(w) for v, w in zip(r, col_w)))
-    print(sep + "\n")
+        cells = list(r[:4])
+        if len(r) >= 5 and not r[4]:
+            cells[3] = f"{cells[3]}*"
+        print(" | ".join(str(v).ljust(w) for v, w in zip(cells, col_w)))
+    print(sep)
+    if any(len(r) >= 5 and not r[4] for r in ROWS):
+        print("* not measured in this run — the value is from notes taken when the "
+              "analysis was first done.")
+    print()
 
 
 # -- Repo clone ----------------------------------------------------------------
@@ -473,7 +487,9 @@ def main():
             ("5ht-modulates-all-recorded-regions-bidirectionally",
              "10-60%, bidirectional", "10-60%, 580 exc / 639 sup"),
         ]:
-            row(slug, pv, rv, "PASS")
+            # The clone failed, so none of these were computed here. "4.0% (122/3028)" reads
+            # like a measurement and is a remembered one.
+            row(slug, pv, rv, "PASS", measured=False)
         print_table()
         return 0
 
@@ -524,9 +540,9 @@ def main():
     print("SUMMARY")
     print_table()
 
-    n_pass = sum(1 for _, _, _, s in ROWS if s == "PASS")
-    n_warn = sum(1 for _, _, _, s in ROWS if s == "WARN")
-    n_fail = sum(1 for _, _, _, s in ROWS if s == "FAIL")
+    n_pass = sum(1 for r in ROWS if r[3] == "PASS")
+    n_warn = sum(1 for r in ROWS if r[3] == "WARN")
+    n_fail = sum(1 for r in ROWS if r[3] == "FAIL")
     print(f"{n_pass}/{len(ROWS)} claims verified ({n_warn} WARN, {n_fail} FAIL)")
     print()
     print("Data source: GitHub repo processed CSVs (light_modulated_neurons.csv, etc.)")

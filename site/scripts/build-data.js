@@ -250,6 +250,16 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
       displayClaim: (fm.displayClaim || '').trim() || null,
       shortClaim: (fm.shortClaim || '').trim() || null,
       epistemic: fm.epistemic || 'unknown',
+      // How well the tree's argument supports the claim (the warrant layer, #126), distinct from
+      // `epistemic`. Only Gädeke carries it today; the site renders warrant where present and
+      // falls back to epistemic otherwise. `warrant_from` is the dossier keys that fired — empty
+      // means the argument reaches nothing, which the site shows as `unassessed`.
+      warrant: fm.warrant || null,
+      warrant_from: fm.warrant_from || [],
+      // A check that sits beside the warrant, never over it (the verification-check layer, #126):
+      // does a re-run stand behind the claim? Absent until that layer runs on a paper.
+      check_verification: fm.check_verification || null,
+      check_verification_from: fm.check_verification_from || [],
       status,
       discrepancy: fm.discrepancy || null,
       'claim-type': fm['claim-type'] || 'empirical',

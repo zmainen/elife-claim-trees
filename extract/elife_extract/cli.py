@@ -371,6 +371,20 @@ def cmd_warrant(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_verification_check(args: argparse.Namespace) -> int:
+    """Layer `verification-check` — does a re-run stand behind each claim, beside its warrant."""
+    from collections import Counter
+    from .layers import verification_check_layer
+
+    cfg = _cfg(args)
+    path, payload = verification_check_layer(args.paper, cfg)
+    by = Counter(c["check_verification"] for c in payload["checks"])
+    print(f"=== verification-check — {args.paper} ===")
+    print(f"  claims = {len(payload['checks'])}  ({dict(sorted(by.items()))})")
+    print(f"  written: {path}")
+    return 0
+
+
 def cmd_summaries(args: argparse.Namespace) -> int:
     """Layer `summaries` — the paper in three paragraphs, written from its claim graph."""
     from .layers import summaries_layer, summaries_request
@@ -1154,6 +1168,23 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common_args(p_warr)
     _add_model_args(p_warr)
     p_warr.set_defaults(func=cmd_warrant)
+
+    # ── verification-check ───────────────────────────────────────────────────
+    p_vc = sub.add_parser(
+        "verification-check",
+        help="Layer `verification-check` — does a re-run stand behind each claim?",
+        description=(
+            "The first checking layer, read beside the warrant, never over it. For each claim it "
+            "reads the reproduction records the claim carries and the verification provenance the "
+            "audited run wrote, and writes one verdict — reproduced, partial, mismatch (shown as "
+            "contested-by-verification), blocked, unattempted, or unrecorded — into "
+            "`check_verification:`, with `check_verification_from:` naming the record statuses and "
+            "provenance it read. Mechanical: no model, no prompt. It never touches `warrant:`."
+        ),
+    )
+    p_vc.add_argument("--paper", required=True, help="Paper slug.")
+    _add_common_args(p_vc)
+    p_vc.set_defaults(func=cmd_verification_check)
 
     # ── summaries ──────────────────────────────────────────────────────────
     p_sum = sub.add_parser(

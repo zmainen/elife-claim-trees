@@ -70,10 +70,18 @@ def used(path, note=""):
     return path
 
 
-def row(slug, paper_val, repro_val, status):
-    ROWS.append((slug, paper_val, repro_val, status))
+def row(slug, paper_val, repro_val, status, measured=True):
+    """`measured=False` when repro_val is a remembered observation this run did not make.
+
+    The status still says what the evidence would mean if it held; the flag says whether this
+    run is the thing that found it. Downstream needs to tell those apart, and the status field
+    alone cannot: a PASS carrying numbers copied from notes is indistinguishable from a PASS
+    carrying numbers a simulation just produced.
+    """
+    ROWS.append((slug, paper_val, repro_val, status, measured))
     PROV["results"].append({"claim": slug, "paper_value": paper_val,
-                            "reproduced_value": repro_val, "status": status})
+                            "reproduced_value": repro_val, "status": status,
+                            "measured": measured})
 
 
 def write_provenance():
@@ -101,8 +109,15 @@ def print_table():
     print(" | ".join(h.ljust(w) for h, w in zip(header, col_w)))
     print(sep)
     for r in ROWS:
-        print(" | ".join(str(v).ljust(w) for v, w in zip(r, col_w)))
-    print(sep + "\n")
+        cells = list(r[:4])
+        if len(r) >= 5 and not r[4]:
+            cells[3] = f"{cells[3]}*"
+        print(" | ".join(str(v).ljust(w) for v, w in zip(cells, col_w)))
+    print(sep)
+    if any(len(r) >= 5 and not r[4] for r in ROWS):
+        print("* not measured in this run — the value is from notes taken when the "
+              "analysis was first done.")
+    print()
 
 # ── Data acquisition ───────────────────────────────────────────────────────────
 
@@ -273,9 +288,13 @@ def verify_happiness_partner():
             for f in all_csv[:20]
             if not _csv_error(f)
         )
+        # Neither branch reads an R² out of the data: one reports that a table exists and
+        # recites the remembered value, the other reports that no table was found.
         note = "LMM table found; R²=%.3f in notes"
-        row(slug + " [fMRI R²]", "0.185", note % 0.185 if lmm_found else "LMM tables not located", "WARN")
-        row(slug + " [Behav R²]", "0.147", note % 0.147 if lmm_found else "LMM tables not located", "WARN")
+        row(slug + " [fMRI R²]", "0.185",
+            note % 0.185 if lmm_found else "LMM tables not located", "WARN", measured=False)
+        row(slug + " [Behav R²]", "0.147",
+            note % 0.147 if lmm_found else "LMM tables not located", "WARN", measured=False)
 
     print(f"  {slug}: ({time.time()-t0:.1f}s)")
     return 2 if r2_fmri is not None and r2_behav is not None else 0
@@ -315,12 +334,14 @@ def verify_guilt_happiness():
         except Exception:
             pass
 
+    # The value is whichever the search found, or the remembered one; `measured` says which,
+    # so the two cases stay distinguishable after the strings reach the provenance file.
     row(slug + " [fMRI β]", "0.33",
         f"{beta_fmri:.2f}" if beta_fmri is not None else "β=0.33 confirmed in LMM table (see notes)",
-        "PASS" if beta_fmri is not None else "WARN")
+        "PASS" if beta_fmri is not None else "WARN", measured=beta_fmri is not None)
     row(slug + " [Behav β]", "0.39",
         f"{beta_behav:.2f}" if beta_behav is not None else "β=0.39 confirmed in LMM table (see notes)",
-        "PASS" if beta_behav is not None else "WARN")
+        "PASS" if beta_behav is not None else "WARN", measured=beta_behav is not None)
 
     print(f"  {slug}: ({time.time()-t0:.1f}s)")
     return 1
@@ -906,9 +927,9 @@ def main():
     print_table()
     write_provenance()
 
-    n_pass = sum(1 for _, _, _, s in ROWS if s == "PASS")
-    n_warn = sum(1 for _, _, _, s in ROWS if s == "WARN")
-    n_fail = sum(1 for _, _, _, s in ROWS if s == "FAIL")
+    n_pass = sum(1 for r in ROWS if r[3] == "PASS")
+    n_warn = sum(1 for r in ROWS if r[3] == "WARN")
+    n_fail = sum(1 for r in ROWS if r[3] == "FAIL")
     print(f"{n_pass}/{len(ROWS)} claims verified ({n_warn} WARN, {n_fail} FAIL)")
     return 0 if n_fail == 0 else 1
 
