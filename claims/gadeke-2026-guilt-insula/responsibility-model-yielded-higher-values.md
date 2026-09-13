@@ -15,6 +15,8 @@ assertions:
   panel: table1
   readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: asserted; nothing in the tree's argument bears on this R^2 comparison
 ---
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->

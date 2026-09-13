@@ -41,6 +41,10 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: null
+warrant: moderate
+warrant_why: it rules out alt-guilt-effect-driven-by-own-outcome by dissociating the guilt effect from the participant's own outcome
+warrant_from:
+- rules_out
 ---
 
 **Notes from extraction:** Shows the guilt effect does not depend on the participant's own outcome, strengthening (validating) the guilt interpretation.

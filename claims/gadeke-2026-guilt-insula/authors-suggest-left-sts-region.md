@@ -17,6 +17,10 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: an interpretation the authors advance over one-cluster-left-sts-responded (moderate); a suggestion, not a tested claim
+warrant_from:
+- interprets
 ---
 
 **Relations.** Why each outgoing edge was inferred:

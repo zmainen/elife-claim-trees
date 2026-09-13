@@ -1135,17 +1135,18 @@ def build_parser() -> argparse.ArgumentParser:
     p_warr = sub.add_parser(
         "warrant", help="Layer `warrant` — how well the tree supports each claim.",
         description=(
-            "Warrant is how well the tree supports a claim, distinct from what the paper says "
-            "(`confidence`) and how it stands toward it (`stance`). Given every claim with its "
-            "sentence, role, stance and a dossier — the outcomes on its predictions, the controls "
-            "that validate it, the alternatives it rules out, its reproductions and their "
-            "verification provenance, what it requires and is part of — return a warrant level per "
-            "claim (a prediction's confirmed/refuted/untested, an alternative's ruled-out/open, "
-            "everything else's strong/moderate/weak/contested), a one-line `why` citing the "
-            "dossier, and an `unsupported` flag. It writes `warrant:`, `warrant_why:` and "
-            "`warrant_from:` onto each claim file, leaving `epistemic` untouched. The prompt shows "
-            "the dossier, never the rule. `--dump-prompt` writes the exact request, `--answer` "
-            "feeds a reply back through the same validation."
+            "Warrant is how well the tree's argument supports a claim, distinct from what the "
+            "paper says (`confidence`) and how it stands toward it (`stance`). Checking — a "
+            "reproduction, a methods or statistics or citation check — is a separate later layer, "
+            "not this one. Given every claim with its sentence, role, stance and a dossier — the "
+            "outcomes on its predictions, the controls that validate it, the alternatives it "
+            "rules out, what supports/refutes it and what it requires and is part of — return a "
+            "warrant level per claim (a prediction's confirmed/refuted/untested, an alternative's "
+            "ruled-out/open, everything else's strong/moderate/weak/contested), a one-line `why` "
+            "citing the dossier, and an `unsupported` flag. It writes `warrant:`, `warrant_why:` "
+            "and `warrant_from:` onto each claim file, leaving `epistemic` untouched. The prompt "
+            "shows the dossier, never the rule. `--dump-prompt` writes the exact request, "
+            "`--answer` feeds a reply back through the same validation."
         ),
     )
     p_warr.add_argument("--paper", required=True, help="Paper slug.")

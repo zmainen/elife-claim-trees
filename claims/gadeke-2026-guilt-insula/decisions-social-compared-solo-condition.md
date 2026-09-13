@@ -38,6 +38,8 @@ reproductions:
   status: blocked
   blocked_by: compute-infeasible
   notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
+warrant: weak
+warrant_why: asserted; the tree's argument records no prediction outcome, control or supporting claim for the three-cluster result
 ---
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->

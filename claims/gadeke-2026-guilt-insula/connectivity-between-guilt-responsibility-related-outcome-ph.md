@@ -12,6 +12,11 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
+warrant: confirmed
+warrant_why: confirmed by functional-connectivity-between-left-anterior, the PPI cluster with a Condition-by-Choice interaction
+warrant_from:
+- outcome
+- confirmed_by
 derived-from:
 - functional-connectivity-between-guilt-responsibility-related
 belongings: []

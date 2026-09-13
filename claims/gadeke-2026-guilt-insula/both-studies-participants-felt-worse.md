@@ -16,6 +16,10 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
+warrant: moderate
+warrant_why: a cross-study synthesis of the main guilt effect, resting on the strong when-partner-received-low-lottery result
+warrant_from:
+- supported_by
 ---
 
 **Notes from extraction:** Integrates the guilt-effect results across both studies; synthesis is expected to be single-source (results reader only).

@@ -16,7 +16,7 @@ concepts:
 priority: 2026-09-10
 epistemic: weak
 warrant: ruled-out
-warrant_why: 'participants-probability-choosing-risky-option rules it out: choice tracked expected value (verified reproduction, beta>0), so participants were value-sensitive'
+warrant_why: 'participants-probability-choosing-risky-option rules it out: choice tracked expected value, so participants were value-sensitive'
 warrant_from:
 - ruled_out_by
 

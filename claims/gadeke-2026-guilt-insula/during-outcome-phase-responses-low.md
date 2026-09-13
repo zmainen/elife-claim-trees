@@ -18,6 +18,10 @@ assertions:
   panel: app1table9
   readers: single-source
 reproductions: []
+warrant: weak
+warrant_why: part of insula-rois-responded-more-low; the outcome-phase contrast is not itself argued in the tree
+warrant_from:
+- part_of
 ---
 
 **Notes from extraction:** Columns are InsulaL (0.41***), InsulaR (0.18***) and MidTempR (–0.12**). Table-level breakdown supplementing the fig4e insula ROI result; kept separate by panel and by the added middle-temporal region.

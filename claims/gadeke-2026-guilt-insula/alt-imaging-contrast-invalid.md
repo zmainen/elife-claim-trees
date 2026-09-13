@@ -16,7 +16,7 @@ concepts:
 priority: 2026-09-10
 epistemic: weak
 warrant: ruled-out
-warrant_why: 'bilateral-ventral-striatum-more-active rules it out: a verified reproduction recovering the expected VS risk effect shows the pipeline recovers established contrasts'
+warrant_why: 'bilateral-ventral-striatum-more-active rules it out: the pipeline recovers the established risky>safe VS contrast'
 warrant_from:
 - ruled_out_by
 

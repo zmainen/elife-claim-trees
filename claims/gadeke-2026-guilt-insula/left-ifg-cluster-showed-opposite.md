@@ -16,6 +16,8 @@ assertions:
   panel: fig5s1
   readers: high
 reproductions: []
+warrant: weak
+warrant_why: the claim itself notes it did not survive correction, and the tree's argument records nothing behind it
 ---
 
 **Notes from extraction:** Reported at an uncorrected threshold; did not survive multiple-comparison correction. The caption reader classified it as a control while the results reader classified it as empirical; both agree on panel and direction, resolved to empirical.

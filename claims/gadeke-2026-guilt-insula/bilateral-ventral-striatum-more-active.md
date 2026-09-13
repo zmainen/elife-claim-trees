@@ -42,6 +42,10 @@ reproductions:
   blocked_by: compute-infeasible
   notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
     Raw BOLD data available on OpenNeuro but full re-analysis requires SPM12/MATLAB.
+warrant: moderate
+warrant_why: a positive control that replicates the established risky>safe VS effect and rules out alt-imaging-contrast-invalid
+warrant_from:
+- rules_out
 ---
 
 **Notes from extraction:** The results reader treated this as a control replicating a known risk-related effect and validating the imaging analysis; the caption reader described it as a plain empirical result. Both are empirical measurements agreeing on panel and direction; resolved to control.

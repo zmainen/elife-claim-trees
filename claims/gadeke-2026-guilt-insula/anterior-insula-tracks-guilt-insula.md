@@ -9,6 +9,11 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
+warrant: confirmed
+warrant_why: confirmed by insula-rois-responded-more-low and the independent mass-univariate-voxel-wise-analysis-found-small
+warrant_from:
+- outcome
+- confirmed_by
 derived-from:
 - anterior-insula-neural-substrate-guilt
 belongings: []

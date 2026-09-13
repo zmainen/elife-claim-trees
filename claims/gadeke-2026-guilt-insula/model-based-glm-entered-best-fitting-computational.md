@@ -17,6 +17,10 @@ assertions:
   panel: null
   readers: high
 reproductions: []
+warrant: moderate
+warrant_why: validated by the manipulation-check-bilateral-ventral-striatum control
+warrant_from:
+- validated_by
 ---
 
 **Notes from extraction:** The neural claims about tracking social_pRPE versus partner_pRPE depend on this model-based GLM being interpretable, which in turn depends on the model comparison.
