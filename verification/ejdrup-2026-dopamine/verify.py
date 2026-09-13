@@ -3,9 +3,15 @@
 Verification script for Ejdrup et al. 2026 — Striatal Dopamine Model.
 eLife | doi:10.7554/eLife.ejdrup2026
 
-FAST MODE (default, ~5 min):
+FAST MODE (default, ~18 min):
   Clones GitHub repo, applies matplotlib compatibility fix, and runs
   Figure 1 and Figure 2 scripts with a timeout to check for clean exit.
+
+  It said ~5 min for a long time and does not take 5 min. Each of the two figure
+  scripts is allowed 600s here, so the worst case is 1200s before the clone is
+  counted, and a measured uncontended run took 1064s. The observer's timeout was
+  set against the 5-minute figure, so it killed this script every time and
+  reported the paper as a failed run when nothing had failed.
   Requirements: pandas, numpy, matplotlib, tqdm
   Data: https://github.com/Gether-Lab/striatal-dopamine-model (~30 MB)
 
@@ -236,7 +242,7 @@ def main():
     parser.add_argument('--claim', help='Verify a single claim by slug')
     args = parser.parse_args()
 
-    print(f"{'FULL' if args.full else 'FAST'} MODE — estimated time: {'~8 hrs' if args.full else '~5 min'}")
+    print(f"{'FULL' if args.full else 'FAST'} MODE — estimated time: {'~8 hrs' if args.full else '~18 min'}")
     print("=" * 60)
     print("NOTE: matplotlib fix (w_xaxis → xaxis) applied automatically.")
     print()

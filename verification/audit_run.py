@@ -27,7 +27,17 @@ What it emits, beside the script it ran:
 Usage:
   python3 verification/audit_run.py <paper-slug> [-- script args]
   python3 verification/audit_run.py --all
-  python3 verification/audit_run.py --all --timeout 900
+  python3 verification/audit_run.py --all --timeout 1800
+
+`--timeout` now defaults to 1800s rather than to no limit. The documented example used to say
+900, which is shorter than the slowest verification script's own internal budget: Ejdrup's fast
+mode runs two figure scripts and allows each 600s, so its worst case is 1200s before the clone
+is counted, and an uncontended run measured 1064s. A run killed at 900s writes no results, and
+`audit_verifications` then reports the paper as a failed run — which it was not. The script had
+been working the whole time and the observer was giving up first.
+
+A default that cannot accommodate the slowest thing it observes is a fault in the observer, and
+one that reads as a fault in the observed, which is the worst way for it to be wrong.
 """
 
 from __future__ import annotations
@@ -301,7 +311,9 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paper", nargs="?")
     ap.add_argument("--all", action="store_true")
-    ap.add_argument("--timeout", type=int, default=None)
+    ap.add_argument("--timeout", type=int, default=1800,
+                    help="seconds before a run is killed (default 1800: the slowest "
+                         "script in the corpus measured 1064s). Pass 0 for no limit.")
     ap.add_argument("--single", action="store_true",
                     help="internal: audit one script in this interpreter")
     ap.add_argument("args", nargs="*", help="arguments passed through to verify.py")
@@ -317,6 +329,11 @@ def main():
     # library was left holding. One script could then change the numbers another produces --
     # which is precisely the class of error this tool exists to catch, so it must not be able
     # to commit it. Each audit gets a clean interpreter.
+    # `subprocess.run(timeout=0)` kills instantly rather than waiting forever, so the flag's
+    # promise that 0 removes the limit has to be made true here.
+    if a.timeout == 0:
+        a.timeout = None
+
     if a.single:
         prov = run(papers[0], a.args, a.timeout)
         return 0 if not prov.get("exception") else 0
