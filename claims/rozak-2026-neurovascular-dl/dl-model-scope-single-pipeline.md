@@ -25,8 +25,7 @@ scopes:
   - capillary-efficiency-increases-4pct
   - novas3d-generalizes-qualitatively-ood
 
-belongings:
-[]
+belongings: []
 
 assertions:
   - paper-slug: rozak-2026-neurovascular-dl
