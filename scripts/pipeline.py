@@ -807,6 +807,23 @@ def cmd_run(args) -> int:
         print(f"error: no paper {args.paper!r}", file=sys.stderr)
         return 2
 
+    # Ask the named layer for the prompt it would send and stop. Nothing is produced, so no
+    # ledger entry is written — the answer comes back through `--answer`, which does record a
+    # version. The seam every model-answered layer has (`--dump-prompt`/`--answer` on the CLI),
+    # reached through `run` so the command is the declared one and cannot drift.
+    if getattr(args, "dump_prompt", None):
+        layer = by_id[args.layer]
+        cmd = layer.get("command")
+        if not cmd or "elife_extract.cli" not in cmd:
+            print(f"error: {args.layer} has no model prompt to dump", file=sys.stderr)
+            return 3
+        cmd = cmd.replace("{paper}", args.paper).replace("{doi}", _doi_of(args.paper) or "")
+        cmd += f" --dump-prompt {shlex.quote(args.dump_prompt)}"
+        if args.profile:
+            cmd += f" --profile {shlex.quote(args.profile)}"
+        print(f"  {args.layer}: {cmd}")
+        return subprocess.run(cmd, shell=True, cwd=ROOT).returncode
+
     st = state(decl, [args.paper])[args.paper]
 
     # Dependency order, restricted to this layer's ancestors — and pruned at the ones that
@@ -1088,6 +1105,10 @@ def main() -> int:
                         "records is zero and the ledger knew how the answer arrived but not "
                         "what it cost. The declared command is fixed, so this reaches the "
                         "runner through the environment.")
+    r.add_argument("--dump-prompt", metavar="PATH",
+                   help="write the exact prompt the named layer would send to PATH and exit, so "
+                        "whatever answers it answers the same question. Nothing is run or "
+                        "recorded; hand the reply back with --answer.")
     r.add_argument("--answer", metavar="FILE",
                    help="record this file as the named layer's answer instead of calling a "
                         "backend; the raw reply is kept beside the output as a version")

@@ -178,6 +178,9 @@ _BUDGET_TABLE: dict[str, tuple[int, int, int]] = {
     "synthesis":          (  0,       512,  4_096),
     "abstract-map":       (  0,       512,  2_048),
     "stance":             (  0,     1_024,  4_096),
+    # One warrant level, a why and a flag per claim — output scales with the tree, so a paper's
+    # worth of claims needs more room than the other feature layers' fixed reasoning.
+    "warrant":            (  0,     2_048, 16_384),
 }
 
 

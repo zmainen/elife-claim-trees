@@ -344,6 +344,26 @@ def cmd_stance(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_warrant(args: argparse.Namespace) -> int:
+    """Layer `warrant` — how well the tree supports each claim, judged from its dossier."""
+    from .layers import warrant_layer, warrant_request
+
+    cfg = _cfg(args)
+    if _dump(args, lambda: warrant_request(args.paper, cfg), "warrant"):
+        return 0
+    path, payload = warrant_layer(args.paper, cfg, answer=args.answer)
+    by_level: dict[str, int] = {}
+    for c in payload["claims"]:
+        by_level[c["warrant"]] = by_level.get(c["warrant"], 0) + 1
+    unsupported = sum(1 for c in payload["claims"] if c["unsupported"])
+    print(f"=== warrant — {args.paper} ===")
+    print(f"  model  = {payload['model']}")
+    print(f"  claims = {len(payload['claims'])}  ({dict(sorted(by_level.items()))})")
+    print(f"  flagged unsupported = {unsupported}")
+    print(f"  written: {path}")
+    return 0
+
+
 def cmd_summaries(args: argparse.Namespace) -> int:
     """Layer `summaries` — the paper in three paragraphs, written from its claim graph."""
     from .layers import summaries_layer, summaries_request
@@ -1103,6 +1123,29 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common_args(p_stance)
     _add_model_args(p_stance)
     p_stance.set_defaults(func=cmd_stance)
+
+    # ── warrant ──────────────────────────────────────────────────────────────
+    p_warr = sub.add_parser(
+        "warrant", help="Layer `warrant` — how well the tree supports each claim.",
+        description=(
+            "Warrant is how well the tree supports a claim, distinct from what the paper says "
+            "(`confidence`) and how it stands toward it (`stance`). Given every claim with its "
+            "sentence, role, stance and a dossier — the outcomes on its predictions, the controls "
+            "that validate it, the alternatives it rules out, its reproductions and their "
+            "verification provenance, what it requires and is part of — return a warrant level per "
+            "claim (a prediction's confirmed/refuted/untested, an alternative's ruled-out/open, "
+            "everything else's strong/moderate/weak/contested), a one-line `why` citing the "
+            "dossier, and an `unsupported` flag. It writes `warrant:`, `warrant_why:` and "
+            "`warrant_from:` onto each claim file, leaving `epistemic` untouched. The prompt shows "
+            "the dossier, never the rule. `--dump-prompt` writes the exact request, `--answer` "
+            "feeds a reply back through the same validation."
+        ),
+    )
+    p_warr.add_argument("--paper", required=True, help="Paper slug.")
+    _add_answerable_args(p_warr, "the warrants are validated against this tree and vocabulary.")
+    _add_common_args(p_warr)
+    _add_model_args(p_warr)
+    p_warr.set_defaults(func=cmd_warrant)
 
     # ── summaries ──────────────────────────────────────────────────────────
     p_sum = sub.add_parser(
