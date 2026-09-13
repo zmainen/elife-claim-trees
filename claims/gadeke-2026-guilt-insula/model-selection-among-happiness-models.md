@@ -19,6 +19,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: asserted method; nothing in the tree's argument bears on it
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** The model-comparison method that licenses treating the best-fitting model's variables as the regressors entered into the model-based fMRI GLM (GLM2). Kept distinct from the results reader's report of the likelihood-ratio outcome, which is an empirical result rather than a method.

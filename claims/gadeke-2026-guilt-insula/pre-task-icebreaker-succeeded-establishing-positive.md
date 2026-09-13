@@ -20,6 +20,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: asserted manipulation check; its own dossier records no argument behind it
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Manipulation check that the social relationship was positive and non-competitive; the caption reader anchored it to Appendix 1—table 11 (ratings across the five items range roughly 8.35–9.34 across Studies 1 and 2).

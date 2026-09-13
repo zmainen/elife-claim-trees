@@ -17,6 +17,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: asserted; nothing in the tree's argument bears on this sub-contrast
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** Caption states all coefficients and differences are significantly different from 0 (see Appendix 1—table 4).

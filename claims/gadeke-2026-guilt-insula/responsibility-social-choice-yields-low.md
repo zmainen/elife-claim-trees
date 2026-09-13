@@ -10,6 +10,7 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+check_verification: unrecorded
 warrant: strong
 warrant_why: both its predictions are confirmed and it is supported by when-partner-received-low-lottery, partner-reward-prediction-errors-resulting and likelihood-ratio-test-showed-responsibility, with every rival ruled out
 warrant_from:

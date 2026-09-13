@@ -16,6 +16,9 @@ concepts:
   - dopamine kinetics
 priority: 2026-03-29
 epistemic: weak
+check_verification: partial
+check_verification_from:
+- record:verified
 
 scopes:
   - d2r-integrates-over-seconds

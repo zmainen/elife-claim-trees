@@ -53,6 +53,11 @@ warrant_from:
 - confirms
 - supported_by
 - requires
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:blocked
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** Caption notes this is restricted to brain regions sensitive to outcomes of risky choices.

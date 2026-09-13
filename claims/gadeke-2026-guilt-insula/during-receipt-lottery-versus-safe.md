@@ -18,6 +18,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: asserted localizer contrast; nothing in the tree's argument bears on it
+check_verification: unrecorded
 ---
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->

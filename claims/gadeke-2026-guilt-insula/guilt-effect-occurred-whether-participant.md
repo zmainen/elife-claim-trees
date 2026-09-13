@@ -45,6 +45,11 @@ warrant: moderate
 warrant_why: it rules out alt-guilt-effect-driven-by-own-outcome by dissociating the guilt effect from the participant's own outcome
 warrant_from:
 - rules_out
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:unattempted
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** Shows the guilt effect does not depend on the participant's own outcome, strengthening (validating) the guilt interpretation.

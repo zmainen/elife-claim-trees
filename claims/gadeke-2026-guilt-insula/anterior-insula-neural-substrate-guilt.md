@@ -9,6 +9,7 @@ role: hypothesis
 concepts: []
 priority: '2026-09-13'
 epistemic: hypothesis
+check_verification: unrecorded
 warrant: strong
 warrant_why: its prediction anterior-insula-tracks-guilt-insula is confirmed, it is supported by insula-rois-responded-more-low and prior-literature-documents-association-between, and no rival stands
 warrant_from:

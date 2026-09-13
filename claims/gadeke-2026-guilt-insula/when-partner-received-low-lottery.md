@@ -79,6 +79,10 @@ warrant_from:
 - validated_by
 - confirms
 - requires
+check_verification: partial
+check_verification_from:
+- record:verified
+- record:verified
 ---
 
 **Notes from extraction:** The core behavioural 'guilt effect'; this is the empirical result that tests the guilt prediction.

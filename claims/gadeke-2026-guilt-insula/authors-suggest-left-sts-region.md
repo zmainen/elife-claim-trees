@@ -21,6 +21,7 @@ warrant: weak
 warrant_why: an interpretation the authors advance over one-cluster-left-sts-responded (moderate); a suggestion, not a tested claim
 warrant_from:
 - interprets
+check_verification: unrecorded
 ---
 
 **Relations.** Why each outgoing edge was inferred:

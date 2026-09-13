@@ -20,6 +20,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: asserted scope; nothing in the tree's argument bears on it
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** In Study 2 the partner was experimenter MG or TW rather than another participant, so any replication of the Study 1 guilt effect holds under this changed social pairing.

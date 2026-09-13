@@ -19,6 +19,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: asserted; nothing in the tree's argument bears on it
+check_verification: unrecorded
 ---
 
 **Notes from extraction:** The results reader stated the participant- and partner-reward correlations jointly; the caption reader anchored the participant-reward correlation to fig3a/fig3e specifically, so it is split from the partner-reward claim by panel.

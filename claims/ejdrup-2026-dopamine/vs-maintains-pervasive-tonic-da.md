@@ -15,6 +15,11 @@ concepts:
   - DAT Vmax
 priority: 2026-03-29
 epistemic: moderate
+check_verification: partial
+check_verification_from:
+- record:blocked
+- record:verified
+- provenance:WARN
 
 tests:
   - hypothesis-vmax-explains-regional-difference

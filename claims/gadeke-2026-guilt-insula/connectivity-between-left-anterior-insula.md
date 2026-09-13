@@ -46,6 +46,11 @@ warrant: weak
 warrant_why: it interprets functional-connectivity-between-left-anterior (moderate), reading a guilt-sensitivity into a single connectivity result
 warrant_from:
 - interprets
+check_verification: reproduced
+check_verification_from:
+- record:verified
+- record:blocked
+- provenance:PASS measured
 ---
 
 **Notes from extraction:** Interpretation stated in the abstract.

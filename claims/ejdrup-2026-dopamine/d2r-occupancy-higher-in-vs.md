@@ -15,6 +15,9 @@ concepts:
   - tonic dopamine
 priority: 2026-03-29
 epistemic: weak
+check_verification: blocked
+check_verification_from:
+- record:blocked
 
 belongings:
   - relation: requires

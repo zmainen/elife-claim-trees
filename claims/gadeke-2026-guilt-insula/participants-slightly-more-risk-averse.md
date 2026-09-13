@@ -20,6 +20,7 @@ assertions:
 reproductions: []
 warrant: weak
 warrant_why: asserted, weak and unreplicated in Study 2; nothing in the tree's argument bears on it
+check_verification: unrecorded
 ---
 
 **Relations.** Why each outgoing edge was inferred:

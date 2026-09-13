@@ -19,6 +19,10 @@ concepts:
   - ventral striatum
 priority: 2026-03-29
 epistemic: moderate
+check_verification: mismatch
+check_verification_from:
+- record:blocked
+- record:mismatch
 
 tests:
   - hypothesis-nanoclustering-regulates-vmax
