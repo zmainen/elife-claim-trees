@@ -1,22 +1,55 @@
-======================================================================
-Gadeke et al. 2026 — Guilt and Anterior Insula — Verification
-======================================================================
-Data source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
-
+FAST MODE — estimated time: ~3 min
+============================================================
 [data] Repo already present at /tmp/gadeke
+  participants-probability-choosing-risky-option: (0.0s)
+  participant-momentary-happiness-varied-rewards-2: (0.1s)
+  when-partner-received-low-lottery: (0.0s)
+  mass-univariate-voxel-wise-analysis-found-small: paper=[-28, 24, -4], reproduced=[-28, 24, -4] → PASS (0.0s)
+  dot-products-between-individual-neural: sign p=0.008 → PASS (0.1s)
+  individual-grbs-dot-product-values-not: rho=0.088, p=0.588, n=40 — null reproduces, coefficient differs from the reported -0.058. Volume i is assumed to be row i: the deposit ships no participant order for the 4D map, so the pairing cannot be confirmed from it. → WARN
+  manipulation-check-bilateral-ventral-striatum: 110vox [-14, 8, -8] T=5.63 · 80vox [10, 10, -4] T=5.46 → PASS
+  bilateral-ventral-striatum-more-active: 401vox [10, 12, -4] T=7.18 · 390vox [-10, 8, -6] T=6.12 → PASS
+  decisions-social-compared-solo-condition: 758vox [0, -62, 38] T=5.72 · 216vox [-34, -58, 26] T=4.5 · 135vox [4, 52, 22] T=3.97 → PASS
+  one-cluster-left-sts-responded: 99vox [-52, -32, 0] T=4.7 → PASS
+  connectivity-between-left-anterior-insula: 113vox [46, 16, 22] T=4.34 · 38vox [-38, -2, 26] T=4.08 → PASS
+  partner-reward-prediction-errors-resulting: median=0.197, wilcoxon p=0.0037, 27/40 above zero → PASS
+  guilt-effect-occurred-whether-participant: own-win t(39)=-3.57 p=0.0010 · own-loss t(36)=-3.59 p=0.0010 → PASS
+  participant-happiness-lower-when-participant: t=-2.60 p=0.0131 → WARN
+  participants-chose-risky-option-lottery: t=-1.06 p=0.297 → WARN (condition coding undocumented)
+
+[figures] Running /Users/zach/Projects/mainenlab/elife-claim-trees/.claude/worktrees/agent-skill-claims-structures-a0a942/verification/gadeke-2026-guilt-insula/figures/generate_figures.py ...
+Generating Gadeke 2026 figure panels...
+[figures] WARNING: exited 1
+Traceback (most recent call last):
+  File "/Users/zach/Projects/mainenlab/elife-claim-trees/.claude/worktrees/agent-skill-claims-structures-a0a942/verification/gadeke-2026-guilt-insula/figures/generate_figures.py", line 172, in <module>
+    fig_lottery_choice_ev()
+  File "/Users/zach/Projects/mainenlab/elife-claim-trees/.claude/worktrees/agent-skill-claims-structures-a0a942/verification/gadeke-2026-guilt-insula/figures/generate_figures.py", line 26, in fig_lottery_choice_ev
+    df = pd.read_csv(
+
+============================================================
+SUMMARY
 
 --------------------------------------------------------+------------------------+------------------------+-------
 CLAIM SLUG                                              | PAPER VALUE            | REPRODUCED             | STATUS
 --------------------------------------------------------+------------------------+------------------------+-------
-lottery-choice-increases-with-ev [fMRI]                 | β>0, p<0.05            | β=0.032, p=9.55e-68, n=2400 | PASS  
-happiness-correlates-partner-reward [fMRI R²]           | 0.185                  | 0.184                  | PASS  
-happiness-correlates-partner-reward [Behav R²]          | 0.147                  | 0.145                  | PASS  
-guilt-reduces-happiness-after-partner-loss [fMRI β]     | 0.33                   | 0.34                   | PASS  
-guilt-reduces-happiness-after-partner-loss [Behav β]    | 0.39                   | 0.40                   | PASS  
-insula-tracks-guilt-effect                              | peak MNI [-28, 24, -4] | peak MNI [-28, 24, -4] | PASS  
-insula-guilt-replicates-yu-koban-signature              | sign test p<0.05       | nibabel not installed  | WARN  
+participants-probability-choosing-risky-option [fMRI]   | β>0, p<0.05            | β=0.032, p=9.55e-68, n=2400 | PASS  
+participant-momentary-happiness-varied-rewards-2 [fMRI R²] | 0.185                  | 0.184                  | PASS  
+participant-momentary-happiness-varied-rewards-2 [Behav R²] | 0.147                  | 0.145                  | PASS  
+when-partner-received-low-lottery [fMRI β]              | 0.33                   | 0.34                   | PASS  
+when-partner-received-low-lottery [Behav β]             | 0.39                   | 0.40                   | PASS  
+mass-univariate-voxel-wise-analysis-found-small         | peak MNI [-28, 24, -4] | peak MNI [-28, 24, -4] | PASS  
+dot-products-between-individual-neural                  | sign test p<0.05       | sign p=0.008, wilcoxon p=0.021 (n_pos=28/40) | PASS  
+individual-grbs-dot-product-values-not                  | Spearman rho=-0.058, p=0.725 | rho=0.088, p=0.588, n=40 — null reproduces, coefficient differs from the reported -0.058. Volume i is assumed to be row i: the deposit ships no participant order for the 4D map, so the pairing cannot be confirmed from it. | WARN  
+manipulation-check-bilateral-ventral-striatum           | L 110vox [-14 8 -8] T=5.63 · R 80vox [10 10 -4] T=5.46 | 110vox [-14, 8, -8] T=5.63 · 80vox [10, 10, -4] T=5.46 | PASS  
+bilateral-ventral-striatum-more-active                  | bilateral VS, risky>safe (d=0.72 / 0.85) | 401vox [10, 12, -4] T=7.18 · 390vox [-10, 8, -6] T=6.12 | PASS  
+decisions-social-compared-solo-condition                | 3 clusters: precuneus, left TPJ, mPFC | 758vox [0, -62, 38] T=5.72 · 216vox [-34, -58, 26] T=4.5 · 135vox [4, 52, 22] T=3.97 | PASS  
+one-cluster-left-sts-responded                          | left STS, pRPEsocial > pRPEpartner | 99vox [-52, -32, 0] T=4.7 | PASS  
+connectivity-between-left-anterior-insula               | aIns seed, condition-dependent IFG coupling | 113vox [46, 16, 22] T=4.34 · 38vox [-38, -2, 26] T=4.08 | PASS  
+partner-reward-prediction-errors-resulting              | Z=2.85, p=0.004 (social_pRPE > 0) | median=0.197, wilcoxon p=0.0037, 27/40 above zero | PASS  
+guilt-effect-occurred-whether-participant               | own-win t(39)=-3.58 p<0.001 · own-loss t(39)=-3.39 p=0.002 | own-win t(39)=-3.57 p=0.0010 · own-loss t(36)=-3.59 p=0.0010 | PASS  
+participant-happiness-lower-when-participant            | t(3600)=-3.92, p<0.0001, beta=-0.14 | decided=-0.048 vs not=0.122, t(39)=-2.60 p=0.0131 — direction reproduces on the deposited subset (social risky choices, 1216 trials); the paper's model covers ~3600 | WARN  
+participants-chose-risky-option-lottery                 | t(4796)=2.54, p=0.011 (weak, not replicated in Study 2) | cond0=0.518 vs cond1=0.536, t(39)=-1.06 p=0.297 per participant — the deposit does not document which level is Solo, and a per-participant test has far less power than the paper's trial-level model | WARN  
 --------------------------------------------------------+------------------------+------------------------+-------
 
-Summary: 7 claims | 6 PASS | 1 WARN | 0 FAIL
-
-All claims PASS or WARN. No mismatches.
+[prov] 90 file(s) opened, 17 result(s) → /Users/zach/Projects/mainenlab/elife-claim-trees/.claude/worktrees/agent-skill-claims-structures-a0a942/verification/gadeke-2026-guilt-insula/provenance.json
+14/17 claims verified (3 WARN, 0 FAIL)
