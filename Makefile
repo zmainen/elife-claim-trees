@@ -28,7 +28,7 @@ SITE   := site
 # scripts under `scripts/` and pip installs only the `claim_graphs` package and one console
 # script. Seventeen of the nineteen commands below are such scripts, so `pip install
 # claim-graphs` would not make this Makefile work. Publishing them as entry points is the
-# eventual fix (claim-graphs#21); a named checkout is what works today, and it is what the
+# eventual fix (claim-graphs#26); a named checkout is what works today, and it is what the
 # runner was already built for — `pipeline.py` resolves the machinery from its own location and
 # the graph from CLAIM_GRAPHS_ROOT.
 #
