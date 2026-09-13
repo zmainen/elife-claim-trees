@@ -39,6 +39,10 @@ run state. So it follows the ruling's stated fallback: they are errors for Gaede
 edge-inference is re-answered under the new contract in the same change, and warnings for every
 other paper, whose trees the ruling does not re-run. `--warnings` lists the warnings.
 
+Before any of that, every claim file's frontmatter must parse as written: a file strict YAML
+refuses is not checked by anything, it is silently skipped, and nine such files went unchecked
+for five months.
+
 A dangling target -- a relation naming something that is not a claim in the paper -- is
 reported the same way, as a warning, not a failure. Some are genuine gaps awaiting the
 alternative claims of issue #3; `scopes: '*'` is deliberate and means the whole paper.
@@ -54,6 +58,8 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+
+import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from export_mira import (CLAIMS_DIR, load_paper, public_papers,  # noqa: E402
@@ -76,6 +82,36 @@ LINT_OPPOSE = {"contradicts", "rules-out", "refutes"}
 # The paper whose edge-inference is re-answered under the post-#28 contract in this change, so
 # its outcome rules fail rather than warn. See the module docstring.
 CURRENT_UNDER_CONTRACT = {"gadeke-2026-guilt-insula"}
+
+
+def strict_frontmatter_errors(paper_slug):
+    """Claim files whose raw frontmatter strict YAML refuses.
+
+    A precondition for everything else here: a file that will not parse is not checked, it is
+    skipped, and nine files were skipped by every check in this repository for five months. An
+    April schema migration wrote `belongings:` with `[]` at column 0 on the next line, which
+    YAML rejects outright, and each reader worked around it privately — `export_mira`,
+    `edge_review` and `migrate_to_oxa` all carry their own normaliser. Tolerating it at three
+    call sites is what let it stay invisible; the corpus files are now well-formed and this is
+    what keeps them that way.
+
+    Readers may still normalise what they are handed — a claim file from elsewhere is not ours
+    to reject. This says only that the files in this repository parse as written.
+    """
+    d = os.path.join(CLAIMS_DIR, paper_slug)
+    out = []
+    for fn in sorted(os.listdir(d)):
+        if not fn.endswith(".md"):
+            continue
+        text = open(os.path.join(d, fn), encoding="utf-8").read()
+        if not text.startswith("---"):
+            continue
+        try:
+            yaml.safe_load(text.split("---", 2)[1])
+        except yaml.YAMLError as exc:
+            detail = (exc.args[0] if exc.args else str(exc)).strip().splitlines()[0]
+            out.append(f"{fn}: frontmatter is not valid YAML — {detail}")
+    return out
 
 
 def stance(claim, paper_slug):
@@ -164,6 +200,7 @@ def main():
             print(f"  {s}: no claim directory", file=sys.stderr)
             continue
         errors, warnings = check(s)
+        errors = strict_frontmatter_errors(s) + errors
         total_e += len(errors)
         total_w += len(warnings)
         if errors or (warnings and a.warnings):
