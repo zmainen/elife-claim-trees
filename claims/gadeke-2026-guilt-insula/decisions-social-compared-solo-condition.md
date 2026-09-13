@@ -1,5 +1,5 @@
 ---
-uuid: 370dd7d3-1e14-4a15-b30d-698b7270dec9
+uuid: c2960d53-2f5c-4e76-a75d-ebb27cf03c00
 slug: decisions-social-compared-solo-condition
 doi: null
 claim: Decisions in the Social compared with the Solo condition engaged three clusters — the precuneus
@@ -8,18 +8,12 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: strong
-warrant_why: a verified reproduction recovered all three clusters (precuneus, TPJ, mPFC)
-warrant_from:
-- reproductions
-- verification
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4b
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: precuneus-tpj-mpfc-social-decisions
   agent: mainen-z

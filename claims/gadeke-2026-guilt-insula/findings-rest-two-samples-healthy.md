@@ -1,5 +1,5 @@
 ---
-uuid: 969a9486-68dd-4163-8a30-315ee77abdcd
+uuid: 9eb1ea63-60cd-4642-83e4-6b8b10939b5a
 slug: findings-rest-two-samples-healthy
 doi: null
 claim: The findings rest on two samples of healthy adults — Study 1 (behaviour only, N = 40) and Study
@@ -9,11 +9,6 @@ claim-type: assessment
 role: scope
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: its only reproduction is blocked; the sample scope is unchecked
-warrant_from:
-- reproductions
 scopes:
 - when-partner-received-low-lottery
 belongings: []
@@ -21,7 +16,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: scope-two-study-design
   agent: mainen-z

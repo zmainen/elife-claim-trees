@@ -1,5 +1,5 @@
 ---
-uuid: 5656e398-7d59-4c95-86dd-51e3ced41315
+uuid: 898aa8b6-d872-47b3-a3ef-d1a7f608c1a4
 slug: study-reproduced-study-design-inside
 doi: null
 claim: Study 2 reproduced the Study 1 design inside the fMRI scanner with identical parameters except
@@ -9,9 +9,6 @@ claim-type: assessment
 role: scope
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: the tree records nothing bearing on this design-reproduction scope claim
 scopes:
 - insula-rois-responded-more-low
 belongings: []
@@ -19,7 +16,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

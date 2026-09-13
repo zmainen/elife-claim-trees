@@ -1,5 +1,5 @@
 ---
-uuid: f452b291-30ac-4466-88a1-4eeb8cb3ad80
+uuid: 1323c81a-fb0a-4b6b-8409-78c734f6eab8
 slug: insula-rois-responded-more-low
 doi: null
 claim: The insula ROIs responded more to low lottery outcomes for the partner in the Social than the Partner
@@ -8,12 +8,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: moderate
-warrant_why: validated by the dot-products-between-individual-neural control (convergent GRBS validity, verified); the ROI numbers themselves are not directly reproduced
-warrant_from:
-- validated_by
-- requires
 tests:
 - anterior-insula-tracks-guilt-insula
 confirms:
@@ -27,7 +21,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4e
-  confidence: tentative
+  readers: high
 reproductions: []
 ---
 

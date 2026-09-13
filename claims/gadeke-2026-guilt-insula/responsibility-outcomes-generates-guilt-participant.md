@@ -1,5 +1,5 @@
 ---
-uuid: 3e9f0864-10bf-471e-957d-0f18f6eccec4
+uuid: 86414b7a-dde7-44bb-a682-bfc6cab54615
 slug: responsibility-outcomes-generates-guilt-participant
 doi: null
 claim: If responsibility for outcomes generates guilt, then participant happiness should decrease more
@@ -9,10 +9,6 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
-warrant: confirmed
-warrant_why: confirmed by when-partner-received-low-lottery, whose interaction reproduced
-warrant_from:
-- outcome
 derived-from:
 - responsibility-social-choice-yields-low
 belongings: []
@@ -20,7 +16,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

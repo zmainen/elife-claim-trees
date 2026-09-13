@@ -1,5 +1,5 @@
 ---
-uuid: 892dad5c-8e04-45e0-842c-22844d606e0b
+uuid: 55424080-599e-41c2-8241-3822cc99402f
 slug: no-significant-interaction-between-difference
 doi: null
 claim: There was no significant interaction between the difference in expected values and experimental
@@ -8,9 +8,6 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: the tree records no reproduction, control or test bearing on this null result
 belongings:
 - relation: supports
   target: participants-showed-very-similar-risk
@@ -18,7 +15,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

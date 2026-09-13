@@ -1,0 +1,63 @@
+---
+uuid: 2e7b6fa2-a2ee-4143-b083-4eaffc3a5876
+slug: partner-reward-prediction-errors-resulting
+doi: null
+claim: 'The partner''s reward prediction errors resulting from the participants'' own choices (social_pRPE)
+  had weights greater than 0 (Responsibility model: Study 1: Z = 2.85, p = 0.004; Study 2: Z = 3.26, p
+  = 0.001), contributing to explaining participants'' momentary happiness.'
+claim-type: empirical
+role: empirical
+concepts: []
+priority: '2026-09-13'
+epistemic: tentative
+warrant: strong
+warrant_why: a verified reproduction recovered the social_pRPE weight above zero (wilcoxon p=0.0037)
+warrant_from:
+- reproductions
+- verification
+tests:
+- responsibility-partner-outcomes-influences-participant
+confirms:
+- responsibility-partner-outcomes-influences-participant
+belongings:
+- relation: supports
+  target: responsibility-social-choice-yields-low
+assertions:
+- paper-slug: gadeke-2026-guilt-insula
+  doi: 10.7554/eLife.105391
+  panel: null
+  confidence: tentative
+reproductions:
+- carried_from: social-prpe-weight-positive
+  agent: mainen-z
+  date: 2026-09-11
+  status: verified
+  script: verification/gadeke-2026-guilt-insula/verify.py
+  script_execution: executed
+  data_source: https://github.com/BonnSocialNeuroscienceUnit/ResponsibilityExperiment
+  data_file: Code/csv/Behav - Responsibility - fittedParameters.csv
+  paper_value: Z=2.85, p=0.004 (social_pRPE > 0)
+  reproduced_value: median=0.197, wilcoxon p=0.0037, 27/40 above zero
+  notes: 'Re-checked 2026-09-11 against the deposited per-trial data, observed by verification/audit_run.py.
+    Paper: Z=2.85, p=0.004 (social_pRPE > 0). Reproduced: median=0.197, wilcoxon p=0.0037, 27/40 above
+    zero. Recorded `unattempted` until this run, while the CSV that settles it was already being downloaded
+    by the same script.
+
+    '
+- carried_from: social-prpe-weight-positive
+  agent: mainen-z
+  date: 2026-03-30
+  status: unattempted
+  notes: null
+---
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `tests` → `responsibility-partner-outcomes-influences-participant`: the social_pRPE weight tests the prediction that partner pRPE from own choices contributes
+- `confirms` → `responsibility-partner-outcomes-influences-participant`: social_pRPE weights were reliably greater than zero in both studies
+- `supports` → `responsibility-social-choice-yields-low`: a positive social_pRPE weight supports that partner outcomes from own choices affect happiness
+
+<!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
+
+**results-reader evidence:**
+> weights for social_pRPE were greater than 0: Responsibility model: Study 1: Z = 2.85, p = 0.004, Study 2: Z = 3.26, p = 0.001; ResponsibilityRedux model: Study 1: Z = 2.93, p = 0.003, Study 2: Z = 3.30, p = 0.001.

@@ -1,5 +1,5 @@
 ---
-uuid: 21f204da-538c-4e83-8422-54188af2e9ed
+uuid: 65a8d4fd-6112-4739-9761-ad7966580788
 slug: pre-task-icebreaker-succeeded-establishing-positive
 doi: null
 claim: 'A pre-task icebreaker succeeded in establishing a positive attitude toward the partner: participants
@@ -9,9 +9,6 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: the tree records no reproduction, control or test bearing on this manipulation check
 validates:
 - when-partner-received-low-lottery
 belongings: []
@@ -19,7 +16,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: app1table11
-  confidence: tentative
+  readers: high
 reproductions: []
 ---
 

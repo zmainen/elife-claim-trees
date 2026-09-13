@@ -1,5 +1,5 @@
 ---
-uuid: 88c906cb-a32f-46a9-8ad9-ea5cb2ec59c2
+uuid: 4cb25073-d1b7-487b-8df2-87ccfb96be30
 slug: mass-univariate-voxel-wise-analysis-found-small
 doi: null
 claim: A mass-univariate voxel-wise analysis found a small left anterior insula cluster (peak T = 3.95,
@@ -9,12 +9,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: strong
-warrant_why: a verified reproduction recovered the insula peak MNI [-28, 24, -4]
-warrant_from:
-- reproductions
-- verification
 tests:
 - anterior-insula-tracks-guilt-insula
 confirms:
@@ -24,7 +18,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: fig4f
-  confidence: tentative
+  readers: high
 reproductions:
 - carried_from: insula-tracks-guilt-effect
   agent: mainen-z

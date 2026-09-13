@@ -1,5 +1,5 @@
 ---
-uuid: f7190424-29cd-4ad9-b5d6-eef07541fcfb
+uuid: 394bc1b6-98fd-4138-9a49-3e846286df07
 slug: connectivity-between-guilt-responsibility-related-outcome-ph
 doi: null
 claim: If connectivity between the guilt- and responsibility-related outcome-phase regions (left insula,
@@ -12,10 +12,6 @@ role: prediction
 concepts: []
 priority: '2026-09-13'
 epistemic: prediction
-warrant: confirmed
-warrant_why: confirmed by functional-connectivity-between-left-anterior
-warrant_from:
-- outcome
 derived-from:
 - functional-connectivity-between-guilt-responsibility-related
 belongings: []
@@ -23,7 +19,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

@@ -1,5 +1,5 @@
 ---
-uuid: 75187541-3b2b-4f38-92fa-2971d7c44708
+uuid: 5f3c3215-e632-499a-bf5a-8c1143b58c29
 slug: risk-aversion-parameter-not-differ-between
 doi: null
 claim: 'The risk-aversion parameter ρ did not differ between gain and loss trials (Study 1: t(17) = 0.21,
@@ -9,9 +9,6 @@ claim-type: empirical
 role: control
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: the tree records no reproduction, control or test bearing on this pooling justification
 validates:
 - momentary-happiness-modelled-five-computational
 belongings: []
@@ -19,7 +16,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

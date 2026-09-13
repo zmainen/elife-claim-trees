@@ -1,5 +1,5 @@
 ---
-uuid: 973ba1c8-7a3e-4e36-a78a-10fbd38c45b2
+uuid: 335dd7e2-e500-4bb4-96a8-ec99837bc3bb
 slug: model-selection-among-happiness-models
 doi: null
 claim: Model selection among the happiness models used likelihood-ratio tests comparing the Responsibility
@@ -8,9 +8,6 @@ claim-type: assessment
 role: methodological
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: weak
-warrant_why: the tree records no reproduction, control or test bearing on this model-selection method
 enables-method:
 - likelihood-ratio-test-showed-responsibility
 belongings: []
@@ -18,7 +15,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions: []
 ---
 

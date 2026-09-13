@@ -1,5 +1,5 @@
 ---
-uuid: 2e7b6fa2-a2ee-4143-b083-4eaffc3a5876
+uuid: 907a1b08-2fe3-4389-a651-fac29ccdaff1
 slug: partner-reward-prediction-errors-resulting
 doi: null
 claim: 'The partner''s reward prediction errors resulting from the participants'' own choices (social_pRPE)
@@ -9,12 +9,6 @@ claim-type: empirical
 role: empirical
 concepts: []
 priority: '2026-09-13'
-epistemic: tentative
-warrant: strong
-warrant_why: a verified reproduction recovered the social_pRPE weight above zero (wilcoxon p=0.0037)
-warrant_from:
-- reproductions
-- verification
 tests:
 - responsibility-partner-outcomes-influences-participant
 confirms:
@@ -26,7 +20,7 @@ assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
-  confidence: tentative
+  readers: single-source
 reproductions:
 - carried_from: social-prpe-weight-positive
   agent: mainen-z
