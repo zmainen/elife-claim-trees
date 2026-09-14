@@ -1,5 +1,5 @@
 ---
-uuid: 2b3e78d5-e3a7-4e42-9281-8594e67b4e30
+uuid: 361dbc69-143a-46fc-a84a-422381efb954
 slug: likelihood-ratio-test-showed-responsibility
 doi: null
 claim: 'A likelihood ratio test showed the Responsibility model fitted the happiness data better than
@@ -8,7 +8,7 @@ claim: 'A likelihood ratio test showed the Responsibility model fitted the happi
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 tests:
 - responsibility-partner-outcomes-influences-participant
 confirms:
@@ -30,12 +30,6 @@ reproductions:
   status: unattempted
   notes: Computational model code in GitHub repo. Behavioral data in BehaviouralData/ directory (.mat
     files). MATLAB required. Not yet executed.
-warrant: moderate
-warrant_why: confirms the prediction responsibility-partner-outcomes-influences-participant and is supported by several happiness results
-warrant_from:
-- confirms
-- supported_by
-- requires
 check_verification: unattempted
 check_verification_from:
 - record:unattempted

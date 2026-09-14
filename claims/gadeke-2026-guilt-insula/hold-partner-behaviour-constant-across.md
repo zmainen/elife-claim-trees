@@ -1,5 +1,5 @@
 ---
-uuid: 40ad0de9-7352-4e66-b192-fdf239643013
+uuid: fb90ba93-2683-4229-9c5a-0693af366fdb
 slug: hold-partner-behaviour-constant-across
 doi: null
 claim: To hold the partner's behaviour constant across participants, the partner's decisions were simulated
@@ -7,7 +7,7 @@ claim: To hold the partner's behaviour constant across participants, the partner
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 enables-method:
 - when-partner-received-low-lottery
 belongings: []
@@ -26,8 +26,6 @@ reproductions:
     were simulated using a simple algorithm that always selected the option with the highest expected
     value". Authors acknowledge this in Discussion as a limitation and note that partner outcomes nonetheless
     influenced participant happiness, arguing the effects could be stronger with genuine interaction.'
-warrant: weak
-warrant_why: the tree records nothing bearing on this methodological choice
 check_verification: blocked
 check_verification_from:
 - record:blocked

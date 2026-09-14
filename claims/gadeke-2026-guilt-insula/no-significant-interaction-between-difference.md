@@ -1,5 +1,5 @@
 ---
-uuid: 2da2c101-3210-4699-8395-b46b11bbe2d5
+uuid: a3b19ef3-bb8e-4833-a58d-26cca005b3bd
 slug: no-significant-interaction-between-difference
 doi: null
 claim: There was no significant interaction between the difference in expected values and experimental
@@ -7,7 +7,7 @@ claim: There was no significant interaction between the difference in expected v
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: supports
   target: participants-showed-very-similar-risk
@@ -17,8 +17,6 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: the tree records nothing bearing on this null control
 check_verification: unrecorded
 ---
 

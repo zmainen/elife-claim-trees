@@ -1,5 +1,5 @@
 ---
-uuid: 256f3e8f-87f6-4a84-9fd2-d564243c1eb6
+uuid: 454e1c13-475b-4d28-ba28-a73f62a5dac6
 slug: linear-mixed-model-containing-all
 doi: null
 claim: The linear mixed model containing all three two-way interaction terms (Model 5, Equation 10) explained
@@ -9,7 +9,7 @@ claim: The linear mixed model containing all three two-way interaction terms (Mo
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 validates:
 - when-partner-received-low-lottery
 belongings: []
@@ -19,8 +19,6 @@ assertions:
   panel: app1table2
   readers: contested
 reproductions: []
-warrant: weak
-warrant_why: the tree records nothing bearing on this methodological result
 check_verification: unrecorded
 ---
 

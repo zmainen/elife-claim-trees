@@ -1,5 +1,5 @@
 ---
-uuid: 9fbb1b24-0d56-4a63-824f-9878838a3f28
+uuid: 618f55c1-0e97-43d1-bdb4-0d7f49784bfe
 slug: participant-happiness-lower-when-participant
 doi: null
 claim: 'Participant happiness was lower when the participant was the decision-maker (Social + Solo vs.
@@ -8,7 +8,7 @@ claim: 'Participant happiness was lower when the participant was the decision-ma
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 dissociates-with:
 - when-partner-received-low-lottery
 belongings: []
@@ -43,10 +43,6 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: null
-warrant: moderate
-warrant_why: an empirical result that rules out alt-agency-aversion-not-guilt
-warrant_from:
-- rules_out
 check_verification: reproduced
 check_verification_from:
 - record:partial

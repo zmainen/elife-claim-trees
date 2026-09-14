@@ -1,5 +1,5 @@
 ---
-uuid: 05e1c77d-80e1-4aab-8b94-1273386a0b33
+uuid: 8ddb6db0-7f1b-404d-ae2a-352a03ba13d3
 slug: each-trial-participants-chose-between
 doi: null
 claim: 'On each trial participants chose between a safe and a risky monetary option under three conditions:
@@ -8,7 +8,7 @@ claim: 'On each trial participants chose between a safe and a risky monetary opt
 claim-type: assessment
 role: scope
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 scopes:
 - when-partner-received-low-lottery
 belongings: []
@@ -18,8 +18,6 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: a scope statement the tree records nothing bearing on
 check_verification: unrecorded
 ---
 

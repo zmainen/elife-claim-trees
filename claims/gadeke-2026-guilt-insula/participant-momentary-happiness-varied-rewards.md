@@ -1,5 +1,5 @@
 ---
-uuid: 7efedbb1-f561-4b3f-8368-550a1d65f093
+uuid: bc8b71d7-2262-4835-8802-e1227a83aaef
 slug: participant-momentary-happiness-varied-rewards
 doi: null
 claim: Participant momentary happiness varied with the rewards the participant received in the current
@@ -7,7 +7,7 @@ claim: Participant momentary happiness varied with the rewards the participant r
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: supports
   target: likelihood-ratio-test-showed-responsibility
@@ -17,8 +17,6 @@ assertions:
   panel: fig3a,fig3e
   readers: high
 reproductions: []
-warrant: weak
-warrant_why: the tree records nothing bearing on this result
 check_verification: unrecorded
 ---
 

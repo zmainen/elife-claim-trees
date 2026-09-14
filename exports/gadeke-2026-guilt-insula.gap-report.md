@@ -1,8 +1,8 @@
 # MIRA export — what the strict file cannot carry
 
-**Paper:** `gadeke-2026-guilt-insula` · **Claims registered:** 2026-09-10 – 2026-09-13
+**Paper:** `gadeke-2026-guilt-insula` · **Claims registered:** 2026-09-10 – 2026-09-14
 
-68 claims, 82 typed relations between them.
+68 claims, 85 typed relations between them.
 
 ## Claims by role
 
@@ -18,7 +18,7 @@
 
 ## Relations dropped
 
-**34 of 82 relations (41%) have no MIRA predicate and are absent from the strict export.**
+**35 of 85 relations (41%) have no MIRA predicate and are absent from the strict export.**
 
 | Relation | Dropped | What is lost |
 |---|---:|---|
@@ -30,6 +30,7 @@
 | `enables-method` | 3 | a result makes a downstream method possible |
 | `scopes` | 3 | a scope constraint governs another claim's validity |
 | `dissociates-with` | 1 | the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric) |
+| `qualifies` | 1 | a claim narrows another's applicability |
 
 The `entails` / `derived-from` pair is the most consequential: together they are the paper's deductive spine. Without them a reader cannot tell which prediction belongs to which hypothesis.
 

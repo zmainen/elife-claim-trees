@@ -1,5 +1,5 @@
 ---
-uuid: 78bf184d-9af1-4f3a-8c1f-4efc7dbc2a34
+uuid: 3b72028e-7d17-4145-b33e-431df3fd044f
 slug: responsibility-choices-not-influence-happiness
 doi: null
 claim: Responsibility for choices did not influence happiness following positive (high) lottery outcomes
@@ -7,7 +7,7 @@ claim: Responsibility for choices did not influence happiness following positive
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 validates:
 - when-partner-received-low-lottery
 belongings: []
@@ -17,8 +17,6 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: the tree records nothing bearing on this null control
 check_verification: unrecorded
 ---
 

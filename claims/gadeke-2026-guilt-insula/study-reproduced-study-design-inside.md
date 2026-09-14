@@ -1,5 +1,5 @@
 ---
-uuid: 846060d5-c556-4a0f-8668-9adfd8937224
+uuid: 67abbc49-5bf2-4491-bb3c-d00cd9c94a84
 slug: study-reproduced-study-design-inside
 doi: null
 claim: Study 2 reproduced the Study 1 design inside the fMRI scanner with identical parameters except
@@ -8,7 +8,7 @@ claim: Study 2 reproduced the Study 1 design inside the fMRI scanner with identi
 claim-type: assessment
 role: scope
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 scopes:
 - insula-rois-responded-more-low
 belongings: []
@@ -18,8 +18,6 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: a scope statement the tree records nothing bearing on
 check_verification: unrecorded
 ---
 

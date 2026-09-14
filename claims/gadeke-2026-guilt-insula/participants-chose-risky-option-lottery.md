@@ -1,5 +1,5 @@
 ---
-uuid: f12d294d-eafe-4a6b-9968-8b4d9034ee56
+uuid: a4ff2cf1-0e20-4953-b866-139a23b050fe
 slug: participants-chose-risky-option-lottery
 doi: null
 claim: Participants chose the risky option (lottery) more often in the Solo than the Social condition
@@ -8,7 +8,7 @@ claim: Participants chose the risky option (lottery) more often in the Solo than
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: supports
   target: participants-showed-very-similar-risk
@@ -44,10 +44,6 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: Behavioral result from Study 1. Not yet executed.
-warrant: weak
-warrant_why: a choice result that requires the paradigm each-trial-participants-chose-between; no control or support bears on it
-warrant_from:
-- requires
 check_verification: reproduced
 check_verification_from:
 - record:partial

@@ -1,5 +1,5 @@
 ---
-uuid: 6cdf645a-3865-433f-ac5f-308630199916
+uuid: 76d70862-e70e-4b2a-bd08-08066f9cdfd9
 slug: individual-grbs-dot-product-values-not
 doi: null
 claim: Individual GRBS dot-product values did not correlate with the behavioural guilt responses (Spearman's
@@ -8,7 +8,7 @@ claim: Individual GRBS dot-product values did not correlate with the behavioural
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -41,8 +41,6 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: null
-warrant: weak
-warrant_why: the tree records nothing bearing on this null control
 check_verification: reproduced
 check_verification_from:
 - record:partial

@@ -4,7 +4,7 @@ title: Contributions of insula and superior temporal sulcus to interpersonal gui
   and responsibility in social decisions
 doi: 10.7554/eLife.105391
 url: https://doi.org/10.7554/eLife.105391
-added: '2026-09-13'
+added: '2026-09-14'
 claim-count: 62
 extraction-path: jats
 ---
@@ -79,8 +79,3 @@ extraction-path: jats
 - per-agent counts: {'results': 44, 'caption': 25, 'structure': 16}
 - reconciliation strategy: confidence-tagged
 - prompt variant: default
-
-## Unsupported parts of the argument
-
-- [left-ifg-cluster-showed-opposite](left-ifg-cluster-showed-opposite.md) — the second PPI leg of the connectivity hypothesis - the left-IFG cluster with the STS seed - did not survive correction for multiple comparisons (p uncorrected = 0.001), so the STS half of the connectivity claim rests on an uncorrected result
-- [during-receipt-lottery-versus-safe](during-receipt-lottery-versus-safe.md) — a localizer contrast defining the outcome-responsive regions; the insula ROI result requires it, but no result supports it and it settles no prediction - it stands alone as evidence

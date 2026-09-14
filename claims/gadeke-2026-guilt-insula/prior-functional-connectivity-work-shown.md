@@ -1,5 +1,5 @@
 ---
-uuid: cac423cb-4c24-400d-aa4e-833c084c21ac
+uuid: a8a7bd3d-cb7f-45b6-a7ea-3b79029910cd
 slug: prior-functional-connectivity-work-shown
 doi: null
 claim: Prior functional connectivity work has shown network differences between social and self-only choices,
@@ -8,7 +8,7 @@ claim: Prior functional connectivity work has shown network differences between 
 claim-type: interpretive
 role: literature-context
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: supports
   target: functional-connectivity-between-guilt-responsibility-related
@@ -18,8 +18,6 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: prior-literature context the tree records nothing bearing on
 check_verification: unrecorded
 ---
 

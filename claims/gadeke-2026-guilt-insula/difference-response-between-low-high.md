@@ -1,5 +1,5 @@
 ---
-uuid: 49168f37-934f-49b3-bf0b-36194b87610d
+uuid: aeace190-6ce8-4384-88a0-48863a69c352
 slug: difference-response-between-low-high
 doi: null
 claim: The difference in response between low and high lottery outcomes was greater in the Social than
@@ -8,7 +8,7 @@ claim: The difference in response between low and high lottery outcomes was grea
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 part-of:
 - insula-rois-responded-more-low
 belongings: []
@@ -18,10 +18,6 @@ assertions:
   panel: app1table10
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: one measure that is part of insula-rois-responded-more-low, not independently warranted
-warrant_from:
-- part_of
 check_verification: unrecorded
 ---
 

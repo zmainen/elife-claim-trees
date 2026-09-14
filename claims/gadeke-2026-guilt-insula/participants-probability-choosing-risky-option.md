@@ -1,5 +1,5 @@
 ---
-uuid: 2fc68635-8b12-4013-9f44-5cbc696eb177
+uuid: 5f9e54ad-4455-4263-924f-c1f6337e4683
 slug: participants-probability-choosing-risky-option
 doi: null
 claim: 'Participants'' probability of choosing the risky option (lottery) increased with the difference
@@ -8,7 +8,7 @@ claim: 'Participants'' probability of choosing the risky option (lottery) increa
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -63,10 +63,6 @@ reproductions:
     a coefficient-scale comparison against a utility-weighted predictor, not a failure to reproduce.
 
     '
-warrant: moderate
-warrant_why: a control that rules out alt-participants-insensitive-to-value
-warrant_from:
-- rules_out
 check_verification: partial
 check_verification_from:
 - record:partial

@@ -1,5 +1,5 @@
 ---
-uuid: 43b388c8-9d29-4fd4-8c6e-db588f0ba409
+uuid: 67015b34-8ded-4bcd-beca-288607bbe89b
 slug: risk-aversion-parameter-not-differ-between
 doi: null
 claim: 'The risk-aversion parameter ρ did not differ between gain and loss trials (Study 1: t(17) = 0.21,
@@ -8,7 +8,7 @@ claim: 'The risk-aversion parameter ρ did not differ between gain and loss tria
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 validates:
 - momentary-happiness-modelled-five-computational
 belongings: []
@@ -18,8 +18,6 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: the tree records nothing bearing on this control
 check_verification: unrecorded
 ---
 

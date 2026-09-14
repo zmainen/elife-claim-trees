@@ -1,5 +1,5 @@
 ---
-uuid: 9b641e59-dbca-4931-8682-5a8d8eac63e3
+uuid: 36b87634-b160-49e8-8ab7-db31d9e21e3b
 slug: manipulation-check-bilateral-ventral-striatum
 doi: null
 claim: 'As a manipulation check, bilateral ventral striatum activation increased with expected certain
@@ -8,7 +8,7 @@ claim: 'As a manipulation check, bilateral ventral striatum activation increased
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 validates:
 - model-based-glm-entered-best-fitting-computational
 belongings: []
@@ -43,10 +43,6 @@ reproductions:
   status: blocked
   blocked_by: compute-infeasible
   notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
-warrant: moderate
-warrant_why: a manipulation-check control that rules out alt-model-based-glm-invalid
-warrant_from:
-- rules_out
 check_verification: reproduced
 check_verification_from:
 - record:verified

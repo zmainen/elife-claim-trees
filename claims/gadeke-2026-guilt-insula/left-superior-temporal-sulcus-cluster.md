@@ -1,5 +1,5 @@
 ---
-uuid: a4a93102-d24f-47c6-b78d-57e4bf7a0208
+uuid: f8eae7da-537f-4168-b864-c70813c65fe4
 slug: left-superior-temporal-sulcus-cluster
 doi: null
 claim: The left superior temporal sulcus cluster responded to model-based regressors coding participant
@@ -7,7 +7,7 @@ claim: The left superior temporal sulcus cluster responded to model-based regres
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: supports
   target: one-cluster-left-sts-responded
@@ -17,8 +17,6 @@ assertions:
   panel: fig4i
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: the tree records nothing bearing on this result
 check_verification: unrecorded
 ---
 

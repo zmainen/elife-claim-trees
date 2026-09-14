@@ -1,5 +1,5 @@
 ---
-uuid: 2b7d839d-9617-46ad-8d4e-dc19f19a6841
+uuid: 7cf1ed18-de2a-4539-a4d8-f22cce916a9c
 slug: among-computational-models-fitted-momentary
 doi: null
 claim: Among the computational models fitted to momentary happiness data, the Responsibility Redux model
@@ -7,7 +7,7 @@ claim: Among the computational models fitted to momentary happiness data, the Re
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: requires
   target: momentary-happiness-modelled-five-computational
@@ -17,10 +17,6 @@ assertions:
   panel: table1
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: an AIC ranking that requires momentary-happiness-modelled-five-computational; nothing in the tree validates or supports it
-warrant_from:
-- requires
 check_verification: unrecorded
 ---
 

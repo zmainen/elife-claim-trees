@@ -1,5 +1,5 @@
 ---
-uuid: 153a5ccc-6999-4c3b-a0a7-7fa168fda438
+uuid: e24a6bdd-0bf2-4f65-9012-581962ac4fcd
 slug: partner-reward-prediction-errors-resulting
 doi: null
 claim: 'The partner''s reward prediction errors resulting from the participants'' own choices (social_pRPE)
@@ -8,7 +8,7 @@ claim: 'The partner''s reward prediction errors resulting from the participants'
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 tests:
 - responsibility-partner-outcomes-influences-participant
 confirms:
@@ -43,10 +43,6 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: null
-warrant: moderate
-warrant_why: confirms the prediction responsibility-partner-outcomes-influences-participant
-warrant_from:
-- confirms
 check_verification: reproduced
 check_verification_from:
 - record:verified
