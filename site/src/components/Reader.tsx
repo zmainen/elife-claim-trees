@@ -143,7 +143,7 @@ function EdgeFlag({ base, paper, claim, rel, label, target, who }:
   );
 }
 
-/** The draft card: a claim nobody has agreed to yet, beside the sentence that prompted it.
+/** The draft card: a claim awaiting a decision, beside the sentence that prompted it.
  *
  *  Defined at module scope rather than inside `Reader`, unlike the claim card. A component
  *  declared in a render body is a new type on every render, so React tears it down and builds

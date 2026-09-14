@@ -53,7 +53,7 @@ const cellTitle = (c: Cell) => {
 // How many papers a person has read, at all, across the corpus — the fact the mark makes
 // visible at this altitude, and which has never been shown here before.
 const adjudicated = papers.reduce(
-  (n, p) => n + cells(p).filter(c => c.adjudication.kind !== 'unread').length, 0);
+  (n, p) => n + cells(p).filter(c => c.adjudication.kind !== 'awaiting').length, 0);
 
 // The matrix columns run in layer order, which is phase order, so a layer's group is a
 // contiguous span of columns. Grouping the rotated labels under a phase header turns
@@ -170,8 +170,8 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
                        class={`relative inline-block w-3.5 h-3.5 rounded-sm ${TONE[c.state] ?? TONE.absent}`}>
                       {/* Adjudication as a mark over the mechanism colour: a filled dot where a
                           person has approved this version, a ring where the reading is partial.
-                          Nothing where nobody has read it, which is most cells but no longer
-                          all of them. */}
+                          Nothing where no approval stands — which says nothing about whether
+                          anyone has read it, only that no one has stamped it. */}
                       {c.adjudication.kind === 'approved' && (
                         <i class="absolute inset-0 m-auto w-1.5 h-1.5 rounded-full bg-white dark:bg-gray-950 ring-1 ring-gray-900/40"></i>
                       )}
@@ -210,7 +210,7 @@ for (const p of papers) for (const c of cells(p)) counts[c.state] = (counts[c.st
         <i class="relative inline-block w-3.5 h-3.5 rounded-sm bg-gray-200 dark:bg-gray-700"><i class="absolute inset-0 m-auto w-1.5 h-1.5 rounded-full border border-white dark:border-gray-950"></i></i>
         {ADJUDICATION_LABEL.partial} — a reading is under way
       </span>
-      <span>no mark — {ADJUDICATION_LABEL.unread}</span>
+      <span>no mark — {ADJUDICATION_LABEL.awaiting}</span>
     </div>
 
     <!-- ── approval, which is not a state ────────────────────────── -->

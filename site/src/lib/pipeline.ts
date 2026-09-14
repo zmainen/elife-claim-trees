@@ -36,7 +36,7 @@ export interface Scheme {
 /** The adjudication fact: whether a person has read this cell's output. From the per-paper
  *  approvals ledger and the verdict file the reading is recorded in. */
 export interface Adjudication {
-  kind: 'approved' | 'partial' | 'superseded' | 'unread';
+  kind: 'approved' | 'partial' | 'superseded' | 'awaiting';
   v?: number;
   by?: string;
   when?: string;
@@ -171,7 +171,7 @@ function adjudicationOf(paper: string, layerId: string,
   }
   if (approved) return { kind: 'superseded', v: approved.v, by: approved.by, when: approved.when };
   if (vinfo && vinfo.considered > 0) return { kind: 'partial', v, ...partial };
-  return { kind: 'unread' };
+  return { kind: 'awaiting' };
 }
 
 /** A paper's version history: every run, newest first. This is the changelog — there is no
@@ -351,7 +351,7 @@ export function approvedCells(): Cell[] {
 
 /** How many papers a person has read under this layer — the adjudication counter a layer page
  *  carries beside its scheme badge. Counts approved and partial readings; superseded and
- *  unread are not readings that still stand. */
+ *  awaiting are not readings that still stand. */
 export function adjudicatedCount(layerId: string): number {
   return papers.filter(p => {
     const c = cell(p, layerId);
@@ -419,7 +419,10 @@ export const SCHEME_NOTE: Record<SchemeState, string> = {
 };
 
 export const ADJUDICATION_LABEL: Record<Adjudication['kind'], string> = {
-  approved: 'approved', partial: 'partial', superseded: 'superseded', unread: 'unread',
+  approved: 'approved', partial: 'partial', superseded: 'superseded',
+  // Not 'unread'. The record knows whether a stamp exists; it does not know whether anyone
+  // has looked, and people read this corpus without stamping what they read.
+  awaiting: 'awaiting approval',
 };
 
 /** The adjudication fact as one line — the "approved v3 by X", "partial, 4 of 30", the rest. */
@@ -431,5 +434,5 @@ export function adjudicationText(a: Adjudication): string {
     return (a.considered != null
       ? `partial — ${a.considered} of ${a.total} considered` : 'partial reading') + proc;
   if (a.kind === 'superseded') return `v${a.v} approved, then the layer ran again`;
-  return 'unread';
+  return 'awaiting approval';
 }
