@@ -1,5 +1,5 @@
 ---
-uuid: d591bac9-ef83-498d-9b20-a71865d84e92
+uuid: ad12528a-753f-4e7d-ae31-2aa0db8ff75a
 slug: participants-own-reward-prediction-errors
 doi: null
 claim: 'Participants'' own reward prediction errors (sRPE) influenced happiness more than the partner''s
@@ -8,7 +8,7 @@ claim: 'Participants'' own reward prediction errors (sRPE) influenced happiness 
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: supports
   target: likelihood-ratio-test-showed-responsibility
@@ -18,8 +18,6 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: the tree records nothing bearing on this result
 check_verification: unrecorded
 ---
 

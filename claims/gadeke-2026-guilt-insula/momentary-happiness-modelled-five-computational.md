@@ -1,5 +1,5 @@
 ---
-uuid: 0694f71a-3833-44b8-92c2-5d4fba1029f7
+uuid: 60aa85cd-2ca6-4817-85f6-b57d134152b0
 slug: momentary-happiness-modelled-five-computational
 doi: null
 claim: Momentary happiness was modelled with five computational models (Basic, Inequality, Guilt-envy,
@@ -8,7 +8,7 @@ claim: Momentary happiness was modelled with five computational models (Basic, I
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -16,10 +16,6 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: moderate
-warrant_why: validated by the control risk-aversion-parameter-not-differ-between
-warrant_from:
-- validated_by
 check_verification: unrecorded
 ---
 

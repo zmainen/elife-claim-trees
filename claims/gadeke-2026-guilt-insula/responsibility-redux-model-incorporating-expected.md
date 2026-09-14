@@ -1,5 +1,5 @@
 ---
-uuid: 22c6b000-90d3-4115-aa71-a7c184345e72
+uuid: f9002814-6185-4c9d-b2a6-96b8764080cf
 slug: responsibility-redux-model-incorporating-expected
 doi: null
 claim: The Responsibility Redux model — incorporating expected, previous and current rewards, reward prediction
@@ -8,7 +8,7 @@ claim: The Responsibility Redux model — incorporating expected, previous and c
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: requires
   target: momentary-happiness-modelled-five-computational
@@ -18,11 +18,6 @@ assertions:
   panel: fig3c,fig3g
   readers: single-source
 reproductions: []
-warrant: moderate
-warrant_why: validated by the control parameter-recovery-procedure-synthetic-data-generated
-warrant_from:
-- validated_by
-- requires
 check_verification: unrecorded
 ---
 

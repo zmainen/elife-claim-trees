@@ -1,5 +1,5 @@
 ---
-uuid: dc8fcf43-bc0c-40c9-bda1-46f2b1cc3f61
+uuid: a9bd5d97-a634-413f-9d82-480d553ccf34
 slug: connectivity-between-left-anterior-insula
 doi: null
 claim: Connectivity between the left anterior insula and the right inferior frontal gyrus varied with
@@ -8,7 +8,7 @@ claim: Connectivity between the left anterior insula and the right inferior fron
 claim-type: interpretive
 role: interpretation
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 interprets:
 - functional-connectivity-between-left-anterior
 belongings: []
@@ -42,10 +42,6 @@ reproductions:
   blocked_by: compute-infeasible
   notes: gPPI analysis requires individual-level GLM outputs from OpenNeuro raw data. gPPI toolbox dependency.
     Group-level results may be in fMRIresults/ NIfTI files. Not yet executed.
-warrant: weak
-warrant_why: interprets functional-connectivity-between-left-anterior, itself only moderate
-warrant_from:
-- interprets
 check_verification: reproduced
 check_verification_from:
 - record:verified

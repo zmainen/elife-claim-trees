@@ -1,17 +1,17 @@
 # gadeke-2026-guilt-insula — what each format carries
 
-68 claims, 82 typed relations between them.
+68 claims, 85 typed relations between them.
 
 One source, three targets. Each row is a relation type the paper's claim tree uses; each column is what became of it.
 
 | Relation | In the tree | MIRA | OXA | Discourse Graphs |
 |---|---:|---|---|---|
-| `supports` | 19 | `cg:supports`, under `mira:supports` | kept | kept |
+| `supports` | 20 | `cg:supports`, under `mira:supports` | kept | kept |
 | `requires` | 9 | `cg:requires`, neutral | kept | dropped |
 | `validates` | 8 | `cg:validates`, under `mira:supports` | kept | kept |
+| `rules-out` | 7 | `cg:rules-out`, under `mira:opposes` | kept | kept |
 | `confirms` | 7 | `cg:confirms`, under `mira:supports` | kept | kept |
 | `tests` | 7 | `cg:tests`, neutral | kept | kept |
-| `rules-out` | 6 | `cg:rules-out`, under `mira:opposes` | kept | kept |
 | `entails` | 5 | `cg:entails`, neutral | kept | dropped |
 | `derived-from` | 5 | — | kept | dropped |
 | `interprets` | 4 | `cg:interprets`, neutral | kept | dropped |
@@ -19,11 +19,12 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 | `scopes` | 3 | `cg:scopes`, neutral | kept | dropped |
 | `enables-method` | 3 | `cg:enables-method`, neutral | kept | dropped |
 | `in-tension-with` | 1 | `cg:in-tension-with`, under `mira:opposes` | kept | kept |
+| `qualifies` | 1 | `cg:qualifies`, neutral | kept | dropped |
 | `dissociates-with` | 1 | `cg:dissociates-with`, neutral | kept | dropped |
 
 ## What MIRA has no predicate for — and what happens instead
 
-**36 of 82 relations (44%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
+**37 of 85 relations (44%) are neither support nor opposition.** They are not dropped and not flattened. MIRA imports a Discourse Graphs base schema in which relations are definable, and its `AbstractRelationDef` is a neutral root — it carries no supporting or opposing commitment — so each is declared in the document with a domain, a range and a description, and the edges are typed by that declaration.
 
 - `cg:requires` (9) — a claim depends on another holding
 - `cg:entails` (5) — a hypothesis entails its prediction — the deductive step
@@ -32,26 +33,28 @@ One source, three targets. Each row is a relation type the paper's claim tree us
 - `cg:part-of` (4) — a component of another claim — one comparison, condition, measure or study of a proposition the target states whole; the target is weakened but not falsified by the source alone
 - `cg:scopes` (3) — a scope constraint governs another claim's validity
 - `cg:enables-method` (3) — a result makes a downstream method possible
+- `cg:qualifies` (1) — a claim narrows another's applicability
 - `cg:dissociates-with` (1) — the source and target jointly establish a dissociation — two claims whose difference across a condition, region, population or measure is itself the finding, neither bearing on the other's truth (symmetric)
 
 Declaring them under `mira:supports` would have been worse than dropping them: it would assert that a boundary condition is evidence *for* the claim it limits, which reverses the meaning.
 
 ## What a reader who knows only core MIRA sees
 
-Every relation keeps its own type — nothing is flattened into `supports`. 41 of the 77 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
+Every relation keeps its own type — nothing is flattened into `supports`. 43 of the 80 edges are declared under `mira:supports` or `mira:opposes`, so a reader that follows only those two still gets their direction; the reason the edge was drawn is in the declaration rather than lost.
 
-- `supports` (19) — under `mira:supports`
+- `supports` (20) — under `mira:supports`
 - `requires` (9) — neutral
 - `validates` (8) — under `mira:supports`
+- `rules-out` (7) — under `mira:opposes`
 - `confirms` (7) — under `mira:supports`
 - `tests` (7) — neutral
-- `rules-out` (6) — under `mira:opposes`
 - `entails` (5) — neutral
 - `interprets` (4) — neutral
 - `part-of` (4) — neutral
 - `scopes` (3) — neutral
 - `enables-method` (3) — neutral
 - `in-tension-with` (1) — under `mira:opposes`
+- `qualifies` (1) — neutral
 - `dissociates-with` (1) — neutral
 
 ## What MIRA genuinely cannot carry

@@ -1,5 +1,5 @@
 ---
-uuid: d8cad4fe-5332-4f92-b0ca-12c143e2611e
+uuid: 9f971700-7dce-4737-899d-ea4f973ca68d
 slug: pre-task-icebreaker-succeeded-establishing-positive
 doi: null
 claim: 'A pre-task icebreaker succeeded in establishing a positive attitude toward the partner: participants
@@ -8,7 +8,7 @@ claim: 'A pre-task icebreaker succeeded in establishing a positive attitude towa
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 validates:
 - when-partner-received-low-lottery
 belongings: []
@@ -18,8 +18,6 @@ assertions:
   panel: app1table11
   readers: high
 reproductions: []
-warrant: weak
-warrant_why: the tree records nothing bearing on this control
 check_verification: unrecorded
 ---
 

@@ -1,5 +1,5 @@
 ---
-uuid: be34b7c6-0ed7-4211-9e98-b9ca16df0d51
+uuid: 2460aa6c-428d-4d10-99b3-b8420af1f4b3
 slug: guilt-effect-occurred-whether-participant
 doi: null
 claim: 'The guilt effect occurred whether the participant received the high lottery outcome (Study 1:
@@ -8,7 +8,7 @@ claim: 'The guilt effect occurred whether the participant received the high lott
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 validates:
 - when-partner-received-low-lottery
 belongings: []
@@ -41,10 +41,6 @@ reproductions:
   date: 2026-03-30
   status: unattempted
   notes: null
-warrant: moderate
-warrant_why: a control that rules out alt-guilt-effect-driven-by-own-outcome
-warrant_from:
-- rules_out
 check_verification: reproduced
 check_verification_from:
 - record:verified

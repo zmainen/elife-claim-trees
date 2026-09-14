@@ -1,5 +1,5 @@
 ---
-uuid: 52cc08a1-e54c-4fd3-b788-f5057d5c50ef
+uuid: 6f88f48c-5191-4b6b-8bd1-4b68cf9a29e7
 slug: responsibility-outcomes-generates-guilt-participant
 doi: null
 claim: If responsibility for outcomes generates guilt, then participant happiness should decrease more
@@ -7,14 +7,9 @@ claim: If responsibility for outcomes generates guilt, then participant happines
 claim-type: prediction
 role: prediction
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 epistemic: prediction
 check_verification: unrecorded
-warrant: confirmed
-warrant_why: confirmed by when-partner-received-low-lottery
-warrant_from:
-- outcome
-- confirmed_by
 derived-from:
 - responsibility-social-choice-yields-low
 belongings: []

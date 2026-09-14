@@ -1,5 +1,5 @@
 ---
-uuid: 8762076c-4ce2-46c7-9537-7af8ba43fa99
+uuid: f3a97a72-32b6-4f6d-ae59-61d8ac8f016a
 slug: when-partner-received-low-lottery
 doi: null
 claim: 'When the partner received the low lottery outcome, participant happiness was lower when the participant
@@ -9,7 +9,7 @@ claim: 'When the partner received the low lottery outcome, participant happiness
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 tests:
 - responsibility-outcomes-generates-guilt-participant
 confirms:
@@ -73,12 +73,6 @@ reproductions:
     auditability: as with the partner-reward check, the script locates its input by globbing the CSV directory
     and matching on column names rather than by a pinned filename, so this row of the chain is not yet
     independently auditable. Pinning the exact filename is an open task.'
-warrant: strong
-warrant_why: confirms the prediction responsibility-outcomes-generates-guilt-participant and is validated by four controls including guilt-effect-occurred-whether-participant
-warrant_from:
-- validated_by
-- confirms
-- requires
 check_verification: partial
 check_verification_from:
 - record:verified
