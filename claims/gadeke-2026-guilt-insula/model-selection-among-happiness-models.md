@@ -1,5 +1,5 @@
 ---
-uuid: 3139ed2b-ab4c-4ae9-8131-60a86d0203c6
+uuid: 9f20652e-412a-469f-bf10-576f34ba2934
 slug: model-selection-among-happiness-models
 doi: null
 claim: Model selection among the happiness models used likelihood-ratio tests comparing the Responsibility
@@ -7,7 +7,7 @@ claim: Model selection among the happiness models used likelihood-ratio tests co
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 enables-method:
 - likelihood-ratio-test-showed-responsibility
 belongings: []
@@ -17,8 +17,6 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: the tree records nothing bearing on this methodological choice
 check_verification: unrecorded
 ---
 

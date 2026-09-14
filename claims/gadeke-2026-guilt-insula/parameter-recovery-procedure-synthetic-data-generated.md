@@ -1,5 +1,5 @@
 ---
-uuid: 16d67552-5456-47aa-a8e7-b2f8a6dba280
+uuid: 02875bfa-5a38-42a1-9c47-1a84eb237cbb
 slug: parameter-recovery-procedure-synthetic-data-generated
 doi: null
 claim: A parameter-recovery procedure on synthetic data generated from each participant's estimated parameters
@@ -7,7 +7,7 @@ claim: A parameter-recovery procedure on synthetic data generated from each part
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 enables-method:
 - responsibility-redux-model-incorporating-expected
 validates:
@@ -19,8 +19,6 @@ assertions:
   panel: fig3s1
   readers: contested
 reproductions: []
-warrant: weak
-warrant_why: the tree records nothing bearing on this methodological check
 check_verification: unrecorded
 ---
 

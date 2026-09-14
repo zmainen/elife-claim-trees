@@ -1,12 +1,12 @@
 ---
-uuid: 0b0270ec-9c6e-44cd-925a-1cf4d2710b99
+uuid: a371e9d9-b3f8-4f69-833c-f25f253837f6
 slug: participant-momentary-happiness-varied-rewards-2
 doi: null
 claim: Participant momentary happiness varied with the rewards the partner received in the current trial.
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: supports
   target: likelihood-ratio-test-showed-responsibility
@@ -61,8 +61,6 @@ reproductions:
     and matching on column names rather than by a pinned filename, so this row of the chain is not yet
     independently auditable — a reader cannot confirm which file was read. Pinning the exact filename
     is an open task.'
-warrant: weak
-warrant_why: the tree records nothing bearing on this result
 check_verification: partial
 check_verification_from:
 - record:verified

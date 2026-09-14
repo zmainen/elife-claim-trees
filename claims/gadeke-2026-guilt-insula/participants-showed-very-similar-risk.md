@@ -1,5 +1,5 @@
 ---
-uuid: c7402514-904a-4748-b305-062e30f8907f
+uuid: c3110968-1d8c-440f-8f0a-f895f7591a9e
 slug: participants-showed-very-similar-risk
 doi: null
 claim: Participants showed very similar risk preferences whether deciding only for themselves (Solo) or
@@ -8,7 +8,9 @@ claim: Participants showed very similar risk preferences whether deciding only f
 claim-type: synthesis
 role: synthesis
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
+rules-out:
+- alt-social-context-shifts-risk-attitude
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -16,10 +18,6 @@ assertions:
   panel: null
   readers: single-source
 reproductions: []
-warrant: moderate
-warrant_why: draws together four converging risk-preference results, including the rival-ruling-out control risk-premiums-not-differ-between and no-significant-interaction-between-difference
-warrant_from:
-- supported_by
 check_verification: unrecorded
 ---
 

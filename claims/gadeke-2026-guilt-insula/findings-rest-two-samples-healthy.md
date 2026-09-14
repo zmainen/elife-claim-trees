@@ -1,5 +1,5 @@
 ---
-uuid: 2005532f-b003-46be-827f-5597a232f385
+uuid: f8cd7c54-93a3-4b1e-aae2-9367ec966ee2
 slug: findings-rest-two-samples-healthy
 doi: null
 claim: The findings rest on two samples of healthy adults — Study 1 (behaviour only, N = 40) and Study
@@ -8,7 +8,7 @@ claim: The findings rest on two samples of healthy adults — Study 1 (behaviour
 claim-type: assessment
 role: scope
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 scopes:
 - when-partner-received-low-lottery
 belongings: []
@@ -27,8 +27,6 @@ reproductions:
     condition); Study 2 (N=44, behavioural replication with identical task structure outside scanner).
     Algorithmic partner confirmed via `partner-algorithm-deception-assumption`. The two-study structure
     is the paper''s principal robustness check against single-sample false positives.'
-warrant: weak
-warrant_why: a scope statement the tree records nothing bearing on
 check_verification: blocked
 check_verification_from:
 - record:blocked

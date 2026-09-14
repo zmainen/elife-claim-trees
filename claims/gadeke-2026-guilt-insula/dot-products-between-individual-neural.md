@@ -1,5 +1,5 @@
 ---
-uuid: bbcdbc22-6a62-4040-9f0c-60fd0fbbf7f9
+uuid: 48801a5e-023e-45c2-a1c7-0ead2dabb07b
 slug: dot-products-between-individual-neural
 doi: null
 claim: Dot products between individual neural guilt responses and the Yu et al. (2020) guilt-related brain
@@ -8,7 +8,7 @@ claim: Dot products between individual neural guilt responses and the Yu et al. 
 claim-type: empirical
 role: control
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 validates:
 - insula-rois-responded-more-low
 in-tension-with:
@@ -78,8 +78,6 @@ reproductions:
     than one replacing the other.
 
     '
-warrant: weak
-warrant_why: the tree records nothing bearing on this convergent-validity control
 check_verification: reproduced
 check_verification_from:
 - record:partial

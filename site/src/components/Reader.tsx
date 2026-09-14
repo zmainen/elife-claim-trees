@@ -19,6 +19,9 @@ type Claim = {
   // (with warrantFrom and the epistemic fallback) is how well the tree's argument supports the
   // claim; verification is whether a re-run stands behind it, null until that layer has run.
   warrant: string | null; warrantFrom: string[]; epistemic: string; verification: string | null;
+  // A person's judgement on this proposition. `applies` false means it was granted and the
+  // claim has changed since — a lapsed approval, which is not the same as never approved.
+  approval: { by: string; when: string; note: string; applies: boolean } | null;
   panel: string | null; panels: [string, string][]; method: string | null; dataset: string | null;
   check: { paper?: string; reproduced?: string; date?: string; how?: string } | null;
   script: string | null; scriptSource: string | null;
@@ -1234,6 +1237,19 @@ export default function Reader({ data, base }: Props) {
           {c.verification && VERIFICATION_CHECK_LABEL[c.verification] && (
             <span className={`rd-chip ${VERIFICATION_CHECK_TAILWIND[c.verification]}`} title="verification">
               {VERIFICATION_CHECK_LABEL[c.verification]}
+            </span>
+          )}
+          {/* Whether a person has signed off on this proposition. Absent means no one has
+              stamped it, which says nothing about whether anyone has read it. */}
+          {c.approval && (
+            <span
+              className={`rd-chip ${c.approval.applies
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'
+                : 'bg-gray-50 text-gray-600 border-gray-300 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700'}`}
+              title={c.approval.applies
+                ? `approved by ${c.approval.by} on ${c.approval.when?.slice(0, 10)}${c.approval.note ? ` — ${c.approval.note}` : ''}`
+                : `approved by ${c.approval.by} on ${c.approval.when?.slice(0, 10)}, and the claim has changed since`}>
+              {c.approval.applies ? 'approved' : 'approval lapsed'}
             </span>
           )}
         </p>

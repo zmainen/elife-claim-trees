@@ -1,5 +1,5 @@
 ---
-uuid: 67792426-bb51-4765-90fc-025d56ad605c
+uuid: 9a335450-a36a-4c98-8791-2fb88471625e
 slug: both-studies-participants-felt-worse
 doi: null
 claim: In both studies, participants felt worse after low lottery outcomes for the partner when those
@@ -8,22 +8,24 @@ claim: In both studies, participants felt worse after low lottery outcomes for t
 claim-type: synthesis
 role: synthesis
 concepts: []
-priority: '2026-09-13'
-belongings: []
+priority: '2026-09-14'
+belongings:
+- relation: supports
+  target: responsibility-social-choice-yields-low
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
   doi: 10.7554/eLife.105391
   panel: null
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: rests on a single result, when-partner-received-low-lottery; a synthesis needs two or more converging claims
-warrant_from:
-- supported_by
 check_verification: unrecorded
 ---
 
 **Notes from extraction:** Integrates the guilt-effect results across both studies; synthesis is expected to be single-source (results reader only).
+
+**Relations.** Why each outgoing edge was inferred:
+
+- `supports` → `responsibility-social-choice-yields-low`: the across-both-studies guilt effect is evidence for the responsibility-guilt hypothesis; the edge task wrote edges into the synthesis and none out (#53)
 
 <!-- Evidence quotes from the extraction agents — preserved for audit. Edit or remove as appropriate. -->
 

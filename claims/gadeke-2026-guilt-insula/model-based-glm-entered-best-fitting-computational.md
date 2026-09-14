@@ -1,5 +1,5 @@
 ---
-uuid: db286450-f335-4e88-b8b2-706b3a36cc98
+uuid: fd6a049d-c181-4127-9644-29e23c8e4fb3
 slug: model-based-glm-entered-best-fitting-computational
 doi: null
 claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsibility) model's variables
@@ -9,7 +9,7 @@ claim: A model-based GLM (GLM2) entered the best-fitting computational (Responsi
 claim-type: assessment
 role: methodological
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings: []
 assertions:
 - paper-slug: gadeke-2026-guilt-insula
@@ -17,10 +17,6 @@ assertions:
   panel: null
   readers: high
 reproductions: []
-warrant: moderate
-warrant_why: validated by the control manipulation-check-bilateral-ventral-striatum
-warrant_from:
-- validated_by
 check_verification: unrecorded
 ---
 

@@ -1,5 +1,5 @@
 ---
-uuid: f1812754-4a69-47b9-a5a1-7b464cb7317b
+uuid: 1d694f08-ffa6-4f8c-84b8-96ce08d369b3
 slug: responsibility-model-yielded-higher-values
 doi: null
 claim: 'The Responsibility model yielded higher R² values than all other models (Study 1: all t > 3.6,
@@ -7,7 +7,7 @@ claim: 'The Responsibility model yielded higher R² values than all other models
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: supports
   target: likelihood-ratio-test-showed-responsibility
@@ -19,10 +19,6 @@ assertions:
   panel: table1
   readers: single-source
 reproductions: []
-warrant: weak
-warrant_why: an R2 comparison that requires momentary-happiness-modelled-five-computational; nothing validates or supports it
-warrant_from:
-- requires
 check_verification: unrecorded
 ---
 

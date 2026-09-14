@@ -37,6 +37,16 @@ function mainCheckout() {
 const machinery = process.env.CLAIM_GRAPHS
   ? (process.env.CLAIM_GRAPHS.startsWith('/') ? process.env.CLAIM_GRAPHS : join(projectRoot, process.env.CLAIM_GRAPHS))
   : join(mainCheckout(), '../claim-graphs');
+
+// Which claims a person has approved, resolved against each claim's content hash by
+// scripts/claim_approvals_report.py. The rule for whether an approval still stands lives in the
+// machinery; writing a second copy of it here would give two answers and no way to see them
+// diverge. Absent until that script has run, which is not an error — it means none are recorded.
+let claimApprovals = {};
+try {
+  claimApprovals = JSON.parse(readFileSync(join(projectRoot, 'site/src/data/claim-approvals.json'), 'utf8'));
+} catch { /* no approvals recorded yet */ }
+
 const outDir = join(__dirname, '../src/data');
 const outFile = join(outDir, 'claims.json');
 
@@ -285,6 +295,10 @@ for (const paperSlug of readdirSync(claimsRoot).sort()) {
       check_verification: fm.check_verification || null,
       check_verification_from: fm.check_verification_from || [],
       status,
+      // A person's judgement on this proposition, distinct from the claim-tree approval that
+      // covers the argument: `applies` false means the approval was granted and the claim has
+      // since changed, which is a different state from never having been approved.
+      approval: (claimApprovals[paperSlug] || {})[slug] || null,
       discrepancy: fm.discrepancy || null,
       'claim-type': fm['claim-type'] || 'empirical',
       isAssessment: isAssessment(slug, fm),

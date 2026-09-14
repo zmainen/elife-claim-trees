@@ -1,5 +1,5 @@
 ---
-uuid: 077e31a7-4fa3-471e-b1a7-aeba86331dca
+uuid: 41fdf7cc-9f55-4060-96ea-53c175a9f272
 slug: decisions-social-compared-solo-condition
 doi: null
 claim: Decisions in the Social compared with the Solo condition engaged three clusters — the precuneus
@@ -7,7 +7,7 @@ claim: Decisions in the Social compared with the Solo condition engaged three cl
 claim-type: empirical
 role: empirical
 concepts: []
-priority: '2026-09-13'
+priority: '2026-09-14'
 belongings:
 - relation: requires
   target: each-trial-participants-chose-between
@@ -40,10 +40,6 @@ reproductions:
   status: blocked
   blocked_by: compute-infeasible
   notes: Pre-computed NIfTI results in fMRIresults/ enable figure reproduction without re-running GLM.
-warrant: weak
-warrant_why: an fMRI contrast that requires the paradigm each-trial-participants-chose-between; no control or support bears on it
-warrant_from:
-- requires
 check_verification: reproduced
 check_verification_from:
 - record:verified
