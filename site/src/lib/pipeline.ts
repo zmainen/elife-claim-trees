@@ -59,7 +59,13 @@ export interface LayerDecl {
   produces?: string[];
   views?: string[];
   command?: string;
-  issue?: number;
+  /** `owner/repo#n` — the tracker is part of the reference, not an assumption the renderer
+   *  makes. A bare number meant "whatever repository the reader assumes", and once the
+   *  machinery moved to zmainen/claim-graphs the two assumptions diverged: the site pasted
+   *  every number onto the elife-claim-trees URL, so #85 and #126 linked to nothing and #19
+   *  and #28 linked to unrelated pull requests. Issues are renumbered on transfer, too —
+   *  elife-claim-trees#126 is claim-graphs#21 — so the number alone cannot survive the move. */
+  issue?: string;
   /** The layer this one passes judgement on. Set only on `judgement` layers. */
   reviews?: string;
   /** How it works, in prose: what it is given, what it returns, and what it gets wrong.
@@ -74,7 +80,6 @@ export interface LayerDecl {
    *  unstated — not accepted. Only `proposed` is rendered, so an undeclared status never
    *  claims an approval nobody granted. */
   status?: 'proposed' | 'accepted' | 'superseded';
-  open?: boolean;
   requires_human?: boolean;
   added?: string;
   found?: string;
@@ -435,4 +440,13 @@ export function adjudicationText(a: Adjudication): string {
       ? `partial — ${a.considered} of ${a.total} considered` : 'partial reading') + proc;
   if (a.kind === 'superseded') return `v${a.v} approved, then the layer ran again`;
   return 'awaiting approval';
+}
+
+/** An `owner/repo#n` reference, as a label and a URL. The tracker comes from the reference
+ *  itself; nothing here knows a default repository, which is the whole point — see `issue`
+ *  on Layer. Returns null for a malformed ref so a bad declaration renders as no link rather
+ *  than as a link to the wrong place. */
+export function issueRef(ref: string | undefined): { label: string; url: string } | null {
+  const m = /^([\w.-]+\/[\w.-]+)#(\d+)$/.exec(ref ?? '');
+  return m ? { label: `${m[1]}#${m[2]}`, url: `https://github.com/${m[1]}/issues/${m[2]}` } : null;
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import type { ExplorerData, LayerView, CellView } from '../lib/explorer';
 import type { Artifact } from '../lib/artifacts';
+import { issueRef } from '../lib/pipeline';
 
 // A layer, without leaving the map.
 //
@@ -200,11 +201,11 @@ export default function LayerDrawer({ data, layer, onSelect, base }: Props) {
                 A decision about the corpus, not a run against one paper. It has no cell of its
                 own; when it changes, every cell that rests on it goes stale.
               </p>
-              {l.issue && (
+              {issueRef(l.issue ?? undefined) && (
                 <p className="text-[12.5px] m-0 mt-2">
-                  <a href={`https://github.com/zmainen/elife-claim-trees/issues/${l.issue}`}
+                  <a href={issueRef(l.issue ?? undefined)!.url}
                      target="_blank" rel="noopener"
-                     className="text-amber-700 dark:text-amber-400 no-underline hover:underline">Issue #{l.issue}</a>
+                     className="text-amber-700 dark:text-amber-400 no-underline hover:underline">{issueRef(l.issue ?? undefined)!.label}</a>
                   <span className="text-gray-500 dark:text-gray-400"> — the decision is taken there.</span>
                 </p>
               )}

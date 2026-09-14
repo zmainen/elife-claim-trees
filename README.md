@@ -46,8 +46,8 @@ Claims relate to each other via directed belongings: `supports`, `requires`, `co
 
 ## Status
 
-Working prototype. The published corpus is **10 eLife papers, 254 claims (wholes; parts are
-counted separately), 919 typed relations**; two further claim trees are versions of one
+Working prototype. The published corpus is **10 eLife papers, 289 claims (wholes; the 4 parts
+are counted separately), 913 typed relations**; two further claim trees are versions of one
 bioRxiv preprint, kept as method
 examples and never folded into the corpus totals. Public site at
 https://zmainen.github.io/elife-claim-trees/ (eLife papers only).
@@ -55,7 +55,8 @@ https://zmainen.github.io/elife-claim-trees/ (eLife papers only).
 Figures on the site are generated — `scripts/corpus_facts.py` counts the claim files and the
 pages substitute `{{token}}`, so a number in prose cannot drift from the corpus because it is
 not in the prose. This README is not built that way, so treat it as the one place a count can
-go stale; `python3 scripts/corpus_facts.py --print` is authoritative.
+go stale; `python3 scripts/corpus_facts.py --print` is authoritative. It last went stale at
+254/919, against a corpus holding 289/913.
 
 Full methodology at `docs/method.md`, claim format at `docs/claim-format.md`, cost estimate
 for 3000-paper scaling at `docs/cost-estimate.md`.
@@ -77,6 +78,12 @@ make check
 `../claim-graphs` is the default; `make CLAIM_GRAPHS=/elsewhere` overrides it, and every
 target and script honours that. If the checkout is missing, the error says so by name rather
 than failing somewhere downstream.
+
+"Beside this repository" is resolved by asking git for the real checkout, not by counting `..`
+from the working directory — so it is the same directory whether you are in a plain clone or
+in a git worktree. Before that, a worktree resolved the default to a sibling of the *worktree*,
+which never exists: `make env` and `make machinery-check` named two different wrong paths and
+`npm run dev` died before Astro started.
 
 `.claim-graphs-sha` records the machinery commit this corpus's committed artifacts were
 produced by. `make machinery-check` compares it with what is checked out and fails on a

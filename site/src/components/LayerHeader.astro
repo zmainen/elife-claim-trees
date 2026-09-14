@@ -7,7 +7,7 @@
 // carry the same head as the rest rather than reinventing it. A bespoke page is depth behind
 // the general surface, not an escape from it.
 import { byId, groups, dependents, resolve, scheme, adjudicatedCount,
-         SCHEME_LABEL, SCHEME_NOTE, papers, type LayerDecl } from '../lib/pipeline';
+         SCHEME_LABEL, SCHEME_NOTE, papers, issueRef, type LayerDecl } from '../lib/pipeline';
 
 interface Props { layer: LayerDecl }
 const { layer } = Astro.props;
@@ -81,10 +81,10 @@ const paras = (s: string) =>
       Part of <strong class="text-gray-700 dark:text-gray-300">{groups[layer.group].title}</strong> — {groups[layer.group].question}
     </p>
   )}
-  {layer.issue && (
+  {issueRef(layer.issue) && (
     <p class="text-sm mt-3 m-0">
-      <a href={`https://github.com/zmainen/elife-claim-trees/issues/${layer.issue}`} target="_blank"
-         class="text-amber-700 dark:text-amber-400 no-underline hover:underline">Issue #{layer.issue}</a>
+      <a href={issueRef(layer.issue)!.url} target="_blank"
+         class="text-amber-700 dark:text-amber-400 no-underline hover:underline">{issueRef(layer.issue)!.label}</a>
       <span class="text-gray-500 dark:text-gray-400"> — the decision is taken there; the propagation is taken here.</span>
     </p>
   )}

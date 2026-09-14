@@ -13,7 +13,7 @@
 
 import {
   layers, byId, groups, papers, cells, cell, dependents, depth, resolve, shortOf, titleOf,
-  paperLayers, STATE_LABEL, type CellState, type LayerDecl,
+  paperLayers, STATE_LABEL, scheme, type CellState, type LayerDecl,
 } from './pipeline';
 import { artifacts, isDirectory, type Artifact } from './artifacts';
 
@@ -57,9 +57,17 @@ export interface LayerView {
   groupTitle: string | null;
   groupQuestion: string | null;
   status: string | null;
+  /** Undecided: a corpus-scope decision nobody has ruled on. Computed from the approvals
+   *  ledger — the declaration used to carry an `open:` flag saying the same thing by hand, and
+   *  the two drifted apart the moment a question was answered.
+   *
+   *  Scope is half the predicate, not decoration. `declaration_state` calls every layer no
+   *  one has ruled on `open`, which for a paper-scope runner means only that a mechanical
+   *  step has never been put to a person — not that anything is undecided. The badge belongs
+   *  to the decisions that belong to no single paper, which is what it always marked. */
   open: boolean;
   requiresHuman: boolean;
-  issue: number | null;
+  issue: string | null;
   added: string | null;
   found: string | null;
   needs: string[];
@@ -119,7 +127,7 @@ const layerView = (l: LayerDecl, base: string, only: string | null): LayerView =
     groupTitle: l.group ? groups[l.group]?.title ?? null : null,
     groupQuestion: l.group ? groups[l.group]?.question ?? null : null,
     status: (l as any).status ?? null,
-    open: Boolean(l.open),
+    open: l.scope === 'corpus' && scheme(l.id)?.state === 'open',
     requiresHuman: Boolean(l.requires_human),
     issue: l.issue ?? null,
     added: l.added ?? null,
