@@ -91,6 +91,9 @@ data: $(SITE)/node_modules  ## Regenerate every artifact the site is built from
 	$(MAKE) validate PYTHON=$(PYTHON)
 	$(PYTHON) scripts/corpus_facts.py
 	$(PYTHON) $(CG)/scripts/agents_report.py
+	# Which claims carry a standing approval, resolved against each claim's content hash.
+	# The site cannot compute that itself — the hash rule lives in the machinery.
+	$(PYTHON) $(CG)/scripts/claim_approvals_report.py --write
 	$(PYTHON) $(CG)/scripts/review_queue.py
 	cd $(SITE) && CORPUS=$(CORPUS) CLAIM_GRAPHS=$(abspath $(CG)) node scripts/build-data.js
 

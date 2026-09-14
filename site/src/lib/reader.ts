@@ -430,6 +430,7 @@ export function readerData(paperSlug: string) {
       warrantFrom: c.warrant_from ?? [],
       epistemic: c.epistemic ?? 'unknown',
       verification: c.check_verification ?? null,
+      approval: c.approval ?? null,
       // The plain wording where the layer has run, the authors' short wording where it has
       // not, and the full claim as a last resort — so a paper without the layer still reads.
       // `||`, not `??`. `short` is a trimmed string, so a claim without one is '' — which
