@@ -571,7 +571,7 @@
           "when": "2026-09-13T11:43:37Z"
         },
         "scheme": "proposed",
-        "version": "bf1d76811843"
+        "version": "26488e4ba54c"
       },
       "claim-tree": {
         "provisional_on": [
@@ -626,7 +626,7 @@
           "relation-vocab"
         ],
         "scheme": "open",
-        "version": "313369401458"
+        "version": "570497de676a"
       },
       "external-review": {
         "scheme": "open",
@@ -638,7 +638,7 @@
           "relation-vocab"
         ],
         "scheme": "open",
-        "version": "14587042550b"
+        "version": "423c528af048"
       },
       "gap-claim": {
         "provisional_on": [
@@ -662,7 +662,7 @@
           "relation-vocab"
         ],
         "scheme": "open",
-        "version": "746403ea69b1"
+        "version": "311acc3f5348"
       },
       "modules": {
         "provisional_on": [
@@ -694,7 +694,7 @@
           "relation-vocab"
         ],
         "scheme": "proposed",
-        "version": "18b329752f48"
+        "version": "80f95d915c47"
       },
       "plain-claim": {
         "provisional_on": [
@@ -717,7 +717,7 @@
           "relation-vocab"
         ],
         "scheme": "proposed",
-        "version": "68cb5c3eebe9"
+        "version": "826012b59a12"
       },
       "prepare": {
         "scheme": "open",
@@ -736,7 +736,7 @@
           "relation-vocab"
         ],
         "scheme": "proposed",
-        "version": "880af487ef04"
+        "version": "da2445194a34"
       },
       "reconcile": {
         "scheme": "open",
@@ -762,7 +762,7 @@
           "claim-format"
         ],
         "scheme": "proposed",
-        "version": "fb8bffd873ff"
+        "version": "db025402617c"
       },
       "replication": {
         "provisional_on": [
@@ -827,7 +827,7 @@
           "relation-vocab"
         ],
         "scheme": "proposed",
-        "version": "0bea552b881c"
+        "version": "01abf03d6f99"
       }
     },
     "groups": {
@@ -855,6 +855,9 @@
     "layers": [
       {
         "doc": "/pipeline/vocabulary/",
+        "governs": [
+          "docs/claim-format.md"
+        ],
         "how": "One file per claim: a YAML frontmatter block over a markdown body, carrying a uuid, a slug, the claim sentence, a `claim-type` and a `role`, the concepts it touches, an `epistemic` mark, and an `assertions` list naming the paper that asserts it and with what stance. Relations are frontmatter keys whose values are other claims' slugs, so the graph lives in the same files as the claims and there is no separate edge store to fall out of step with them.\nAlmost everything below reads or writes this, which is why a change here is never small. The document is a declared input of `relation-vocab` and `claim-tree` both, so editing it marks every tree in the corpus stale.\n",
         "id": "claim-format",
         "kind": "feature",
@@ -870,6 +873,7 @@
       },
       {
         "doc": "/pipeline/vocabulary/",
+        "governs": [],
         "how": "`scripts/relations.py` holds the vocabulary once \u2014 which relations exist, what each asserts, which pairs are oppositions \u2014 after four scripts each kept their own copy of the list and the four disagreed. `check_relations.py` runs that vocabulary over the corpus and is the gate `make check` enforces.\nThe semantics were the open part, and they were settled on 2026-09-13. The `zmainen/elife-claim-trees#125` ruling split the old `dissociates-with` in two, because it was carrying both readings at once: the neutral contrast keeps the name and moved to GAPS, where it opposes nothing and exports under no MIRA predicate, and the oppositional reading became `in-tension-with` \u2014 two claims the paper asserts whose implications pull against each other. `in-tension-with` exports under `mira:opposes` but is kept out of CONTRARY, so the support-plus-oppose lint leaves it alone; that is what made the twelve pairs that carried both a support and an opposition coherent rather than errors. `zmainen/elife-claim-trees#28` supplied the other missing half, `refutes`, so a failed prediction can be written down.\nBoth rulings are written into `scripts/relations.py` and gated by `check_relations.py`. What remains open is not the vocabulary but what a consumer can do with it: `zmainen/claim-graphs#7` asks MIRA for a non-polar relation mechanism, because 59% of this corpus's relations still reach it with no interpretable predicate.\n",
         "id": "relation-vocab",
         "issue": "zmainen/elife-claim-trees#19",
@@ -910,6 +914,7 @@
         "added": "2026-09-11",
         "command": "python3 scripts/prediction_outcome.py --write",
         "found": "`tests` is neutral by design, so a tree can record that a prediction was tested and never whether it was met. Of {{prediction_outcome_total}} predictions, {{prediction_outcome_recorded}} now carry a recorded outcome and {{prediction_outcome_unrecorded}} carry a `tests` edge and no outcome yet. The issue #28 ruling gave the vocabulary its missing half \u2014 `refutes`, the negative outcome beside `confirms` \u2014 so a failed prediction can now be written down; what remains is filling the rest in.\n",
+        "governs": [],
         "how": "The rule is mechanical, and it is now rule v3. For each `role: prediction` claim it looks at the edges pointing in and out, and sorts the prediction by the shape of that wiring: a `tests` edge with an outcome (`confirms` or `refutes`) beside it, a `tests` edge alone, nothing, or a conjunction of several. It reads the graph and nothing else \u2014 not the paper, and not whether the prediction was in fact met.\nThat limit is the point of running it. The issue #28 ruling settled the wiring convention \u2014 a `tests` edge carries its outcome beside it \u2014 so the buckets now measure which trees have had the outcome filled in, not which convention a paper happened to follow.\n",
         "id": "prediction-outcome",
         "issue": "zmainen/elife-claim-trees#28",
@@ -937,6 +942,7 @@
         "command": "python3 scripts/evaluation_report.py --write",
         "doc": "/pipeline/evaluation/",
         "found": "Of {{evaluation_n_rows}} profile \u00d7 paper rows, {{evaluation_n_scored}} were scored and {{evaluation_n_not_run}} could not run for want of a paid backend. The best recovery recorded so far is {{evaluation_best_recovery}}% of a paper's committed claims. No reference here has been approved, so every score is against a committed tree, not a tree a person has stood behind.\n",
+        "governs": [],
         "how": "For each paper the sweep has touched, `evaluate score` aligns a re-extraction \u2014 produced under one model profile \u2014 to the best reference the paper has, and writes a scorecard under `runs/<paper>/evaluation/`. This layer gathers every one of them into `review/evaluation.json`: profile \u00d7 paper \u00d7 metric \u2014 recovery, precision, role, panel, edge recovery, parts \u2014 with the reference it was scored against and whether that reference was approved.\nIt measures and does not judge. The reference is the committed tree unless a person has approved a version (none has yet, so every row here scores against the committed tree and says so). Only the `subagent` profile and the two experiments run without a paid backend; the other profiles appear as `not run: no backend credit`, so the table names what is missing rather than omitting it.\n",
         "id": "evaluation",
         "issue": "zmainen/claim-graphs#24",
@@ -1234,6 +1240,9 @@
         "added": "2026-09-11",
         "by_from": "model",
         "command": "cd extract && python3 -m claim_graphs.cli questions --paper {paper}",
+        "governs": [
+          "extract/prompts/questions.md"
+        ],
         "group": "tree",
         "how": "Given the abstract (and the Introduction where the prepared paper carries it) and the paper's existing hypothesis and `alt-` claims \u2014 slug and sentence \u2014 it returns the questions the paper states and which claim answers which. A hypothesis is the answer the paper commits to; the alternatives it rules out are the other answers to the same question. It then writes `questions:` onto the paper's `index.md` and `addresses:` onto the named claim files, editing their frontmatter in place.\n`--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through the same validation \u2014 an invented slug or a question no claim addresses is dropped rather than written \u2014 so a model that has no backend here can still answer it.\n",
         "id": "questions",
@@ -1260,6 +1269,9 @@
         "added": "2026-09-11",
         "by_from": "model",
         "command": "cd extract && python3 -m claim_graphs.cli parts --paper {paper}",
+        "governs": [
+          "extract/prompts/parts.md"
+        ],
         "group": "tree",
         "how": "Reads the tree, not the paper \u2014 each claim's slug, role, panel, sentence and existing edges \u2014 and returns the `part-of` edges it holds: every claim that states one comparison, condition, measure or study of a proposition another claim states whole. The graph half-says composition already, since a part usually carries a `supports` or `tests` edge into its whole, but support is evidence and composition is not, so the definition decides, not the edge. It then writes `part-of:` into each part's claim file, editing the frontmatter in place.\n`--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through the same validation \u2014 an unknown slug, a self-edge, a second whole for one part, or an edge that would close a cycle is dropped rather than written \u2014 so a model with no backend here can still answer it.\n",
         "id": "parts",
@@ -1678,6 +1690,9 @@
         "added": "2026-09-13",
         "by_from": "model",
         "command": "cd extract && python3 -m claim_graphs.cli warrant --paper {paper}",
+        "governs": [
+          "extract/prompts/warrant.md"
+        ],
         "group": "tree",
         "how": "Assembles, for each claim, a dossier of what the tree's argument holds about its support \u2014 its role and stance, the outcomes on its predictions, the controls that validate it, the rivals it rules out, what it requires and is part of (with their roles), and the claims that support, extend, confirm or refute it. It shows a reader every claim with its sentence and that dossier, and asks for a warrant level from the vocabulary the claim's role allows \u2014 a prediction's confirmed/refuted/untested, an alternative's ruled-out/open, everything else's strong/moderate/weak/contested \u2014 a one-line why that cites the dossier, and an `unsupported` flag where the tree's argument records nothing.\nThe basis is the argument the tree records, not the paper's confidence and not any reproduction, which a later checking layer assesses and may then modify. The prompt shows the dossier and the vocabulary, never the mechanical rule: scripts/warrant.py carries a rule floor the reading is scored against afterwards, and the ruling puts that floor after the judgement, not before.\n`--dump-prompt` writes the exact request and exits, and `--answer` feeds a reply back through the same validation \u2014 a slug not in the tree, or a level outside the role's vocabulary, is dropped \u2014 so a model with no backend here can still answer it.\n",
         "id": "warrant",
