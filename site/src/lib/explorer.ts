@@ -59,7 +59,7 @@ export interface LayerView {
   status: string | null;
   open: boolean;
   requiresHuman: boolean;
-  issue: number | null;
+  issue: string | null;
   added: string | null;
   found: string | null;
   needs: string[];

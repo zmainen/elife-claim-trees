@@ -5,6 +5,7 @@
 //   CORPUS=all    → all papers (private/lab site)
 //   unset         → defaults to 'elife'
 import fs, { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { execFileSync } from 'child_process';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import matter from 'gray-matter';
@@ -16,9 +17,26 @@ const projectRoot = join(__dirname, '../../');
 
 // The layer declaration belongs to the machinery, which is its own repository now. CLAIM_GRAPHS
 // names that checkout; the Makefile exports it, and the default is the sibling convention.
+//
+// "Sibling" has to mean a sibling of the repository, not of `projectRoot`. Run from a git
+// worktree — .claude/worktrees/<name> — projectRoot is the worktree, so the old default
+// resolved to a directory that has never existed and `npm run dev` died before astro started.
+// The Makefile asks git for the real checkout and exports an absolute CLAIM_GRAPHS; this is
+// the same question asked again, for the case where build-data.js is run on its own.
+function mainCheckout() {
+  try {
+    const gitDir = execFileSync(
+      'git', ['rev-parse', '--path-format=absolute', '--git-common-dir'],
+      { cwd: projectRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+    ).trim();
+    return gitDir ? dirname(gitDir) : projectRoot;
+  } catch {
+    return projectRoot;        // not a git checkout: the sibling convention is all there is
+  }
+}
 const machinery = process.env.CLAIM_GRAPHS
   ? (process.env.CLAIM_GRAPHS.startsWith('/') ? process.env.CLAIM_GRAPHS : join(projectRoot, process.env.CLAIM_GRAPHS))
-  : join(projectRoot, '../claim-graphs');
+  : join(mainCheckout(), '../claim-graphs');
 const outDir = join(__dirname, '../src/data');
 const outFile = join(outDir, 'claims.json');
 

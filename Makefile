@@ -35,9 +35,16 @@ SITE   := site
 # CLAIM_GRAPHS_SHA is the version this corpus's committed artifacts were produced by. `make
 # machinery-check` compares it with what is actually checked out, so a silent upgrade shows up
 # as a failing gate rather than as a diff nobody can explain.
-CLAIM_GRAPHS     ?= ../claim-graphs
+# "Beside this repository" is not $(CURDIR)/.. when $(CURDIR) is a git worktree: a worktree
+# under .claude/worktrees/<name> resolved `../claim-graphs` to a sibling of the *worktree*,
+# which is a path that has never existed. The symptom was a `make env` and a `make
+# machinery-check` that named two different wrong directories, and an `npm run dev` that died
+# outright. git knows where the real checkout is — the common git dir's parent — and that is
+# the same answer in a plain clone, so ask it rather than counting `..` segments.
+MAIN_CHECKOUT    := $(patsubst %/.git,%,$(shell git rev-parse --path-format=absolute --git-common-dir 2>/dev/null))
+CLAIM_GRAPHS     ?= $(if $(MAIN_CHECKOUT),$(MAIN_CHECKOUT)/../claim-graphs,../claim-graphs)
 CLAIM_GRAPHS_SHA ?= $(shell cat .claim-graphs-sha 2>/dev/null)
-CG               := $(CLAIM_GRAPHS)
+CG               := $(abspath $(CLAIM_GRAPHS))
 export CLAIM_GRAPHS_ROOT = $(CURDIR)
 export CLAIM_GRAPHS_CORPUS_DIR = $(CURDIR)/claims
 
