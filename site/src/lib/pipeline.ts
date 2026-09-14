@@ -261,11 +261,17 @@ export function inState(...states: CellState[]): Cell[] {
  *
  *  `absent` is the only state that is genuinely empty. What is checkable is counted
  *  separately, on /pipeline, where the distinction is the subject rather than a side effect. */
-export function fill_of(paper: string): { done: number; total: number; observed: number } {
+export function fill_of(paper: string):
+    { done: number; total: number; observed: number; approved: number } {
   const cs = cells(paper);
   return {
     done: cs.filter(c => c.state !== 'absent').length,
     total: cs.length,
+    // Counted rather than asserted. The paper page used to carry the sentence "Nobody has
+    // approved any of it", hardcoded, on every paper — which was false for the two that do
+    // carry an approval, and would have gone on being false as more were granted. A claim
+    // about the record belongs in the record.
+    approved: cs.filter(c => c.adjudication.kind === 'approved').length,
     // The other half of the sentence. `done` counts answers and `observed` counts the runs
     // that can still be checked, and a page that prints the first without the second reads as
     // a contradiction beside cells that say no run was observed — which is what Gaedeke's
