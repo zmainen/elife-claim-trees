@@ -77,8 +77,10 @@ const stage = stageLabel[(paperData as any).stage] || '';
       <p class="record-note">
         {data.counts.claims} claims, of which {data.counts.rerun} were re-run from the authors' deposited
         data. {fill.done} of {fill.total} layers have produced something; {fill.observed} of those runs were
-        observed. Nobody has approved any of it —
-        <a href={`${base}/method/`}>every claim here was written by a model</a>.
+        observed, and {fill.approved} {fill.approved === 1 ? 'carries' : 'carry'} an approval on record.
+        <a href={`${base}/method/`}>Every claim here was drafted by a model</a>. An approval is a
+        stamp against one version of one layer, so the count says what has been signed off, not what
+        anyone has read &mdash; the corpus is read far more often than it is stamped.
       </p>
 
       <details class="rec">

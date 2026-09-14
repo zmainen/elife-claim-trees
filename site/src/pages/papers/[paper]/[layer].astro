@@ -129,7 +129,7 @@ const ADJ_TONE: Record<string, string> = {
   approved: 'text-emerald-700 dark:text-emerald-400 border-emerald-500',
   partial: 'text-amber-700 dark:text-amber-400 border-amber-500',
   superseded: 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700',
-  unread: 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700',
+  awaiting: 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700',
 };
 ---
 
@@ -178,7 +178,7 @@ const ADJ_TONE: Record<string, string> = {
       <div class="border border-blue-300 dark:border-blue-800 rounded-lg p-4 mb-8">
         <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 m-0 mb-1.5">Provisional</h2>
         <p class="text-sm text-gray-700 dark:text-gray-300 m-0">
-          This layer needs a corpus-scope decision that no one has accepted, so what it
+          This layer needs a corpus-scope decision that has not been ruled on yet, so what it
           produces would change if the decision changed. It waits on
           {provisional.map((d: string, i: number) => (
             <span>{i > 0 ? ', ' : ' '}<a href={url(`/pipeline/${d}`)} class="font-mono text-xs text-amber-700 dark:text-amber-400 no-underline hover:underline">{d}</a></span>
@@ -190,7 +190,7 @@ const ADJ_TONE: Record<string, string> = {
     <div class={`border rounded-lg p-4 mb-8 ${c.approved?.applies
         ? 'border-emerald-400 dark:border-emerald-700' : 'border-gray-200 dark:border-gray-700'}`}>
       <h2 class="text-sm font-semibold text-gray-900 dark:text-gray-100 m-0 mb-1.5">
-        {c.approved?.applies ? 'Approved' : 'Not approved'}
+        {c.approved?.applies ? 'Approved' : 'Awaiting approval'}
       </h2>
       {c.approved?.applies ? (
         <p class="text-sm text-gray-700 dark:text-gray-300 m-0">
@@ -210,9 +210,11 @@ const ADJ_TONE: Record<string, string> = {
         </p>
       ) : (
         <p class="text-sm text-gray-700 dark:text-gray-300 m-0">
-          Nobody has read this output and approved it. Approval is an operation on a version,
-          not a step of its own — it is recorded against the version it was granted to, so
-          running this layer again does not carry it forward.
+          Waiting for approval. That is a statement about the record, not about whether
+          anyone has read this: people read the corpus without stamping what they read, and
+          only a stamp leaves a trace. Approval is an operation on a version, not a step of its
+          own — it is recorded against the version it was granted to, so running this layer
+          again does not carry it forward.
         </p>
       )}
     </div>

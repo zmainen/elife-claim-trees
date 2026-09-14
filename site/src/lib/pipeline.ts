@@ -36,7 +36,7 @@ export interface Scheme {
 /** The adjudication fact: whether a person has read this cell's output. From the per-paper
  *  approvals ledger and the verdict file the reading is recorded in. */
 export interface Adjudication {
-  kind: 'approved' | 'partial' | 'superseded' | 'unread';
+  kind: 'approved' | 'partial' | 'superseded' | 'awaiting';
   v?: number;
   by?: string;
   when?: string;
@@ -176,7 +176,7 @@ function adjudicationOf(paper: string, layerId: string,
   }
   if (approved) return { kind: 'superseded', v: approved.v, by: approved.by, when: approved.when };
   if (vinfo && vinfo.considered > 0) return { kind: 'partial', v, ...partial };
-  return { kind: 'unread' };
+  return { kind: 'awaiting' };
 }
 
 /** A paper's version history: every run, newest first. This is the changelog — there is no
@@ -266,11 +266,17 @@ export function inState(...states: CellState[]): Cell[] {
  *
  *  `absent` is the only state that is genuinely empty. What is checkable is counted
  *  separately, on /pipeline, where the distinction is the subject rather than a side effect. */
-export function fill_of(paper: string): { done: number; total: number; observed: number } {
+export function fill_of(paper: string):
+    { done: number; total: number; observed: number; approved: number } {
   const cs = cells(paper);
   return {
     done: cs.filter(c => c.state !== 'absent').length,
     total: cs.length,
+    // Counted rather than asserted. The paper page used to carry the sentence "Nobody has
+    // approved any of it", hardcoded, on every paper — which was false for the two that do
+    // carry an approval, and would have gone on being false as more were granted. A claim
+    // about the record belongs in the record.
+    approved: cs.filter(c => c.adjudication.kind === 'approved').length,
     // The other half of the sentence. `done` counts answers and `observed` counts the runs
     // that can still be checked, and a page that prints the first without the second reads as
     // a contradiction beside cells that say no run was observed — which is what Gaedeke's
@@ -350,7 +356,7 @@ export function approvedCells(): Cell[] {
 
 /** How many papers a person has read under this layer — the adjudication counter a layer page
  *  carries beside its scheme badge. Counts approved and partial readings; superseded and
- *  unread are not readings that still stand. */
+ *  awaiting are not readings that still stand. */
 export function adjudicatedCount(layerId: string): number {
   return papers.filter(p => {
     const c = cell(p, layerId);
@@ -418,7 +424,10 @@ export const SCHEME_NOTE: Record<SchemeState, string> = {
 };
 
 export const ADJUDICATION_LABEL: Record<Adjudication['kind'], string> = {
-  approved: 'approved', partial: 'partial', superseded: 'superseded', unread: 'unread',
+  approved: 'approved', partial: 'partial', superseded: 'superseded',
+  // Not 'unread'. The record knows whether a stamp exists; it does not know whether anyone
+  // has looked, and people read this corpus without stamping what they read.
+  awaiting: 'awaiting approval',
 };
 
 /** The adjudication fact as one line — the "approved v3 by X", "partial, 4 of 30", the rest. */
@@ -430,7 +439,7 @@ export function adjudicationText(a: Adjudication): string {
     return (a.considered != null
       ? `partial — ${a.considered} of ${a.total} considered` : 'partial reading') + proc;
   if (a.kind === 'superseded') return `v${a.v} approved, then the layer ran again`;
-  return 'unread';
+  return 'awaiting approval';
 }
 
 /** An `owner/repo#n` reference, as a label and a URL. The tracker comes from the reference
