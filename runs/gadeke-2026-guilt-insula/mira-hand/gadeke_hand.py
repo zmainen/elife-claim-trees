@@ -34,17 +34,13 @@ def edge(relation, subject, object, anchor=None):
 # QUESTIONS — one per hypothesis the paper commits to
 # ═══════════════════════════════════════════════════════════════════════════════════════════
 node("q1", "Question",
-     "Does being responsible for a risky choice that leaves a partner worse off produce interpersonal guilt — a larger fall in the decision-maker's momentary happiness than when the partner made the same choice?",
-     "The behavioural question. Guilt is defined operationally: feeling worse about a partner's bad outcome when you caused it than when they did.",
+     "How does being responsible for a risky choice that affects a partner change how the decision-maker feels?",
+     "The behavioural question. The paper's answer is interpersonal guilt, defined operationally as feeling worse about a partner's bad outcome when you caused it than when they did; the alternatives are the other answers.",
      "The neural mechanisms underlying guilt evoked during such situations of social responsibility are still unknown.")
 node("q2", "Question",
-     "Is the anterior insula, together with its connectivity to prefrontal cortex, the neural substrate of that guilt?",
-     "The imaging question about guilt itself: which region responds when the participant is responsible for the partner's low outcome, and how it talks to prefrontal cortex.",
+     "Which brain regions carry guilt and responsibility for a partner's outcomes, and how do they interact with prefrontal cortex?",
+     "The imaging question: where the guilt effect shows up (the paper's answer: anterior insula), what tracks responsibility for the partner's surprises as such (left STS), and how these regions couple with prefrontal cortex during choice.",
      "Next we sought to uncover the neural mechanisms associated with our guilt effect")
-node("q3", "Question",
-     "Does a neural substrate track the participant's responsibility for the partner's outcomes — representing the partner's reward prediction errors more strongly when they follow the participant's own choice?",
-     "The imaging question about responsibility rather than guilt: a signal that cares who chose, not whether the outcome was bad.",
-     "those involved in tracking consequences of participants’ decisions on their partner")
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════
 # STUDIES, PROTOCOLS, SOURCE DOCUMENTS
@@ -134,7 +130,7 @@ node("h3", "Claim", "Connectivity between the guilt- and responsibility-related 
 node("h4", "Claim", "A neural substrate tracks the participant's responsibility for the partner's outcomes, representing the partner's reward prediction errors more strongly when they arise from the participant's own choice.",
      "A bet about responsibility rather than guilt: some region should care who caused the partner's surprise, good or bad.",
      "search for networks sensitive to reward prediction errors resulting from participant or partner choices", subtype="Hypothesis")
-edge("addresses", "h1", "q1"); edge("addresses", "h2", "q2"); edge("addresses", "h3", "q2"); edge("addresses", "h4", "q3")
+edge("addresses", "h1", "q1"); edge("addresses", "h2", "q2"); edge("addresses", "h3", "q2"); edge("addresses", "h4", "q2")
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════
 # FINDINGS (Claim) — the results as propositions, one per figure-panel group
@@ -142,7 +138,7 @@ edge("addresses", "h1", "q1"); edge("addresses", "h2", "q2"); edge("addresses", 
 node("f_guilt", "Claim", "Happiness fell more after a partner's low outcome when the participant rather than the partner had chosen the lottery.",
      "The guilt effect, in both studies: the same bad outcome for the partner hurts more when you caused it. Figure 3D and 3H. The authors read it as 'simple guilt'.",
      "When the partner received the low lottery outcome, participant happiness was lower when they rather than the partner had chosen the lottery")
-node("f_model", "Claim", "A happiness model that weights the partner's reward prediction errors from the participant's own choices separately fits best, and those weights are above zero.",
+node("f_model", "Claim", "Happiness was best explained by a model that gives separate weight to the partner's reward surprises caused by the participant's own choice; that weight was reliably positive.",
      "Of five computational models, the Responsibility model wins the likelihood-ratio tests in both studies, and the term for the partner's surprises caused by the participant is reliably positive. Table 1, Figure 3C and 3G.",
      "the Responsibility model fitted better than all the other models, including the Responsibility Redux model")
 node("f_ownrpe", "Claim", "The participant's own reward prediction errors influenced happiness more than the partner's.",
@@ -210,14 +206,22 @@ node("a_algorithm", "Claim", "Because the partner's choices were really an algor
      "The first limitation is that the partner’s decisions were in fact taken by an algorithm", subtype="Alternative")
 for a, q in [("a_own", "q1"), ("a_general", "q1"), ("a_risk", "q1"), ("a_inequality", "q1"), ("a_emotion", "q1"), ("a_algorithm", "q1")]:
     edge("addresses", a, q)
-edge("addresses", "a_emotion", "q2")
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════
 # EVIDENCE — one node per study and panel/statistic; Check marks a result that defends rather than argues
 # ═══════════════════════════════════════════════════════════════════════════════════════════
+IIIF = "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_{key}.tif/full/{w},/0/default.jpg"
+PAGE = "https://epp.elifepathways.org/mira/105391#{key}"
+def figure_for(panel):
+    m = re.match(r"(Figure|Table) (\d)", panel)
+    if not m: return None
+    key = ("fig" if m.group(1) == "Figure" else "tbl") + m.group(2)
+    return {"label": panel, "image": IIIF.format(key=key, w="max"), "thumbnail": IIIF.format(key=key, w=480), "page": PAGE.format(key=key)}
+
 def ev(id, study, panel, text, anchor, supports=(), opposes=(), check=False, description=None):
     desc = (f"{'Check. ' if check else ''}{study.replace('st', 'Study ')} · {panel}." + (f" {description}" if description else ""))
-    node(id, "Evidence", text, desc, anchor, subtype="Check" if check else None, sourceDocument=PAPER_DOI, panel=panel, study=study)
+    fig = figure_for(panel)
+    node(id, "Evidence", text, desc, anchor, subtype="Check" if check else None, sourceDocument=PAPER_DOI, panel=panel, study=study, **({"figure": fig} if fig else {}))
     edge("grounds", study, id)
     for s in supports: edge("supports", id, s)
     for o in opposes: edge("opposes", id, o)
@@ -375,6 +379,7 @@ def covers(panel, p):
     return False
 coverage = {panel: [n["id"] for n in N if n.get("panel") and covers(panel, n["panel"])] for panel in PANELS}
 coverage["Figure 1"] = ["p_task"]
+FIG_LINKS = {p: figure_for(p) for p in PANELS}
 uncovered = [p for p, v in coverage.items() if not v]
 
 if problems:
@@ -387,7 +392,7 @@ graph = {"source": "hand-built from eLife 105391 v2 as served by epp.elifepathwa
                    "authors": [{"name": a} for a in ["Maria Gädeke", "Tom Willems", "Omar Salah Ahmed", "Bernd Weber", "René Hurlemann", "Johannes Schultz"]]},
          "subtypes": {"Hypothesis": "Claim", "Alternative": "Claim", "Check": "Evidence"},
          "nodes": N, "edges": E, "models": ["hand-built (Zach Mainen, Claude)"], "edited": True,
-         "coverage": coverage}
+         "coverage": coverage, "figures": FIG_LINKS}
 json.dump(graph, open(os.path.join(HERE, "gadeke-hand.graph.json"), "w"), indent=1, ensure_ascii=False)
 
 # ── MIRA JSON-LD ─────────────────────────────────────────────────────────────────────────────
@@ -415,7 +420,9 @@ for n in N:
     typ = ([f"cg:type/{n['subtype']}"] if n.get("subtype") else []) + [f"cg:type/{n['type']}", n["type"]]
     o = {"@id": i, "@type": typ, "title": n["text"] if n["type"] in ("Study", "Protocol", "SourceDocument", "Request") else n["description"].split(" · ")[-1][:200] if False else n["text"],
          "description": item(n["description"] + " — Anchor: “" + n["anchor"] + "”")}
-    if n["type"] == "Evidence": o["sourceDocument"] = n.get("sourceDocument", PAPER_DOI)
+    if n["type"] == "Evidence":
+        o["sourceDocument"] = n.get("sourceDocument", PAPER_DOI)
+        if n.get("figure"): o["observationBase"] = n["figure"]["image"]
     g.append(o)
 for k, e in enumerate(E, 1):
     g.append(stamped({"@id": f"{BASE}edge/{k}", "@type": [f"cg:rel/{e['relation']}", e["relation"]], "source": iri[e["subject"]], "destination": iri[e["object"]],
