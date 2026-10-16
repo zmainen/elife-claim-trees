@@ -1,0 +1,436 @@
+#!/usr/bin/env python3
+"""Gädeke et al. 2026 (eLife 105391, Reviewed Preprint v2) as a hand-built MIRA graph.
+
+Built for eLife Pathways' claims-tree prototype, against the text their page serves (v2), so that
+every anchor docks to it. MIRA's seven node types and eight relations, plus three declared
+subclasses: Hypothesis and Alternative (of Claim), Check (of Evidence). Every node carries a
+statement (`text`), a plain-language summary (`description`) and a verbatim anchor; every
+Evidence names its study and its figure panel or table; every figure panel is accounted for.
+
+Run:  python3 gadeke_hand.py            → gadeke-hand.graph.json (extractor shape) + .mira.jsonld + report
+The builder refuses to emit if any anchor is not found character-for-character in gadeke-v2.txt.
+"""
+import json, os, re, sys
+from collections import Counter, defaultdict
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+TEXT = open(os.path.join(HERE, "gadeke-v2.txt"), encoding="utf-8").read()
+PAPER_DOI = "https://doi.org/10.7554/eLife.105391.2"
+
+N = []   # nodes
+E = []   # edges
+
+def node(id, type, text, description, anchor, subtype=None, **extra):
+    n = {"id": id, "type": type, "text": text, "description": description, "anchor": anchor}
+    if subtype: n["subtype"] = subtype
+    n.update(extra); N.append(n); return id
+
+def edge(relation, subject, object, anchor=None):
+    e = {"relation": relation, "subject": subject, "object": object}
+    if anchor: e["anchor"] = anchor
+    E.append(e)
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+# QUESTIONS — one per hypothesis the paper commits to
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+node("q1", "Question",
+     "Does being responsible for a risky choice that leaves a partner worse off produce interpersonal guilt — a larger fall in the decision-maker's momentary happiness than when the partner made the same choice?",
+     "The behavioural question. Guilt is defined operationally: feeling worse about a partner's bad outcome when you caused it than when they did.",
+     "The neural mechanisms underlying guilt evoked during such situations of social responsibility are still unknown.")
+node("q2", "Question",
+     "Is the anterior insula, together with its connectivity to prefrontal cortex, the neural substrate of that guilt?",
+     "The imaging question about guilt itself: which region responds when the participant is responsible for the partner's low outcome, and how it talks to prefrontal cortex.",
+     "Next we sought to uncover the neural mechanisms associated with our guilt effect")
+node("q3", "Question",
+     "Does a neural substrate track the participant's responsibility for the partner's outcomes — representing the partner's reward prediction errors more strongly when they follow the participant's own choice?",
+     "The imaging question about responsibility rather than guilt: a signal that cares who chose, not whether the outcome was bad.",
+     "those involved in tracking consequences of participants’ decisions on their partner")
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+# STUDIES, PROTOCOLS, SOURCE DOCUMENTS
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+node("st1", "Study", "Study 1: behavioural experiment, 40 participants, three sessions outside the scanner",
+     "Participants chose between safe and risky options for themselves (Solo), for themselves and a partner (Social), or watched the partner choose (Partner), rating happiness every two trials. The partner was another participant.",
+     "40 healthy participants (14 male, mean age 26.1, range 22 to 31) participated in Study 1 (behaviour only study)")
+node("st2", "Study", "Study 2: fMRI experiment, 44 participants, two sessions in the scanner",
+     "The same task inside a 3T scanner, with longer and variable intervals between events; the partner was an experimenter. All brain results come from this study.",
+     "44 healthy participants (19 male, mean (SD) age = 30.6 (6.5), range 23 to 50) participated in Study 2 (fMRI study)")
+
+node("p_task", "Protocol", "Lottery choice task with Solo, Social and Partner conditions",
+     "On each trial a safe amount against a lottery with two equiprobable outcomes. Solo: the choice affects only the participant. Social: the participant chooses for both. Partner: the partner chooses for both. In Social and Partner, each player's lottery is drawn independently.",
+     "participants were presented with pairs of monetary options (a safe and a risky option; the risky option was a lottery with equally probable high and low outcomes)")
+node("p_partner", "Protocol", "Partner choices simulated by an expected-value-maximising algorithm",
+     "To keep the partner's behaviour identical across participants, the partner's choices were made by an algorithm that always picked the higher expected value. Participants were not told.",
+     "We contrasted this condition with similar choices made by a simple expected-value-maximizing algorithm posing for the partner")
+node("p_ice", "Protocol", "Icebreaker game to create a social bond before the task",
+     "Participant and partner met for about fifteen minutes and played a cooperative game, so that the partner's outcomes would matter emotionally.",
+     "participants were paired with a partner and played an “ice-breaker” game that created a positive social bond between them")
+node("p_happy", "Protocol", "Momentary happiness probe every two trials",
+     "After every second outcome, participants rated how happy they felt on a continuous scale; the ratings are the dependent measure for the behavioural analyses.",
+     "Momentary happiness was assessed every two trials in a similar manner to previous studies by Rutledge and colleagues")
+node("p_risk", "Protocol", "Risk-attitude estimation: risk premium and CARA expected utility",
+     "Two measures of how risk-averse each participant was in each condition: a risk premium from a fitted logistic regression, and a constant-absolute-risk-aversion parameter ρ from expected utility theory.",
+     "we calculated for each participant a “risk premium”, defined as the difference between the expected value of a lottery and its certainty equivalent")
+node("p_models", "Protocol", "Five computational models of momentary happiness",
+     "Basic, Inequality, Guilt-envy, Responsibility and Responsibility Redux: exponentially decaying influences of certain rewards, expected values and reward prediction errors, with the Responsibility models adding the partner's prediction errors split by who chose. Compared by AIC, BIC, R² and likelihood-ratio tests; parameter recovery on synthetic data.",
+     "we fitted computational models to each participant’s happiness data")
+node("p_lmm", "Protocol", "Linear mixed models of happiness after lottery outcomes",
+     "Happiness after Social and Partner lottery outcomes modelled with the participant's outcome, the partner's outcome, who chose, and their interactions; the guilt effect is the partner-outcome × decision-maker interaction.",
+     "we analysed happiness values reported after outcomes of lottery choices in the Social and Partner conditions using conventional linear mixed models")
+node("p_fmri", "Protocol", "fMRI acquisition, GLMs and region-of-interest mixed models",
+     "3T EPI BOLD; a conventional GLM of the trial events (GLM1) and a model-based GLM with the Responsibility model's variables as regressors (GLM2); regions of interest from the lottery-versus-safe outcome contrast analysed with linear mixed models.",
+     "We analysed the BOLD responses of brain regions engaged during decision-making and at the time of receiving the outcomes of the choice using conventional as well as computational model-based analyses")
+node("p_ppi", "Protocol", "Seed-to-voxel psychophysiological interaction from left insula and left STS",
+     "Whole-brain connectivity during the choice phase from two seeds, looking for a Condition × Choice interaction.",
+     "we used the left insula and left STS as seed regions for whole-brain seed-to-voxel psychophysiological interaction analyses")
+node("p_grbs", "Protocol", "Comparison with the published guilt-related brain signature",
+     "Each participant's guilt-related activation map was projected onto Yu et al.'s multivariate guilt signature; a positive dot product means resemblance.",
+     "we compared this brain signature to the neural responses obtained in our task")
+
+for st in ("st1", "st2"):
+    for p in ("p_task", "p_partner", "p_ice", "p_happy", "p_risk", "p_models", "p_lmm"):
+        edge("follows", st, p)
+for p in ("p_fmri", "p_ppi", "p_grbs"):
+    edge("follows", "st2", p)
+
+node("s_paper", "SourceDocument", "Gädeke et al. (2026), Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions, eLife 105391 v2",
+     "The paper this graph is extracted from.", "Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions", doi=PAPER_DOI)
+edge("describesActivity", "s_paper", "st1"); edge("describesActivity", "s_paper", "st2")
+
+# cited works the argument leans on — each with the study it reports and the one finding used here
+cited = [
+    ("rutledge", "Rutledge et al. (2016)", "Prior work establishing that momentary happiness in a probabilistic reward task is explained by recent rewards, expectations and prediction errors — the modelling framework this paper adopts and extends.",
+     "Following Rutledge and colleagues’ methodology, which considers that changes in momentary happiness in response to outcomes of a probabilistic reward task are explained by the combined influence of recent reward expectations and prediction errors",
+     "Changes in momentary happiness during a probabilistic reward task are explained by recent reward expectations and the prediction errors arising from them.", "f_rewards"),
+    ("edelson", "Edelson et al. (2018)", "A study of seeking or avoiding responsibility for group outcomes, which found responsibility aversion not explained by guilt, and insula–TPJ connectivity varying with it.",
+     "most participants displayed responsibility aversion, and this effect could not be explained by guilt, suggesting people associate a psychological cost with assuming responsibility for others’ outcomes",
+     "Most participants show responsibility aversion — a psychological cost of deciding for others — that guilt does not explain.", "f_agency"),
+    ("yu2014", "Yu et al. (2014)", "A guilt paradigm in which participants could bear part of a partner's pain; anterior insula and anterior middle cingulate were more active when the pain followed the participant's own errors.",
+     "The level of pain taken, indicative of guilt, and activations in anterior middle cingulate cortex and aIns were higher when the pain followed errors made only by the participant rather than by both players",
+     "Anterior insula and anterior middle cingulate activity were higher when a partner's pain followed the participant's own errors.", "h2"),
+    ("yu2020", "Yu et al. (2020)", "A multivariate reanalysis of two guilt datasets yielding a guilt-related brain signature, used here as an external yardstick.",
+     "A multivariate reanalysis of these two datasets revealed a neural signature for guilt (Yu et al., 2020)",
+     "A multivariate reanalysis of two guilt studies yields a distributed guilt-related brain signature spanning anterior midcingulate, insula, IFG, inferior temporal cortex, thalamus and cerebellum.", "f_grbs"),
+]
+for key, label, desc, anchor, finding, target in cited:
+    node(f"s_{key}", "SourceDocument", label, desc, anchor)
+    node(f"st_{key}", "Study", f"The study reported by {label}", desc, anchor)
+    node(f"e_{key}", "Evidence", finding, f"Cited finding from {label}, as this paper states it.", anchor)
+    edge("describesActivity", f"s_{key}", f"st_{key}"); edge("grounds", f"st_{key}", f"e_{key}")
+    edge("supports", f"e_{key}", target)
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+# HYPOTHESES (Claim / Hypothesis)
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+node("h1", "Claim", "Responsibility for a social choice that yields a low outcome for a partner produces interpersonal guilt, felt as a larger decrease in momentary happiness than when the partner made the same choice.",
+     "The paper's central bet: it is being responsible for the partner's bad outcome, not the bad outcome itself, that hurts.",
+     "choosing a risky option in such a case may evoke guilt when the outcome for others is negative", subtype="Hypothesis")
+node("h2", "Claim", "The anterior insula is the neural substrate of that guilt, responding more when the participant is responsible for a low outcome affecting the partner.",
+     "The insula has been linked to guilt in earlier work; the bet is that it carries the guilt effect here.",
+     "Given the documented association between anterior insula and guilt (see Introduction)", subtype="Hypothesis")
+node("h3", "Claim", "Connectivity between the guilt- and responsibility-related regions and prefrontal cortex changes with who decides and with the type of choice.",
+     "A bet about how the insula and STS talk to prefrontal cortex during choice, depending on whether the choice is risky and whether it affects the partner.",
+     "We hypothesized that connectivity with regions that showed guilt- and responsibility-related responses during the outcome phase (see previous paragraph) might change depending on whether participants made decisions for themselves only or for themselves and their partner", subtype="Hypothesis")
+node("h4", "Claim", "A neural substrate tracks the participant's responsibility for the partner's outcomes, representing the partner's reward prediction errors more strongly when they arise from the participant's own choice.",
+     "A bet about responsibility rather than guilt: some region should care who caused the partner's surprise, good or bad.",
+     "search for networks sensitive to reward prediction errors resulting from participant or partner choices", subtype="Hypothesis")
+edge("addresses", "h1", "q1"); edge("addresses", "h2", "q2"); edge("addresses", "h3", "q2"); edge("addresses", "h4", "q3")
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+# FINDINGS (Claim) — the results as propositions, one per figure-panel group
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+node("f_guilt", "Claim", "Happiness fell more after a partner's low outcome when the participant rather than the partner had chosen the lottery.",
+     "The guilt effect, in both studies: the same bad outcome for the partner hurts more when you caused it. Figure 3D and 3H. The authors read it as 'simple guilt'.",
+     "When the partner received the low lottery outcome, participant happiness was lower when they rather than the partner had chosen the lottery")
+node("f_model", "Claim", "A happiness model that weights the partner's reward prediction errors from the participant's own choices separately fits best, and those weights are above zero.",
+     "Of five computational models, the Responsibility model wins the likelihood-ratio tests in both studies, and the term for the partner's surprises caused by the participant is reliably positive. Table 1, Figure 3C and 3G.",
+     "the Responsibility model fitted better than all the other models, including the Responsibility Redux model")
+node("f_ownrpe", "Claim", "The participant's own reward prediction errors influenced happiness more than the partner's.",
+     "Responsibility matters, but one's own surprises matter more.",
+     "Participants’ reward prediction errors (sRPE) influenced happiness more than partner’s reward prediction errors")
+node("f_rewards", "Claim", "Momentary happiness tracked the rewards both the participant and the partner received on the current trial.",
+     "The basic premise of the modelling, replicated here: happiness follows recent rewards, one's own and the partner's. Figure 3A, 3B, 3E, 3F.",
+     "participant momentary happiness correlated with rewards obtained in the current trial by the participant and by the partner")
+node("f_agency", "Claim", "Being the decision-maker lowered happiness, independent of the outcome.",
+     "A separate finding, not the guilt effect: deciding for others costs something even when nothing bad happens. The authors read it as the 'weight of responsibility', as in Edelson et al.",
+     "found happiness to be lower when the participant chose, independent of the outcome")
+node("f_null_good", "Claim", "Responsibility did not change happiness after good outcomes for the partner.",
+     "The guilt effect is specific to bad outcomes, as guilt predicts.",
+     "Responsibility for choices did not influence happiness following positive lottery outcomes for the partner")
+node("f_risk", "Claim", "Risk preferences were very similar whether deciding for oneself alone or for oneself and the partner, with only a weak tendency to more caution in the Social condition in Study 1.",
+     "Risk premiums did not differ in either study; the ρ parameter was slightly higher in Social in Study 1 only. Figure 2. The authors conclude they have no strong evidence of a difference.",
+     "participants showed very similar risk preferences when making decisions affecting only themselves (Solo condition) or themselves and their partner (Social condition)")
+node("f_insula", "Claim", "Insula activity was higher for the partner's low outcomes when the participant rather than the partner had chosen.",
+     "The guilt effect in the brain: insula regions of interest mirrored the behavioural interaction, and a voxel-wise analysis found a small left anterior insula cluster doing the same. Figure 4E and 4F.",
+     "activation in our insula ROIs increased in situations during which participants experienced guilt for low outcomes impacting their partner")
+node("f_ppi_insula", "Claim", "Connectivity between the left anterior insula and the right inferior frontal gyrus varied with condition and choice, highest for risky choices for oneself and safe choices for both.",
+     "How the insula talks to prefrontal cortex depends on what is chosen and for whom. Figure 5. The authors suggest the right IFG is sensitive to guilt-related information.",
+     "a cluster in the right inferior frontal gyrus (IFG) whose connectivity to the insula (the seed region) was highest when participants made Risky choices for themselves and Safe choices for both players")
+node("f_ppi_sts", "Claim", "Connectivity between the left STS and left inferior frontal gyrus showed the opposite pattern, but did not survive correction.",
+     "A weak, uncorrected result the authors call anecdotal, read as information from STS being relayed to IFG. Supplementary Figure 2.",
+     "connectivity with the left STS (the seed region) showed the opposite pattern")
+node("f_sts", "Claim", "A left superior temporal sulcus cluster responded more to the partner's reward prediction errors when they followed the participant's own choice than the partner's.",
+     "The responsibility signal: a region that tracks the partner's surprises more when the participant caused them. Figure 4H and 4I. The authors read it as monitoring the consequences of one's decisions on others.",
+     "We found this effect in one cluster within the left STS")
+node("f_network", "Claim", "Choosing for both oneself and the partner, rather than for oneself alone, engaged the precuneus, left temporo-parietal junction and medial prefrontal cortex.",
+     "The social-decision network, replicating earlier work; precuneus and TPJ were most active for risky choices in the Social condition. Figure 4B and 4C.",
+     "Three significant clusters of voxels were identified (Figure 4B and Supplementary Table 3), in the precuneus")
+node("f_outcome_net", "Claim", "Receiving lottery outcomes, compared with safe outcomes, engaged bilateral anterior insula, dorsomedial prefrontal cortex, right STS, ventral striatum, right dorsolateral prefrontal cortex and inferior parietal lobe.",
+     "The regions sensitive to risky outcomes, which define the regions of interest for the guilt analyses. Figure 4D.",
+     "Cluster of voxels more active during receipt of lottery outcomes than outcomes of safe choices were identified in the bilateral anterior insula")
+node("f_grbs", "Claim", "The guilt-related activation patterns resembled the published guilt-related brain signature.",
+     "Convergent evidence that what the insula analysis found is guilt: individual maps projected positively onto Yu et al.'s signature, though the match did not track individual differences in the behavioural effect.",
+     "The “neurometrics” analysis of our guilt-related activation maps showed a significant similarity to a published guilt-related brain signature")
+
+# findings support hypotheses
+for f, h in [("f_guilt", "h1"), ("f_model", "h1"), ("f_null_good", "h1"), ("f_insula", "h2"), ("f_grbs", "h2"),
+             ("f_ppi_insula", "h3"), ("f_ppi_sts", "h3"), ("f_sts", "h4")]:
+    edge("supports", f, h)
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+# ALTERNATIVES (Claim / Alternative) — stated as their proponent would
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+node("a_own", "Claim", "The larger drop in happiness after the partner's low outcome is disappointment at the participant's own outcome, not guilt about the partner's.",
+     "Rival to the guilt reading. Argued against: the effect holds whether the participant's own lottery came out high or low.",
+     "The “guilt effect” occurred whether the participant received the high lottery outcome", subtype="Alternative")
+node("a_general", "Claim", "Being responsible simply amplifies the participant's reaction to all of the partner's outcomes, good or bad.",
+     "Rival to the guilt reading. Argued against: responsibility made no difference after good partner outcomes.",
+     "Responsibility for choices did not influence happiness following positive lottery outcomes for the partner", subtype="Alternative")
+node("a_risk", "Claim", "Choosing for two people changes how much risk participants take, so the differences between conditions reflect different choices rather than guilt.",
+     "Rival, handled by checking risk attitudes directly. Risk premiums did not differ; a slight shift in ρ in Study 1 gives it weak support. The authors conclude they have no strong evidence of a difference.",
+     "To better assess whether people’s risk preferences varied between the Solo and the Social condition", subtype="Alternative")
+node("a_inequality", "Claim", "Happiness tracks the inequality between the participant's and the partner's rewards; responsibility for the partner's surprises adds nothing.",
+     "Rival account built into the model comparison as the Inequality and Guilt-envy models. Argued against: the Responsibility model beat both in both studies.",
+     "we assessed the fit of an ‘Inequality’ model that included one term modelling the difference between the participant and partner outcomes", subtype="Alternative")
+node("a_emotion", "Claim", "What participants felt was empathy for the partner, a sense of failure or bad luck, or some emotion other than guilt.",
+     "Raised by the authors themselves, since no one was asked what they felt. Left open on the behavioural measure ('we cannot exclude'), then argued against on the neural one: the activation maps resembled a published guilt signature, 'we thus believe that our participants did experience guilt'.",
+     "we cannot exclude the possibility that they have instead or in addition felt empathy for their partner, a feeling of failure or bad luck, or some other emotion", subtype="Alternative")
+node("a_algorithm", "Claim", "Because the partner's choices were really an algorithm, participants were emotionally detached from the partner's outcomes and the effects do not reflect a social interaction.",
+     "A limitation the authors raise and answer: partner outcomes did move participants' happiness, so they were not detached.",
+     "The first limitation is that the partner’s decisions were in fact taken by an algorithm", subtype="Alternative")
+for a, q in [("a_own", "q1"), ("a_general", "q1"), ("a_risk", "q1"), ("a_inequality", "q1"), ("a_emotion", "q1"), ("a_algorithm", "q1")]:
+    edge("addresses", a, q)
+edge("addresses", "a_emotion", "q2")
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+# EVIDENCE — one node per study and panel/statistic; Check marks a result that defends rather than argues
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+def ev(id, study, panel, text, anchor, supports=(), opposes=(), check=False, description=None):
+    desc = (f"{'Check. ' if check else ''}{study.replace('st', 'Study ')} · {panel}." + (f" {description}" if description else ""))
+    node(id, "Evidence", text, desc, anchor, subtype="Check" if check else None, sourceDocument=PAPER_DOI, panel=panel, study=study)
+    edge("grounds", study, id)
+    for s in supports: edge("supports", id, s)
+    for o in opposes: edge("opposes", id, o)
+
+# behaviour: choices
+ev("e_value_s1", "st1", "Figure 2A", "In Study 1, the probability of choosing the lottery rose with the lottery's expected-value advantage over the safe option (t(4796) = 9.26, p < 3.1e-20, β = 0.074).",
+   "participants’ probability of choosing the risky option (lottery) increased with the difference between the expected value of the lottery and the value of the safe option", supports=("f_guilt",), check=True, description="Manipulation check: choices were value-sensitive, so the behavioural measures mean something.")
+ev("e_value_s2", "st2", "Figure 2D", "In Study 2, the probability of choosing the lottery rose with its expected-value advantage (t(3829) = 10.62, p < 5.3e-26, β = 0.093).",
+   "Study 2: Figure 2D, t(3829) = 10.62, p < 5.3e-26, β = 0.093", supports=("f_guilt",), check=True, description="Manipulation check, Study 2.")
+ev("e_choice_s1", "st1", "Figure 2A", "In Study 1, participants chose the lottery more often in the Solo than the Social condition (t(4796) = 2.54, p = 0.011, β = 0.164).",
+   "Participants chose the lottery more often in the Solo condition than in the Social condition in Study 1 (t(4796) = 2.54, p = 0.011, β = 0.164", supports=("f_risk", "a_risk"))
+ev("e_choice_s2", "st2", "Figure 2D", "In Study 2, lottery choice did not differ between Solo and Social (t(3829) = 0.23, p = 0.82, β = 0.015).",
+   "this difference was not found in Study 2 (t(3829) = 0.23, p = 0.82, β = 0.015", supports=("f_risk",), opposes=("a_risk",))
+ev("e_ev_x_cond", "st1", "Figure 2A, 2D", "The expected-value effect on choice did not interact with condition in either study (p > 0.52).",
+   "There was no significant interaction between the difference in expected values and experimental conditions in either study (p > 0.52)", supports=("f_risk",), opposes=("a_risk",))
+ev("e_premium_s1", "st1", "Figure 2B", "In Study 1, risk premiums did not differ between Social and Solo (t(39) = 1.53, p = 0.134, d = 0.24, BF10 = 0.49).",
+   "Risk premiums did not differ between Social and Solo conditions (Study 1: Figure 2B, t(39) = 1.53, p = 0.134, Cohen’s d = 0.24, BF10 = 0.49", supports=("f_risk",), opposes=("a_risk",))
+ev("e_premium_s2", "st2", "Figure 2E", "In Study 2, risk premiums did not differ between Social and Solo (t(43) = -0.21, p = 0.84, d = -0.03, BF10 = 0.17).",
+   "Study 2: Figure 2E, t(43) = -0.21, p = 0.84, d = -0.03, BF10 = 0.17", supports=("f_risk",), opposes=("a_risk",))
+ev("e_rho_gainloss", "st1", "Methods", "The risk-aversion parameter ρ did not differ between gain and loss trials in either study (Study 1: t(17) = 0.21, p = 0.84; Study 2: t(15) = -0.61, p = 0.55), justifying pooling.",
+   "As ρ did not vary between gain and loss trials (Study 1: t(17) = 0.21, p = 0.84, d = 0.05; Study 2: t(15) = - 0.61, p = 0.55, d = 0.15; paired t-test)", supports=("f_risk",), check=True, description="Assumption check before pooling gain and loss trials.")
+ev("e_rho_s1", "st1", "Figure 2C", "In Study 1, ρ was slightly higher in the Social than the Solo condition (t(39) = 2.27, p = 0.03, d = 0.36, BF10 = 1.69).",
+   "participants were slightly more risk averse in the Social than in the Solo condition in Study 1 (Figure 2C, t(39) = 2.27, p = 0.03, d = 0.36, BF10 = 1.69)", supports=("f_risk", "a_risk"), description="The one result that gives the risk-attitude alternative any support; the authors note ρ could be estimated in only 18 of 40 participants.")
+ev("e_rho_s2", "st2", "Figure 2F", "In Study 2, ρ did not differ between Social and Solo (t(43) = 1.40, p = 0.17, d = 0.21, BF10 = 0.41).",
+   "but not in Study 2 (Figure 2F, t(43) = 1.40, p = 0.17, d = 0.21, BF10 = 0.41)", supports=("f_risk",), opposes=("a_risk",))
+ev("e_rho_premium", "st1", "Figure 2", "Risk premium and ρ were highly consistent across participants in both conditions and both studies (all F > 42, p < 0.001, R² 0.55–0.65).",
+   "Risk premium and ρ were highly consistent with each other across participants in both conditions for both studies", supports=("f_risk",), check=True, description="Convergence of the two risk measures.")
+
+# behaviour: happiness and models
+ev("e_rewards_s1", "st1", "Figure 3A, 3B", "In Study 1, happiness correlated with the participant's reward (F(1,3598) = 691.5, R² = 0.16) and the partner's reward (F(1,2426) = 128.6, R² = 0.05) on the current trial.",
+   "Correlations with participant reward, Study 1: F(1,3598) = 691.5, p < 0.001, R2 = 0.16; partner reward, Study 1: F(1,2426) = 128.6, p < 0.001, R2 = 0.05", supports=("f_rewards",), opposes=("a_algorithm",))
+ev("e_rewards_s2", "st2", "Figure 3E, 3F", "In Study 2, happiness correlated with the participant's reward (F(1,2630) = 650.8, R² = 0.20) and the partner's reward (F(1,1735) = 111.8, R² = 0.06).",
+   "participant reward, Study 2: F(1,2630) = 650.8, p < 0.001, R2 = 0.20; partner reward, Study 2: F(1,1735) = 111.8, p < 0.001, R2 = 0.06", supports=("f_rewards",), opposes=("a_algorithm",))
+ev("e_lr_s1", "st1", "Table 1", "In Study 1, the Responsibility model fitted better than every other model by likelihood-ratio test (all LR ≥ 47.36, p < 0.0001).",
+   "Study 1: all LR ≥ 47.36, p < 0.0001", supports=("f_model",), opposes=("a_inequality",))
+ev("e_lr_s2", "st2", "Table 1", "In Study 2, the Responsibility model fitted better than every other model by likelihood-ratio test (all LR ≥ 77.83, p < 0.0001).",
+   "Study 2: all LR ≥ 77.83, p < 0.0001", supports=("f_model",), opposes=("a_inequality",))
+ev("e_fit_s1", "st1", "Figure 3C, Table 1", "In Study 1 the Responsibility and Responsibility Redux models had the highest R² and adjusted R² and lowest AIC/BIC of the five models.",
+   "the Responsibility and Responsibility Redux (Figure 3C and 3G) models explained the data best (highest R2 / adjusted R2 or lowest AIC / BIC)", supports=("f_model",))
+ev("e_fit_s2", "st2", "Figure 3G, Table 1", "In Study 2 the Responsibility and Responsibility Redux models likewise explained the happiness data best.",
+   "All models explained variations in happiness reasonably well (Table 1 and Supplementary Materials)", supports=("f_model",))
+ev("e_weights_s1", "st1", "Table 1", "In Study 1 the weight on the partner's prediction errors from the participant's own choices was above zero (Responsibility model Z = 2.85, p = 0.004; Redux Z = 2.93, p = 0.003).",
+   "Responsibility model: Study 1: Z = 2.85, p = 0.004, Study 2: Z = 3.26, p = 0.001", supports=("f_model",))
+ev("e_weights_s2", "st2", "Table 1", "In Study 2 that weight was above zero (Responsibility model Z = 3.26, p = 0.001; Redux Z = 3.30, p = 0.001), and tended to exceed the weight on partner-caused errors.",
+   "ResponsibilityRedux model: Study 1: Z = 2.93, p = 0.003, Study 2: Z = 3.30, p = 0.001", supports=("f_model",))
+ev("e_srpe", "st1", "Table 1", "Weights on the participant's own prediction errors exceeded those on the partner's in both studies (Study 1: all Z > 6.0, p < 0.001; Study 2: all Z > 3.7, p < 0.003).",
+   "weights for sRPE were higher than for social_pRPE or partner_pRPE (Study 1: all Z > 6.0, p < 0.001; Study 2: all Z > 3.7, p < 0.003)", supports=("f_ownrpe",))
+ev("e_recovery", "st1", "Supplementary Materials", "A parameter-recovery procedure on synthetic data recovered the happiness-model parameters reliably.",
+   "The stability of these estimated parameters was verified using a parameter recovery procedure", supports=("f_model",), check=True, description="Parameter recovery for the computational models.")
+ev("e_agency_s1", "st1", "Methods / Results", "In Study 1, happiness was lower when the participant chose, independent of outcome (t(3600) = -3.92, p < 0.0001, β = -0.14).",
+   "Study 1: t(3600) = -3.92, p < 0.0001, β = -0.14", supports=("f_agency",))
+ev("e_agency_s2", "st2", "Methods / Results", "In Study 2, happiness was lower when the participant chose, independent of outcome (t(2870) = -6.07, p < 0.0001, β = -0.24).",
+   "Study 2: t(2870) = -6.07, p < 0.0001, β = -0.24", supports=("f_agency",))
+ev("e_lmm_select", "st1", "Supplementary Table 2", "Across several linear mixed models, lottery outcomes and the identity of the decision-maker both influenced happiness.",
+   "Fitting several models revealed that lottery outcomes influenced happiness, and that the identity of the decision-maker played a role", supports=("f_guilt",), check=True, description="Model selection for the happiness LMMs.")
+ev("e_guilt_s1", "st1", "Figure 3D", "In Study 1, the partner-outcome × decision-maker interaction on happiness was significant (t(1180) = 3.52, p = 0.0004, β = 0.37).",
+   "Study 1: t(1180) = 3.52, p = 0.0004, β = 0.37", supports=("f_guilt",))
+ev("e_guilt_s2", "st2", "Figure 3H", "In Study 2, the partner-outcome × decision-maker interaction on happiness was significant (t(937) = 2.85, p = 0.0045, β = 0.33).",
+   "Study 2: t(937) = 2.85, p = 0.0045, β = 0.33", supports=("f_guilt",))
+ev("e_ownhigh", "st1", "Figure 3D, 3H", "The guilt effect held when the participant's own outcome was high (Study 1: t(39) = -3.58, p < 0.001, d = 0.56, BF10 = 32; Study 2: t(43) = -2.68, p = 0.01, d = 0.4, BF10 = 3.8).",
+   "Study 1: t(39) = -3.58, p < 0.001, d = 0.56, BF10 = 32; Study 2: t(43) = -2.68, p = 0.01, d = 0.4, BF10 = 3.8", supports=("f_guilt",), opposes=("a_own",))
+ev("e_ownlow", "st1", "Figure 3D, 3H", "The guilt effect held when the participant's own outcome was low (Study 1: t(39) = -3.39, p = 0.002, d = 0.54, BF10 = 19; Study 2: t(43) = -3.58, p < 0.001, d = 0.54, BF10 = 33.5).",
+   "Study 1: t(39) = -3.39, p = 0.002, d = 0.54, BF10 = 19; Study 2: t(43) = -3.58, p < 0.001, d = 0.54, BF10 = 33.5", supports=("f_guilt",), opposes=("a_own",))
+ev("e_null_good", "st1", "Results", "After good outcomes for the partner, responsibility did not affect happiness in either study (all |t| < 1.3, p > 0.2, BF10 < 0.2).",
+   "both studies, all |t| < 1.3, p > 0.2, BF10 < 0.2", supports=("f_null_good",), opposes=("a_general",))
+
+# imaging (Study 2)
+ev("e_vs_risky", "st2", "Figure 4A", "Bilateral ventral striatum responded more when participants chose the lottery than the safe option (d = 0.72 left, 0.85 right), replicating earlier work.",
+   "found such responses in the bilateral ventral striatum (Cohen’s d = 0.72 and 0.85 in the left and right clusters, respectively", supports=("f_insula", "f_network"), check=True, description="Positive control: the pipeline recovers a known effect of risky choice.")
+ev("e_social_solo", "st2", "Figure 4B", "Social versus Solo decisions engaged the precuneus (d = 0.79), left TPJ (d = 0.59) and medial prefrontal cortex (d = 0.54).",
+   "in the precuneus (d = 0.79), the left temporo-parietal junction (TPJ; d = 0.59) and the medial prefrontal cortex (mPFC; d = 0.54)", supports=("f_network",))
+ev("e_precuneus_tpj", "st2", "Figure 4C", "Only precuneus and TPJ showed a larger risky-minus-safe response in Social than in both Solo and Partner conditions.",
+   "Only Precuneus and TPJ showed positive differences in both comparisons (Figure 4C)", supports=("f_network",))
+ev("e_outcome_net", "st2", "Figure 4D", "Lottery outcomes versus safe outcomes engaged bilateral anterior insula, dmPFC, right STS, ventral striatum, right dlPFC and inferior parietal lobe.",
+   "bilateral anterior insula, dorsal mPFC (dmPFC), right superior temporal sulcus (STS), bilateral ventral striatum, right dorsolateral prefrontal cortex, and bilateral inferior parietal lobe (Figure 4D", supports=("f_outcome_net",))
+ev("e_insula_roi", "st2", "Figure 4E", "Insula ROIs responded more to the partner's low outcomes in the Social than the Partner condition, also after subtracting responses to high outcomes.",
+   "the insulae showed the sought-after effect (see Supplementary Table 6 and Figure 4E)", supports=("f_insula",))
+ev("e_insula_voxel", "st2", "Figure 4F", "A voxel-wise analysis found a small left anterior insula cluster responding more to the partner's low outcomes after participant than partner choices (peak T = 3.95, d = 0.59, 22 voxels), surviving small-volume correction (p = 0.024).",
+   "We found a weak response in a small cluster within the left anterior insula (peak T = 3.95, d = 0.59, 22 voxels", supports=("f_insula",))
+ev("e_vs_model", "st2", "Figure 4G", "Ventral striatum activation increased with expected certain rewards and the expected values of chosen lotteries under the model-based regressor (left pFWE = 0.002, T = 5.63; right pFWE = 0.005, T = 5.46).",
+   "activation in bilateral ventral striatum indeed increased with the amount of expected certain rewards and the expected values of chosen lotteries", supports=("f_sts",), check=True, description="Manipulation check for the model-based GLM before it is used to find the STS effect.")
+ev("e_sts", "st2", "Figure 4H", "One left STS cluster responded more to the partner's reward prediction errors from participant than partner choices (pFWE = 0.022, T = 4.70, d = 0.53, 100 voxels, peak MNI [-52 -32 0]).",
+   "We found this effect in one cluster within the left STS (pFWE = 0.022, T = 4.70, d = 0.53, Z = 4.57, 100 voxels", supports=("f_sts",))
+ev("e_sts_sessions", "st2", "Figure 4I", "The STS cluster's responses to partner prediction errors from participant and partner choices are shown for both sessions.",
+   "Responses to the computational-model-based regressors coding for partner reward prediction errors resulting from participant and from partner choices in this cluster are shown in Figure 4I", supports=("f_sts",))
+ev("e_ppi_insula", "st2", "Figure 5", "Right IFG connectivity with the left insula seed was highest for risky choices for oneself and safe choices for both players (pFWE = 0.020, T = 4.34, d = 0.80, 115 voxels).",
+   "pFWE = 0.020, T = 4.34, d = 0.80, Z = 4.21, 115 voxels, peak at MNI [46 16 22]; Figure 5", supports=("f_ppi_insula",))
+ev("e_ppi_insula_left", "st2", "Figure 5", "A smaller left IFG cluster showed the same connectivity pattern with the insula seed but did not survive correction (puncorrected = 0.001, T = 4.08, 38 voxels).",
+   "A smaller cluster in the left IFG showed the same effect but did not survive correction for multiple tests", supports=("f_ppi_insula",))
+ev("e_ppi_sts", "st2", "Supplementary Figure 2", "Left IFG connectivity with the left STS seed showed the opposite pattern — highest for safe choices for oneself and risky choices for both — uncorrected (p = 0.001, T = 4.44, 35 voxels).",
+   "connectivity was highest when participants made Safe choices for themselves and Risky choices for both players (puncorrected = 0.001, T = 4.44, Z = 4.30, 35 voxels", supports=("f_ppi_sts",))
+ev("e_grbs", "st2", "Results (neurometrics)", "Dot products between individual guilt-related maps and the published guilt signature were overall positive (mean 5.22, median 6.97, sign test p = 0.017, Cliff's delta 0.4).",
+   "overall these values were positive (mean = 5.22; median = 6.97; sign test: p = 0.017; Cliff’s Delta = 0.4 = medium effect size", supports=("f_grbs",), opposes=("a_emotion",))
+ev("e_grbs_indiv", "st2", "Results (neurometrics)", "The signature match did not correlate with individual behavioural guilt effects (Spearman's ρ = -0.058, p = 0.725).",
+   "did not find a significant association [Spearman’s Rho = -0.058, p = 0.725]", description="A null that qualifies the convergent-validity reading; attached to the finding it bears on.")
+edge("supports", "e_grbs_indiv", "f_grbs")   # bears on it; the description says how
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+# REQUESTS — the Discussion's future work
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+req = [
+    ("r_emotions", "Ask participants directly which emotions they felt at each stage of the task, to link subjective experience to the analytical measures of guilt.",
+     "asking participants directly about which emotions they have felt during the different stages of this task would allow us to link subjective experience with our analytical measures", ["f_guilt", "a_emotion"]),
+    ("r_traits", "Test more participants to assess how personality traits shape the experience and the behavioural and neural correlates of guilt and responsibility.",
+     "Testing more participants would allow us to assess the impact of inter-individual variations in personality traits", ["f_guilt", "f_insula"]),
+    ("r_trials", "Run more trials so risk preferences can be modelled separately for gains and losses per condition, and to test whether happiness changes affect later choices.",
+     "Using more trials in the experiment would allow separate modelling of risk preferences in gain and loss trials in each experimental condition", ["f_risk"]),
+    ("r_partners", "Vary the partner's identity — friend, stranger, artificial agent — to measure social discounting of guilt and responsibility.",
+     "Varying partner identities (friends, stranger, artificial agent) could reveal the impact of social discounting on guilt and responsibility", ["f_guilt", "a_algorithm"]),
+    ("r_feedback_ppi", "Run the connectivity analyses on the outcome (feedback) phase of the task.",
+     "Functional connectivity analyses could also be performed for the data obtained in the feedback part of the paradigm", ["f_ppi_insula", "f_ppi_sts"]),
+    ("r_computations", "Run experiments that isolate the specific computations the left STS/TPJ and anterior insula perform, to explain how guilt and responsibility shape social decisions.",
+     "More experiments investigating specific computations in which these regions are involved", ["f_sts", "f_insula"]),
+]
+for rid, text, anchor, targets in req:
+    node(rid, "Request", text, "Future work the Discussion calls for.", anchor)
+    for t in targets: edge("request_target", rid, t)
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+# BUILD, CHECK, EMIT
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+LEGAL = {"addresses": ({"Claim"}, {"Question"}), "supports": ({"Evidence", "Claim"}, {"Claim"}), "opposes": ({"Evidence", "Claim"}, {"Claim"}),
+         "grounds": ({"Study"}, {"Evidence"}), "follows": ({"Study"}, {"Protocol"}), "describesActivity": ({"SourceDocument"}, {"Study"}),
+         "request_target": ({"Request"}, {"Claim"}), "request_for": ({"Request"}, {"Study"})}
+T = {n["id"]: n["type"] for n in N}
+problems = []
+for n in N:
+    if n["anchor"] not in TEXT:
+        problems.append(f"ANCHOR NOT VERBATIM  {n['id']}: {n['anchor'][:90]}")
+ids = set(T)
+for e in E:
+    if e["subject"] not in ids or e["object"] not in ids:
+        problems.append(f"DANGLING EDGE {e}"); continue
+    s, o = LEGAL[e["relation"]]
+    if T[e["subject"]] not in s or T[e["object"]] not in o:
+        problems.append(f"ILLEGAL EDGE {e['relation']} {T[e['subject']]}→{T[e['object']]} ({e['subject']}→{e['object']})")
+dups = [k for k, c in Counter(n["id"] for n in N).items() if c > 1]
+if dups: problems.append(f"DUPLICATE IDS {dups}")
+
+# figure-panel coverage
+PANELS = ["Figure 1", "Figure 2A", "Figure 2B", "Figure 2C", "Figure 2D", "Figure 2E", "Figure 2F",
+          "Figure 3A", "Figure 3B", "Figure 3C", "Figure 3D", "Figure 3E", "Figure 3F", "Figure 3G", "Figure 3H", "Table 1",
+          "Figure 4A", "Figure 4B", "Figure 4C", "Figure 4D", "Figure 4E", "Figure 4F", "Figure 4G", "Figure 4H", "Figure 4I", "Figure 5", "Supplementary Figure 2"]
+def covers(panel, p):
+    if panel == "Figure 1": return False
+    m = re.match(r"(Figure \d|Table \d|Supplementary Figure \d)([A-I]?)", panel)
+    fig, letter = m.group(1), m.group(2)
+    parts = [x.strip() for x in p.split(",")]
+    num = fig.split()[-1]
+    for x in parts:
+        if x.startswith(fig): tail = x[len(fig):]
+        elif re.match(rf"{num}[A-I]", x): tail = x[len(num):]
+        else: continue
+        if not letter or letter in tail: return True
+    return False
+coverage = {panel: [n["id"] for n in N if n.get("panel") and covers(panel, n["panel"])] for panel in PANELS}
+coverage["Figure 1"] = ["p_task"]
+uncovered = [p for p, v in coverage.items() if not v]
+
+if problems:
+    print("\n".join(problems)); sys.exit(1)
+
+# ── extractor-shaped graph.json ───────────────────────────────────────────────────────────────
+graph = {"source": "hand-built from eLife 105391 v2 as served by epp.elifepathways.org", "slug": "gadeke-2026-guilt-insula",
+         "paper": {"title": "Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions",
+                   "doi": "10.7554/eLife.105391.2", "license": "CC BY 4.0",
+                   "authors": [{"name": a} for a in ["Maria Gädeke", "Tom Willems", "Omar Salah Ahmed", "Bernd Weber", "René Hurlemann", "Johannes Schultz"]]},
+         "subtypes": {"Hypothesis": "Claim", "Alternative": "Claim", "Check": "Evidence"},
+         "nodes": N, "edges": E, "models": ["hand-built (Zach Mainen, Claude)"], "edited": True,
+         "coverage": coverage}
+json.dump(graph, open(os.path.join(HERE, "gadeke-hand.graph.json"), "w"), indent=1, ensure_ascii=False)
+
+# ── MIRA JSON-LD ─────────────────────────────────────────────────────────────────────────────
+WHO, STAMP, BASE = "urn:claim-graphs:hand-built-2026-10-16", "2026-10-16T00:00:00.000Z", "urn:claim-graphs:gadeke-2026-guilt-insula:hand:"
+item = lambda c: {"@type": "Item", "format": "text/plain", "content": c}
+def stamped(n): n.update({"creator": WHO, "created": STAMP, "modified": STAMP}); return n
+g = [{"@id": WHO, "@type": "UserAccount", "accountName": "claim-graphs, hand-built"}]
+for t in ["Question", "Claim", "Evidence", "Study", "Protocol", "SourceDocument", "Request", "Argument"]:
+    g.append(stamped({"@id": f"cg:type/{t}", "@type": "NodeSchema", "subClassOf": [f"mira:{t}"], "label": t}))
+for sub, sup in graph["subtypes"].items():
+    g.append(stamped({"@id": f"cg:type/{sub}", "@type": "NodeSchema", "subClassOf": [f"cg:type/{sup}", f"mira:{sup}"], "label": sub,
+                      "description": item({"Hypothesis": "A claim the paper commits to and sets out to test — an untested claim, in the Discourse Graphs sense.",
+                                           "Alternative": "A claim the paper raises in order to test or argue against, or leaves open: a rival explanation of a finding.",
+                                           "Check": "An observation whose job is to defend a finding or a method — a manipulation check, positive control, replication of a known effect, or assumption test — rather than to argue for or against a hypothesis."}[sub])}))
+RELS = {"addresses": ("mira:addresses", "Claim", "Question"), "supports": ("mira:supports", "Argument", "Claim"), "opposes": ("mira:opposes", "Argument", "Claim"),
+        "grounds": ("mira:grounds", "Study", "Evidence"), "follows": ("mira:follows", "Study", "Protocol"), "describesActivity": ("mira:describesActivity", "SourceDocument", "Study"),
+        "request_target": ("mira:request_target", "Request", "Claim")}
+for key, (sup, dom, rng) in RELS.items():
+    rid, did = f"cg:rel/{key}", f"cg:rel/{key}/def"
+    g.append(stamped({"@id": rid, "@type": "AbstractRelationDef", "subClassOf": [sup, {"@type": "owl:Restriction", "onProperty": "rdf:predicate", "hasValue": rid}], "label": key}))
+    g.append(stamped({"@id": did, "@type": "RelationDef", "domain": f"cg:type/{dom}", "range": f"cg:type/{rng}", "subClassOf": [rid, "dgb:RelationInstance"], "label": key}))
+iri = {}
+for n in N:
+    i = n.get("doi") or (BASE + n["id"]); iri[n["id"]] = i
+    typ = ([f"cg:type/{n['subtype']}"] if n.get("subtype") else []) + [f"cg:type/{n['type']}", n["type"]]
+    o = {"@id": i, "@type": typ, "title": n["text"] if n["type"] in ("Study", "Protocol", "SourceDocument", "Request") else n["description"].split(" · ")[-1][:200] if False else n["text"],
+         "description": item(n["description"] + " — Anchor: “" + n["anchor"] + "”")}
+    if n["type"] == "Evidence": o["sourceDocument"] = n.get("sourceDocument", PAPER_DOI)
+    g.append(o)
+for k, e in enumerate(E, 1):
+    g.append(stamped({"@id": f"{BASE}edge/{k}", "@type": [f"cg:rel/{e['relation']}", e["relation"]], "source": iri[e["subject"]], "destination": iri[e["object"]],
+                      "title": f"[[{e['subject']}]] -{e['relation']}-> [[{e['object']}]]"}))
+doc = {"@context": ["https://purl.org/mira-science/mira.jsonld", {"cg": "https://w3id.org/claim-graphs/schema#", "dgb": "https://discoursegraphs.com/schema/dg_base#",
+       "owl": "http://www.w3.org/2002/07/owl#", "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "onProperty": {"@id": "owl:onProperty", "@type": "@id"}, "hasValue": {"@id": "owl:hasValue", "@type": "@id"}}], "@graph": g}
+json.dump(doc, open(os.path.join(HERE, "gadeke-hand.mira.jsonld"), "w"), indent=1, ensure_ascii=False)
+
+# ── report ────────────────────────────────────────────────────────────────────────────────────
+by = Counter(n["type"] for n in N); sub = Counter(n.get("subtype") for n in N if n.get("subtype")); rel = Counter(e["relation"] for e in E)
+print("nodes", dict(by), "| subtypes", dict(sub)); print("edges", dict(rel), "total", len(E))
+print("anchors verbatim:", sum(1 for n in N if n["anchor"] in TEXT), "/", len(N))
+print("panels covered:", len(PANELS) - len(uncovered), "/", len(PANELS), "| uncovered:", uncovered)
+alts = [n for n in N if n.get("subtype") == "Alternative"]
+opp = defaultdict(list)
+for e in E:
+    if e["relation"] == "opposes": opp[e["object"]].append(e["subject"])
+for a in alts: print(f"  Alternative {a['id']}: opposed by {opp.get(a['id'], [])}")
