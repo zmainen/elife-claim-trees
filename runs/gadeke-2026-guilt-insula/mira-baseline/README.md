@@ -65,6 +65,35 @@ inputs is large (49 against 33 nodes for the original prompt via the API), so tw
 settle it, but the direction is consistent with the Fable run: a stronger model and a better
 prompt change the size and the provenance, not the eliminative shape.
 
+## The alternatives pass — the first added stage
+
+`alternatives_pass.txt`: a second model call given an existing run's graph (its nodes and argument
+edges) plus the whole paper, with one job — find the alternatives the paper argues against or
+leaves open, state each as a Claim as its proponent would, `addresses` the favoured explanation's
+Question, draw `opposes` from the results that count against it, and add any eliminating result
+the first pass dropped as Evidence grounded in its Study; checks become `supports`, open
+alternatives get no opposing edge. The reply is a patch merged onto the base graph (new ids
+`a…`, `ae…`), so the stage's contribution is exactly the diff. ~25 s and ~$0.15 a run.
+
+| run | base | added | `opposes` | what it found |
+|:--|:--|:--|--:|:--|
+| `sonnet-4.5-alternatives.run1` | variant-1 (API) | 6 nodes, 10 edges | 1 | empathy-vs-guilt as open (correct, anchored); insula-empathy as open; responsibility aversion, but *supported* by the agency main effect rather than opposed (the same mis-wiring our own tree had); the algorithm partner as a limitation opposed by the partner-reward correlation; e11→c6 check wired |
+| `sonnet-4.5-alternatives.run2` | variant-1 (API) | 8 nodes, 15 edges | 4 | empathy as open; **the general-responsibility rival correctly opposed by the null after good partner outcomes** (`ae2`, anchored) — the first Results-based elimination any run has produced; risk premiums added as Evidence (`ae1`) but aimed at a mis-stated rival ("strategic considerations about the partner's expectations"); insula-empathy opposed by the guilt-signature match; the algorithm partner again |
+| `sonnet-4.5-alternatives-over-run1.run1` | original (API, run 1) | 7 nodes, 11 edges | 5 | empathy, shame and bad luck split into three rivals from the one caveat sentence, and **all three plus insula-empathy opposed by the guilt-signature match** — an argument the paper does not make (it reports the signature as convergent validity and says the opposite about empathy). Four fabricated `opposes` edges. |
+
+**Reproducible:** the open empathy alternative, with a verbatim anchor, in all three runs. **Once:**
+a genuine Results-based elimination (run 2). **Never, in three runs:** own-outcome disappointment
+(the high/low split — present as Evidence in the run-1 base and still not wired) and inequality
+aversion (the model comparison). **Over-reach:** the signature-match run invents an eliminative
+argument; new Claim anchors are verbatim in about half the cases, new Evidence anchors in most.
+
+So the stage changes the shape — `opposes` goes from 0 to between 1 and 5 — and its recall is
+concentrated where the paper uses explicit eliminative phrasing ("rather than", "cannot exclude",
+"did not influence"). The two alternatives that are never found are the ones that have to be
+constructed from a design (the own-outcome split) or from a model comparison, which is also
+where the single-pass prompts failed. Precision needs a guard: an `opposes` edge should require
+that the paper itself draws the inference, and the anchor rule for new Claims needs enforcing.
+
 ## Error catalogue
 
 Entries tie each observed failure to the passage of the paper that shows it.
