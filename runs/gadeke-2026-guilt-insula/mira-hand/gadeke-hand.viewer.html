@@ -57,7 +57,7 @@ const outs={},ins={};for(const e of G.edges){(outs[e.subject]??=[]).push(e);(ins
 // tabs
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));document.querySelectorAll('main').forEach(m=>m.classList.toggle('on',m.id===b.dataset.tab))});
 // ── article: mark anchors ───────────────────────────────────────────────────────────────
-const anchored=G.nodes.filter(n=>n.anchor&&T.includes(n.anchor)).sort((a,b)=>b.anchor.length-a.anchor.length);
+const anchored=G.nodes.filter(n=>n.anchor&&T.includes(n.anchor)&&n.type!=='SourceDocument').sort((a,b)=>b.anchor.length-a.anchor.length);
 let segs=[{t:T}];// split text into plain/anchor segments, longest anchors first so nesting is avoided
 for(const n of anchored){const out=[];for(const s of segs){if(s.n){out.push(s);continue}let i=s.t.indexOf(n.anchor);if(i<0){out.push(s);continue}out.push({t:s.t.slice(0,i)});out.push({t:n.anchor,n});out.push({t:s.t.slice(i+n.anchor.length)})}segs=out.filter(s=>s.t.length)}
 const html=[];let para=[];const flush=()=>{if(!para.length)return;const h=para.join('');const ids=[...new Set([...h.matchAll(/data-id="([^"]+)"/g)].map(m=>m[1]))];
