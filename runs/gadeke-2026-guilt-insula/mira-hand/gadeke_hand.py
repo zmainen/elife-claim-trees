@@ -136,10 +136,10 @@ edge("addresses", "h1", "q1"); edge("addresses", "h2", "q2"); edge("addresses", 
 # ═══════════════════════════════════════════════════════════════════════════════════════════
 # FINDINGS (Claim) — the results as propositions, one per figure-panel group
 # ═══════════════════════════════════════════════════════════════════════════════════════════
-node("f_guilt", "Claim", "Happiness fell more after a partner's low outcome when the participant rather than the partner had chosen the lottery.",
+node("f_guilt", "Claim", "Responsibility for a partner's bad lottery outcomes decreases participant happiness more than the same outcomes following partner choices, consistent with interpersonal guilt.",
      "The guilt effect, in both studies: the same bad outcome for the partner hurts more when you caused it. Figure 3D and 3H. The authors read it as 'simple guilt'.",
      "When the partner received the low lottery outcome, participant happiness was lower when they rather than the partner had chosen the lottery")
-node("f_model", "Claim", "Happiness was best explained by a model that gives separate weight to the partner's reward surprises caused by the participant's own choice; that weight was reliably positive.",
+node("f_model", "Claim", "Computational models incorporating partner reward prediction errors differentiated by decision-maker (participant vs partner) best explain momentary happiness variations.",
      "Of five computational models, the Responsibility model wins the likelihood-ratio tests in both studies, and the term for the partner's surprises caused by the participant is reliably positive. Table 1, Figure 3C and 3G.",
      "the Responsibility model fitted better than all the other models, including the Responsibility Redux model")
 node("f_ownrpe", "Claim", "The participant's own reward prediction errors influenced happiness more than the partner's.",
@@ -154,19 +154,23 @@ node("f_agency", "Claim", "Being the decision-maker lowered happiness, independe
 node("f_null_good", "Claim", "Responsibility did not change happiness after good outcomes for the partner.",
      "The guilt effect is specific to bad outcomes, as guilt predicts.",
      "Responsibility for choices did not influence happiness following positive lottery outcomes for the partner")
-node("f_risk", "Claim", "Risk preferences were very similar whether deciding for oneself alone or for oneself and the partner, with only a weak tendency to more caution in the Social condition in Study 1.",
+node("f_risk", "Claim", "Participants show similar risk preferences when deciding for themselves versus for themselves and a partner, with a tendency toward higher risk aversion in the Social condition only in Study 1.",
      "Risk premiums did not differ in either study; the ρ parameter was slightly higher in Social in Study 1 only. Figure 2. The authors conclude they have no strong evidence of a difference.",
      "participants showed very similar risk preferences when making decisions affecting only themselves (Solo condition) or themselves and their partner (Social condition)")
-node("f_insula", "Claim", "Insula activity was higher for the partner's low outcomes when the participant rather than the partner had chosen.",
+node("f_insula", "Claim", "The guilt effect is associated with increased BOLD signal in the left anterior insula.",
      "The guilt effect in the brain: insula regions of interest mirrored the behavioural interaction, and a voxel-wise analysis found a small left anterior insula cluster doing the same. Figure 4E and 4F.",
      "activation in our insula ROIs increased in situations during which participants experienced guilt for low outcomes impacting their partner")
-node("f_ppi_insula", "Claim", "Connectivity between the left anterior insula and the right inferior frontal gyrus varied with condition and choice, highest for risky choices for oneself and safe choices for both.",
+node("f_ppi_insula", "Claim", "Functional connectivity between the left anterior insula and the right inferior frontal gyrus varies with choice and condition: highest for risky choices for oneself and safe choices for both players.",
      "How the insula talks to prefrontal cortex depends on what is chosen and for whom. Figure 5. The authors suggest the right IFG is sensitive to guilt-related information.",
      "a cluster in the right inferior frontal gyrus (IFG) whose connectivity to the insula (the seed region) was highest when participants made Risky choices for themselves and Safe choices for both players")
+node("c_ifg", "Claim", "The right inferior frontal gyrus is sensitive to guilt-related information during social choices.",
+     "The authors' reading of the connectivity result: a prefrontal region whose coupling with the insula tracks what is chosen and for whom.",
+     "suggesting that this part of prefrontal cortex is sensitive to guilt-related information during social choices")
+edge("supports", "f_ppi_insula", "c_ifg"); edge("addresses", "c_ifg", "q2")
 node("f_ppi_sts", "Claim", "Connectivity between the left STS and left inferior frontal gyrus showed the opposite pattern, but did not survive correction.",
      "A weak, uncorrected result the authors call anecdotal, read as information from STS being relayed to IFG. Supplementary Figure 2.",
      "connectivity with the left STS (the seed region) showed the opposite pattern")
-node("f_sts", "Claim", "A left superior temporal sulcus cluster responded more to the partner's reward prediction errors when they followed the participant's own choice than the partner's.",
+node("f_sts", "Claim", "The left superior temporal sulcus tracks partner reward prediction errors specifically when they result from the participant's choices.",
      "The responsibility signal: a region that tracks the partner's surprises more when the participant caused them. Figure 4H and 4I. The authors read it as monitoring the consequences of one's decisions on others.",
      "We found this effect in one cluster within the left STS")
 node("f_network", "Claim", "Choosing for both oneself and the partner, rather than for oneself alone, engaged the precuneus, left temporo-parietal junction and medial prefrontal cortex.",
@@ -365,6 +369,7 @@ SUMMARIES = {
     "f_risk": "Participants were about as willing to take risks for themselves and a partner as for themselves alone.",
     "f_insula": "Insula activity rose more for the partner's bad outcomes when the participant had made the choice, mirroring the behavioural guilt effect.",
     "f_ppi_insula": "How strongly the insula and the right inferior frontal gyrus were coupled depended on what was chosen and for whom.",
+    "c_ifg": "The authors suggest this prefrontal region handles guilt-related information while a social choice is being made.",
     "f_ppi_sts": "A weaker, uncorrected result suggested the STS and the left inferior frontal gyrus couple in the opposite pattern.",
     "f_sts": "A region of the left superior temporal sulcus tracked the partner's surprises more when the participant had caused them.",
     "f_network": "Choosing for two people engaged regions associated with thinking about others: precuneus, temporo-parietal junction and medial prefrontal cortex.",

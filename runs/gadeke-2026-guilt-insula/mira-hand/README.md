@@ -14,7 +14,7 @@ https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks
   the known upstream `sh:in` violations and the closed `prov:Activity` shape's refusal of
   `title`/`description` on Study nodes (4, one pair per Study), both documented upstream.
 
-96 nodes · 160 edges · 2 Questions · 4 Hypotheses · 14 findings · 6 Alternatives (13 `opposes`) ·
+97 nodes · 162 edges · 2 Questions · 4 Hypotheses · 14 findings + 1 interpretation (c_ifg) · 6 Alternatives (13 `opposes`) ·
 47 Evidence of which 8 Checks and 4 cited findings · 2 Studies · 10 Protocols · 5 SourceDocuments (the paper
 + 4 cited works) · 6 Requests. A cited finding is Evidence whose `sourceDocument` is the cited work;
 no placeholder Study is minted for it.
