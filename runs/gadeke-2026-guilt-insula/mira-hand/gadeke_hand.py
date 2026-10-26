@@ -111,7 +111,7 @@ cited = [
 for key, label, desc, anchor, finding, target in cited:
     node(f"s_{key}", "SourceDocument", label, desc, anchor)
     node(f"st_{key}", "Study", f"The study reported by {label}", desc, anchor)
-    node(f"e_{key}", "Evidence", finding, f"Cited finding from {label}, as this paper states it.", anchor)
+    node(f"e_{key}", "Evidence", finding, f"Cited finding from {label}, as this paper states it.", anchor, study=f"st_{key}", panel=f"cited: {label}")
     edge("describesActivity", f"s_{key}", f"st_{key}"); edge("grounds", f"st_{key}", f"e_{key}")
     edge("supports", f"e_{key}", target)
 
@@ -182,6 +182,10 @@ node("f_grbs", "Claim", "The guilt-related activation patterns resembled the pub
 for f, h in [("f_guilt", "h1"), ("f_model", "h1"), ("f_null_good", "h1"), ("f_insula", "h2"), ("f_grbs", "h2"),
              ("f_ppi_insula", "h3"), ("f_ppi_sts", "h3"), ("f_sts", "h4")]:
     edge("supports", f, h)
+# findings that bear on a question without testing a hypothesis address it directly, so a
+# question → claims tree has somewhere to put them
+for f, q in [("f_rewards", "q1"), ("f_ownrpe", "q1"), ("f_agency", "q1"), ("f_risk", "q1"), ("f_network", "q2"), ("f_outcome_net", "q2")]:
+    edge("addresses", f, q)
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════
 # ALTERNATIVES (Claim / Alternative) — stated as their proponent would
@@ -339,6 +343,116 @@ req = [
 for rid, text, anchor, targets in req:
     node(rid, "Request", text, "Future work the Discussion calls for.", anchor)
     for t in targets: edge("request_target", rid, t)
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+# SUMMARIES — what a reader sees beside each node: one or two plain sentences, no editorial
+# remarks (those go to `notes`). Study, panel and check status are structured fields, not prose.
+# ═══════════════════════════════════════════════════════════════════════════════════════════
+SUMMARIES = {
+    "q1": "Does it feel different to have caused a bad outcome for someone than to have watched them cause it themselves?",
+    "q2": "Which parts of the brain respond to guilt and to being responsible for a partner, and how do they communicate with the prefrontal cortex?",
+    "h1": "Being the one who chose, when the choice turns out badly for a partner, should hurt more than the same bad luck under the partner's own choice.",
+    "h2": "The anterior insula, already linked to guilt, should respond more when the participant is responsible for the partner's bad outcome.",
+    "h3": "How the insula and STS couple with prefrontal cortex during a choice should depend on whether the choice is risky and whether it affects the partner.",
+    "h4": "Some brain region should track the partner's surprises more strongly when the participant, not the partner, caused them.",
+    "f_guilt": "The same bad outcome for the partner lowered happiness more when the participant had made the choice, in both studies.",
+    "f_model": "Among five models of what drives happiness, the one that separates out the partner's surprises caused by the participant's own choice fitted best, and that term mattered.",
+    "f_ownrpe": "A participant's own surprises affected their happiness more than the partner's did.",
+    "f_rewards": "Happiness rose and fell with the rewards both players had just received.",
+    "f_agency": "Simply being the one who decided made participants slightly less happy, whatever the outcome.",
+    "f_null_good": "When the partner's outcome was good, it made no difference who had chosen.",
+    "f_risk": "Participants were about as willing to take risks for themselves and a partner as for themselves alone.",
+    "f_insula": "Insula activity rose more for the partner's bad outcomes when the participant had made the choice, mirroring the behavioural guilt effect.",
+    "f_ppi_insula": "How strongly the insula and the right inferior frontal gyrus were coupled depended on what was chosen and for whom.",
+    "f_ppi_sts": "A weaker, uncorrected result suggested the STS and the left inferior frontal gyrus couple in the opposite pattern.",
+    "f_sts": "A region of the left superior temporal sulcus tracked the partner's surprises more when the participant had caused them.",
+    "f_network": "Choosing for two people engaged regions associated with thinking about others: precuneus, temporo-parietal junction and medial prefrontal cortex.",
+    "f_outcome_net": "Receiving a lottery outcome engaged a set of regions associated with risk, including the anterior insula and ventral striatum.",
+    "f_grbs": "Brain activity during the guilt effect resembled a published brain signature of guilt from other studies.",
+    "a_own": "Perhaps participants were just disappointed about their own outcome, not the partner's.",
+    "a_general": "Perhaps being responsible simply makes every outcome for the partner matter more, good or bad.",
+    "a_risk": "Perhaps people take different risks when choosing for two, and the differences between conditions follow from that rather than from guilt.",
+    "a_inequality": "Perhaps happiness just tracks the gap between what the two players got, with no role for who was responsible.",
+    "a_emotion": "Perhaps what participants felt was empathy, or a sense of failure or bad luck, rather than guilt.",
+    "a_algorithm": "Perhaps, because the partner was really an algorithm, participants were not emotionally engaged with the partner's outcomes at all.",
+    "r_emotions": "Ask participants what they felt, to connect the measures of guilt to their own experience.",
+    "r_traits": "Study more people, to see how personality shapes guilt and responsibility and their brain correlates.",
+    "r_trials": "Collect more trials, so risk preferences can be modelled separately for gains and losses in each condition.",
+    "r_partners": "Vary who the partner is, from friend to stranger to machine, to see how closeness changes guilt and responsibility.",
+    "r_feedback_ppi": "Analyse connectivity during the moment outcomes are revealed, not only during the choice.",
+    "r_computations": "Design experiments that isolate what the STS and anterior insula each compute during social decisions.",
+    "e_value_s1": "Participants took the lottery more often the better it was, showing their choices were sensible.",
+    "e_value_s2": "The same held in the scanner study.",
+    "e_choice_s1": "In the first study, participants chose the lottery a little more often when choosing for themselves alone.",
+    "e_choice_s2": "In the scanner study, choosing for two made no difference to how often the lottery was chosen.",
+    "e_ev_x_cond": "How much the lottery's value swayed choices was the same whether choosing for one or for two.",
+    "e_premium_s1": "The premium participants demanded for taking a risk was the same whether choosing for one or for two.",
+    "e_premium_s2": "The same held in the scanner study.",
+    "e_rho_gainloss": "Risk attitude was the same for gains and losses, so the two could be pooled.",
+    "e_rho_s1": "By one measure, participants in the first study were slightly more cautious when choosing for two.",
+    "e_rho_s2": "By the same measure, participants in the scanner study were not more cautious when choosing for two.",
+    "e_rho_premium": "The two ways of measuring risk attitude agreed closely.",
+    "e_rewards_s1": "In the first study, happiness tracked the rewards both the participant and the partner had just received.",
+    "e_rewards_s2": "The same held in the scanner study.",
+    "e_lr_s1": "In the first study, the responsibility model fitted the happiness data better than every other model.",
+    "e_lr_s2": "The same held in the scanner study.",
+    "e_fit_s1": "The two responsibility models explained the first study's happiness data best by every fit measure.",
+    "e_fit_s2": "The same held in the scanner study.",
+    "e_weights_s1": "In the first study, the partner's surprises caused by the participant's own choice carried a reliable weight in happiness.",
+    "e_weights_s2": "The same held in the scanner study, where that weight also tended to exceed the weight on surprises the partner caused.",
+    "e_srpe": "A participant's own surprises weighed more on happiness than the partner's, in both studies.",
+    "e_recovery": "The model's parameters could be recovered from simulated data, so the fits are stable.",
+    "e_agency_s1": "In the first study, participants were less happy after trials in which they had been the one to choose, regardless of outcome.",
+    "e_agency_s2": "The same held in the scanner study.",
+    "e_lmm_select": "Across several statistical models, both the outcome and who chose affected happiness.",
+    "e_guilt_s1": "In the first study, the partner's outcome and who had chosen interacted: a bad outcome hurt more after the participant's own choice.",
+    "e_guilt_s2": "The same interaction held in the scanner study.",
+    "e_ownhigh": "The guilt effect was present when the participant's own outcome was good.",
+    "e_ownlow": "The guilt effect was present when the participant's own outcome was bad.",
+    "e_null_good": "After a good outcome for the partner, who had chosen made no difference to happiness.",
+    "e_vs_risky": "The ventral striatum responded more to risky than safe choices, as it has in earlier studies.",
+    "e_social_solo": "Choosing for both players engaged the precuneus, left temporo-parietal junction and medial prefrontal cortex.",
+    "e_precuneus_tpj": "The precuneus and temporo-parietal junction were most active for risky choices made on behalf of both players.",
+    "e_outcome_net": "Receiving a lottery outcome engaged the anterior insula, ventral striatum and several other regions more than receiving a safe outcome.",
+    "e_insula_roi": "Insula regions responded more to the partner's bad outcomes when the participant had chosen, even after discounting responses to good outcomes.",
+    "e_insula_voxel": "A small cluster in the left anterior insula showed the same guilt-related response in a voxel-by-voxel analysis.",
+    "e_vs_model": "The ventral striatum tracked the model's expected rewards, confirming the model-based analysis works.",
+    "e_sts": "A cluster in the left superior temporal sulcus responded more to the partner's surprises when the participant had caused them.",
+    "e_sts_sessions": "That cluster's responses are shown separately for the two scanning sessions.",
+    "e_ppi_insula": "Coupling between the insula and the right inferior frontal gyrus was strongest for risky choices for oneself and safe choices for both.",
+    "e_ppi_insula_left": "A smaller cluster on the left showed the same pattern but did not survive statistical correction.",
+    "e_ppi_sts": "Coupling between the STS and the left inferior frontal gyrus showed the opposite pattern, but did not survive correction.",
+    "e_grbs": "Participants' guilt-related brain maps resembled a published guilt signature more often than not.",
+    "e_grbs_indiv": "How closely a participant's map resembled the signature did not predict the size of their behavioural guilt effect.",
+    "e_rutledge": "Earlier work had shown that happiness in a gambling task follows recent rewards and surprises.",
+    "e_edelson": "Earlier work had found that people dislike being responsible for others' outcomes, independently of guilt.",
+    "e_yu2014": "Earlier work had found the anterior insula more active when a partner's pain followed the participant's own mistakes.",
+    "e_yu2020": "Earlier work had derived a brain-wide signature of guilt from two studies.",
+}
+NOTES = {
+    "a_own": "Rival to the guilt reading; argued against by the own-outcome split.",
+    "a_general": "Rival to the guilt reading; argued against by the null after good outcomes.",
+    "a_risk": "Handled by measuring risk attitudes directly; one Study 1 result gives it weak support, which is drawn as `supports`. The authors conclude they have no strong evidence of a difference.",
+    "a_inequality": "Built into the model comparison as the Inequality and Guilt-envy models; argued against by the likelihood-ratio tests.",
+    "a_emotion": "Raised by the authors. Left open on the behavioural measure ('we cannot exclude'); argued against on the neural one by the signature match ('we thus believe that our participants did experience guilt').",
+    "a_algorithm": "A limitation the authors raise and answer with the partner-reward effect.",
+    "f_agency": "A separate finding from the guilt effect, not an alternative to it; read by the authors as the 'weight of responsibility' (Edelson et al. 2018).",
+    "f_guilt": "The authors call this 'simple guilt' (Battigalli & Dufwenberg 2007).",
+    "f_ppi_insula": "The authors suggest the right IFG is sensitive to guilt-related information during social choice.",
+    "f_ppi_sts": "Uncorrected; the authors call it anecdotal and read it as information relayed from STS to IFG.",
+    "f_sts": "Read by the authors as monitoring the consequences of one's decisions for others.",
+    "f_grbs": "The match did not track individual differences in the behavioural effect (e_grbs_indiv).",
+    "f_outcome_net": "These regions define the regions of interest for the guilt analyses.",
+    "e_rho_s1": "ρ could be estimated in only 18 of 40 participants; the authors judge the result unreliable.",
+    "e_grbs_indiv": "A null that qualifies the convergent-validity reading of f_grbs.",
+}
+for n in N:
+    if n["id"] in SUMMARIES:
+        n["description"] = SUMMARIES[n["id"]]
+    if n["id"] in NOTES:
+        n["notes"] = NOTES[n["id"]]
+    if n.get("subtype") == "Check":
+        n["notes"] = ("Check: " + n["notes"]) if n.get("notes") else "Check: a result that defends a finding or a method rather than arguing for a hypothesis."
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════
 # BUILD, CHECK, EMIT
