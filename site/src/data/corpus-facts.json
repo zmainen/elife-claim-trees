@@ -656,6 +656,10 @@
         "scheme": "open",
         "version": "c39ffdd35c27"
       },
+      "mira-baseline": {
+        "scheme": "proposed",
+        "version": "3671e0f193ab"
+      },
       "mira-export": {
         "provisional_on": [
           "claim-format",
@@ -842,6 +846,10 @@
       "measures": {
         "question": "What can be measured over the tree - its coverage, its wording, whether its code re-runs?",
         "title": "Measures"
+      },
+      "mira": {
+        "question": "Starting from MIRA's own vocabulary and the community extractor, what does each added stage earn?",
+        "title": "MIRA track"
       },
       "source": {
         "question": "What text did the readers read, and what does the paper itself say?",
@@ -1774,6 +1782,35 @@
         "title": "Modules",
         "views": [
           "modules"
+        ]
+      },
+      {
+        "added": "2026-10-16",
+        "by_from": "model",
+        "command": "python3 scripts/mira_baseline.py run {paper}",
+        "doc": "The MIRA community extractor (MIRA-science/MIRA-extraction) sends the whole paper to one pinned model in one call and returns a MIRA graph. This layer reproduces that call exactly \u2014 its prompt verbatim, its message composition, temperature, output cap, streaming and retries \u2014 on the same prepared text our readers read, without running the extractor's own code, and keeps the raw graph the model returned. Run several times on the pinned free model and once on a stronger one, it is the baseline every later stage of the track is measured against: what a single call recovers, how stable it is across repeats, what it costs, and what it leaves out. The README beside the runs is the error catalogue, each entry tied to the passage of the paper that shows it.\n",
+        "group": "mira",
+        "id": "mira-baseline",
+        "issue": "zmainen/claim-graphs#77",
+        "kind": "step",
+        "needs": [
+          "prepare"
+        ],
+        "produces": [
+          "runs/{paper}/mira-baseline/README.md",
+          "runs/{paper}/mira-baseline/summary.json"
+        ],
+        "question": "What does the community extractor's single call recover from this paper, and what does it miss?",
+        "reads": [
+          "extract/prompts/external/mira-extraction/system_message.txt",
+          "extract/prompts/external/mira-extraction/user_preamble.txt",
+          "scripts/mira_baseline.py"
+        ],
+        "status": "proposed",
+        "title": "MIRA baseline",
+        "views": [
+          "document",
+          "table"
         ]
       }
     ],
@@ -47632,6 +47669,9 @@
           "state": "stale",
           "v": 3
         },
+        "mira-baseline": {
+          "state": "absent"
+        },
         "mira-export": {
           "absent": [],
           "appeared": [],
@@ -47901,6 +47941,9 @@
           "ran": "2026-09-12T12:11:26Z",
           "state": "stale",
           "v": 3
+        },
+        "mira-baseline": {
+          "state": "absent"
         },
         "mira-export": {
           "absent": [],
@@ -48221,6 +48264,9 @@
           "ran": "2026-09-12T12:11:27Z",
           "state": "stale",
           "v": 3
+        },
+        "mira-baseline": {
+          "state": "absent"
         },
         "mira-export": {
           "absent": [],
@@ -49024,6 +49070,9 @@
           "ran": "2026-09-12T12:11:27Z",
           "state": "stale",
           "v": 7
+        },
+        "mira-baseline": {
+          "state": "unrecorded"
         },
         "mira-export": {
           "absent": [],
@@ -50162,6 +50211,9 @@
           "state": "stale",
           "v": 3
         },
+        "mira-baseline": {
+          "state": "absent"
+        },
         "mira-export": {
           "absent": [],
           "appeared": [],
@@ -50477,6 +50529,9 @@
           "state": "stale",
           "v": 3
         },
+        "mira-baseline": {
+          "state": "absent"
+        },
         "mira-export": {
           "absent": [],
           "appeared": [],
@@ -50748,6 +50803,9 @@
           "ran": "2026-09-13T13:49:38Z",
           "state": "stale",
           "v": 4
+        },
+        "mira-baseline": {
+          "state": "absent"
         },
         "mira-export": {
           "absent": [],
@@ -51028,6 +51086,9 @@
           "state": "stale",
           "v": 3
         },
+        "mira-baseline": {
+          "state": "absent"
+        },
         "mira-export": {
           "absent": [],
           "appeared": [],
@@ -51298,6 +51359,9 @@
           "ran": "2026-09-12T12:11:28Z",
           "state": "stale",
           "v": 3
+        },
+        "mira-baseline": {
+          "state": "absent"
         },
         "mira-export": {
           "absent": [],
@@ -51574,6 +51638,9 @@
           "ran": "2026-09-13T13:49:40Z",
           "state": "stale",
           "v": 4
+        },
+        "mira-baseline": {
+          "state": "absent"
         },
         "mira-export": {
           "absent": [],
