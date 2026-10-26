@@ -108,11 +108,12 @@ cited = [
      "A multivariate reanalysis of these two datasets revealed a neural signature for guilt (Yu et al., 2020)",
      "A multivariate reanalysis of two guilt studies yields a distributed guilt-related brain signature spanning anterior midcingulate, insula, IFG, inferior temporal cortex, thalamus and cerebellum.", "f_grbs"),
 ]
+# A cited finding is Evidence whose sourceDocument is the cited work. MIRA's full provenance spine
+# would add a Study the cited work describes; the extractor's own prompt allows omitting that chain
+# when the study is not identified, and a placeholder Study carries nothing, so it is collapsed.
 for key, label, desc, anchor, finding, target in cited:
     node(f"s_{key}", "SourceDocument", label, desc, anchor)
-    node(f"st_{key}", "Study", f"The study reported by {label}", desc, anchor)
-    node(f"e_{key}", "Evidence", finding, f"Cited finding from {label}, as this paper states it.", anchor, study=f"st_{key}", panel=f"cited: {label}")
-    edge("describesActivity", f"s_{key}", f"st_{key}"); edge("grounds", f"st_{key}", f"e_{key}")
+    node(f"e_{key}", "Evidence", finding, f"Cited finding from {label}, as this paper states it.", anchor, sourceDocument=f"s_{key}", panel=f"cited: {label}")
     edge("supports", f"e_{key}", target)
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════
@@ -535,7 +536,8 @@ for n in N:
     o = {"@id": i, "@type": typ, "title": n["text"] if n["type"] in ("Study", "Protocol", "SourceDocument", "Request") else n["description"].split(" · ")[-1][:200] if False else n["text"],
          "description": item(n["description"] + " — Anchor: “" + n["anchor"] + "”")}
     if n["type"] == "Evidence":
-        o["sourceDocument"] = n.get("sourceDocument", PAPER_DOI)
+        sd = n.get("sourceDocument", PAPER_DOI)
+        o["sourceDocument"] = sd if sd.startswith("http") else BASE + sd
         if n.get("figure"): o["observationBase"] = n["figure"]["image"]
     g.append(o)
 for k, e in enumerate(E, 1):

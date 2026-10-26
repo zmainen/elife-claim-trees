@@ -12,10 +12,17 @@ https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks
 - `gadeke-hand.mira.jsonld` — MIRA JSON-LD with three declared `NodeSchema` subclasses: `Hypothesis`
   and `Alternative` under Claim, `Check` under Evidence. Against the vendored shapes it raises only
   the known upstream `sh:in` violations and the closed `prov:Activity` shape's refusal of
-  `title`/`description` on Study nodes (12, one pair per Study), both documented upstream.
+  `title`/`description` on Study nodes (4, one pair per Study), both documented upstream.
 
-100 nodes · 162 edges · 2 Questions · 4 Hypotheses · 14 findings · 6 Alternatives (13 `opposes`) ·
-47 Evidence of which 8 Checks · 6 Studies (2 + 4 cited) · 10 Protocols · 5 SourceDocuments · 6 Requests.
+96 nodes · 160 edges · 2 Questions · 4 Hypotheses · 14 findings · 6 Alternatives (13 `opposes`) ·
+47 Evidence of which 8 Checks and 4 cited findings · 2 Studies · 10 Protocols · 5 SourceDocuments (the paper
++ 4 cited works) · 6 Requests. A cited finding is Evidence whose `sourceDocument` is the cited work;
+no placeholder Study is minted for it.
+
+- `alignment-prototype.map.json` / `alignment-prototype.json` — hand map and computed alignment to
+  eLife's prototype graph (`../mira-baseline/elife-prototype-2026-07.graph.json`), from
+  `mira_align.py`; drives the viewer's "Compared with eLife's graph" tab. 33 of their 34 nodes have a
+  counterpart; the one left is their risk-preferences Question, which is a finding here.
 Every anchor verbatim in v2; all 27 panels of Figures 1–5, Table 1 and Supplementary Figure 2 covered.
 
 Not yet adjudicated. Open for review: the texts of the findings and alternatives, the choice to keep
