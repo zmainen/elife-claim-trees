@@ -191,6 +191,11 @@ node("f_grbs", "Claim", "The guilt-related activation patterns resembled the pub
      "Convergent evidence that what the insula analysis found is guilt: individual maps projected positively onto Yu et al.'s signature, though the match did not track individual differences in the behavioural effect.",
      "The “neurometrics” analysis of our guilt-related activation maps showed a significant similarity to a published guilt-related brain signature")
 
+# second anchors: the abstract's own statement of the main findings, so they are marked there too
+EXTRA_ANCHORS = {'f_guilt': ['Crucially, happiness decreases following low outcomes for the partner were larger when the participant rather than their partner had made the choice, which fits an operational definition of guilt'], 'f_insula': ['This guilt effect was associated with BOLD signal increase in the left anterior insula'], 'f_ppi_insula': ['Connectivity between this region and the right inferior frontal gyrus varied depending on choice and experimental condition'], 'f_model': ['Variations in happiness were well explained by computational models based on participant’s and partner’s rewards and reward prediction errors'], 'f_sts': ['A model-based analysis revealed a left superior temporal sulcus cluster that tracked partner reward prediction errors that followed participant choices'], 'f_rewards': ['participant happiness decreased following both low lottery outcomes for themselves and for the partner']}
+for n in N:
+    if n["id"] in EXTRA_ANCHORS: n["anchors"] = EXTRA_ANCHORS[n["id"]]
+
 # findings support hypotheses
 for f, h in [("f_guilt", "h1"), ("f_model", "h1"), ("f_null_good", "h1"), ("f_insula", "h2"), ("f_grbs", "h2"),
              ("f_ppi_insula", "h3"), ("f_ppi_sts", "h3"), ("f_sts", "h4")]:
@@ -477,8 +482,8 @@ LEGAL = {"addresses": ({"Claim"}, {"Question"}), "supports": ({"Evidence", "Clai
 T = {n["id"]: n["type"] for n in N}
 problems = []
 for n in N:
-    if n["anchor"] not in TEXT:
-        problems.append(f"ANCHOR NOT VERBATIM  {n['id']}: {n['anchor'][:90]}")
+    for a in [n["anchor"]] + n.get("anchors", []):
+        if a not in TEXT: problems.append(f"ANCHOR NOT VERBATIM  {n['id']}: {a[:90]}")
 ids = set(T)
 for e in E:
     if e["subject"] not in ids or e["object"] not in ids:
