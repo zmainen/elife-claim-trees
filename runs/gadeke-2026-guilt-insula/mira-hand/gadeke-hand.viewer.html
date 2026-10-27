@@ -36,11 +36,12 @@ aside.panel ul{margin:0;padding-left:1.1rem}aside.panel img{max-width:100%;borde
 .verify{display:flex;flex-wrap:wrap;gap:.3rem}.verify span{font-size:.72rem;padding:.05rem .4rem;border-radius:2px;background:var(--paper);border:1px solid var(--rule)}.verify .ok{color:var(--F)}.verify .bad{color:var(--A);border-color:var(--A)}
 .rel{font-family:var(--mono);font-size:.75rem;color:var(--link)}
 /* tree: rows */
-#tree{max-width:80ch;margin-inline:auto}.qb{margin:1.6rem 0}.qb>h2{font:600 1.15rem var(--serif);margin:0 0 .2rem;display:flex;gap:.6rem;align-items:baseline}.qb>.s{color:var(--ink-2);margin:0 0 .6rem}
+#tree{max-width:80ch;margin-inline:auto}.qb{margin:1.6rem 0}.qb>h2{font:600 1.15rem var(--serif);margin:0 0 .2rem;display:flex;gap:.6rem;align-items:baseline}.qb>.drawer{margin-bottom:.8rem}.qb>.s{color:var(--ink-2);margin:0 0 .6rem}
 .row{display:grid;grid-template-columns:auto 1fr;gap:.6rem;align-items:baseline;padding:.3rem 0;border-top:1px solid var(--rule)}.row:hover{background:var(--paper-2)}
 .row .t{cursor:pointer}.row .w{font:600 .68rem var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin-right:.4rem}
 .row.lvl1{margin-left:0}.row.lvl2{margin-left:1.6rem}.row.lvl3{margin-left:3.2rem;font-size:.92rem}.row.lvl3 .t{color:var(--ink-2)}
 details.ev{margin-left:3.2rem}details.ev>summary{cursor:pointer;font-size:.82rem;color:var(--ink-3);padding:.15rem 0}details.ev .row{margin-left:0;font-size:.9rem}
+.drawer{background:var(--paper-2);border:1px solid var(--rule);border-radius:6px;padding:.8rem 1rem;margin:.2rem 0 .6rem;font-size:.9rem;display:grid;gap:.4rem}.drawer h3{margin:0;font:600 1rem var(--serif)}.drawer .q{color:var(--ink-2);font-style:italic;margin:0}.drawer .m{color:var(--ink-3);font-size:.82rem}.drawer img{max-width:360px;border:1px solid var(--rule);background:#fff}.drawer ul{margin:0;padding-left:1.1rem}.drawer p{margin:0}
 .note{font-size:.82rem;color:var(--ink-3);margin-left:3.2rem;padding:.2rem 0}
 /* checks, compare, json */
 #checks{max-width:90ch;margin-inline:auto}#checks table{width:100%;border-collapse:collapse;font-size:.9rem}#checks td,#checks th{text-align:left;vertical-align:top;padding:.3rem .5rem;border-top:1px solid var(--rule)}
@@ -75,16 +76,20 @@ const html=[];let para=[];const flush=()=>{if(!para.length)return;const h=para.j
 for(const s of segs){const parts=s.t.split('\n\n');parts.forEach((p,i)=>{if(i>0){flush()}const t=p.replace(/\n/g,' ');if(!t)return;para.push(s.n?`<mark class="anc" data-id="${s.n.id}">${esc(t)}</mark><span class="id ${pre(s.n)}" data-id="${s.n.id}">${s.n.id}</span>`:esc(t))})}
 flush();document.getElementById('text').innerHTML=html.join('');
 function verifyBadges(id){const v=V.nodes?.[id]||{};return `<div class="verify">${Object.entries(v).map(([c,r])=>`<span class="${r.ok?'ok':'bad'}" title="${esc(r.note)}">${c} ${r.ok?'✓':'✗'}</span>`).join('')}</div>`}
+function detail(n){const rel=(list,dir)=>(list||[]).filter(e=>['supports','opposes','addresses','observationStatement','request_target','grounds','follows'].includes(e.relation)).map(e=>{const o=N[dir==='out'?e.object:e.subject];return `<li><span class="rel">${e.relation}</span> ${dir==='in'?'← ':'→ '}${chip(o)} ${esc(o.description||o.text)}</li>`}).join('');
+ const fig=n.figure?`<p><a href="${esc(n.figure.page)}" target="_blank">open ${esc(n.panel)} on eLife ↗</a></p><img src="${esc(n.figure.thumbnail)}" alt="${esc(n.panel)}">`:'';
+ return `<div>${chip(n)} <span class="m">${WORD[pre(n)]}${n.panel?` · ${esc(n.panel)}`:''}${n.study?` · ${esc(studyOf(n))}`:''}${prov(n)}</span></div><h3>${esc(n.text)}</h3>${n.description&&n.description!==n.text?`<p class="sum">${esc(n.description)}</p>`:''}${n.notes?`<p class="q">${esc(n.notes)}</p>`:''}
+ <p class="q">“${esc(n.anchor)}” <a href="#" data-id="${n.id}">in the article</a></p>${fig}${verifyBadges(n.id)}<ul>${rel(outs[n.id],'out')}${rel(ins[n.id],'in')}</ul>`}
 function show(id){const n=N[id];if(!n)return;document.querySelectorAll('mark.anc.on').forEach(m=>m.classList.remove('on'));document.querySelectorAll(`mark[data-id="${id}"]`).forEach(m=>m.classList.add('on'));
- const rel=(list,dir)=>(list||[]).filter(e=>['supports','opposes','addresses','observationStatement','request_target','grounds'].includes(e.relation)).map(e=>{const o=N[dir==='out'?e.object:e.subject];return `<li><span class="rel">${e.relation}</span> ${dir==='in'?'← ':'→ '}${chip(o)} ${esc(o.description||o.text)}</li>`}).join('');
- const fig=n.figure?`<a href="${esc(n.figure.page)}" target="_blank">open ${esc(n.panel)} on eLife ↗</a><img src="${esc(n.figure.thumbnail)}" alt="${esc(n.panel)}">`:'';
- document.getElementById('panel').innerHTML=`<div>${chip(n)} <span class="m">${WORD[pre(n)]}${n.panel?` · ${esc(n.panel)}`:''}${n.study?` · ${esc(studyOf(n))}`:''}${prov(n)}</span></div><h3>${esc(n.text)}</h3>${n.description&&n.description!==n.text?`<p class="sum">${esc(n.description)}</p>`:''}${n.notes?`<p class="q">${esc(n.notes)}</p>`:''}
- <p class="q">“${esc(n.anchor)}”</p>${fig}${verifyBadges(id)}<ul>${rel(outs[id],'out')}${rel(ins[id],'in')}</ul>`;
+ document.getElementById('panel').innerHTML=detail(n);
  document.querySelector(`mark[data-id="${id}"]`)?.scrollIntoView({block:'center',behavior:'smooth'})}
-document.body.addEventListener('click',e=>{const el=e.target.closest('[data-id],[data-go]');if(!el)return;e.preventDefault();const id=el.dataset.id||el.dataset.go;if(!N[id])return;document.querySelector('[data-tab="article"]').click();show(id)});
+document.body.addEventListener('click',e=>{const el=e.target.closest('[data-id],[data-go],[data-open]');if(!el||e.target.closest('a[href^="http"]'))return;e.preventDefault();
+ if(el.dataset.open){const id=el.dataset.open,row=el.closest('.row');let d=row.nextElementSibling;if(d&&d.classList.contains('drawer')&&d.dataset.for===id){d.remove();return}
+  d=document.createElement('div');d.className='drawer';d.dataset.for=id;d.style.marginLeft=getComputedStyle(row).marginLeft;d.innerHTML=detail(N[id]);row.after(d);return}
+ const id=el.dataset.id||el.dataset.go;if(!N[id])return;document.querySelector('[data-tab="article"]').click();show(id)});
 // ── tree: one row per node — chip, then summary (claims) or text (evidence) ─────────────
 const line=n=>n.type==='Evidence'||!n.description?n.text:n.description;
-const row=(n,lvl,extra='')=>`<div class="row lvl${lvl}">${chip(n)}<div class="t" data-go="${n.id}">${extra}${esc(line(n))}${prov(n)}</div></div>`;
+const row=(n,lvl,extra='')=>`<div class="row lvl${lvl}">${chip(n)}<div class="t" data-open="${n.id}">${extra}${esc(line(n))}${prov(n)}</div></div>`;
 const evidenceFor=c=>(ins[c.id]||[]).filter(e=>N[e.subject]?.type==='Evidence').map(e=>({e:N[e.subject],rel:e.relation}));
 const evBlock=c=>{const ev=evidenceFor(c);if(!ev.length)return'';const sup=ev.filter(x=>x.rel==='supports'&&x.e.subtype!=='Check'),opp=ev.filter(x=>x.rel==='opposes'),chk=ev.filter(x=>x.e.subtype==='Check');
  const label=[sup.length?`${sup.length} supporting`:'',opp.length?`${opp.length} opposing`:'',chk.length?`${chk.length} check${chk.length>1?'s':''}`:''].filter(Boolean).join(', ');
@@ -92,7 +97,7 @@ const evBlock=c=>{const ev=evidenceFor(c);if(!ev.length)return'';const sup=ev.fi
 let tree='';for(const q of G.nodes.filter(n=>n.type==='Question')){
  const addr=(ins[q.id]||[]).filter(e=>e.relation==='addresses').map(e=>N[e.subject]);
  const hyps=addr.filter(n=>n.subtype==='Hypothesis'),alts=addr.filter(n=>n.subtype==='Alternative'),plain=addr.filter(n=>!n.subtype);
- tree+=`<section class="qb"><h2>${chip(q)}<span data-go="${q.id}" style="cursor:pointer">${esc(q.text)}</span></h2><p class="s">${esc(q.description||'')}</p>`;
+ tree+=`<section class="qb"><h2>${chip(q)}<span data-open="${q.id}" style="cursor:pointer">${esc(q.text)}</span></h2><p class="s">${esc(q.description||'')}</p>`;
  for(const h of hyps){tree+=row(h,1,'<span class="w">hypothesis</span>');for(const f of (ins[h.id]||[]).filter(e=>e.relation==='supports'&&N[e.subject].type==='Claim').map(e=>N[e.subject]))tree+=row(f,2)+evBlock(f)}
  if(plain.length){tree+=`<div class="row lvl1"><span></span><div class="t"><span class="w">other findings</span></div></div>`;for(const c of plain){tree+=row(c,2)+evBlock(c);for(const d of (ins[c.id]||[]).filter(e=>e.relation==='supports'&&N[e.subject].type==='Claim').map(e=>N[e.subject]))tree+=row(d,3,'<span class="w">from</span>')}}
  for(const a of alts){tree+=row(a,1,'<span class="w">alternative</span>');const op=evidenceFor(a).filter(x=>x.rel==='opposes'),sp=evidenceFor(a).filter(x=>x.rel==='supports');
