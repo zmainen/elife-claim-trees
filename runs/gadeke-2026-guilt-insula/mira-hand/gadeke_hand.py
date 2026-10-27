@@ -113,7 +113,7 @@ cited = [
 # when the study is not identified, and a placeholder Study carries nothing, so it is collapsed.
 for key, label, desc, anchor, finding, target in cited:
     node(f"s_{key}", "SourceDocument", label, desc, anchor)
-    node(f"e_{key}", "Evidence", finding, f"Cited finding from {label}, as this paper states it.", anchor, sourceDocument=f"s_{key}", panel=f"cited: {label}")
+    node(f"e_{key}", "Evidence", finding, f"Cited finding from {label}, as this paper states it.", anchor, subtype="Cited", sourceDocument=f"s_{key}", panel=f"cited: {label}")
     edge("supports", f"e_{key}", target)
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════
@@ -509,7 +509,7 @@ if problems:
 # Readers cite nodes by id, so ids are short and typed: Q question, H hypothesis, F finding, A alternative,
 # E evidence, K check, R request, S study, P protocol, D source document. The mnemonic ids above stay as `key`.
 PREFIX = {("Question", None): "Q", ("Claim", "Hypothesis"): "H", ("Claim", None): "F", ("Claim", "Alternative"): "A",
-          ("Evidence", None): "E", ("Evidence", "Check"): "K", ("Request", None): "R", ("Study", None): "S",
+          ("Evidence", None): "E", ("Evidence", "Check"): "K", ("Evidence", "Cited"): "C", ("Request", None): "R", ("Study", None): "S",
           ("Protocol", None): "P", ("SourceDocument", None): "D"}
 counts, ID = Counter(), {}
 for n in N:
@@ -527,7 +527,7 @@ graph = {"source": "hand-built from eLife 105391 v2 as served by epp.elifepathwa
          "paper": {"title": "Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions",
                    "doi": "10.7554/eLife.105391.2", "license": "CC BY 4.0",
                    "authors": [{"name": a} for a in ["Maria Gädeke", "Tom Willems", "Omar Salah Ahmed", "Bernd Weber", "René Hurlemann", "Johannes Schultz"]]},
-         "subtypes": {"Hypothesis": "Claim", "Alternative": "Claim", "Check": "Evidence"},
+         "subtypes": {"Hypothesis": "Claim", "Alternative": "Claim", "Check": "Evidence", "Cited": "Evidence"},
          "nodes": N, "edges": E, "models": ["hand-built (Zach Mainen, Claude)"], "edited": True,
          "coverage": coverage, "figures": FIG_LINKS}
 json.dump(graph, open(os.path.join(HERE, "gadeke-hand.graph.json"), "w"), indent=1, ensure_ascii=False)
@@ -543,7 +543,8 @@ for sub, sup in graph["subtypes"].items():
     g.append(stamped({"@id": f"cg:type/{sub}", "@type": "NodeSchema", "subClassOf": [f"cg:type/{sup}", f"mira:{sup}"], "label": sub,
                       "description": item({"Hypothesis": "A claim the paper commits to and sets out to test — an untested claim, in the Discourse Graphs sense.",
                                            "Alternative": "A claim the paper raises in order to test or argue against, or leaves open: a rival explanation of a finding.",
-                                           "Check": "An observation whose job is to defend a finding or a method — a manipulation check, positive control, replication of a known effect, or assumption test — rather than to argue for or against a hypothesis."}[sub])}))
+                                           "Check": "An observation whose job is to defend a finding or a method — a manipulation check, positive control, replication of a known effect, or assumption test — rather than to argue for or against a hypothesis.",
+                                           "Cited": "A finding this paper takes from another publication, as this paper states it; its sourceDocument is the cited work, not this paper."}[sub])}))
 RELS = {"addresses": ("mira:addresses", "Claim", "Question"), "supports": ("mira:supports", "Argument", "Claim"), "opposes": ("mira:opposes", "Argument", "Claim"),
         "grounds": ("mira:grounds", "Study", "Evidence"), "follows": ("mira:follows", "Study", "Protocol"), "describesActivity": ("mira:describesActivity", "SourceDocument", "Study"),
         "request_target": ("mira:request_target", "Request", "Claim")}
