@@ -166,7 +166,7 @@ node("f_ppi_insula", "Claim", "Functional connectivity between the left anterior
 node("c_ifg", "Claim", "The right inferior frontal gyrus is sensitive to guilt-related information during social choices.",
      "The authors' reading of the connectivity result: a prefrontal region whose coupling with the insula tracks what is chosen and for whom.",
      "suggesting that this part of prefrontal cortex is sensitive to guilt-related information during social choices")
-edge("supports", "f_ppi_insula", "c_ifg"); edge("addresses", "c_ifg", "q2")
+edge("supports", "f_ppi_insula", "c_ifg"); edge("supports", "c_ifg", "h3")
 node("f_ppi_sts", "Claim", "Connectivity between the left STS and left inferior frontal gyrus showed the opposite pattern, but did not survive correction.",
      "A weak, uncorrected result the authors call anecdotal, read as information from STS being relayed to IFG. Supplementary Figure 2.",
      "connectivity with the left STS (the seed region) showed the opposite pattern")
