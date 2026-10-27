@@ -38,6 +38,7 @@ mark.anc{background:none;border-bottom:2px solid var(--rule);cursor:pointer;padd
 .row .t{cursor:pointer}.row .w{font:600 .68rem var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin-right:.4rem}
 .row.lvl1{margin-left:0}.row.lvl2{margin-left:1.6rem}.row.lvl3{margin-left:3.2rem;font-size:.92rem}.row.lvl3 .t{color:var(--ink-2)}
 details.ev{margin-left:3.2rem}details.ev>summary{cursor:pointer;font-size:.82rem;color:var(--ink-3);padding:.15rem 0}details.ev .row{margin-left:0;font-size:.9rem}
+.drawer .grp{font:600 .68rem var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin-top:.5rem}.drawer .row{border-top:1px solid var(--rule);padding:.25rem 0}.drawer .row:hover{background:var(--paper)}.drawer .drawer{margin-left:0 !important}
 .drawer{background:var(--paper-2);border:1px solid var(--rule);border-radius:6px;padding:.8rem 1rem;margin:.2rem 0 .6rem;font-size:.9rem;display:grid;gap:.4rem}.drawer h3{margin:0;font:600 1rem var(--serif)}.drawer .q{color:var(--ink-2);font-style:italic;margin:0}.drawer .m{color:var(--ink-3);font-size:.82rem}.drawer img{max-width:360px;border:1px solid var(--rule);background:#fff}.drawer ul{margin:0;padding-left:1.1rem}.drawer p{margin:0}
 .note{font-size:.82rem;color:var(--ink-3);margin-left:3.2rem;padding:.2rem 0}
 /* checks, compare, json */
@@ -73,14 +74,15 @@ const html=[];let para=[];const flush=()=>{if(!para.length)return;const h=para.j
 for(const s of segs){const parts=s.t.split('\n\n');parts.forEach((p,i)=>{if(i>0){flush()}const t=p.replace(/\n/g,' ');if(!t)return;para.push(s.n?`<mark class="anc" data-id="${s.n.id}">${esc(t)}</mark><span class="id ${pre(s.n)}" data-id="${s.n.id}">${s.n.id}</span>`:esc(t))})}
 flush();document.getElementById('text').innerHTML=html.join('');
 function verifyBadges(id){const bad=Object.entries(V.nodes?.[id]||{}).filter(([,r])=>!r.ok);return bad.length?`<div class="verify">${bad.map(([c,r])=>`<span class="bad" title="${esc(r.note)}">${c} ✗ ${esc(r.note)}</span>`).join('')}</div>`:''}
-function detail(n){const rel=(list,dir)=>(list||[]).filter(e=>['supports','opposes','addresses','observationStatement','request_target','grounds','follows'].includes(e.relation)).map(e=>{const a=N[e.subject],b=N[e.object],o=dir==='out'?b:a;return `<li>${chip(a,true)} <span class="rel">${e.relation}</span> ${chip(b,true)} ${esc(o.description||o.text)}</li>`}).join('');
+function detail(n){const rel=(list,dir)=>(list||[]).filter(e=>['supports','opposes','addresses','observationStatement','request_target','grounds','follows'].includes(e.relation)).filter(e=>!(dir==='in'&&n.type==='Claim'&&['supports','opposes'].includes(e.relation))).map(e=>{const a=N[e.subject],b=N[e.object],o=dir==='out'?b:a;return `<li>${chip(a,true)} <span class="rel">${e.relation}</span> ${chip(b,true)} ${esc(o.description||o.text)}</li>`}).join('');
  return `<div class="m">${chip(n,true)}${n.study?` · ${esc(studyOf(n))}`:''}${n.panel?` · ${esc(n.panel)}`:''}${prov(n)}</div><h3>${esc(n.text)}</h3>${n.notes?`<p class="q">${esc(n.notes)}</p>`:''}
  ${n.text.includes(n.anchor)?'':`<p class="q">“${esc(n.anchor)}”</p>`}<p class="m"><a href="#" data-article="${n.id}">article</a>${n.figure?` · <a href="${esc(n.figure.page)}" target="_blank">${esc(n.panel)} ↗</a>`:''}</p>${n.figure?`<img src="${thumb(n.figure.thumbnail)}" alt="${esc(n.panel)}">`:''}${verifyBadges(n.id)}<ul>${rel(outs[n.id],'out')}${rel(ins[n.id],'in')}</ul>`}
 function openDrawer(id){const t=document.querySelector(`#tree .t[data-open="${id}"],#tree [data-open="${id}"]`);if(!t)return false;const row=t.closest('.row')||t.closest('.qb');
  let d=row.nextElementSibling;if(d&&d.classList.contains('drawer')&&d.dataset.for===id)return d;
  let p=row.parentElement;while(p&&p.id!=='tree'){if(p.tagName==='DETAILS')p.open=true;p=p.parentElement}
- d=document.createElement('div');d.className='drawer';d.dataset.for=id;d.style.marginLeft=getComputedStyle(row).marginLeft;d.innerHTML=detail(N[id]);row.after(d);return d}
-function show(id){const n=N[id];if(!n)return;document.querySelector('[data-tab="tree"]').click();const d=openDrawer(id);(d||document.getElementById('tree')).scrollIntoView({block:'start',behavior:'smooth'})}
+ d=document.createElement('div');d.className='drawer';d.dataset.for=id;d.style.marginLeft=getComputedStyle(row).marginLeft;d.innerHTML=detail(N[id])+children(N[id]);row.after(d);return d}
+function openPath(id){if(document.querySelector(`#tree [data-open="${id}"]`))return openDrawer(id);const p=(outs[id]||[]).find(e=>['supports','opposes'].includes(e.relation)&&N[e.object]?.type==='Claim');if(!p)return null;openPath(p.object);return openDrawer(id)}
+function show(id){const n=N[id];if(!n)return;document.querySelector('[data-tab="tree"]').click();const d=openPath(id);(d||document.getElementById('tree')).scrollIntoView({block:'start',behavior:'smooth'})}
 function showInArticle(id){document.querySelector('[data-tab="article"]').click();document.querySelectorAll('mark.anc.on').forEach(m=>m.classList.remove('on'));document.querySelectorAll(`mark[data-id="${id}"]`).forEach(m=>m.classList.add('on'));document.querySelector(`mark[data-id="${id}"]`)?.scrollIntoView({block:'center',behavior:'smooth'})}
 document.body.addEventListener('click',e=>{const el=e.target.closest('[data-id],[data-go],[data-open],[data-article]');if(!el||e.target.closest('a[href^="http"]'))return;e.preventDefault();
  if(el.dataset.article){showInArticle(el.dataset.article);return}
@@ -88,19 +90,18 @@ document.body.addEventListener('click',e=>{const el=e.target.closest('[data-id],
  const id=el.dataset.id||el.dataset.go;if(N[id])show(id)});
 // ── tree: one row per node — chip, then summary (claims) or text (evidence) ─────────────
 const line=n=>n.description||n.text;
-const row=(n,lvl,extra='')=>`<div class="row lvl${lvl}">${chip(n)}<div class="t" data-open="${n.id}">${extra}${esc(line(n))}${prov(n)}</div></div>`;
+const row=(n,lvl,extra='',tail='')=>`<div class="row lvl${lvl}">${chip(n)}<div class="t" data-open="${n.id}">${extra}${esc(line(n))}${prov(n)}${tail}</div></div>`;
 const evidenceFor=c=>(ins[c.id]||[]).filter(e=>N[e.subject]?.type==='Evidence').map(e=>({e:N[e.subject],rel:e.relation}));
-const evBlock=c=>{const ev=evidenceFor(c);if(!ev.length)return'';const sup=ev.filter(x=>x.rel==='supports'&&x.e.subtype!=='Check'),opp=ev.filter(x=>x.rel==='opposes'),chk=ev.filter(x=>x.e.subtype==='Check');
- const label=[sup.length?`${sup.length} supporting`:'',opp.length?`${opp.length} opposing`:'',chk.length?`${chk.length} check${chk.length>1?'s':''}`:''].filter(Boolean).join(', ');
- return `<details class="ev"><summary>${label}</summary>${[...sup,...opp,...chk].map(({e,rel})=>row(e,3,rel==='opposes'?'<span class="w">opposes</span>':'')).join('')}</details>`};
+const children=c=>{if(c.type!=='Claim')return'';const ev=evidenceFor(c);const sup=ev.filter(x=>x.rel==='supports'&&x.e.subtype!=='Check'),opp=ev.filter(x=>x.rel==='opposes'),chk=ev.filter(x=>x.e.subtype==='Check');
+ const grp=(label,xs)=>xs.length?`<div class="grp">${label}</div>${xs.map(({e})=>row(e,0)).join('')}`:'';
+ return c.subtype==='Alternative'?grp('argued against by',opp)+grp('in its favour',sup):grp('supported by',sup)+grp('argued against by',opp)+grp('checks',chk)};
 let tree='';for(const q of G.nodes.filter(n=>n.type==='Question')){
  const addr=(ins[q.id]||[]).filter(e=>e.relation==='addresses').map(e=>N[e.subject]);
  const hyps=addr.filter(n=>n.subtype==='Hypothesis'),alts=addr.filter(n=>n.subtype==='Alternative'),plain=addr.filter(n=>!n.subtype);
  tree+=`<section class="qb"><h2>${chip(q)}<span data-open="${q.id}" style="cursor:pointer">${esc(q.text)}</span></h2><p class="s">${esc(q.description||'')}</p>`;
- for(const h of hyps){tree+=row(h,1,'<span class="w">hypothesis</span>');for(const f of (ins[h.id]||[]).filter(e=>e.relation==='supports'&&N[e.subject].type==='Claim').map(e=>N[e.subject]))tree+=row(f,2)+evBlock(f)}
- if(plain.length){tree+=`<div class="row lvl1"><span></span><div class="t"><span class="w">other findings</span></div></div>`;for(const c of plain){tree+=row(c,2)+evBlock(c);for(const d of (ins[c.id]||[]).filter(e=>e.relation==='supports'&&N[e.subject].type==='Claim').map(e=>N[e.subject]))tree+=row(d,3,'<span class="w">from</span>')}}
- for(const a of alts){tree+=row(a,1,'<span class="w">alternative</span>');const op=evidenceFor(a).filter(x=>x.rel==='opposes'),sp=evidenceFor(a).filter(x=>x.rel==='supports');
-  tree+=op.length?`<details class="ev"><summary>ruled out by ${op.length} result${op.length>1?'s':''}${sp.length?`, ${sp.length} for it`:''}</summary>${op.map(({e})=>row(e,3)).join('')}${sp.map(({e})=>row(e,3,'<span class="w">supports</span>')).join('')}</details>`:`<div class="note">left open: nothing in the paper opposes it</div>`}
+ for(const h of hyps){tree+=row(h,1,'<span class="w">hypothesis</span>');for(const f of (ins[h.id]||[]).filter(e=>e.relation==='supports'&&N[e.subject].type==='Claim').map(e=>N[e.subject]))tree+=row(f,2)}
+ if(plain.length){tree+=`<div class="row lvl1"><span></span><div class="t"><span class="w">other findings</span></div></div>`;for(const c of plain){tree+=row(c,2);for(const d of (ins[c.id]||[]).filter(e=>e.relation==='supports'&&N[e.subject].type==='Claim').map(e=>N[e.subject]))tree+=row(d,3,'<span class="w">from</span>')}}
+ for(const a of alts){const op=evidenceFor(a).filter(x=>x.rel==='opposes').length;tree+=row(a,1,'<span class="w">alternative</span>',op?'':' <span class="prov">nothing in the paper argues against it</span>')}
  tree+='</section>'}
 const reqs=G.nodes.filter(n=>n.type==='Request');if(reqs.length)tree+=`<section class="qb"><h2>What the authors call for next</h2>${reqs.map(r=>row(r,1,'',)+`<div class="note">about ${(outs[r.id]||[]).map(e=>chip(N[e.object])).join(' ')}</div>`).join('')}</section>`;
 const rest=G.nodes.filter(n=>['Study','Protocol','SourceDocument'].includes(n.type));tree+=`<section class="qb"><h2>Studies, methods, sources</h2>${rest.map(n=>row(n,1,`<span class="w">${WORD[pre(n)]}</span>`)).join('')}</section>`;
