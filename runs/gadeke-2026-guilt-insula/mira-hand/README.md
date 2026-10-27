@@ -17,6 +17,9 @@ https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks
 - `gadeke-hand.viewer.html` — the review page, self-contained, built by `mira_viewer.py` with
   `--compare` and `--embed-figures` (figure thumbnails cached in `.figcache/`, gitignored). Published
   at https://claude.ai/artifact/2hV3hPEa8P1tgkVuzCrsHJ; feedback goes in comments on that page.
+- `gadeke-hand.deliver.html` / `gadeke-hand.deliver.graph.json` — the page for eLife, built with
+  `--deliver`: same reading surface; the Data item opens About this graph, the cleaned JSON (no
+  builder bookkeeping, a `fields` note) and the MIRA JSON-LD; no comparison, no verification table.
 - `gadeke-hand.mira.jsonld` — MIRA JSON-LD with three declared `NodeSchema` subclasses: `Hypothesis`
   and `Alternative` under Claim, `Check` and `Cited` under Evidence. Against the vendored shapes it raises only
   the known upstream `sh:in` violations and the closed `prov:Activity` shape's refusal of
