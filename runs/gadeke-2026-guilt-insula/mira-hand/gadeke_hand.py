@@ -94,6 +94,14 @@ node("s_paper", "SourceDocument", "Gädeke et al. (2026), Contributions of insul
 edge("describesActivity", "s_paper", "st1"); edge("describesActivity", "s_paper", "st2")
 
 # cited works the argument leans on — each with the study it reports and the one finding used here
+BIB = {   # reference-list entries as the eLife page gives them
+    "rutledge": {"doi": "10.1038/ncomms11825", "fields": {"authors": ["Rutledge RB", "de Berker AO", "Espenhahn S", "Dayan P", "Dolan RJ"], "year": 2016, "journal": "Nature Communications", "volume": "7", "pages": "11825", "title": "The social contingency of momentary subjective well-being"}},
+    "edelson": {"doi": "10.1126/science.aat0036", "fields": {"authors": ["Edelson MG", "Polania R", "Ruff CC", "Fehr E", "Hare TA"], "year": 2018, "journal": "Science", "volume": "361", "pages": "eaat0036", "title": "Computational and neurobiological foundations of leadership decisions"}},
+    "yu2014": {"doi": "10.1093/scan/nst090", "fields": {"authors": ["Yu H", "Hu J", "Hu L", "Zhou X"], "year": 2014, "journal": "Social Cognitive and Affective Neuroscience", "volume": "9", "pages": "1150–1158", "title": "The voice of conscience: neural bases of interpersonal guilt and compensation"}},
+    "yu2020": {"doi": "10.1093/cercor/bhz326", "fields": {"authors": ["Yu H", "Koban L", "Chang LJ", "Wagner U", "Krishnan A", "Vuilleumier P", "Zhou X", "Wager TD"], "year": 2020, "journal": "Cerebral Cortex", "volume": "30", "pages": "3558–3572", "title": "A generalizable multivariate brain pattern for interpersonal guilt"}},
+}
+for b in BIB.values():
+    f = b["fields"]; b["entry"] = f"{', '.join(f['authors'])} ({f['year']}). {f['title']}. {f['journal']} {f['volume']}:{f['pages']}."
 cited = [
     ("rutledge", "Rutledge et al. (2016)", "Prior work establishing that momentary happiness in a probabilistic reward task is explained by recent rewards, expectations and prediction errors — the modelling framework this paper adopts and extends.",
      "Following Rutledge and colleagues’ methodology, which considers that changes in momentary happiness in response to outcomes of a probabilistic reward task are explained by the combined influence of recent reward expectations and prediction errors",
@@ -112,7 +120,7 @@ cited = [
 # would add a Study the cited work describes; the extractor's own prompt allows omitting that chain
 # when the study is not identified, and a placeholder Study carries nothing, so it is collapsed.
 for key, label, desc, anchor, finding, target in cited:
-    node(f"s_{key}", "SourceDocument", label, desc, anchor)
+    node(f"s_{key}", "SourceDocument", BIB[key]["entry"], desc, anchor, doi=BIB[key]["doi"], url="https://doi.org/" + BIB[key]["doi"], **BIB[key]["fields"])
     node(f"e_{key}", "Evidence", finding, f"Cited finding from {label}, as this paper states it.", anchor, subtype="Cited", sourceDocument=f"s_{key}", panel=f"cited: {label}")
     edge("supports", f"e_{key}", target)
 
@@ -509,11 +517,12 @@ if problems:
 # Readers cite nodes by id, so ids are short and typed: Q question, H hypothesis, F finding, A alternative,
 # E evidence, K check, R request, S study, P protocol, D source document. The mnemonic ids above stay as `key`.
 PREFIX = {("Question", None): "Q", ("Claim", "Hypothesis"): "H", ("Claim", None): "F", ("Claim", "Alternative"): "A",
-          ("Evidence", None): "E", ("Evidence", "Check"): "K", ("Evidence", "Cited"): "C", ("Request", None): "R", ("Study", None): "S",
+          ("Evidence", None): "E", ("Evidence", "Check"): "K", ("Evidence", "Cited"): "E", ("Request", None): "R", ("Study", None): "S",
           ("Protocol", None): "P", ("SourceDocument", None): "D"}
 counts, ID = Counter(), {}
 for n in N:
-    pre = PREFIX[(n["type"], n.get("subtype"))]; counts[pre] += 1; ID[n["id"]] = f"{pre}{counts[pre]}"
+    pre = "C" if n["type"] == "SourceDocument" and n.get("doi") != PAPER_DOI else PREFIX[(n["type"], n.get("subtype"))]
+    counts[pre] += 1; ID[n["id"]] = f"{pre}{counts[pre]}"
 for n in N:
     n["key"] = n["id"]; n["id"] = ID[n["key"]]
     for f in ("study", "sourceDocument"):
@@ -554,13 +563,13 @@ for key, (sup, dom, rng) in RELS.items():
     g.append(stamped({"@id": did, "@type": "RelationDef", "domain": f"cg:type/{dom}", "range": f"cg:type/{rng}", "subClassOf": [rid, "dgb:RelationInstance"], "label": key}))
 iri = {}
 for n in N:
-    i = n.get("doi") or (BASE + n["id"]); iri[n["id"]] = i
+    i = n.get("url") or n.get("doi") or (BASE + n["id"]); iri[n["id"]] = i
     typ = ([f"cg:type/{n['subtype']}"] if n.get("subtype") else []) + [f"cg:type/{n['type']}", n["type"]]
     o = {"@id": i, "@type": typ, "title": n["text"] if n["type"] in ("Study", "Protocol", "SourceDocument", "Request") else n["description"].split(" · ")[-1][:200] if False else n["text"],
          "description": item(n["description"] + " — Anchor: “" + n["anchor"] + "”")}
     if n["type"] == "Evidence":
         sd = n.get("sourceDocument", PAPER_DOI)
-        o["sourceDocument"] = sd if sd.startswith("http") else BASE + sd
+        o["sourceDocument"] = sd if sd.startswith("http") else iri.get(sd, BASE + sd)
         if n.get("figure"): o["observationBase"] = n["figure"]["image"]
     g.append(o)
 for k, e in enumerate(E, 1):

@@ -15,11 +15,11 @@ https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks
   `title`/`description` on Study nodes (4, one pair per Study), both documented upstream.
 
 97 nodes · 162 edges · 2 Questions · 4 Hypotheses · 14 findings + 1 interpretation (c_ifg) · 6 Alternatives (13 `opposes`) ·
-47 Evidence of which 8 Checks and 4 Cited · 2 Studies · 10 Protocols · 5 SourceDocuments (the paper
-+ 4 cited works) · 6 Requests. A cited finding is Evidence whose `sourceDocument` is the cited work;
+47 Evidence of which 8 Checks and 4 Cited · 2 Studies · 10 Protocols · 5 SourceDocuments (the paper D1
++ 4 cited works C1–C4, each with its reference-list entry and DOI) · 6 Requests. A cited finding is Evidence whose `sourceDocument` is the cited work;
 no placeholder Study is minted for it.
 
-- Node ids are typed and short (Q1, H1–H4, F1–F15, A1–A6, E1–E35, K1–K8, C1–C4, R1–R6, S1–S2, P1–P10, D1–D5) so
+- Node ids are typed and short (Q1, H1–H4, F1–F15, A1–A6, E1–E39 (four of them Cited), K1–K8, C1–C4 cited works, R1–R6, S1–S2, P1–P10, D1–D5) so
   reviewers can cite them; each node keeps its mnemonic from the builder as `key`.
 - `alignment-prototype.map.json` / `alignment-prototype.json` — hand map and computed alignment to
   eLife's prototype graph (`../mira-baseline/elife-prototype-2026-07.graph.json`), from
