@@ -103,16 +103,16 @@ BIB = {   # reference-list entries as the eLife page gives them
 for b in BIB.values():
     f = b["fields"]; b["entry"] = f"{', '.join(f['authors'])} ({f['year']}). {f['title']}. {f['journal']} {f['volume']}:{f['pages']}."
 cited = [
-    ("rutledge", "Rutledge et al. (2016)", "Prior work establishing that momentary happiness in a probabilistic reward task is explained by recent rewards, expectations and prediction errors — the modelling framework this paper adopts and extends.",
+    ("rutledge", "Rutledge et al. (2016)", "The paper whose happiness-modelling method this study adopts and extends to a social setting.",
      "Following Rutledge and colleagues’ methodology, which considers that changes in momentary happiness in response to outcomes of a probabilistic reward task are explained by the combined influence of recent reward expectations and prediction errors",
      "Changes in momentary happiness during a probabilistic reward task are explained by recent reward expectations and the prediction errors arising from them.", "f_rewards"),
-    ("edelson", "Edelson et al. (2018)", "A study of seeking or avoiding responsibility for group outcomes, which found responsibility aversion not explained by guilt, and insula–TPJ connectivity varying with it.",
+    ("edelson", "Edelson et al. (2018)", "The leadership study this paper compares its agency effect and its connectivity results with.",
      "most participants displayed responsibility aversion, and this effect could not be explained by guilt, suggesting people associate a psychological cost with assuming responsibility for others’ outcomes",
      "Most participants show responsibility aversion — a psychological cost of deciding for others — that guilt does not explain.", "f_agency"),
-    ("yu2014", "Yu et al. (2014)", "A guilt paradigm in which participants could bear part of a partner's pain; anterior insula and anterior middle cingulate were more active when the pain followed the participant's own errors.",
+    ("yu2014", "Yu et al. (2014)", "The guilt paradigm that motivates the insula hypothesis.",
      "The level of pain taken, indicative of guilt, and activations in anterior middle cingulate cortex and aIns were higher when the pain followed errors made only by the participant rather than by both players",
      "Anterior insula and anterior middle cingulate activity were higher when a partner's pain followed the participant's own errors.", "h2"),
-    ("yu2020", "Yu et al. (2020)", "A multivariate reanalysis of two guilt datasets yielding a guilt-related brain signature, used here as an external yardstick.",
+    ("yu2020", "Yu et al. (2020)", "The source of the guilt-related brain signature this paper uses as an external yardstick.",
      "A multivariate reanalysis of these two datasets revealed a neural signature for guilt (Yu et al., 2020)",
      "A multivariate reanalysis of two guilt studies yields a distributed guilt-related brain signature spanning anterior midcingulate, insula, IFG, inferior temporal cortex, thalamus and cerebellum.", "f_grbs"),
 ]
