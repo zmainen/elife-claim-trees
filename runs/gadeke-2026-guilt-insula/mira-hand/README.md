@@ -19,6 +19,8 @@ https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks
 + 4 cited works) · 6 Requests. A cited finding is Evidence whose `sourceDocument` is the cited work;
 no placeholder Study is minted for it.
 
+- Node ids are typed and short (Q1, H1–H4, F1–F15, A1–A6, E1–E39, K1–K8, R1–R6, S1–S2, P1–P10, D1–D5) so
+  reviewers can cite them; each node keeps its mnemonic from the builder as `key`.
 - `alignment-prototype.map.json` / `alignment-prototype.json` — hand map and computed alignment to
   eLife's prototype graph (`../mira-baseline/elife-prototype-2026-07.graph.json`), from
   `mira_align.py`; drives the viewer's "Compared with eLife's graph" tab. 33 of their 34 nodes have a

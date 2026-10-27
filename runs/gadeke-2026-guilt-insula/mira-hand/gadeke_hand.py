@@ -505,6 +505,23 @@ uncovered = [p for p, v in coverage.items() if not v]
 if problems:
     print("\n".join(problems)); sys.exit(1)
 
+# ── typed short ids ─────────────────────────────────────────────────────────────────────────
+# Readers cite nodes by id, so ids are short and typed: Q question, H hypothesis, F finding, A alternative,
+# E evidence, K check, R request, S study, P protocol, D source document. The mnemonic ids above stay as `key`.
+PREFIX = {("Question", None): "Q", ("Claim", "Hypothesis"): "H", ("Claim", None): "F", ("Claim", "Alternative"): "A",
+          ("Evidence", None): "E", ("Evidence", "Check"): "K", ("Request", None): "R", ("Study", None): "S",
+          ("Protocol", None): "P", ("SourceDocument", None): "D"}
+counts, ID = Counter(), {}
+for n in N:
+    pre = PREFIX[(n["type"], n.get("subtype"))]; counts[pre] += 1; ID[n["id"]] = f"{pre}{counts[pre]}"
+for n in N:
+    n["key"] = n["id"]; n["id"] = ID[n["key"]]
+    for f in ("study", "sourceDocument"):
+        if n.get(f) in ID: n[f] = ID[n[f]]
+for e in E:
+    e["subject"], e["object"] = ID[e["subject"]], ID[e["object"]]
+coverage = {k: [ID[x] for x in v] for k, v in coverage.items()}
+
 # ── extractor-shaped graph.json ───────────────────────────────────────────────────────────────
 graph = {"source": "hand-built from eLife 105391 v2 as served by epp.elifepathways.org", "slug": "gadeke-2026-guilt-insula",
          "paper": {"title": "Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions",
