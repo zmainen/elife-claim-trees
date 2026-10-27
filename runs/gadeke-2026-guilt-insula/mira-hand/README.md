@@ -8,7 +8,15 @@ https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks
   and anchor, and every edge; also the builder, which refuses to emit if any anchor is not
   character-for-character in the text, any edge breaks MIRA's grammar, or a figure panel is unaccounted for.
 - `gadeke-hand.graph.json` — the extractor's working-graph shape (what the prototype ingests), plus
-  `subtypes` and a figure-panel `coverage` table.
+  `subtypes`, a figure-panel `coverage` table and `figures` (IIIF image, thumbnail and page link per
+  panel). Beyond the extractor's fields, nodes carry `description` (the plain summary), `anchor`
+  (verbatim in `gadeke-v2.txt`), optional `anchors` (further verbatim passages: the six main findings
+  are also anchored in the abstract), `panel`, `study`, `figure`, `notes`, `key` (the builder's
+  mnemonic) and, on evidence, `sourceDocument`.
+- `gadeke-hand.verification.json` — `mira_verify.py`'s verdict per node and edge (97 of 97 pass).
+- `gadeke-hand.viewer.html` — the review page, self-contained, built by `mira_viewer.py` with
+  `--compare` and `--embed-figures` (figure thumbnails cached in `.figcache/`, gitignored). Published
+  at https://claude.ai/artifact/2hV3hPEa8P1tgkVuzCrsHJ; feedback goes in comments on that page.
 - `gadeke-hand.mira.jsonld` — MIRA JSON-LD with three declared `NodeSchema` subclasses: `Hypothesis`
   and `Alternative` under Claim, `Check` and `Cited` under Evidence. Against the vendored shapes it raises only
   the known upstream `sh:in` violations and the closed `prov:Activity` shape's refusal of
@@ -23,10 +31,13 @@ no placeholder Study is minted for it.
   reviewers can cite them; each node keeps its mnemonic from the builder as `key`.
 - `alignment-prototype.map.json` / `alignment-prototype.json` — hand map and computed alignment to
   eLife's prototype graph (`../mira-baseline/elife-prototype-2026-07.graph.json`), from
-  `mira_align.py`; drives the viewer's "Compared with eLife's graph" tab. 33 of their 34 nodes have a
-  counterpart; the one left is their risk-preferences Question, which is a finding here.
+  `mira_align.py`; drives the viewer's "Compared with prototype" view and the `= g3` marks on rows.
+  33 of their 34 nodes have a counterpart; the one left is their risk-preferences Question, which is
+  a finding here.
 Every anchor verbatim in v2; all 27 panels of Figures 1–5, Table 1 and Supplementary Figure 2 covered.
 
-Not yet adjudicated. Open for review: the texts of the findings and alternatives, the choice to keep
-interpretations in descriptions rather than as Claims, and the cited works' DOIs (left unresolved;
-`reference-check` can fill them).
+Under adjudication (27 Oct). Settled so far: the six findings shared with the prototype keep its
+wording; the authors' IFG reading is its own claim (F10) under F9; cited works are C1–C4 with their
+reference-list entries and DOIs, their findings `Cited` evidence; interpretations stay in summaries
+unless the authors state them as claims. Open: the texts of the alternatives and whether the brain
+question should carry alternatives of its own.
