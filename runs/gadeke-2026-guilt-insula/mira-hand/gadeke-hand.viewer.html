@@ -22,6 +22,7 @@ main{padding-block:1rem 4rem}main:not(.on){display:none !important}main.on{displ
 /* id chip: the one thing every node shows everywhere */
 .id{display:inline-block;font:600 .72rem var(--mono);padding:.02rem .3rem;border-radius:3px;color:#fff;background:var(--ink-3);min-width:2.2em;text-align:center;cursor:pointer;vertical-align:1px}
 .id.Q{background:var(--Q)}.id.H{background:var(--H)}.id.F{background:var(--F)}.id.A{background:var(--A)}.id.E{background:var(--E)}.id.K{background:var(--K)}.id.R{background:var(--R)}
+.id.ref{background:none !important;border:1px solid currentColor;font-weight:400;opacity:.85}.id.ref.Q{color:var(--Q)}.id.ref.H{color:var(--H)}.id.ref.F{color:var(--F)}.id.ref.A{color:var(--A)}.id.ref.E{color:var(--E)}.id.ref.K{color:var(--K)}.id.ref.R{color:var(--R)}.id.ref.S,.id.ref.P,.id.ref.D{color:var(--ink-3)}
 .prov{font-size:.7rem;color:var(--ink-3);margin-left:.4rem;white-space:nowrap}.prov.new{color:var(--F)}
 /* article */
 #article.on{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:2rem}@media (max-width:900px){#article.on{grid-template-columns:1fr}}
@@ -59,7 +60,7 @@ const D=JSON.parse(document.getElementById('data').textContent);const G=D.graph,
 const N=Object.fromEntries(G.nodes.map(n=>[n.id,n]));const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const WORD={Q:'question',H:'hypothesis',F:'finding',A:'alternative',E:'evidence',K:'check',R:'request',S:'study',P:'protocol',D:'source'};
 const pre=n=>n.subtype==='Hypothesis'?'H':n.subtype==='Alternative'?'A':n.subtype==='Check'?'K':n.type==='Claim'?'F':n.type==='Evidence'?'E':n.type==='Question'?'Q':n.type==='Request'?'R':n.type==='Study'?'S':n.type==='Protocol'?'P':'D';
-const chip=n=>`<span class="id ${pre(n)}" data-go="${n.id}">${n.id}</span>`;
+const chip=(n,ref=false)=>`<span class="id ${pre(n)}${ref?' ref':''}" data-go="${n.id}">${n.id}</span>`;
 const outs={},ins={};for(const e of G.edges){(outs[e.subject]??=[]).push(e);(ins[e.object]??=[]).push(e)}
 const thumb=u=>D.thumbs?.[u]||u;const TN=C?Object.fromEntries(C.graph.nodes.map(n=>[n.id,n])):{};const O2T=C?C.align.ours_to_theirs:null;
 const prov=n=>!C?'':O2T[n.id]?`<span class="prov" title="${esc(O2T[n.id].map(t=>TN[t].text).join('\n'))}">= ${O2T[n.id].join(', ')} in ${esc(C.label)}</span>`:n.type==='Evidence'?'':`<span class="prov new">new</span>`;
@@ -75,10 +76,10 @@ const html=[];let para=[];const flush=()=>{if(!para.length)return;const h=para.j
  html.push(body);if(ids.length)html.push(`<div class="margin">${ids.map(id=>`<div data-go="${id}">${chip(N[id])}<span>${esc(N[id].description||N[id].text)}</span></div>`).join('')}</div>`);para=[]};
 for(const s of segs){const parts=s.t.split('\n\n');parts.forEach((p,i)=>{if(i>0){flush()}const t=p.replace(/\n/g,' ');if(!t)return;para.push(s.n?`<mark class="anc" data-id="${s.n.id}">${esc(t)}</mark><span class="id ${pre(s.n)}" data-id="${s.n.id}">${s.n.id}</span>`:esc(t))})}
 flush();document.getElementById('text').innerHTML=html.join('');
-function verifyBadges(id){const v=V.nodes?.[id]||{};return `<div class="verify">${Object.entries(v).map(([c,r])=>`<span class="${r.ok?'ok':'bad'}" title="${esc(r.note)}">${c} ${r.ok?'✓':'✗'}</span>`).join('')}</div>`}
-function detail(n){const rel=(list,dir)=>(list||[]).filter(e=>['supports','opposes','addresses','observationStatement','request_target','grounds','follows'].includes(e.relation)).map(e=>{const o=N[dir==='out'?e.object:e.subject];return `<li><span class="rel">${e.relation}</span> ${dir==='in'?'← ':'→ '}${chip(o)} ${esc(o.description||o.text)}</li>`}).join('');
+function verifyBadges(id){const bad=Object.entries(V.nodes?.[id]||{}).filter(([,r])=>!r.ok);return bad.length?`<div class="verify">${bad.map(([c,r])=>`<span class="bad" title="${esc(r.note)}">${c} ✗ ${esc(r.note)}</span>`).join('')}</div>`:''}
+function detail(n){const rel=(list,dir)=>(list||[]).filter(e=>['supports','opposes','addresses','observationStatement','request_target','grounds','follows'].includes(e.relation)).map(e=>{const a=N[e.subject],b=N[e.object],o=dir==='out'?b:a;return `<li>${chip(a,true)} <span class="rel">${e.relation}</span> ${chip(b,true)} ${esc(o.description||o.text)}</li>`}).join('');
  const fig=n.figure?`<p><a href="${esc(n.figure.page)}" target="_blank">open ${esc(n.panel)} on eLife ↗</a></p><img src="${thumb(n.figure.thumbnail)}" alt="${esc(n.panel)}">`:'';
- return `<div>${chip(n)} <span class="m">${WORD[pre(n)]}${n.panel?` · ${esc(n.panel)}`:''}${n.study?` · ${esc(studyOf(n))}`:''}${prov(n)}</span></div><h3>${esc(n.text)}</h3>${n.notes?`<p class="q">${esc(n.notes)}</p>`:''}
+ return `<div>${chip(n,true)} <span class="m">${WORD[pre(n)]}${n.panel?` · ${esc(n.panel)}`:''}${n.study?` · ${esc(studyOf(n))}`:''}${prov(n)}</span></div><h3>${esc(n.text)}</h3>${n.notes?`<p class="q">${esc(n.notes)}</p>`:''}
  <p class="q">${n.text.includes(n.anchor)?'':`“${esc(n.anchor)}” `}<a href="#" data-id="${n.id}">in the article</a></p>${fig}${verifyBadges(n.id)}<ul>${rel(outs[n.id],'out')}${rel(ins[n.id],'in')}</ul>`}
 function show(id){const n=N[id];if(!n)return;document.querySelectorAll('mark.anc.on').forEach(m=>m.classList.remove('on'));document.querySelectorAll(`mark[data-id="${id}"]`).forEach(m=>m.classList.add('on'));
  document.getElementById('panel').innerHTML=detail(n);
