@@ -1,6 +1,6 @@
 # Gädeke 2026 — hand-built MIRA graph (Reviewed Preprint v2)
 
-**Graph version 1.0.3, 2026-10-28** (git tag `gadeke-mira-v1.0.3`; 1.0.0 was the first delivered).
+**Graph version 1.0.4, 2026-10-28** (git tag `gadeke-mira-v1.0.4`; 1.0.0 was the first delivered).
 The version and date are fields of the JSON (`version`, `date`) and of the JSON-LD's provenance
 stamps, and appear on the page. Every change that reaches the delivered page is its own version,
 commit and tag, recorded in `CHANGELOG.md`: major for schema or subclasses, minor for nodes or
@@ -51,7 +51,8 @@ no placeholder Study is minted for it.
   33 of their 34 nodes have a counterpart; the one left is their risk-preferences Question, which is
   a finding here.
 The JSON's `stats` block holds these counts by type, subtype and relation; the page shows them in
-the Contents panel of the left margin, which doubles as the key to the chips. Every anchor verbatim in v2; all 27 panels of Figures 1–5, Table 1 and Supplementary Figure 2 covered.
+the Contents panel of the left margin, which doubles as the key to the chips: claims with their three
+subtypes, evidence with its three, cited works, requests, then studies, protocols and edges. Every anchor verbatim in v2; all 27 panels of Figures 1–5, Table 1 and Supplementary Figure 2 covered.
 
 Under adjudication (27 Oct). Settled so far: the six findings shared with the prototype keep its
 wording; the authors' IFG reading is its own claim (F10) under F9; cited works are C1–C4 with their

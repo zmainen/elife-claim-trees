@@ -37,3 +37,8 @@ First delivered version. Consolidates the work of 16–28 October:
 
 - The Contents panel shows the structure: claims with their three subtypes, evidence with its three,
   then cited works and requests.
+
+## 1.0.4 — 2026-10-28
+
+- Contents panel formatting: aligned chip, label and count columns; group rows for claims and
+  evidence; studies, protocols and edges as rows; wider margin.
