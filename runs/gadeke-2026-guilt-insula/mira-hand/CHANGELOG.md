@@ -27,3 +27,8 @@ First delivered version. Consolidates the work of 16–28 October:
 
 - A `stats` block in the JSON (nodes and edges by type, subtype and relation; panels covered) and a
   Contents table on the About page.
+
+## 1.0.2 — 2026-10-28
+
+- The key in the left margin becomes a Contents panel: each kind with its count, plus studies,
+  protocols and edges. The Contents table leaves the About page.
