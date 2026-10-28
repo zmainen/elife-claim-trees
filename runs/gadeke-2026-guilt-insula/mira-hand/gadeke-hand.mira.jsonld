@@ -1,0 +1,3862 @@
+{
+ "@context": [
+  "https://purl.org/mira-science/mira.jsonld",
+  {
+   "cg": "https://w3id.org/claim-graphs/schema#",
+   "dgb": "https://discoursegraphs.com/schema/dg_base#",
+   "owl": "http://www.w3.org/2002/07/owl#",
+   "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+   "onProperty": {
+    "@id": "owl:onProperty",
+    "@type": "@id"
+   },
+   "hasValue": {
+    "@id": "owl:hasValue",
+    "@type": "@id"
+   }
+  }
+ ],
+ "@graph": [
+  {
+   "@id": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "@type": "UserAccount",
+   "accountName": "claim-graphs, hand-built"
+  },
+  {
+   "@id": "cg:type/Question",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "mira:Question"
+   ],
+   "label": "Question",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/Claim",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "mira:Claim"
+   ],
+   "label": "Claim",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/Evidence",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "mira:Evidence"
+   ],
+   "label": "Evidence",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/Study",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "mira:Study"
+   ],
+   "label": "Study",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/Protocol",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "mira:Protocol"
+   ],
+   "label": "Protocol",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/SourceDocument",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "mira:SourceDocument"
+   ],
+   "label": "SourceDocument",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/Request",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "mira:Request"
+   ],
+   "label": "Request",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/Argument",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "mira:Argument"
+   ],
+   "label": "Argument",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/Hypothesis",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "cg:type/Claim",
+    "mira:Claim"
+   ],
+   "label": "Hypothesis",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "A claim the paper commits to and sets out to test — an untested claim, in the Discourse Graphs sense."
+   },
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/Alternative",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "cg:type/Claim",
+    "mira:Claim"
+   ],
+   "label": "Alternative",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "A claim the paper raises in order to test or argue against, or leaves open: a rival explanation of a finding."
+   },
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/Check",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "cg:type/Evidence",
+    "mira:Evidence"
+   ],
+   "label": "Check",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "An observation whose job is to defend a finding or a method — a manipulation check, positive control, replication of a known effect, or assumption test — rather than to argue for or against a hypothesis."
+   },
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:type/Cited",
+   "@type": "NodeSchema",
+   "subClassOf": [
+    "cg:type/Evidence",
+    "mira:Evidence"
+   ],
+   "label": "Cited",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "A finding this paper takes from another publication, as this paper states it; its sourceDocument is the cited work, not this paper."
+   },
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/addresses",
+   "@type": "AbstractRelationDef",
+   "subClassOf": [
+    "mira:addresses",
+    {
+     "@type": "owl:Restriction",
+     "onProperty": "rdf:predicate",
+     "hasValue": "cg:rel/addresses"
+    }
+   ],
+   "label": "addresses",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/addresses/def",
+   "@type": "RelationDef",
+   "domain": "cg:type/Claim",
+   "range": "cg:type/Question",
+   "subClassOf": [
+    "cg:rel/addresses",
+    "dgb:RelationInstance"
+   ],
+   "label": "addresses",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/supports",
+   "@type": "AbstractRelationDef",
+   "subClassOf": [
+    "mira:supports",
+    {
+     "@type": "owl:Restriction",
+     "onProperty": "rdf:predicate",
+     "hasValue": "cg:rel/supports"
+    }
+   ],
+   "label": "supports",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/supports/def",
+   "@type": "RelationDef",
+   "domain": "cg:type/Argument",
+   "range": "cg:type/Claim",
+   "subClassOf": [
+    "cg:rel/supports",
+    "dgb:RelationInstance"
+   ],
+   "label": "supports",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/opposes",
+   "@type": "AbstractRelationDef",
+   "subClassOf": [
+    "mira:opposes",
+    {
+     "@type": "owl:Restriction",
+     "onProperty": "rdf:predicate",
+     "hasValue": "cg:rel/opposes"
+    }
+   ],
+   "label": "opposes",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/opposes/def",
+   "@type": "RelationDef",
+   "domain": "cg:type/Argument",
+   "range": "cg:type/Claim",
+   "subClassOf": [
+    "cg:rel/opposes",
+    "dgb:RelationInstance"
+   ],
+   "label": "opposes",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/grounds",
+   "@type": "AbstractRelationDef",
+   "subClassOf": [
+    "mira:grounds",
+    {
+     "@type": "owl:Restriction",
+     "onProperty": "rdf:predicate",
+     "hasValue": "cg:rel/grounds"
+    }
+   ],
+   "label": "grounds",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/grounds/def",
+   "@type": "RelationDef",
+   "domain": "cg:type/Study",
+   "range": "cg:type/Evidence",
+   "subClassOf": [
+    "cg:rel/grounds",
+    "dgb:RelationInstance"
+   ],
+   "label": "grounds",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/follows",
+   "@type": "AbstractRelationDef",
+   "subClassOf": [
+    "mira:follows",
+    {
+     "@type": "owl:Restriction",
+     "onProperty": "rdf:predicate",
+     "hasValue": "cg:rel/follows"
+    }
+   ],
+   "label": "follows",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/follows/def",
+   "@type": "RelationDef",
+   "domain": "cg:type/Study",
+   "range": "cg:type/Protocol",
+   "subClassOf": [
+    "cg:rel/follows",
+    "dgb:RelationInstance"
+   ],
+   "label": "follows",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/describesActivity",
+   "@type": "AbstractRelationDef",
+   "subClassOf": [
+    "mira:describesActivity",
+    {
+     "@type": "owl:Restriction",
+     "onProperty": "rdf:predicate",
+     "hasValue": "cg:rel/describesActivity"
+    }
+   ],
+   "label": "describesActivity",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/describesActivity/def",
+   "@type": "RelationDef",
+   "domain": "cg:type/SourceDocument",
+   "range": "cg:type/Study",
+   "subClassOf": [
+    "cg:rel/describesActivity",
+    "dgb:RelationInstance"
+   ],
+   "label": "describesActivity",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/request_target",
+   "@type": "AbstractRelationDef",
+   "subClassOf": [
+    "mira:request_target",
+    {
+     "@type": "owl:Restriction",
+     "onProperty": "rdf:predicate",
+     "hasValue": "cg:rel/request_target"
+    }
+   ],
+   "label": "request_target",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "cg:rel/request_target/def",
+   "@type": "RelationDef",
+   "domain": "cg:type/Request",
+   "range": "cg:type/Claim",
+   "subClassOf": [
+    "cg:rel/request_target",
+    "dgb:RelationInstance"
+   ],
+   "label": "request_target",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "@type": [
+    "cg:type/Question",
+    "Question"
+   ],
+   "title": "How does being responsible for a risky choice that affects a partner change how the decision-maker feels?",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Does it feel different to have caused a bad outcome for someone than to have watched them cause it themselves? — Anchor: “The neural mechanisms underlying guilt evoked during such situations of social responsibility are still unknown.”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q2",
+   "@type": [
+    "cg:type/Question",
+    "Question"
+   ],
+   "title": "Which brain regions carry guilt and responsibility for a partner's outcomes, and how do they interact with prefrontal cortex?",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Which parts of the brain respond to guilt and to being responsible for a partner, and how do they communicate with the prefrontal cortex? — Anchor: “Next we sought to uncover the neural mechanisms associated with our guilt effect”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "@type": [
+    "cg:type/Study",
+    "Study"
+   ],
+   "title": "Study 1: behavioural experiment, 40 participants, three sessions outside the scanner",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Participants chose between safe and risky options for themselves (Solo), for themselves and a partner (Social), or watched the partner choose (Partner), rating happiness every two trials. The partner was another participant. — Anchor: “40 healthy participants (14 male, mean age 26.1, range 22 to 31) participated in Study 1 (behaviour only study)”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "@type": [
+    "cg:type/Study",
+    "Study"
+   ],
+   "title": "Study 2: fMRI experiment, 44 participants, two sessions in the scanner",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The same task inside a 3T scanner, with longer and variable intervals between events; the partner was an experimenter. All brain results come from this study. — Anchor: “44 healthy participants (19 male, mean (SD) age = 30.6 (6.5), range 23 to 50) participated in Study 2 (fMRI study)”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P1",
+   "@type": [
+    "cg:type/Protocol",
+    "Protocol"
+   ],
+   "title": "Lottery choice task with Solo, Social and Partner conditions",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "On each trial a safe amount against a lottery with two equiprobable outcomes. Solo: the choice affects only the participant. Social: the participant chooses for both. Partner: the partner chooses for both. In Social and Partner, each player's lottery is drawn independently. — Anchor: “participants were presented with pairs of monetary options (a safe and a risky option; the risky option was a lottery with equally probable high and low outcomes)”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P2",
+   "@type": [
+    "cg:type/Protocol",
+    "Protocol"
+   ],
+   "title": "Partner choices simulated by an expected-value-maximising algorithm",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "To keep the partner's behaviour identical across participants, the partner's choices were made by an algorithm that always picked the higher expected value. Participants were not told. — Anchor: “We contrasted this condition with similar choices made by a simple expected-value-maximizing algorithm posing for the partner”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P3",
+   "@type": [
+    "cg:type/Protocol",
+    "Protocol"
+   ],
+   "title": "Icebreaker game to create a social bond before the task",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Participant and partner met for about fifteen minutes and played a cooperative game, so that the partner's outcomes would matter emotionally. — Anchor: “participants were paired with a partner and played an “ice-breaker” game that created a positive social bond between them”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P4",
+   "@type": [
+    "cg:type/Protocol",
+    "Protocol"
+   ],
+   "title": "Momentary happiness probe every two trials",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "After every second outcome, participants rated how happy they felt on a continuous scale; the ratings are the dependent measure for the behavioural analyses. — Anchor: “Momentary happiness was assessed every two trials in a similar manner to previous studies by Rutledge and colleagues”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P5",
+   "@type": [
+    "cg:type/Protocol",
+    "Protocol"
+   ],
+   "title": "Risk-attitude estimation: risk premium and CARA expected utility",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Two measures of how risk-averse each participant was in each condition: a risk premium from a fitted logistic regression, and a constant-absolute-risk-aversion parameter ρ from expected utility theory. — Anchor: “we calculated for each participant a “risk premium”, defined as the difference between the expected value of a lottery and its certainty equivalent”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P6",
+   "@type": [
+    "cg:type/Protocol",
+    "Protocol"
+   ],
+   "title": "Five computational models of momentary happiness",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Basic, Inequality, Guilt-envy, Responsibility and Responsibility Redux: exponentially decaying influences of certain rewards, expected values and reward prediction errors, with the Responsibility models adding the partner's prediction errors split by who chose. Compared by AIC, BIC, R² and likelihood-ratio tests; parameter recovery on synthetic data. — Anchor: “we fitted computational models to each participant’s happiness data”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P7",
+   "@type": [
+    "cg:type/Protocol",
+    "Protocol"
+   ],
+   "title": "Linear mixed models of happiness after lottery outcomes",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Happiness after Social and Partner lottery outcomes modelled with the participant's outcome, the partner's outcome, who chose, and their interactions; the guilt effect is the partner-outcome × decision-maker interaction. — Anchor: “we analysed happiness values reported after outcomes of lottery choices in the Social and Partner conditions using conventional linear mixed models”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P8",
+   "@type": [
+    "cg:type/Protocol",
+    "Protocol"
+   ],
+   "title": "fMRI acquisition, GLMs and region-of-interest mixed models",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "3T EPI BOLD; a conventional GLM of the trial events (GLM1) and a model-based GLM with the Responsibility model's variables as regressors (GLM2); regions of interest from the lottery-versus-safe outcome contrast analysed with linear mixed models. — Anchor: “We analysed the BOLD responses of brain regions engaged during decision-making and at the time of receiving the outcomes of the choice using conventional as well as computational model-based analyses”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P9",
+   "@type": [
+    "cg:type/Protocol",
+    "Protocol"
+   ],
+   "title": "Seed-to-voxel psychophysiological interaction from left insula and left STS",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Whole-brain connectivity during the choice phase from two seeds, looking for a Condition × Choice interaction. — Anchor: “we used the left insula and left STS as seed regions for whole-brain seed-to-voxel psychophysiological interaction analyses”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P10",
+   "@type": [
+    "cg:type/Protocol",
+    "Protocol"
+   ],
+   "title": "Comparison with the published guilt-related brain signature",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Each participant's guilt-related activation map was projected onto Yu et al.'s multivariate guilt signature; a positive dot product means resemblance. — Anchor: “we compared this brain signature to the neural responses obtained in our task”"
+   }
+  },
+  {
+   "@id": "https://doi.org/10.7554/eLife.105391.2",
+   "@type": [
+    "cg:type/SourceDocument",
+    "SourceDocument"
+   ],
+   "title": "Gädeke et al. (2026), Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions, eLife 105391 v2",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The paper this graph is extracted from. — Anchor: “Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions”"
+   }
+  },
+  {
+   "@id": "https://doi.org/10.1038/ncomms11825",
+   "@type": [
+    "cg:type/SourceDocument",
+    "SourceDocument"
+   ],
+   "title": "Rutledge RB, de Berker AO, Espenhahn S, Dayan P, Dolan RJ (2016). The social contingency of momentary subjective well-being. Nature Communications 7:11825.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The paper whose happiness-modelling method this study adopts and extends to a social setting. — Anchor: “Following Rutledge and colleagues’ methodology, which considers that changes in momentary happiness in response to outcomes of a probabilistic reward task are explained by the combined influence of recent reward expectations and prediction errors”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E1",
+   "@type": [
+    "cg:type/Cited",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Changes in momentary happiness during a probabilistic reward task are explained by recent reward expectations and the prediction errors arising from them.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Earlier work had shown that happiness in a gambling task follows recent rewards and surprises. — Anchor: “Following Rutledge and colleagues’ methodology, which considers that changes in momentary happiness in response to outcomes of a probabilistic reward task are explained by the combined influence of recent reward expectations and prediction errors”"
+   },
+   "sourceDocument": "https://doi.org/10.1038/ncomms11825"
+  },
+  {
+   "@id": "https://doi.org/10.1126/science.aat0036",
+   "@type": [
+    "cg:type/SourceDocument",
+    "SourceDocument"
+   ],
+   "title": "Edelson MG, Polania R, Ruff CC, Fehr E, Hare TA (2018). Computational and neurobiological foundations of leadership decisions. Science 361:eaat0036.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The leadership study this paper compares its agency effect and its connectivity results with. — Anchor: “most participants displayed responsibility aversion, and this effect could not be explained by guilt, suggesting people associate a psychological cost with assuming responsibility for others’ outcomes”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E2",
+   "@type": [
+    "cg:type/Cited",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Most participants show responsibility aversion — a psychological cost of deciding for others — that guilt does not explain.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Earlier work had found that people dislike being responsible for others' outcomes, independently of guilt. — Anchor: “most participants displayed responsibility aversion, and this effect could not be explained by guilt, suggesting people associate a psychological cost with assuming responsibility for others’ outcomes”"
+   },
+   "sourceDocument": "https://doi.org/10.1126/science.aat0036"
+  },
+  {
+   "@id": "https://doi.org/10.1093/scan/nst090",
+   "@type": [
+    "cg:type/SourceDocument",
+    "SourceDocument"
+   ],
+   "title": "Yu H, Hu J, Hu L, Zhou X (2014). The voice of conscience: neural bases of interpersonal guilt and compensation. Social Cognitive and Affective Neuroscience 9:1150–1158.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The guilt paradigm that motivates the insula hypothesis. — Anchor: “The level of pain taken, indicative of guilt, and activations in anterior middle cingulate cortex and aIns were higher when the pain followed errors made only by the participant rather than by both players”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E3",
+   "@type": [
+    "cg:type/Cited",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Anterior insula and anterior middle cingulate activity were higher when a partner's pain followed the participant's own errors.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Earlier work had found the anterior insula more active when a partner's pain followed the participant's own mistakes. — Anchor: “The level of pain taken, indicative of guilt, and activations in anterior middle cingulate cortex and aIns were higher when the pain followed errors made only by the participant rather than by both players”"
+   },
+   "sourceDocument": "https://doi.org/10.1093/scan/nst090"
+  },
+  {
+   "@id": "https://doi.org/10.1093/cercor/bhz326",
+   "@type": [
+    "cg:type/SourceDocument",
+    "SourceDocument"
+   ],
+   "title": "Yu H, Koban L, Chang LJ, Wagner U, Krishnan A, Vuilleumier P, Zhou X, Wager TD (2020). A generalizable multivariate brain pattern for interpersonal guilt. Cerebral Cortex 30:3558–3572.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The source of the guilt-related brain signature this paper uses as an external yardstick. — Anchor: “A multivariate reanalysis of these two datasets revealed a neural signature for guilt (Yu et al., 2020)”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E4",
+   "@type": [
+    "cg:type/Cited",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "A multivariate reanalysis of two guilt studies yields a distributed guilt-related brain signature spanning anterior midcingulate, insula, IFG, inferior temporal cortex, thalamus and cerebellum.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Earlier work had derived a brain-wide signature of guilt from two studies. — Anchor: “A multivariate reanalysis of these two datasets revealed a neural signature for guilt (Yu et al., 2020)”"
+   },
+   "sourceDocument": "https://doi.org/10.1093/cercor/bhz326"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H1",
+   "@type": [
+    "cg:type/Hypothesis",
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Responsibility for a social choice that yields a low outcome for a partner produces interpersonal guilt, felt as a larger decrease in momentary happiness than when the partner made the same choice.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Being the one who chose, when the choice turns out badly for a partner, should hurt more than the same bad luck under the partner's own choice. — Anchor: “choosing a risky option in such a case may evoke guilt when the outcome for others is negative”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H2",
+   "@type": [
+    "cg:type/Hypothesis",
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "The anterior insula is the neural substrate of that guilt, responding more when the participant is responsible for a low outcome affecting the partner.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The anterior insula, already linked to guilt, should respond more when the participant is responsible for the partner's bad outcome. — Anchor: “Given the documented association between anterior insula and guilt (see Introduction)”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H3",
+   "@type": [
+    "cg:type/Hypothesis",
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Connectivity between the guilt- and responsibility-related regions and prefrontal cortex changes with who decides and with the type of choice.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "How the insula and STS couple with prefrontal cortex during a choice should depend on whether the choice is risky and whether it affects the partner. — Anchor: “We hypothesized that connectivity with regions that showed guilt- and responsibility-related responses during the outcome phase (see previous paragraph) might change depending on whether participants made decisions for themselves only or for themselves and their partner”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H4",
+   "@type": [
+    "cg:type/Hypothesis",
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "A neural substrate tracks the participant's responsibility for the partner's outcomes, representing the partner's reward prediction errors more strongly when they arise from the participant's own choice.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Some brain region should track the partner's surprises more strongly when the participant, not the partner, caused them. — Anchor: “search for networks sensitive to reward prediction errors resulting from participant or partner choices”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Responsibility for a partner's bad lottery outcomes decreases participant happiness more than the same outcomes following partner choices, consistent with interpersonal guilt.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The same bad outcome for the partner lowered happiness more when the participant had made the choice, in both studies. — Anchor: “When the partner received the low lottery outcome, participant happiness was lower when they rather than the partner had chosen the lottery”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F2",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Computational models incorporating partner reward prediction errors differentiated by decision-maker (participant vs partner) best explain momentary happiness variations.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Among five models of what drives happiness, the one that separates out the partner's surprises caused by the participant's own choice fitted best, and that term mattered. — Anchor: “the Responsibility model fitted better than all the other models, including the Responsibility Redux model”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F3",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "The participant's own reward prediction errors influenced happiness more than the partner's.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "A participant's own surprises affected their happiness more than the partner's did. — Anchor: “Participants’ reward prediction errors (sRPE) influenced happiness more than partner’s reward prediction errors”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F4",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Momentary happiness tracked the rewards both the participant and the partner received on the current trial.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Happiness rose and fell with the rewards both players had just received. — Anchor: “participant momentary happiness correlated with rewards obtained in the current trial by the participant and by the partner”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F5",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Being the decision-maker lowered happiness, independent of the outcome.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Simply being the one who decided made participants slightly less happy, whatever the outcome. — Anchor: “found happiness to be lower when the participant chose, independent of the outcome”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F6",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Responsibility did not change happiness after good outcomes for the partner.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "When the partner's outcome was good, it made no difference who had chosen. — Anchor: “Responsibility for choices did not influence happiness following positive lottery outcomes for the partner”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Participants show similar risk preferences when deciding for themselves versus for themselves and a partner, with a tendency toward higher risk aversion in the Social condition only in Study 1.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Participants were about as willing to take risks for themselves and a partner as for themselves alone. — Anchor: “participants showed very similar risk preferences when making decisions affecting only themselves (Solo condition) or themselves and their partner (Social condition)”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F8",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "The guilt effect is associated with increased BOLD signal in the left anterior insula.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Insula activity rose more for the partner's bad outcomes when the participant had made the choice, mirroring the behavioural guilt effect. — Anchor: “activation in our insula ROIs increased in situations during which participants experienced guilt for low outcomes impacting their partner”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F9",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Functional connectivity between the left anterior insula and the right inferior frontal gyrus varies with choice and condition: highest for risky choices for oneself and safe choices for both players.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "How strongly the insula and the right inferior frontal gyrus were coupled depended on what was chosen and for whom. — Anchor: “a cluster in the right inferior frontal gyrus (IFG) whose connectivity to the insula (the seed region) was highest when participants made Risky choices for themselves and Safe choices for both players”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F10",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "The right inferior frontal gyrus is sensitive to guilt-related information during social choices.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The authors suggest this prefrontal region handles guilt-related information while a social choice is being made. — Anchor: “suggesting that this part of prefrontal cortex is sensitive to guilt-related information during social choices”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F11",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Connectivity between the left STS and left inferior frontal gyrus showed the opposite pattern, but did not survive correction.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "A weaker, uncorrected result suggested the STS and the left inferior frontal gyrus couple in the opposite pattern. — Anchor: “connectivity with the left STS (the seed region) showed the opposite pattern”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F12",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "The left superior temporal sulcus tracks partner reward prediction errors specifically when they result from the participant's choices.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "A region of the left superior temporal sulcus tracked the partner's surprises more when the participant had caused them. — Anchor: “We found this effect in one cluster within the left STS”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F13",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Choosing for both oneself and the partner, rather than for oneself alone, engaged the precuneus, left temporo-parietal junction and medial prefrontal cortex.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Choosing for two people engaged regions associated with thinking about others: precuneus, temporo-parietal junction and medial prefrontal cortex. — Anchor: “Three significant clusters of voxels were identified (Figure 4B and Supplementary Table 3), in the precuneus”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F14",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Receiving lottery outcomes, compared with safe outcomes, engaged bilateral anterior insula, dorsomedial prefrontal cortex, right STS, ventral striatum, right dorsolateral prefrontal cortex and inferior parietal lobe.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Receiving a lottery outcome engaged a set of regions associated with risk, including the anterior insula and ventral striatum. — Anchor: “Cluster of voxels more active during receipt of lottery outcomes than outcomes of safe choices were identified in the bilateral anterior insula”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F15",
+   "@type": [
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "The guilt-related activation patterns resembled the published guilt-related brain signature.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Brain activity during the guilt effect resembled a published brain signature of guilt from other studies. — Anchor: “The “neurometrics” analysis of our guilt-related activation maps showed a significant similarity to a published guilt-related brain signature”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A1",
+   "@type": [
+    "cg:type/Alternative",
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "The larger drop in happiness after the partner's low outcome is disappointment at the participant's own outcome, not guilt about the partner's.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Perhaps participants were just disappointed about their own outcome, not the partner's. — Anchor: “The “guilt effect” occurred whether the participant received the high lottery outcome”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A2",
+   "@type": [
+    "cg:type/Alternative",
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Being responsible simply amplifies the participant's reaction to all of the partner's outcomes, good or bad.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Perhaps being responsible simply makes every outcome for the partner matter more, good or bad. — Anchor: “Responsibility for choices did not influence happiness following positive lottery outcomes for the partner”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A3",
+   "@type": [
+    "cg:type/Alternative",
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Choosing for two people changes how much risk participants take, so the differences between conditions reflect different choices rather than guilt.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Perhaps people take different risks when choosing for two, and the differences between conditions follow from that rather than from guilt. — Anchor: “To better assess whether people’s risk preferences varied between the Solo and the Social condition”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A4",
+   "@type": [
+    "cg:type/Alternative",
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Happiness tracks the inequality between the participant's and the partner's rewards; responsibility for the partner's surprises adds nothing.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Perhaps happiness just tracks the gap between what the two players got, with no role for who was responsible. — Anchor: “we assessed the fit of an ‘Inequality’ model that included one term modelling the difference between the participant and partner outcomes”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A5",
+   "@type": [
+    "cg:type/Alternative",
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "What participants felt was empathy for the partner, a sense of failure or bad luck, or some emotion other than guilt.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Perhaps what participants felt was empathy, or a sense of failure or bad luck, rather than guilt. — Anchor: “we cannot exclude the possibility that they have instead or in addition felt empathy for their partner, a feeling of failure or bad luck, or some other emotion”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A6",
+   "@type": [
+    "cg:type/Alternative",
+    "cg:type/Claim",
+    "Claim"
+   ],
+   "title": "Because the partner's choices were really an algorithm, participants were emotionally detached from the partner's outcomes and the effects do not reflect a social interaction.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Perhaps, because the partner was really an algorithm, participants were not emotionally engaged with the partner's outcomes at all. — Anchor: “The first limitation is that the partner’s decisions were in fact taken by an algorithm”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K1",
+   "@type": [
+    "cg:type/Check",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 1, the probability of choosing the lottery rose with the lottery's expected-value advantage over the safe option (t(4796) = 9.26, p < 3.1e-20, β = 0.074).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Participants took the lottery more often the better it was, showing their choices were sensible. — Anchor: “participants’ probability of choosing the risky option (lottery) increased with the difference between the expected value of the lottery and the value of the safe option”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig2.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K2",
+   "@type": [
+    "cg:type/Check",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 2, the probability of choosing the lottery rose with its expected-value advantage (t(3829) = 10.62, p < 5.3e-26, β = 0.093).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The same held in the scanner study. — Anchor: “Study 2: Figure 2D, t(3829) = 10.62, p < 5.3e-26, β = 0.093”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig2.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E5",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 1, participants chose the lottery more often in the Solo than the Social condition (t(4796) = 2.54, p = 0.011, β = 0.164).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "In the first study, participants chose the lottery a little more often when choosing for themselves alone. — Anchor: “Participants chose the lottery more often in the Solo condition than in the Social condition in Study 1 (t(4796) = 2.54, p = 0.011, β = 0.164”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig2.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E6",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 2, lottery choice did not differ between Solo and Social (t(3829) = 0.23, p = 0.82, β = 0.015).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "In the scanner study, choosing for two made no difference to how often the lottery was chosen. — Anchor: “this difference was not found in Study 2 (t(3829) = 0.23, p = 0.82, β = 0.015”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig2.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E7",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "The expected-value effect on choice did not interact with condition in either study (p > 0.52).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "How much the lottery's value swayed choices was the same whether choosing for one or for two. — Anchor: “There was no significant interaction between the difference in expected values and experimental conditions in either study (p > 0.52)”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig2.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E8",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 1, risk premiums did not differ between Social and Solo (t(39) = 1.53, p = 0.134, d = 0.24, BF10 = 0.49).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The premium participants demanded for taking a risk was the same whether choosing for one or for two. — Anchor: “Risk premiums did not differ between Social and Solo conditions (Study 1: Figure 2B, t(39) = 1.53, p = 0.134, Cohen’s d = 0.24, BF10 = 0.49”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig2.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E9",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 2, risk premiums did not differ between Social and Solo (t(43) = -0.21, p = 0.84, d = -0.03, BF10 = 0.17).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The same held in the scanner study. — Anchor: “Study 2: Figure 2E, t(43) = -0.21, p = 0.84, d = -0.03, BF10 = 0.17”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig2.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K3",
+   "@type": [
+    "cg:type/Check",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "The risk-aversion parameter ρ did not differ between gain and loss trials in either study (Study 1: t(17) = 0.21, p = 0.84; Study 2: t(15) = -0.61, p = 0.55), justifying pooling.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Risk attitude was the same for gains and losses, so the two could be pooled. — Anchor: “As ρ did not vary between gain and loss trials (Study 1: t(17) = 0.21, p = 0.84, d = 0.05; Study 2: t(15) = - 0.61, p = 0.55, d = 0.15; paired t-test)”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E10",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 1, ρ was slightly higher in the Social than the Solo condition (t(39) = 2.27, p = 0.03, d = 0.36, BF10 = 1.69).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "By one measure, participants in the first study were slightly more cautious when choosing for two. — Anchor: “participants were slightly more risk averse in the Social than in the Solo condition in Study 1 (Figure 2C, t(39) = 2.27, p = 0.03, d = 0.36, BF10 = 1.69)”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig2.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E11",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 2, ρ did not differ between Social and Solo (t(43) = 1.40, p = 0.17, d = 0.21, BF10 = 0.41).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "By the same measure, participants in the scanner study were not more cautious when choosing for two. — Anchor: “but not in Study 2 (Figure 2F, t(43) = 1.40, p = 0.17, d = 0.21, BF10 = 0.41)”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig2.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K4",
+   "@type": [
+    "cg:type/Check",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Risk premium and ρ were highly consistent across participants in both conditions and both studies (all F > 42, p < 0.001, R² 0.55–0.65).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The two ways of measuring risk attitude agreed closely. — Anchor: “Risk premium and ρ were highly consistent with each other across participants in both conditions for both studies”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig2.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E12",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 1, happiness correlated with the participant's reward (F(1,3598) = 691.5, R² = 0.16) and the partner's reward (F(1,2426) = 128.6, R² = 0.05) on the current trial.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "In the first study, happiness tracked the rewards both the participant and the partner had just received. — Anchor: “Correlations with participant reward, Study 1: F(1,3598) = 691.5, p < 0.001, R2 = 0.16; partner reward, Study 1: F(1,2426) = 128.6, p < 0.001, R2 = 0.05”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig3.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E13",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 2, happiness correlated with the participant's reward (F(1,2630) = 650.8, R² = 0.20) and the partner's reward (F(1,1735) = 111.8, R² = 0.06).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The same held in the scanner study. — Anchor: “participant reward, Study 2: F(1,2630) = 650.8, p < 0.001, R2 = 0.20; partner reward, Study 2: F(1,1735) = 111.8, p < 0.001, R2 = 0.06”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig3.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E14",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 1, the Responsibility model fitted better than every other model by likelihood-ratio test (all LR ≥ 47.36, p < 0.0001).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "In the first study, the responsibility model fitted the happiness data better than every other model. — Anchor: “Study 1: all LR ≥ 47.36, p < 0.0001”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_tbl1.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E15",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 2, the Responsibility model fitted better than every other model by likelihood-ratio test (all LR ≥ 77.83, p < 0.0001).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The same held in the scanner study. — Anchor: “Study 2: all LR ≥ 77.83, p < 0.0001”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_tbl1.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E16",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 1 the Responsibility and Responsibility Redux models had the highest R² and adjusted R² and lowest AIC/BIC of the five models.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The two responsibility models explained the first study's happiness data best by every fit measure. — Anchor: “the Responsibility and Responsibility Redux (Figure 3C and 3G) models explained the data best (highest R2 / adjusted R2 or lowest AIC / BIC)”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig3.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E17",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 2 the Responsibility and Responsibility Redux models likewise explained the happiness data best.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The same held in the scanner study. — Anchor: “All models explained variations in happiness reasonably well (Table 1 and Supplementary Materials)”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig3.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E18",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 1 the weight on the partner's prediction errors from the participant's own choices was above zero (Responsibility model Z = 2.85, p = 0.004; Redux Z = 2.93, p = 0.003).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "In the first study, the partner's surprises caused by the participant's own choice carried a reliable weight in happiness. — Anchor: “Responsibility model: Study 1: Z = 2.85, p = 0.004, Study 2: Z = 3.26, p = 0.001”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_tbl1.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E19",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 2 that weight was above zero (Responsibility model Z = 3.26, p = 0.001; Redux Z = 3.30, p = 0.001), and tended to exceed the weight on partner-caused errors.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The same held in the scanner study, where that weight also tended to exceed the weight on surprises the partner caused. — Anchor: “ResponsibilityRedux model: Study 1: Z = 2.93, p = 0.003, Study 2: Z = 3.30, p = 0.001”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_tbl1.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E20",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Weights on the participant's own prediction errors exceeded those on the partner's in both studies (Study 1: all Z > 6.0, p < 0.001; Study 2: all Z > 3.7, p < 0.003).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "A participant's own surprises weighed more on happiness than the partner's, in both studies. — Anchor: “weights for sRPE were higher than for social_pRPE or partner_pRPE (Study 1: all Z > 6.0, p < 0.001; Study 2: all Z > 3.7, p < 0.003)”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_tbl1.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K5",
+   "@type": [
+    "cg:type/Check",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "A parameter-recovery procedure on synthetic data recovered the happiness-model parameters reliably.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The model's parameters could be recovered from simulated data, so the fits are stable. — Anchor: “The stability of these estimated parameters was verified using a parameter recovery procedure”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E21",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 1, happiness was lower when the participant chose, independent of outcome (t(3600) = -3.92, p < 0.0001, β = -0.14).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "In the first study, participants were less happy after trials in which they had been the one to choose, regardless of outcome. — Anchor: “Study 1: t(3600) = -3.92, p < 0.0001, β = -0.14”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E22",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 2, happiness was lower when the participant chose, independent of outcome (t(2870) = -6.07, p < 0.0001, β = -0.24).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The same held in the scanner study. — Anchor: “Study 2: t(2870) = -6.07, p < 0.0001, β = -0.24”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K6",
+   "@type": [
+    "cg:type/Check",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Across several linear mixed models, lottery outcomes and the identity of the decision-maker both influenced happiness.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Across several statistical models, both the outcome and who chose affected happiness. — Anchor: “Fitting several models revealed that lottery outcomes influenced happiness, and that the identity of the decision-maker played a role”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E23",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 1, the partner-outcome × decision-maker interaction on happiness was significant (t(1180) = 3.52, p = 0.0004, β = 0.37).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "In the first study, the partner's outcome and who had chosen interacted: a bad outcome hurt more after the participant's own choice. — Anchor: “Study 1: t(1180) = 3.52, p = 0.0004, β = 0.37”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig3.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E24",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "In Study 2, the partner-outcome × decision-maker interaction on happiness was significant (t(937) = 2.85, p = 0.0045, β = 0.33).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The same interaction held in the scanner study. — Anchor: “Study 2: t(937) = 2.85, p = 0.0045, β = 0.33”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig3.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E25",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "The guilt effect held when the participant's own outcome was high (Study 1: t(39) = -3.58, p < 0.001, d = 0.56, BF10 = 32; Study 2: t(43) = -2.68, p = 0.01, d = 0.4, BF10 = 3.8).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The guilt effect was present when the participant's own outcome was good. — Anchor: “Study 1: t(39) = -3.58, p < 0.001, d = 0.56, BF10 = 32; Study 2: t(43) = -2.68, p = 0.01, d = 0.4, BF10 = 3.8”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig3.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E26",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "The guilt effect held when the participant's own outcome was low (Study 1: t(39) = -3.39, p = 0.002, d = 0.54, BF10 = 19; Study 2: t(43) = -3.58, p < 0.001, d = 0.54, BF10 = 33.5).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The guilt effect was present when the participant's own outcome was bad. — Anchor: “Study 1: t(39) = -3.39, p = 0.002, d = 0.54, BF10 = 19; Study 2: t(43) = -3.58, p < 0.001, d = 0.54, BF10 = 33.5”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig3.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E27",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "After good outcomes for the partner, responsibility did not affect happiness in either study (all |t| < 1.3, p > 0.2, BF10 < 0.2).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "After a good outcome for the partner, who had chosen made no difference to happiness. — Anchor: “both studies, all |t| < 1.3, p > 0.2, BF10 < 0.2”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K7",
+   "@type": [
+    "cg:type/Check",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Bilateral ventral striatum responded more when participants chose the lottery than the safe option (d = 0.72 left, 0.85 right), replicating earlier work.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The ventral striatum responded more to risky than safe choices, as it has in earlier studies. — Anchor: “found such responses in the bilateral ventral striatum (Cohen’s d = 0.72 and 0.85 in the left and right clusters, respectively”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig4.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E28",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Social versus Solo decisions engaged the precuneus (d = 0.79), left TPJ (d = 0.59) and medial prefrontal cortex (d = 0.54).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Choosing for both players engaged the precuneus, left temporo-parietal junction and medial prefrontal cortex. — Anchor: “in the precuneus (d = 0.79), the left temporo-parietal junction (TPJ; d = 0.59) and the medial prefrontal cortex (mPFC; d = 0.54)”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig4.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E29",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Only precuneus and TPJ showed a larger risky-minus-safe response in Social than in both Solo and Partner conditions.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The precuneus and temporo-parietal junction were most active for risky choices made on behalf of both players. — Anchor: “Only Precuneus and TPJ showed positive differences in both comparisons (Figure 4C)”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig4.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E30",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Lottery outcomes versus safe outcomes engaged bilateral anterior insula, dmPFC, right STS, ventral striatum, right dlPFC and inferior parietal lobe.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Receiving a lottery outcome engaged the anterior insula, ventral striatum and several other regions more than receiving a safe outcome. — Anchor: “bilateral anterior insula, dorsal mPFC (dmPFC), right superior temporal sulcus (STS), bilateral ventral striatum, right dorsolateral prefrontal cortex, and bilateral inferior parietal lobe (Figure 4D”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig4.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E31",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Insula ROIs responded more to the partner's low outcomes in the Social than the Partner condition, also after subtracting responses to high outcomes.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Insula regions responded more to the partner's bad outcomes when the participant had chosen, even after discounting responses to good outcomes. — Anchor: “the insulae showed the sought-after effect (see Supplementary Table 6 and Figure 4E)”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig4.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E32",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "A voxel-wise analysis found a small left anterior insula cluster responding more to the partner's low outcomes after participant than partner choices (peak T = 3.95, d = 0.59, 22 voxels), surviving small-volume correction (p = 0.024).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "A small cluster in the left anterior insula showed the same guilt-related response in a voxel-by-voxel analysis. — Anchor: “We found a weak response in a small cluster within the left anterior insula (peak T = 3.95, d = 0.59, 22 voxels”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig4.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K8",
+   "@type": [
+    "cg:type/Check",
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Ventral striatum activation increased with expected certain rewards and the expected values of chosen lotteries under the model-based regressor (left pFWE = 0.002, T = 5.63; right pFWE = 0.005, T = 5.46).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "The ventral striatum tracked the model's expected rewards, confirming the model-based analysis works. — Anchor: “activation in bilateral ventral striatum indeed increased with the amount of expected certain rewards and the expected values of chosen lotteries”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig4.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E33",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "One left STS cluster responded more to the partner's reward prediction errors from participant than partner choices (pFWE = 0.022, T = 4.70, d = 0.53, 100 voxels, peak MNI [-52 -32 0]).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "A cluster in the left superior temporal sulcus responded more to the partner's surprises when the participant had caused them. — Anchor: “We found this effect in one cluster within the left STS (pFWE = 0.022, T = 4.70, d = 0.53, Z = 4.57, 100 voxels”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig4.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E34",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "The STS cluster's responses to partner prediction errors from participant and partner choices are shown for both sessions.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "That cluster's responses are shown separately for the two scanning sessions. — Anchor: “Responses to the computational-model-based regressors coding for partner reward prediction errors resulting from participant and from partner choices in this cluster are shown in Figure 4I”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig4.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E35",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Right IFG connectivity with the left insula seed was highest for risky choices for oneself and safe choices for both players (pFWE = 0.020, T = 4.34, d = 0.80, 115 voxels).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Coupling between the insula and the right inferior frontal gyrus was strongest for risky choices for oneself and safe choices for both. — Anchor: “pFWE = 0.020, T = 4.34, d = 0.80, Z = 4.21, 115 voxels, peak at MNI [46 16 22]; Figure 5”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig5.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E36",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "A smaller left IFG cluster showed the same connectivity pattern with the insula seed but did not survive correction (puncorrected = 0.001, T = 4.08, 38 voxels).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "A smaller cluster on the left showed the same pattern but did not survive statistical correction. — Anchor: “A smaller cluster in the left IFG showed the same effect but did not survive correction for multiple tests”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2",
+   "observationBase": "https://iiif.elifesciences.org/epp/105391%2Fv2%2Fcontent%2F107300v6_fig5.tif/full/max,/0/default.jpg"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E37",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Left IFG connectivity with the left STS seed showed the opposite pattern — highest for safe choices for oneself and risky choices for both — uncorrected (p = 0.001, T = 4.44, 35 voxels).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Coupling between the STS and the left inferior frontal gyrus showed the opposite pattern, but did not survive correction. — Anchor: “connectivity was highest when participants made Safe choices for themselves and Risky choices for both players (puncorrected = 0.001, T = 4.44, Z = 4.30, 35 voxels”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E38",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "Dot products between individual guilt-related maps and the published guilt signature were overall positive (mean 5.22, median 6.97, sign test p = 0.017, Cliff's delta 0.4).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Participants' guilt-related brain maps resembled a published guilt signature more often than not. — Anchor: “overall these values were positive (mean = 5.22; median = 6.97; sign test: p = 0.017; Cliff’s Delta = 0.4 = medium effect size”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E39",
+   "@type": [
+    "cg:type/Evidence",
+    "Evidence"
+   ],
+   "title": "The signature match did not correlate with individual behavioural guilt effects (Spearman's ρ = -0.058, p = 0.725).",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "How closely a participant's map resembled the signature did not predict the size of their behavioural guilt effect. — Anchor: “did not find a significant association [Spearman’s Rho = -0.058, p = 0.725]”"
+   },
+   "sourceDocument": "https://doi.org/10.7554/eLife.105391.2"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R1",
+   "@type": [
+    "cg:type/Request",
+    "Request"
+   ],
+   "title": "Ask participants directly which emotions they felt at each stage of the task, to link subjective experience to the analytical measures of guilt.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Ask participants what they felt, to connect the measures of guilt to their own experience. — Anchor: “asking participants directly about which emotions they have felt during the different stages of this task would allow us to link subjective experience with our analytical measures”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R2",
+   "@type": [
+    "cg:type/Request",
+    "Request"
+   ],
+   "title": "Test more participants to assess how personality traits shape the experience and the behavioural and neural correlates of guilt and responsibility.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Study more people, to see how personality shapes guilt and responsibility and their brain correlates. — Anchor: “Testing more participants would allow us to assess the impact of inter-individual variations in personality traits”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R3",
+   "@type": [
+    "cg:type/Request",
+    "Request"
+   ],
+   "title": "Run more trials so risk preferences can be modelled separately for gains and losses per condition, and to test whether happiness changes affect later choices.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Collect more trials, so risk preferences can be modelled separately for gains and losses in each condition. — Anchor: “Using more trials in the experiment would allow separate modelling of risk preferences in gain and loss trials in each experimental condition”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R4",
+   "@type": [
+    "cg:type/Request",
+    "Request"
+   ],
+   "title": "Vary the partner's identity — friend, stranger, artificial agent — to measure social discounting of guilt and responsibility.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Vary who the partner is, from friend to stranger to machine, to see how closeness changes guilt and responsibility. — Anchor: “Varying partner identities (friends, stranger, artificial agent) could reveal the impact of social discounting on guilt and responsibility”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R5",
+   "@type": [
+    "cg:type/Request",
+    "Request"
+   ],
+   "title": "Run the connectivity analyses on the outcome (feedback) phase of the task.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Analyse connectivity during the moment outcomes are revealed, not only during the choice. — Anchor: “Functional connectivity analyses could also be performed for the data obtained in the feedback part of the paradigm”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R6",
+   "@type": [
+    "cg:type/Request",
+    "Request"
+   ],
+   "title": "Run experiments that isolate the specific computations the left STS/TPJ and anterior insula perform, to explain how guilt and responsibility shape social decisions.",
+   "description": {
+    "@type": "Item",
+    "format": "text/plain",
+    "content": "Design experiments that isolate what the STS and anterior insula each compute during social decisions. — Anchor: “More experiments investigating specific computations in which these regions are involved”"
+   }
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/1",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P1",
+   "title": "[[S1]] -follows-> [[P1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/2",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P2",
+   "title": "[[S1]] -follows-> [[P2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/3",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P3",
+   "title": "[[S1]] -follows-> [[P3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/4",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P4",
+   "title": "[[S1]] -follows-> [[P4]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/5",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P5",
+   "title": "[[S1]] -follows-> [[P5]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/6",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P6",
+   "title": "[[S1]] -follows-> [[P6]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/7",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P7",
+   "title": "[[S1]] -follows-> [[P7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/8",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P1",
+   "title": "[[S2]] -follows-> [[P1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/9",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P2",
+   "title": "[[S2]] -follows-> [[P2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/10",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P3",
+   "title": "[[S2]] -follows-> [[P3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/11",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P4",
+   "title": "[[S2]] -follows-> [[P4]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/12",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P5",
+   "title": "[[S2]] -follows-> [[P5]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/13",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P6",
+   "title": "[[S2]] -follows-> [[P6]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/14",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P7",
+   "title": "[[S2]] -follows-> [[P7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/15",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P8",
+   "title": "[[S2]] -follows-> [[P8]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/16",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P9",
+   "title": "[[S2]] -follows-> [[P9]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/17",
+   "@type": [
+    "cg:rel/follows",
+    "follows"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:P10",
+   "title": "[[S2]] -follows-> [[P10]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/18",
+   "@type": [
+    "cg:rel/describesActivity",
+    "describesActivity"
+   ],
+   "source": "https://doi.org/10.7554/eLife.105391.2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "title": "[[D1]] -describesActivity-> [[S1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/19",
+   "@type": [
+    "cg:rel/describesActivity",
+    "describesActivity"
+   ],
+   "source": "https://doi.org/10.7554/eLife.105391.2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "title": "[[D1]] -describesActivity-> [[S2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/20",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F4",
+   "title": "[[E1]] -supports-> [[F4]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/21",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F5",
+   "title": "[[E2]] -supports-> [[F5]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/22",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E3",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H2",
+   "title": "[[E3]] -supports-> [[H2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/23",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E4",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F15",
+   "title": "[[E4]] -supports-> [[F15]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/24",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[H1]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/25",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q2",
+   "title": "[[H2]] -addresses-> [[Q2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/26",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H3",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q2",
+   "title": "[[H3]] -addresses-> [[Q2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/27",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H4",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q2",
+   "title": "[[H4]] -addresses-> [[Q2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/28",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F9",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F10",
+   "title": "[[F9]] -supports-> [[F10]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/29",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F10",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H3",
+   "title": "[[F10]] -supports-> [[H3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/30",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H1",
+   "title": "[[F1]] -supports-> [[H1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/31",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H1",
+   "title": "[[F2]] -supports-> [[H1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/32",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F6",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H1",
+   "title": "[[F6]] -supports-> [[H1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/33",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F8",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H2",
+   "title": "[[F8]] -supports-> [[H2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/34",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F15",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H2",
+   "title": "[[F15]] -supports-> [[H2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/35",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F9",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H3",
+   "title": "[[F9]] -supports-> [[H3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/36",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F11",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H3",
+   "title": "[[F11]] -supports-> [[H3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/37",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F12",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:H4",
+   "title": "[[F12]] -supports-> [[H4]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/38",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F4",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[F4]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/39",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F3",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[F3]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/40",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F5",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[F5]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/41",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[F7]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/42",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F13",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q2",
+   "title": "[[F13]] -addresses-> [[Q2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/43",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F14",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q2",
+   "title": "[[F14]] -addresses-> [[Q2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/44",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[A1]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/45",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[A2]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/46",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A3",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[A3]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/47",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A4",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[A4]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/48",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A5",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[A5]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/49",
+   "@type": [
+    "cg:rel/addresses",
+    "addresses"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A6",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:Q1",
+   "title": "[[A6]] -addresses-> [[Q1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/50",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K1",
+   "title": "[[S1]] -grounds-> [[K1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/51",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "title": "[[K1]] -supports-> [[F1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/52",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K2",
+   "title": "[[S2]] -grounds-> [[K2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/53",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "title": "[[K2]] -supports-> [[F1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/54",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E5",
+   "title": "[[S1]] -grounds-> [[E5]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/55",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E5",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "title": "[[E5]] -supports-> [[F7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/56",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E5",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A3",
+   "title": "[[E5]] -supports-> [[A3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/57",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E6",
+   "title": "[[S2]] -grounds-> [[E6]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/58",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E6",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "title": "[[E6]] -supports-> [[F7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/59",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E6",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A3",
+   "title": "[[E6]] -opposes-> [[A3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/60",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E7",
+   "title": "[[S1]] -grounds-> [[E7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/61",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E7",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "title": "[[E7]] -supports-> [[F7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/62",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E7",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A3",
+   "title": "[[E7]] -opposes-> [[A3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/63",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E8",
+   "title": "[[S1]] -grounds-> [[E8]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/64",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E8",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "title": "[[E8]] -supports-> [[F7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/65",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E8",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A3",
+   "title": "[[E8]] -opposes-> [[A3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/66",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E9",
+   "title": "[[S2]] -grounds-> [[E9]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/67",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E9",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "title": "[[E9]] -supports-> [[F7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/68",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E9",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A3",
+   "title": "[[E9]] -opposes-> [[A3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/69",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K3",
+   "title": "[[S1]] -grounds-> [[K3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/70",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K3",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "title": "[[K3]] -supports-> [[F7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/71",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E10",
+   "title": "[[S1]] -grounds-> [[E10]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/72",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E10",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "title": "[[E10]] -supports-> [[F7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/73",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E10",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A3",
+   "title": "[[E10]] -supports-> [[A3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/74",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E11",
+   "title": "[[S2]] -grounds-> [[E11]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/75",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E11",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "title": "[[E11]] -supports-> [[F7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/76",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E11",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A3",
+   "title": "[[E11]] -opposes-> [[A3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/77",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K4",
+   "title": "[[S1]] -grounds-> [[K4]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/78",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K4",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "title": "[[K4]] -supports-> [[F7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/79",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E12",
+   "title": "[[S1]] -grounds-> [[E12]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/80",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E12",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F4",
+   "title": "[[E12]] -supports-> [[F4]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/81",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E12",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A6",
+   "title": "[[E12]] -opposes-> [[A6]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/82",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E13",
+   "title": "[[S2]] -grounds-> [[E13]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/83",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E13",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F4",
+   "title": "[[E13]] -supports-> [[F4]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/84",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E13",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A6",
+   "title": "[[E13]] -opposes-> [[A6]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/85",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E14",
+   "title": "[[S1]] -grounds-> [[E14]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/86",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E14",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F2",
+   "title": "[[E14]] -supports-> [[F2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/87",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E14",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A4",
+   "title": "[[E14]] -opposes-> [[A4]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/88",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E15",
+   "title": "[[S2]] -grounds-> [[E15]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/89",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E15",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F2",
+   "title": "[[E15]] -supports-> [[F2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/90",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E15",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A4",
+   "title": "[[E15]] -opposes-> [[A4]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/91",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E16",
+   "title": "[[S1]] -grounds-> [[E16]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/92",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E16",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F2",
+   "title": "[[E16]] -supports-> [[F2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/93",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E17",
+   "title": "[[S2]] -grounds-> [[E17]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/94",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E17",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F2",
+   "title": "[[E17]] -supports-> [[F2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/95",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E18",
+   "title": "[[S1]] -grounds-> [[E18]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/96",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E18",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F2",
+   "title": "[[E18]] -supports-> [[F2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/97",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E19",
+   "title": "[[S2]] -grounds-> [[E19]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/98",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E19",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F2",
+   "title": "[[E19]] -supports-> [[F2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/99",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E20",
+   "title": "[[S1]] -grounds-> [[E20]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/100",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E20",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F3",
+   "title": "[[E20]] -supports-> [[F3]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/101",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K5",
+   "title": "[[S1]] -grounds-> [[K5]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/102",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K5",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F2",
+   "title": "[[K5]] -supports-> [[F2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/103",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E21",
+   "title": "[[S1]] -grounds-> [[E21]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/104",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E21",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F5",
+   "title": "[[E21]] -supports-> [[F5]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/105",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E22",
+   "title": "[[S2]] -grounds-> [[E22]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/106",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E22",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F5",
+   "title": "[[E22]] -supports-> [[F5]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/107",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K6",
+   "title": "[[S1]] -grounds-> [[K6]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/108",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K6",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "title": "[[K6]] -supports-> [[F1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/109",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E23",
+   "title": "[[S1]] -grounds-> [[E23]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/110",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E23",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "title": "[[E23]] -supports-> [[F1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/111",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E24",
+   "title": "[[S2]] -grounds-> [[E24]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/112",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E24",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "title": "[[E24]] -supports-> [[F1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/113",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E25",
+   "title": "[[S1]] -grounds-> [[E25]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/114",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E25",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "title": "[[E25]] -supports-> [[F1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/115",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E25",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A1",
+   "title": "[[E25]] -opposes-> [[A1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/116",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E26",
+   "title": "[[S1]] -grounds-> [[E26]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/117",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E26",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "title": "[[E26]] -supports-> [[F1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/118",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E26",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A1",
+   "title": "[[E26]] -opposes-> [[A1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/119",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E27",
+   "title": "[[S1]] -grounds-> [[E27]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/120",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E27",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F6",
+   "title": "[[E27]] -supports-> [[F6]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/121",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E27",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A2",
+   "title": "[[E27]] -opposes-> [[A2]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/122",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K7",
+   "title": "[[S2]] -grounds-> [[K7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/123",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K7",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F8",
+   "title": "[[K7]] -supports-> [[F8]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/124",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K7",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F13",
+   "title": "[[K7]] -supports-> [[F13]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/125",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E28",
+   "title": "[[S2]] -grounds-> [[E28]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/126",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E28",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F13",
+   "title": "[[E28]] -supports-> [[F13]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/127",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E29",
+   "title": "[[S2]] -grounds-> [[E29]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/128",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E29",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F13",
+   "title": "[[E29]] -supports-> [[F13]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/129",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E30",
+   "title": "[[S2]] -grounds-> [[E30]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/130",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E30",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F14",
+   "title": "[[E30]] -supports-> [[F14]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/131",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E31",
+   "title": "[[S2]] -grounds-> [[E31]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/132",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E31",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F8",
+   "title": "[[E31]] -supports-> [[F8]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/133",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E32",
+   "title": "[[S2]] -grounds-> [[E32]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/134",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E32",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F8",
+   "title": "[[E32]] -supports-> [[F8]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/135",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K8",
+   "title": "[[S2]] -grounds-> [[K8]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/136",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:K8",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F12",
+   "title": "[[K8]] -supports-> [[F12]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/137",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E33",
+   "title": "[[S2]] -grounds-> [[E33]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/138",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E33",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F12",
+   "title": "[[E33]] -supports-> [[F12]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/139",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E34",
+   "title": "[[S2]] -grounds-> [[E34]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/140",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E34",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F12",
+   "title": "[[E34]] -supports-> [[F12]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/141",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E35",
+   "title": "[[S2]] -grounds-> [[E35]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/142",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E35",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F9",
+   "title": "[[E35]] -supports-> [[F9]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/143",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E36",
+   "title": "[[S2]] -grounds-> [[E36]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/144",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E36",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F9",
+   "title": "[[E36]] -supports-> [[F9]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/145",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E37",
+   "title": "[[S2]] -grounds-> [[E37]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/146",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E37",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F11",
+   "title": "[[E37]] -supports-> [[F11]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/147",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E38",
+   "title": "[[S2]] -grounds-> [[E38]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/148",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E38",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F15",
+   "title": "[[E38]] -supports-> [[F15]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/149",
+   "@type": [
+    "cg:rel/opposes",
+    "opposes"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E38",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A5",
+   "title": "[[E38]] -opposes-> [[A5]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/150",
+   "@type": [
+    "cg:rel/grounds",
+    "grounds"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:S2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E39",
+   "title": "[[S2]] -grounds-> [[E39]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/151",
+   "@type": [
+    "cg:rel/supports",
+    "supports"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:E39",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F15",
+   "title": "[[E39]] -supports-> [[F15]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/152",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "title": "[[R1]] -request_target-> [[F1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/153",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R1",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A5",
+   "title": "[[R1]] -request_target-> [[A5]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/154",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "title": "[[R2]] -request_target-> [[F1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/155",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R2",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F8",
+   "title": "[[R2]] -request_target-> [[F8]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/156",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R3",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F7",
+   "title": "[[R3]] -request_target-> [[F7]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/157",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R4",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F1",
+   "title": "[[R4]] -request_target-> [[F1]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/158",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R4",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:A6",
+   "title": "[[R4]] -request_target-> [[A6]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/159",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R5",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F9",
+   "title": "[[R5]] -request_target-> [[F9]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/160",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R5",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F11",
+   "title": "[[R5]] -request_target-> [[F11]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/161",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R6",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F12",
+   "title": "[[R6]] -request_target-> [[F12]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  },
+  {
+   "@id": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:edge/162",
+   "@type": [
+    "cg:rel/request_target",
+    "request_target"
+   ],
+   "source": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:R6",
+   "destination": "urn:claim-graphs:gadeke-2026-guilt-insula:hand:F8",
+   "title": "[[R6]] -request_target-> [[F8]]",
+   "creator": "urn:claim-graphs:gadeke-mira-v1.1.0",
+   "created": "2026-10-28T00:00:00.000Z",
+   "modified": "2026-10-28T00:00:00.000Z"
+  }
+ ]
+}
