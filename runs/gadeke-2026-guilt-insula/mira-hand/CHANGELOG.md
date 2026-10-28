@@ -32,3 +32,8 @@ First delivered version. Consolidates the work of 16–28 October:
 
 - The key in the left margin becomes a Contents panel: each kind with its count, plus studies,
   protocols and edges. The Contents table leaves the About page.
+
+## 1.0.3 — 2026-10-28
+
+- The Contents panel shows the structure: claims with their three subtypes, evidence with its three,
+  then cited works and requests.

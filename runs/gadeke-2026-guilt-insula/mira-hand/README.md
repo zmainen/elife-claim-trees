@@ -1,6 +1,6 @@
 # Gädeke 2026 — hand-built MIRA graph (Reviewed Preprint v2)
 
-**Graph version 1.0.2, 2026-10-28** (git tag `gadeke-mira-v1.0.2`; 1.0.0 was the first delivered).
+**Graph version 1.0.3, 2026-10-28** (git tag `gadeke-mira-v1.0.3`; 1.0.0 was the first delivered).
 The version and date are fields of the JSON (`version`, `date`) and of the JSON-LD's provenance
 stamps, and appear on the page. Every change that reaches the delivered page is its own version,
 commit and tag, recorded in `CHANGELOG.md`: major for schema or subclasses, minor for nodes or
