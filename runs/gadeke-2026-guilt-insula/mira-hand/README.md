@@ -24,8 +24,9 @@ https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks
   the two files), the cleaned JSON (no `key`, no coverage table, a `fields` block naming the extra
   fields; the same file written beside the page) and the MIRA JSON-LD. No comparison, no
   verification table. One self-contained file: article text, graph, figure thumbnails and JSON-LD
-  are embedded; each thumbnail also falls back to a copy in `fig/` (gitignored, published beside the
-  artifact) for hosts that refuse embedded images.
+  are embedded, so the artifact exports as one HTML file. (`fig/` holds copies of the thumbnails,
+  gitignored; the page would fall back to them if a host refused embedded images, but they are not
+  published, since sidecar files turn the export into a zip.)
 - `gadeke-hand.mira.jsonld` — MIRA JSON-LD with three declared `NodeSchema` subclasses: `Hypothesis`
   and `Alternative` under Claim, `Check` and `Cited` under Evidence. Against the vendored shapes it raises only
   the known upstream `sh:in` violations and the closed `prov:Activity` shape's refusal of
