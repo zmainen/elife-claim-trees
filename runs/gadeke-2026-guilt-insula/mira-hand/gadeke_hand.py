@@ -537,7 +537,8 @@ for e in E:
 coverage = {k: [ID[x] for x in v] for k, v in coverage.items()}
 
 # ── extractor-shaped graph.json ───────────────────────────────────────────────────────────────
-graph = {"source": "hand-built from eLife 105391 v2 as served by epp.elifepathways.org", "slug": "gadeke-2026-guilt-insula",
+VERSION, DATE = "1.0", "2026-10-28"   # of this graph; bump on any change to nodes or edges after delivery
+graph = {"version": VERSION, "date": DATE, "source": "built with Claude from eLife 105391 v2 (Reviewed Preprint), reviewed by Z. F. Mainen", "slug": "gadeke-2026-guilt-insula",
          "paper": {"title": "Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions",
                    "doi": "10.7554/eLife.105391.2", "license": "CC BY 4.0",
                    "authors": [{"name": a} for a in ["Maria Gädeke", "Tom Willems", "Omar Salah Ahmed", "Bernd Weber", "René Hurlemann", "Johannes Schultz"]]},
@@ -547,7 +548,7 @@ graph = {"source": "hand-built from eLife 105391 v2 as served by epp.elifepathwa
 json.dump(graph, open(os.path.join(HERE, "gadeke-hand.graph.json"), "w"), indent=1, ensure_ascii=False)
 
 # ── MIRA JSON-LD ─────────────────────────────────────────────────────────────────────────────
-WHO, STAMP, BASE = "urn:claim-graphs:hand-built-2026-10-16", "2026-10-16T00:00:00.000Z", "urn:claim-graphs:gadeke-2026-guilt-insula:hand:"
+WHO, STAMP, BASE = "urn:claim-graphs:gadeke-mira-v" + VERSION, DATE + "T00:00:00.000Z", "urn:claim-graphs:gadeke-2026-guilt-insula:hand:"
 item = lambda c: {"@type": "Item", "format": "text/plain", "content": c}
 def stamped(n): n.update({"creator": WHO, "created": STAMP, "modified": STAMP}); return n
 g = [{"@id": WHO, "@type": "UserAccount", "accountName": "claim-graphs, hand-built"}]

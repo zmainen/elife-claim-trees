@@ -1,5 +1,9 @@
 # Gädeke 2026 — hand-built MIRA graph (Reviewed Preprint v2)
 
+**Graph version 1.0, 2026-10-28** — the version delivered to eLife (git tag `gadeke-mira-v1.0`).
+The version and date are fields of the JSON (`version`, `date`) and of the JSON-LD's provenance
+stamps; bump the version in `gadeke_hand.py` on any change to nodes or edges after delivery.
+
 Built 2026-10-16 for eLife Pathways' claims-tree prototype and for adjudication, from the text
 their page serves (`gadeke-v2.txt`, flattened from the article content of
 https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks to it.
