@@ -537,7 +537,7 @@ for e in E:
 coverage = {k: [ID[x] for x in v] for k, v in coverage.items()}
 
 # ── extractor-shaped graph.json ───────────────────────────────────────────────────────────────
-VERSION, DATE = "1.0", "2026-10-28"   # of this graph; bump on any change to nodes or edges after delivery
+VERSION, DATE = "1.0.0", "2026-10-28"   # major: schema or subclasses · minor: nodes or edges · patch: wording, summaries, the page. Record each in CHANGELOG.md and tag gadeke-mira-v<version>.
 graph = {"version": VERSION, "date": DATE, "source": "built with Claude from eLife 105391 v2 (Reviewed Preprint), reviewed by Z. F. Mainen", "slug": "gadeke-2026-guilt-insula",
          "paper": {"title": "Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions",
                    "doi": "10.7554/eLife.105391.2", "license": "CC BY 4.0",
