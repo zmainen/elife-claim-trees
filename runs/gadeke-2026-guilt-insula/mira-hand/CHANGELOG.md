@@ -42,3 +42,9 @@ First delivered version. Consolidates the work of 16–28 October:
 
 - Contents panel formatting: aligned chip, label and count columns; group rows for claims and
   evidence; studies, protocols and edges as rows; wider margin.
+
+## 1.1.0 — 2026-10-28
+
+- Layout: the left margin holds only the section list. The right column gets a toolbar (Claims ·
+  About · Data, collapse all) and a one-line key beneath it. Counts live in the About page's Contents
+  table and in each question's header (hypotheses · findings · alternatives).
