@@ -25,9 +25,9 @@ https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks
   at https://claude.ai/artifact/2hV3hPEa8P1tgkVuzCrsHJ; feedback goes in comments on that page.
 - `gadeke-hand.deliver.html` / `gadeke-hand.deliver.graph.json` — the page for eLife, built with
   `--deliver`, published at https://claude.ai/artifact/5AFpgCyeGQXKbCZzAUe1M6 (private until shared).
-  Same reading surface as the review page; the Data item in the margin opens About this graph
-  (facts only: what it is, who built and reviewed it, what is in it, the four subclasses, the checks,
-  the two files), the cleaned JSON (no `key`, no coverage table, a `fields` block naming the extra
+  Same reading surface as the review page; the toolbar above the claims offers About this graph
+  (facts only: what it is, who built and reviewed it, what is in it, a Contents table, the four
+  subclasses, the checks, the two files), the cleaned JSON (no `key`, no coverage table, a `fields` block naming the extra
   fields; the same file written beside the page) and the MIRA JSON-LD. No comparison, no
   verification table. One self-contained file: article text, graph, figure thumbnails and JSON-LD
   are embedded, so the artifact exports as one HTML file. (`fig/` holds copies of the thumbnails,
