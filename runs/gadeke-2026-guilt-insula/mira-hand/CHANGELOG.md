@@ -22,3 +22,8 @@ First delivered version. Consolidates the work of 16–28 October:
   JSON-LD.
 - 2026-10-28 — About page as plain facts; every figure embedded; edge lines as chip triples with
   hover statements; no sidecar files, one-file export; version and date in the graph and page.
+
+## 1.0.1 — 2026-10-28
+
+- A `stats` block in the JSON (nodes and edges by type, subtype and relation; panels covered) and a
+  Contents table on the About page.

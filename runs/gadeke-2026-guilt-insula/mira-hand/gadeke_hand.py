@@ -537,12 +537,21 @@ for e in E:
 coverage = {k: [ID[x] for x in v] for k, v in coverage.items()}
 
 # ── extractor-shaped graph.json ───────────────────────────────────────────────────────────────
-VERSION, DATE = "1.0.0", "2026-10-28"   # major: schema or subclasses · minor: nodes or edges · patch: wording, summaries, the page. Record each in CHANGELOG.md and tag gadeke-mira-v<version>.
+VERSION, DATE = "1.0.1", "2026-10-28"   # major: schema or subclasses · minor: nodes or edges · patch: wording, summaries, the page. Record each in CHANGELOG.md and tag gadeke-mira-v<version>.
 graph = {"version": VERSION, "date": DATE, "source": "built with Claude from eLife 105391 v2 (Reviewed Preprint), reviewed by Z. F. Mainen", "slug": "gadeke-2026-guilt-insula",
          "paper": {"title": "Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions",
                    "doi": "10.7554/eLife.105391.2", "license": "CC BY 4.0",
                    "authors": [{"name": a} for a in ["Maria Gädeke", "Tom Willems", "Omar Salah Ahmed", "Bernd Weber", "René Hurlemann", "Johannes Schultz"]]},
          "subtypes": {"Hypothesis": "Claim", "Alternative": "Claim", "Check": "Evidence", "Cited": "Evidence"},
+         "stats": {"nodes": len(N), "edges": len(E),
+                   "by_type": dict(sorted(Counter(n["type"] for n in N).items())),
+                   "claims": {"hypotheses": sum(n.get("subtype") == "Hypothesis" for n in N), "findings": sum(n["type"] == "Claim" and not n.get("subtype") for n in N),
+                              "alternatives": sum(n.get("subtype") == "Alternative" for n in N)},
+                   "evidence": {"results": sum(n["type"] == "Evidence" and not n.get("subtype") for n in N), "checks": sum(n.get("subtype") == "Check" for n in N),
+                                "cited": sum(n.get("subtype") == "Cited" for n in N)},
+                   "sources": {"this_paper": 1, "cited_works": sum(n["type"] == "SourceDocument" for n in N) - 1},
+                   "by_relation": dict(sorted(Counter(e["relation"] for e in E).items())),
+                   "figure_panels_covered": len(PANELS)},
          "nodes": N, "edges": E, "models": ["hand-built (Zach Mainen, Claude)"], "edited": True,
          "coverage": coverage, "figures": FIG_LINKS}
 json.dump(graph, open(os.path.join(HERE, "gadeke-hand.graph.json"), "w"), indent=1, ensure_ascii=False)
