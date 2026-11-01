@@ -48,3 +48,14 @@ First delivered version. Consolidates the work of 16–28 October:
 - Layout: the left margin holds only the section list. The right column gets a toolbar (Claims ·
   About · Data, collapse all) and a one-line key beneath it. Counts live in the About page's Contents
   table and in each question's header (hypotheses · findings · alternatives).
+
+## 1.1.1 — 2026-11-01
+
+- JSON-LD: each figure image an evidence node cites as `observationBase` is declared a `prov:Entity`,
+  as MIRA's shape requires. Validation falls from 85 violations to 51, all documented (47 upstream
+  `sh:in`, 4 Study `title`/`description`). The working-graph JSON changes only in version and date.
+- README: id ranges corrected (Q1–Q2; D1 is the paper, C1–C4 the cited works); the page text's origin
+  and the validation command stated.
+
+Note on tags: `gadeke-mira-v1.0` (on commit 5ef357f) predates the three-part numbering and is
+superseded by `gadeke-mira-v1.0.0`; it is kept because it was pushed.

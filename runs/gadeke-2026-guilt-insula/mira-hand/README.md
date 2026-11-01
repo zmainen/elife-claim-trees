@@ -1,6 +1,6 @@
 # Gädeke 2026 — hand-built MIRA graph (Reviewed Preprint v2)
 
-**Graph version 1.1.0, 2026-10-28** (git tag `gadeke-mira-v1.1.0`; 1.0.0 was the first delivered).
+**Graph version 1.1.1, 2026-11-01** (git tag `gadeke-mira-v1.1.1`; 1.0.0 was the first delivered).
 The version and date are fields of the JSON (`version`, `date`) and of the JSON-LD's provenance
 stamps, and appear on the page. Every change that reaches the delivered page is its own version,
 commit and tag, recorded in `CHANGELOG.md`: major for schema or subclasses, minor for nodes or
@@ -8,7 +8,8 @@ edges, patch for wording, summaries, anchors or the page. Set it in `gadeke_hand
 
 Built 2026-10-16 for eLife Pathways' claims-tree prototype and for adjudication, from the text
 their page serves (`gadeke-v2.txt`, flattened from the article content of
-https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks to it.
+https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks to it. It is
+`mira_page_text.py 105391`'s `105391v2-page.txt`, renamed; the builder reads it under this name.
 
 - `gadeke_hand.py` — the specification: every node with its statement, plain summary, study, panel
   and anchor, and every edge; also the builder, which refuses to emit if any anchor is not
@@ -33,17 +34,20 @@ https://epp.elifepathways.org/mira/105391, msid 105391v2), so every anchor docks
   are embedded, so the artifact exports as one HTML file. (`fig/` holds copies of the thumbnails,
   gitignored; the page would fall back to them if a host refused embedded images, but they are not
   published, since sidecar files turn the export into a zip.)
-- `gadeke-hand.mira.jsonld` — MIRA JSON-LD with three declared `NodeSchema` subclasses: `Hypothesis`
-  and `Alternative` under Claim, `Check` and `Cited` under Evidence. Against the vendored shapes it raises only
-  the known upstream `sh:in` violations and the closed `prov:Activity` shape's refusal of
-  `title`/`description` on Study nodes (4, one pair per Study), both documented upstream.
+- `gadeke-hand.mira.jsonld` — MIRA JSON-LD with four declared `NodeSchema` subclasses: `Hypothesis`
+  and `Alternative` under Claim, `Check` and `Cited` under Evidence. Each evidence node's
+  `observationBase` is its figure image, declared once as a `prov:Entity` (the shape requires it).
+  `validate_mira.py gadeke-hand.mira.jsonld` (with `CLAIM_GRAPHS_ROOT` at a corpus checkout, for
+  `vendor/`) reports 51 violations: 47 the known upstream `sh:in` constraint on `sourceDocument`, and
+  4 the closed `prov:Activity` shape's refusal of `title`/`description` on the two Study nodes.
+  Both are documented upstream; the script exits 1 because it counts the second kind as ours.
 
-97 nodes · 162 edges · 2 Questions · 4 Hypotheses · 14 findings + 1 interpretation (c_ifg) · 6 Alternatives (13 `opposes`) ·
+97 nodes · 162 edges · 2 Questions · 4 Hypotheses · 14 findings + 1 interpretation (F10) · 6 Alternatives (13 `opposes`) ·
 47 Evidence of which 8 Checks and 4 Cited · 2 Studies · 10 Protocols · 5 SourceDocuments (the paper D1
 + 4 cited works C1–C4, each with its reference-list entry and DOI) · 6 Requests. A cited finding is Evidence whose `sourceDocument` is the cited work;
 no placeholder Study is minted for it.
 
-- Node ids are typed and short (Q1, H1–H4, F1–F15, A1–A6, E1–E39 (four of them Cited), K1–K8, C1–C4 cited works, R1–R6, S1–S2, P1–P10, D1–D5) so
+- Node ids are typed and short (Q1–Q2, H1–H4, F1–F15, A1–A6, E1–E39 (four of them Cited), K1–K8, D1 the paper, C1–C4 cited works, R1–R6, S1–S2, P1–P10) so
   reviewers can cite them; each node keeps its mnemonic from the builder as `key`.
 - `alignment-prototype.map.json` / `alignment-prototype.json` — hand map and computed alignment to
   eLife's prototype graph (`../mira-baseline/elife-prototype-2026-07.graph.json`), from

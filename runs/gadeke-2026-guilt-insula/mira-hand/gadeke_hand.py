@@ -537,7 +537,7 @@ for e in E:
 coverage = {k: [ID[x] for x in v] for k, v in coverage.items()}
 
 # ── extractor-shaped graph.json ───────────────────────────────────────────────────────────────
-VERSION, DATE = "1.1.0", "2026-10-28"   # major: schema or subclasses · minor: nodes or edges · patch: wording, summaries, the page. Record each in CHANGELOG.md and tag gadeke-mira-v<version>.
+VERSION, DATE = "1.1.1", "2026-11-01"   # major: schema or subclasses · minor: nodes or edges · patch: wording, summaries, the page. Record each in CHANGELOG.md and tag gadeke-mira-v<version>.
 graph = {"version": VERSION, "date": DATE, "source": "built with Claude from eLife 105391 v2 (Reviewed Preprint), reviewed by Z. F. Mainen", "slug": "gadeke-2026-guilt-insula",
          "paper": {"title": "Contributions of insula and superior temporal sulcus to interpersonal guilt and responsibility in social decisions",
                    "doi": "10.7554/eLife.105391.2", "license": "CC BY 4.0",
@@ -587,11 +587,13 @@ for n in N:
         o["sourceDocument"] = sd if sd.startswith("http") else iri.get(sd, BASE + sd)
         if n.get("figure"): o["observationBase"] = n["figure"]["image"]
     g.append(o)
+for img in sorted({n["figure"]["image"] for n in N if n["type"] == "Evidence" and n.get("figure")}):
+    g.append({"@id": img, "@type": "prov:Entity"})   # observationBase must name a prov:Entity; the figure image is one
 for k, e in enumerate(E, 1):
     g.append(stamped({"@id": f"{BASE}edge/{k}", "@type": [f"cg:rel/{e['relation']}", e["relation"]], "source": iri[e["subject"]], "destination": iri[e["object"]],
                       "title": f"[[{e['subject']}]] -{e['relation']}-> [[{e['object']}]]"}))
 doc = {"@context": ["https://purl.org/mira-science/mira.jsonld", {"cg": "https://w3id.org/claim-graphs/schema#", "dgb": "https://discoursegraphs.com/schema/dg_base#",
-       "owl": "http://www.w3.org/2002/07/owl#", "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "onProperty": {"@id": "owl:onProperty", "@type": "@id"}, "hasValue": {"@id": "owl:hasValue", "@type": "@id"}}], "@graph": g}
+       "owl": "http://www.w3.org/2002/07/owl#", "prov": "http://www.w3.org/ns/prov#", "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "onProperty": {"@id": "owl:onProperty", "@type": "@id"}, "hasValue": {"@id": "owl:hasValue", "@type": "@id"}}], "@graph": g}
 json.dump(doc, open(os.path.join(HERE, "gadeke-hand.mira.jsonld"), "w"), indent=1, ensure_ascii=False)
 
 # ── report ────────────────────────────────────────────────────────────────────────────────────
