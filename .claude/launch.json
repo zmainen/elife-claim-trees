@@ -3,27 +3,15 @@
   "configurations": [
     {
       "name": "site",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "--prefix",
-        "site",
-        "run",
-        "dev"
-      ],
-      "port": 4321,
-      "autoPort": true
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd site && CLAIM_GRAPHS=/Users/zach/Projects/mainenlab/claim-graphs/.claude/worktrees/mira-track npm run dev -- --port 4321"],
+      "port": 4321
     },
     {
-      "name": "site-preview",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "--prefix",
-        "site",
-        "run",
-        "preview"
-      ],
-      "port": 4322,
-      "autoPort": true
+      "name": "viewer",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8772", "--directory", "runs/gadeke-2026-guilt-insula/mira-hand"],
+      "port": 8772
     }
   ]
 }
