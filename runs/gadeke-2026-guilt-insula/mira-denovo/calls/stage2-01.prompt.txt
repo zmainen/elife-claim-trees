@@ -1,0 +1,160 @@
+## System
+
+You transcribe the results an article reports for one figure, table or section. You answer with JSON only.
+
+For the panel group you are given, find every sentence in the article that reports a result for it, and emit one **evidence** item per reported result. Rules:
+- `text`: the result restated in one sentence *with its statistic* (test, value, p, effect size, Bayes factor, voxel count, coordinates — whatever the article gives).
+- `anchor`: the sentence or the statistic clause, copied character for character from the article.
+- `panel`: the panel(s) the result is about, as the article names them ("Figure 3D", "Figure 3D, 3H", "Table 1", "Methods", "Supplementary Table 2").
+- `study`: which study the result belongs to, by key from the inventory. Two studies reporting the same effect are two items.
+- Null results and results reported in Methods or supplementary material are evidence too.
+- Do not summarise. Do not merge. Do not invent a statistic the article does not give; if the article gives none, `text` states the result without one.
+
+Output shape:
+{"evidence":[{"key":"e_…","text":"…","anchor":"…","panel":"Figure 3D","study":"st1"}]}
+
+## User
+
+Inventory (studies and protocols):
+{
+ "studies": [
+  {
+   "key": "st1",
+   "text": "Study 1: behavioral study",
+   "description": "Behavioral study outside the MRI scanner with 40 participants performing risky choice tasks in social contexts and reporting momentary happiness.",
+   "anchor": "40 healthy participants (14 male, mean age 26.1, range 22 to 31) participated in Study 1 (behaviour only study)"
+  },
+  {
+   "key": "st2",
+   "text": "Study 2: fMRI study",
+   "description": "Neuroimaging study with 44 participants performing the same behavioral task during fMRI scanning.",
+   "anchor": "44 healthy participants (19 male, mean (SD) age = 30.6 (6.5), range 23 to 50) participated in Study 2 (fMRI study)"
+  }
+ ],
+ "protocols": [
+  {
+   "key": "p_icebreaker",
+   "text": "Ice-breaker game",
+   "description": "A cooperative drawing game to create positive social bonds between participant and partner before the main task.",
+   "anchor": "In this session lasting about 15 minutes, participants played an ice breaker game with their experiment partner, in which both participant and partner took turns in drawing one half of a simple picture while being blindfolded and following verbal instructions given by their game partner.",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_task",
+   "text": "Risky decision task",
+   "description": "Main experimental task where participants chose between safe and risky monetary options across three conditions (Solo, Social, Partner).",
+   "anchor": "Following the icebreaker game, participants in Study 1 performed 3 sessions of a task in which they decided on each trial between a safe and a risky monetary option (Figure 1).",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_riskpremium",
+   "text": "Risk premium estimation",
+   "description": "Method to quantify risk attitudes by calculating the difference between lottery expected value and certainty equivalent.",
+   "anchor": "Next, we estimated risk attitudes by calculating a risk premium for each participant and condition, defined as the difference between the expected value of a lottery and its certainty equivalent (positive values indicate risk aversion, negative values risk seeking).",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_cara",
+   "text": "CARA model",
+   "description": "Expected utility theory approach using constant absolute risk aversion to estimate risk attitude parameter ρ from choices.",
+   "anchor": "One simple model of risk aversion termed Constant Absolute Risk Aversion (CARA) assumes an exponential utility function:",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_compmodels",
+   "text": "Computational models of happiness",
+   "description": "Five models (Basic, Inequality, Guilt-envy, Responsibility, Responsibility Redux) that explain happiness variations using rewards, prediction errors, and social comparisons.",
+   "anchor": "Following previous work (Rutledge et al., 2014, 2016), we modelled the variations in momentary well-being (happiness ratings) using computational models that considered the influence of recent reward expectations, prediction errors resulting from those expectations, and differences in rewards obtained by the game partners.",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_logistic",
+   "text": "Mixed-effects logistic regression of choices",
+   "description": "Statistical model to test whether choices varied with expected value differences and experimental conditions.",
+   "anchor": "we modelled choices with a mixed-effects logistic regression with subject-specific random intercepts u0j ∼ N(0, δu2) and slopes [u1j , u2j] ∼ N(0, δu2) and residual εij ∼ L(0, 1), assumed to follow the standard logistic distribution.",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_fmri_acq",
+   "text": "fMRI acquisition and preprocessing",
+   "description": "Neuroimaging data collection using 3T scanner and standard preprocessing including realignment, normalization, and smoothing.",
+   "anchor": "Imaging data were collected on a 3T Siemens TRIO MRI system (Siemens AG, Erlangen, Germany) with a Siemens 32-channel head coil.",
+   "followed_by": [
+    "st2"
+   ]
+  },
+  {
+   "key": "p_glm1",
+   "text": "GLM1: event-related fMRI analysis",
+   "description": "First-level GLM modeling brain responses to different trial events (choices, outcomes) across experimental conditions.",
+   "anchor": "The first GLM (GLM1) included the following event types for each session: presentation of choice options, safe choice, risky choice (=lottery), receipt of outcome of safe option, all modelled separately for the Social, Partner and Solo conditions",
+   "followed_by": [
+    "st2"
+   ]
+  },
+  {
+   "key": "p_glm2",
+   "text": "GLM2: model-based fMRI analysis",
+   "description": "Computational model-based GLM using regressors for certain rewards, expected values, and reward prediction errors from the best-fitting behavioral model.",
+   "anchor": "In addition, we created another GLM (GLM2) with regressors designed to identify brain regions whose activation reflected the variables of the best-fitting computational model (see above).",
+   "followed_by": [
+    "st2"
+   ]
+  },
+  {
+   "key": "p_ppi",
+   "text": "PPI connectivity analysis",
+   "description": "Psychophysiological interaction analysis to identify functional connectivity changes with insula and STS seeds during decision-making.",
+   "anchor": "We used the gPPI toolbox (McLaren et al., 2012) for SPM to run seed-to-voxel functional connectivity analyses.",
+   "followed_by": [
+    "st2"
+   ]
+  },
+  {
+   "key": "p_grbs",
+   "text": "Neurometric guilt signature comparison",
+   "description": "Comparison of neural activation patterns with a published multivariate guilt-related brain signature from Yu et al. 2020.",
+   "anchor": "As the GRBS and code to compare neural responses to it is freely available (https://github.com/canlab/Neuroimaging_Pattern_Masks/tree/master/Multivariate_signature_patterns/2019_Yu_Koban_Guilt), we compared this brain signature to the neural responses obtained in our task",
+   "followed_by": [
+    "st2"
+   ]
+  }
+ ]
+}
+
+Panel group: Figure 1
+
+Article passages that mention this panel group, with surrounding context:
+One landmark study reported on the mechanisms involved in seeking or avoiding responsibility in decisions affecting a group of individuals, and reported involvement of medial prefrontal cortex, aIns and temporo-parietal junction (Edelson et al., 2018). In this elegant study, participants could delegate their choice between a risky and a safe option to a group or decide themselves; in separate conditions, the choice affected payoff either only for the participant or for all group members. Interestingly, most participants displayed responsibility aversion, and this effect could not be explained by guilt, suggesting people associate a psychological cost with assuming responsibility for others’ outcomes. However, in many situations one does not have the possibility to delegate a decision to others, and choosing a risky option in such a case may evoke guilt when the outcome for others is negative. The neural mechanisms underlying guilt evoked during such situations of social responsibility are still unknown. These questions are subject of the present study. Similarly to Edelson et al.’s and more recent studies (Arioli et al., 2023; Fareri et al., 2022), our paradigm leveraged a risky choice task with social conditions.
+
+In our experiment, participants were paired with a partner and played an “ice-breaker” game that created a positive social bond between them, increasing the likelihood of feeling empathy and guilt for each other (Baumeister, 1998; Julle-Danière et al., 2020; Loewenstein et al., 1989). Participants or their partner then chose between risky and safe monetary options in three conditions (Figure 1). In the Social condition, the outcome of choices affected both participant and partner; participants were and felt responsible for these outcomes because they had agency over their decisions and knew that they could have chosen otherwise (Frith, 2014). We contrasted this condition with similar choices made by a simple expected-value-maximizing algorithm posing for the partner (Partner condition), and participant choices only affecting the participant themselves (Solo condition, acting as control). Importantly, we assessed the emotional impact of the outcomes of these choices by monitoring participants’ happiness every two trials (Rutledge et al., 2014, 2016). This allowed to fit computational models to happiness data and search for networks sensitive to reward prediction errors resulting from participant or partner choices. We ran two experiments, Study 1 outside the MRI scanner and Study 2 during fMRI, with separate groups of participants.
+
+[Figure 1:] 
+
+## Experimental design.
+
+## Decision task
+
+Following the icebreaker game, participants in Study 1 performed 3 sessions of a task in which they decided on each trial between a safe and a risky monetary option (Figure 1). The risky monetary option was a lottery with two equiprobable outcomes (lottery). There were 3 kinds of trials: decisions by the participant only for themselves (Solo condition), decisions by the participant for themselves and the partner (Social condition), and decisions by the partner for both themselves and the participant (Partner condition). Importantly, when the risky option was selected in the Social or Partner condition, the lottery was played out independently for the participant and the partner, such that both could receive the higher (HighOutcome) or lower outcome (LowOutcome), independently from each other. In order to ascertain constant decisions by the partner, the partner’s decisions were simulated using a simple algorithm that always selected the option with the highest expected value; i.e., it selected the lottery if EV diff > 0; EVdiff = (high lottery outcome + low lottery outcome) / 2 – safe outcome. The amounts earned per trial were determined as in a previous study (Rutledge et al., 2014), as follows. There were 20 mixed trials, 20 gain trials, and 20 loss trials per session. In the mixed trials, participants chose between a safe option of 0 € and a lottery consisting of a gain and a loss amount. Gain amounts were selected randomly out of the following: [15, 25, 40, 55, 75] cents. Loss options were determined by multiplying the gain amount with one randomly selected value out of the following: [-0.2, -0.34, - 0.5, -0.64, -0.77, -0.89, -1, -1.1, -1.35, -2]. In gain trials, participants chose between a safe gain out of the following: [10, 15, 20, 25, 30] cents and a lottery with 0 € and a higher gain amount, calculated by multiplying the safe amount with one of the following values: [1.68, 1.82, 2, 2.22, 2.48, 2.8, 3.16, 3.6, 4.2, 5]. In loss trials, participants chose between a certain loss or a lottery with 0 € or a larger loss. Certain loss amounts were one of [-10, -15, -20, -25, -30] cents, and the larger loss amount of the lottery was a multiple of the certain loss amount and one of the following values: [1.68, 1.82, 2, 2.22, 2.48, 2.8, 3.16, 3.6, 4.2, 5]. The position of the safe and risky option on the screen (left or right) was determined randomly on every trial, and the different trial types (Solo, Social or Partner condition; gain, loss and mixed trials) were presented in randomized order, with the constraint that there could not be more than 2 trials of the same condition in a row. Participants had unlimited time to choose between the safe or risky option. Decisions were displayed for 2s and lottery outcomes for 2.5s. Trials were separated in time by an inter-stimulus interval (ISI) of 1 to 2s drawn randomly from a gamma distribution.
+
+## Momentary happiness
+
+Emit the evidence for this panel group as JSON.

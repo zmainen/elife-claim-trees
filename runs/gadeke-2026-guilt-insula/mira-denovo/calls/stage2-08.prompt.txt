@@ -1,0 +1,152 @@
+## System
+
+You transcribe the results an article reports for one figure, table or section. You answer with JSON only.
+
+For the panel group you are given, find every sentence in the article that reports a result for it, and emit one **evidence** item per reported result. Rules:
+- `text`: the result restated in one sentence *with its statistic* (test, value, p, effect size, Bayes factor, voxel count, coordinates — whatever the article gives).
+- `anchor`: the sentence or the statistic clause, copied character for character from the article.
+- `panel`: the panel(s) the result is about, as the article names them ("Figure 3D", "Figure 3D, 3H", "Table 1", "Methods", "Supplementary Table 2").
+- `study`: which study the result belongs to, by key from the inventory. Two studies reporting the same effect are two items.
+- Null results and results reported in Methods or supplementary material are evidence too.
+- Do not summarise. Do not merge. Do not invent a statistic the article does not give; if the article gives none, `text` states the result without one.
+
+Output shape:
+{"evidence":[{"key":"e_…","text":"…","anchor":"…","panel":"Figure 3D","study":"st1"}]}
+
+## User
+
+Inventory (studies and protocols):
+{
+ "studies": [
+  {
+   "key": "st1",
+   "text": "Study 1: behavioral study",
+   "description": "Behavioral study outside the MRI scanner with 40 participants performing risky choice tasks in social contexts and reporting momentary happiness.",
+   "anchor": "40 healthy participants (14 male, mean age 26.1, range 22 to 31) participated in Study 1 (behaviour only study)"
+  },
+  {
+   "key": "st2",
+   "text": "Study 2: fMRI study",
+   "description": "Neuroimaging study with 44 participants performing the same behavioral task during fMRI scanning.",
+   "anchor": "44 healthy participants (19 male, mean (SD) age = 30.6 (6.5), range 23 to 50) participated in Study 2 (fMRI study)"
+  }
+ ],
+ "protocols": [
+  {
+   "key": "p_icebreaker",
+   "text": "Ice-breaker game",
+   "description": "A cooperative drawing game to create positive social bonds between participant and partner before the main task.",
+   "anchor": "In this session lasting about 15 minutes, participants played an ice breaker game with their experiment partner, in which both participant and partner took turns in drawing one half of a simple picture while being blindfolded and following verbal instructions given by their game partner.",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_task",
+   "text": "Risky decision task",
+   "description": "Main experimental task where participants chose between safe and risky monetary options across three conditions (Solo, Social, Partner).",
+   "anchor": "Following the icebreaker game, participants in Study 1 performed 3 sessions of a task in which they decided on each trial between a safe and a risky monetary option (Figure 1).",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_riskpremium",
+   "text": "Risk premium estimation",
+   "description": "Method to quantify risk attitudes by calculating the difference between lottery expected value and certainty equivalent.",
+   "anchor": "Next, we estimated risk attitudes by calculating a risk premium for each participant and condition, defined as the difference between the expected value of a lottery and its certainty equivalent (positive values indicate risk aversion, negative values risk seeking).",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_cara",
+   "text": "CARA model",
+   "description": "Expected utility theory approach using constant absolute risk aversion to estimate risk attitude parameter ρ from choices.",
+   "anchor": "One simple model of risk aversion termed Constant Absolute Risk Aversion (CARA) assumes an exponential utility function:",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_compmodels",
+   "text": "Computational models of happiness",
+   "description": "Five models (Basic, Inequality, Guilt-envy, Responsibility, Responsibility Redux) that explain happiness variations using rewards, prediction errors, and social comparisons.",
+   "anchor": "Following previous work (Rutledge et al., 2014, 2016), we modelled the variations in momentary well-being (happiness ratings) using computational models that considered the influence of recent reward expectations, prediction errors resulting from those expectations, and differences in rewards obtained by the game partners.",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_logistic",
+   "text": "Mixed-effects logistic regression of choices",
+   "description": "Statistical model to test whether choices varied with expected value differences and experimental conditions.",
+   "anchor": "we modelled choices with a mixed-effects logistic regression with subject-specific random intercepts u0j ∼ N(0, δu2) and slopes [u1j , u2j] ∼ N(0, δu2) and residual εij ∼ L(0, 1), assumed to follow the standard logistic distribution.",
+   "followed_by": [
+    "st1",
+    "st2"
+   ]
+  },
+  {
+   "key": "p_fmri_acq",
+   "text": "fMRI acquisition and preprocessing",
+   "description": "Neuroimaging data collection using 3T scanner and standard preprocessing including realignment, normalization, and smoothing.",
+   "anchor": "Imaging data were collected on a 3T Siemens TRIO MRI system (Siemens AG, Erlangen, Germany) with a Siemens 32-channel head coil.",
+   "followed_by": [
+    "st2"
+   ]
+  },
+  {
+   "key": "p_glm1",
+   "text": "GLM1: event-related fMRI analysis",
+   "description": "First-level GLM modeling brain responses to different trial events (choices, outcomes) across experimental conditions.",
+   "anchor": "The first GLM (GLM1) included the following event types for each session: presentation of choice options, safe choice, risky choice (=lottery), receipt of outcome of safe option, all modelled separately for the Social, Partner and Solo conditions",
+   "followed_by": [
+    "st2"
+   ]
+  },
+  {
+   "key": "p_glm2",
+   "text": "GLM2: model-based fMRI analysis",
+   "description": "Computational model-based GLM using regressors for certain rewards, expected values, and reward prediction errors from the best-fitting behavioral model.",
+   "anchor": "In addition, we created another GLM (GLM2) with regressors designed to identify brain regions whose activation reflected the variables of the best-fitting computational model (see above).",
+   "followed_by": [
+    "st2"
+   ]
+  },
+  {
+   "key": "p_ppi",
+   "text": "PPI connectivity analysis",
+   "description": "Psychophysiological interaction analysis to identify functional connectivity changes with insula and STS seeds during decision-making.",
+   "anchor": "We used the gPPI toolbox (McLaren et al., 2012) for SPM to run seed-to-voxel functional connectivity analyses.",
+   "followed_by": [
+    "st2"
+   ]
+  },
+  {
+   "key": "p_grbs",
+   "text": "Neurometric guilt signature comparison",
+   "description": "Comparison of neural activation patterns with a published multivariate guilt-related brain signature from Yu et al. 2020.",
+   "anchor": "As the GRBS and code to compare neural responses to it is freely available (https://github.com/canlab/Neuroimaging_Pattern_Masks/tree/master/Multivariate_signature_patterns/2019_Yu_Koban_Guilt), we compared this brain signature to the neural responses obtained in our task",
+   "followed_by": [
+    "st2"
+   ]
+  }
+ ]
+}
+
+Panel group: Supplementary Table 3
+
+Article passages that mention this panel group, with surrounding context:
+## Brain regions engaged during social decision-making
+
+Given that our task involved several conditions and successive trial components, we aimed to first replicate previous results related to the neural correlates of decisions under economic risk. We searched for brain regions engaged more when participants chose the risky instead of the safe option, and found such responses in the bilateral ventral striatum (Cohen’s d = 0.72 and 0.85 in the left and right clusters, respectively; Figure 4A and Supplementary Table 3), which replicates previous findings (Cui et al., 2022; Preuschoff et al., 2006). Next, we aimed to identify the brain regions associated with social decision-making under risk, and searched for regions more engaged during decisions in the Social condition compared to the Solo condition. Three significant clusters of voxels were identified (Figure 4B and Supplementary Table 3), in the precuneus (d = 0.79), the left temporo-parietal junction (TPJ; d = 0.59) and the medial prefrontal cortex (mPFC; d = 0.54). This also replicates previous findings associating this region with social decisions (e.g., Fareri et al., 2012; Jung et al., 2013; Nicolle et al., 2012; Ogawa et al., 2018; Piva et al., 2019).
+
+[Figure 4:] 
+
+Emit the evidence for this panel group as JSON.
