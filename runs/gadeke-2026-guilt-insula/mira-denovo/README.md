@@ -5,11 +5,13 @@ This is the first real run of the staged de novo extraction (`scripts/mira_denov
 - **Model.** `claude:claude-sonnet-4-5`, run through `claude -p` on the Max subscription. Each call ran isolated: in an empty temporary folder, with no settings, CLAUDE.md, memory, tools or MCP. Every call's meta file records `auth: none`, meaning no API key was used.
 - **Calls.** There were 21, taking 33.5 minutes in total. At API prices they would have cost about $3.59, though nothing was billed. Claude Code turns on extended thinking by default and temperature can't be set, so this is not the same configuration as an OpenRouter run.
 - **Text.** `text.txt` is the eLife Pathways page text, the same file as `../mira-hand/gadeke-v2.txt`. `references.txt` is the page's reference list, with 71 entries.
-- **Machinery.** The run used claim-graphs `fix/mira-denovo-nulls` at 7e8056c, which is the pin 08ecc21 plus four fixes found during this run:
+- **Machinery.** The model calls ran on claim-graphs `fix/mira-denovo-nulls` at 7e8056c, which is 08ecc21 plus four fixes found during this run:
   - null-safe string checks;
   - a reference list for stage 6;
   - eLife's "Figure N:" labels;
   - an empty alignment map.
+
+  After that branch was reviewed and merged (claim-graphs #81, 3731208), `figures.json` and `references.txt` were fetched again and stages 6–8 were replayed from the saved replies, with no new calls. The checks and assembly in this folder are therefore those of 3731208. One effect of the review fixes is that tables now get their figure records, so the Table 1 evidence links to its image.
 
 ## How the run went
 
@@ -44,8 +46,7 @@ What the checkers refused:
 
 Four panels were never covered by any evidence item: Figure 1, Figure 4A, Figure 4I and Supplementary Table 7.
 
-Verification passed 141 of 176 nodes:
-- 22 fail only because they point to Table 1, which has no image.
+Verification passed 159 of 176 nodes. (It was 141 before the replay; the 22 failures for Table 1 having no figure link are gone.)
 - 11 Evidence nodes, including checks, support no claim.
 - 6 findings reach no question.
 - 2 summaries are missing.
